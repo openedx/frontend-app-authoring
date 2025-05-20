@@ -43,6 +43,7 @@ import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 import './styles/global-overrides.scss';
+import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 
 const queryClient = new QueryClient();
 
@@ -83,7 +84,7 @@ const App = ({ themeData }) => {
         />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-        <Route path="/new-course" element={<PSCourseForm />} />
+        <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}

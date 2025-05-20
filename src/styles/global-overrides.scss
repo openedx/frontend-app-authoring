@@ -16,13 +16,15 @@ body {
 /* Theme colors */
 :root {
   /* Main Theme Colors */
-  --primary: #5e35b1;  /* Berry Purple */
+  --primary: #5e35b1;
+  /* Berry Purple */
   --primary-alt: #673ab7;
   --primary-hover: #ede7f6;
   --primary-active: #673ab7;
   --primary-light: #ede7f6;
 
-  --secondary: #1e88e5;  /* Berry Blue */
+  --secondary: #1e88e5;
+  /* Berry Blue */
   --secondary-alt: #2196f3;
   --secondary-hover: #e3f2fd;
   --secondary-active: #2196f3;
@@ -34,15 +36,15 @@ body {
   --success: #358F0A;
   --success-hover: #2d7908;
   --success-light: #eaf6e6;
-  
+
   --warning: #FFCD29;
   --warning-hover: #e6b800;
   --warning-light: #fff8e6;
-  
+
   --danger: #dc3545;
   --danger-hover: #c82333;
   --danger-light: #fbecec;
-  
+
   --info: #0B8E77;
   --info-hover: #097a66;
   --info-light: #e6f5f2;
@@ -70,7 +72,7 @@ body {
   border-radius: 4px;
   font-weight: 500;
   transition: all 0.2s ease-in-out;
-  
+
 
   // &:focus {
   //   box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
@@ -89,7 +91,8 @@ body {
     color: var(--primary-alt);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--primary-active) !important;
     border-color: var(--primary-active) !important;
     color: var(--primary-light) !important;
@@ -122,7 +125,8 @@ body {
     border-color: var(--primary);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     color: var(--primary-light) !important;
     background-color: var(--primary-active) !important;
     border-color: var(--primary-active) !important;
@@ -153,7 +157,8 @@ body {
     border-color: var(--secondary-hover);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--secondary-active) !important;
     border-color: var(--secondary-active) !important;
   }
@@ -181,7 +186,8 @@ body {
     border-color: var(--secondary);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     color: var(--primary-light) !important;
     background-color: var(--secondary-active) !important;
     border-color: var(--secondary-active) !important;
@@ -212,7 +218,8 @@ body {
     background-color: var(--primary-light) !important;
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     color: var(--primary-active) !important;
     background-color: var(--primary-light) !important;
   }
@@ -241,7 +248,8 @@ body {
     background-color: var(--primary-light);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     color: var(--primary-active) !important;
     background-color: var(--primary-light) !important;
   }
@@ -276,7 +284,8 @@ body {
     color: var(--primary);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--primary);
     color: #FFFFFF;
   }
@@ -290,7 +299,7 @@ body {
 .form-control {
   border-radius: 4px;
   border: 1px solid #ced4da;
-  
+
   &:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
@@ -356,7 +365,7 @@ body {
   border-radius: 8px;
   // border: 1px solid rgba(0, 0, 0, 0.1);
   // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  box-shadow: none;
+  box-shadow: none !important;
 
   // .card-header {
   //   background-color: #FFFFFF;
@@ -408,13 +417,13 @@ body {
   .pgn__form-label {
     font-weight: 500;
     font-size: 0.875rem;
-    color: var(--secondary);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
   }
 
   .pgn__form-control-description {
     font-size: 0.75rem;
-    color: var(--secondary);
+    color: var(--text-primary);
     margin-top: 0.25rem;
   }
 }
@@ -493,7 +502,8 @@ body {
     border-color: var(--success-hover);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--success-hover) !important;
     border-color: var(--success-hover) !important;
   }
@@ -514,7 +524,8 @@ body {
     border-color: var(--warning-hover);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--warning-hover) !important;
     border-color: var(--warning-hover) !important;
   }
@@ -535,7 +546,8 @@ body {
     border-color: var(--danger-hover);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--danger-hover) !important;
     border-color: var(--danger-hover) !important;
   }
@@ -556,7 +568,8 @@ body {
     border-color: var(--info-hover);
   }
 
-  &:active, &.active {
+  &:active,
+  &.active {
     background-color: var(--info-hover) !important;
     border-color: var(--info-hover) !important;
   }
@@ -568,7 +581,7 @@ body {
 
 /* Icon Button Styles */
 .btn-icon {
- 
+
 
   &:focus {
     color: var(--primary) !important;
@@ -587,7 +600,8 @@ body {
       border-color: var(--primary-hover);
     }
 
-    &:active, &.active {
+    &:active,
+    &.active {
       color: var(--primary-light) !important;
       background-color: var(--primary-active) !important;
       border-color: var(--primary-active) !important;
@@ -604,16 +618,19 @@ body {
 
   /* Secondary Icon Button */
   &.btn-icon-secondary {
-    color: var(--primary);
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    color: var(--secondary);
+    // background-color: var(--secondary);
+    // border-color: var(--secondary);
 
     &:hover {
+      color: var(--secondary-alt) !important;
       background-color: var(--secondary-hover);
       border-color: var(--secondary-hover);
     }
 
-    &:active, &.active {
+    &:active,
+    &.active {
+      color: var(--secondary-light) !important;
       background-color: var(--secondary-active) !important;
       border-color: var(--secondary-active) !important;
     }
@@ -621,7 +638,12 @@ body {
     &:disabled {
       color: var(--disabled) !important;
     }
+
+    &:focus {
+      box-shadow: none !important;
+    }
   }
+
 
   /* Outline Primary Icon Button */
   &.btn-outline-primary {
@@ -643,7 +665,8 @@ body {
       }
     }
 
-    &:active, &.active {
+    &:active,
+    &.active {
       color: var(--primary-light) !important;
       background-color: var(--primary-active) !important;
       border-color: var(--primary-active) !important;
@@ -683,7 +706,8 @@ body {
       }
     }
 
-    &:active, &.active {
+    &:active,
+    &.active {
       color: var(--primary-light) !important;
       background-color: var(--secondary-active) !important;
       border-color: var(--secondary-active) !important;
@@ -726,7 +750,8 @@ body {
       }
     }
 
-    &:active, &.active {
+    &:active,
+    &.active {
       color: var(--primary-active) !important;
       background-color: var(--primary-light) !important;
 
@@ -799,26 +824,35 @@ body {
   &.text-primary {
     color: var(--text-primary) !important;
   }
-  
+
   &.text-secondary {
     color: var(--text-secondary) !important;
   }
-  
+
   &.text-success {
     color: var(--success) !important;
   }
-  
+
   &.text-warning {
     color: var(--warning) !important;
   }
-  
+
   &.text-danger {
     color: var(--danger) !important;
   }
-  
+
   &.text-info {
     color: var(--info) !important;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.custom-outline-section .row{
+  box-shadow: none !important;
+  border: 1px solid #e1e1e1;
 }
 
 

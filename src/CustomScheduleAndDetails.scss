@@ -1,63 +1,7 @@
-.custom-schedule-details input[type="text"],
-.custom-schedule-details input[type="date"],
-.custom-schedule-details input[type="time"] {
-    border: 2px solid #0070d2;
-    /* Example: blue border */
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 1.1em;
-    background: #f9f9f9;
-    color: #222;
-    margin-bottom: 8px;
-}
-
-.custom-schedule-details input:focus {
-    border-color: #0056a3;
-    outline: none;
-    background: #fff;
-}
-
-.schedule-and-details {
-    // background-color: grey;
-}
-
-.custom-schedule-details {
-    .alert-container {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        width: 100%;
-        max-width: 600px;
-        margin-top: 1rem;
-    }
-
-    .success-alert {
-        background-color: #e9f6eb;
-        border: 1px solid #00a647;
-        border-radius: 0.375rem;
-        padding: 0.75rem 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-        .alert-heading {
-            color: #00a647;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-
-            svg {
-                width: 20px;
-                height: 20px;
-                color: #00a647;
-            }
-        }
+.schedule-detail-form {
+    .datepicker-custom-control-icon {
+        right: 5.188rem !important;
     }
 }
-
-.col-8>.row {
-    border: 1px solid #e1e1e1;
-}
+.input[type="radio"]:checked {
+  }

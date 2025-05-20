@@ -188,7 +188,7 @@ const SectionCard = ({
       isDroppable={actions.childAddable}
       componentStyle={{
         padding: '1.75rem',
-        ...borderStyle,
+        // ...borderStyle,
       }}
     >
       <div

@@ -26,10 +26,7 @@ import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
-import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
-import CourseNavigationSidebar from './shared-components/CourseNavigationSidebar';
-// import CourseNavigationBar from './shared-components/CourseNavigationBar.jsx';
-
+import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
  *
@@ -53,7 +50,7 @@ const CoursePageLayout = ({ children, courseId }) => {
       <div style={{ minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee' }}>
         <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
       </div>
-      <main style={{ flex: 1, padding: '32px 24px 24px 24px' }}>
+      <main style={{ flex: 1, padding: '16px 16px 24px 16px' }}>
         <Suspense>
           {children}
         </Suspense>
@@ -172,7 +169,7 @@ const CourseAuthoringRoutes = () => {
         />
 
         {/* Route outside the CourseAuthoringPage layout? */}
-        <Route path="/new-course" element={<PageWrap><PSCourseForm handleOnClickCancel={() => window.history.back()} /></PageWrap>} />
+        <Route path="/new-course" element={<PageWrap><CustomCreateNewCourseForm handleOnClickCancel={() => window.history.back()} /></PageWrap>} />
       </Routes>
     </CourseAuthoringPage>
   );

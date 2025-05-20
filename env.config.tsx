@@ -36,20 +36,6 @@ const config = {
                 },
             ],
         },
-        course_outline_plugin_slot: { // Use the standard plugin structure
-            plugins: [
-                {
-                    op: PLUGIN_OPERATIONS.Insert, // Operation to insert the widget
-                    widget: {
-                        id: 'course-nav-bar',
-                        type: DIRECT_PLUGIN,
-                        priority: 1,
-                        // Render the CourseNavigationBar component
-                        RenderWidget: () => <CourseNavigationBar />,
-                    },
-                },
-            ],
-        },
         course_sidebar_plugin_slot: { // Use the standard plugin structure
             plugins: [
                 {
