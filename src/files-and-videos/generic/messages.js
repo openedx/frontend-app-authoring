@@ -209,6 +209,11 @@ const messages = defineMessages({
     defaultMessage: 'Upload error',
     description: 'Title for upload error alert',
   },
+  fileInputAriaLabel: {
+    id: 'course-authoring.files-and-uploads.fileInput.ariaLabel',
+    defaultMessage: 'Upload a file',
+    description: 'Accessible (screen reader) label for file input',
+  },
 });
 
 export default messages;

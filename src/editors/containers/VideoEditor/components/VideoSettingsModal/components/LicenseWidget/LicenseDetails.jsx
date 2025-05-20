@@ -30,17 +30,17 @@ const LicenseDetails = ({
   // redux
   updateField,
 }) => (
-  level !== LicenseLevel.course && details && license !== 'select' ? (
+  level !== LicenseLevel.course && details && license !== 'select' && (
     <div className="x-small border-primary-100 border-bottom m-0 pr-1">
       <Form.Group className="pb-2">
         <div className="mb-3">
           <FormattedMessage {...messages.detailsSubsectionTitle} />
         </div>
-        {license === LicenseTypes.allRightsReserved ? (
+        {license === LicenseTypes.allRightsReserved && (
           <div className="mt-2">
             <FormattedMessage {...messages.allRightsReservedSectionMessage} />
           </div>
-        ) : null}
+        )}
         {license === LicenseTypes.creativeCommons
           ? (
             <Stack gap={4}>
@@ -55,7 +55,6 @@ const LicenseDetails = ({
                     <CheckboxControl
                       disabled
                       checked
-                      aria-label="Checkbox"
                     />
                   </ActionRow>
                 </Form.Group>
@@ -80,7 +79,6 @@ const LicenseDetails = ({
                           noncommercial: e.target.checked,
                         },
                       })}
-                      aria-label="Checkbox"
                     />
                   </ActionRow>
                 </Form.Group>
@@ -106,7 +104,6 @@ const LicenseDetails = ({
                           shareAlike: e.target.checked ? false : details.shareAlike,
                         },
                       })}
-                      aria-label="Checkbox"
                     />
                   </ActionRow>
                 </Form.Group>
@@ -132,7 +129,6 @@ const LicenseDetails = ({
                           noDerivatives: e.target.checked ? false : details.noDerivatives,
                         },
                       })}
-                      aria-label="Checkbox"
                     />
                   </ActionRow>
                 </Form.Group>
@@ -144,7 +140,7 @@ const LicenseDetails = ({
           ) : null}
       </Form.Group>
     </div>
-  ) : null
+  )
 );
 
 LicenseDetails.propTypes = {
