@@ -114,7 +114,7 @@ type CollectionCardProps = {
 
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished, setCollectionId } = useLibraryContext();
   const { openCollectionInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
@@ -136,11 +136,15 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
     && sidebarComponentInfo.id === collectionId;
 
   const { navigateTo } = useLibraryRoutes();
-  const openCollection = useCallback(() => {
+  const openCollection = useCallback((e?: React.MouseEvent) => {
     openCollectionInfoSidebar(collectionId);
+    const doubleClicked = (e?.detail || 0) > 1;
 
     if (!componentPickerMode) {
-      navigateTo({ collectionId });
+      navigateTo({ collectionId, doubleClicked });
+    } else if (doubleClicked) {
+      /* istanbul ignore next */
+      setCollectionId(collectionId);
     }
   }, [collectionId, navigateTo, openCollectionInfoSidebar]);
 
