@@ -408,13 +408,13 @@ body {
   .pgn__form-label {
     font-weight: 500;
     font-size: 0.875rem;
-    color: var(--secondary);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
   }
 
   .pgn__form-control-description {
     font-size: 0.75rem;
-    color: var(--secondary);
+    color: var(--text-primary);
     margin-top: 0.25rem;
   }
 }
@@ -605,21 +605,27 @@ body {
   /* Secondary Icon Button */
   &.btn-icon-secondary {
     color: var(--primary);
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    // background-color: var(--secondary);
+    // border-color: var(--secondary);
 
     &:hover {
+      color: var(--secondary-alt) !important;
       background-color: var(--secondary-hover);
       border-color: var(--secondary-hover);
     }
 
     &:active, &.active {
+      color: var(--secondary-light) !important;
       background-color: var(--secondary-active) !important;
       border-color: var(--secondary-active) !important;
     }
 
     &:disabled {
       color: var(--disabled) !important;
+    }
+
+    &:focus {
+      box-shadow: none !important;
     }
   }
 
