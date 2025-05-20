@@ -176,7 +176,6 @@ describe('<CourseOutline />', () => {
         courseId, gradedOnly: true, validateOras: true, all: true,
       }))
       .reply(200, courseLaunchMock);
-    // add mock for getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics
     axiosMock
       .onPost(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`)
       .reply(200, {});
