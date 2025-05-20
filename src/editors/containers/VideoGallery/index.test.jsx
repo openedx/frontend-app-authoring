@@ -6,6 +6,8 @@ import React from 'react';
 import {
   act, fireEvent, render, screen,
 } from '@testing-library/react';
+import * as reactRouterDom from 'react-router-dom';
+import * as reduxThunks from '../../data/redux';
 
 import VideoGallery from './index';
 
@@ -120,11 +122,10 @@ describe('VideoGallery', () => {
         expect(screen.getByText(video.client_video_id)).toBeInTheDocument()
       ));
     });
-    it('navigates to video upload page when there are no videos', async () => {
-      expect(window.location.replace).not.toHaveBeenCalled();
+    it('renders video upload modal when there are no videos', async () => {
       updateState({ videos: [] });
       await renderComponent();
-      expect(window.location.replace).toHaveBeenCalled();
+      expect(screen.getByRole('heading', { name: /upload or embed a new video/i })).toBeInTheDocument();
     });
     it.each([
       [/newest/i, [2, 1, 3]],
@@ -190,6 +191,37 @@ describe('VideoGallery', () => {
       expect(screen.queryByText('client_id_2')).toBeInTheDocument();
       expect(screen.queryByText('client_id_1')).not.toBeInTheDocument();
       expect(screen.queryByText('client_id_3')).not.toBeInTheDocument();
+    });
+
+    it('calls onVideoUpload correctly when a video is uploaded', async () => {
+      // Mock useSearchParams
+      const setSearchParams = jest.fn();
+      jest.spyOn(reactRouterDom, 'useSearchParams').mockReturnValue([{}, setSearchParams]);
+
+      // Mock the uploadVideo thunk to immediately call postUploadRedirect
+      jest.spyOn(reduxThunks.thunkActions.video, 'uploadVideo').mockImplementation(
+        ({ postUploadRedirect }) => () => {
+          if (postUploadRedirect) {
+            postUploadRedirect('http://test.video/url.mp4');
+          }
+          return { type: 'MOCK_UPLOAD_VIDEO' };
+        },
+      );
+
+      await renderComponent();
+
+      // Open the upload modal by clicking the button
+      const openModalButton = screen.getByRole('button', { name: /upload or embed a new video/i });
+      fireEvent.click(openModalButton);
+
+      // Wait for the input to appear in the modal
+      const urlInput = await screen.findByPlaceholderText('Paste your video ID or URL');
+      fireEvent.change(urlInput, { target: { value: 'http://test.video/url.mp4' } });
+
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+      fireEvent.click(submitButton);
+
+      expect(setSearchParams).toHaveBeenCalledWith({ selectedVideoUrl: 'http://test.video/url.mp4' });
     });
   });
 });
