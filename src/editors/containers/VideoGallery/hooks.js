@@ -129,7 +129,7 @@ export const useVideoListProps = ({
     selectBtnProps: {
       onClick: () => {
         if (highlighted) {
-          navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${highlighted}`);
+          navigateTo(`/authoring/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${highlighted}`);
         } else {
           setShowSelectVideoError(true);
         }
@@ -141,7 +141,7 @@ export const useVideoListProps = ({
 export const useVideoUploadHandler = ({ replace }) => {
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
-  const path = `/course/${learningContextId}/editor/video_upload/${blockId}`;
+  const path = `/authoring/course/${learningContextId}/editor/video_upload/${blockId}`;
   if (replace) {
     return () => window.location.replace(path);
   }
