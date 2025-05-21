@@ -5,13 +5,13 @@ import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
 
-const Head = ({ intl, themeData }) => (
+const Head = ({ intl }) => (
   <Helmet>
     <title>
       {intl.formatMessage(messages['course-authoring.page.title'], { siteName: getConfig().SITE_NAME })}
     </title>
     <link rel="shortcut icon" href={getConfig().FAVICON_URL} type="image/x-icon" />
-    <style>{themeData}</style>
+    {/* <style>{themeData}</style> */}
   </Helmet>
 );
 
