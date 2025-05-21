@@ -15,8 +15,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -87,13 +85,6 @@ const StudioHome = () => {
           disabled={showNewCourseContainer}
         >
           {intl.formatMessage(messages.addNewCourseBtnText)}
-        </Button>,
-        <Button
-          variant="primary"
-          onClick={() => navigate('/ps-course-form')}
-          disabled={showNewCourseContainer}
-        >
-          {intl.formatMessage(messages.addNewPSCourseBtnText)}
         </Button>
       );
     }
@@ -181,9 +172,7 @@ const StudioHome = () => {
 
   return (
     <>
-      {/* <PluginSlot id="header_plugin_slot"> */}
       <Header isHiddenMainMenu />
-      {/* </PluginSlot> */}
       <Container size="xl" className="p-4 mt-3">
         <section className="mb-4">
           <article className="studio-home-sub-header">

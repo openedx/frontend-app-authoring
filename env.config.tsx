@@ -1,7 +1,6 @@
 // This file contains configuration for plugins and environment variables.
 
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
-import CourseNavigationBar from './src/shared-components/CourseNavigationBar'; // Import the new component
 import CourseNavigationSidebar from './src/shared-components/CourseNavigationSidebar';
 import { SettingsApplications } from '@openedx/paragon/icons';
 import { Icon } from '@openedx/paragon';

@@ -18,9 +18,6 @@ import {
     Alert,
 } from '@openedx/paragon';
 import { Calendar, Money, More, CloudUpload, Close, InfoOutline, Warning } from '@openedx/paragon/icons';
-import messages from './messages';
-import { REGEX_RULES } from '../../constants';
-import { MAX_TOTAL_LENGTH } from '../../data/constants';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
 import './PSCourseForm.scss';
 import IntroductionVideo from '../../schedule-and-details/introducing-section/introduction-video';
@@ -28,7 +25,6 @@ import { getStudioHomeData } from '../data/selectors';
 import { useCreateOrRerunCourse } from '../../generic/create-or-rerun-course/hooks';
 import { fetchStudioHomeData } from '../data/thunks';
 import TypeaheadDropdown from '../../editors/sharedComponents/TypeaheadDropdown';
-import { getCourseAppSettings } from '../../advanced-settings/data/selectors';
 import { fetchCourseAppSettings } from '../../advanced-settings/data/thunks';
 import { videoTranscriptLanguages } from '../../editors/data/constants/video';
 import { LICENSE_TYPE } from '../../schedule-and-details/license-section/constants';
@@ -339,17 +335,6 @@ const PSCourseForm = ({
 
     const validateForm = () => {
         const newErrors = {};
-
-        if (touched.org && !editedValues.org) {
-            newErrors.org = intl.formatMessage(messages.organizationRequired);
-        }
-        if (touched.courseId && !editedValues.courseId) {
-            newErrors.courseId = intl.formatMessage(messages.courseNumberRequired);
-        }
-        if (touched.run && !editedValues.run) {
-            newErrors.run = intl.formatMessage(messages.courseRunRequired);
-        }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

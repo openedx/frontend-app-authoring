@@ -65,7 +65,6 @@ const Header = ({
 
   return (
     <>
-      {/* <PluginSlot id="header_plugin_slot"> */}
       <StudioHeader
         org={org}
         number={number}
@@ -83,7 +82,6 @@ const Header = ({
           onClose={closeSearchModal}
         />
       )}
-      {/* </PluginSlot> */}
     </>
   );
 };
