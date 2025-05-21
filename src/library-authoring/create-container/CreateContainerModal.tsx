@@ -30,7 +30,7 @@ const CreateContainerModal = () => {
     isCreateUnitModalOpen,
     closeCreateUnitModal,
   } = useLibraryContext();
-  const { insideCollection, insideSubsection, insideSection } = useLibraryRoutes();
+  const { insideCollection } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
   const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const { showToast } = React.useContext(ToastContext);
@@ -44,8 +44,9 @@ const CreateContainerModal = () => {
         placeholder: intl.formatMessage(messages.createSectionModalNamePlaceholder),
         successMsg: intl.formatMessage(messages.createSectionSuccess),
         errorMsg: intl.formatMessage(messages.createSectionError),
-      }
-    } else if (isCreateSubsectionModalOpen) {
+      };
+    }
+    if (isCreateSubsectionModalOpen) {
       return {
         modalTitle: intl.formatMessage(messages.createSubsectionModalTitle),
         validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
@@ -53,17 +54,16 @@ const CreateContainerModal = () => {
         placeholder: intl.formatMessage(messages.createSubsectionModalNamePlaceholder),
         successMsg: intl.formatMessage(messages.createSubsectionSuccess),
         errorMsg: intl.formatMessage(messages.createSubsectionError),
-      }
-    } else {
-      return {
-        modalTitle: intl.formatMessage(messages.createUnitModalTitle),
-        validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
-        nameLabel: intl.formatMessage(messages.createUnitModalNameLabel),
-        placeholder: intl.formatMessage(messages.createUnitModalNamePlaceholder),
-        successMsg: intl.formatMessage(messages.createUnitSuccess),
-        errorMsg: intl.formatMessage(messages.createUnitError),
-      }
+      };
     }
+    return {
+      modalTitle: intl.formatMessage(messages.createUnitModalTitle),
+      validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
+      nameLabel: intl.formatMessage(messages.createUnitModalNameLabel),
+      placeholder: intl.formatMessage(messages.createUnitModalNamePlaceholder),
+      successMsg: intl.formatMessage(messages.createUnitSuccess),
+      errorMsg: intl.formatMessage(messages.createUnitError),
+    };
   }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen, intl]);
 
   const handleClose = React.useCallback(() => {
@@ -75,11 +75,11 @@ const CreateContainerModal = () => {
   const containerType = React.useMemo(() => {
     if (isCreateSectionModalOpen) {
       return ContainerType.Section;
-    } else if (isCreateSubsectionModalOpen) {
-      return ContainerType.Subsection;
-    } else {
-      return ContainerType.Unit;
     }
+    if (isCreateSubsectionModalOpen) {
+      return ContainerType.Subsection;
+    }
+    return ContainerType.Unit;
   }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen, intl]);
 
   const handleCreate = React.useCallback(async (values) => {
