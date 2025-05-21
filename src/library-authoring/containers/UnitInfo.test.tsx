@@ -106,6 +106,6 @@ describe('<UnitInfo />', () => {
   it('show only published content', async () => {
     render(true);
     expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /text block published 1/i })).toBeInTheDocument();
+    expect(screen.getByText(/text block published 1/i)).toBeInTheDocument();
   });
 });
