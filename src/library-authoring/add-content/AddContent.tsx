@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import type { MessageDescriptor } from 'react-intl';
+import type { IntlShape, MessageDescriptor } from 'react-intl';
 import { useSelector } from 'react-redux';
 import {
   Stack,
@@ -29,7 +29,7 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 import { blockTypes } from '../../editors/data/constants/app';
 
-import { ContentType as LibraryContentTypes } from '../routes';
+import { ContentType as LibraryContentTypes, useLibraryRoutes } from '../routes';
 import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
@@ -58,7 +58,7 @@ type AddAdvancedContentViewProps = {
   closeAdvancedList: () => void,
   onCreateContent: (blockType: string) => void,
   advancedBlocks: Record<string, BlockTypeMetadata>,
-  isBlockTypeEnabled: (blockType) => boolean,
+  isBlockTypeEnabled: (blockType: string) => boolean,
 };
 
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
@@ -93,8 +93,14 @@ const AddContentView = ({
     componentPicker,
     unitId,
   } = useLibraryContext();
+  const {
+    insideCollection,
+    insideUnit,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
   let upstreamContainerType: ContainerType | undefined;
-  if (unitId) {
+  if (unitId && insideUnit) {
     upstreamContainerType = getContainerTypeFromId(unitId);
   }
 
@@ -110,6 +116,18 @@ const AddContentView = ({
     blockType: 'vertical',
   };
 
+  const sectionButtonData = {
+    name: intl.formatMessage(messages.sectionButton),
+    disabled: false,
+    blockType: 'chapter',
+  };
+
+  const subsectionButtonData = {
+    name: intl.formatMessage(messages.subsectionButton),
+    disabled: false,
+    blockType: 'sequential',
+  };
+
   const libraryContentButtonData = {
     name: intl.formatMessage(messages.libraryContentButton),
     disabled: false,
@@ -121,7 +139,7 @@ const AddContentView = ({
 
   return (
     <>
-      {(collectionId || unitId) && componentPicker && (
+      {((collectionId && insideCollection) || (unitId && insideUnit)) && componentPicker && (
         /// Show the "Add Library Content" button for units and collections
         <>
           <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
@@ -133,12 +151,20 @@ const AddContentView = ({
           />
         </>
       )}
-      {!collectionId && !unitId && (
+      {!insideCollection && !insideUnit && !insideSubsection && !insideSection && (
         // Doesn't show the "Collection" button if we are in a unit or collection
         <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
       )}
-      {upstreamContainerType !== ContainerType.Unit && (
-        // Doesn't show the "Unit" button if we are in a unit
+      {!(insideUnit || insideSubsection || insideSection) && (
+        // Doesn't show the "Section" button if we are in a unit or section or subsection
+        <AddContentButton contentType={sectionButtonData} onCreateContent={onCreateContent} />
+      )}
+      {!(insideSubsection || insideUnit) && (
+        // Doesn't show the "Subsection" button if we are in a unit or Subsection
+        <AddContentButton contentType={subsectionButtonData} onCreateContent={onCreateContent} />
+      )}
+      {!(insideUnit || insideSection) && (
+        // Doesn't show the "Unit" button if we are in a unit or section
         <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
       )}
       <hr className="w-100 bg-gray-500" />
@@ -191,7 +217,7 @@ const AddAdvancedContentView = ({
 };
 
 export const parseErrorMsg = (
-  intl,
+  intl: IntlShape,
   error: any,
   detailedMessage: MessageDescriptor,
   defaultMessage: MessageDescriptor,
@@ -223,9 +249,15 @@ const AddContent = () => {
     collectionId,
     openCreateCollectionModal,
     openCreateUnitModal,
+    openCreateSectionModal,
+    openCreateSubsectionModal,
     openComponentEditor,
     unitId,
   } = useLibraryContext();
+  const {
+    insideCollection,
+    insideUnit,
+  } = useLibraryRoutes();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
   const addComponentsToContainerMutation = useAddComponentsToContainer(unitId);
   const createBlockMutation = useCreateLibraryBlock();
@@ -306,12 +338,12 @@ const AddContent = () => {
   }
 
   const linkComponent = (opaqueKey: string) => {
-    if (collectionId) {
+    if (collectionId && insideCollection) {
       addComponentsToCollectionMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
       });
     }
-    if (unitId) {
+    if (unitId && insideUnit) {
       addComponentsToContainerMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
       });
@@ -381,6 +413,10 @@ const AddContent = () => {
       showAdvancedList();
     } else if (blockType === 'vertical') {
       openCreateUnitModal();
+    } else if (blockType === 'chapter') {
+      openCreateSectionModal();
+    } else if (blockType === 'sequential') {
+      openCreateSubsectionModal();
     } else {
       onCreateBlock(blockType);
     }

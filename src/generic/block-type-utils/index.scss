@@ -123,6 +123,56 @@
   }
 }
 
+.component-style-sequential {
+  background-color: #EA3E3E;
+
+  .pgn__icon:not(.btn-icon-before) {
+    color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#EA3E3E, 15%);
+    }
+  }
+
+  .btn {
+    background-color: lighten(#0B8E77, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#0B8E77, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
+}
+
+.component-style-chapter {
+  background-color: #45009E;
+
+  .pgn__icon:not(.btn-icon-before) {
+    color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#45009E, 15%);
+    }
+  }
+
+  .btn {
+    background-color: lighten(#0B8E77, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#0B8E77, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
+}
+
 .component-style-other {
   background-color: #646464;
 

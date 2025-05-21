@@ -21,6 +21,10 @@ export const ROUTES = {
   COMPONENTS: '/components/:componentId?',
   // * Collections tab, with an optionally selected collectionId in the sidebar.
   COLLECTIONS: '/collections/:collectionId?',
+  // * Sections tab, with an optionally selected sectionId in the sidebar.
+  SECTIONS: '/sections/:sectionId?',
+  // * Subsections tab, with an optionally selected subsectionId in the sidebar.
+  SUBSECTIONS: '/subsections/:subsectionId?',
   // * Units tab, with an optionally selected unitId in the sidebar.
   UNITS: '/units/:unitId?',
   // * All Content tab, with an optionally selected componentId in the sidebar.
@@ -30,6 +34,12 @@ export const ROUTES = {
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:componentId?',
+  // LibrarySectionPage route:
+  // * with a selected sectionId and/or an optionally selected subsectionId.
+  SECTION: '/section/:sectionId/:subsectionId?',
+  // LibrarySubsectionPage route:
+  // * with a selected subsectionId and/or an optionally selected unitId.
+  SUBSECTION: '/subsection/:subsectionId/:unitId?',
   // LibraryUnitPage route:
   // * with a selected unitId and/or an optionally selected componentId.
   UNIT: '/unit/:unitId/:componentId?',
@@ -56,6 +66,10 @@ export type LibraryRoutesData = {
   insideCollection: PathMatch<string> | null;
   insideCollections: PathMatch<string> | null;
   insideComponents: PathMatch<string> | null;
+  insideSections: PathMatch<string> | null;
+  insideSection: PathMatch<string> | null;
+  insideSubsections: PathMatch<string> | null;
+  insideSubsection: PathMatch<string> | null;
   insideUnits: PathMatch<string> | null;
   insideUnit: PathMatch<string> | null;
 
@@ -73,6 +87,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
   const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
+  const insideSections = matchPath(BASE_ROUTE + ROUTES.SECTIONS, pathname);
+  const insideSection = matchPath(BASE_ROUTE + ROUTES.SECTION, pathname);
+  const insideSubsections = matchPath(BASE_ROUTE + ROUTES.SUBSECTIONS, pathname);
+  const insideSubsection = matchPath(BASE_ROUTE + ROUTES.SUBSECTION, pathname);
   const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
   const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname);
 
@@ -189,6 +207,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     insideCollection,
     insideCollections,
     insideComponents,
+    insideSections,
+    insideSection,
+    insideSubsections,
+    insideSubsection,
     insideUnits,
     insideUnit,
   };

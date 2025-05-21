@@ -40,6 +40,14 @@ export type LibraryContextData = {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
+  // "Create New Section" modal
+  isCreateSectionModalOpen: boolean;
+  openCreateSectionModal: () => void;
+  closeCreateSectionModal: () => void;
+  // "Create New Subsection" modal
+  isCreateSubsectionModalOpen: boolean;
+  openCreateSubsectionModal: () => void;
+  closeCreateSubsectionModal: () => void;
   // "Create New Unit" modal
   isCreateUnitModalOpen: boolean;
   openCreateUnitModal: () => void;
@@ -92,6 +100,8 @@ export const LibraryProvider = ({
 }: LibraryProviderProps) => {
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [isCreateUnitModalOpen, openCreateUnitModal, closeCreateUnitModal] = useToggle(false);
+  const [isCreateSectionModalOpen, openCreateSectionModal, closeCreateSectionModal] = useToggle(false);
+  const [isCreateSubsectionModalOpen, openCreateSubsectionModal, closeCreateSubsectionModal] = useToggle(false);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
@@ -150,6 +160,12 @@ export const LibraryProvider = ({
       isCreateUnitModalOpen,
       openCreateUnitModal,
       closeCreateUnitModal,
+      isCreateSectionModalOpen,
+      openCreateSectionModal,
+      closeCreateSectionModal,
+      isCreateSubsectionModalOpen,
+      openCreateSubsectionModal,
+      closeCreateSubsectionModal,
       componentBeingEdited,
       openComponentEditor,
       closeComponentEditor,

@@ -11,6 +11,16 @@ const messages = defineMessages({
     defaultMessage: 'Unit',
     description: 'Content of button to create a Unit.',
   },
+  sectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.section',
+    defaultMessage: 'Section',
+    description: 'Content of button to create a Section.',
+  },
+  subsectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.subsection',
+    defaultMessage: 'Subsection',
+    description: 'Content of button to create a Subsection.',
+  },
   libraryContentButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.library-content',
     defaultMessage: 'Existing Library Content',
