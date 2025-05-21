@@ -33,7 +33,6 @@ import { ContentType as LibraryContentTypes, useLibraryRoutes } from '../routes'
 import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
-import { getContainerTypeFromId, ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
@@ -99,10 +98,6 @@ const AddContentView = ({
     insideSection,
     insideSubsection,
   } = useLibraryRoutes();
-  let upstreamContainerType: ContainerType | undefined;
-  if (unitId && insideUnit) {
-    upstreamContainerType = getContainerTypeFromId(unitId);
-  }
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
