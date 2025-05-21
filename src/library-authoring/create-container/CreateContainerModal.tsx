@@ -39,7 +39,7 @@ const CreateContainerModal = () => {
     if (isCreateSectionModalOpen) {
       return {
         modalTitle: intl.formatMessage(messages.createSectionModalTitle),
-        validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
+        validationError: intl.formatMessage(messages.createSectionModalNameInvalid),
         nameLabel: intl.formatMessage(messages.createSectionModalNameLabel),
         placeholder: intl.formatMessage(messages.createSectionModalNamePlaceholder),
         successMsg: intl.formatMessage(messages.createSectionSuccess),
@@ -49,7 +49,7 @@ const CreateContainerModal = () => {
     if (isCreateSubsectionModalOpen) {
       return {
         modalTitle: intl.formatMessage(messages.createSubsectionModalTitle),
-        validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
+        validationError: intl.formatMessage(messages.createSubsectionModalNameInvalid),
         nameLabel: intl.formatMessage(messages.createSubsectionModalNameLabel),
         placeholder: intl.formatMessage(messages.createSubsectionModalNamePlaceholder),
         successMsg: intl.formatMessage(messages.createSubsectionSuccess),
@@ -58,7 +58,7 @@ const CreateContainerModal = () => {
     }
     return {
       modalTitle: intl.formatMessage(messages.createUnitModalTitle),
-      validationError: intl.formatMessage(messages.createContainerModalNameInvalid),
+      validationError: intl.formatMessage(messages.createUnitModalNameInvalid),
       nameLabel: intl.formatMessage(messages.createUnitModalNameLabel),
       placeholder: intl.formatMessage(messages.createUnitModalNamePlaceholder),
       successMsg: intl.formatMessage(messages.createUnitSuccess),

@@ -36,7 +36,7 @@ const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
   const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };
   return baseRender(<AddContent />, {
-    path: '/library/:libraryId/:collectionId?',
+    path: '/library/:libraryId/collection/:collectionId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
@@ -51,7 +51,7 @@ const render = (collectionId?: string) => {
 const renderWithUnit = (unitId: string) => {
   const params: { libraryId: string, unitId?: string } = { libraryId, unitId };
   return baseRender(<AddContent />, {
-    path: '/library/:libraryId/:unitId?',
+    path: '/library/:libraryId/unit/:unitId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
@@ -326,14 +326,17 @@ describe('<AddContent />', () => {
     });
   });
 
-  it('should not show collection/unit buttons when create component in container', async () => {
+  it('should not show collection, unit, section and subsection buttons when create component in unit', async () => {
     const unitId = 'lct:orf1:lib1:unit:test-1';
     renderWithUnit(unitId);
 
     expect(await screen.findByRole('button', { name: 'Text' })).toBeInTheDocument();
+    screen.debug();
 
     expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Unit' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subsection' })).not.toBeInTheDocument();
   });
 
   it('should create a component in unit', async () => {

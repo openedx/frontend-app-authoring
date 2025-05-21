@@ -735,9 +735,22 @@ describe('<LibraryAuthoringPage />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library collection');
   });
 
-  it('should create a unit', async () => {
+  test.each([
+    {
+      label: 'should create a unit',
+      containerType: 'unit',
+    },
+    {
+      label: 'should create a section',
+      containerType: 'section',
+    },
+    {
+      label: 'should create a subsection',
+      containerType: 'subsection',
+    },
+  ])('$label', async ({ containerType }) => {
     await renderLibraryPage();
-    const title = 'This is a Test';
+    const title = `This is a Test ${containerType}`;
     const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(url).reply(200, {
       id: '1',
@@ -753,11 +766,11 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(newButton);
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
-    // Open New unit Modal
+    // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
     fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
     expect(unitModalHeading).toBeInTheDocument();
 
     // Click on Cancel button
@@ -765,10 +778,10 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(cancelButton);
     expect(unitModalHeading).not.toBeInTheDocument();
 
-    // Open new unit modal again and create a unit
+    // Open new unit modal again and create a container
     fireEvent.click(newUnitButton);
     const createButton = screen.getByRole('button', { name: /create/i });
-    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+    const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
 
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.click(createButton);
@@ -778,14 +791,27 @@ describe('<LibraryAuthoringPage />', () => {
 
     expect(axiosMock.history.post[0].url).toBe(url);
     expect(axiosMock.history.post[0].data).toContain(`"display_name":"${title}"`);
-    expect(axiosMock.history.post[0].data).toContain('"container_type":"unit"');
-    expect(mockShowToast).toHaveBeenCalledWith('Unit created successfully');
+    expect(axiosMock.history.post[0].data).toContain(`"container_type":"${containerType}"`);
+    expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')));
   });
 
-  it('should show validations in create unit', async () => {
+  test.each([
+    {
+      label: 'should show validations in create unit',
+      containerType: 'unit',
+    },
+    {
+      label: 'should show validations in create section',
+      containerType: 'section',
+    },
+    {
+      label: 'should show validations in create subsection',
+      containerType: 'subsection',
+    },
+  ])('$label', async ({ containerType }) => {
     await renderLibraryPage();
 
-    const title = 'This is a Test';
+    const title = `This is a Test ${containerType}`;
     const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(url).reply(200, {
       id: '1',
@@ -801,14 +827,14 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(newButton);
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
-    // Open New unit Modal
+    // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
     fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
     expect(unitModalHeading).toBeInTheDocument();
 
-    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+    const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
     fireEvent.focus(nameField);
     fireEvent.blur(nameField);
 
@@ -816,12 +842,25 @@ describe('<LibraryAuthoringPage />', () => {
     const createButton = screen.getByRole('button', { name: /create/i });
     fireEvent.click(createButton);
 
-    expect(await screen.findByText(/unit name is required/i)).toBeInTheDocument();
+    expect(await screen.findByText(new RegExp(`${containerType} name is required`, 'i'))).toBeInTheDocument();
   });
 
-  it('should show error on create unit', async () => {
+  test.each([
+    {
+      label: 'should show error on create unit',
+      containerType: 'unit',
+    },
+    {
+      label: 'should show error on create section',
+      containerType: 'section',
+    },
+    {
+      label: 'should show error on create subsection',
+      containerType: 'subsection',
+    },
+  ])('$label', async ({ containerType }) => {
     await renderLibraryPage();
-    const displayName = 'This is a Test';
+    const displayName = `This is a Test ${containerType}`;
     const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(url).reply(500);
 
@@ -833,23 +872,25 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(newButton);
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
-    // Open New Unit Modal
+    // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
     fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
     expect(unitModalHeading).toBeInTheDocument();
 
-    // Create a unit
+    // Create a container
     const createButton = screen.getByRole('button', { name: /create/i });
-    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+    const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
 
     fireEvent.change(nameField, { target: { value: displayName } });
     fireEvent.click(createButton);
 
     // Check error toast
     await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
-    expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library unit');
+    expect(mockShowToast).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`There is an error when creating the library ${containerType}`, 'i'))
+    );
   });
 
   it('shows a single block when usageKey query param is set', async () => {

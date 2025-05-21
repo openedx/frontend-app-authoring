@@ -56,10 +56,20 @@ const messages = defineMessages({
     defaultMessage: 'Give a descriptive title',
     description: 'Placeholder of the Name field of the Create Section modal form',
   },
-  createContainerModalNameInvalid: {
-    id: 'course-authoring.library-authoring.modals.create-container.form.name.invalid',
-    defaultMessage: 'Container name is required',
-    description: 'Message when the Name field of the Create Container modal form is invalid',
+  createUnitModalNameInvalid: {
+    id: 'course-authoring.library-authoring.modals.create-unit.form.name.invalid',
+    defaultMessage: 'Unit name is required',
+    description: 'Message when the Name field of the Create Unit modal form is invalid',
+  },
+  createSectionModalNameInvalid: {
+    id: 'course-authoring.library-authoring.modals.create-section.form.name.invalid',
+    defaultMessage: 'Section name is required',
+    description: 'Message when the Name field of the Create Section modal form is invalid',
+  },
+  createSubsectionModalNameInvalid: {
+    id: 'course-authoring.library-authoring.modals.create-subsection.form.name.invalid',
+    defaultMessage: 'Subsection name is required',
+    description: 'Message when the Name field of the Create Subsection modal form is invalid',
   },
   createSectionSuccess: {
     id: 'course-authoring.library-authoring.modals.create-section.success',
