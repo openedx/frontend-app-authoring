@@ -40,10 +40,8 @@ const messages = defineMessages({
   },
   fallbackVideoMessage: {
     id: 'authoring.videoeditor.videoSource.fallbackVideo.message',
-    defaultMessage: `To be sure all learners can access the video, edX
-    recommends providing additional videos in both .mp4 and
-    .webm formats.  The first listed video compatible with the
-    learner's device will play.`,
+    defaultMessage: `To be sure all learners can access the video, it is recommended to provide additional videos in both .mp4 and
+    .webm formats.  The first listed video compatible with the learner's device will play.`,
     description: 'Test explaining reason for fallback videos',
   },
   fallbackVideoLabel: {
