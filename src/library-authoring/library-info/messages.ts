@@ -78,7 +78,7 @@ const messages = defineMessages({
   },
   publishLibraryButtonLabel: {
     id: 'course-authoring.library-authoring.library.publishLibraryButtonLabel',
-    defaultMessage: 'Publish All Changes',
+    defaultMessage: 'Publish All',
     description: 'Button text for publish library button',
   },
 });
