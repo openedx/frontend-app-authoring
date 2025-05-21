@@ -320,7 +320,7 @@ const CourseOutline = ({ courseId }) => {
                       id="statusbar_content_plugin_slot"
                       pluginProps={{
                         onAddSection: handleNewSectionSubmit,
-                        onCollapseAll: () => setSectionsExpanded(false),
+                        onCollapseAll: headerNavigationsActions.handleExpandAll,
                         isSectionsExpanded,
                         handleExpandAll: headerNavigationsActions.handleExpandAll,
                       }}
