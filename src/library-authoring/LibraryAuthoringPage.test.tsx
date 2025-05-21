@@ -889,7 +889,7 @@ describe('<LibraryAuthoringPage />', () => {
     // Check error toast
     await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
     expect(mockShowToast).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`There is an error when creating the library ${containerType}`, 'i'))
+      expect.stringMatching(new RegExp(`There is an error when creating the library ${containerType}`, 'i')),
     );
   });
 
