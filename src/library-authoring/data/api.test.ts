@@ -142,4 +142,13 @@ describe('library data API', () => {
     await api.removeLibraryContainerChildren(containerId, ['test']);
     expect(axiosMock.history.delete[0].url).toEqual(url);
   });
+
+  it('getContentLibraryV2List', async () => {
+    const url = api.getContentLibraryV2ListApiUrl();
+
+    axiosMock.onGet(url).reply(200, { some: 'data' });
+
+    await api.getContentLibraryV2List({ type: 'complex' });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+  });
 });
