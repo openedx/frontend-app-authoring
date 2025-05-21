@@ -51,15 +51,18 @@ export const buildCollectionUsageKey = (learningContextKey: string, collectionId
 };
 
 export enum ContainerType {
+  Section = 'section',
+  Subsection = 'subsection',
   Unit = 'unit',
   /**
-   * Vertical is the old name for Unit. Generally, **please avoid using this term entirely in any libraries code** or
+   * Chapter, Sequential and Vertical is the old name for Unit. Generally, **please avoid using this term entirely in any libraries code** or
    * anything based on the new Learning Core "Containers" framework - just call it a unit. We do still need to use this
    * in the modulestore-based courseware, and currently the /xblock/ API used to copy library containers into courses
    * also requires specifying this, though that should change to a better API that does the unit->vertical conversion
    * automatically in the future.
-   * TODO: we should probably move this to a separate enum/mapping, and keep this for the new container types only.
    */
+  Chapter = 'chapter',
+  Sequential = 'sequential',
   Vertical = 'vertical',
 }
 
