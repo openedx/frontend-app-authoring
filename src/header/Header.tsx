@@ -9,7 +9,6 @@ import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
 
-
 type ContainerPropsType = React.ComponentProps<typeof Container>;
 
 interface HeaderProps {

@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
@@ -55,7 +56,6 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import OutlineSidebar from './outline-sidebar/OutlineSidebar';
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();

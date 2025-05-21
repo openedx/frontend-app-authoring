@@ -2,11 +2,11 @@ import React from 'react';
 import './Footer.scss';
 import { FooterProps } from '../interfaces/components';
 
-const Footer: React.FC<FooterProps> = ({ contactInfo, quickLinks, exploreLinks, logoUrl, copyrights }) => {
+const Footer: React.FC<FooterProps> = ({
+  contactInfo, quickLinks, exploreLinks, logoUrl, copyrights,
+}) => {
   // Use class names directly now
-  const getAlignClass = (align: string | undefined) => {
-    return align ?? 'left'; // default to 'left' class if not provided
-  };
+  const getAlignClass = (align: string | undefined) => align ?? 'left'; // default to 'left' class if not provided
 
   return (
     <footer className="footer">
@@ -14,7 +14,7 @@ const Footer: React.FC<FooterProps> = ({ contactInfo, quickLinks, exploreLinks, 
         <div className={`section ${getAlignClass(contactInfo.align)}`}>
           <div>
             <img
-              style={{ width: "5.5rem", height: "5rem" }}
+              style={{ width: '5.5rem', height: '5rem' }}
               src={logoUrl}
               alt="Logo"
             />

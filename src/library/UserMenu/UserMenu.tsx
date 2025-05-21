@@ -29,7 +29,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   authenticatedUserAvatar,
   isMobile,
   // isAdmin,
-  menuItems
+  menuItems,
 }) => {
   const avatar = authenticatedUserAvatar ? (
     <img

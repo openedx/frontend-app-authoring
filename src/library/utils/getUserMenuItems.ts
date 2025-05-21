@@ -12,7 +12,6 @@ const getUserMenuItems = ({
   logoutUrl,
   isAdmin,
 }: UserMenuItemsParams) => {
-  console.log('getUserMenuItems', { studioBaseUrl, logoutUrl, isAdmin });
   let items = [
     {
       href: `${studioBaseUrl}`,

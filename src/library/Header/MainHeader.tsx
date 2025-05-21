@@ -12,12 +12,12 @@ import {
 // import useIsMobileSize from '../../../hooks/useIsMobileSize';
 // import { MainHeaderProps } from '../../../interfaces/components';
 import { MainHeaderProps } from 'titaned-lib';
-import useIsMobileSize from '../hooks/useIsMobileSize';
-import UserMenu from '../UserMenu/UserMenu';
-import './MainHeader.scss';
 import {
   ExitToApp, HelpCenter, Notifications, Sync,
 } from '@openedx/paragon/icons';
+import useIsMobileSize from '../hooks/useIsMobileSize';
+import UserMenu from '../UserMenu/UserMenu';
+import './MainHeader.scss';
 
 const MainHeader: React.FC<MainHeaderProps> = ({
   logoUrl,
@@ -29,9 +29,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   menuAlignment,
 }) => {
   const isMobile = useIsMobileSize();
-  const [selectedLanguage, setSelectedLanguage] = useState(() => {
-    return localStorage.getItem('selectedLanguage') || 'EN';
-  });
+  const [selectedLanguage, setSelectedLanguage] = useState(() => localStorage.getItem('selectedLanguage') || 'EN');
 
   useEffect(() => {
     document.body.dir = selectedLanguage === 'AR' ? 'rtl' : 'ltr';

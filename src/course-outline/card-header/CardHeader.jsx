@@ -72,8 +72,6 @@ const CardHeader = ({
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
 
-
-
   useEffect(() => {
     const locatorId = searchParams.get('show');
     if (!locatorId) {
@@ -103,8 +101,6 @@ const CardHeader = ({
     },
     dependency: title,
   });
-
-
 
   return (
     <>
@@ -242,7 +238,7 @@ const CardHeader = ({
             </Dropdown.Menu>
           </Dropdown>
         </div>
-      </div >
+      </div>
       <ContentTagsDrawerSheet
         id={cardId}
         onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}

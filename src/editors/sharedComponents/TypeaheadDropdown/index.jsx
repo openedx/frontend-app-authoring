@@ -208,15 +208,15 @@ class TypeaheadDropdown extends React.Component {
 
     const noOptionsMessage = (
       <ActionRow className="p-2 pl-3">
-        <div className="muted">{this.props.noOptionsMessage}</div> {/* Use this.props here as it wasn't destructured for this part */}
+        <div className="muted">{this.props.noOptionsMessage}</div>
         <ActionRow.Spacer />
         {this.props.allowNewOption && (
           <Button
             data-testid="add-option-button"
             iconBefore={Add}
-            onClick={this.props.addNewOption} // Use this.props here
+            onClick={this.props.addNewOption}
           >
-            {this.props.newOptionButtonLabel} {/* Use this.props here */}
+            {this.props.newOptionButtonLabel}
           </Button>
         )}
       </ActionRow>
@@ -224,7 +224,7 @@ class TypeaheadDropdown extends React.Component {
     const dropDownEmptyList = this.state.dropDownItems && this.state.isFocused ? noOptionsMessage : null;
 
     return (
-      <div className="dropdown-group-wrapper" {...rest}> {/* Pass remaining props to the wrapper? */}
+      <div className="dropdown-group-wrapper" {...rest}>
         <FormGroup
           name={name}
           type="text"
@@ -242,7 +242,6 @@ class TypeaheadDropdown extends React.Component {
           handleBlur={this.handleOnBlur}
           handleFocus={this.handleFocus}
           isFocused={this.state.isFocused}
-        // Do NOT spread ...rest here if it contains invalid props for FormGroup
         >
           <div
             data-testid="dropdown-container"

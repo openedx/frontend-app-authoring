@@ -8,8 +8,8 @@ import {
 } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 
-import messages from './messages';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
+import messages from './messages';
 
 const SortableItem = ({
   id,

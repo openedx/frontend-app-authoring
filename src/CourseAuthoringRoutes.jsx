@@ -43,21 +43,22 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-const CoursePageLayout = ({ children, courseId }) => {
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
-      <div style={{ minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee' }}>
-        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
-      </div>
-      <main style={{ flex: 1, paddingTop: '1.5rem' }}>
-        <Suspense>
-          {children}
-        </Suspense>
-      </main>
+const CoursePageLayout = ({ children, courseId }) => (
+  <div style={{ display: 'flex', minHeight: '100vh' }}>
+    {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
+    <div style={{
+      minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee',
+    }}
+    >
+      <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
     </div>
-  );
-};
+    <main style={{ flex: 1, paddingTop: '1.5rem' }}>
+      <Suspense>
+        {children}
+      </Suspense>
+    </main>
+  </div>
+);
 
 CoursePageLayout.propTypes = {
   children: PropTypes.node.isRequired,
