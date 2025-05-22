@@ -1,6 +1,8 @@
-module.exports = {
-  next: null,
-  previous: null,
+import { TaxonomyListData, TaxonomyData } from '../data/types';
+
+const taxonomyListMock: TaxonomyListData = {
+  next: '',
+  previous: '',
   count: 4,
   numPages: 1,
   currentPage: 1,
@@ -18,7 +20,7 @@ module.exports = {
       visibleToAuthors: false,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
-    },
+    } as TaxonomyData,
     {
       id: -1,
       name: 'Languages',
@@ -30,7 +32,7 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
-    },
+    } as TaxonomyData,
     {
       id: 1,
       name: 'Taxonomy',
@@ -42,7 +44,7 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
-    },
+    } as TaxonomyData,
     {
       id: 2,
       name: 'Taxonomy long long long long long long long long long long long long long long long long long long long',
@@ -54,6 +56,8 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
-    },
+    } as TaxonomyData,
   ],
 };
+
+export default taxonomyListMock;
