@@ -162,7 +162,11 @@ const UnitInfo = () => {
         activeKey={tab}
         onSelect={handleTabChange}
       >
-        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(
+          UNIT_INFO_TABS.Preview,
+          <LibraryUnitBlocks readOnly />,
+          intl.formatMessage(messages.previewTabTitle),
+        )}
         {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
