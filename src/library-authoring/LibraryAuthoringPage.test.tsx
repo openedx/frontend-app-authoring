@@ -509,8 +509,8 @@ describe('<LibraryAuthoringPage />', () => {
     // Switch back to the collection
     fireEvent.click((await screen.findByText('Collection 1')));
 
-    // The Manage (default) tab should be selected because the collection does not have a Preview tab
-    expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
+    // The Details (default) tab should be selected because the collection does not have a Preview tab
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
   });
 
   const problemTypes = {

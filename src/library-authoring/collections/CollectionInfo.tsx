@@ -31,7 +31,7 @@ const CollectionInfo = () => {
 
   const tab: CollectionInfoTab = (
     sidebarTab && isCollectionInfoTab(sidebarTab)
-  ) ? sidebarTab : COLLECTION_INFO_TABS.Manage;
+  ) ? sidebarTab : COLLECTION_INFO_TABS.Details;
 
   const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
