@@ -17,6 +17,7 @@ import LoadingButton from '../../generic/loading-button';
 import { ContainerType } from '../../generic/key-utils';
 import { useLibraryRoutes } from '../routes';
 
+/** Common modal to create section, subsection or unit in library */
 const CreateContainerModal = () => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const CreateContainerModal = () => {
   const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const { showToast } = React.useContext(ToastContext);
 
+  /** labels based on the type of modal open, i.e., section, subsection or unit */
   const labels = React.useMemo(() => {
     if (isCreateSectionModalOpen) {
       return {
@@ -66,12 +68,14 @@ const CreateContainerModal = () => {
     };
   }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen, intl]);
 
+  /** Call close for section, subsection and unit as the operation is idempotent */
   const handleClose = React.useCallback(() => {
     closeCreateSectionModal();
     closeCreateSubsectionModal();
     closeCreateUnitModal();
   }, [closeCreateUnitModal, closeCreateSubsectionModal, closeCreateSectionModal]);
 
+  /** Calculate containerType based on type of open modal */
   const containerType = React.useMemo(() => {
     if (isCreateSectionModalOpen) {
       return ContainerType.Section;
@@ -80,7 +84,7 @@ const CreateContainerModal = () => {
       return ContainerType.Subsection;
     }
     return ContainerType.Unit;
-  }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen, intl]);
+  }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen]);
 
   const handleCreate = React.useCallback(async (values) => {
     try {
