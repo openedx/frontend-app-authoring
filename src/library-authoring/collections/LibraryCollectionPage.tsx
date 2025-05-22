@@ -22,7 +22,6 @@ import NotFoundAlert from '../../generic/NotFoundAlert';
 import {
   ClearFiltersButton,
   FilterByBlockType,
-  FilterByPublished,
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
@@ -36,6 +35,7 @@ import { SidebarBodyComponentId, useSidebarContext } from '../common/context/Sid
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
+import LibraryFilterByPublished from '../generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -218,7 +218,7 @@ const LibraryCollectionPage = () => {
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
-              <FilterByPublished />
+              <LibraryFilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
