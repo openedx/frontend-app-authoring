@@ -97,8 +97,6 @@ const TaxonomyCard: React.FC<TaxonomyCardProps> = ({ className = '', original })
     id, name, description, systemDefined, orgsCount,
   } = original;
 
-  const intl = useIntl();
-
   const getHeaderActions = () => (
     <TaxonomyMenu
       taxonomy={original as any}

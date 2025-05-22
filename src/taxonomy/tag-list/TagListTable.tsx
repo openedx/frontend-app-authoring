@@ -97,7 +97,7 @@ const TagListTable: React.FC<TagListTableProps> = ({ taxonomyId }) => {
         isExpandable
         // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
         // the Figma design and do something more sophisticated.
-        renderRowSubComponent={({ row }: { row: { original: TagData } }) => (
+        renderRowSubComponent={({ row }) => (
           <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
         )}
         columns={[

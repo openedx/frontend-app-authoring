@@ -32,7 +32,7 @@ interface MenuItem {
 }
 
 const TaxonomyMenu: React.FC<TaxonomyMenuProps> = ({
-  taxonomy, 
+  taxonomy,
   iconMenu = false,
 }) => {
   const intl = useIntl();

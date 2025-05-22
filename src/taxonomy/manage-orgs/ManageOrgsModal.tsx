@@ -213,7 +213,10 @@ const ManageOrgsModal: React.FC<ManageOrgsModalProps> = ({
               )) : [] }
             </Form.Autosuggest>
           </Form.Group>
-          <Form.Checkbox checked={allOrgs} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAllOrgs(e.target.checked)}>
+          <Form.Checkbox
+            checked={allOrgs}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAllOrgs(e.target.checked)}
+          >
             {intl.formatMessage(messages.assignAll)}
           </Form.Checkbox>
         </ModalDialog.Body>

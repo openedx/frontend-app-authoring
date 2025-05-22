@@ -26,7 +26,6 @@ import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile, apiUrls } from '../data/api';
 import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
-import { TaxonomyData } from '../data/types';
 
 const linebreak = <> <br /> <br /> </>;
 
