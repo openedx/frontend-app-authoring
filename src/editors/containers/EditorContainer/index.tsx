@@ -14,7 +14,6 @@ import { Close } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { EditorComponent } from '../../EditorComponent';
-import { useEditorContext } from '../../EditorContext';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
@@ -30,37 +29,18 @@ interface WrapperProps {
 }
 
 export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }> = ({ children, onClose }) => {
-  const { fullScreen } = useEditorContext();
   const intl = useIntl();
-  if (fullScreen) {
-    return (
-      <div
-        className="editor-container d-flex flex-column position-relative zindex-0"
-        style={{ minHeight: '100%' }}
-      >
-        {children}
-      </div>
-    );
-  }
+
   const title = intl.formatMessage(messages.modalTitle);
   return (
     <ModalDialog isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
   );
 };
 
-export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => {
-  const { fullScreen } = useEditorContext();
-  return <ModalDialog.Body className={fullScreen ? 'pb-6' : 'pb-0'}>{ children }</ModalDialog.Body>;
-};
+export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{ children }</ModalDialog.Body>;
 
-export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
-  const { fullScreen } = useEditorContext();
-  if (fullScreen) {
-    return <div className="editor-footer fixed-bottom">{children}</div>;
-  }
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{ children }</>;
-};
+// eslint-disable-next-line react/jsx-no-useless-fragment
+export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{ children }</>;
 
 interface Props extends EditorComponent {
   children: React.ReactNode;

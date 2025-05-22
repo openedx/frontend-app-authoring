@@ -1,10 +1,10 @@
+import { getConfig } from '@edx/frontend-platform';
 import {
   FC, useEffect, useState, useMemo, useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle, Sheet } from '@openedx/paragon';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   hideProcessingNotification,
@@ -13,9 +13,9 @@ import {
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
+import { getWaffleFlags } from '../../data/selectors';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
-import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import {
   fetchCourseSectionVerticalData,
@@ -35,16 +35,22 @@ import messages from './messages';
 import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
 import { useIframeContent } from '../../generic/hooks/useIframeContent';
 import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
+import EditorPage from '../../editors/EditorPage';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
+  const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
+  const [blockType, setBlockType] = useState<string>('');
+  const { useVideoGalleryFlow } = useSelector(getWaffleFlags);
+  const [newBlockId, setNewBlockId] = useState<string>('');
   const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
   const [iframeOffset, setIframeOffset] = useState(0);
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
@@ -64,14 +70,27 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setIframeRef(iframeRef);
   }, [setIframeRef]);
 
+  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
+    closeXBlockEditorModal();
+    closeVideoSelectorModal();
+    sendMessageToIframe(messageTypes.refreshXBlock, null);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+
+  const handleEditXBlock = useCallback((type: string, id: string) => {
+    setBlockType(type);
+    setNewBlockId(id);
+    if (type === 'video' && useVideoGalleryFlow) {
+      showVideoSelectorModal();
+    } else {
+      showXBlockEditorModal();
+    }
+  }, [showVideoSelectorModal, showXBlockEditorModal]);
+
   const handleDuplicateXBlock = useCallback(
-    (blockType: string, usageId: string) => {
+    (usageId: string) => {
       unitXBlockActions.handleDuplicate(usageId);
-      if (supportedEditors[blockType]) {
-        navigate(`/course/${courseId}/editor/${blockType}/${usageId}`);
-      }
     },
-    [unitXBlockActions, courseId, navigate],
+    [unitXBlockActions, courseId],
   );
 
   const handleDeleteXBlock = (usageId: string) => {
@@ -147,13 +166,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch(hideProcessingNotification());
   };
 
-  const handleRedirectToXBlockEditPage = (payload: { type: string, locator: string }) => {
-    navigate(`/course/${courseId}/editor/${payload.type}/${payload.locator}`);
-  };
-
   const messageHandlers = useMessageHandlers({
     courseId,
-    navigate,
     dispatch,
     setIframeOffset,
     handleDeleteXBlock,
@@ -167,7 +181,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleOpenManageTagsModal,
     handleShowProcessingNotification,
     handleHideProcessingNotification,
-    handleRedirectToXBlockEditPage,
+    handleEditXBlock,
   });
 
   useIframeMessages(messageHandlers);
@@ -186,6 +200,43 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         close={closeDeleteModal}
         onDeleteSubmit={onDeleteSubmit}
       />
+      <StandardModal
+        title={intl.formatMessage(messages.videoPickerModalTitle)}
+        isOpen={isVideoSelectorModalOpen}
+        onClose={closeVideoSelectorModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <div className="selector-page">
+          <VideoSelectorPage
+            blockId={newBlockId}
+            courseId={courseId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onCancel={closeVideoSelectorModal}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+          />
+        </div>
+      </StandardModal>
+      <StandardModal
+        title={intl.formatMessage(messages.blockEditorModalTitle)}
+        isOpen={isXBlockEditorModalOpen}
+        onClose={closeXBlockEditorModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <div className="editor-page">
+          <EditorPage
+            courseId={courseId}
+            blockType={blockType}
+            blockId={newBlockId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onClose={closeXBlockEditorModal}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+          />
+        </div>
+      </StandardModal>
       {Object.keys(accessManagedXBlockData).length ? (
         <ConfigureModal
           isXBlockComponent

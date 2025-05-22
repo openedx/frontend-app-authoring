@@ -32,7 +32,6 @@ const defaultPropsHtml = {
   lmsEndpointUrl: 'http://lms.test.none/',
   studioEndpointUrl: 'http://cms.test.none/',
   onClose: jest.fn(),
-  fullScreen: false,
 };
 const fieldsHtml = {
   displayName: 'Introduction to Testing',

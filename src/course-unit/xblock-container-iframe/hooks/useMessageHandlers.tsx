@@ -16,7 +16,6 @@ import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
  */
 export const useMessageHandlers = ({
   courseId,
-  navigate,
   dispatch,
   setIframeOffset,
   handleDeleteXBlock,
@@ -30,15 +29,15 @@ export const useMessageHandlers = ({
   handleOpenManageTagsModal,
   handleShowProcessingNotification,
   handleHideProcessingNotification,
-  handleRedirectToXBlockEditPage,
+  handleEditXBlock,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
   return useMemo(() => ({
     [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
     [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
-    [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => navigate(`/course/${courseId}/editor/${blockType}/${usageId}`),
-    [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
+    [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => handleEditXBlock(blockType, usageId),
+    [messageTypes.duplicateXBlock]: ({ usageId }) => handleDuplicateXBlock(usageId),
     [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
     [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
     [messageTypes.toggleCourseXBlockDropdown]: ({
@@ -52,9 +51,14 @@ export const useMessageHandlers = ({
     [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
     [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
     [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
-    [messageTypes.copyXBlockLegacy]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.copying),
+    [messageTypes.copyXBlockLegacy]: /* istanbul ignore next */ () => handleShowProcessingNotification(
+      NOTIFICATION_MESSAGES.copying,
+    ),
     [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
-    [messageTypes.handleRedirectToXBlockEditPage]: (payload) => handleRedirectToXBlockEditPage(payload),
+    [messageTypes.handleRedirectToXBlockEditPage]: /* istanbul ignore next */ (payload) => handleEditXBlock(
+      payload.type,
+      payload.locator,
+    ),
   }), [
     courseId,
     handleDeleteXBlock,

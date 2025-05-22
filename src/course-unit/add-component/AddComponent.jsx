@@ -1,13 +1,14 @@
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
+import { getWaffleFlags } from '../../data/selectors';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
@@ -16,6 +17,8 @@ import { ComponentPicker } from '../../library-authoring/component-picker';
 import { messageTypes } from '../constants';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { useEventListener } from '../../generic/hooks';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
+import EditorPage from '../../editors/EditorPage';
 
 const AddComponent = ({
   parentLocator,
@@ -24,7 +27,6 @@ const AddComponent = ({
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
 }) => {
-  const navigate = useNavigate();
   const intl = useIntl();
   const [isOpenAdvanced, openAdvanced, closeAdvanced] = useToggle(false);
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
@@ -32,10 +34,17 @@ const AddComponent = ({
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
   const blockId = addComponentTemplateData.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
+  const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
+
+  const [blockType, setBlockType] = useState(null);
+  const [courseId, setCourseId] = useState(null);
+  const [newBlockId, setNewBlockId] = useState(null);
   const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
+  const { useVideoGalleryFlow } = useSelector(getWaffleFlags);
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
@@ -54,6 +63,12 @@ const AddComponent = ({
     closeSelectLibraryContentModal();
   }, [selectedComponents]);
 
+  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
+    closeXBlockEditorModal();
+    closeVideoSelectorModal();
+    sendMessageToIframe(messageTypes.refreshXBlock, null);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+
   const handleLibraryV2Selection = useCallback((selection) => {
     handleCreateNewCourseXBlock({
       type: COMPONENT_TYPES.libraryV2,
@@ -71,11 +86,27 @@ const AddComponent = ({
         handleCreateNewCourseXBlock({ type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.problem:
-      case COMPONENT_TYPES.video:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
-          localStorage.setItem('createXBlockLastYPosition', window.scrollY);
-          navigate(`/course/${courseKey}/editor/${type}/${locator}`);
+          setCourseId(courseKey);
+          setBlockType(type);
+          setNewBlockId(locator);
+          showXBlockEditorModal();
         });
+        break;
+      case COMPONENT_TYPES.video:
+        handleCreateNewCourseXBlock(
+          { type, parentLocator: blockId },
+          /* istanbul ignore next */ ({ courseKey, locator }) => {
+            setCourseId(courseKey);
+            setBlockType(type);
+            setNewBlockId(locator);
+            if (useVideoGalleryFlow) {
+              showVideoSelectorModal();
+            } else {
+              showXBlockEditorModal();
+            }
+          },
+        );
         break;
         // TODO: The library functional will be a bit different of current legacy (CMS)
         //  behaviour and this ticket is on hold (blocked by other development team).
@@ -99,9 +130,11 @@ const AddComponent = ({
           type,
           boilerplate: moduleName,
           parentLocator: blockId,
-        }, ({ courseKey, locator }) => {
-          localStorage.setItem('createXBlockLastYPosition', window.scrollY);
-          navigate(`/course/${courseKey}/editor/html/${locator}`);
+        }, /* istanbul ignore next */ ({ courseKey, locator }) => {
+          setCourseId(courseKey);
+          setBlockType(type);
+          setNewBlockId(locator);
+          showXBlockEditorModal();
         });
         break;
       default:
@@ -200,6 +233,43 @@ const AddComponent = ({
             onComponentSelected={handleLibraryV2Selection}
             onChangeComponentSelection={setSelectedComponents}
           />
+        </StandardModal>
+        <StandardModal
+          title={intl.formatMessage(messages.videoPickerModalTitle)}
+          isOpen={isVideoSelectorModalOpen}
+          onClose={closeVideoSelectorModal}
+          isOverflowVisible={false}
+          size="xl"
+        >
+          <div className="selector-page">
+            <VideoSelectorPage
+              blockId={newBlockId}
+              courseId={courseId}
+              studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+              lmsEndpointUrl={getConfig().LMS_BASE_URL}
+              onCancel={closeVideoSelectorModal}
+              returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+            />
+          </div>
+        </StandardModal>
+        <StandardModal
+          title={intl.formatMessage(messages.blockEditorModalTitle)}
+          isOpen={isXBlockEditorModalOpen}
+          onClose={closeXBlockEditorModal}
+          isOverflowVisible={false}
+          size="xl"
+        >
+          <div className="editor-page">
+            <EditorPage
+              courseId={courseId}
+              blockType={blockType}
+              blockId={newBlockId}
+              studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+              lmsEndpointUrl={getConfig().LMS_BASE_URL}
+              onClose={closeXBlockEditorModal}
+              returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+            />
+          </div>
         </StandardModal>
       </div>
     );
