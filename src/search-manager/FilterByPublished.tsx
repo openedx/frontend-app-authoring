@@ -56,6 +56,7 @@ const FilterByPublished = ({
 
   const visibleFiltersToRender = visibleFilters.map((filter) => (
     <MenuItem
+      key={filter}
       as={Form.Checkbox}
       value={filter}
       onChange={() => { toggleFilterMode(filter); }}
