@@ -138,7 +138,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/dashboard');
+        // Use the https://design.titaned.com/dashboard endpoint for deployment and http://localhost:3001/dashboard for local development
+        const response = await fetch('https://design.titaned.com/dashboard');
         const data = await response.json();
         // Sort widgets by order before setting state
         const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
