@@ -4,7 +4,6 @@ import {
   OverlayTrigger,
   Popover,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -12,10 +11,17 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { TaxonomyMenu } from '../taxonomy-menu';
 import messages from './messages';
 import SystemDefinedBadge from '../system-defined-badge';
+import { TaxonomyData } from '../data/types';
 
-const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
+const orgsCountEnabled = (orgsCount?: number) => orgsCount !== undefined && orgsCount !== 0;
 
-const HeaderSubtitle = ({
+interface HeaderSubtitleProps {
+  id: number;
+  showSystemBadge: boolean;
+  orgsCount?: number;
+}
+
+const HeaderSubtitle: React.FC<HeaderSubtitleProps> = ({
   id, showSystemBadge, orgsCount,
 }) => {
   const intl = useIntl();
@@ -38,25 +44,22 @@ const HeaderSubtitle = ({
   return null;
 };
 
-HeaderSubtitle.defaultProps = {
-  orgsCount: undefined,
-};
+interface HeaderTitleProps {
+  taxonomyId: number;
+  title: string;
+}
 
-HeaderSubtitle.propTypes = {
-  id: PropTypes.number.isRequired,
-  showSystemBadge: PropTypes.bool.isRequired,
-  orgsCount: PropTypes.number,
-};
-
-const HeaderTitle = ({ taxonomyId, title }) => {
-  const containerRef = useRef(null);
-  const textRef = useRef(null);
+const HeaderTitle: React.FC<HeaderTitleProps> = ({ taxonomyId, title }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
   useEffect(() => {
-    const containerWidth = containerRef.current.clientWidth;
-    const textWidth = textRef.current.offsetWidth;
-    setIsTruncated(textWidth > containerWidth);
+    if (containerRef.current && textRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const textWidth = textRef.current.offsetWidth;
+      setIsTruncated(textWidth > containerWidth);
+    }
   }, [title]);
 
   const getToolTip = () => (
@@ -84,12 +87,12 @@ const HeaderTitle = ({ taxonomyId, title }) => {
   );
 };
 
-HeaderTitle.propTypes = {
-  taxonomyId: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
-};
+interface TaxonomyCardProps {
+  className?: string;
+  original: Partial<TaxonomyData> & { orgsCount?: number };
+}
 
-const TaxonomyCard = ({ className, original }) => {
+const TaxonomyCard: React.FC<TaxonomyCardProps> = ({ className = '', original }) => {
   const {
     id, name, description, systemDefined, orgsCount,
   } = original;
@@ -98,7 +101,7 @@ const TaxonomyCard = ({ className, original }) => {
 
   const getHeaderActions = () => (
     <TaxonomyMenu
-      taxonomy={original}
+      taxonomy={original as any}
       iconMenu
     />
   );
@@ -112,13 +115,12 @@ const TaxonomyCard = ({ className, original }) => {
       data-testid={`taxonomy-card-${id}`}
     >
       <Card.Header
-        title={<HeaderTitle taxonomyId={id} title={name} />}
+        title={<HeaderTitle taxonomyId={id!} title={name!} />}
         subtitle={(
           <HeaderSubtitle
-            id={id}
-            showSystemBadge={systemDefined}
+            id={id!}
+            showSystemBadge={systemDefined!}
             orgsCount={orgsCount}
-            intl={intl}
           />
         )}
         actions={getHeaderActions()}
@@ -134,24 +136,6 @@ const TaxonomyCard = ({ className, original }) => {
       </Card.Body>
     </Card>
   );
-};
-
-TaxonomyCard.defaultProps = {
-  className: '',
-};
-
-TaxonomyCard.propTypes = {
-  className: PropTypes.string,
-  original: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    description: PropTypes.string,
-    systemDefined: PropTypes.bool,
-    orgsCount: PropTypes.number,
-    tagsCount: PropTypes.number,
-    canChangeTaxonomy: PropTypes.bool,
-    canDeleteTaxonomy: PropTypes.bool,
-  }).isRequired,
 };
 
 export default TaxonomyCard;

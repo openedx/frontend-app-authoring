@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useState, useContext, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -19,7 +18,6 @@ import {
   InsertDriveFile,
   Warning,
 } from '@openedx/paragon/icons';
-import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';
 import { LoadingSpinner } from '../../generic/Loading';
@@ -28,15 +26,22 @@ import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile, apiUrls } from '../data/api';
 import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
+import { TaxonomyData } from '../data/types';
 
 const linebreak = <> <br /> <br /> </>;
 
-const TaxonomyProp = PropTypes.shape({
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-});
+type StepKey = 'export' | 'upload' | 'populate' | 'plan' | 'confirm';
 
-const ExportStep = ({ taxonomy }) => {
+interface TaxonomyProp {
+  id: number;
+  name: string;
+}
+
+interface ExportStepProps {
+  taxonomy: TaxonomyProp;
+}
+
+const ExportStep: React.FC<ExportStepProps> = ({ taxonomy }) => {
   const intl = useIntl();
 
   return (
@@ -66,15 +71,18 @@ const ExportStep = ({ taxonomy }) => {
   );
 };
 
-ExportStep.propTypes = {
-  taxonomy: TaxonomyProp.isRequired,
-};
+interface UploadStepProps {
+  file: File | null;
+  setFile: (file: File | null) => void;
+  importPlanError: string | null;
+  reimport?: boolean;
+}
 
-const UploadStep = ({
+const UploadStep: React.FC<UploadStepProps> = ({
   file,
   setFile,
   importPlanError,
-  reimport,
+  reimport = false,
 }) => {
   const intl = useIntl();
 
@@ -86,12 +94,12 @@ const UploadStep = ({
     <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
   );
 
-  /** @type {(args: {fileData: FormData}) => void} */
-  const handleFileLoad = ({ fileData }) => {
-    setFile(fileData.get('file'));
+  const handleFileLoad = ({ fileData }: { fileData: FormData }) => {
+    const uploadedFile = fileData.get('file') as File;
+    setFile(uploadedFile);
   };
 
-  const clearFile = (e) => {
+  const clearFile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setFile(null);
   };
@@ -155,35 +163,29 @@ const UploadStep = ({
   );
 };
 
-UploadStep.propTypes = {
-  file: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    size: PropTypes.number.isRequired,
-  }),
-  setFile: PropTypes.func.isRequired,
-  importPlanError: PropTypes.string,
-  reimport: PropTypes.bool,
-};
+interface TaxonomyPopulateData {
+  taxonomyName: string;
+  taxonomyDesc: string;
+}
 
-UploadStep.defaultProps = {
-  file: null,
-  importPlanError: null,
-  reimport: false,
-};
+interface PopulateStepProps {
+  taxonomyPopulateData: TaxonomyPopulateData;
+  setTaxonomyPopulateData: (data: TaxonomyPopulateData) => void;
+}
 
-const PopulateStep = ({
+const PopulateStep: React.FC<PopulateStepProps> = ({
   taxonomyPopulateData,
   setTaxonomyPopulateData,
 }) => {
   const intl = useIntl();
 
-  const handleNameChange = (e) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedState = { ...taxonomyPopulateData };
     updatedState.taxonomyName = e.target.value;
     setTaxonomyPopulateData(updatedState);
   };
 
-  const handleDescChange = (e) => {
+  const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const updatedState = { ...taxonomyPopulateData };
     updatedState.taxonomyDesc = e.target.value;
     setTaxonomyPopulateData(updatedState);
@@ -210,15 +212,11 @@ const PopulateStep = ({
   );
 };
 
-PopulateStep.propTypes = {
-  taxonomyPopulateData: PropTypes.shape({
-    taxonomyName: PropTypes.string.isRequired,
-    taxonomyDesc: PropTypes.string.isRequired,
-  }).isRequired,
-  setTaxonomyPopulateData: PropTypes.func.isRequired,
-};
+interface PlanStepProps {
+  importPlan: string[] | null;
+}
 
-const PlanStep = ({ importPlan }) => {
+const PlanStep: React.FC<PlanStepProps> = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
@@ -237,15 +235,11 @@ const PlanStep = ({ importPlan }) => {
   );
 };
 
-PlanStep.propTypes = {
-  importPlan: PropTypes.arrayOf(PropTypes.string),
-};
+interface ConfirmStepProps {
+  importPlan: string[] | null;
+}
 
-PlanStep.defaultProps = {
-  importPlan: null,
-};
-
-const ConfirmStep = ({ importPlan }) => {
+const ConfirmStep: React.FC<ConfirmStepProps> = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
@@ -260,40 +254,39 @@ const ConfirmStep = ({ importPlan }) => {
   );
 };
 
-ConfirmStep.propTypes = {
-  importPlan: PropTypes.arrayOf(PropTypes.string),
-};
+interface DefaultModalHeaderProps {
+  children: string;
+}
 
-ConfirmStep.defaultProps = {
-  importPlan: null,
-};
-
-const DefaultModalHeader = ({ children }) => (
+const DefaultModalHeader: React.FC<DefaultModalHeaderProps> = ({ children }) => (
   <ModalDialog.Header>
     <ModalDialog.Title>{children}</ModalDialog.Title>
   </ModalDialog.Header>
 );
 
-DefaultModalHeader.propTypes = {
-  children: PropTypes.string.isRequired,
-};
+interface ImportTagsWizardProps {
+  taxonomy?: TaxonomyProp;
+  isOpen: boolean;
+  onClose: () => void;
+  reimport?: boolean;
+}
 
-const ImportTagsWizard = ({
+const ImportTagsWizard: React.FC<ImportTagsWizardProps> = ({
   taxonomy,
   isOpen,
   onClose,
-  reimport,
+  reimport = false,
 }) => {
   const intl = useIntl();
   const { setToastMessage, setAlertError } = useContext(TaxonomyContext);
 
-  const [currentStep, setCurrentStep] = useState(reimport ? 'export' : 'upload');
+  const [currentStep, setCurrentStep] = useState<StepKey>(reimport ? 'export' : 'upload');
 
-  const [file, setFile] = useState(/** @type {null|File} */ (null));
+  const [file, setFile] = useState<File | null>(null);
 
   const [isDialogDisabled, disableDialog, enableDialog] = useToggle(false);
 
-  const [taxonomyPopulateData, setTaxonomyPopulateData] = useState({
+  const [taxonomyPopulateData, setTaxonomyPopulateData] = useState<TaxonomyPopulateData>({
     taxonomyName: '',
     taxonomyDesc: '',
   });
@@ -314,7 +307,7 @@ const ImportTagsWizard = ({
       if (setToastMessage) {
         setToastMessage(intl.formatMessage(messages.importNewTaxonomyToast, { name: taxonomyName }));
       }
-    } catch (/** @type {unknown} */ error) {
+    } catch (error: unknown) {
       if (setAlertError) {
         setAlertError({
           title: intl.formatMessage(messages.importTaxonomyErrorAlert),
@@ -339,7 +332,7 @@ const ImportTagsWizard = ({
     const planArray = planArrayTemp
       .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
       .map((line) => line.split(':')[1].trim()); // Get only the action message
-    return /** @type {string[]} */(planArray);
+    return planArray;
   }, [importPlanResult.data]);
 
   const importTagsMutation = useImportTags();
@@ -355,16 +348,16 @@ const ImportTagsWizard = ({
   const confirmImportTags = async () => {
     disableDialog();
     try {
-      if (file) {
+      if (file && taxonomy) {
         await importTagsMutation.mutateAsync({
           taxonomyId: taxonomy.id,
           file,
         });
       }
-      if (setToastMessage) {
-        setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy?.name }));
+      if (setToastMessage && taxonomy) {
+        setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
       }
-    } catch (/** @type {unknown} */ error) {
+    } catch (error: unknown) {
       if (setAlertError) {
         setAlertError({
           title: intl.formatMessage(messages.importTaxonomyErrorAlert),
@@ -377,7 +370,7 @@ const ImportTagsWizard = ({
     }
   };
 
-  const stepHeaders = {
+  const stepHeaders: Record<StepKey, React.ReactNode> = {
     export: (
       <DefaultModalHeader>
         {intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy?.name })}
@@ -433,11 +426,11 @@ const ImportTagsWizard = ({
 
         <Stepper activeKey={currentStep}>
           <ModalDialog.Body>
-            {reimport && <ExportStep taxonomy={taxonomy} />}
+            {reimport && taxonomy && <ExportStep taxonomy={taxonomy} />}
             <UploadStep
               file={file}
               setFile={setFile}
-              importPlanError={/** @type {Error|undefined} */(importPlanResult.error)?.message}
+              importPlanError={(importPlanResult.error as Error | undefined)?.message || null}
               reimport={reimport}
             />
             <PopulateStep
@@ -544,18 +537,6 @@ const ImportTagsWizard = ({
       </ModalDialog>
     </Container>
   );
-};
-
-ImportTagsWizard.defaultProps = {
-  taxonomy: null,
-  reimport: false,
-};
-
-ImportTagsWizard.propTypes = {
-  taxonomy: TaxonomyProp,
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  reimport: PropTypes.bool,
 };
 
 export { ImportTagsWizard };

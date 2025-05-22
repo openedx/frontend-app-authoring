@@ -8,13 +8,12 @@ import {
   render,
   waitFor,
 } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { TaxonomyContext } from '../common/context';
 import ManageOrgsModal from './ManageOrgsModal';
 
-let store;
+let store: any;
 
 const taxonomy = {
   id: 1,
@@ -50,13 +49,17 @@ const mockSetAlertProps = jest.fn();
 const context = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertProps: null,
-  setAlertProps: mockSetAlertProps,
+  alertError: null,
+  setAlertError: mockSetAlertProps,
 };
 
 const queryClient = new QueryClient();
 
-const RootWrapper = ({ onClose }) => (
+interface RootWrapperProps {
+  onClose: () => void;
+}
+
+const RootWrapper: React.FC<RootWrapperProps> = ({ onClose }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -67,10 +70,6 @@ const RootWrapper = ({ onClose }) => (
     </IntlProvider>
   </AppProvider>
 );
-
-RootWrapper.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
 
 describe('<ManageOrgsModal />', () => {
   beforeEach(() => {
@@ -90,7 +89,7 @@ describe('<ManageOrgsModal />', () => {
     queryClient.clear();
   });
 
-  const checkDialogRender = async (getByText) => {
+  const checkDialogRender = async (getByText: Function) => {
     await waitFor(() => {
       // Dialog title
       expect(getByText('Assign to organizations')).toBeInTheDocument();
@@ -190,9 +189,9 @@ describe('<ManageOrgsModal />', () => {
     await checkDialogRender(getByText);
 
     // Remove org1
-    fireEvent.click(getByText('org1').nextSibling);
+    fireEvent.click(getByText('org1').nextSibling as HTMLElement);
     // Remove org2
-    fireEvent.click(getByText('org2').nextSibling);
+    fireEvent.click(getByText('org2').nextSibling as HTMLElement);
 
     fireEvent.click(getByRole('button', { name: 'Save' }));
 

@@ -1,15 +1,19 @@
-// @ts-check
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { DataTable } from '@openedx/paragon';
 import { isEqual } from 'lodash';
-import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
 import { useTagListData, useSubTags } from '../data/apiHooks';
+import { TagData, QueryOptions } from '../data/types';
 
-const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
+interface SubTagsExpandedProps {
+  taxonomyId: number;
+  parentTagValue: string;
+}
+
+const SubTagsExpanded: React.FC<SubTagsExpandedProps> = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);
 
   if (subTagsData.isLoading) {
@@ -30,47 +34,50 @@ const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   );
 };
 
-SubTagsExpanded.propTypes = {
-  taxonomyId: Proptypes.number.isRequired,
-  parentTagValue: Proptypes.string.isRequired,
-};
+interface OptionalExpandLinkProps {
+  row: {
+    original: TagData;
+    toggleRowExpanded: () => void;
+    getToggleRowExpandedProps: () => any;
+  };
+}
 
 /**
  * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
  */
-const OptionalExpandLink = ({ row }) => (
+const OptionalExpandLink: React.FC<OptionalExpandLinkProps> = ({ row }) => (
   row.original.childCount > 0 ? <div className="d-flex justify-content-end"><DataTable.ExpandRow row={row} /></div> : null
 );
-OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
+
+interface TagValueProps {
+  row: {
+    original: TagData;
+  };
+}
 
 /**
  * Custom DataTable cell to join tag value with child count
  */
-const TagValue = ({ row }) => (
+const TagValue: React.FC<TagValueProps> = ({ row }) => (
   <>
     <span>{row.original.value}</span>
     <span className="text-secondary-500">{` (${row.original.descendantCount})`}</span>
   </>
 );
-TagValue.propTypes = {
-  row: Proptypes.shape({
-    original: Proptypes.shape({
-      value: Proptypes.string.isRequired,
-      childCount: Proptypes.number.isRequired,
-      descendantCount: Proptypes.number.isRequired,
-    }).isRequired,
-  }).isRequired,
-};
 
-const TagListTable = ({ taxonomyId }) => {
+interface TagListTableProps {
+  taxonomyId: number;
+}
+
+const TagListTable: React.FC<TagListTableProps> = ({ taxonomyId }) => {
   const intl = useIntl();
-  const [options, setOptions] = useState({
+  const [options, setOptions] = useState<QueryOptions>({
     pageIndex: 0,
     pageSize: 100,
   });
   const { isLoading, data: tagList } = useTagListData(taxonomyId, options);
 
-  const fetchData = (args) => {
+  const fetchData = (args: QueryOptions) => {
     if (!isEqual(args, options)) {
       setOptions({ ...args });
     }
@@ -90,7 +97,7 @@ const TagListTable = ({ taxonomyId }) => {
         isExpandable
         // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
         // the Figma design and do something more sophisticated.
-        renderRowSubComponent={({ row }) => (
+        renderRowSubComponent={({ row }: { row: { original: TagData } }) => (
           <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
         )}
         columns={[
@@ -112,10 +119,6 @@ const TagListTable = ({ taxonomyId }) => {
       </DataTable>
     </div>
   );
-};
-
-TagListTable.propTypes = {
-  taxonomyId: Proptypes.number.isRequired,
 };
 
 export default TagListTable;

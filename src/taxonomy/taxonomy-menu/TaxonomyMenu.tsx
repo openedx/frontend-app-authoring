@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -10,7 +9,6 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { pickBy } from 'lodash';
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 import ExportModal from '../export-modal';
@@ -20,19 +18,22 @@ import DeleteDialog from '../delete-dialog';
 import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
+import { TaxonomyData } from '../data/types';
 
-/** @typedef {import('../data/types.js').TaxonomyData} TaxonomyData */
-// Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
+interface TaxonomyMenuProps {
+  taxonomy: Pick<TaxonomyData, 'id' | 'name' | 'tagsCount' | 'systemDefined' | 'canChangeTaxonomy' | 'canDeleteTaxonomy'>;
+  iconMenu?: boolean;
+}
 
-/**
- * A menu that provides actions for editing a specific taxonomy.
- * @type {React.FC<{
- *   taxonomy: Pick<TaxonomyData, 'id'|'name'|'tagsCount'|'systemDefined'|'canChangeTaxonomy'|'canDeleteTaxonomy'>,
- *   iconMenu?: boolean
- * }>}
- */
-const TaxonomyMenu = ({
-  taxonomy, iconMenu,
+interface MenuItem {
+  title: string;
+  action: () => void;
+  show?: boolean;
+}
+
+const TaxonomyMenu: React.FC<TaxonomyMenuProps> = ({
+  taxonomy, 
+  iconMenu = false,
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -52,23 +53,14 @@ const TaxonomyMenu = ({
         // TODO: display the error to the user
       },
     });
-  }, [setToastMessage, taxonomy]);
+  }, [setToastMessage, taxonomy, deleteTaxonomy, intl, navigate]);
 
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
   const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
   const [isManageOrgsModalOpen, manageOrgsModalOpen, manageOrgsModalClose] = useToggle(false);
 
-  /**
-    * @typedef {Object} MenuItem
-    * @property {string} title - The title of the menu item
-    * @property {() => void} action - The action to perform when the menu item is clicked
-    * @property {boolean} [show] - Whether or not to show the menu item
-    *
-    * @constant
-    * @type {Record<string, MenuItem>}
-    */
-  let menuItems = {
+  let menuItems: Record<string, MenuItem> = {
     import: {
       title: intl.formatMessage(messages.importMenu),
       action: importModalOpen,
@@ -170,22 +162,6 @@ const TaxonomyMenu = ({
       {renderModals()}
     </Dropdown>
   );
-};
-
-TaxonomyMenu.propTypes = {
-  taxonomy: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    tagsCount: PropTypes.number.isRequired,
-    systemDefined: PropTypes.bool.isRequired,
-    canChangeTaxonomy: PropTypes.bool.isRequired,
-    canDeleteTaxonomy: PropTypes.bool.isRequired,
-  }).isRequired,
-  iconMenu: PropTypes.bool,
-};
-
-TaxonomyMenu.defaultProps = {
-  iconMenu: false,
 };
 
 export default TaxonomyMenu;

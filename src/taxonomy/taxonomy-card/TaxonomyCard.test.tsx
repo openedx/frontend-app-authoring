@@ -6,12 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
 
 import initializeStore from '../../store';
+import { TaxonomyData } from '../data/types';
 import TaxonomyCard from '.';
 
-let store;
+let store: any;
 const taxonomyId = 1;
 
-const data = {
+const data: Partial<TaxonomyData> & { orgsCount?: number } = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
@@ -23,7 +24,11 @@ const data = {
 
 const queryClient = new QueryClient();
 
-const TaxonomyCardComponent = ({ original }) => (
+interface TaxonomyCardComponentProps {
+  original: Partial<TaxonomyData> & { orgsCount?: number };
+}
+
+const TaxonomyCardComponent: React.FC<TaxonomyCardComponentProps> = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -34,8 +39,6 @@ const TaxonomyCardComponent = ({ original }) => (
     </IntlProvider>
   </AppProvider>
 );
-
-TaxonomyCardComponent.propTypes = TaxonomyCard.propTypes;
 
 describe('<TaxonomyCard />', () => {
   beforeEach(async () => {
@@ -52,8 +55,8 @@ describe('<TaxonomyCard />', () => {
 
   it('should render title and description of the card', () => {
     const { getByText } = render(<TaxonomyCardComponent original={data} />);
-    expect(getByText(data.name)).toBeInTheDocument();
-    expect(getByText(data.description)).toBeInTheDocument();
+    expect(getByText(data.name!)).toBeInTheDocument();
+    expect(getByText(data.description!)).toBeInTheDocument();
   });
 
   it('should show the ⋮ menu', () => {

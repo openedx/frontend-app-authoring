@@ -5,26 +5,29 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { render } from '@testing-library/react';
 
 import initializeStore from '../../store';
-
+import { TaxonomyData } from '../data/types';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 
-let store;
+let store: any;
 
 const data = {
   id: 1,
   name: 'Taxonomy 1',
   description: 'This is a description',
+  exportId: 'export-id-1',
 };
 
-const TaxonomyCardComponent = ({ taxonomy }) => (
+interface TaxonomyCardComponentProps {
+  taxonomy: Pick<TaxonomyData, 'name' | 'exportId' | 'description'>;
+}
+
+const TaxonomyCardComponent: React.FC<TaxonomyCardComponentProps> = ({ taxonomy }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <TaxonomyDetailSideCard taxonomy={taxonomy} />
     </IntlProvider>
   </AppProvider>
 );
-
-TaxonomyCardComponent.propTypes = TaxonomyDetailSideCard.propTypes;
 
 describe('<TaxonomyDetailSideCard/>', () => {
   beforeEach(async () => {

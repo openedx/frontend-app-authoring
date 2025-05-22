@@ -1,12 +1,17 @@
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
+import { TaxonomyData } from '../data/types';
 
 import messages from './messages';
 
-const TaxonomyDetailSideCard = ({ taxonomy }) => {
+interface TaxonomyDetailSideCardProps {
+  taxonomy: Pick<TaxonomyData, 'name' | 'exportId' | 'description'>;
+}
+
+const TaxonomyDetailSideCard: React.FC<TaxonomyDetailSideCardProps> = ({ taxonomy }) => {
   const intl = useIntl();
   return (
     <Card>
@@ -23,14 +28,6 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
       </Card.Section>
     </Card>
   );
-};
-
-TaxonomyDetailSideCard.propTypes = {
-  taxonomy: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    exportId: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default TaxonomyDetailSideCard;

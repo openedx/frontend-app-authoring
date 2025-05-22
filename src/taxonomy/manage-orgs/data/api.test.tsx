@@ -1,3 +1,4 @@
+import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { renderHook } from '@testing-library/react';
@@ -8,10 +9,9 @@ import MockAdapter from 'axios-mock-adapter';
 import {
   getManageOrgsApiUrl,
   useManageOrgs,
-
 } from './api';
 
-let axiosMock;
+let axiosMock: MockAdapter;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const wrapper = ({ children }) => (
+const wrapper = ({ children }: { children: React.ReactNode }) => (
   <QueryClientProvider client={queryClient}>
     {children}
   </QueryClientProvider>

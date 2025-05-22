@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useContext, useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -16,7 +15,6 @@ import {
   Close,
   Warning,
 } from '@openedx/paragon/icons';
-import PropTypes from 'prop-types';
 
 import { useOrganizationListData } from '../../generic/data/apiHooks';
 import { TaxonomyContext } from '../common/context';
@@ -25,7 +23,14 @@ import { useManageOrgs } from './data/api';
 import messages from './messages';
 import './ManageOrgsModal.scss';
 
-const ConfirmModal = ({
+interface ConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  confirm: () => void;
+  taxonomyName: string;
+}
+
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
   confirm,
@@ -57,14 +62,13 @@ const ConfirmModal = ({
   );
 };
 
-ConfirmModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  confirm: PropTypes.func.isRequired,
-  taxonomyName: PropTypes.string.isRequired,
-};
+interface ManageOrgsModalProps {
+  taxonomyId: number;
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-const ManageOrgsModal = ({
+const ManageOrgsModal: React.FC<ManageOrgsModalProps> = ({
   taxonomyId,
   isOpen,
   onClose,
@@ -72,8 +76,8 @@ const ManageOrgsModal = ({
   const intl = useIntl();
   const { setToastMessage } = useContext(TaxonomyContext);
 
-  const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */(null));
-  const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */(null));
+  const [selectedOrgs, setSelectedOrgs] = useState<string[] | null>(null);
+  const [allOrgs, setAllOrgs] = useState<boolean | null>(null);
 
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
 
@@ -126,15 +130,14 @@ const ManageOrgsModal = ({
         setAllOrgs(taxonomy.allOrgs);
       }
     }
-  }, [taxonomy]);
+  }, [taxonomy, selectedOrgs, allOrgs]);
 
   useEffect(() => {
     if (selectedOrgs) {
       // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
-      const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.manage-orgs .pgn__form-group input'));
+      const inputRef = document.querySelector('.manage-orgs .pgn__form-group input') as HTMLInputElement | null;
       if (inputRef) {
-        //  @ts-ignore value can be null
-        inputRef.value = null;
+        inputRef.value = '';
         const event = new Event('change', { bubbles: true });
         inputRef.dispatchEvent(event);
       }
@@ -198,7 +201,7 @@ const ManageOrgsModal = ({
             </Form.Label>
             <Form.Autosuggest
               placeholder={intl.formatMessage(messages.searchOrganizations)}
-              onChange={({ selectionValue }) => {
+              onChange={({ selectionValue }: { selectionValue: string }) => {
                 if (selectionValue) {
                   setSelectedOrgs([...selectedOrgs, selectionValue]);
                 }
@@ -210,7 +213,7 @@ const ManageOrgsModal = ({
               )) : [] }
             </Form.Autosuggest>
           </Form.Group>
-          <Form.Checkbox checked={allOrgs} onChange={(e) => setAllOrgs(e.target.checked)}>
+          <Form.Checkbox checked={allOrgs} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAllOrgs(e.target.checked)}>
             {intl.formatMessage(messages.assignAll)}
           </Form.Checkbox>
         </ModalDialog.Body>
@@ -236,12 +239,6 @@ const ManageOrgsModal = ({
       />
     </Container>
   );
-};
-
-ManageOrgsModal.propTypes = {
-  taxonomyId: PropTypes.number.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ManageOrgsModal;

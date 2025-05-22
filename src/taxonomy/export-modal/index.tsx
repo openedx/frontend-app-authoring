@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useState } from 'react';
 import {
   ActionRow,
@@ -7,18 +6,25 @@ import {
   Form,
   ModalDialog,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { getTaxonomyExportFile } from '../data/api';
 
-const ExportModal = ({
+interface ExportModalProps {
+  taxonomyId: number;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+type OutputFormat = 'csv' | 'json';
+
+const ExportModal: React.FC<ExportModalProps> = ({
   taxonomyId,
   isOpen,
   onClose,
 }) => {
   const intl = useIntl();
-  const [outputFormat, setOutputFormat] = useState(/** @type {'csv'|'json'} */('csv'));
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>('csv');
 
   const onClickExport = React.useCallback(() => {
     onClose();
@@ -50,7 +56,7 @@ const ExportModal = ({
             <Form.RadioSet
               name="export-format"
               value={outputFormat}
-              onChange={(e) => setOutputFormat(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOutputFormat(e.target.value as OutputFormat)}
             >
               <Form.Radio
                 key={`export-csv-format-${taxonomyId}`}
@@ -84,12 +90,6 @@ const ExportModal = ({
       </ModalDialog>
     </Container>
   );
-};
-
-ExportModal.propTypes = {
-  taxonomyId: PropTypes.number.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ExportModal;

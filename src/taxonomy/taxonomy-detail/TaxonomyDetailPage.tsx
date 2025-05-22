@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -20,9 +19,9 @@ import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { useTaxonomyDetails } from '../data/apiHooks';
 import SystemDefinedBadge from '../system-defined-badge';
 
-const TaxonomyDetailPage = () => {
+const TaxonomyDetailPage: React.FC = () => {
   const intl = useIntl();
-  const { taxonomyId: taxonomyIdString } = useParams();
+  const { taxonomyId: taxonomyIdString } = useParams<{ taxonomyId: string }>();
   const taxonomyId = Number(taxonomyIdString);
 
   const {
