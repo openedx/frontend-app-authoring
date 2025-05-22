@@ -1,4 +1,4 @@
-import { TaxonomyListData, TaxonomyData } from '../data/types';
+import type { TaxonomyListData } from '../data/types';
 
 const taxonomyListMock: TaxonomyListData = {
   next: '',
@@ -20,7 +20,12 @@ const taxonomyListMock: TaxonomyListData = {
       visibleToAuthors: false,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
-    } as TaxonomyData,
+      exportId: 'CA',
+      tagsCount: 0,
+      allOrgs: true,
+      canTagObject: true,
+      orgs: [],
+    },
     {
       id: -1,
       name: 'Languages',
@@ -32,7 +37,12 @@ const taxonomyListMock: TaxonomyListData = {
       visibleToAuthors: true,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
-    } as TaxonomyData,
+      exportId: 'L',
+      tagsCount: 15,
+      allOrgs: true,
+      canTagObject: true,
+      orgs: [],
+    },
     {
       id: 1,
       name: 'Taxonomy',
@@ -44,7 +54,12 @@ const taxonomyListMock: TaxonomyListData = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
-    } as TaxonomyData,
+      exportId: 'T1',
+      tagsCount: 15,
+      allOrgs: false,
+      canTagObject: true,
+      orgs: ['org'],
+    },
     {
       id: 2,
       name: 'Taxonomy long long long long long long long long long long long long long long long long long long long',
@@ -56,7 +71,12 @@ const taxonomyListMock: TaxonomyListData = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
-    } as TaxonomyData,
+      exportId: 'T2',
+      tagsCount: 15,
+      allOrgs: false,
+      canTagObject: true,
+      orgs: ['org'],
+    },
   ],
 };
 
