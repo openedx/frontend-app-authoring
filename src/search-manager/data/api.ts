@@ -31,6 +31,8 @@ export enum PublishStatus {
   NeverPublished = 'never',
 }
 
+export const allPublishFilters: PublishStatus[] = Object.values(PublishStatus);
+
 /**
  * Get the content search configuration from the CMS.
  */
