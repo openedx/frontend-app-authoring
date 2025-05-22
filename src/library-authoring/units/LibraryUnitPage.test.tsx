@@ -106,12 +106,12 @@ describe('<LibraryUnitPage />', () => {
   it('can rename unit', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
-    const unitTitle = screen.getAllByRole(
+
+    const editUnitTitleButton = screen.getAllByRole(
       'button',
-      { name: mockGetContainerMetadata.containerData.displayName },
-    )[0];
-    fireEvent.click(unitTitle);
+      { name: /edit/i },
+    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editUnitTitleButton);
 
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
     axiosMock.onPatch(url).reply(200);
@@ -137,12 +137,12 @@ describe('<LibraryUnitPage />', () => {
   it('show error if renaming unit fails', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
-    const unitTitle = screen.getAllByRole(
+
+    const editUnitTitleButton = screen.getAllByRole(
       'button',
-      { name: mockGetContainerMetadata.containerData.displayName },
-    )[0];
-    fireEvent.click(unitTitle);
+      { name: /edit/i },
+    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editUnitTitleButton);
 
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
     axiosMock.onPatch(url).reply(400);
@@ -210,11 +210,11 @@ describe('<LibraryUnitPage />', () => {
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const componentTitle = screen.getAllByRole(
+    const editButton = screen.getAllByRole(
       'button',
-      { name: 'text block 0' },
-    )[0];
-    fireEvent.click(componentTitle);
+      { name: /edit/i },
+    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editButton);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();
@@ -244,11 +244,11 @@ describe('<LibraryUnitPage />', () => {
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const componentTitle = screen.getAllByRole(
+    const editButton = screen.getAllByRole(
       'button',
-      { name: 'text block 0' },
-    )[0];
-    fireEvent.click(componentTitle);
+      { name: /edit/i },
+    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editButton);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();

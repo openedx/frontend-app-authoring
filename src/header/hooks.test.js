@@ -45,7 +45,7 @@ describe('header utils', () => {
         librariesV2Enabled: true,
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123')).result.current;
-      expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Libraries' });
+      expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Library Updates' });
     });
   });
 

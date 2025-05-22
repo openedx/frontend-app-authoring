@@ -204,12 +204,12 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
 
   const { navigateTo } = useLibraryRoutes();
 
-  const openContainer = useCallback(() => {
+  const openContainer = useCallback((e?: React.MouseEvent) => {
     if (itemType === 'unit') {
       openUnitInfoSidebar(unitId);
       setUnitId(unitId);
       if (!componentPickerMode) {
-        navigateTo({ unitId });
+        navigateTo({ unitId, doubleClicked: (e?.detail || 0) > 1 });
       }
     }
   }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);

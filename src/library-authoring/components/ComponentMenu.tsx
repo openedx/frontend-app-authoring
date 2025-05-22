@@ -90,6 +90,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     });
   };
 
+  const handleEdit = useCallback(() => {
+    navigateTo({ componentId: usageKey });
+    openComponentInfoSidebar(usageKey);
+    openComponentEditor(usageKey);
+  }, [usageKey]);
+
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
     // This needs to run after all changes to url takes place to avoid conflicts.
@@ -119,7 +125,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}>
+        <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
           <FormattedMessage {...messages.menuEdit} />
         </Dropdown.Item>
         <Dropdown.Item onClick={updateClipboardClick}>
@@ -142,7 +148,13 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
-      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
+      {isConfirmingDelete && (
+        <ComponentDeleter
+          usageKey={usageKey}
+          isConfirmingDelete={isConfirmingDelete}
+          cancelDelete={cancelDelete}
+        />
+      )}
     </Dropdown>
   );
 };

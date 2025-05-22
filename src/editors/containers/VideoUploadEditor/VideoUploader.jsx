@@ -10,9 +10,9 @@ import { thunkActions } from '../../data/redux';
 import * as hooks from './hooks';
 import messages from './messages';
 
-const URLUploader = () => {
+const URLUploader = ({ onUpload }) => {
   const [textInputValue, setTextInputValue] = React.useState('');
-  const onURLUpload = hooks.onVideoUpload('selectedVideoUrl');
+  const onURLUpload = hooks.onVideoUpload('selectedVideoUrl', onUpload);
   const intl = useIntl();
   return (
     <div className="d-flex flex-column">
@@ -58,16 +58,16 @@ const URLUploader = () => {
   );
 };
 
-export const VideoUploader = ({ setLoading }) => {
+export const VideoUploader = ({ setLoading, onUpload, onClose }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
-  const goBack = hooks.useHistoryGoBack();
+  const goBack = onClose || hooks.useHistoryGoBack();
 
   const handleProcessUpload = ({ fileData }) => {
     dispatch(thunkActions.video.uploadVideo({
       supportedFiles: [fileData],
       setLoadSpinner: setLoading,
-      postUploadRedirect: hooks.onVideoUpload('selectedVideoId'),
+      postUploadRedirect: hooks.onVideoUpload('selectedVideoId', onUpload),
     }));
   };
 
@@ -85,14 +85,20 @@ export const VideoUploader = ({ setLoading }) => {
       <Dropzone
         accept={{ 'video/*': ['.mp4', '.mov'] }}
         onProcessUpload={handleProcessUpload}
-        inputComponent={<URLUploader />}
+        inputComponent={<URLUploader onUpload={onUpload} />}
       />
     </div>
   );
 };
 
+URLUploader.propTypes = {
+  onUpload: PropTypes.func,
+};
+
 VideoUploader.propTypes = {
   setLoading: PropTypes.func.isRequired,
+  onUpload: PropTypes.func,
+  onClose: PropTypes.func,
 };
 
 export default VideoUploader;

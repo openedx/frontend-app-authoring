@@ -1,6 +1,7 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { SearchField } from '@openedx/paragon';
+import { debounce } from 'lodash';
 import messages from './messages';
 import { useSearchContext } from './SearchManager';
 
@@ -17,10 +18,15 @@ const SearchKeywordsField: React.FC<{
   const defaultPlaceholder = usageKey ? messages.clearUsageKeyToSearch : messages.inputPlaceholder;
   const { placeholder = intl.formatMessage(defaultPlaceholder) } = props;
 
+  const handleSearch = React.useCallback(
+    debounce((term) => setSearchKeywords(term.trim()), 400),
+    [searchKeywords],
+  );// Perform search after 500ms
+
   return (
     <SearchField.Advanced
       onSubmit={setSearchKeywords}
-      onChange={setSearchKeywords}
+      onChange={handleSearch}
       onClear={() => setSearchKeywords('')}
       value={searchKeywords}
       className={props.className}
