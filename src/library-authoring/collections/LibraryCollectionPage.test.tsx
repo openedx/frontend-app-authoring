@@ -444,7 +444,7 @@ describe('<LibraryCollectionPage />', () => {
     );
     axiosMock.onPatch(collectionUrl).reply(200);
 
-    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Test Collection/i })).toBeInTheDocument();
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
 
     // Open Add content sidebar
