@@ -13,25 +13,20 @@ import initializeStore from '../../store';
 import { TaxonomyContext } from '../common/context';
 import ManageOrgsModal from './ManageOrgsModal';
 
-let store: any;
-
-const taxonomy = {
-  id: 1,
-  name: 'Test Taxonomy',
-  allOrgs: false,
-  orgs: ['org1', 'org2'],
-};
-
-const orgs = ['org1', 'org2', 'org3', 'org4', 'org5'];
-
+// Use hardcoded mock implementations to avoid variable hoisting issues
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
-  getTaxonomy: jest.fn().mockResolvedValue(taxonomy),
+  getTaxonomy: jest.fn().mockResolvedValue({
+    id: 1,
+    name: 'Test Taxonomy',
+    allOrgs: false,
+    orgs: ['org1', 'org2'],
+  }),
 }));
 
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
-  getOrganizations: jest.fn().mockResolvedValue(orgs),
+  getOrganizations: jest.fn().mockResolvedValue(['org1', 'org2', 'org3', 'org4', 'org5']),
 }));
 
 const mockUseManageOrgsMutate = jest.fn();
@@ -43,6 +38,16 @@ jest.mock('./data/api', () => ({
     mutateAsync: mockUseManageOrgsMutate,
   })),
 }));
+
+let store: any;
+
+// Define mockTaxonomy after the jest.mock calls for use in the component and test assertions
+const mockTaxonomy = {
+  id: 1,
+  name: 'Test Taxonomy',
+  allOrgs: false,
+  orgs: ['org1', 'org2'],
+};
 
 const mockSetToastMessage = jest.fn();
 const mockSetAlertProps = jest.fn();
@@ -64,7 +69,7 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ onClose }) => (
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ManageOrgsModal taxonomyId={taxonomy.id} isOpen onClose={onClose} />
+          <ManageOrgsModal taxonomyId={mockTaxonomy.id} isOpen onClose={onClose} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
@@ -150,7 +155,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         orgs: ['org1', 'org3'],
         allOrgs: false,
       });
@@ -173,7 +178,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         allOrgs: true,
       });
     });
@@ -204,7 +209,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         allOrgs: false,
         orgs: [],
       });
