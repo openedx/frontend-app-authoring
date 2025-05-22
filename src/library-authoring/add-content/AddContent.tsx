@@ -88,7 +88,6 @@ const AddContentView = ({
 }: AddContentViewProps) => {
   const intl = useIntl();
   const {
-    collectionId,
     componentPicker,
     unitId,
   } = useLibraryContext();
@@ -132,35 +131,51 @@ const AddContentView = ({
   const extraFilter = unitId ? ['NOT block_type = "unit"', 'NOT type = "collections"'] : undefined;
   const visibleTabs = unitId ? [LibraryContentTypes.components] : undefined;
 
+  /** List container content types that should be displayed based on current path */
+  const visibleContentTypes = useMemo(() => {
+    if (insideCollection) {
+      // except for add collection button, show everthing.
+      return [
+        libraryContentButtonData,
+        sectionButtonData,
+        subsectionButtonData,
+        unitButtonData,
+      ];
+    }
+    if (insideUnit) {
+      // Only show libraryContentButton
+      return [libraryContentButtonData];
+    }
+    if (insideSection) {
+      // Should only allow adding subsections
+      return [subsectionButtonData];
+    }
+    if (insideSubsection) {
+      // Should only allow adding units
+      return [unitButtonData];
+    }
+    // except for libraryContentButton, show everthing.
+    return [
+      collectionButtonData,
+      sectionButtonData,
+      subsectionButtonData,
+      unitButtonData,
+    ];
+  }, [insideCollection, insideUnit, insideSection, insideSubsection]);
+
   return (
     <>
-      {((collectionId && insideCollection) || (unitId && insideUnit)) && componentPicker && (
+      {visibleContentTypes.map((contentType) => (
+        <AddContentButton contentType={contentType} onCreateContent={onCreateContent} />
+      ))}
+      {componentPicker && visibleContentTypes.includes(libraryContentButtonData) && (
         /// Show the "Add Library Content" button for units and collections
-        <>
-          <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
-          <PickLibraryContentModal
-            isOpen={isAddLibraryContentModalOpen}
-            onClose={closeAddLibraryContentModal}
-            extraFilter={extraFilter}
-            visibleTabs={visibleTabs}
-          />
-        </>
-      )}
-      {!insideCollection && !insideUnit && !insideSubsection && !insideSection && (
-        // Doesn't show the "Collection" button if we are in a unit or collection
-        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
-      )}
-      {!(insideUnit || insideSubsection || insideSection) && (
-        // Doesn't show the "Section" button if we are in a unit or section or subsection
-        <AddContentButton contentType={sectionButtonData} onCreateContent={onCreateContent} />
-      )}
-      {!(insideSubsection || insideUnit) && (
-        // Doesn't show the "Subsection" button if we are in a unit or Subsection
-        <AddContentButton contentType={subsectionButtonData} onCreateContent={onCreateContent} />
-      )}
-      {!(insideUnit || insideSection) && (
-        // Doesn't show the "Unit" button if we are in a unit or section
-        <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
+        <PickLibraryContentModal
+          isOpen={isAddLibraryContentModalOpen}
+          onClose={closeAddLibraryContentModal}
+          extraFilter={extraFilter}
+          visibleTabs={visibleTabs}
+        />
       )}
       <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
