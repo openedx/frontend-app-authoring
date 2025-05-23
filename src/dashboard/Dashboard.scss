@@ -343,17 +343,21 @@
 }
 
 .ai-suggestion-item {
-  background: #faeef3;
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
+  background: #faf3f6;
+  border-radius: 8px;
+  border: 1px solid #eec5d6;
+  padding: 0.25rem 0.75rem;
   margin-bottom: 0;
   box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
   font-size: 0.95rem;
   color: #4b4b4b;
-  position: relative;
+//   position: relative;
+//   display: flex;
+//   align-items: flex-start;
+//   min-height: 60px;
   display: flex;
-  align-items: flex-start;
-  min-height: 60px;
+  align-items: center;
+  min-height: 48px;
 }
 
 .todo-list {
@@ -364,8 +368,9 @@
 
 .todo-item {
   background: #fff;
-  border-radius: 12px;
-  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #928f8f;
+  padding: 0.25rem 0.75rem;
   margin-bottom: 0;
   box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
   font-size: 0.95rem;

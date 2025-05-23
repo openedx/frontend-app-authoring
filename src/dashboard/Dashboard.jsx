@@ -10,6 +10,7 @@ import {
   MenuBook, Groups, LibraryBooks, Assessment,
   DragIndicator,
   FilterList,
+  RadioButtonUnchecked,
 } from '@openedx/paragon/icons';
 import './Dashboard.scss';
 import {
@@ -414,7 +415,7 @@ const Dashboard = () => {
       <div className="dashboard-sidebar">
         <Card className="sidebar-card">
           <h4 className="card-header">Titan AI suggestion</h4>
-          <Card.Section className="card-section">
+          <Card.Section className="card-section temp-flow">
             {aiSuggestions.length > 0 ? (
               <div className="card-list ai-suggestion-list">
                 {aiSuggestions.map((suggestion) => (
@@ -433,7 +434,18 @@ const Dashboard = () => {
             {dashboardData.todoList.length > 0 ? (
               <div className="card-list todo-list">
                 {dashboardData.todoList.map((todo) => (
-                  <div className="todo-item" key={`todo-${todo}`}>{todo}</div>
+                  <div className="todo-item" key={`todo-${todo}`}>
+                    <Icon
+                      src={RadioButtonUnchecked}
+                      style={{
+                        marginRight: '0.75rem',
+                        color: '#454545',
+                        minWidth: 22,
+                        minHeight: 22,
+                      }}
+                    />
+                    {todo}
+                  </div>
                 ))}
               </div>
             ) : (
