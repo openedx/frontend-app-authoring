@@ -257,6 +257,9 @@ const Dashboard = () => {
     return <div>Error loading dashboard data</div>;
   }
 
+  // Provide default suggestions if none are present
+  const aiSuggestions = dashboardData.titanAISuggestions;
+
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-main-content">
@@ -412,12 +415,12 @@ const Dashboard = () => {
         <Card className="sidebar-card">
           <h4 className="card-header">Titan AI suggestion</h4>
           <Card.Section className="card-section">
-            {dashboardData.titanAISuggestions.length > 0 ? (
-              <ul className="card-list">
-                {dashboardData.titanAISuggestions.map((suggestion) => (
-                  <li key={`suggestion-${suggestion}`}>{suggestion}</li>
+            {aiSuggestions.length > 0 ? (
+              <div className="card-list ai-suggestion-list">
+                {aiSuggestions.map((suggestion) => (
+                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`}>{suggestion}</div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className="text-muted">No suggestions yet.</p>
             )}
@@ -428,11 +431,11 @@ const Dashboard = () => {
           <h4 className="card-header">Todo List</h4>
           <Card.Section className="card-section temp-flow">
             {dashboardData.todoList.length > 0 ? (
-              <ul className="card-list">
+              <div className="card-list todo-list">
                 {dashboardData.todoList.map((todo) => (
-                  <li key={`todo-${todo}`}>{todo}</li>
+                  <div className="todo-item" key={`todo-${todo}`}>{todo}</div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className="text-muted">No tasks added.</p>
             )}

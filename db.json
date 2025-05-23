@@ -43,7 +43,15 @@
         }
       ]
     },
-    "titanAISuggestions": [],
+    "titanAISuggestions": [
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring."
+    ],
     "todoList": [
       "You have no course expiring.",
       "You are not registered to attend any online class.",
