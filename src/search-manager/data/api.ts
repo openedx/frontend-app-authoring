@@ -288,6 +288,8 @@ export async function fetchSearchResults({
   // The second query is to get the possible values for the "block types" filter
   if (!skipBlockTypeFetch) {
     queries.push({
+      // We send search keywords so that the search results coincide with the filter counts.
+      q: searchKeywords,
       indexUid: indexName,
       facets: ['block_type', 'content.problem_types', 'publish_status'],
       filter: [
