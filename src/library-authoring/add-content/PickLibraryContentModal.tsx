@@ -48,6 +48,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   const {
     libraryId,
     collectionId,
+    sectionId,
     unitId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
      * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
@@ -56,8 +57,8 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
-  if (!(collectionId || unitId) || !ComponentPicker) {
-    throw new Error('collectionId/unitId and componentPicker are required');
+  if (!(collectionId || unitId || sectionId) || !ComponentPicker) {
+    throw new Error('collectionId/sectionId/unitId and componentPicker are required');
   }
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);

@@ -5,7 +5,7 @@ import {
   Container,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
@@ -13,59 +13,18 @@ import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import ErrorAlert from '../../generic/alert-error';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
-import { ToastContext } from '../../generic/toast-context';
 import Header from '../../header';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext,
 } from '../common/context/SidebarContext';
-import { useContainer, useUpdateContainer, useContentLibrary } from '../data/apiHooks';
+import { useContainer, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
-
-interface EditableTitleProps {
-  unitId: string;
-}
-
-const EditableTitle = ({ unitId }: EditableTitleProps) => {
-  const intl = useIntl();
-
-  const { readOnly } = useLibraryContext();
-
-  const { data: container } = useContainer(unitId);
-
-  const updateMutation = useUpdateContainer(unitId);
-  const { showToast } = useContext(ToastContext);
-
-  const handleSaveDisplayName = async (newDisplayName: string) => {
-    try {
-      await updateMutation.mutateAsync({
-        displayName: newDisplayName,
-      });
-      showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
-    } catch (err) {
-      showToast(intl.formatMessage(messages.updateContainerErrorMsg));
-      throw err;
-    }
-  };
-
-  // istanbul ignore if: this should never happen
-  if (!container) {
-    return null;
-  }
-
-  return (
-    <InplaceTextEditor
-      onSave={handleSaveDisplayName}
-      text={container.displayName}
-      readOnly={readOnly}
-    />
-  );
-};
+import { ContainerEditableTitle } from '../containers';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -223,7 +182,7 @@ export const LibraryUnitPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<EditableTitle unitId={unitId} />} />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={unitId} />} />}
               headerActions={<HeaderActions />}
               breadcrumbs={breadcrumbs}
               hideBorder

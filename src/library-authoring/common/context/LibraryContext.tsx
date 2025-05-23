@@ -33,6 +33,8 @@ export type LibraryContextData = {
   setComponentId: (componentId?: string) => void;
   unitId: string | undefined;
   setUnitId: (unitId?: string) => void;
+  sectionId: string | undefined;
+  setSectionId: (sectionId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // Additional filtering
@@ -117,17 +119,21 @@ export const LibraryProvider = ({
     collectionId: urlCollectionId,
     componentId: urlComponentId,
     unitId: urlUnitId,
+    sectionId: urlSectionId,
     selectedItemId: urlSelectedItemId,
   } = params;
-  const selectedItemIdIsUnit = !!urlSelectedItemId?.startsWith('lct:');
+  const selectedItemIdIsContainer = !!urlSelectedItemId?.startsWith('lct:');
   const [componentId, setComponentId] = useState(
     skipUrlUpdate ? undefined : urlComponentId,
   );
   const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsContainer ? urlSelectedItemId : undefined),
   );
   const [unitId, setUnitId] = useState(
-    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
+  const [sectionId, setSectionId] = useState(
+    skipUrlUpdate ? undefined : urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
   );
 
   const context = useMemo<LibraryContextData>(() => {
@@ -138,6 +144,8 @@ export const LibraryProvider = ({
       setCollectionId,
       unitId,
       setUnitId,
+      sectionId,
+      setSectionId,
       componentId,
       setComponentId,
       readOnly,
