@@ -12,11 +12,11 @@ module.exports = createConfig(
       'template-curly-spacing': 'off',
       'react-hooks/exhaustive-deps': 'off',
       'no-restricted-exports': 'off',
-      // There is no reason to disallow this syntax anymore; we don't use regenerator-runtime in new browsers
       'no-restricted-syntax': 'off',
+
+      'linebreak-style': ['error', 'unix'],
     },
     settings: {
-      // Import URLs should be resolved using aliases
       'import/resolver': {
         webpack: {
           config: path.resolve(__dirname, 'webpack.dev.config.js'),
