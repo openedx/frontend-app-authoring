@@ -143,19 +143,27 @@
     align-items: center;
     font-size: small;
     gap: 40px;
+  }
 
-    span {
+  .section-collapsible-header-action-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #000000;
+    font-variant-numeric: lining-nums tabular-nums;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+
+    p{
+      width: 20px;
+      margin: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      color: #000000;
-      font-variant-numeric: lining-nums tabular-nums;
-      font-family: Inter, sans-serif;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 28px;
+      align-self: center;
     }
   }
 
@@ -168,7 +176,7 @@
   }
 
   .section-collapsible-item {
-    margin-right: -24px;
+    margin-right: -36px;
   }
 
   .section-collapsible-item-body {
@@ -272,4 +280,26 @@
   & .pgn__card-header-content {
     margin-top: 1.5rem !important;
   }
+}
+
+.open-section-rounded {
+  border: .5px solid rgb(0 0 0 / .15);
+
+  &.is-open {
+    &:not(:first-child) {
+      border-radius: 8px;
+    }
+
+    border-radius: 8px;
+  }
+}
+
+.closed-section-rounded-top {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.closed-section-rounded-bottom {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
 }
