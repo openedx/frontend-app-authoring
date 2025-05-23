@@ -148,11 +148,13 @@ const AddContentView = ({
     }
     if (insideSection) {
       // Should only allow adding subsections
-      return [subsectionButtonData];
+      throw new Error('Not implemented');
+      // return [subsectionButtonData];
     }
     if (insideSubsection) {
       // Should only allow adding units
-      return [unitButtonData];
+      throw new Error('Not implemented');
+      // return [unitButtonData];
     }
     // except for libraryContentButton, show everthing.
     return [
@@ -166,7 +168,11 @@ const AddContentView = ({
   return (
     <>
       {visibleContentTypes.map((contentType) => (
-        <AddContentButton contentType={contentType} onCreateContent={onCreateContent} />
+        <AddContentButton
+          key={contentType.blockType}
+          contentType={contentType}
+          onCreateContent={onCreateContent}
+        />
       ))}
       {componentPicker && visibleContentTypes.includes(libraryContentButtonData) && (
         /// Show the "Add Library Content" button for units and collections
