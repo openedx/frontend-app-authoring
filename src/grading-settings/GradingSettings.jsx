@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 import { CheckCircle, Warning, Add as IconAdd } from '@openedx/paragon/icons';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';
 import { RequestStatus } from '../data/constants';
@@ -138,12 +139,22 @@ const GradingSettings = ({ intl, courseId }) => {
             >
               <Layout.Element>
                 <article>
-                  <SubHeader
-                    title={intl.formatMessage(messages.headingTitle)}
-                    subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    contentTitle={intl.formatMessage(messages.policy)}
-                    description={intl.formatMessage(messages.policiesDescription)}
-                  />
+                  <PluginSlot
+                    id="grading_header_plugin_slot"
+                    pluginProps={{
+                      contentTitle: intl.formatMessage(messages.policy),
+                      description: intl.formatMessage(messages.policiesDescription),
+                    }}
+                  >
+                    <SubHeader
+                      title={intl.formatMessage(messages.headingTitle)}
+                      subtitle={intl.formatMessage(messages.headingSubtitle)}
+                      contentTitle={intl.formatMessage(messages.policy)}
+                      description={intl.formatMessage(
+                        messages.policiesDescription,
+                      )}
+                    />
+                  </PluginSlot>
                   <section>
                     <GradingScale
                       gradeCutoffs={gradeCutoffs}
@@ -174,10 +185,18 @@ const GradingSettings = ({ intl, courseId }) => {
                     </section>
                   )}
                   <section>
-                    <SectionSubHeader
-                      title={intl.formatMessage(messages.gradingRulesPoliciesSectionTitle)}
-                      description={intl.formatMessage(messages.gradingRulesPoliciesSectionDescription)}
-                    />
+                    <PluginSlot
+                      id="grading_section_sub_header_plugin_slot"
+                      pluginProps={{
+                        title: intl.formatMessage(messages.gradingRulesPoliciesSectionTitle),
+                        description: intl.formatMessage(messages.gradingRulesPoliciesSectionDescription),
+                      }}
+                    >
+                      <SectionSubHeader
+                        title={intl.formatMessage(messages.gradingRulesPoliciesSectionTitle)}
+                        description={intl.formatMessage(messages.gradingRulesPoliciesSectionDescription)}
+                      />
+                    </PluginSlot>
                     <DeadlineSection
                       setShowSavePrompt={setShowSavePrompt}
                       gracePeriod={gracePeriod}
@@ -186,14 +205,22 @@ const GradingSettings = ({ intl, courseId }) => {
                     />
                   </section>
                   <section>
-                    <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
-                      <h2 className="lead">
-                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                      </h2>
-                      <span className="small text-gray-700">
-                        {intl.formatMessage(messages.assignmentTypeSectionDescription)}
-                      </span>
-                    </header>
+                    <PluginSlot
+                      id="grading_assignment_section_sub_header_plugin_slot"
+                      pluginProps={{
+                        title: intl.formatMessage(messages.assignmentTypeSectionTitle),
+                        description: intl.formatMessage(messages.assignmentTypeSectionDescription),
+                      }}
+                    >
+                      <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
+                        <h2 className="lead">
+                          {intl.formatMessage(messages.assignmentTypeSectionTitle)}
+                        </h2>
+                        <span className="small text-gray-700">
+                          {intl.formatMessage(messages.assignmentTypeSectionDescription)}
+                        </span>
+                      </header>
+                    </PluginSlot>
                     <AssignmentSection
                       handleRemoveAssignment={handleRemoveAssignment}
                       setShowSavePrompt={setShowSavePrompt}
