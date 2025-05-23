@@ -270,7 +270,7 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Overview Cards */}
+        {/* Overview Section */}
         <div className="overview-section">
           <div className="overview-header">
             <h1>Overview</h1>
@@ -282,92 +282,32 @@ const Dashboard = () => {
             />
           </div>
           <div className="overview-grid">
-            {/* <div>
-              <Card className="overview-card">
-                <h4 className="card-header">Quick Actions</h4>
-                <Card.Section className="card-section">
-                  <ul className="card-list">
-                    {dashboardData.quickActions.map((action) => (
-                      <li key={`quick-action-${action}`}>{action}</li>
-                    ))}
-                  </ul>
-                </Card.Section>
-              </Card>
-
-              <Card className="overview-card">
-                <h4 className="card-header">Recent course</h4>
-                <Card.Section className="card-section">
-                  <ul className="card-list">
-                    {dashboardData.recentCourses.map((course) => (
-                      <li key={`recent-course-${course}`}>{course}</li>
-                    ))}
-                  </ul>
-                </Card.Section>
-              </Card>
-
-              <Card className="overview-card">
-                <h4 className="card-header">Notifications</h4>
-                <Card.Section className="card-section">
-                  {dashboardData.notifications.length > 0 ? (
-                    <ul className="card-list">
-                      {dashboardData.notifications.map((notification) => (
-                        <li key={`notification-${notification}`}>
-                          {notification}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-muted">No notifications yet.</p>
-                  )}
-                </Card.Section>
-              </Card>
-
-              <Card className="overview-card">
-                <h4 className="card-header">Upcoming Events</h4>
-                <Card.Section className="card-section">
-                  {dashboardData.upcomingEvents.length > 0 ? (
-                    <ul className="card-list">
-                      {dashboardData.upcomingEvents.map((event) => (
-                        <li key={`upcoming-event-${event}`}>{event}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-muted">No upcoming events.</p>
-                  )}
-                </Card.Section>
-              </Card>
-
-              <Card className="calendar-card">
-                <h4 className="card-header">
-                  Calendar - {dashboardData.calendar.date}
-                </h4>
-                <Card.Section className="card-section">
-                  <div className="calendar-events">
-                    {dashboardData.calendar.events.map((event) => (
-                      <div
-                        key={`calendar-event-${event.title}`}
-                        className="calendar-event"
-                      >
-                        {event.title}
-                        <br />
-                        <span className="event-time">{event.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </Card.Section>
-              </Card>
-            </div> */}
-            {dashboardData.widgets
-              .filter((widget) => widget.enabled)
-              .map((widget) => (
-                <WidgetCard
-                  key={widget.id}
-                  type={widget.type}
-                  title={widget.title}
-                  content={widget.content}
-                  styles={widget.styles}
-                />
-              ))}
+            <div className="overview-left">
+              {dashboardData.widgets
+                .filter(widget => widget.enabled && widget.position === 'left')
+                .map(widget => (
+                  <WidgetCard
+                    key={widget.id}
+                    type={widget.type}
+                    title={widget.title}
+                    content={widget.content}
+                    styles={widget.styles}
+                  />
+                ))}
+            </div>
+            <div className="overview-right">
+              {dashboardData.widgets
+                .filter(widget => widget.enabled && widget.position === 'right')
+                .map(widget => (
+                  <WidgetCard
+                    key={widget.id}
+                    type={widget.type}
+                    title={widget.title}
+                    content={widget.content}
+                    styles={widget.styles}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       </div>
