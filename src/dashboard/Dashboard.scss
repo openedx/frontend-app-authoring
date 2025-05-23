@@ -128,8 +128,8 @@
 
     .sidebar-card {
       margin-bottom: 1rem;
-      height: 20rem;
-      // overflow: auto;
+      height: 30rem;
+      overflow: auto;
       position: relative;
 
       .card-header {
@@ -141,10 +141,14 @@
         top: 0;
         z-index: 1;
       }
+      .ai-suggestion-list {
+        // max-height: 15.5rem;
+        // overflow-y: auto;
+      }
     }
 
     .card-list {
-      padding-left: 1rem;
+      // padding-left: 1rem;
       list-style-type: disc;
       font-size: 0.875rem;
     }
@@ -339,7 +343,7 @@
 }
 
 .ai-suggestion-item {
-  background: #fff;
+  background: #faeef3;
   border-radius: 12px;
   padding: 1rem 1.25rem;
   margin-bottom: 0;
