@@ -33,7 +33,7 @@ const CoursesFilterMenu = ({
       <Dropdown.Toggle
         alt="dropdown-toggle-menu-items"
         id={idProp}
-        variant="none"
+        variant="tertiary"
         className="dropdown-toggle-menu-items"
         data-testid={idProp}
       >

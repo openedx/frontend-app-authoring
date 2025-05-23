@@ -13,13 +13,13 @@
   flex-grow: 1;
 }
 
-.main-content {
+.dashboard-main-content {
   flex: 1;
   padding: 20px;
   padding-top: 0;
   box-sizing: border-box;
   overflow: auto;
-  background-color: white;
+  background-color: var(--bg-body);
 }
 
 .card-stack>*:not(:last-child) {
@@ -40,30 +40,14 @@
     display: flex;
     gap: 2rem;
     margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
   }
 
   .metric-card {
     flex: 1;
     padding: 1rem;
+    color: var(--text-white);
 
-    .metric-card-content {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-
-      .metric-text {
-        text-align: left;
-
-        .metric-value {
-          font-size: 1.125rem;
-          font-weight: 600;
-        }
-
-        .metric-label {
-          font-size: 0.875rem;
-        }
-      }
-    }
   }
 
   .overview-section {
@@ -76,9 +60,18 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
+      background-color: var(--bg-surface);
+      padding: 0.5rem;
+      border-radius: 8px;
 
       h1 {
         margin-bottom: 0;
+        font-size: larger;
+        font-style: normal;
+      }
+
+      .text-primary {
+        color: var(--text-primary);
       }
     }
 
@@ -86,22 +79,6 @@
       display: grid;
       gap: 2rem;
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .overview-card {
-      height: 25rem;
-      overflow: auto;
-      position: relative;
-
-      .card-header {
-        border-bottom: 1px solid #eaeaea;
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
-        background-color: white;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-      }
     }
 
     .calendar-card {
@@ -138,12 +115,12 @@
     }
   }
 
-  .sidebar {
+  .dashboard-sidebar {
     width: 300px;
-    border-left: 1px solid #eaeaea;
-    padding-left: 2rem;
+    // border-left: 1px solid var(--primary);
+    // padding-left: 1rem;
     z-index: auto;
-    background-color: white;
+    background-color: var(--bg-body);
 
     .sidebar-card {
       margin-bottom: 1rem;
@@ -152,10 +129,10 @@
       position: relative;
 
       .card-header {
-        border-bottom: 1px solid #eaeaea;
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 0.5rem;
         margin-bottom: 0.5rem;
-        background-color: white;
+        background-color: var(--bg-surface);
         position: sticky;
         top: 0;
         z-index: 1;
@@ -182,7 +159,7 @@
     .sidebar {
       width: 100%;
       border-left: none;
-      border-top: 1px solid #eaeaea;
+      border-top: 1px solid var(--border-color);
       padding-left: 0;
       padding-top: 2rem;
     }
@@ -249,11 +226,81 @@
 }
 
 .widget-selection-card.selected {
-  border: 2px solid #1976d2 !important;
-  background: #e3f2fd !important;
+  border: 2px solid var(--border-color) !important;
+  background: var(--primary-light) !important;
   box-shadow: 0 0 0 2px #1976d233;
 }
 
 .temp-flow {
   overflow: auto;
+}
+
+.metrics-container .metric-card:nth-child(1) {
+  background-color: var(--primary);
+}
+.metrics-container .metric-card:nth-child(2) {
+  background-color: var(--secondary);
+}
+.metrics-container .metric-card:nth-child(3) {
+  background-color: var(--primary);
+}
+.metrics-container .metric-card:nth-child(4) {
+  background-color: var(--secondary);
+}
+
+.metric-card-modern {
+  // box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  min-height: 5rem;
+
+  &:hover {
+    .metric-icon-modern .pgn__icon {
+      opacity: 1;
+    }
+  }
+}
+
+.metric-card-content-modern {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.metric-text-modern {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.metric-value-modern {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.1;
+}
+
+.metric-label-modern {
+  font-size: 1rem;
+  color: var(--text-white);
+  // margin-top: 0.25rem;
+  font-weight: 400;
+}
+
+.metric-icon-modern {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.metric-icon-modern .pgn__icon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.25;
+  color: var(--text-white);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
