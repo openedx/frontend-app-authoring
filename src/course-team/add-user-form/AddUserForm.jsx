@@ -24,8 +24,9 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
       >
         {({ handleSubmit, values }) => (
           <>
+            <h3 className="form-title">{intl.formatMessage(messages.formTitle)}</h3>
+            <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '0 0 0 0' }} />
             <Form.Group size="sm" className="form-field">
-              <h3 className="form-title">{intl.formatMessage(messages.formTitle)}</h3>
               <Form.Label size="sm" className="form-label font-weight-bold">
                 {intl.formatMessage(messages.formLabel)}
               </Form.Label>
