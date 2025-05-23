@@ -248,29 +248,25 @@ const Dashboard = () => {
             icon={MenuBook}
             value={dashboardData.metrics.courses}
             label="Courses"
-            bgColor="#ffe4ef"
-            iconBg="#ff4d92"
+            type="courses"
           />
           <MetricCard
             icon={Groups}
             value={dashboardData.metrics.students}
             label="Students"
-            bgColor="#fffbe7"
-            iconBg="#ffb200"
+            type="students"
           />
           <MetricCard
             icon={Assessment}
             value={dashboardData.metrics.enrollments}
             label="Enrollments"
-            bgColor="#eaffef"
-            iconBg="#22c55e"
+            type="enrollments"
           />
           <MetricCard
             icon={LibraryBooks}
             value={dashboardData.metrics.submissions}
             label="Submissions"
-            bgColor="#e6f8ff"
-            iconBg="#1cb0f6"
+            type="submissions"
           />
         </div>
 

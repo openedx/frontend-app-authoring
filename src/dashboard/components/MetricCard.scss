@@ -87,7 +87,6 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 18px;
-
   svg {
     width: 24px;
     height: 24px;
@@ -113,6 +112,35 @@
   color: #222;
   font-weight: 400;
   opacity: 0.85;
+}
+
+// Type-specific backgrounds (high specificity, at the bottom)
+.metric-card-visual.metric-card-courses {
+  background: #ffe4ef !important;
+}
+.metric-card-visual.metric-card-courses .metric-card-visual-icon {
+  background: #ff4d92 !important;
+}
+
+.metric-card-visual.metric-card-students {
+  background: #fffbe7 !important;
+}
+.metric-card-visual.metric-card-students .metric-card-visual-icon {
+  background: #ffb200 !important;
+}
+
+.metric-card-visual.metric-card-enrollments {
+  background: #eaffef !important;
+}
+.metric-card-visual.metric-card-enrollments .metric-card-visual-icon {
+  background: #22c55e !important;
+}
+
+.metric-card-visual.metric-card-submissions {
+  background: #e6f8ff !important;
+}
+.metric-card-visual.metric-card-submissions .metric-card-visual-icon {
+  background: #1cb0f6 !important;
 }
 
 // Colors will be handled by the metrics-container nth-child selectors in Dashboard.scss 

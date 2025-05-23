@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import { Card, Icon } from '@openedx/paragon';
 import './MetricCard.scss';
 
-const MetricCard = ({
-  icon, value, label, bgColor, iconBg,
-}) => (
-  <Card className="metric-card-visual" style={{ background: bgColor }}>
+const MetricCard = ({ icon, value, label, type }) => (
+  <Card className={`metric-card-visual metric-card-${type}`}>
     <div className="metric-card-visual-content">
-      <div className="metric-card-visual-icon" style={{ background: iconBg }}>
+      <div className="metric-card-visual-icon">
         <Icon src={icon} />
       </div>
       <div className="metric-card-visual-text">
@@ -23,8 +21,7 @@ MetricCard.propTypes = {
   icon: PropTypes.elementType.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   label: PropTypes.string.isRequired,
-  bgColor: PropTypes.string.isRequired,
-  iconBg: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['courses', 'students', 'enrollments', 'submissions']).isRequired,
 };
 
 export default MetricCard;
