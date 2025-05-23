@@ -158,22 +158,54 @@ const Dashboard = () => {
     });
   };
 
-  // Restore handleDragEnd for column-based reordering
-  const handleDragEnd = (event, position) => {
+  const handleDragOver = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) { return; }
+
+    const activeWidget = tempOrderedWidgets.find(w => w.id === active.id);
+    const overWidget = tempOrderedWidgets.find(w => w.id === over.id);
+
+    if (!activeWidget || !overWidget) { return; }
+
+    // If dragging to a different column
+    if (activeWidget.position !== overWidget.position) {
+      setTempOrderedWidgets(items => {
+        const updatedItems = items.map(widget => {
+          if (widget.id === active.id) {
+            return { ...widget, position: overWidget.position };
+          }
+          return widget;
+        });
+        return updatedItems;
+      });
+    }
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) { return; }
+
     setTempOrderedWidgets((items) => {
-      // Only reorder within the same column
-      const columnItems = items.filter(w => w.position === position);
-      const otherItems = items.filter(w => w.position !== position);
+      const activeWidget = items.find(w => w.id === active.id);
+      const overWidget = items.find(w => w.id === over.id);
+
+      if (!activeWidget || !overWidget) { return items; }
+
+      // Get all widgets in the target column
+      const columnItems = items.filter(w => w.position === overWidget.position);
+      const otherItems = items.filter(w => w.position !== overWidget.position);
+
       const oldIndex = columnItems.findIndex(item => item.id === active.id);
       const newIndex = columnItems.findIndex(item => item.id === over.id);
+
       if (oldIndex === -1 || newIndex === -1) { return items; }
+
       const reordered = [...columnItems];
       const [moved] = reordered.splice(oldIndex, 1);
       reordered.splice(newIndex, 0, moved);
-      // Merge reordered column back with other items, preserving order for other column
-      return position === 'left'
+
+      // Merge reordered column back with other items
+      return overWidget.position === 'left'
         ? [...reordered, ...otherItems]
         : [...otherItems, ...reordered];
     });
@@ -312,12 +344,13 @@ const Dashboard = () => {
         </ModalDialog.Header>
         <ModalDialog.Body>
           <div className="modal-widgets-grid">
-            {/* LEFT COLUMN */}
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
-              onDragEnd={event => handleDragEnd(event, 'left')}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
             >
+              {/* LEFT COLUMN */}
               <SortableContext
                 items={tempOrderedWidgets.filter(w => w.position === 'left').map(w => w.id)}
                 strategy={verticalListSortingStrategy}
@@ -335,13 +368,8 @@ const Dashboard = () => {
                     ))}
                 </div>
               </SortableContext>
-            </DndContext>
-            {/* RIGHT COLUMN */}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={event => handleDragEnd(event, 'right')}
-            >
+
+              {/* RIGHT COLUMN */}
               <SortableContext
                 items={tempOrderedWidgets.filter(w => w.position === 'right').map(w => w.id)}
                 strategy={verticalListSortingStrategy}
