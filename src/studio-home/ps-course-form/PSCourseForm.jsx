@@ -24,7 +24,6 @@ import IntroductionVideo from '../../schedule-and-details/introducing-section/in
 import { getStudioHomeData } from '../data/selectors';
 import { useCreateOrRerunCourse } from '../../generic/create-or-rerun-course/hooks';
 import { fetchStudioHomeData } from '../data/thunks';
-import TypeaheadDropdown from '../../editors/sharedComponents/TypeaheadDropdown';
 import { fetchCourseAppSettings } from '../../advanced-settings/data/thunks';
 import { videoTranscriptLanguages } from '../../editors/data/constants/video';
 import { LICENSE_TYPE } from '../../schedule-and-details/license-section/constants';
@@ -33,6 +32,7 @@ import LicenseSelector from '../../schedule-and-details/license-section/license-
 import LicenseCommonsOptions from '../../schedule-and-details/license-section/license-commons-options';
 import LicenseIcons from '../../schedule-and-details/license-section/license-icons';
 import licenseMessages from '../../schedule-and-details/license-section/messages';
+import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
 
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
@@ -415,7 +415,9 @@ const PSCourseForm = ({
                                                         <Nav.Item key={tab.key}>
                                                             <Nav.Link
                                                                 className={activeTab === tab.key ? 'active' : ''}
-                                                                onClick={() => setActiveTab(tab.key)}
+                                                                onClick={() => {
+                                                                    console.log('Edited Values:', editedValues);
+                                                                    setActiveTab(tab.key);}}
                                                             >
                                                                 <Icon className="icon" src={tab.icon} />
                                                                 <span>{tab.label}</span>
@@ -434,7 +436,7 @@ const PSCourseForm = ({
                                                                     <Form.Group>
                                                                         <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
                                                                         {createOrRerunOrganizations ? (
-                                                                            <TypeaheadDropdown
+                                                                            <CustomTypeaheadDropdown
                                                                                 readOnly={false}
                                                                                 name="organization"
                                                                                 value={editedValues.organization || ''}
