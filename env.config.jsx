@@ -321,6 +321,19 @@ const config = {
         },
       ],
     },
+    help_sidebar_classname_plugin_slot: {
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: "help-sidebar-classname",
+            type: DIRECT_PLUGIN,
+            priority: 1,
+            RenderWidget: () => {}
+          },
+        },
+      ],
+    },
     },
 };
 
