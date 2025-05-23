@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
-import {Stack} from '@openedx/paragon';
+import { Stack } from '@openedx/paragon';
 import TagsSidebarControls from '../../content-tags-drawer/tags-sidebar-controls';
 import Sidebar from '../../course-unit/sidebar';
 import LocationInfo from '../../course-unit/sidebar/LocationInfo';
