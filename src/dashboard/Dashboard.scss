@@ -314,3 +314,20 @@
   color: var(--text-white);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.modal-widgets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.modal-widgets-left,
+.modal-widgets-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .modal-widgets-grid {
+    grid-template-columns: 1fr;
+  }
+}

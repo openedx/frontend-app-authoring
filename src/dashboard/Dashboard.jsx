@@ -53,7 +53,6 @@ const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
     <div ref={setNodeRef} style={style}>
       <Card
         className={`widget-selection-card ${isSelected ? 'selected' : ''}`}
-        // Only allow selection on card click, not on drag handle
         onClick={onClick}
       >
         <Card.Section className="widget-selection-content" style={{ display: 'flex', alignItems: 'center' }}>
@@ -63,14 +62,12 @@ const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
               {...attributes}
               {...listeners}
               style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 8 }}
-              onClick={e => e.stopPropagation()}
               role="button"
               tabIndex={0}
               aria-label="Drag to reorder"
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  // Let dnd-kit handle keyboard drag
                 }
               }}
             >
@@ -108,7 +105,6 @@ const Dashboard = () => {
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
 
-  // dnd-kit sensors (must be before any early return)
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -162,35 +158,25 @@ const Dashboard = () => {
     });
   };
 
-  const handleDragEnd = (event) => {
+  // Restore handleDragEnd for column-based reordering
+  const handleDragEnd = (event, position) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setTempOrderedWidgets((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        // Create a new array with updated order values
-        return items.map((item, index) => {
-          if (item.id === active.id) {
-            // Set the dragged item's order to the new position
-            return { ...item, order: newIndex };
-          }
-
-          // Adjust orders of items between old and new positions
-          if (oldIndex < newIndex && index > oldIndex && index <= newIndex) {
-            // Moving down: decrease order of items between old and new positions
-            return { ...item, order: item.order - 1 };
-          }
-
-          if (oldIndex > newIndex && index >= newIndex && index < oldIndex) {
-            // Moving up: increase order of items between new and old positions
-            return { ...item, order: item.order + 1 };
-          }
-
-          return item;
-        }).sort((a, b) => a.order - b.order);
-      });
-    }
+    if (!over || active.id === over.id) { return; }
+    setTempOrderedWidgets((items) => {
+      // Only reorder within the same column
+      const columnItems = items.filter(w => w.position === position);
+      const otherItems = items.filter(w => w.position !== position);
+      const oldIndex = columnItems.findIndex(item => item.id === active.id);
+      const newIndex = columnItems.findIndex(item => item.id === over.id);
+      if (oldIndex === -1 || newIndex === -1) { return items; }
+      const reordered = [...columnItems];
+      const [moved] = reordered.splice(oldIndex, 1);
+      reordered.splice(newIndex, 0, moved);
+      // Merge reordered column back with other items, preserving order for other column
+      return position === 'left'
+        ? [...reordered, ...otherItems]
+        : [...otherItems, ...reordered];
+    });
   };
 
   const handleUpdateWidgets = async () => {
@@ -325,27 +311,56 @@ const Dashboard = () => {
           </ModalDialog.Title>
         </ModalDialog.Header>
         <ModalDialog.Body>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={tempOrderedWidgets.map((widget) => widget.id)}
-              strategy={verticalListSortingStrategy}
+          <div className="modal-widgets-grid">
+            {/* LEFT COLUMN */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={event => handleDragEnd(event, 'left')}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {tempOrderedWidgets.map((widget) => (
-                  <SortableWidgetCard
-                    key={widget.id}
-                    widget={widget}
-                    isSelected={tempSelectedWidgets.includes(widget.id)}
-                    onClick={() => handleWidgetSelection(widget.id)}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={tempOrderedWidgets.filter(w => w.position === 'left').map(w => w.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="modal-widgets-left">
+                  {tempOrderedWidgets
+                    .filter(widget => widget.position === 'left')
+                    .map(widget => (
+                      <SortableWidgetCard
+                        key={widget.id}
+                        widget={widget}
+                        isSelected={tempSelectedWidgets.includes(widget.id)}
+                        onClick={() => handleWidgetSelection(widget.id)}
+                      />
+                    ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+            {/* RIGHT COLUMN */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={event => handleDragEnd(event, 'right')}
+            >
+              <SortableContext
+                items={tempOrderedWidgets.filter(w => w.position === 'right').map(w => w.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="modal-widgets-right">
+                  {tempOrderedWidgets
+                    .filter(widget => widget.position === 'right')
+                    .map(widget => (
+                      <SortableWidgetCard
+                        key={widget.id}
+                        widget={widget}
+                        isSelected={tempSelectedWidgets.includes(widget.id)}
+                        onClick={() => handleWidgetSelection(widget.id)}
+                      />
+                    ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
         </ModalDialog.Body>
         <ModalDialog.Footer>
           <Button
