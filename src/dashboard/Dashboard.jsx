@@ -28,26 +28,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import WidgetCard from './components/WidgetCard';
-
-const MetricCard = ({ icon, value, label }) => (
-  <Card className="metric-card metric-card-modern">
-    <div className="metric-card-content-modern">
-      <div className="metric-text-modern">
-        <div className="metric-value-modern">{value}</div>
-        <div className="metric-label-modern">{label}</div>
-      </div>
-      <div className="metric-icon-modern">
-        <Icon src={icon} />
-      </div>
-    </div>
-  </Card>
-);
-
-MetricCard.propTypes = {
-  icon: PropTypes.elementType.isRequired,
-  value: PropTypes.number.isRequired,
-  label: PropTypes.string.isRequired,
-};
+import MetricCard from './components/MetricCard';
 
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
@@ -263,10 +244,34 @@ const Dashboard = () => {
       <div className="dashboard-main-content">
         {/* Top Metric Cards */}
         <div className="metrics-container">
-          <MetricCard icon={MenuBook} value={dashboardData.metrics.courses} label="Courses" />
-          <MetricCard icon={Groups} value={dashboardData.metrics.students} label="Students" />
-          <MetricCard icon={Assessment} value={dashboardData.metrics.enrollments} label="Enrollments" />
-          <MetricCard icon={LibraryBooks} value={dashboardData.metrics.submissions} label="Submissions" />
+          <MetricCard
+            icon={MenuBook}
+            value={dashboardData.metrics.courses}
+            label="Courses"
+            bgColor="#ffe4ef"
+            iconBg="#ff4d92"
+          />
+          <MetricCard
+            icon={Groups}
+            value={dashboardData.metrics.students}
+            label="Students"
+            bgColor="#fffbe7"
+            iconBg="#ffb200"
+          />
+          <MetricCard
+            icon={Assessment}
+            value={dashboardData.metrics.enrollments}
+            label="Enrollments"
+            bgColor="#eaffef"
+            iconBg="#22c55e"
+          />
+          <MetricCard
+            icon={LibraryBooks}
+            value={dashboardData.metrics.submissions}
+            label="Submissions"
+            bgColor="#e6f8ff"
+            iconBg="#1cb0f6"
+          />
         </div>
 
         {/* Overview Cards */}

@@ -20,6 +20,8 @@
   box-sizing: border-box;
   overflow: auto;
   background-color: var(--bg-body);
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .card-stack>*:not(:last-child) {
@@ -28,8 +30,10 @@
 
 .dashboard-wrapper {
   display: flex;
-  padding: 1rem;
+  padding: 2rem;
   gap: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 
   .main-content {
     flex: 1;
@@ -37,10 +41,10 @@
   }
 
   .metrics-container {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .metric-card {

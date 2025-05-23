@@ -1,0 +1,118 @@
+.metric-card-modern {
+  border-radius: 1rem;
+  border: none;
+  padding: 1.5rem 2rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  min-height: 5rem;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    .metric-icon-modern .pgn__icon {
+      opacity: 1;
+    }
+  }
+
+  .metric-card-content-modern {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .metric-text-modern {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .metric-value-modern {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-white);
+    line-height: 1.1;
+  }
+
+  .metric-label-modern {
+    font-size: 1rem;
+    color: var(--text-white);
+    font-weight: 400;
+  }
+
+  .metric-icon-modern {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .pgn__icon {
+      width: 48px;
+      height: 48px;
+      opacity: 0.25;
+      color: var(--text-white);
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}
+
+.metric-card-visual {
+  border-radius: 18px;
+  border: none;
+  box-shadow: none;
+  padding: 1.5rem 1.5rem 1.25rem 1.5rem;
+  min-width: 220px;
+  min-height: 150px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.metric-card-visual-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+}
+
+.metric-card-visual-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+  }
+}
+
+.metric-card-visual-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.metric-card-visual-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.25rem;
+}
+
+.metric-card-visual-label {
+  font-size: 1.05rem;
+  color: #222;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+// Colors will be handled by the metrics-container nth-child selectors in Dashboard.scss 
