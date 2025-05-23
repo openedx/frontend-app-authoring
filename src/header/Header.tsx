@@ -9,7 +9,6 @@ import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
 
-
 type ContainerPropsType = React.ComponentProps<typeof Container>;
 
 interface HeaderProps {
@@ -66,7 +65,6 @@ const Header = ({
 
   return (
     <>
-      {/* <PluginSlot id="header_plugin_slot"> */}
       <StudioHeader
         org={org}
         number={number}
@@ -84,7 +82,6 @@ const Header = ({
           onClose={closeSearchModal}
         />
       )}
-      {/* </PluginSlot> */}
     </>
   );
 };

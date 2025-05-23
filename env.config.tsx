@@ -1,7 +1,6 @@
 // This file contains configuration for plugins and environment variables.
 
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
-import CourseNavigationBar from './src/shared-components/CourseNavigationBar'; // Import the new component
 import CourseNavigationSidebar from './src/shared-components/CourseNavigationSidebar';
 import { SettingsApplications } from '@openedx/paragon/icons';
 import { Icon } from '@openedx/paragon';
@@ -32,20 +31,6 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: () => <div>This is Footer</div>, // Render "This is Footer" text
-                    },
-                },
-            ],
-        },
-        course_outline_plugin_slot: { // Use the standard plugin structure
-            plugins: [
-                {
-                    op: PLUGIN_OPERATIONS.Insert, // Operation to insert the widget
-                    widget: {
-                        id: 'course-nav-bar',
-                        type: DIRECT_PLUGIN,
-                        priority: 1,
-                        // Render the CourseNavigationBar component
-                        RenderWidget: () => <CourseNavigationBar />,
                     },
                 },
             ],

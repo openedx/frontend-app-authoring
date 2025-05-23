@@ -23,6 +23,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
@@ -54,6 +55,7 @@ import {
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
+import OutlineSidebar from './outline-sidebar/OutlineSidebar';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -237,8 +239,8 @@ const CourseOutline = ({ courseId }) => {
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
 
-      <Container size="xl" className="px-4">
-        <section className="course-outline-container mb-4 mt-5">
+      <Container size="xl" className="ml-2">
+        <section className="course-outline-container mb-4">
           <PageAlerts
             courseId={courseId}
             notificationDismissUrl={notificationDismissUrl}
@@ -268,21 +270,23 @@ const CourseOutline = ({ courseId }) => {
               />
             ) : null}
           </TransitionReplace>
-          <SubHeader
-            title={intl.formatMessage(messages.headingTitle)}
-            subtitle={intl.formatMessage(messages.headingSubtitle)}
-            headerActions={(
-              <HeaderNavigations
-                isReIndexShow={isReIndexShow}
-                isSectionsExpanded={isSectionsExpanded}
-                headerNavigationsActions={headerNavigationsActions}
-                isDisabledReindexButton={isDisabledReindexButton}
-                hasSections={Boolean(sectionsList.length)}
-                courseActions={courseActions}
-                errors={errors}
-              />
-            )}
-          />
+          <PluginSlot id="sub_header_plugin_slot">
+            <SubHeader
+              title={intl.formatMessage(messages.headingTitle)}
+              subtitle={intl.formatMessage(messages.headingSubtitle)}
+              headerActions={(
+                <HeaderNavigations
+                  isReIndexShow={isReIndexShow}
+                  isSectionsExpanded={isSectionsExpanded}
+                  headerNavigationsActions={headerNavigationsActions}
+                  isDisabledReindexButton={isDisabledReindexButton}
+                  hasSections={Boolean(sectionsList.length)}
+                  courseActions={courseActions}
+                  errors={errors}
+                />
+              )}
+            />
+          </PluginSlot>
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
             md={[{ span: 9 }, { span: 3 }]}
@@ -293,13 +297,33 @@ const CourseOutline = ({ courseId }) => {
             <Layout.Element>
               <article>
                 <div>
-                  <section className="course-outline-section">
-                    <StatusBar
-                      courseId={courseId}
-                      isLoading={isLoading}
-                      statusBarData={statusBarData}
-                      openEnableHighlightsModal={openEnableHighlightsModal}
-                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+                  <section className="course-outline-section custom-outline-section">
+                    <PluginSlot
+                      id="view_live_button_slot"
+                      pluginProps={{
+                        courseId,
+                        isLoading,
+                        statusBarData,
+                        openEnableHighlightsModal,
+                        handleVideoSharingOptionChange,
+                      }}
+                    >
+                      <StatusBar
+                        courseId={courseId}
+                        isLoading={isLoading}
+                        statusBarData={statusBarData}
+                        openEnableHighlightsModal={openEnableHighlightsModal}
+                        handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+                      />
+                    </PluginSlot>
+                    <PluginSlot
+                      id="statusbar_content_plugin_slot"
+                      pluginProps={{
+                        onAddSection: handleNewSectionSubmit,
+                        onCollapseAll: headerNavigationsActions.handleExpandAll,
+                        isSectionsExpanded,
+                        handleExpandAll: headerNavigationsActions.handleExpandAll,
+                      }}
                     />
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
@@ -432,6 +456,9 @@ const CourseOutline = ({ courseId }) => {
                   </section>
                 </div>
               </article>
+            </Layout.Element>
+            <Layout.Element>
+              <OutlineSidebar courseId={courseId} />
             </Layout.Element>
           </Layout>
           <EnableHighlightsModal

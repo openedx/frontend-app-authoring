@@ -6,6 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { StudioFooter } from '@edx/frontend-component-footer';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Header from './header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
@@ -15,7 +16,6 @@ import { fetchStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();

@@ -1,4 +1,3 @@
-/* eslint-disable implicit-arrow-linebreak */
 import React, { useState } from 'react';
 import { Button } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
@@ -33,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ buttons, onNavigate, presentPath }) =
           <Button
             key={btn.path}
             variant="tertiary"
-            className={`sidebar-btn ${btn.path === presentPath ? 'pgn-btn-active' : ''}`}
+            className={`sidebar-btn ${btn.path === presentPath ? 'pgn-btn-active' : 'pgn-btn-inactive'}`}
             onClick={() => onNavigate(btn.path)}
           >
             <div className="btn-content">

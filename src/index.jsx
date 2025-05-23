@@ -16,7 +16,7 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import { loadThemeStyles } from 'utils/themeService';
+// import { loadThemeStyles } from 'utils/themeService';
 import MyCourses from 'my-courses/MyCourses';
 import CreateWidgets from 'widgets-create/CreateWidgets';
 import Dashboard from './dashboard/Dashboard';
@@ -37,16 +37,16 @@ import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
-import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 import './styles/global-overrides.scss';
+import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 
 const queryClient = new QueryClient();
 
-const App = ({ themeData }) => {
+const App = () => {
   useEffect(() => {
     if (process.env.HOTJAR_APP_ID) {
       try {
@@ -83,7 +83,7 @@ const App = ({ themeData }) => {
         />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-        <Route path="/new-course" element={<PSCourseForm />} />
+        <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}
@@ -115,7 +115,7 @@ const App = ({ themeData }) => {
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
-          <Head themeData={themeData} />
+          <Head />
           <RouterProvider router={router} />
         </QueryClientProvider>
       </ToastProvider>
@@ -124,9 +124,9 @@ const App = ({ themeData }) => {
 };
 
 subscribe(APP_READY, async () => {
-  const themeData = await loadThemeStyles();
+  // const themeData = await loadThemeStyles();
   ReactDOM.render(
-    (<App themeData={themeData} />),
+    (<App />),
     document.getElementById('root'),
   );
 });

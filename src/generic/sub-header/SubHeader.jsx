@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ActionRow } from '@openedx/paragon';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const SubHeader = ({
   title,
@@ -35,10 +36,18 @@ const SubHeader = ({
       )}
     </header>
     {contentTitle && withSubHeaderContent && (
-      <header className="sub-header-content">
-        <h2 className="sub-header-content-title">{contentTitle}</h2>
-        <span className="small text-gray-700">{description}</span>
-      </header>
+      <PluginSlot
+        id="grading_header_styleplugin_slot"
+        pluginProps={{
+          contentTitle,
+          description,
+        }}
+      >
+        <header className="sub-header-content">
+          <h2 className="sub-header-content-title">{contentTitle}</h2>
+          <span className="small text-gray-700">{description}</span>
+        </header>
+      </PluginSlot>
     )}
     {instruction && (
       <p className="sub-header-instructions mb-4">{instruction}</p>

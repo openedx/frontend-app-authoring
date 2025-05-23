@@ -26,10 +26,7 @@ import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
-import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
-import CourseNavigationSidebar from './shared-components/CourseNavigationSidebar';
-// import CourseNavigationBar from './shared-components/CourseNavigationBar.jsx';
-
+import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
  *
@@ -46,21 +43,22 @@ import CourseNavigationSidebar from './shared-components/CourseNavigationSidebar
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-const CoursePageLayout = ({ children, courseId }) => {
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
-      <div style={{ minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee' }}>
-        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
-      </div>
-      <main style={{ flex: 1, padding: '32px 24px 24px 24px' }}>
-        <Suspense>
-          {children}
-        </Suspense>
-      </main>
+const CoursePageLayout = ({ children, courseId }) => (
+  <div style={{ display: 'flex', minHeight: '100vh' }}>
+    {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
+    <div style={{
+      minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee',
+    }}
+    >
+      <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
     </div>
-  );
-};
+    <main style={{ flex: 1, paddingTop: '1.5rem' }}>
+      <Suspense>
+        {children}
+      </Suspense>
+    </main>
+  </div>
+);
 
 CoursePageLayout.propTypes = {
   children: PropTypes.node.isRequired,
@@ -172,7 +170,7 @@ const CourseAuthoringRoutes = () => {
         />
 
         {/* Route outside the CourseAuthoringPage layout? */}
-        <Route path="/new-course" element={<PageWrap><PSCourseForm handleOnClickCancel={() => window.history.back()} /></PageWrap>} />
+        <Route path="/new-course" element={<PageWrap><CustomCreateNewCourseForm handleOnClickCancel={() => window.history.back()} /></PageWrap>} />
       </Routes>
     </CourseAuthoringPage>
   );

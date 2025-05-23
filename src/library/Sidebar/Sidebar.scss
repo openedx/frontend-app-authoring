@@ -1,8 +1,8 @@
 .sidebar {
   width: 80px;
-  background-color: #f5f5f5;
+  background-color: var(--bg-surface);
   padding: 8px 4px;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--border-color);
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
@@ -29,7 +29,7 @@
           left: 100%;
           top: 50%;
           transform: translateY(-50%);
-          background-color: #454545;
+          background-color: var(--text-light);
           color: white;
           padding: 4px 8px;
           border-radius: 4px;
@@ -141,7 +141,17 @@
 }
 
 .pgn-btn-active {
-  color: #454545;
-  background-color: #E1DDDB !important;
-  border-color: transparent;
+  color: #454545 !important;
+  background-color: var(--primary-light) !important;
+  border-color: transparent !important;
+}
+
+.sidebar-btn {
+  &.pgn-btn-inactive {
+    color: var(--text-light) !important;
+
+    &:hover {
+      color: var(--primary) !important;
+    }
+  }
 }
