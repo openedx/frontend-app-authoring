@@ -30,9 +30,9 @@
 
 .dashboard-wrapper {
   display: flex;
-  padding: 2rem;
-  gap: 2rem;
-  background-color: #f8f9fa;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  background-color: var(--bg-body);
   min-height: 100vh;
 
   .main-content {
@@ -42,7 +42,7 @@
 
   .metrics-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(184px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
