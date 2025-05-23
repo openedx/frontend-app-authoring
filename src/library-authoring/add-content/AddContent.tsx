@@ -146,11 +146,13 @@ const AddContentView = ({
       // Only show libraryContentButton
       return [libraryContentButtonData];
     }
+    // istanbul ignore if
     if (insideSection) {
       // Should only allow adding subsections
       throw new Error('Not implemented');
       // return [subsectionButtonData];
     }
+    // istanbul ignore if
     if (insideSubsection) {
       // Should only allow adding units
       throw new Error('Not implemented');
