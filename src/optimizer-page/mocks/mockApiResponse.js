@@ -1,4 +1,4 @@
-const mockApiResponse = {
+export const mockApiResponse = {
   LinkCheckStatus: 'Succeeded',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
@@ -123,4 +123,36 @@ const mockApiResponse = {
   },
 };
 
-export default mockApiResponse;
+export const mockApiResponseForNoResultFound = {
+  LinkCheckStatus: 'Succeeded',
+  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
+  LinkCheckOutput: {
+    sections: [
+      {
+        id: 'section-1',
+        displayName: 'Introduction to Programming',
+        subsections: [
+          {
+            id: 'subsection-1-1',
+            displayName: 'Getting Started',
+            units: [
+              {
+                id: 'unit-1-1-1',
+                displayName: 'Test Broken Links',
+                blocks: [
+                  {
+                    id: 'block-1-1-1-5',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: [],
+                    externalForbiddenLinks: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};

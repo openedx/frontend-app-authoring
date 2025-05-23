@@ -45,7 +45,7 @@ const GoToBlock: FC<{ block: { url: string, displayName: string } }> = ({ block 
 const LinksCol: FC<{ block: { url: string, displayName: string }, href: string }> = ({ block, href }) => (
   <span className="links-container">
     <GoToBlock block={{ url: block.url, displayName: block.displayName || 'Go to block' }} />
-    <Icon className="arrow-forward-ios" src={ArrowForwardIos} />
+    <Icon className="arrow-forward-ios" src={ArrowForwardIos} style={{ color: '#8F8F8F' }} />
     <BrokenLinkHref href={href} />
   </span>
 );
@@ -64,7 +64,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
   filters,
 }) => (
-  <Card className="unit-card rounded-sm pt-2 pl-3 pr-4 mb-2.5">
+  <Card className="unit-card rounded-sm mb-4">
     <p className="unit-header">{unit.displayName}</p>
     <Table
       data={unit.blocks.reduce(

@@ -1,4 +1,4 @@
-import mockApiResponse from '../mocks/mockApiResponse';
+import { mockApiResponse } from '../mocks/mockApiResponse';
 import { initializeMocks } from '../../testUtils';
 import * as api from './api';
 import { LINK_CHECK_STATUSES } from './constants';

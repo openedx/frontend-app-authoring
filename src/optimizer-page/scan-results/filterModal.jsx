@@ -41,7 +41,7 @@ const FilterModal = ({
   };
 
   return (
-    <ModalPopup isOpen={isOpen} onClose={onClose} positionRef={positionRef} placement="bottom-start">
+    <ModalPopup isOpen={isOpen} onClose={onClose} positionRef={positionRef} placement="bottom-end">
       <div className="filter-modal bg-white rounded shadow-sm w-175">
         <Form.Group>
           <Form.CheckboxSet
