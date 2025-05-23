@@ -331,7 +331,6 @@ describe('<AddContent />', () => {
     renderWithUnit(unitId);
 
     expect(await screen.findByRole('button', { name: 'Text' })).toBeInTheDocument();
-    screen.debug();
 
     expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Unit' })).not.toBeInTheDocument();
