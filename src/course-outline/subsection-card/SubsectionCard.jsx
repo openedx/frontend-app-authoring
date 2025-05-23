@@ -31,6 +31,7 @@ import { getStudioHomeData } from '../../studio-home/data/selectors';
 const SubsectionCard = ({
   section,
   subsection,
+  isSectionsExpanded,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
@@ -98,13 +99,17 @@ const SubsectionCard = ({
 
     return false;
   };
-  const [isExpanded, setIsExpanded] = useState(containsSearchResult() || !isHeaderVisible);
+  const [isExpanded, setIsExpanded] = useState(containsSearchResult() || !isHeaderVisible || isSectionsExpanded);
   const subsectionStatus = getItemStatus({
     published,
     visibilityState,
     hasChanges,
   });
   const borderStyle = getItemStatusBorder(subsectionStatus);
+
+  useEffect(() => {
+    setIsExpanded(isSectionsExpanded);
+  }, [isSectionsExpanded]);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
@@ -252,7 +257,7 @@ const SubsectionCard = ({
               </div>
             </>
           )}
-          {isExpanded && (
+          {(isExpanded) && (
             <div
               data-testid="subsection-card__units"
               className={classNames('subsection-card__units', { 'item-children': isDraggable })}
@@ -354,6 +359,7 @@ SubsectionCard.propTypes = {
     }).isRequired,
   }).isRequired,
   children: PropTypes.node,
+  isSectionsExpanded: PropTypes.bool.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
