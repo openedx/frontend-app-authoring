@@ -81,8 +81,8 @@
 
     .overview-grid {
       display: grid;
+      grid-template-columns: 1fr 2fr;
       gap: 2rem;
-      grid-template-columns: repeat(2, 1fr);
     }
 
     .calendar-card {
@@ -181,6 +181,12 @@
 
   .calendar-card {
     grid-column: auto !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .overview-section .overview-grid {
+    grid-template-columns: 1fr;
   }
 }
 
