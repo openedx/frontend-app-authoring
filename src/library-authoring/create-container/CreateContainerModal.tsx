@@ -24,12 +24,8 @@ const CreateContainerModal = () => {
   const {
     collectionId,
     libraryId,
-    isCreateSectionModalOpen,
-    closeCreateSectionModal,
-    isCreateSubsectionModalOpen,
-    closeCreateSubsectionModal,
-    isCreateUnitModalOpen,
-    closeCreateUnitModal,
+    createContainerModalType,
+    setCreateContainerModalType,
   } = useLibraryContext();
   const { insideCollection } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
@@ -38,7 +34,7 @@ const CreateContainerModal = () => {
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
   const labels = React.useMemo(() => {
-    if (isCreateSectionModalOpen) {
+    if (createContainerModalType === ContainerType.Chapter) {
       return {
         modalTitle: intl.formatMessage(messages.createSectionModalTitle),
         validationError: intl.formatMessage(messages.createSectionModalNameInvalid),
@@ -48,7 +44,7 @@ const CreateContainerModal = () => {
         errorMsg: intl.formatMessage(messages.createSectionError),
       };
     }
-    if (isCreateSubsectionModalOpen) {
+    if (createContainerModalType === ContainerType.Sequential) {
       return {
         modalTitle: intl.formatMessage(messages.createSubsectionModalTitle),
         validationError: intl.formatMessage(messages.createSubsectionModalNameInvalid),
@@ -66,25 +62,21 @@ const CreateContainerModal = () => {
       successMsg: intl.formatMessage(messages.createUnitSuccess),
       errorMsg: intl.formatMessage(messages.createUnitError),
     };
-  }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen, intl]);
+  }, [createContainerModalType]);
 
   /** Call close for section, subsection and unit as the operation is idempotent */
-  const handleClose = React.useCallback(() => {
-    closeCreateSectionModal();
-    closeCreateSubsectionModal();
-    closeCreateUnitModal();
-  }, [closeCreateUnitModal, closeCreateSubsectionModal, closeCreateSectionModal]);
+  const handleClose = () => setCreateContainerModalType(undefined);
 
   /** Calculate containerType based on type of open modal */
   const containerType = React.useMemo(() => {
-    if (isCreateSectionModalOpen) {
+    if (createContainerModalType === ContainerType.Chapter) {
       return ContainerType.Section;
     }
-    if (isCreateSubsectionModalOpen) {
+    if (createContainerModalType === ContainerType.Sequential) {
       return ContainerType.Subsection;
     }
     return ContainerType.Unit;
-  }, [isCreateUnitModalOpen, isCreateSectionModalOpen, isCreateSubsectionModalOpen]);
+  }, [createContainerModalType]);
 
   const handleCreate = React.useCallback(async (values) => {
     try {
@@ -109,7 +101,7 @@ const CreateContainerModal = () => {
   return (
     <ModalDialog
       title={labels.modalTitle}
-      isOpen={isCreateUnitModalOpen || isCreateSectionModalOpen || isCreateSubsectionModalOpen}
+      isOpen={!!createContainerModalType}
       onClose={handleClose}
       hasCloseButton
       isFullscreenOnMobile

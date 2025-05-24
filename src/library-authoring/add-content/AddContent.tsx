@@ -33,6 +33,7 @@ import { ContentType as LibraryContentTypes, useLibraryRoutes } from '../routes'
 import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
+import { ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
@@ -266,9 +267,7 @@ const AddContent = () => {
     libraryId,
     collectionId,
     openCreateCollectionModal,
-    openCreateUnitModal,
-    openCreateSectionModal,
-    openCreateSubsectionModal,
+    setCreateContainerModalType,
     openComponentEditor,
     unitId,
   } = useLibraryContext();
@@ -429,12 +428,12 @@ const AddContent = () => {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
       showAdvancedList();
-    } else if (blockType === 'vertical') {
-      openCreateUnitModal();
-    } else if (blockType === 'chapter') {
-      openCreateSectionModal();
-    } else if (blockType === 'sequential') {
-      openCreateSubsectionModal();
+    } else if ([
+      ContainerType.Vertical,
+      ContainerType.Chapter,
+      ContainerType.Sequential,
+    ].includes(blockType as ContainerType)) {
+      setCreateContainerModalType(blockType as ContainerType);
     } else {
       onCreateBlock(blockType);
     }
