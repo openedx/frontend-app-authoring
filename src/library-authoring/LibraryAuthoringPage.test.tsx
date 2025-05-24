@@ -768,18 +768,18 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
-    fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
-    expect(unitModalHeading).toBeInTheDocument();
+    const newContainerButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
+    fireEvent.click(newContainerButton);
+    const containerModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
+    expect(containerModalHeading).toBeInTheDocument();
 
     // Click on Cancel button
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
     fireEvent.click(cancelButton);
-    expect(unitModalHeading).not.toBeInTheDocument();
+    expect(containerModalHeading).not.toBeInTheDocument();
 
-    // Open new unit modal again and create a container
-    fireEvent.click(newUnitButton);
+    // Open new container modal again and create a container
+    fireEvent.click(newContainerButton);
     const createButton = screen.getByRole('button', { name: /create/i });
     const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
 
@@ -829,10 +829,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
-    fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
-    expect(unitModalHeading).toBeInTheDocument();
+    const newContainerButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
+    fireEvent.click(newContainerButton);
+    const containerModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
+    expect(containerModalHeading).toBeInTheDocument();
 
     const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
     fireEvent.focus(nameField);
@@ -874,10 +874,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Open New container Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
-    fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
-    expect(unitModalHeading).toBeInTheDocument();
+    const newContainerButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
+    fireEvent.click(newContainerButton);
+    const containerModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
+    expect(containerModalHeading).toBeInTheDocument();
 
     // Create a container
     const createButton = screen.getByRole('button', { name: /create/i });
