@@ -598,7 +598,7 @@ export async function createLibraryContainer(
 
 export interface Container {
   id: string;
-  containerType: 'unit';
+  containerType: 'section' | 'subsection' | 'unit';
   displayName: string;
   lastPublished: string | null;
   publishedBy: string | null;
@@ -656,7 +656,7 @@ export async function restoreContainer(containerId: string) {
 export async function getLibraryContainerChildren(
   containerId: string,
   published: boolean = false,
-): Promise<LibraryBlockMetadata[]> {
+): Promise<LibraryBlockMetadata[] | Container[]> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerChildrenApiUrl(containerId, published),
   );

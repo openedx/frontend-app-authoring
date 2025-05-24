@@ -5,7 +5,7 @@ import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
-import { useAddItemsToCollection, useAddComponentsToContainer } from '../data/apiHooks';
+import { useAddItemsToCollection, useAddChildrenToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
 import type { ContentType } from '../routes';
 import messages from './messages';
@@ -62,7 +62,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   }
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  const updateUnitComponentsMutation = useAddComponentsToContainer(unitId);
+  const updateUnitComponentsMutation = useAddChildrenToContainer(sectionId || unitId);
 
   const { showToast } = useContext(ToastContext);
 
@@ -80,7 +80,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
     }
-    if (unitId) {
+    if (unitId || sectionId) {
       updateUnitComponentsMutation.mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));

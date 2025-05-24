@@ -13,7 +13,7 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
 import {
-  useAddComponentsToContainer,
+  useAddChildrenToContainer,
   useRemoveContainerChildren,
   useRemoveItemsFromCollection,
 } from '../data/apiHooks';
@@ -42,7 +42,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addComponentToContainerMutation = useAddComponentsToContainer(unitId);
+  const addComponentToContainerMutation = useAddChildrenToContainer(unitId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
   const removeContainerComponentsMutation = useRemoveContainerChildren(unitId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);

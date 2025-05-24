@@ -695,7 +695,7 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 /**
  * Use this mutation to add components to a container
  */
-export const useAddComponentsToContainer = (containerId?: string) => {
+export const useAddChildrenToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {

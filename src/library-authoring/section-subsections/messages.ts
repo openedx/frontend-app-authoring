@@ -31,6 +31,11 @@ const messages = defineMessages({
     defaultMessage: 'Draft',
     description: 'Chip in components in section page that is shown when component has unpublished changes',
   },
+  sectionNoChildrenText: {
+    id: 'course-authoring.library-authoring.section.no-children.text',
+    defaultMessage: 'This section is empty',
+    description: 'Message to display when section has not children',
+  },
 });
 
 export default messages;

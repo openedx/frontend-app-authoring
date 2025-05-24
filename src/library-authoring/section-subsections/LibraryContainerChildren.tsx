@@ -1,36 +1,42 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { Button, useToggle } from "@openedx/paragon";
-import { Add } from "@openedx/paragon/icons";
+import { FormattedMessage } from "@edx/frontend-platform/i18n";
 import { useCallback, useEffect, useState } from "react";
 import DraggableList from "../../generic/DraggableList";
-import { PickLibraryContentModal } from "../add-content";
+import Loading from "../../generic/Loading";
+import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { ContentType } from "../routes";
+import { useContainerChildren } from "../data/apiHooks";
 import messages from "./messages";
+import { Container } from "../data/api";
+import { Stack } from "@openedx/paragon";
 
 interface LibraryContainerChildrenProps {
   /** set to true if it is rendered as preview */
   readOnly?: boolean;
 }
 
-interface LibraryContainerMetadataWithUniqueId {
+interface LibraryContainerMetadataWithUniqueId extends Container {
   originalId: string;
-  id: string;
-  displayName: string;
+}
+
+interface SubsectionRowProps {
+  subsection: LibraryContainerMetadataWithUniqueId;
+}
+
+const SubsectionRow = ({ subsection }: SubsectionRowProps) => {
+  return (
+    <Stack
+      direction="horizontal"
+      className="font-weight-bold p-3 bg-light-200 mb-2 border-left border-light-500 rounded-lg"
+    >
+      { subsection.displayName }
+    </Stack>
+  )
 }
 
 export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenProps) => {
-  const intl = useIntl();
   // TODO: fix type
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
-  const { sectionId, readOnly: libReadOnly, showOnlyPublished } = useLibraryContext();
-  // TOOO: get data from server
-  const children = [
-    { id: "lct:UNIX:CS1:subsection:test-subsection-1-55890a", displayName: 'Test subsection 1' },
-    { id: "lct:UNIX:CS1:subsection:test-subsection-2-adb711", displayName: 'Test subsection 2' },
-  ];
-
+  const { sectionId, showOnlyPublished } = useLibraryContext();
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
       return;
@@ -43,6 +49,13 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     //   showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     // }
   }, []);
+
+  const {
+    data: children,
+    isLoading,
+    isError,
+    error,
+  } = useContainerChildren(sectionId, showOnlyPublished);
 
   useEffect(() => {
     // Create new ids which are unique using index.
@@ -58,17 +71,22 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-  //
-  // if (isError) {
-  //   // istanbul ignore next
-  //   return <ErrorAlert error={error} />;
-  // }
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    // istanbul ignore next
+    return <ErrorAlert error={error} />;
+  }
 
   return (
-    <div className="library-unit-page">
+    <div className="ml-2 mb-3">
+      {children?.length === 0 && (
+        <h4 className="ml-2">
+          <FormattedMessage {...messages.sectionNoChildrenText} />
+        </h4>
+      )}
       <DraggableList
         itemList={orderedChildren}
         setState={setOrderedChildren}
@@ -77,48 +95,13 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
         {orderedChildren?.map((child, idx) => (
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
-          <div
+          <SubsectionRow
             // eslint-disable-next-line react/no-array-index-key
             key={`${child.originalId}-${idx}`}
-          >
-            { child.displayName }
-          </div>
+            subsection={child}
+          />
         ))}
       </DraggableList>
-      {!readOnly && (
-        <div className="d-flex">
-          <div className="w-100 mr-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={() => {}}
-              block
-            >
-              {intl.formatMessage(messages.newContentButton)}
-            </Button>
-          </div>
-          <div className="w-100 ml-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={showAddLibraryContentModal}
-              block
-            >
-              {intl.formatMessage(messages.addExistingContentButton)}
-            </Button>
-            <PickLibraryContentModal
-              isOpen={isAddLibraryContentModalOpen}
-              onClose={closeAddLibraryContentModal}
-              extraFilter={['block_type = "subsection"']}
-              visibleTabs={[ContentType.home]}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

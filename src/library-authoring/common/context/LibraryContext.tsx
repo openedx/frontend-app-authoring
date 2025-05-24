@@ -35,6 +35,8 @@ export type LibraryContextData = {
   setUnitId: (unitId?: string) => void;
   sectionId: string | undefined;
   setSectionId: (sectionId?: string) => void;
+  subsectionId: string | undefined;
+  setSubsectionId: (sectionId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // Additional filtering
@@ -120,6 +122,7 @@ export const LibraryProvider = ({
     componentId: urlComponentId,
     unitId: urlUnitId,
     sectionId: urlSectionId,
+    subsectionId: urlSubsectionId,
     selectedItemId: urlSelectedItemId,
   } = params;
   const selectedItemIdIsContainer = !!urlSelectedItemId?.startsWith('lct:');
@@ -135,6 +138,9 @@ export const LibraryProvider = ({
   const [sectionId, setSectionId] = useState(
     skipUrlUpdate ? undefined : urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
   );
+  const [subsectionId, setSubsectionId] = useState(
+    skipUrlUpdate ? undefined : urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
@@ -146,6 +152,8 @@ export const LibraryProvider = ({
       setUnitId,
       sectionId,
       setSectionId,
+      subsectionId,
+      setSubsectionId,
       componentId,
       setComponentId,
       readOnly,
