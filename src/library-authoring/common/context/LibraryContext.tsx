@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
+import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
@@ -40,18 +41,9 @@ export type LibraryContextData = {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  // "Create New Section" modal
-  isCreateSectionModalOpen: boolean;
-  openCreateSectionModal: () => void;
-  closeCreateSectionModal: () => void;
-  // "Create New Subsection" modal
-  isCreateSubsectionModalOpen: boolean;
-  openCreateSubsectionModal: () => void;
-  closeCreateSubsectionModal: () => void;
-  // "Create New Unit" modal
-  isCreateUnitModalOpen: boolean;
-  openCreateUnitModal: () => void;
-  closeCreateUnitModal: () => void;
+  // "Create new container" modal
+  createContainerModalType: ContainerType | undefined;
+  setCreateContainerModalType: (containerType?: ContainerType) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is the component being edited. */
   componentBeingEdited: ComponentEditorInfo | undefined;
@@ -99,9 +91,7 @@ export const LibraryProvider = ({
   componentPicker,
 }: LibraryProviderProps) => {
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
-  const [isCreateUnitModalOpen, openCreateUnitModal, closeCreateUnitModal] = useToggle(false);
-  const [isCreateSectionModalOpen, openCreateSectionModal, closeCreateSectionModal] = useToggle(false);
-  const [isCreateSubsectionModalOpen, openCreateSubsectionModal, closeCreateSubsectionModal] = useToggle(false);
+  const [createContainerModalType, setCreateContainerModalType] = useState<ContainerType | undefined>(undefined);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
@@ -157,15 +147,8 @@ export const LibraryProvider = ({
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
       closeCreateCollectionModal,
-      isCreateUnitModalOpen,
-      openCreateUnitModal,
-      closeCreateUnitModal,
-      isCreateSectionModalOpen,
-      openCreateSectionModal,
-      closeCreateSectionModal,
-      isCreateSubsectionModalOpen,
-      openCreateSubsectionModal,
-      closeCreateSubsectionModal,
+      createContainerModalType,
+      setCreateContainerModalType,
       componentBeingEdited,
       openComponentEditor,
       closeComponentEditor,
@@ -189,9 +172,6 @@ export const LibraryProvider = ({
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
-    isCreateUnitModalOpen,
-    openCreateUnitModal,
-    closeCreateUnitModal,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
