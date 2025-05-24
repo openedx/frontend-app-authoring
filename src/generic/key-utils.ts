@@ -55,12 +55,12 @@ export enum ContainerType {
   Subsection = 'subsection',
   Unit = 'unit',
   /**
-   * Chapter, Sequential and Vertical are the old names for section, subsection an unit.
+   * Chapter, Sequential and Vertical are the old names for section, subsection and unit.
    * Generally, **please avoid using this term entirely in any libraries code** or
-   * anything based on the new Learning Core "Containers" framework - just call it a unit. We do still need to use this
-   * in the modulestore-based courseware, and currently the /xblock/ API used to copy library containers into courses
-   * also requires specifying this, though that should change to a better API that does the unit->vertical conversion
-   * automatically in the future.
+   * anything based on the new Learning Core "Containers" framework - just call it a unit, section or subsection. We
+   * do still need to use this in the modulestore-based courseware, and currently the /xblock/ API used to copy
+   * library containers into courses also requires specifying this, though that should change to a better API
+   * that does the unit->vertical conversion automatically in the future.
    */
   Chapter = 'chapter',
   Sequential = 'sequential',
