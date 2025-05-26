@@ -4,7 +4,12 @@ import DraggableList, { SortableItem } from "../../generic/DraggableList";
 import Loading from "../../generic/Loading";
 import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { useContainerChildren, useUpdateContainer, useUpdateContainerChildren } from "../data/apiHooks";
+import {
+  libraryAuthoringQueryKeys,
+  useContainerChildren,
+  useUpdateContainer,
+  useUpdateContainerChildren,
+} from "../data/apiHooks";
 import messages from "./messages";
 import containerMessages from "../containers/messages";
 import { Container } from "../data/api";
@@ -14,6 +19,7 @@ import { ToastContext } from "../../generic/toast-context";
 import TagCount from "../../generic/tag-count";
 import { ContainerMenu } from "../components/ContainerCard";
 import { useLibraryRoutes } from "../routes";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface LibraryContainerChildrenProps {
   /** set to true if it is rendered as preview */
@@ -31,14 +37,25 @@ interface SubsectionRowProps extends LibraryContainerChildrenProps {
 const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
+  const { sectionId } = useLibraryContext();
   const updateMutation = useUpdateContainer(subsection.originalId);
+  const queryClient = useQueryClient();
+
+  if (!sectionId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without sectionId URL parameter');
+  }
+
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
       await updateMutation.mutateAsync({
           displayName: newDisplayName,
       });
-      // TODO: invalidate parent container children query to see upated name
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
+      // invalidate parent container children query to see upated name
+      queryClient.invalidateQueries({
+        queryKey: libraryAuthoringQueryKeys.containerChildren(sectionId),
+      });
     } catch (err) {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
       throw err;
@@ -114,6 +131,11 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
+  if (!sectionId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without sectionId URL parameter');
+  }
+
   if (isLoading) {
     return <Loading />;
   }
@@ -142,8 +164,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
           // eslint-disable-next-line react/no-array-index-key
           <SortableItem
             id={child.id}
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${child.originalId}-${idx}-${child.modified}`}
+            key={child.id}
             componentStyle={{
               outline: activeDraggingId === child.id && '2px dashed gray',
               marginBottom: '1rem',
@@ -168,7 +189,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
                 readOnly={readOnly}
               />
             }
-          ></SortableItem>
+          />
 
         ))}
       </DraggableList>
