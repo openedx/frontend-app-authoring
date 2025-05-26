@@ -1,10 +1,10 @@
 {
   "dashboard": {
     "metrics": {
-      "courses": 5,
-      "students": 5,
-      "enrollments": 10,
-      "submissions": 8
+      "courses": 12,
+      "students": 1500,
+      "enrollments": 2500,
+      "submissions": 1800
     },
     "quickActions": [
       "You have no course expiring.",
@@ -44,18 +44,35 @@
       ]
     },
     "titanAISuggestions": [
-      "You have no course expiring.",
-      "You are not registered to attend any online class."
+      "Consider adding more interactive elements to engage students",
+      "Review course completion rates and identify areas for improvement",
+      "Update course materials with the latest industry trends"
     ],
     "todoList": [
-      "You have no course expiring.",
-      "You are not registered to attend any online class."
+      "Review student feedback from last week",
+      "Update course syllabus for next semester",
+      "Schedule faculty meeting",
+      "Prepare presentation for upcoming conference"
     ],
     "widgets": [
       {
+        "id": "youtube-widget-1",
+        "title": "Welcome Video",
+        "type": "youtube",
+        "position": "left",
+        "enabled": true,
+        "order": 1,
+        "content": {
+          "videoId": "23HFxAPyJ9U",
+          "title": "Welcome to the Course",
+          "description": "This video provides an overview of the course content and learning objectives.",
+          "autoplay": false
+        }
+      },
+      {
         "id": "overview-widget-1",
         "type": "text",
-        "order": 1,
+        "order": 2,
         "position": "left",
         "enabled": true,
         "title": "Overview 1",
@@ -65,7 +82,7 @@
       {
         "id": "overview-widget-3",
         "type": "chart",
-        "order": 2,
+        "order": 3,
         "position": "left",
         "enabled": true,
         "title": "Overview 3",
@@ -95,7 +112,7 @@
       {
         "id": "overview-widget-2",
         "type": "chart",
-        "order": 3,
+        "order": 4,
         "position": "right",
         "enabled": true,
         "title": "Overview 2",
@@ -178,7 +195,7 @@
       {
         "id": "overview-widget-4",
         "type": "chart",
-        "order": 4,
+        "order": 5,
         "position": "right",
         "enabled": true,
         "title": "Overview 4",
@@ -278,7 +295,7 @@
       {
         "id": "calendar-widget",
         "type": "calendar",
-        "order": 5,
+        "order": 6,
         "position": "right",
         "enabled": true,
         "title": "Calendar 6",

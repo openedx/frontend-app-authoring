@@ -226,6 +226,29 @@ const WidgetCard = ({
             )}
           </div>
         )}
+        {type === 'youtube' && content && content.videoId && (
+          <div className="youtube-widget-container">
+            <div className="video-wrapper">
+              <iframe
+                src={`https://www.youtube.com/embed/${content.videoId}${content.autoplay ? '?autoplay=1' : ''}`}
+                title={content.title || 'YouTube video'}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{
+                  width: '100%',
+                  aspectRatio: '16/9',
+                  borderRadius: '8px',
+                }}
+              />
+            </div>
+            {content.description && (
+              <div className="video-description">
+                <p>{content.description}</p>
+              </div>
+            )}
+          </div>
+        )}
         {type === 'calendar' && content && (
           <div className="calendar-widget">
             <div className="calendar-title">{content.date}</div>
@@ -263,6 +286,12 @@ WidgetCard.propTypes = {
         label: PropTypes.string,
         value: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
       })).isRequired,
+    }),
+    PropTypes.shape({
+      videoId: PropTypes.string.isRequired,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      autoplay: PropTypes.bool,
     }),
   ]).isRequired,
   styles: PropTypes.string,
