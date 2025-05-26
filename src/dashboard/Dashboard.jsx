@@ -190,7 +190,7 @@ const Dashboard = () => {
     if (activeWidget.position !== overWidget.position) {
       setTempOrderedWidgets(items => {
         // First, move the active widget to the new position
-        const updatedItems = items.map(widget => {
+        let updatedItems = items.map(widget => {
           if (widget.id === active.id) {
             return { ...widget, position: overWidget.position };
           }
@@ -215,7 +215,7 @@ const Dashboard = () => {
           }
         } else {
           // If there are widgets in left column, remove the placeholder
-          return updatedItems.filter(w => w.id !== 'left-placeholder');
+          updatedItems = updatedItems.filter(w => w.id !== 'left-placeholder');
         }
 
         // Check if right column is empty (excluding placeholder)
@@ -234,6 +234,9 @@ const Dashboard = () => {
               order: updatedItems.length + 1,
             });
           }
+        } else {
+          // If there are widgets in right column, remove the placeholder
+          updatedItems = updatedItems.filter(w => w.id !== 'right-placeholder');
         }
 
         return updatedItems;
