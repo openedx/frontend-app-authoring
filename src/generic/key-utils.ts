@@ -9,6 +9,11 @@ export function getBlockType(usageKey: string): string {
     if (blockType) {
       return blockType;
     }
+  } else if (usageKey && usageKey.startsWith('lct:')) {
+    const containerType = usageKey.split(':')[4];
+    if (containerType) {
+      return containerType;
+    }
   }
   throw new Error(`Invalid usageKey: ${usageKey}`);
 }

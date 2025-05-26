@@ -36,6 +36,16 @@ const messages = defineMessages({
     defaultMessage: 'This section is empty',
     description: 'Message to display when section has not children',
   },
+  orderUpdatedMsg: {
+    id: 'course-authoring.library-authoring.unit-component.order-updated-msg.text',
+    defaultMessage: 'Order updated',
+    description: 'Toast message displayed when components are successfully reordered in a unit',
+  },
+  failedOrderUpdatedMsg: {
+    id: 'course-authoring.library-authoring.unit-component.failed-order-updated-msg.text',
+    defaultMessage: 'Failed to update components order',
+    description: 'Toast message displayed when components are successfully reordered in a unit',
+  },
 });
 
 export default messages;

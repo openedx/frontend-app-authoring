@@ -4,7 +4,7 @@ import DraggableList, { SortableItem } from "../../generic/DraggableList";
 import Loading from "../../generic/Loading";
 import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { useContainerChildren, useUpdateContainer } from "../data/apiHooks";
+import { useContainerChildren, useUpdateContainer, useUpdateContainerChildren } from "../data/apiHooks";
 import messages from "./messages";
 import containerMessages from "../containers/messages";
 import { Container } from "../data/api";
@@ -73,21 +73,25 @@ const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
 }
 
 export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenProps) => {
+  const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { sectionId, showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
+  const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
+  const orderMutator = useUpdateContainerChildren(sectionId);
+  const { showToast } = useContext(ToastContext);
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
       return;
     }
-    // const usageKeys = newOrder.map((o) => o.originalId);
-    // try {
-    //   await orderMutator.mutateAsync(usageKeys);
-    //   showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    // } catch (e) {
-    //   showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
-    // }
-  }, []);
+    const childrenKeys = newOrder.map((o) => o.originalId);
+    try {
+      await orderMutator.mutateAsync(childrenKeys);
+      showToast(intl.formatMessage(messages.orderUpdatedMsg));
+    } catch (e) {
+      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
+    }
+  }, [orderMutator]);
 
   const {
     data: children,
@@ -130,6 +134,8 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
         itemList={orderedChildren}
         setState={setOrderedChildren}
         updateOrder={handleReorder}
+        activeId={activeDraggingId}
+        setActiveId={setActiveDraggingId}
       >
         {orderedChildren?.map((child, idx) => (
           // A container can have multiple instances of the same block
@@ -139,6 +145,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
             // eslint-disable-next-line react/no-array-index-key
             key={`${child.originalId}-${idx}-${child.modified}`}
             componentStyle={{
+              outline: activeDraggingId === child.id && '2px dashed gray',
               marginBottom: '1rem',
               borderRadius: '8px',
             }}
