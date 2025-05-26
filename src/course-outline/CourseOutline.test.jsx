@@ -257,8 +257,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -280,8 +280,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -426,10 +426,10 @@ describe('<CourseOutline />', () => {
       });
     const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
     await act(async () => fireEvent.click(newUnitButton));
-    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post.length).toBe(3);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       parent_locator: subsection.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
@@ -464,7 +464,7 @@ describe('<CourseOutline />', () => {
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       type: COMPONENT_TYPES.libraryV2,
       category: 'vertical',
       parent_locator: subsection.id,
@@ -905,8 +905,8 @@ describe('<CourseOutline />', () => {
     const saveButton = await findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       publish: 'republish',
       metadata: {
         visible_to_staff_only: true,
@@ -1005,8 +1005,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1141,8 +1141,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1261,8 +1261,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1361,8 +1361,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1457,8 +1457,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(2);
-    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));

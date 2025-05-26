@@ -296,9 +296,9 @@ const useCourseOutline = ({ courseId }) => {
 
   useEffect(() => {
     if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
-      dispatch(syncDiscussionsTopics);
+      dispatch(syncDiscussionsTopics(courseId));
     }
-  }, [createdOn]);
+  }, [createdOn, courseId]);
 
   useEffect(() => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
