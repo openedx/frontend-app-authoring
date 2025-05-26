@@ -183,6 +183,15 @@ const WidgetCard = ({
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
           </>
         )}
+        {type === 'html' && content && (
+          <div className="html-widget-container">
+            {styles && <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(styles) }} />}
+            <div
+              className="html-content"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.html) }}
+            />
+          </div>
+        )}
         {type === 'chart' && content && content.data && (
           <div className="chart-widget-container">
             {(content.chartType === 'pie' || content.chartType === 'donut' || content.chartType === 'bar' || content.chartType === 'line' || content.chartType === 'area') && (
@@ -319,6 +328,16 @@ WidgetCard.propTypes = {
         time: PropTypes.string,
       })),
       embedUrl: PropTypes.string,
+    }),
+    PropTypes.shape({
+      html: PropTypes.string.isRequired,
+      data: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+        description: PropTypes.string,
+        status: PropTypes.string,
+        date: PropTypes.string,
+      })),
     }),
   ]).isRequired,
   styles: PropTypes.string,
