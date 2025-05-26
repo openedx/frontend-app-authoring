@@ -213,6 +213,9 @@ const Dashboard = () => {
               order: updatedItems.length + 1,
             });
           }
+        } else {
+          // If there are widgets in left column, remove the placeholder
+          return updatedItems.filter(w => w.id !== 'left-placeholder');
         }
 
         // Check if right column is empty (excluding placeholder)
