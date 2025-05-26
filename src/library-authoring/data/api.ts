@@ -598,7 +598,7 @@ export async function createLibraryContainer(
 
 export interface Container {
   id: string;
-  containerType: 'section' | 'subsection' | 'unit';
+  containerType: ContainerType;
   displayName: string;
   lastPublished: string | null;
   publishedBy: string | null;
@@ -609,6 +609,7 @@ export interface Container {
   created: string;
   modified: string;
   collections: CollectionMetadata[];
+  tagsCount: number;
 }
 
 /**

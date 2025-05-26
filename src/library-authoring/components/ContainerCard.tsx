@@ -9,10 +9,9 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import { Link } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { getBlockType } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -27,16 +26,13 @@ import ContainerDeleter from './ContainerDeleter';
 import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
-  hit: ContainerHit,
+  containerKey: string;
+  containerType: ContainerType;
+  displayName: string;
 };
 
-const ContainerMenu = ({ hit } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
-  const {
-    contextKey,
-    usageKey: containerId,
-    displayName,
-  } = hit;
   const { libraryId, collectionId } = useLibraryContext();
   const {
     sidebarComponentInfo,
@@ -51,8 +47,8 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
   const removeFromCollection = () => {
-    removeComponentsMutation.mutateAsync([containerId]).then(() => {
-      if (sidebarComponentInfo?.id === containerId) {
+    removeComponentsMutation.mutateAsync([containerKey]).then(() => {
+      if (sidebarComponentInfo?.id === containerKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -69,10 +65,10 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ unitId: containerId });
-    openUnitInfoSidebar(containerId);
+    navigateTo({ [`${containerType}Id`]: containerKey });
+    openUnitInfoSidebar(containerKey);
     scheduleJumpToCollection();
-  }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
+  }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerKey]);
 
   return (
     <>
@@ -88,8 +84,8 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
         />
         <Dropdown.Menu>
           <Dropdown.Item
-            as={Link}
-            to={`/library/${contextKey}/unit/${containerId}`}
+            // required to set container ID in library context
+            onClick={() => navigateTo({ [`${containerType}Id`]: containerKey, doubleClicked: true })}
           >
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
@@ -109,7 +105,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
       <ContainerDeleter
         isOpen={isConfirmingDelete}
         close={cancelDelete}
-        containerId={containerId}
+        containerId={containerKey}
         displayName={displayName}
       />
     </>
@@ -173,7 +169,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { setUnitId, showOnlyPublished } = useLibraryContext();
+  const { setSectionId, setSubsectionId, setUnitId, showOnlyPublished } = useLibraryContext();
   const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
@@ -183,7 +179,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     numChildren,
     published,
     publishStatus,
-    usageKey: unitId,
+    usageKey: containerKey,
     content,
   } = hit;
 
@@ -200,19 +196,40 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   ) ?? [];
 
   const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
-    && sidebarComponentInfo.id === unitId;
+    && sidebarComponentInfo.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
   const openContainer = useCallback((e?: React.MouseEvent) => {
-    if (itemType === 'unit') {
-      openUnitInfoSidebar(unitId);
-      setUnitId(unitId);
-      if (!componentPickerMode) {
-        navigateTo({ unitId, doubleClicked: (e?.detail || 0) > 1 });
-      }
+    switch (itemType) {
+      case ContainerType.Unit:
+        openUnitInfoSidebar(containerKey);
+        if (!componentPickerMode) {
+          navigateTo({ unitId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
+        } else {
+          setUnitId(containerKey);
+        }
+        break;
+      case ContainerType.Section:
+        // TODO: open section sidebar
+        if (!componentPickerMode) {
+          navigateTo({ sectionId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
+        } else {
+          setSectionId(containerKey);
+        }
+        break;
+      case ContainerType.Subsection:
+        // TODO: open subsection sidebar
+        if (!componentPickerMode) {
+          navigateTo({ subsectionId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
+        } else {
+          setSubsectionId(containerKey);
+        }
+        break;
+      default:
+        break;
     }
-  }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);
+  }, [containerKey, itemType, openUnitInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
@@ -224,9 +241,13 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <AddComponentWidget usageKey={unitId} blockType={itemType} />
+            <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu hit={hit} />
+            <ContainerMenu
+              containerKey={containerKey}
+              containerType={itemType}
+              displayName={hit.displayName}
+            />
           )}
         </ActionRow>
       )}

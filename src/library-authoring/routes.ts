@@ -197,9 +197,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           : ROUTES.SECTIONS
       );
     } else if (insideSection) {
-      // We're viewing a section, so stay there,
-      // and optionally select a subsection in that section.
-      route = ROUTES.SECTION;
+      route = (
+        (subsectionId && doubleClicked)
+          // now open the subsection,
+          ? ROUTES.SUBSECTION
+          // We're viewing a section, so stay there,
+          // and optionally select a subsection in that section.
+          : ROUTES.SECTION
+      );
     } else if (insideSubsections) {
       // We're inside the subsections tab,
       route = (
@@ -210,9 +215,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           : ROUTES.SUBSECTIONS
       );
     } else if (insideSubsection) {
-      // We're viewing a subsection, so stay there,
-      // and optionally select a unit in that subsection.
-      route = ROUTES.SUBSECTION;
+      route = (
+        (unitId && doubleClicked)
+          // now open the unit,
+          ? ROUTES.UNIT
+          // We're viewing a subsection, so stay there,
+          // and optionally select a unit in that subsection.
+          : ROUTES.SECTION
+      );
     } else if (insideUnits) {
       // We're inside the units tab,
       route = (
@@ -233,6 +243,12 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (collectionId && doubleClicked) {
       // now open the previously-selected collection
       route = ROUTES.COLLECTION;
+    } else if (sectionId && doubleClicked) {
+      // now open the previously-selected section
+      route = ROUTES.SECTION;
+    } else if (subsectionId && doubleClicked) {
+      // now open the previously-selected subsection
+      route = ROUTES.SUBSECTION;
     } else if (unitId && doubleClicked) {
       // now open the previously-selected unit
       route = ROUTES.UNIT;

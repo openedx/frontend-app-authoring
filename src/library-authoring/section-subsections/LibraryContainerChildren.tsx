@@ -1,13 +1,19 @@
-import { FormattedMessage } from "@edx/frontend-platform/i18n";
-import { useCallback, useEffect, useState } from "react";
-import DraggableList from "../../generic/DraggableList";
+import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
+import { useCallback, useContext, useEffect, useState } from "react";
+import DraggableList, { SortableItem } from "../../generic/DraggableList";
 import Loading from "../../generic/Loading";
 import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { useContainerChildren } from "../data/apiHooks";
+import { useContainerChildren, useUpdateContainer } from "../data/apiHooks";
 import messages from "./messages";
+import containerMessages from "../containers/messages";
 import { Container } from "../data/api";
-import { Stack } from "@openedx/paragon";
+import { ActionRow, Stack } from "@openedx/paragon";
+import { InplaceTextEditor } from "../../generic/inplace-text-editor";
+import { ToastContext } from "../../generic/toast-context";
+import TagCount from "../../generic/tag-count";
+import { ContainerMenu } from "../components/ContainerCard";
+import { useLibraryRoutes } from "../routes";
 
 interface LibraryContainerChildrenProps {
   /** set to true if it is rendered as preview */
@@ -18,25 +24,58 @@ interface LibraryContainerMetadataWithUniqueId extends Container {
   originalId: string;
 }
 
-interface SubsectionRowProps {
+interface SubsectionRowProps extends LibraryContainerChildrenProps {
   subsection: LibraryContainerMetadataWithUniqueId;
 }
 
-const SubsectionRow = ({ subsection }: SubsectionRowProps) => {
+const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
+  const updateMutation = useUpdateContainer(subsection.originalId);
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+          displayName: newDisplayName,
+      });
+      // TODO: invalidate parent container children query to see upated name
+      showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
+    } catch (err) {
+      showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
+      throw err;
+    }
+  };
+
   return (
-    <Stack
-      direction="horizontal"
-      className="font-weight-bold p-3 bg-light-200 mb-2 border-left border-light-500 rounded-lg"
-    >
-      { subsection.displayName }
-    </Stack>
+    <>
+      <InplaceTextEditor
+        onSave={handleSaveDisplayName}
+        text={subsection.displayName}
+        textClassName='font-weight-bold small'
+        readOnly={readOnly}
+      />
+      <ActionRow.Spacer/>
+      <Stack
+        direction="horizontal"
+        gap={3}
+        // Prevent parent card from being clicked.
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+        onClick={(e) => e.stopPropagation()}
+      >
+        <TagCount size="sm" count={subsection.tagsCount} />
+        <ContainerMenu
+          containerKey={subsection.originalId}
+          containerType={subsection.containerType}
+          displayName={subsection.displayName}
+        />
+      </Stack>
+    </>
   )
 }
 
 export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenProps) => {
-  // TODO: fix type
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { sectionId, showOnlyPublished } = useLibraryContext();
+  const { navigateTo } = useLibraryRoutes();
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
       return;
@@ -95,11 +134,35 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
         {orderedChildren?.map((child, idx) => (
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
-          <SubsectionRow
+          <SortableItem
+            id={child.id}
             // eslint-disable-next-line react/no-array-index-key
-            key={`${child.originalId}-${idx}`}
-            subsection={child}
-          />
+            key={`${child.originalId}-${idx}-${child.modified}`}
+            componentStyle={{
+              marginBottom: '1rem',
+              borderRadius: '8px',
+            }}
+            children={null}
+            actionStyle={{
+              padding: '0.5rem 1rem',
+              background: '#FBFAF9',
+              borderRadius: '8px',
+              borderLeft: '8px solid #E1DDDB',
+            }}
+            isClickable
+            onClick={(e: { detail: number; }) => navigateTo({
+              subsectionId: child.originalId,
+              doubleClicked: e.detail > 1,
+            })}
+            disabled={readOnly}
+            actions={
+              <SubsectionRow
+                subsection={child}
+                readOnly={readOnly}
+              />
+            }
+          ></SortableItem>
+
         ))}
       </DraggableList>
     </div>
