@@ -50,6 +50,24 @@ const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
     background: isDragging ? '#f5f5f5' : undefined,
   };
 
+  // Special styling for placeholder card
+  if (widget.id === 'left-placeholder' || widget.id === 'right-placeholder') {
+    return (
+      <div ref={setNodeRef} style={{ ...style, cursor: 'default' }}>
+        <Card className="widget-selection-card placeholder-card">
+          <Card.Section className="widget-selection-content" style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+              <h4 style={{ flex: 1, margin: 0, color: '#666' }}>Placeholder</h4>
+            </div>
+            <div style={{ width: '100%' }}>
+              <p style={{ margin: 0, color: '#666' }}>Drag widgets here</p>
+            </div>
+          </Card.Section>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div ref={setNodeRef} style={style}>
       <Card
@@ -171,12 +189,50 @@ const Dashboard = () => {
     // If dragging to a different column
     if (activeWidget.position !== overWidget.position) {
       setTempOrderedWidgets(items => {
+        // First, move the active widget to the new position
         const updatedItems = items.map(widget => {
           if (widget.id === active.id) {
             return { ...widget, position: overWidget.position };
           }
           return widget;
         });
+
+        // Check if left column is empty (excluding placeholder)
+        const leftColumnWidgets = updatedItems.filter(w => w.position === 'left' && w.id !== 'left-placeholder');
+        // If left column is empty, ensure placeholder exists
+        if (leftColumnWidgets.length === 0) {
+          const placeholderExists = updatedItems.some(w => w.id === 'left-placeholder');
+          if (!placeholderExists) {
+            updatedItems.push({
+              id: 'left-placeholder',
+              title: 'Placeholder',
+              type: 'text',
+              content: 'Drag widgets here',
+              position: 'left',
+              enabled: false,
+              order: updatedItems.length + 1,
+            });
+          }
+        }
+
+        // Check if right column is empty (excluding placeholder)
+        const rightColumnWidgets = updatedItems.filter(w => w.position === 'right' && w.id !== 'right-placeholder');
+        // If right column is empty, ensure placeholder exists
+        if (rightColumnWidgets.length === 0) {
+          const placeholderExists = updatedItems.some(w => w.id === 'right-placeholder');
+          if (!placeholderExists) {
+            updatedItems.push({
+              id: 'right-placeholder',
+              title: 'Placeholder',
+              type: 'text',
+              content: 'Drag widgets here',
+              position: 'right',
+              enabled: false,
+              order: updatedItems.length + 1,
+            });
+          }
+        }
+
         return updatedItems;
       });
     }
@@ -192,9 +248,9 @@ const Dashboard = () => {
 
       if (!activeWidget || !overWidget) { return items; }
 
-      // Get all widgets in the target column
-      const columnItems = items.filter(w => w.position === overWidget.position);
-      const otherItems = items.filter(w => w.position !== overWidget.position);
+      // Get all widgets in the target column (excluding placeholders)
+      const columnItems = items.filter(w => w.position === overWidget.position && w.id !== 'left-placeholder' && w.id !== 'right-placeholder');
+      const otherItems = items.filter(w => w.position !== overWidget.position || w.id === 'left-placeholder' || w.id === 'right-placeholder');
 
       const oldIndex = columnItems.findIndex(item => item.id === active.id);
       const newIndex = columnItems.findIndex(item => item.id === over.id);
@@ -204,6 +260,24 @@ const Dashboard = () => {
       const reordered = [...columnItems];
       const [moved] = reordered.splice(oldIndex, 1);
       reordered.splice(newIndex, 0, moved);
+
+      // Check if left column is empty after reordering
+      const leftColumnWidgets = reordered.filter(w => w.position === 'left' && w.id !== 'left-placeholder');
+      const leftPlaceholder = items.find(w => w.id === 'left-placeholder');
+
+      // If left column is empty and we have a placeholder, ensure it's in the left column
+      if (leftColumnWidgets.length === 0 && leftPlaceholder) {
+        leftPlaceholder.position = 'left';
+      }
+
+      // Check if right column is empty after reordering
+      const rightColumnWidgets = reordered.filter(w => w.position === 'right' && w.id !== 'right-placeholder');
+      const rightPlaceholder = items.find(w => w.id === 'right-placeholder');
+
+      // If right column is empty and we have a placeholder, ensure it's in the right column
+      if (rightColumnWidgets.length === 0 && rightPlaceholder) {
+        rightPlaceholder.position = 'right';
+      }
 
       // Merge reordered column back with other items
       return overWidget.position === 'left'

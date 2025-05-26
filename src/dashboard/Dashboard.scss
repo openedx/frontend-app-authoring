@@ -379,3 +379,20 @@
   align-items: center;
   min-height: 48px;
 }
+
+.placeholder-card {
+  border: 2px dashed #ccc;
+  background-color: #fff;
+  cursor: default !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .widget-selection-content {
+    border: none;
+    background: transparent;
+  }
+}
