@@ -293,7 +293,7 @@
         }
       },
       {
-        "id": "calendar-widget",
+        "id": "calendar-widget-embedded",
         "type": "calendar",
         "order": 6,
         "position": "right",
@@ -315,12 +315,12 @@
         }
       },
       {
-        "id": "calendar-widget",
+        "id": "calendar-widget-static",
         "type": "calendar",
         "order": 7,
         "position": "right",
         "enabled": true,
-        "title": "Calendar 6",
+        "title": "Upcoming Events",
         "content": {
           "date": "Mon April 22",
           "events": [
