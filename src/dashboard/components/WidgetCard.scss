@@ -58,28 +58,47 @@
 }
 
 .calendar-widget {
-  // Container for the calendar widget
-}
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
-.calendar-title {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
+  .calendar-embed-container {
+    flex: 1;
+    min-height: 400px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-.calendar-events {
-  // Container for events
-}
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
 
-.calendar-event {
-  background: #03a9f4;
-  color: white;
-  border-radius: 6px;
-  padding: 0.5rem;
-  margin-bottom: 8px;
-}
+  .calendar-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
 
-.event-time {
-  font-size: 0.85em;
+  .calendar-events {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .calendar-event {
+    background: #03a9f4;
+    color: white;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-bottom: 8px;
+  }
+
+  .event-time {
+    font-size: 0.85em;
+  }
 }
 
 .widget-card-modern {

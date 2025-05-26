@@ -295,6 +295,28 @@
       {
         "id": "calendar-widget",
         "type": "calendar",
+        "order": 7,
+        "position": "right",
+        "enabled": true,
+        "title": "Calendar",
+        "content": {
+          "embedUrl": "https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0&showTz=0&mode=WEEK&height=400&wkst=1&bgcolor=%23FFFFFF&ctz=UTC",
+          "date": "Mon April 22",
+          "events": [
+            {
+              "title": "TitanEd - Upcoming Event 1",
+              "time": "10:30 – 11:30pm"
+            },
+            {
+              "title": "TitanEd - Upcoming Event 2",
+              "time": "10:30 – 11:30pm"
+            }
+          ]
+        }
+      },
+      {
+        "id": "calendar-widget",
+        "type": "calendar",
         "order": 6,
         "position": "right",
         "enabled": true,

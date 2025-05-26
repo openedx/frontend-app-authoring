@@ -251,23 +251,42 @@ const WidgetCard = ({
         )}
         {type === 'calendar' && content && (
           <div className="calendar-widget">
-            <div className="calendar-title">{content.date}</div>
-            <div className="calendar-events">
-              {content.events && content.events.length > 0 ? (
-                content.events.map(event => (
-                  <div
-                    key={`calendar-event-${event.title}-${event.time}`}
-                    className="calendar-event"
-                  >
-                    {event.title}
-                    <br />
-                    <span className="event-time">{event.time}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-muted">No events today.</div>
-              )}
-            </div>
+            {content.embedUrl ? (
+              <div className="calendar-embed-container">
+                <iframe
+                  src={content.embedUrl}
+                  style={{
+                    border: 0,
+                    width: '100%',
+                    height: '400px',
+                    borderRadius: '8px',
+                  }}
+                  frameBorder="0"
+                  scrolling="no"
+                  title="Calendar"
+                />
+              </div>
+            ) : (
+              <>
+                <div className="calendar-title">{content.date}</div>
+                <div className="calendar-events">
+                  {content.events && content.events.length > 0 ? (
+                    content.events.map(event => (
+                      <div
+                        key={`calendar-event-${event.title}-${event.time}`}
+                        className="calendar-event"
+                      >
+                        {event.title}
+                        <br />
+                        <span className="event-time">{event.time}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted">No events today.</div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
       </Card.Section>
@@ -281,8 +300,8 @@ WidgetCard.propTypes = {
     PropTypes.string,
     PropTypes.shape({
       chartType: PropTypes.oneOf(['pie', 'donut', 'bar', 'line', 'area']),
-      referenceLabels: PropTypes.arrayOf(PropTypes.string), // For x-axis in bar/line/area
-      data: PropTypes.arrayOf(PropTypes.shape({ // For pie/donut: {label: string, value: number}, For bar/line/area: {label: string (series name), value: array of numbers}
+      referenceLabels: PropTypes.arrayOf(PropTypes.string),
+      data: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string,
         value: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
       })).isRequired,
@@ -292,6 +311,14 @@ WidgetCard.propTypes = {
       title: PropTypes.string,
       description: PropTypes.string,
       autoplay: PropTypes.bool,
+    }),
+    PropTypes.shape({
+      date: PropTypes.string,
+      events: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string,
+        time: PropTypes.string,
+      })),
+      embedUrl: PropTypes.string,
     }),
   ]).isRequired,
   styles: PropTypes.string,
