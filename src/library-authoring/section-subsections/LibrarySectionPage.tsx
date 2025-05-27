@@ -64,7 +64,7 @@ const HeaderActions = () => {
         variant="primary rounded-0"
         disabled={readOnly}
       >
-        {intl.formatMessage(messages.addContentButton)}
+        {intl.formatMessage(messages.newContentButton)}
       </Button>
     </div>
   );

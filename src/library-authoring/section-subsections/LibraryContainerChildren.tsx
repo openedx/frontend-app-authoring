@@ -146,7 +146,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
   }
 
   return (
-    <div className="ml-2 mb-3">
+    <div className="ml-2 library-container-page">
       {children?.length === 0 && (
         <h4 className="ml-2">
           <FormattedMessage {...messages.sectionNoChildrenText} />
