@@ -4,15 +4,10 @@
  * @returns The block type as a string
  */
 export function getBlockType(usageKey: string): string {
-  if (usageKey && usageKey.startsWith('lb:')) {
+  if (usageKey && (usageKey.startsWith('lb:') || usageKey.startsWith('lct:'))) {
     const blockType = usageKey.split(':')[3];
     if (blockType) {
       return blockType;
-    }
-  } else if (usageKey && usageKey.startsWith('lct:')) {
-    const containerType = usageKey.split(':')[4];
-    if (containerType) {
-      return containerType;
     }
   }
   throw new Error(`Invalid usageKey: ${usageKey}`);
