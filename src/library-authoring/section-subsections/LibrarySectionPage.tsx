@@ -11,15 +11,13 @@ import Header from '../../header';
 import { Breadcrumb, Container } from '@openedx/paragon';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { ContainerEditableTitle } from '../containers';
 import { Link } from 'react-router-dom';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
-import { HeaderActions } from '../containers/HeaderActions';
+import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 import { ContainerType } from '../../generic/key-utils';
-import { FooterActions } from '../containers/FooterActions';
 
 /** Full library section page */
 export const LibrarySectionPage = () => {

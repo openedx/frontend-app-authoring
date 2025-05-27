@@ -22,10 +22,8 @@ import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
-import { ContainerEditableTitle } from '../containers';
-import { HeaderActions } from '../containers/HeaderActions';
+import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 import { ContainerType } from '../../generic/key-utils';
-import { FooterActions } from '../containers/FooterActions';
 
 export const LibraryUnitPage = () => {
   const intl = useIntl();
