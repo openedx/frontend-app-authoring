@@ -159,7 +159,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
         activeId={activeDraggingId}
         setActiveId={setActiveDraggingId}
       >
-        {orderedChildren?.map((child, idx) => (
+        {orderedChildren?.map((child) => (
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
           <SortableItem
