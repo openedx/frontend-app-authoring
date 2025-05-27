@@ -22,7 +22,7 @@
 
 .dashboard-main-content {
   flex: 1;
-  padding: 0.8rem 0.6rem 0.8rem 0.4rem;
+  padding: 0.8rem 0.5rem 0.8rem 0.4rem;
   padding-top: 0;
   box-sizing: border-box;
   overflow: auto;
@@ -194,17 +194,36 @@
 }
 
 @media (max-width: 768px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dashboard-sidebar {
+    width: 100% !important;
+    margin-top: 1rem;
+  }
+
+  .sidebar-card {
+    border: 1px solid #d1d3d8;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .metrics-container {
     grid-template-columns: repeat(1fr);
     max-width: 100%;
   }
 
-  .overview-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .calendar-card {
-    grid-column: auto !important;
+  .overview-section {
+    .overview-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .calendar-card {
+      grid-column: auto !important;
+    }
   }
 }
 
