@@ -345,6 +345,7 @@ const Dashboard = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-main-content">
         {/* Top Metric Cards */}
+        <div className="dashboard-header">Dashboard</div>
         <div className="metrics-container">
           <MetricCard
             icon={MenuBook}

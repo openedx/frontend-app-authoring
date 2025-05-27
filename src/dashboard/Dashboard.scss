@@ -1,3 +1,10 @@
+.dashboard-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.7rem;
+}
+
 .custom-card {
   height: 22rem;
 }
@@ -136,17 +143,18 @@
     // padding-left: 1rem;
     z-index: auto;
     background-color: var(--bg-body);
+    margin-top: 57px;
 
     .sidebar-card {
       margin-bottom: 1rem;
       height: 30rem;
       overflow: auto;
       position: relative;
+      border-radius: 18px;
 
       .card-header {
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
+        border-bottom: 1px solid white;
+        padding: 1rem 0rem 0rem 1rem !important;
         background-color: var(--bg-surface);
         position: sticky;
         top: 0;
