@@ -172,7 +172,7 @@ export const LibrarySectionPage = () => {
                   onClick={() => {}}
                   block
                 >
-                  {intl.formatMessage(messages.newContentButton)}
+                  {intl.formatMessage(messages.addContentButton)}
                 </Button>
               </div>
               <div className="w-100 ml-2">
