@@ -1,8 +1,8 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContainer, useContentLibrary } from '../data/apiHooks';
 import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
@@ -17,58 +17,10 @@ import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { ContentType, useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
-import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { Add } from '@openedx/paragon/icons';
 import { PickLibraryContentModal } from '../add-content';
-
-const HeaderActions = () => {
-  const intl = useIntl();
-
-  const { sectionId, readOnly } = useLibraryContext();
-  const {
-    closeLibrarySidebar,
-    sidebarComponentInfo,
-  } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
-
-  // istanbul ignore if: this should never happen
-  if (!sectionId) {
-    throw new Error('it should not be possible to render HeaderActions without a sectionId');
-  }
-
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.SectionInfo
-    && sidebarComponentInfo?.id === sectionId;
-
-  const handleOnClickInfoSidebar = useCallback(() => {
-    if (infoSidebarIsOpen) {
-      closeLibrarySidebar();
-    } else {
-      // istanbul ignore next
-      new Error('not implemented');
-    }
-    navigateTo({ sectionId, unitId: '' });
-  }, [sectionId, infoSidebarIsOpen]);
-
-  return (
-    <div className="header-actions">
-      <Button
-        className="normal-border"
-        iconBefore={InfoOutline}
-        variant="outline-primary rounded-0"
-        onClick={handleOnClickInfoSidebar}
-      >
-        {intl.formatMessage(messages.infoButtonText)}
-      </Button>
-      <Button
-        className="ml-2"
-        iconBefore={Add}
-        variant="primary rounded-0"
-        disabled={readOnly}
-      >
-        {intl.formatMessage(messages.newContentButton)}
-      </Button>
-    </div>
-  );
-};
+import { HeaderActions } from '../containers/HeaderActions';
+import { ContainerType } from '../../generic/key-utils';
 
 /** Full library section page */
 export const LibrarySectionPage = () => {
@@ -157,7 +109,14 @@ export const LibrarySectionPage = () => {
             <SubHeader
               title={<SubHeaderTitle title={<ContainerEditableTitle containerId={sectionId} />} />}
               breadcrumbs={breadcrumbs}
-              headerActions={<HeaderActions />}
+              headerActions={(
+                <HeaderActions
+                  containerKey={sectionId}
+                  containerType={ContainerType.Section}
+                  infoBtnText={intl.formatMessage(messages.infoButtonText)}
+                  addContentBtnText={intl.formatMessage(messages.newContentButton)}
+                />
+              )}
               hideBorder
             />
           </div>
