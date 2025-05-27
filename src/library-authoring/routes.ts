@@ -180,9 +180,21 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           : ROUTES.COLLECTIONS
       );
     } else if (insideCollection) {
-      // We're viewing a Collection, so stay there,
-      // and optionally select a component in that collection.
-      route = ROUTES.COLLECTION;
+        if (doubleClicked) {
+          // if any container is doubleClicked in collections tab
+          // Open the selected container page
+          if (sectionId) {
+            route = ROUTES.SECTION;
+          } else if (subsectionId) {
+            route = ROUTES.SUBSECTION
+          } else if (unitId) {
+            route = ROUTES.UNIT;
+          }
+        } else {
+          // We're viewing a Collection, so stay there,
+          // and optionally select a component or container in that collection.
+          route = ROUTES.COLLECTION;
+        }
     } else if (insideComponents) {
       // We're inside the Components tab, so stay there,
       // optionally selecting a component.

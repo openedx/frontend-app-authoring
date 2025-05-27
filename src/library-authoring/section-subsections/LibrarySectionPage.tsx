@@ -8,25 +8,23 @@ import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import ErrorAlert from '../../generic/alert-error';
 import Header from '../../header';
-import { Breadcrumb, Button, Container, useToggle } from '@openedx/paragon';
+import { Breadcrumb, Container } from '@openedx/paragon';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { ContainerEditableTitle } from '../containers';
 import { Link } from 'react-router-dom';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
-import { ContentType, useLibraryRoutes } from '../routes';
+import { useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
-import { Add } from '@openedx/paragon/icons';
-import { PickLibraryContentModal } from '../add-content';
 import { HeaderActions } from '../containers/HeaderActions';
 import { ContainerType } from '../../generic/key-utils';
+import { FooterActions } from '../containers/FooterActions';
 
 /** Full library section page */
 export const LibrarySectionPage = () => {
   const intl = useIntl();
   const { libraryId, sectionId } = useLibraryContext();
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const {
     openInfoSidebar,
     sidebarComponentInfo,
@@ -122,36 +120,10 @@ export const LibrarySectionPage = () => {
           </div>
           <Container className="px-4 py-4">
             <LibraryContainerChildren />
-            <div className="d-flex">
-              <div className="w-100 mr-2">
-                <Button
-                  className="ml-2"
-                  iconBefore={Add}
-                  variant="outline-primary rounded-0"
-                  onClick={() => {}}
-                  block
-                >
-                  {intl.formatMessage(messages.addContentButton)}
-                </Button>
-              </div>
-              <div className="w-100 ml-2">
-                <Button
-                  className="ml-2"
-                  iconBefore={Add}
-                  variant="outline-primary rounded-0"
-                  onClick={showAddLibraryContentModal}
-                  block
-                >
-                  {intl.formatMessage(messages.addExistingContentButton)}
-                </Button>
-                <PickLibraryContentModal
-                  isOpen={isAddLibraryContentModalOpen}
-                  onClose={closeAddLibraryContentModal}
-                  extraFilter={['block_type = "subsection"']}
-                  visibleTabs={[ContentType.home]}
-                />
-              </div>
-            </div>
+            <FooterActions
+              addContentBtnText={intl.formatMessage(messages.addContentButton)}
+              addExistingContentBtnText={intl.formatMessage(messages.addExistingContentButton)}
+            />
           </Container>
         </Container>
       </div>

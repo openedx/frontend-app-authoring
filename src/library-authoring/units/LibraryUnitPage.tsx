@@ -25,6 +25,7 @@ import messages from './messages';
 import { ContainerEditableTitle } from '../containers';
 import { HeaderActions } from '../containers/HeaderActions';
 import { ContainerType } from '../../generic/key-utils';
+import { FooterActions } from '../containers/FooterActions';
 
 export const LibraryUnitPage = () => {
   const intl = useIntl();
@@ -145,6 +146,10 @@ export const LibraryUnitPage = () => {
           </div>
           <Container className="px-4 py-4">
             <LibraryUnitBlocks />
+            <FooterActions
+              addContentBtnText={intl.formatMessage(messages.newContentButton)}
+              addExistingContentBtnText={intl.formatMessage(messages.addExistingContentButton)}
+            />
           </Container>
         </Container>
       </div>
