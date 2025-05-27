@@ -85,6 +85,13 @@
       gap: 2rem;
     }
 
+    .overview-left,
+    .overview-right {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
     .calendar-card {
       grid-column: span 2;
       height: 20rem;
@@ -176,7 +183,8 @@
 
 @media (max-width: 768px) {
   .metrics-container {
-    flex-direction: column;
+    grid-template-columns: repeat(1fr);
+    max-width: 100%;
   }
 
   .overview-grid {
