@@ -15,7 +15,7 @@
 
 .dashboard-main-content {
   flex: 1;
-  padding: 20px;
+  padding: 0.8rem 0.6rem 0.8rem 0.4rem;
   padding-top: 0;
   box-sizing: border-box;
   overflow: auto;
@@ -55,6 +55,11 @@
   }
 
   .overview-section {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 18px;
+    margin-bottom: 2rem;
+
     h1 {
       margin-bottom: 1.5rem;
     }
@@ -63,10 +68,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       background-color: var(--bg-surface);
-      padding: 0.5rem;
-      border-radius: 8px;
+      // padding: 0.5rem;
+      border-radius: 18px;
 
       h1 {
         margin-bottom: 0;
@@ -82,14 +87,13 @@
     .overview-grid {
       display: grid;
       grid-template-columns: 1fr 2fr;
-      gap: 2rem;
+      gap: 1rem;
     }
 
-    .overview-left,
-    .overview-right {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
+    .overview-card {
+      border: 1px solid #d1d3d8;
+      border-radius: 14px;
+      overflow: hidden;
     }
 
     .calendar-card {
@@ -127,7 +131,7 @@
   }
 
   .dashboard-sidebar {
-    width: 300px;
+    width: 280px;
     // border-left: 1px solid var(--primary);
     // padding-left: 1rem;
     z-index: auto;
@@ -268,20 +272,6 @@
 }
 .metrics-container .metric-card:nth-child(4) {
   background-color: var(--secondary);
-}
-
-.metric-card-modern {
-  // box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  min-height: 5rem;
-
-  &:hover {
-    .metric-icon-modern .pgn__icon {
-      opacity: 1;
-    }
-  }
 }
 
 .metric-card-content-modern {

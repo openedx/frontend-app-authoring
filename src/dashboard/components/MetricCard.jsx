@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { Card, Icon } from '@openedx/paragon';
 import './MetricCard.scss';
 
-const MetricCard = ({ icon, value, label, type }) => (
+const MetricCard = ({
+  icon, value, label, type,
+}) => (
   <Card className={`metric-card-visual metric-card-${type}`}>
     <div className="metric-card-visual-content">
       <div className="metric-card-visual-icon">

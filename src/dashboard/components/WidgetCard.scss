@@ -1,13 +1,14 @@
 .overview-card {
-  height: 450px;
+  height: 400px;
   overflow: auto;
   position: relative;
   margin-bottom: 2rem;
 
   .card-header {
-    padding: 1rem;
+    padding: 1rem 0 0 1rem;
     margin: 0;
-    border-bottom: 1px solid var(--border-color);
+    // border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid white;
     background-color: var(--bg-surface);
     position: sticky;
     top: 0;
@@ -16,7 +17,7 @@
   }
 
   .card-section {
-    padding: 1rem;
+    // padding: 1rem 1rem 0rem 1rem !important;
     overflow: overlay;
   }
 
@@ -126,7 +127,7 @@
 
 .youtube-widget-container {
   width: 100%;
-  padding: 1rem;
+  // padding: 1rem;
 
   .video-wrapper {
     position: relative;
