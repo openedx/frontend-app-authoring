@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { Plugin } from '@openedx/frontend-plugin-framework';
 
 import { otherLinkURLParams } from './constants';
 import messages from './messages';
@@ -40,70 +39,68 @@ const HelpSidebar = ({
   const groupConfigurationsDestination = generateLegacyURL(groupConfigurations);
 
   return (
-    <Plugin id="help_sidebar_classname_plugin_slot">
-      <aside className={classNames('help-sidebar', className)}>
-        <div className="help-sidebar-about">{children}</div>
-        {showOtherSettings && (
-          <>
-            <hr />
-            <div className="help-sidebar-other">
-              <h4 className="help-sidebar-other-title">
-                {intl.formatMessage(messages.sidebarTitleOther)}
-              </h4>
-              <nav
-                className="help-sidebar-other-links"
-                aria-label={intl.formatMessage(messages.sidebarTitleOther)}
-              >
-                <ul className="p-0 mb-0">
-                  {showOtherLink(scheduleAndDetails) && (
-                    <HelpSidebarLink
-                      pathToPage={scheduleAndDetailsDestination}
-                      title={intl.formatMessage(
-                        messages.sidebarLinkToScheduleAndDetails,
-                      )}
-                    />
-                  )}
-                  {showOtherLink(grading) && (
-                    <HelpSidebarLink
-                      pathToPage={gradingDestination}
-                      title={intl.formatMessage(messages.sidebarLinkToGrading)}
-                    />
-                  )}
-                  {showOtherLink(courseTeam) && (
-                    <HelpSidebarLink
-                      pathToPage={courseTeamDestination}
-                      title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
-                    />
-                  )}
-                  {showOtherLink(groupConfigurations) && (
-                    <HelpSidebarLink
-                      pathToPage={groupConfigurationsDestination}
-                      title={intl.formatMessage(
-                        messages.sidebarLinkToGroupConfigurations,
-                      )}
-                    />
-                  )}
-                  {showOtherLink(advancedSettings) && (
-                    <HelpSidebarLink
-                      pathToPage={advancedSettingsDestination}
-                      title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
-                    />
-                  )}
-                  {proctoredExamSettingsUrl && (
-                    <HelpSidebarLink
-                      pathToPage={proctoredExamSettingsUrl}
-                      title={intl.formatMessage(
-                        messages.sidebarLinkToProctoredExamSettings,
-                      )}
-                    />
-                  )}
-                </ul>
-              </nav>
-            </div>
-          </>
-        )}
-      </aside>
-    </Plugin>
+    <aside className={classNames('help-sidebar', className)}>
+      <div className="help-sidebar-about">{children}</div>
+      {showOtherSettings && (
+        <>
+          <hr />
+          <div className="help-sidebar-other">
+            <h4 className="help-sidebar-other-title">
+              {intl.formatMessage(messages.sidebarTitleOther)}
+            </h4>
+            <nav
+              className="help-sidebar-other-links"
+              aria-label={intl.formatMessage(messages.sidebarTitleOther)}
+            >
+              <ul className="p-0 mb-0">
+                {showOtherLink(scheduleAndDetails) && (
+                  <HelpSidebarLink
+                    pathToPage={scheduleAndDetailsDestination}
+                    title={intl.formatMessage(
+                      messages.sidebarLinkToScheduleAndDetails,
+                    )}
+                  />
+                )}
+                {showOtherLink(grading) && (
+                  <HelpSidebarLink
+                    pathToPage={gradingDestination}
+                    title={intl.formatMessage(messages.sidebarLinkToGrading)}
+                  />
+                )}
+                {showOtherLink(courseTeam) && (
+                  <HelpSidebarLink
+                    pathToPage={courseTeamDestination}
+                    title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
+                  />
+                )}
+                {showOtherLink(groupConfigurations) && (
+                  <HelpSidebarLink
+                    pathToPage={groupConfigurationsDestination}
+                    title={intl.formatMessage(
+                      messages.sidebarLinkToGroupConfigurations,
+                    )}
+                  />
+                )}
+                {showOtherLink(advancedSettings) && (
+                  <HelpSidebarLink
+                    pathToPage={advancedSettingsDestination}
+                    title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
+                  />
+                )}
+                {proctoredExamSettingsUrl && (
+                  <HelpSidebarLink
+                    pathToPage={proctoredExamSettingsUrl}
+                    title={intl.formatMessage(
+                      messages.sidebarLinkToProctoredExamSettings,
+                    )}
+                  />
+                )}
+              </ul>
+            </nav>
+          </div>
+        </>
+      )}
+    </aside>
   );
 };
 

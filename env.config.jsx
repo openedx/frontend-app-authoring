@@ -237,28 +237,28 @@ const config = {
         },
       ],
     },
-    grading_header_styleplugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-content-style",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <div>
-                <header className="grading-sub-header-content">
-                <h2 className="grading-sub-header-content-title">
-                  {props.contentTitle}
-                </h2>
-                <span className="grading-desc small">{props.description}</span>
-                </header>
-              </div>
-            ),
-          },
-        },
-      ],
-    },
+    // grading_header_styleplugin_slot: {
+    //   plugins: [
+    //     {
+    //       op: PLUGIN_OPERATIONS.Insert,
+    //       widget: {
+    //         id: "grading-content-style",
+    //         type: DIRECT_PLUGIN,
+    //         priority: 1,
+    //         RenderWidget: (props) => (
+    //           <div>
+    //             <header className="grading-sub-header-content">
+    //             <h2 className="grading-sub-header-content-title">
+    //               {props.contentTitle}
+    //             </h2>
+    //             <span className="grading-desc small">{props.description}</span>
+    //             </header>
+    //           </div>
+    //         ),
+    //       },
+    //     },
+    //   ],
+    // },
     grading_section_sub_header_plugin_slot: {
       plugins: [
         {
@@ -277,28 +277,28 @@ const config = {
         },
       ],
     },
-    grading_sub_header_styleplugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-content-style",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <div>
-                <header className="grading-section-sub-header">
-                  <h2 className="lead">{props.title}</h2>
-                  <span className="small grading-rules-desc">
-                    {props.description}
-                  </span>
-                </header>
-              </div>
-            ),
-          },
-        },
-      ],
-    },
+    // grading_sub_header_styleplugin_slot: {
+    //   plugins: [
+    //     {
+    //       op: PLUGIN_OPERATIONS.Insert,
+    //       widget: {
+    //         id: "grading-content-style",
+    //         type: DIRECT_PLUGIN,
+    //         priority: 1,
+    //         RenderWidget: (props) => (
+    //           <div>
+    //             <header className="grading-section-sub-header">
+    //               <h2 className="lead">{props.title}</h2>
+    //               <span className="small grading-rules-desc">
+    //                 {props.description}
+    //               </span>
+    //             </header>
+    //           </div>
+    //         ),
+    //       },
+    //     },
+    //   ],
+    // },
     grading_assignment_section_sub_header_plugin_slot: {
       plugins: [
         {
@@ -321,19 +321,19 @@ const config = {
         },
       ],
     },
-    help_sidebar_classname_plugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "help-sidebar-classname",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: () => {}
-          },
-        },
-      ],
-    },
+    // help_sidebar_classname_plugin_slot: {
+    //   plugins: [
+    //     {
+    //       op: PLUGIN_OPERATIONS.Insert,
+    //       widget: {
+    //         id: "help-sidebar-classname",
+    //         type: DIRECT_PLUGIN,
+    //         priority: 1,
+    //         RenderWidget: () => {}
+    //       },
+    //     },
+    //   ],
+    // },
     },
 };
 
