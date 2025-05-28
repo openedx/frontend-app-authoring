@@ -160,7 +160,7 @@ const CustomCreateNewCourseForm = ({
     };
 
     return (
-        <div className="create-new-course-form">
+        <div className="create-new-course-form mt-4">
             <Container size="xl" className="pb-0 px-2">
                 <Row>
                     <Col xs={12}>
