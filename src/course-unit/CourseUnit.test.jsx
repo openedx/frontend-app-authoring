@@ -408,6 +408,9 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onDelete(getXBlockBaseApiUrl(courseVerticalChildrenMock.children[0].block_id))
       .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, courseSectionVerticalMock);
     await executeThunk(deleteUnitItemQuery(
       courseId,
       courseVerticalChildrenMock.children[0].block_id,
