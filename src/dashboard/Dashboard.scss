@@ -95,6 +95,18 @@
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 1rem;
+
+      // .overview-left {
+      //   width: 280px !important;
+      // }
+
+      // .overview-right {
+      //   width: 560px !important;
+      // }
+
+      // &.single-column {
+      //   grid-template-columns: 1fr;
+      // }
     }
 
     .overview-card {
