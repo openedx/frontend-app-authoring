@@ -27,7 +27,7 @@ import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
-import 'titaned-lib/dist/index.css';
+// import 'titaned-lib/dist/index.css';
 
 const StudioHome = () => {
   const intl = useIntl();

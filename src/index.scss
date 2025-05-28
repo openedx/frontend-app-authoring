@@ -54,8 +54,10 @@ div.xblock-highlight {
   }
 }
 
+html,
 body {
   background-color: $light-200;
+  overflow: hidden;
 
   .editor-page {
     background-color: $light-100;
@@ -70,6 +72,7 @@ mark {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .content-wrapper {
@@ -77,6 +80,7 @@ mark {
   flex: 1;
   min-height: 0;
   flex-grow: 1;
+  overflow: hidden;
 }
 
 .main-content {
@@ -86,8 +90,13 @@ mark {
   padding-bottom: 0px;
   padding-top: 0;
   box-sizing: border-box;
-  overflow: auto;
+  overflow-y: auto;
+  height: calc(100vh - 100px);
   background-color: var(--bg-body);
+
+  .page-content {
+    flex-grow: 1;
+  }
 }
 
 .pgn-btn-active {
@@ -98,4 +107,30 @@ mark {
 
 .btn-tertiary:focus::before {
   border: solid 2px transparent;
+}
+
+.sidebar-container {
+  overflow-y: auto;
+  flex-shrink: 0;
+  overflow-x: hidden;
+  height: calc(100vh - 0px);
+}
+
+/* Styles for the sidebar scrollbar */
+.sidebar-container::-webkit-scrollbar {
+  width: 4px; /* width of the vertical scrollbar */
+  z-index: 10;
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+  background: transparent; /* color of the track */
+}
+
+.sidebar-container::-webkit-scrollbar-thumb {
+  background-color: #888; /* color of the scrollbar thumb */
+  border-radius: 4px; /* roundness of the scrollbar thumb */
+}
+
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* color of the scrollbar thumb on hover */
 }

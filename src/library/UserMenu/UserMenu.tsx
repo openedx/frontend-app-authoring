@@ -46,7 +46,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
       data-testid="avatar-icon"
     />
   );
-  const title = isMobile ? avatar : <>{avatar}{username}</>;
+  const title = isMobile ? avatar : <>{username} &nbsp; {avatar}</>;
 
   return (
     <NavDropdownMenu

@@ -16,19 +16,19 @@ body {
 /* Theme colors */
 :root {
   /* Main Theme Colors */
-  --primary: #5e35b1;
+  --primary: #2B2399;
   /* Berry Purple */
-  --primary-alt: #673ab7;
-  --primary-hover: #ede7f6;
-  --primary-active: #673ab7;
-  --primary-light: #ede7f6;
+  --primary-alt: #3C32B5;
+  --primary-hover: #E2E1F9;
+  --primary-active: #1F1A7D;
+  --primary-light: #E2E1F9;
 
-  --secondary: #1e88e5;
+  --secondary: #7A8AFF;
   /* Berry Blue */
-  --secondary-alt: #2196f3;
-  --secondary-hover: #e3f2fd;
-  --secondary-active: #2196f3;
-  --secondary-light: #e3f2fd;
+  --secondary-alt: #5C6EF0;
+  --secondary-hover: #ECEEFF;
+  --secondary-active: #4A5BD1;
+  --secondary-light: #ECEEFF;
 
   --disabled: #bdbdbd;
 
@@ -51,7 +51,7 @@ body {
 
   /* Text Colors */
   --text-primary: #121926;
-  --text-secondary: #697586;
+  --text-secondary: #9e9f9e;
   --text-muted: #6b7280;
   --text-light: #364152;
   --text-white: #ffffff;
@@ -362,7 +362,7 @@ body {
 
 /* Card Styles */
 .card {
-  border-radius: 8px;
+  border-radius: 16px;
   // border: 1px solid rgba(0, 0, 0, 0.1);
   // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   box-shadow: none !important;
