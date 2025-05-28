@@ -26,16 +26,6 @@
   color: $black;
 }
 
-.grading-sub-header-content-title {
-  font: normal $font-weight-bold 1.40625rem $font-family-base;
-  margin-bottom: 0;
-  color: $black;
-}
-
-.grading-desc {
-  color: $black;
-}
-
 .sub-header-instructions {
   font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
   color: $text-color-base;
@@ -46,9 +36,5 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 1.5rem;
-  margin-bottom: 12px;
-}
-
-.grading-sub-header-content {
   margin-bottom: 12px;
 }

@@ -1,20 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const SectionSubHeader = ({ title, description }) => (
-  <PluginSlot
-    id="grading_sub_header_styleplugin_slot"
-    pluginProps={{
-      title,
-      description,
-    }}
-  >
-    <header className="section-sub-header">
-      <h2 className="lead">{title}</h2>
-      <span className="small text-gray-700">{description}</span>
-    </header>
-  </PluginSlot>
+  <header className="section-sub-header">
+    <h2 className="lead">{title}</h2>
+    <span className="small text-gray-700">{description}</span>
+  </header>
 );
 
 SectionSubHeader.defaultProps = {
