@@ -1,29 +1,47 @@
 .course-card {
-    border-radius: 8px;
+    border-radius: 16px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     height: 100%;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     margin: 0 auto;
+    padding: 10px;
+    border: solid 1px #e0e0e0 !important;
 
+    &:hover {
+        box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card-content-section {
+        padding: 0 6px !important;
+        margin-bottom: 10px;
+    }
 }
 
 .course-card-image {
     width: 100%;
     height: 160px;
     object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    margin-bottom: 1rem;
+
+    .pgn__card-image-cap {
+        border-radius: 12px !important;
+    }
 }
 
 .title-container {
     height: 3rem;
     margin-bottom: 0.5rem;
+    text-align: start;
+
+    p {
+        font-size: 14px;
+    }
 }
   
 .card-title {
     font-size: 1rem;
-    line-height: 1.4;
+    line-height: 1.2;
     word-break: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -31,11 +49,14 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--primary);
+    margin-bottom: 4px !important;
 }
 
 .course-card-buttons {
+    margin-top: 2.5rem;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.2rem;
     justify-content: space-between;
     flex-wrap: wrap;
   
@@ -44,10 +65,18 @@
     }
   
     button {
-        flex: 1;
+        // flex: 1;
         white-space: nowrap;
-        padding: 0.4rem 0.5rem;
+        padding: 0 1.6rem;
         font-size: 0.75rem;
         min-width: max-content;
+
+        @media (max-width: 576px) {
+            width: fit-content !important;
+        }
+    }
+
+    .btn-icon-primary {
+        padding: 0 !important;
     }
 }

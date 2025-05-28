@@ -160,7 +160,7 @@ const MyCourses = () => {
   );
 
   return (
-    <Container className="mt-3">
+    <Container className="mt-4">
       {/* Add the filters at the top */}
       {/* <CoursesFilter dispatch={dispatch} locationValue="/my-courses" /> */}
       {/* <CourseFilter
@@ -179,22 +179,25 @@ const MyCourses = () => {
       ) : (
         <div>
           {/* {isShowProcessing && !isEnabledPagination && <ProcessingCourses />} */}
-          <div className="d-flex justify-content-end align-items-center mb-3 gap-3 filters-container">
-            <CoursesFilters
-              dispatch={dispatch}
-              locationValue={locationValue}
-              isLoading={isLoadingCourses}
-            />
-            {hasAbilityToCreateNewCourse && (
-              <Button
-                variant="outline-primary"
-                iconBefore={Add}
-                size="sm"
-                data-testid="new-course-button"
-              >
-                Create Course
-              </Button>
-            )}
+          <div className="d-flex justify-content-between align-items-center mb-3 gap-3 filters-container">
+            <div className="my-courses-title">My Courses</div>
+            <div className="d-flex align-items-center gap-3">
+              <CoursesFilters
+                dispatch={dispatch}
+                locationValue={locationValue}
+                isLoading={isLoadingCourses}
+              />
+              {hasAbilityToCreateNewCourse && (
+                <Button
+                  variant="outline-primary"
+                  iconBefore={Add}
+                  size="sm"
+                  data-testid="new-course-button"
+                >
+                  Create Course
+                </Button>
+              )}
+            </div>
           </div>
           {hasCourses ? renderCourseGrid() : renderEmptyState()}
         </div>
