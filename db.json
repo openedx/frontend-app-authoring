@@ -334,40 +334,6 @@
             }
           ]
         }
-      },
-      {
-        "id": "html-widget-1",
-        "type": "html",
-        "order": 8,
-        "position": "left",
-        "enabled": true,
-        "title": "Course Progress",
-        "content": {
-          "html": "<div class=\"html-item\"><div class=\"item-header\"><h3 class=\"item-title\">Introduction to Web Development</h3><span class=\"item-status status-active\">In Progress</span></div><p class=\"item-description\">Learn the fundamentals of HTML, CSS, and JavaScript</p><div class=\"item-date\">Started: April 15, 2024</div></div><div class=\"html-item\"><div class=\"item-header\"><h3 class=\"item-title\">Advanced React Patterns</h3><span class=\"item-status status-pending\">Upcoming</span></div><p class=\"item-description\">Master advanced React concepts and best practices</p><div class=\"item-date\">Starts: May 1, 2024</div></div><div class=\"html-item\"><div class=\"item-header\"><h3 class=\"item-title\">Node.js Backend Development</h3><span class=\"item-status status-completed\">Completed</span></div><p class=\"item-description\">Build scalable backend applications with Node.js</p><div class=\"item-date\">Completed: April 10, 2024</div></div>",
-          "data": [
-            {
-              "id": "course-1",
-              "title": "Introduction to Web Development",
-              "description": "Learn the fundamentals of HTML, CSS, and JavaScript",
-              "status": "active",
-              "date": "April 15, 2024"
-            },
-            {
-              "id": "course-2",
-              "title": "Advanced React Patterns",
-              "description": "Master advanced React concepts and best practices",
-              "status": "pending",
-              "date": "May 1, 2024"
-            },
-            {
-              "id": "course-3",
-              "title": "Node.js Backend Development",
-              "description": "Build scalable backend applications with Node.js",
-              "status": "completed",
-              "date": "April 10, 2024"
-            }
-          ]
-        }
       }
     ]
   }
