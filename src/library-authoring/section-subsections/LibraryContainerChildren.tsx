@@ -85,11 +85,12 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   )
 }
 
+/** Component to display container children subsections for section and units for subsection */
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
-  const { navigateTo, insideSection } = useLibraryRoutes();
+  const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
   const { openInfoSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
@@ -116,7 +117,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
 
   useEffect(() => {
     // Create new ids which are unique using index.
-    // This is required to support multiple components with same id under a unit.
+    // This is required to support multiple components with same id under a container.
     const newChildren = children?.map((child, idx) => {
       const newChild: LibraryContainerMetadataWithUniqueId = {
         ...child,
@@ -133,7 +134,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     if (insideSection) {
       navigateTo({ subsectionId: child.originalId, doubleClicked });
       openInfoSidebar({ subsectionId: child.originalId });
-    } else {
+    } else if (insideSubsection) {
       navigateTo({ unitId: child.originalId, doubleClicked });
       openInfoSidebar({ unitId: child.originalId });
     }

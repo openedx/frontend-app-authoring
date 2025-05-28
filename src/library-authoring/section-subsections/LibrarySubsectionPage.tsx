@@ -36,7 +36,7 @@ export const LibrarySubsectionPage = () => {
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
-    data: sectionData,
+    data: subsectionData,
     isLoading,
     isError,
     error,
@@ -52,7 +52,7 @@ export const LibrarySubsectionPage = () => {
     return <ErrorAlert error={error} />;
   }
 
-  if (!libraryData || !sectionData) {
+  if (!libraryData || !subsectionData) {
     return <NotFoundAlert />;
   }
 
@@ -79,7 +79,7 @@ export const LibrarySubsectionPage = () => {
       <div className="flex-grow-1">
         <Helmet>
           <title>
-            {libraryData.title} | {sectionData.displayName} | {process.env.SITE_NAME}
+            {libraryData.title} | {subsectionData.displayName} | {process.env.SITE_NAME}
           </title>
         </Helmet>
         <Header
