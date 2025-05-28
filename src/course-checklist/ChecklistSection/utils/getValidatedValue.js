@@ -14,8 +14,6 @@ const getValidatedValue = (data, id) => {
       return healthValidators.hasAssignmentDeadlines(data.assignments, data.dates);
     case 'videoDuration':
       return healthValidators.hasShortVideoDuration(data.videos);
-    case 'mobileFriendlyVideo':
-      return healthValidators.hasMobileFriendlyVideos(data.videos);
     case 'diverseSequences':
       return healthValidators.hasDiverseSequences(data.subsections);
     case 'weeklyHighlights':
