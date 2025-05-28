@@ -10,7 +10,7 @@ import {
   useUpdateContainer,
   useUpdateContainerChildren,
 } from "../data/apiHooks";
-import messages from "./messages";
+import { messages, subsectionMessages, sectionMessages } from "./messages";
 import containerMessages from "../containers/messages";
 import { Container } from "../data/api";
 import { ActionRow, Stack } from "@openedx/paragon";
@@ -20,8 +20,10 @@ import TagCount from "../../generic/tag-count";
 import { ContainerMenu } from "../components/ContainerCard";
 import { useLibraryRoutes } from "../routes";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSidebarContext } from "../common/context/SidebarContext";
 
 interface LibraryContainerChildrenProps {
+  containerKey: string;
   /** set to true if it is rendered as preview */
   readOnly?: boolean;
 }
@@ -30,21 +32,15 @@ interface LibraryContainerMetadataWithUniqueId extends Container {
   originalId: string;
 }
 
-interface SubsectionRowProps extends LibraryContainerChildrenProps {
-  subsection: LibraryContainerMetadataWithUniqueId;
+interface ContainerRowProps extends LibraryContainerChildrenProps {
+  container: LibraryContainerMetadataWithUniqueId;
 }
 
-const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
+const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const { sectionId } = useLibraryContext();
-  const updateMutation = useUpdateContainer(subsection.originalId);
+  const updateMutation = useUpdateContainer(container.originalId);
   const queryClient = useQueryClient();
-
-  if (!sectionId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without sectionId URL parameter');
-  }
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -54,7 +50,7 @@ const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
       // invalidate parent container children query to see upated name
       queryClient.invalidateQueries({
-        queryKey: libraryAuthoringQueryKeys.containerChildren(sectionId),
+        queryKey: libraryAuthoringQueryKeys.containerChildren(containerKey),
       });
     } catch (err) {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
@@ -66,7 +62,7 @@ const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
     <>
       <InplaceTextEditor
         onSave={handleSaveDisplayName}
-        text={subsection.displayName}
+        text={container.displayName}
         textClassName='font-weight-bold small'
         readOnly={readOnly}
       />
@@ -78,24 +74,25 @@ const SubsectionRow = ({ subsection, readOnly }: SubsectionRowProps) => {
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
-        <TagCount size="sm" count={subsection.tagsCount} />
+        <TagCount size="sm" count={container.tagsCount} />
         <ContainerMenu
-          containerKey={subsection.originalId}
-          containerType={subsection.containerType}
-          displayName={subsection.displayName}
+          containerKey={container.originalId}
+          containerType={container.containerType}
+          displayName={container.displayName}
         />
       </Stack>
     </>
   )
 }
 
-export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenProps) => {
+export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const { sectionId, showOnlyPublished } = useLibraryContext();
-  const { navigateTo } = useLibraryRoutes();
+  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
+  const { navigateTo, insideSection } = useLibraryRoutes();
+  const { openInfoSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
-  const orderMutator = useUpdateContainerChildren(sectionId);
+  const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
@@ -115,7 +112,7 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     isLoading,
     isError,
     error,
-  } = useContainerChildren(sectionId, showOnlyPublished);
+  } = useContainerChildren(containerKey, showOnlyPublished);
 
   useEffect(() => {
     // Create new ids which are unique using index.
@@ -131,10 +128,16 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  if (!sectionId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without sectionId URL parameter');
-  }
+  const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
+    const doubleClicked = numberOfClicks > 1;
+    if (insideSection) {
+      navigateTo({ subsectionId: child.originalId, doubleClicked });
+      openInfoSidebar({ subsectionId: child.originalId });
+    } else {
+      navigateTo({ unitId: child.originalId, doubleClicked });
+      openInfoSidebar({ unitId: child.originalId });
+    }
+  }, [navigateTo, openInfoSidebar]);
 
   if (isLoading) {
     return <Loading />;
@@ -149,7 +152,11 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
     <div className="ml-2 library-container-page">
       {children?.length === 0 && (
         <h4 className="ml-2">
-          <FormattedMessage {...messages.sectionNoChildrenText} />
+          {insideSection ? (
+            <FormattedMessage {...sectionMessages.noChildrenText} />
+          ): (
+            <FormattedMessage {...subsectionMessages.noChildrenText} />
+          )}
         </h4>
       )}
       <DraggableList
@@ -178,15 +185,13 @@ export const LibraryContainerChildren = ({ readOnly }: LibraryContainerChildrenP
               borderLeft: '8px solid #E1DDDB',
             }}
             isClickable
-            onClick={(e: { detail: number; }) => navigateTo({
-              subsectionId: child.originalId,
-              doubleClicked: e.detail > 1,
-            })}
-            disabled={readOnly}
+            onClick={(e: { detail: number; }) => handleChildClick(child, e.detail)}
+            disabled={readOnly || libReadOnly}
             actions={
-              <SubsectionRow
-                subsection={child}
-                readOnly={readOnly}
+              <ContainerRow
+                containerKey={containerKey}
+                container={child}
+                readOnly={readOnly || libReadOnly}
               />
             }
           />

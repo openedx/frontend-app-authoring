@@ -67,11 +67,6 @@ export const LibraryUnitPage = () => {
     };
   }, [setDefaultTab, setHiddenTabs]);
 
-  if (!unitId || !libraryId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without unitId or libraryId URL parameter');
-  }
-
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
     data: unitData,
@@ -81,7 +76,7 @@ export const LibraryUnitPage = () => {
   } = useContainer(unitId);
 
   // Only show loading if unit or library data is not fetched from index yet
-  if (isLibLoading || isLoading) {
+  if (!unitId || !libraryId || isLibLoading || isLoading) {
     return <Loading />;
   }
 

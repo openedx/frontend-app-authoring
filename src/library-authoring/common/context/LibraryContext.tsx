@@ -3,6 +3,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -129,18 +130,40 @@ export const LibraryProvider = ({
   const [componentId, setComponentId] = useState(
     skipUrlUpdate ? undefined : urlComponentId,
   );
-  const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsContainer ? urlSelectedItemId : undefined),
-  );
-  const [unitId, setUnitId] = useState(
-    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
-  );
-  const [sectionId, setSectionId] = useState(
-    skipUrlUpdate ? undefined : urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
-  );
-  const [subsectionId, setSubsectionId] = useState(
-    skipUrlUpdate ? undefined : urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
-  );
+  const [collectionId, setCollectionId] = useState<string | undefined>(undefined);
+  const [unitId, setUnitId] = useState<string | undefined>(undefined);
+  const [sectionId, setSectionId] = useState<string | undefined>(undefined);
+  const [subsectionId, setSubsectionId] = useState<string | undefined>(undefined);
+
+  /** As container ids are not set when you go back in history sometimes.
+   * We set them in useEffect
+  */
+  useEffect(() => {
+    if (!skipUrlUpdate && collectionId === undefined) {
+      setCollectionId(urlCollectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
+    }
+    if (!skipUrlUpdate && sectionId === undefined) {
+      setSectionId(urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
+    }
+    if (!skipUrlUpdate && subsectionId === undefined) {
+      setSubsectionId(urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
+    }
+    if (!skipUrlUpdate && !unitId) {
+      setUnitId(urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
+    }
+  }, [
+    urlUnitId,
+    urlCollectionId,
+    urlSubsectionId,
+    urlSectionId,
+    urlSelectedItemId,
+    skipUrlUpdate,
+    sectionId,
+    subsectionId,
+    unitId,
+    collectionId,
+  ])
+
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {

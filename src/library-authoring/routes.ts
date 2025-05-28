@@ -208,15 +208,19 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           // or stay there to list all sections, or a selected section.
           : ROUTES.SECTIONS
       );
-    } else if (insideSection) {
+    } else if (insideUnits) {
+      // We're inside the units tab,
       route = (
-        (subsectionId && doubleClicked)
-          // now open the subsection,
-          ? ROUTES.SUBSECTION
-          // We're viewing a section, so stay there,
-          // and optionally select a subsection in that section.
-          : ROUTES.SECTION
+        (unitId && doubleClicked)
+          // now open the previously-selected unit,
+          ? ROUTES.UNIT
+          // or stay there to list all units, or a selected unit.
+          : ROUTES.UNITS
       );
+    } else if (insideUnit) {
+      // We're viewing a Unit, so stay there,
+      // and optionally select a component in that Unit.
+      route = ROUTES.UNIT;
     } else if (insideSubsections) {
       // We're inside the subsections tab,
       route = (
@@ -233,21 +237,17 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           ? ROUTES.UNIT
           // We're viewing a subsection, so stay there,
           // and optionally select a unit in that subsection.
+          : ROUTES.SUBSECTION
+      );
+    } else if (insideSection) {
+      route = (
+        (subsectionId && doubleClicked)
+          // now open the subsection,
+          ? ROUTES.SUBSECTION
+          // We're viewing a section, so stay there,
+          // and optionally select a subsection in that section.
           : ROUTES.SECTION
       );
-    } else if (insideUnits) {
-      // We're inside the units tab,
-      route = (
-        (unitId && doubleClicked)
-          // now open the previously-selected unit,
-          ? ROUTES.UNIT
-          // or stay there to list all units, or a selected unit.
-          : ROUTES.UNITS
-      );
-    } else if (insideUnit) {
-      // We're viewing a Unit, so stay there,
-      // and optionally select a component in that Unit.
-      route = ROUTES.UNIT;
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.

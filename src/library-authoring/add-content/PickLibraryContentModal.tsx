@@ -59,8 +59,12 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   }
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  // the order sectionId || subsectionId || unitId is important
-  const updateContainerChildrenMutation = useAddChildrenToContainer(sectionId || subsectionId || unitId);
+  const updateContainerChildrenMutation = useAddChildrenToContainer(
+    (insideSection && sectionId)
+    || (insideSubsection && subsectionId)
+    || (insideUnit && unitId)
+    || ''
+  );
 
   const { showToast } = useContext(ToastContext);
 
@@ -106,7 +110,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     // show only subsections
     extraFilter = ['block_type = "subsection"'];
     addBtnText = messages.addToSectionButton;
-    visibleTabs = [ContentType.subsections];
+    visibleTabs = [ContentType.home];
   } else if (insideSubsection) {
     // show only units
     extraFilter = ['block_type = "unit"'];

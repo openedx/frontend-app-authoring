@@ -1,6 +1,24 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
-const messages = defineMessages({
+export const messages = defineMessages({
+  breadcrumbsAriaLabel: {
+    id: 'course-authoring.library-authoring.section-page.breadcrumbs.label.text',
+    defaultMessage: 'Navigation breadcrumbs',
+    description: 'Aria label for navigation breadcrumbs',
+  },
+  orderUpdatedMsg: {
+    id: 'course-authoring.library-authoring.container-component.order-updated-msg.text',
+    defaultMessage: 'Order updated',
+    description: 'Toast message displayed when children items are successfully reordered in a container',
+  },
+  failedOrderUpdatedMsg: {
+    id: 'course-authoring.library-authoring.container-component.failed-order-updated-msg.text',
+    defaultMessage: 'Failed to update children order',
+    description: 'Toast message displayed when reordering of children items in container fails',
+  },
+});
+
+export const sectionMessages = defineMessages({
   infoButtonText: {
     id: 'course-authoring.library-authoring.section-header.buttons.info',
     defaultMessage: 'Section Info',
@@ -21,31 +39,37 @@ const messages = defineMessages({
     defaultMessage: 'Add Subsection',
     description: 'Text of button to add new subsection to section in header',
   },
-  breadcrumbsAriaLabel: {
-    id: 'course-authoring.library-authoring.breadcrumbs.label.text',
-    defaultMessage: 'Navigation breadcrumbs',
-    description: 'Aria label for navigation breadcrumbs',
-  },
-  draftChipText: {
-    id: 'course-authoring.library-authoring.section-component.draft-chip.text',
-    defaultMessage: 'Draft',
-    description: 'Chip in components in section page that is shown when component has unpublished changes',
-  },
-  sectionNoChildrenText: {
+  noChildrenText: {
     id: 'course-authoring.library-authoring.section.no-children.text',
     defaultMessage: 'This section is empty',
     description: 'Message to display when section has not children',
   },
-  orderUpdatedMsg: {
-    id: 'course-authoring.library-authoring.unit-component.order-updated-msg.text',
-    defaultMessage: 'Order updated',
-    description: 'Toast message displayed when components are successfully reordered in a unit',
-  },
-  failedOrderUpdatedMsg: {
-    id: 'course-authoring.library-authoring.unit-component.failed-order-updated-msg.text',
-    defaultMessage: 'Failed to update components order',
-    description: 'Toast message displayed when components are successfully reordered in a unit',
-  },
 });
 
-export default messages;
+export const subsectionMessages = defineMessages({
+  infoButtonText: {
+    id: 'course-authoring.library-authoring.subsection-header.buttons.info',
+    defaultMessage: 'Subsection Info',
+    description: 'Button text to subsection sidebar from subsection page',
+  },
+  addContentButton: {
+    id: 'course-authoring.library-authoring.subsection-header.buttons.add-subsection',
+    defaultMessage: 'Add New Unit',
+    description: 'Text of button to add subsection to subsection',
+  },
+  addExistingContentButton: {
+    id: 'course-authoring.library-authoring.subsection-header.buttons.add-existing-subsection',
+    defaultMessage: 'Add Existing Unit',
+    description: 'Text of button to add existing content to subsection',
+  },
+  newContentButton: {
+    id: 'course-authoring.library-authoring.subsection-header.buttons.add-new-subsection',
+    defaultMessage: 'Add Unit',
+    description: 'Text of button to add new subsection to subsection in header',
+  },
+  noChildrenText: {
+    id: 'course-authoring.library-authoring.subsection.no-children.text',
+    defaultMessage: 'This subsection is empty',
+    description: 'Message to display when subsection has not children',
+  },
+});

@@ -17,7 +17,7 @@ import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 import { LibraryUnitPage } from './units';
-import { LibrarySectionPage } from './section-subsections';
+import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
 
 const LibraryLayout = () => {
   const { libraryId } = useParams();
@@ -80,6 +80,10 @@ const LibraryLayout = () => {
       <Route
         path={ROUTES.SECTION}
         element={context(<LibrarySectionPage />)}
+      />
+      <Route
+        path={ROUTES.SUBSECTION}
+        element={context(<LibrarySubsectionPage />)}
       />
       <Route
         path={ROUTES.UNIT}

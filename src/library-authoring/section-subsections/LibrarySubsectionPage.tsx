@@ -12,17 +12,17 @@ import { Breadcrumb, Container } from '@openedx/paragon';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { Link } from 'react-router-dom';
-import { messages, sectionMessages } from './messages';
+import { messages, subsectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 import { ContainerType } from '../../generic/key-utils';
 
-/** Full library section page */
-export const LibrarySectionPage = () => {
+/** Full library subsection page */
+export const LibrarySubsectionPage = () => {
   const intl = useIntl();
-  const { libraryId, sectionId } = useLibraryContext();
+  const { libraryId, subsectionId } = useLibraryContext();
   const {
     openInfoSidebar,
     sidebarComponentInfo,
@@ -31,8 +31,8 @@ export const LibrarySectionPage = () => {
   const { navigateTo } = useLibraryRoutes();
   // Open subsection sidebar on mount
   useEffect(() => {
-    openInfoSidebar({ sectionId });
-  }, [sectionId]);
+    openInfoSidebar({ subsectionId });
+  }, [subsectionId]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
@@ -40,10 +40,10 @@ export const LibrarySectionPage = () => {
     isLoading,
     isError,
     error,
-  } = useContainer(sectionId);
+  } = useContainer(subsectionId);
 
-  // show loading if sectionId or libraryId is not set or section or library data is not fetched from index yet
-  if (!sectionId || !libraryId || isLibLoading || isLoading) {
+  // Only show loading if section or library data is not fetched from index yet
+  if (!subsectionId || !libraryId || isLibLoading || isLoading) {
     return <Loading />;
   }
 
@@ -95,24 +95,24 @@ export const LibrarySectionPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={sectionId} />} />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={subsectionId} />} />}
               breadcrumbs={breadcrumbs}
               headerActions={(
                 <HeaderActions
-                  containerKey={sectionId}
-                  containerType={ContainerType.Section}
-                  infoBtnText={intl.formatMessage(sectionMessages.infoButtonText)}
-                  addContentBtnText={intl.formatMessage(sectionMessages.newContentButton)}
+                  containerKey={subsectionId}
+                  containerType={ContainerType.Subsection}
+                  infoBtnText={intl.formatMessage(subsectionMessages.infoButtonText)}
+                  addContentBtnText={intl.formatMessage(subsectionMessages.newContentButton)}
                 />
               )}
               hideBorder
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryContainerChildren containerKey={sectionId} />
+            <LibraryContainerChildren containerKey={subsectionId} />
             <FooterActions
-              addContentBtnText={intl.formatMessage(sectionMessages.addContentButton)}
-              addExistingContentBtnText={intl.formatMessage(sectionMessages.addExistingContentButton)}
+              addContentBtnText={intl.formatMessage(subsectionMessages.addContentButton)}
+              addExistingContentBtnText={intl.formatMessage(subsectionMessages.addExistingContentButton)}
             />
           </Container>
         </Container>
