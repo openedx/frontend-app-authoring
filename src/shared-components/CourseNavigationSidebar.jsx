@@ -21,7 +21,7 @@ const Sidebar = ({ buttons, onNavigate, presentPath }) => (
               type="button"
               onClick={() => onNavigate(item.path)}
               className="course-sidebar-link"
-              style={{ fontWeight: isActive ? 'bold' : 'normal' }}
+              style={{ fontWeight: isActive ? 'normal' : 'normal' }}
             >
               {item.icon && <span className="course-sidebar-icon">{item.icon}</span>}
               {item.label}

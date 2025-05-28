@@ -13,7 +13,7 @@ const CustomCreateNewCourseForm = ({
     courseSettings,
     handleValuesChange,
 }) => {
-    const [formValues, setFormValues] = useState(editedValues || {
+    const initialFormValues = {
         title: '',
         shortDescription: '',
         description: '',
@@ -39,8 +39,9 @@ const CustomCreateNewCourseForm = ({
         introVideo: null,
         prerequisites: '',
         license: null,
-    });
+    };
 
+    const [formValues, setFormValues] = useState(editedValues || initialFormValues);
     const [imageErrors, setImageErrors] = useState({ cardImage: '', bannerImage: '' });
     const [cardImagePreview, setCardImagePreview] = useState('');
     const [bannerImagePreview, setBannerImagePreview] = useState('');
@@ -151,9 +152,16 @@ const CustomCreateNewCourseForm = ({
         });
     };
 
+    const resetForm = () => {
+        setFormValues(initialFormValues);
+        setImageErrors({ cardImage: '', bannerImage: '' });
+        setCardImagePreview('');
+        setBannerImagePreview('');
+    };
+
     return (
-        <div className="create-new-course-form">
-            <Container size="xl" className="px-2 py-4">
+        <div className="create-new-course-form mt-4">
+            <Container size="xl" className="pb-0 px-2">
                 <Row>
                     <Col xs={12}>
                         <PSCourseForm
@@ -172,6 +180,7 @@ const CustomCreateNewCourseForm = ({
                             bannerImageFile={formValues.bannerImage}
                             imageErrors={imageErrors}
                             onSubmit={handleCreateNewCourse}
+                            onResetForm={resetForm}
                         />
                     </Col>
                 </Row>

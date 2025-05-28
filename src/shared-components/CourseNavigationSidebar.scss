@@ -1,4 +1,5 @@
 .course-sidebar-nav {
+    border-radius: 16px;
     width: 220px;
     padding: 24px 0 0 0;
     background: #fff;
@@ -15,6 +16,9 @@
 .course-sidebar-item {
     margin: 0;
     padding: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 16px;
 }
 
 .course-sidebar-link {
@@ -35,10 +39,12 @@
 
 .course-sidebar-item.active .course-sidebar-link {
     background: none;
-    font-weight: bold;
+    // font-weight: bold;
     color: #111;
     border-radius: 0px;
-    border-right: 4px solid var(--primary);
+    // border-right: 4px solid var(--primary);
+    background-color: #d8e1ff;
+    border-radius: 16px;
 }
 
 .course-sidebar-link:hover {

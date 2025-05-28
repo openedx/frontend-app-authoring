@@ -26,23 +26,22 @@ class CustomTypeaheadDropdown extends React.Component {
     this.handleOnBlur = this.handleOnBlur.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (this.props.value !== nextProps.value && nextProps.value !== '') {
-      const opt = this.props.options.find((o) => o === nextProps.value);
-      if (opt && opt !== this.state.displayValue) {
-        this.setState({ displayValue: opt });
-      }
-      return false;
-    }
-
-    return true;
-  }
-
   componentDidUpdate(prevProps) {
-    if (this.props.value !== prevProps.value) {
-      this.setState({ displayValue: this.props.value || '' });
+    if (prevProps.value !== this.props.value) {
+        this.setState({ displayValue: this.props.value || '' });
     }
-  }
+}
+  // shouldComponentUpdate(nextProps) {
+  //   if (this.props.value !== nextProps.value && nextProps.value !== '') {
+  //     const opt = this.props.options.find((o) => o === nextProps.value);
+  //     if (opt && opt !== this.state.displayValue) {
+  //       this.setState({ displayValue: opt });
+  //     }
+  //     return false;
+  //   }
+
+  //   return true;
+  // }
 
   // eslint-disable-next-line react/sort-comp
   getItems(strToFind = '') {
@@ -96,7 +95,7 @@ class CustomTypeaheadDropdown extends React.Component {
       this.setValue(opt);
       this.setState({ displayValue: opt });
     } else {
-      this.setValue(value);
+      // this.setValue(value);
       this.setState({ displayValue: value });
     }
   }
@@ -127,12 +126,14 @@ class CustomTypeaheadDropdown extends React.Component {
 
   // eslint-disable-next-line react/no-unused-class-component-methods
   handleClickOutside = () => {
-    if (this.state.dropDownItems.length > 0) {
+    // if (this.state.dropDownItems.length > 0) {
       this.setState(() => ({
         icon: this.expandMoreButton(),
         dropDownItems: '',
+        isFocused: false,
       }));
-    }
+    // }
+    console.log("clicked outside");
   };
 
   handleExpandLess() {
@@ -156,7 +157,6 @@ class CustomTypeaheadDropdown extends React.Component {
 
   handleItemClick(e) {
     this.setValue(e.target.value);
-    console.log("display value", this.state.displayValue);
     this.setState({ dropDownItems: '', icon: this.expandMoreButton() });
   }
 
@@ -231,7 +231,7 @@ class CustomTypeaheadDropdown extends React.Component {
             className="dropdown-container mt-2 rounded bg-light-100 box-shadow-centered-1 mr-2"
             style={{ maxHeight: '300px', overflowY: 'scroll' }}
           >
-            { this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList }
+            {this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList}
           </div>
         </FormGroup>
       </div>
