@@ -17,7 +17,10 @@ import {
     Nav,
     Alert,
 } from '@openedx/paragon';
-import { Calendar, Money, More, CloudUpload, Close, InfoOutline, Warning } from '@openedx/paragon/icons';
+import {
+    Calendar, Money, More, Add, Close, InfoOutline, Warning, CheckCircle
+} from '@openedx/paragon/icons';
+import { Photo } from '@openedx/paragon/icons';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
 import './PSCourseForm.scss';
 import IntroductionVideo from '../../schedule-and-details/introducing-section/introduction-video';
@@ -33,7 +36,7 @@ import LicenseCommonsOptions from '../../schedule-and-details/license-section/li
 import LicenseIcons from '../../schedule-and-details/license-section/license-icons';
 import licenseMessages from '../../schedule-and-details/license-section/messages';
 import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
-
+import AlertMessage from '../../generic/alert-message';
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
     const date = new Date();
@@ -70,6 +73,7 @@ const PSCourseForm = ({
     allowedImageTypes = ['image/jpeg', 'image/png'],
     onSubmit,
     onImageValidationErrorChange,
+    onResetForm,
 }) => {
     const intl = useIntl();
     const dispatch = useDispatch();
@@ -107,6 +111,7 @@ const PSCourseForm = ({
     const [touched, setTouched] = useState({});
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
     const {
         licenseURL,
@@ -133,7 +138,14 @@ const PSCourseForm = ({
     useEffect(() => {
         dispatch(fetchCourseAppSettings());
     }, [dispatch]);
-
+    useEffect(() => {
+        if (showSuccessAlert) {
+            const timer = setTimeout(() => {
+                setShowSuccessAlert(false);
+            }, 10000); // 10 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [showSuccessAlert]);
     const {
         organizations: createOrRerunOrganizations,
     } = useCreateOrRerunCourse(initialValues);
@@ -183,27 +195,43 @@ const PSCourseForm = ({
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateForm();
-
+    
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-
+    
         try {
-            setIsSubmitting(true);
+            setIsSubmitting(true); // Show loader and disable button
+            const response = await fetch('http://localhost:3000/courses', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editedValues),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to save course data');
+            }
+    
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+            setShowSuccessAlert(true); // Show success alert
+            setTimeout(() => setShowSuccessAlert(false), 10000);
+    
             if (typeof onSubmit === 'function') {
                 onSubmit(editedValues);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
                 submit: 'Failed to submit form. Please try again.',
             }));
         } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false); // Hide loader and enable button
         }
     };
+    
 
     const handleImageUpload = async (field, event) => {
         const file = event.target.files[0];
@@ -235,11 +263,12 @@ const PSCourseForm = ({
         });
     };
 
-    const languageOptions = useMemo(() =>
-        Object.entries(videoTranscriptLanguages)
+    const languageOptions = useMemo(
+        () => Object.entries(videoTranscriptLanguages)
             .filter(([code]) => code !== 'placeholder')
             .map(([code, label]) => [code, label]),
-        []);
+        [],
+    );
 
     const formattedLanguage = () => {
         const result = languageOptions.find((arr) => arr[0] === editedValues.language);
@@ -254,11 +283,6 @@ const PSCourseForm = ({
             <Form.Group className="mb-4">
                 <div className="d-flex align-items-center mb-2">
                     <Form.Label className="mb-0">{label}</Form.Label>
-                    <Icon
-                        src={InfoOutline}
-                        className="ms-2 cursor-pointer"
-                        data-tooltip={`Displayed as ${label.toLowerCase()}. Please upload a JPEG or PNG image between 300x300 and 1024x1024 pixels, under 5MB.`}
-                    />
                 </div>
                 <div
                     className={`upload-box border rounded${error ? ' border-danger' : ''}`}
@@ -280,43 +304,51 @@ const PSCourseForm = ({
                             </Button>
                         </div>
                     ) : (
-                        <div className="p-3">
-                            <Button
-                                variant="outline-primary"
-                                onClick={() => document.getElementById(`${field}Input`).click()}
-                                disabled={isImageUploading}
-                                className="w-100"
-                            >
-                                <Icon src={CloudUpload} className="me-2" />
-                                {isImageUploading ? 'Uploading...' : 'Upload Image'}
-                            </Button>
-                            <input
-                                type="file"
-                                id={`${field}Input`}
-                                accept={allowedImageTypes.join(',')}
-                                className="d-none"
-                                onChange={(e) => onUpload(field, e)}
-                            />
-                            {isImageUploading && uploadProgress > 0 && (
-                                <div className="progress mt-2">
-                                    <div
-                                        className="progress-bar"
-                                        role="progressbar"
-                                        style={{ width: `${uploadProgress}%` }}
-                                        aria-valuenow={uploadProgress}
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"
-                                    >
-                                        {uploadProgress}%
+                        <div className="p-3 text-center">
+                            <div className="d-flex flex-column align-items-center">
+                                <Icon
+                                    src={Photo}
+                                    className="mb-2"
+                                    style={{ fontSize: '2rem' }}
+                                />
+                                <Button
+                                    variant="outline-primary"
+                                    onClick={() => document.getElementById(`${field}Input`).click()}
+                                    disabled={isImageUploading}
+                                    className="mb-2"
+                                >
+                                    <Icon src={Add} className="me-2" />
+                                    {isImageUploading ? 'Uploading...' : 'Upload Image'}
+                                </Button>
+                                <div className="font-12">Please upload a JPEG or PNG image between 300x300 and 1024x1024 pixels, under 5MB.</div>
+                                <input
+                                    type="file"
+                                    id={`${field}Input`}
+                                    accept={allowedImageTypes.join(',')}
+                                    className="d-none"
+                                    onChange={(e) => onUpload(field, e)}
+                                />
+                                {isImageUploading && uploadProgress > 0 && (
+                                    <div className="progress mt-2 w-100">
+                                        <div
+                                            className="progress-bar"
+                                            role="progressbar"
+                                            style={{ width: `${uploadProgress}%` }}
+                                            aria-valuenow={uploadProgress}
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                        >
+                                            {uploadProgress}%
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                            {error && (
-                                <div className="text-danger mt-2 d-flex align-items-center font-small">
-                                    <Icon src={Warning} className="me-1" />
-                                    <span>{error}</span>
-                                </div>
-                            )}
+                                )}
+                                {error && (
+                                    <div className="text-danger mt-2 d-flex align-items-center font-small">
+                                        <Icon src={Warning} className="me-1" />
+                                        <span>{error}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -339,74 +371,101 @@ const PSCourseForm = ({
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleCancel = () => {
+        if (typeof onResetForm === 'function') {
+            onResetForm();
+        }
+        setTouched({});
+        setErrors({});
+    };
+
+    const handleCustomBlurForDropdown = (e) => {
+        const { value, name } = e.target;
+        handleInputChange(name, value);
+        handleBlur(name);
+    };
+
     return (
         <div className="ps-course-form">
+
+            {showSuccessAlert && (
+                <div className="alert-container mb-4">
+                    <AlertMessage
+                        variant="success"
+                        icon={CheckCircle}
+                        title="Success"
+                        className="success-alert"
+                        aria-hidden="true"
+                    />
+                </div>
+            )}
             <Container size="xl" className="pl-3">
                 <Row>
-                    <Col xs={12} className="pr-0 pb-3">
+                    <Col xs={12} className="pr-0 pb-0">
                         <Form className="course-form" onSubmit={handleSubmit}>
                             <Row>
                                 <Col xs={12} md={8}>
                                     <div>
                                         {children}
                                     </div>
-                                    {!hideTitleField && (
-                                        <Form.Group>
-                                            <Form.Label><>Title <span className="required-asterisk">*</span></></Form.Label>
+                                    <div className="title-section">
+                                        {!hideTitleField && (
+                                            <Form.Group>
+                                                <Form.Label><>Title <span className="required-asterisk">*</span></></Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="title"
+                                                    value={editedValues.title || ''}
+                                                    onChange={(e) => handleInputChange('title', e.target.value)}
+                                                    onBlur={() => handleBlur('title')}
+                                                    isInvalid={!!errors.title && touched.title}
+                                                />
+                                                {errors.title && touched.title && (
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {errors.title}
+                                                    </Form.Control.Feedback>
+                                                )}
+                                            </Form.Group>
+                                        )}
+                                        <Form.Group className="mb-1">
+                                            <Form.Label><>Short Description <span className="required-asterisk">*</span></></Form.Label>
                                             <Form.Control
-                                                type="text"
-                                                name="title"
-                                                value={editedValues.title || ''}
-                                                onChange={(e) => handleInputChange('title', e.target.value)}
-                                                onBlur={() => handleBlur('title')}
-                                                isInvalid={!!errors.title && touched.title}
+                                                as="textarea"
+                                                rows={4}
+                                                name="shortDescription"
+                                                value={editedValues.shortDescription || ''}
+                                                onChange={(e) => handleInputChange('shortDescription', e.target.value)}
+                                                onBlur={() => handleBlur('shortDescription')}
+                                                maxLength={150}
+                                                isInvalid={!!errors.shortDescription && touched.shortDescription}
+                                                className="short-description"
                                             />
-                                            {errors.title && touched.title && (
+                                            <Form.Text>A short description that will be displayed on the course card. Limit to 150 characters.</Form.Text>
+                                            {errors.shortDescription && touched.shortDescription && (
                                                 <Form.Control.Feedback type="invalid">
-                                                    {errors.title}
+                                                    {errors.shortDescription}
                                                 </Form.Control.Feedback>
                                             )}
                                         </Form.Group>
-                                    )}
-                                    <Form.Group className="mb-1">
-                                        <Form.Label><>Short Description <span className="required-asterisk">*</span></></Form.Label>
-                                        <Form.Control
-                                            as="textarea"
-                                            rows={4}
-                                            name="shortDescription"
-                                            value={editedValues.shortDescription || ''}
-                                            onChange={(e) => handleInputChange('shortDescription', e.target.value)}
-                                            onBlur={() => handleBlur('shortDescription')}
-                                            maxLength={150}
-                                            isInvalid={!!errors.shortDescription && touched.shortDescription}
-                                            className="short-description"
-                                        />
-                                        <Form.Text>A short description that will be displayed on the course card. Limit to 150 characters.</Form.Text>
-                                        {errors.shortDescription && touched.shortDescription && (
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.shortDescription}
-                                            </Form.Control.Feedback>
-                                        )}
-                                    </Form.Group>
 
-                                    <Form.Group className="mb-3">
-                                        <Form.Label><>Description</></Form.Label>
-                                        <Form.Control
-                                            as="textarea"
-                                            rows={8}
-                                            name="description"
-                                            value={editedValues.description || ''}
-                                            onChange={(e) => handleInputChange('description', e.target.value)}
-                                            onBlur={() => handleBlur('description')}
-                                            isInvalid={!!errors.description && touched.description}
-                                        />
-                                        {errors.description && touched.description && (
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.description}
-                                            </Form.Control.Feedback>
-                                        )}
-                                    </Form.Group>
-
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><>Description</></Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={8}
+                                                name="description"
+                                                value={editedValues.description || ''}
+                                                onChange={(e) => handleInputChange('description', e.target.value)}
+                                                onBlur={() => handleBlur('description')}
+                                                isInvalid={!!errors.description && touched.description}
+                                            />
+                                            {errors.description && touched.description && (
+                                                <Form.Control.Feedback type="invalid">
+                                                    {errors.description}
+                                                </Form.Control.Feedback>
+                                            )}
+                                        </Form.Group>
+                                    </div>
                                     <div className="options-container">
                                         <Row>
                                             <Col xs={12} md={3} className="sidebar">
@@ -417,7 +476,8 @@ const PSCourseForm = ({
                                                                 className={activeTab === tab.key ? 'active' : ''}
                                                                 onClick={() => {
                                                                     console.log('Edited Values:', editedValues);
-                                                                    setActiveTab(tab.key);}}
+                                                                    setActiveTab(tab.key);
+                                                                }}
                                                             >
                                                                 <Icon className="icon" src={tab.icon} />
                                                                 <span>{tab.label}</span>
@@ -430,9 +490,9 @@ const PSCourseForm = ({
                                             <Col xs={12} md={9} className="content-area">
                                                 {activeTab === 'general' && (
                                                     <div className="form-section">
-                                                        <Stack gap={4}>
-                                                            <Row>
-                                                                <Col xs={12} md={6}>
+                                                        <Stack>
+                                                            <Row className="custom-padding">
+                                                                <Col xs={12} md={12}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
                                                                         {createOrRerunOrganizations ? (
@@ -444,6 +504,7 @@ const PSCourseForm = ({
                                                                                 options={createOrRerunOrganizations}
                                                                                 placeholder="Select an organization"
                                                                                 handleChange={(value) => handleInputChange('organization', value)}
+                                                                                handleBlur={handleCustomBlurForDropdown}
                                                                                 noOptionsMessage="No organizations available"
                                                                                 required
                                                                             />
@@ -474,7 +535,7 @@ const PSCourseForm = ({
                                                                         )}
                                                                     </Form.Group>
                                                                 </Col>
-                                                                <Col xs={12} md={6}>
+                                                                <Col xs={12} md={12}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Course Number <span className="required-asterisk">*</span></></Form.Label>
                                                                         <Form.Control
@@ -498,7 +559,7 @@ const PSCourseForm = ({
                                                                     </Form.Group>
                                                                 </Col>
                                                             </Row>
-                                                            <Row>
+                                                            <Row className="pt-0 custom-padding">
                                                                 <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Course Run <span className="required-asterisk">*</span></></Form.Label>
@@ -559,161 +620,185 @@ const PSCourseForm = ({
                                                             <div className="schedule-section">
                                                                 <ul className="schedule-date-list">
                                                                     <li className="schedule-date-item">
-                                                                        <div className="schedule-date-item-container">
-                                                                            <div className="datepicker-control">
-                                                                                <Form.Label>
-                                                                                    Course start date{" "}
-                                                                                    <span className="required-asterisk">*</span>
-                                                                                </Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.date}
-                                                                                    value={editedValues.startDate || ""}
-                                                                                    label={null}
-                                                                                    helpText="Enter the date when your course will start"
-                                                                                    isInvalid={!!errors.startDate && touched.startDate}
-                                                                                    controlName="start-date"
-                                                                                    onChange={(value) => handleInputChange("startDate", value)}
-                                                                                    onBlur={() => handleBlur('startDate')}
-                                                                                    placeholder="MM/DD/YYYY"
-                                                                                />
-                                                                                {errors.startDate && touched.startDate && (
-                                                                                    <Form.Text className="text-danger">
-                                                                                        {errors.startDate}
-                                                                                    </Form.Text>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="time-field">
-                                                                                <Form.Label>Course start time</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.time}
-                                                                                    value={editedValues.startTime || ""}
-                                                                                    label={null}
-                                                                                    isInvalid={!!errors.startTime && touched.startTime}
-                                                                                    controlName="start-time"
-                                                                                    onChange={(value) => handleInputChange("startTime", value)}
-                                                                                    onBlur={() => handleBlur('startTime')}
-                                                                                />
-                                                                                <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                                                                    ({userTimezone})
-                                                                                </span>
-                                                                            </div>
+                                                                        <div>
+                                                                            <Row className="pl-0 pr-0 pb-0 pt-0">
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="datepicker-control">
+                                                                                        <Form.Label>
+                                                                                            Course start date{' '}
+                                                                                            <span className="required-asterisk">*</span>
+                                                                                        </Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.date}
+                                                                                            value={editedValues.startDate || ''}
+                                                                                            label={null}
+                                                                                            helpText="Enter the date when your course will start"
+                                                                                            isInvalid={!!errors.startDate && touched.startDate}
+                                                                                            controlName="start-date"
+                                                                                            onChange={(value) => handleInputChange('startDate', value)}
+                                                                                            onBlur={() => handleBlur('startDate')}
+                                                                                            placeholder="MM/DD/YYYY"
+                                                                                        />
+                                                                                        {errors.startDate && touched.startDate && (
+                                                                                            <Form.Text className="text-danger">
+                                                                                                {errors.startDate}
+                                                                                            </Form.Text>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </Col>
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="time-field">
+                                                                                        <Form.Label>Course start time</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.time}
+                                                                                            value={editedValues.startTime || ''}
+                                                                                            label={null}
+                                                                                            isInvalid={!!errors.startTime && touched.startTime}
+                                                                                            controlName="start-time"
+                                                                                            onChange={(value) => handleInputChange('startTime', value)}
+                                                                                            onBlur={() => handleBlur('startTime')}
+                                                                                        />
+                                                                                        <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                                                            ({userTimezone})
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
                                                                     </li>
                                                                     <li className="schedule-date-item">
-                                                                        <div className="schedule-date-item-container">
-                                                                            <div className="datepicker-control">
-                                                                                <Form.Label>Course end date</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.date}
-                                                                                    value={editedValues.endDate || ""}
-                                                                                    label={null}
-                                                                                    helpText="Enter the date when your course will end"
-                                                                                    isInvalid={!!errors.endDate && touched.endDate}
-                                                                                    controlName="end-date"
-                                                                                    onChange={(value) => handleInputChange("endDate", value)}
-                                                                                    onBlur={() => handleBlur('endDate')}
-                                                                                    placeholder="MM/DD/YYYY"
-                                                                                />
-                                                                                {errors.endDate && touched.endDate && (
-                                                                                    <Form.Text className="text-danger">
-                                                                                        {errors.endDate}
-                                                                                    </Form.Text>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="time-field">
-                                                                                <Form.Label>Course end time</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.time}
-                                                                                    value={editedValues.endTime || ""}
-                                                                                    label={null}
-                                                                                    isInvalid={!!errors.endTime && touched.endTime}
-                                                                                    controlName="end-time"
-                                                                                    onChange={(value) => handleInputChange("endTime", value)}
-                                                                                    onBlur={() => handleBlur('endTime')}
-                                                                                />
-                                                                                <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                                                                    ({userTimezone})
-                                                                                </span>
-                                                                            </div>
+                                                                        <div>
+                                                                            <Row className="pl-0 pr-0 pb-0 pt-0">
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="datepicker-control">
+                                                                                        <Form.Label>Course end date</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.date}
+                                                                                            value={editedValues.endDate || ''}
+                                                                                            label={null}
+                                                                                            helpText="Enter the date when your course will end"
+                                                                                            isInvalid={!!errors.endDate && touched.endDate}
+                                                                                            controlName="end-date"
+                                                                                            onChange={(value) => handleInputChange('endDate', value)}
+                                                                                            onBlur={() => handleBlur('endDate')}
+                                                                                            placeholder="MM/DD/YYYY"
+                                                                                        />
+                                                                                        {errors.endDate && touched.endDate && (
+                                                                                            <Form.Text className="text-danger">
+                                                                                                {errors.endDate}
+                                                                                            </Form.Text>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </Col>
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="time-field">
+                                                                                        <Form.Label>Course end time</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.time}
+                                                                                            value={editedValues.endTime || ''}
+                                                                                            label={null}
+                                                                                            isInvalid={!!errors.endTime && touched.endTime}
+                                                                                            controlName="end-time"
+                                                                                            onChange={(value) => handleInputChange('endTime', value)}
+                                                                                            onBlur={() => handleBlur('endTime')}
+                                                                                        />
+                                                                                        <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                                                            ({userTimezone})
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
                                                                     </li>
                                                                     <li className="schedule-date-item">
-                                                                        <div className="schedule-date-item-container">
-                                                                            <div className="datepicker-control">
-                                                                                <Form.Label>
-                                                                                    Enrollment start date{" "}
-                                                                                    <span className="required-asterisk">*</span>
-                                                                                </Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.date}
-                                                                                    value={editedValues.enrollmentStartDate || ""}
-                                                                                    label={null}
-                                                                                    helpText="Enter the date when enrollment will start"
-                                                                                    isInvalid={!!errors.enrollmentStartDate && touched.enrollmentStartDate}
-                                                                                    controlName="enrollment-start-date"
-                                                                                    onChange={(value) => handleInputChange("enrollmentStartDate", value)}
-                                                                                    onBlur={() => handleBlur('enrollmentStartDate')}
-                                                                                    placeholder="MM/DD/YYYY"
-                                                                                />
-                                                                                {errors.enrollmentStartDate && touched.enrollmentStartDate && (
-                                                                                    <Form.Text className="text-danger">
-                                                                                        {errors.enrollmentStartDate}
-                                                                                    </Form.Text>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="time-field">
-                                                                                <Form.Label>Enrollment start time</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.time}
-                                                                                    value={editedValues.enrollmentStartTime || ""}
-                                                                                    label={null}
-                                                                                    isInvalid={!!errors.enrollmentStartTime && touched.enrollmentStartTime}
-                                                                                    controlName="enrollment-start-time"
-                                                                                    onChange={(value) => handleInputChange("enrollmentStartTime", value)}
-                                                                                    onBlur={() => handleBlur('enrollmentStartTime')}
-                                                                                />
-                                                                                <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                                                                    ({userTimezone})
-                                                                                </span>
-                                                                            </div>
+                                                                        <div>
+                                                                            <Row className="pl-0 pr-0 pb-0 pt-0">
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="datepicker-control">
+                                                                                        <Form.Label>
+                                                                                            Enrollment start date{' '}
+                                                                                            <span className="required-asterisk">*</span>
+                                                                                        </Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.date}
+                                                                                            value={editedValues.enrollmentStartDate || ''}
+                                                                                            label={null}
+                                                                                            helpText="Enter the date when enrollment will start"
+                                                                                            isInvalid={!!errors.enrollmentStartDate && touched.enrollmentStartDate}
+                                                                                            controlName="enrollment-start-date"
+                                                                                            onChange={(value) => handleInputChange('enrollmentStartDate', value)}
+                                                                                            onBlur={() => handleBlur('enrollmentStartDate')}
+                                                                                            placeholder="MM/DD/YYYY"
+                                                                                        />
+                                                                                        {errors.enrollmentStartDate && touched.enrollmentStartDate && (
+                                                                                            <Form.Text className="text-danger">
+                                                                                                {errors.enrollmentStartDate}
+                                                                                            </Form.Text>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </Col>
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="time-field">
+                                                                                        <Form.Label>Enrollment start time</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.time}
+                                                                                            value={editedValues.enrollmentStartTime || ''}
+                                                                                            label={null}
+                                                                                            isInvalid={!!errors.enrollmentStartTime && touched.enrollmentStartTime}
+                                                                                            controlName="enrollment-start-time"
+                                                                                            onChange={(value) => handleInputChange('enrollmentStartTime', value)}
+                                                                                            onBlur={() => handleBlur('enrollmentStartTime')}
+                                                                                        />
+                                                                                        <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                                                            ({userTimezone})
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
                                                                     </li>
                                                                     <li className="schedule-date-item">
-                                                                        <div className="schedule-date-item-container">
-                                                                            <div className="datepicker-control">
-                                                                                <Form.Label>Enrollment end date</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.date}
-                                                                                    value={editedValues.enrollmentEndDate || ""}
-                                                                                    label={null}
-                                                                                    helpText="Enter the date when enrollment will end"
-                                                                                    isInvalid={!!errors.enrollmentEndDate && touched.enrollmentEndDate}
-                                                                                    controlName="enrollment-end-date"
-                                                                                    onChange={(value) => handleInputChange("enrollmentEndDate", value)}
-                                                                                    onBlur={() => handleBlur('enrollmentEndDate')}
-                                                                                    placeholder="MM/DD/YYYY"
-                                                                                />
-                                                                                {errors.enrollmentEndDate && touched.enrollmentEndDate && (
-                                                                                    <Form.Text className="text-danger">
-                                                                                        {errors.enrollmentEndDate}
-                                                                                    </Form.Text>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="time-field">
-                                                                                <Form.Label>Enrollment end time</Form.Label>
-                                                                                <DatepickerControl
-                                                                                    type={DATEPICKER_TYPES.time}
-                                                                                    value={editedValues.enrollmentEndTime || ""}
-                                                                                    label={null}
-                                                                                    isInvalid={!!errors.enrollmentEndTime && touched.enrollmentEndTime}
-                                                                                    controlName="enrollment-end-time"
-                                                                                    onChange={(value) => handleInputChange("enrollmentEndTime", value)}
-                                                                                    onBlur={() => handleBlur('enrollmentEndTime')}
-                                                                                />
-                                                                                <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                                                                    ({userTimezone})
-                                                                                </span>
-                                                                            </div>
+                                                                        <div>
+                                                                            <Row className="pl-0 pr-0 pb-0 pt-0">
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="datepicker-control">
+                                                                                        <Form.Label>Enrollment end date</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.date}
+                                                                                            value={editedValues.enrollmentEndDate || ''}
+                                                                                            label={null}
+                                                                                            helpText="Enter the date when enrollment will end"
+                                                                                            isInvalid={!!errors.enrollmentEndDate && touched.enrollmentEndDate}
+                                                                                            controlName="enrollment-end-date"
+                                                                                            onChange={(value) => handleInputChange('enrollmentEndDate', value)}
+                                                                                            onBlur={() => handleBlur('enrollmentEndDate')}
+                                                                                            placeholder="MM/DD/YYYY"
+                                                                                        />
+                                                                                        {errors.enrollmentEndDate && touched.enrollmentEndDate && (
+                                                                                            <Form.Text className="text-danger">
+                                                                                                {errors.enrollmentEndDate}
+                                                                                            </Form.Text>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </Col>
+                                                                                <Col xs={12} md={6}>
+                                                                                    <div className="time-field">
+                                                                                        <Form.Label>Enrollment end time</Form.Label>
+                                                                                        <DatepickerControl
+                                                                                            type={DATEPICKER_TYPES.time}
+                                                                                            value={editedValues.enrollmentEndTime || ''}
+                                                                                            label={null}
+                                                                                            isInvalid={!!errors.enrollmentEndTime && touched.enrollmentEndTime}
+                                                                                            controlName="enrollment-end-time"
+                                                                                            onChange={(value) => handleInputChange('enrollmentEndTime', value)}
+                                                                                            onBlur={() => handleBlur('enrollmentEndTime')}
+                                                                                        />
+                                                                                        <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                                                            ({userTimezone})
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </div>
                                                                     </li>
                                                                 </ul>
@@ -724,7 +809,7 @@ const PSCourseForm = ({
                                                 {activeTab === 'requirements' && (
                                                     <div className="form-section">
                                                         <Stack gap={2}>
-                                                            <Row>
+                                                            <Row className="custom-padding">
                                                                 <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label>Hours of effort per week</Form.Label>
@@ -780,28 +865,26 @@ const PSCourseForm = ({
                                                                         />
                                                                     </div>
                                                                     {editedValues.requireEntranceExam && (
-                                                                        <>
-                                                                            <div className="entrance-exam-content p-1">
-                                                                                <div className="form-group-custom">
-                                                                                    <Form.Label>Grade requirements</Form.Label>
-                                                                                    <div className="d-flex">
-                                                                                        <Form.Control
-                                                                                            type="number"
-                                                                                            min={0}
-                                                                                            max={100}
-                                                                                            className=""
-                                                                                            value={editedValues.entranceExamGradeRequired || 50}
-                                                                                            onChange={(e) => handleInputChange('entranceExamGradeRequired', e.target.value)}
-                                                                                            onBlur={() => handleBlur('entranceExamGradeRequired')}
-                                                                                        />
-                                                                                        <span className="pgn__form-control-trailing">%</span>
-                                                                                    </div>
-                                                                                    <div className="form-control-feedback">
-                                                                                        The score student must meet in order to successfully complete the entrance exam.
-                                                                                    </div>
+                                                                        <div className="entrance-exam-content p-1">
+                                                                            <div className="form-group-custom">
+                                                                                <Form.Label>Grade requirements</Form.Label>
+                                                                                <div className="d-flex">
+                                                                                    <Form.Control
+                                                                                        type="number"
+                                                                                        min={0}
+                                                                                        max={100}
+                                                                                        className=""
+                                                                                        value={editedValues.entranceExamGradeRequired || 50}
+                                                                                        onChange={(e) => handleInputChange('entranceExamGradeRequired', e.target.value)}
+                                                                                        onBlur={() => handleBlur('entranceExamGradeRequired')}
+                                                                                    />
+                                                                                    <span className="pgn__form-control-trailing">%</span>
+                                                                                </div>
+                                                                                <div className="form-control-feedback">
+                                                                                    The score student must meet in order to successfully complete the entrance exam.
                                                                                 </div>
                                                                             </div>
-                                                                        </>
+                                                                        </div>
                                                                     )}
                                                                 </div>
                                                             </Form.Group>
@@ -809,8 +892,8 @@ const PSCourseForm = ({
                                                     </div>
                                                 )}
                                                 {activeTab === 'additional' && (
-                                                    <div className="form-section">
-                                                        <Stack gap={4}>
+                                                    <div className="form-section pl-12-pr-12">
+                                                        <Stack gap={1}>
                                                             <Form.Group className="form-group-custom dropdown-language">
                                                                 <Form.Label>Language</Form.Label>
                                                                 <Dropdown className="bg-white">
@@ -851,7 +934,7 @@ const PSCourseForm = ({
                                                     </div>
                                                 )}
                                                 {activeTab === 'pricing' && (
-                                                    <div className="form-section">
+                                                    <div className="form-section pl-12-pr-12">
                                                         <Stack gap={1}>
                                                             <Form.Group>
                                                                 <Form.Label>Pricing Model</Form.Label>
@@ -895,7 +978,7 @@ const PSCourseForm = ({
                                                     </div>
                                                 )}
                                                 {activeTab === 'license' && (
-                                                    <div className="form-section license-section">
+                                                    <div className="form-section license-section pl-12-pr-12">
                                                         <Stack gap={1}>
                                                             <div>
                                                                 <p className="mb-8">{intl.formatMessage(licenseMessages.licenseDescription)}</p>
@@ -933,20 +1016,20 @@ const PSCourseForm = ({
                                     <div className="media-section">
                                         <Stack gap={1}>
                                             {renderImageUploadSection(
-                                                "courseImageAssetPath",
-                                                "Course Card Image",
+                                                'courseImageAssetPath',
+                                                'Course Card Image',
                                                 cardImagePreview,
                                                 cardImageFile,
                                                 hasCardImage,
-                                                onImageUpload
+                                                onImageUpload,
                                             )}
                                             {renderImageUploadSection(
-                                                "bannerImageAssetPath",
-                                                "Course Banner Image",
+                                                'bannerImageAssetPath',
+                                                'Course Banner Image',
                                                 bannerImagePreview,
                                                 bannerImageFile,
                                                 hasBannerImage,
-                                                onBannerImageUpload
+                                                onBannerImageUpload,
                                             )}
                                             <Form.Group>
                                                 <IntroductionVideo
@@ -961,41 +1044,58 @@ const PSCourseForm = ({
                             </Row>
 
                             {!hideCreateNewCourseButton && (
-                                <div className="mt-4 d-flex justify-content-end">
-                                    <Button
-                                        variant="primary"
-                                        type="submit"
-                                        disabled={
-                                            isSubmitting ||
-                                            !editedValues.shortDescription?.trim() ||
-                                            !editedValues.organization ||
-                                            !editedValues.courseNumber?.trim() ||
-                                            !editedValues.courseRun?.trim() ||
-                                            !editedValues.startDate ||
-                                            !!imageErrors.cardImage ||
-                                            !!imageErrors.bannerImage
-                                        }
-                                        className="mt-3"
-                                    >
-                                        {isSubmitting ? 'Creating...' : 'Create New Course'}
-                                    </Button>
+                                <div className="ps-courseform-footer-bar">
+                                    <div className="footer-cancel">
+                                        <Button  variant="outline-primary" onClick={handleCancel}>Cancel</Button>
+                                    </div>
+                                    <div className="footer-create">
+                                        {/* <Button
+                                            variant="primary"
+                                            type="submit"
+                                            disabled={
+                                                isSubmitting
+                                                || !editedValues.shortDescription?.trim()
+                                                || !editedValues.organization
+                                                || !editedValues.courseNumber?.trim()
+                                                || !editedValues.courseRun?.trim()
+                                                || !editedValues.startDate
+                                                || !!imageErrors.cardImage
+                                                || !!imageErrors.bannerImage
+                                            }
+                                        >
+                                            {isSubmitting ? 'Creating...' : 'Create'}
+                                        </Button> */}
+                                            <Button
+        variant="primary"
+        type="submit"
+        disabled={
+            isSubmitting ||
+            !editedValues.shortDescription?.trim() ||
+            !editedValues.organization ||
+            !editedValues.courseNumber?.trim() ||
+            !editedValues.courseRun?.trim() ||
+            !editedValues.startDate ||
+            !!imageErrors.cardImage ||
+            !!imageErrors.bannerImage
+        }
+    >
+        {isSubmitting ? (
+            <span>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Creating...
+            </span>
+        ) : (
+            'Create'
+        )}
+    </Button>
+                                    </div>
                                 </div>
-                            )}
-
-                            {Object.keys(errors).length > 0 && (
-                                <Alert variant="danger" className="mt-3">
-                                    <ul className="mb-0">
-                                        {Object.entries(errors).map(([field, error]) => (
-                                            <li key={field}>{error}</li>
-                                        ))}
-                                    </ul>
-                                </Alert>
                             )}
                         </Form>
                     </Col>
-                </Row>
-            </Container>
-        </div>
+                </Row >
+            </Container >
+        </div >
     );
 };
 
@@ -1023,6 +1123,7 @@ PSCourseForm.propTypes = {
     allowedImageTypes: PropTypes.array,
     onSubmit: PropTypes.func,
     onImageValidationErrorChange: PropTypes.func,
+    onResetForm: PropTypes.func,
 };
 
 PSCourseForm.defaultProps = {
@@ -1044,6 +1145,7 @@ PSCourseForm.defaultProps = {
     allowedImageTypes: ['image/jpeg', 'image/png'],
     onSubmit: undefined,
     onImageValidationErrorChange: () => { },
+    onResetForm: () => { },
 };
 
 export default PSCourseForm;

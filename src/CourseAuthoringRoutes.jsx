@@ -47,7 +47,7 @@ const CoursePageLayout = ({ children, courseId }) => (
   <div style={{ display: 'flex', minHeight: '100vh' }}>
     {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
     <div style={{
-      minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee',
+      minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee',marginLeft: '16px', marginTop: '16px', borderRadius: '16px'
     }}
     >
       <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />

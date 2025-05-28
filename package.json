@@ -23,7 +23,8 @@
     "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests",
     "types": "tsc --noEmit",
     "js": "json-server --watch db.json --port=3001",
-    "start-ted": "concurrently \"npm start\" \"npm run js\" "
+    "jsc": "json-server --watch createForm.json --port=3000",
+    "start-ted": "concurrently \"npm start\" \"npm run js\" \"npm run jsc\" "
   },
   "husky": {
     "hooks": {

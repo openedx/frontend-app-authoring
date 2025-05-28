@@ -1,0 +1,32 @@
+{
+  "courses": [
+    {
+      "id": "9df5",
+      "title": "kkj",
+      "shortDescription": "kjkj",
+      "description": "",
+      "organization": "Yui",
+      "courseNumber": "lklk",
+      "courseRun": "lklk",
+      "coursePacing": "instructor",
+      "startDate": "2025-04-30T18:30:00+00:00",
+      "startTime": null,
+      "endDate": null,
+      "endTime": null,
+      "enrollmentStartDate": null,
+      "enrollmentStartTime": null,
+      "enrollmentEndDate": null,
+      "enrollmentEndTime": null,
+      "pricingModel": "free",
+      "price": "",
+      "language": "en",
+      "duration": "",
+      "invitationOnly": false,
+      "cardImage": null,
+      "bannerImage": null,
+      "introVideo": null,
+      "prerequisites": "",
+      "license": null
+    }
+  ]
+}

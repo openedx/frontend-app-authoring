@@ -5,7 +5,7 @@
 }
 
 .datepicker-custom-control-icon {
-    right: 9.188rem !important;
+    right: 1.188rem !important;
     transform: translateY(-60%);
     color: var(--text-secondary) !important;
 }
@@ -53,41 +53,6 @@
         margin-top: 0.25rem;
     }
 
-    // Dropdown styles
-    // .dropdown {
-    //     .dropdown-toggle {
-    //         width: 100%;
-    //         text-align: left;
-    //         background-color: #fff;
-    //         border: 1px solid #e1e1e1;
-    //         color: #454545;
-    //         padding: 0.75rem;
-    //         font-size: 0.875rem;
-
-    //         &:hover,
-    //         &:focus {
-    //             background-color: #fff;
-    //             border-color: var(--primary);
-    //         }
-    //     }
-
-    //     .dropdown-menu {
-    //         width: 100%;
-    //         padding: 0.5rem 0;
-    //         border: 1px solid #e1e1e1;
-    //         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    //         .dropdown-item {
-    //             padding: 0.5rem 1rem;
-    //             font-size: 0.875rem;
-    //             color: #454545;
-
-    //             &:hover {
-    //                 background-color: #f8f9fa;
-    //             }
-    //         }
-    //     }
-    // }
 
     // Radio button styles
     .radio-button {
@@ -126,7 +91,7 @@
         border: 2px dashed var(--border-color);
         border-radius: 4px;
         background-color: var(--bg-hover);
-        min-height: 180px;
+        min-height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -137,8 +102,11 @@
         }
 
         .btn-outline-primary {
-            border-color: var(--primary);
+            border-color: var(--primary-light);
             color: var(--primary);
+            font-size: 0.75rem;
+            border-radius: 8px;
+            background-color: var(--primary-light);
 
             &:hover {
                 background-color: var(--primary);
@@ -147,8 +115,6 @@
         }
 
         img {
-            // max-height: 150px;
-            // width: auto;
             object-fit: contain;
         }
     }
@@ -181,11 +147,8 @@
 
     // Description editor styles
     .description-editor {
-        // border: 1px solid #dee2e6;
         border-radius: 0.25rem;
-        // padding: 0.375rem 0.75rem;
         width: 100%;
-        // min-height: 150px;
         resize: vertical;
     }
 
@@ -264,13 +227,14 @@
     // Options container - main wrapper for two-column layout
     .options-container {
         border: 1px solid var(--border-color);
-        border-radius: 4px;
+        border-radius: 8px;
         background-color: var(--bg-surface);
         overflow: visible;
 
         .row {
             margin: 0;
             height: 100%;
+            padding: 16px;
         }
 
         // Left sidebar styles
@@ -278,6 +242,7 @@
             padding: 0;
             background-color: transparent;
             border-right: 1px solid var(--border-color);
+            padding-right: 16px;
 
             .nav-tabs {
                 border: none;
@@ -285,7 +250,11 @@
                 .nav-item {
                     width: 100%;
                     margin: 0;
-                    border-bottom: 1px solid var(--border-color);
+                    width: 100%;
+                    margin: 0;
+                    border: 1px solid lightgray;
+                    border-radius: 8px;
+                    margin-bottom: 0.5rem;
 
                     .nav-link {
                         width: 100%;
@@ -320,7 +289,7 @@
                             outline: 0 !important;
                             box-shadow: none !important;
                             border: none;
-                            border-left: 4px solid var(--primary);
+                            border-radius: 8px;
 
                             &::before {
                                 display: none;
@@ -328,8 +297,9 @@
                         }
 
                         &.active {
-                            background-color: transparent;
-                            border-left: 4px solid var(--primary);
+                            border: 1px solid var(--primary-light);
+                            background: var(--primary-light);
+                            border-radius: 8px;
                             color: var(--primary);
                             font-weight: 500;
                             outline: none !important;
@@ -353,7 +323,6 @@
 
         // Right content area styles
         .content-area {
-            padding: 0.75rem;
             background-color: var(--bg-surface);
             min-height: 250px;
         }
@@ -380,7 +349,7 @@
     // Media section styles
     .media-section {
         border: 1px solid var(--border-color);
-        border-radius: 4px;
+        border-radius: 16px;
         padding: 1rem;
         background-color: var(--bg-surface);
 
@@ -457,14 +426,15 @@
     // Override font for labels within DatepickerControl
     .datepicker-control .pgn__form-label,
     // Check if DatepickerControl uses this class internally
-    .datepicker-control .form-label {
+    .datepicker-control .form-label,
+    .time-field .pgn__form-label {
         // Or maybe this one
-        font: inherit !important; // Reset font first
+        font: inherit !important; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important; // Re-apply desired stack
-        font-size: 14px !important; // Match other labels
-        font-weight: 400 !important; // Match other labels // Match other labels
-        line-height: 1.5 !important; // Adjust line-height as needed
-        margin-bottom: 0.5rem !important;
+        font-size: 14px !important; 
+        font-weight: 600 !important;  
+        line-height: 1.5 !important;         margin-bottom: 0rem !important;
+        color: var(--text-primary)
     }
 
     // Attempt to override font for IntroductionVideo label (adjust selector if needed)
@@ -538,7 +508,7 @@
                 align-items: baseline;
                 justify-content: space-between;
                 gap: 1.5rem;
-                border-bottom: 0.063rem solid var(--border-color);
+                border-bottom: none !important;
                 padding-bottom: 0.625rem;
                 margin-bottom: 0.375rem;
 
@@ -993,4 +963,63 @@
             min-height: 20px;
         }
     }
+}
+
+.title-section {
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid lightgray;
+    margin-bottom: 1rem;
+    background: #ffffff;
+}
+
+.font-12 {
+    font-size: 0.75rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.ps-courseform-footer-bar {
+    // position: fixed;
+    // bottom: 135px;
+    // left: 0;
+    background: var(--text-secondary);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 2rem;
+    margin-left: -1.75rem;
+    margin-right: -1.75rem
+}
+
+.footer-cancel {
+    display: flex;
+    align-items: center;
+}
+
+.footer-create {
+    display: flex;
+    align-items: center;
+}
+
+.nav-tabs .nav-link:hover {
+    border-radius: 8px !important;
+}
+
+.custom-padding {
+    padding-left: 0px !important;
+    padding-top: 0px !important;
+    padding-right: 0px !important;
+}
+
+.pl-12-pr-12 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
 }
