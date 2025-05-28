@@ -341,8 +341,8 @@ const Dashboard = () => {
   // Provide default suggestions if none are present
   const aiSuggestions = dashboardData.titanAISuggestions;
 
-  // const isLeftColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'left');
-  // const isRightColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'right');
+  const isLeftColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'left');
+  const isRightColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'right');
 
   return (
     <div className="dashboard-wrapper">
@@ -387,8 +387,8 @@ const Dashboard = () => {
               onClick={handleModalOpen}
             />
           </div>
-          {/* <div className={`overview-grid ${isLeftColumnEmpty || isRightColumnEmpty ? 'single-column' : ''}`}> */}
-          <div className="overview-grid">
+          <div className={`overview-grid ${isLeftColumnEmpty || isRightColumnEmpty ? 'single-column' : ''}`}>
+            {/* <div className="overview-grid"> */}
             <div className="overview-left">
               {dashboardData.widgets
                 .filter(widget => widget.enabled && widget.position === 'left')
