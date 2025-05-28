@@ -243,6 +243,7 @@
             background-color: transparent;
             border-right: 1px solid var(--border-color);
             padding-right: 16px;
+            min-height: fit-content !important;
 
             .nav-tabs {
                 border: none;
@@ -985,7 +986,7 @@
     // position: fixed;
     // bottom: 135px;
     // left: 0;
-    background: var(--text-secondary);
+    background: #e0e0e0;
     padding: 20px 40px;
     display: flex;
     justify-content: space-between;
