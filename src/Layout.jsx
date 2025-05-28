@@ -13,10 +13,11 @@ import {
 } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
 import {
-  Footer, Sidebar, MainHeader, SidebarProvider,
+  MainHeader, Sidebar, SidebarProvider,
 } from 'titaned-lib';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import MainHeader from 'library/Header/MainHeader';
+// import { SidebarProvider } from 'library/providers/SidebarProvider';
 // import { FooterProps } './studio-home/interfaces/components';
 
 const Layout = () => {
@@ -70,76 +71,77 @@ const Layout = () => {
     { label: 'Shared Resources', path: '/shared-resources', icon: <FolderShared /> },
   ];
 
-  const contactInfo = {
-    align: 'left',
-    content: {
-      shortdesc: 'We are passionate education dedicated to providing high-quality resources learners all backgrounds.',
-      address1: 'Yarra Park, Melbourne, Australia',
-      address2: '',
-      pincode: '',
-      location: {
-        label: 'San fransicoq',
-        value: 'Sanss',
-      },
-      phonenumber: '9515088071',
-      facebook: '',
-      instagram: '',
-      twitter: '',
-      linkedIn: '',
-    },
-  };
+  // const contactInfo = {
+  //   align: 'left',
+  //   content: {
+  //     shortdesc: 'We are passionate education dedicated to 
+  // providing high-quality resources learners all backgrounds.',
+  //     address1: 'Yarra Park, Melbourne, Australia',
+  //     address2: '',
+  //     pincode: '',
+  //     location: {
+  //       label: 'San fransicoq',
+  //       value: 'Sanss',
+  //     },
+  //     phonenumber: '9515088071',
+  //     facebook: '',
+  //     instagram: '',
+  //     twitter: '',
+  //     linkedIn: '',
+  //   },
+  // };
 
-  const quickLinks = {
-    align: 'center',
-    content: [
-      {
-        label: 'Latest Courses',
-        link: '',
-      },
-      {
-        label: 'Mission & Vision',
-        link: '',
-      },
-      {
-        label: 'Join a Career',
-        link: '',
-      },
-      {
-        label: 'Zoom Meeting',
-        link: '',
-      },
-      {
-        label: 'Pricing Plan',
-        link: '',
-      },
-    ],
-  };
+  // const quickLinks = {
+  //   align: 'center',
+  //   content: [
+  //     {
+  //       label: 'Latest Courses',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Mission & Vision',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Join a Career',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Zoom Meeting',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Pricing Plan',
+  //       link: '',
+  //     },
+  //   ],
+  // };
 
-  const exploreLinks = {
-    align: 'right',
-    content: [
-      {
-        label: 'Course One',
-        link: '',
-      },
-      {
-        label: 'Course Two',
-        link: '',
-      },
-      {
-        label: 'Create Course',
-        link: '',
-      },
-      {
-        label: 'Lesson Details',
-        link: '',
-      },
-      {
-        label: 'Instructor',
-        link: '',
-      },
-    ],
-  };
+  // const exploreLinks = {
+  //   align: 'right',
+  //   content: [
+  //     {
+  //       label: 'Course One',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Course Two',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Create Course',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Lesson Details',
+  //       link: '',
+  //     },
+  //     {
+  //       label: 'Instructor',
+  //       link: '',
+  //     },
+  //   ],
+  // };
 
   return (
     <div className="app-container">
@@ -157,18 +159,20 @@ const Layout = () => {
         </div>
         {/* Sidebar and Main Content */}
         <div className="content-wrapper">
-          <Sidebar
-            buttons={sidebarItems}
-            onNavigate={handleNavigate}
-            presentPath={presentPath}
-          />
+          <div className="sidebar-container">
+            <Sidebar
+              buttons={sidebarItems}
+              onNavigate={handleNavigate}
+              presentPath={presentPath}
+            />
+          </div>
           <div className="main-content">
             <div className="page-content">
               <Outlet />
             </div>
           </div>
         </div>
-        <div>
+        {/* <div>
           <div className="footer-container">
             <Footer
               contactInfo={contactInfo}
@@ -178,7 +182,7 @@ const Layout = () => {
               copyrights="Copyright © 2025 All Rights Reserved by TitanEd"
             />
           </div>
-        </div>
+        </div> */}
       </SidebarProvider>
     </div>
   );
