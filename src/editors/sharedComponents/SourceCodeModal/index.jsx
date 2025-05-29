@@ -41,6 +41,7 @@ const SourceCodeModal = ({
         <CodeEditor
           innerRef={ref}
           value={value}
+          lang="html"
         />
       </div>
     </BaseModal>
