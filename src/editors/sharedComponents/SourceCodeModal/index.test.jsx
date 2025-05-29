@@ -12,7 +12,7 @@ jest.mock('./hooks', () => ({
   }),
 }));
 
-describe('SourceCodeModal', () => {
+fdescribe('SourceCodeModal', () => {
   const mockClose = jest.fn();
 
   const props = {
@@ -26,10 +26,12 @@ describe('SourceCodeModal', () => {
   test('renders as expected with default behavior', () => {
     const mocksaveBtnProps = 'SoMevAlue';
     const mockvalue = 'mOckHtMl';
+    const mockLang = 'mOckHtMl';
     const mockref = 'moCKrEf';
     hooks.prepareSourceCodeModal.mockReturnValueOnce({
       saveBtnProps: mocksaveBtnProps,
       value: mockvalue,
+      lang: mockLang,
       ref: mockref,
     });
     expect(shallow(<SourceCodeModal {...props} />).snapshot).toMatchSnapshot();
