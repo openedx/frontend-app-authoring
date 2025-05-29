@@ -1,10 +1,10 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { useContext } from "react";
-import { InplaceTextEditor } from "../../generic/inplace-text-editor";
-import { ToastContext } from "../../generic/toast-context";
-import { useLibraryContext } from "../common/context/LibraryContext";
-import { useContainer, useUpdateContainer } from "../data/apiHooks";
-import messages from "./messages";
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { useContext } from 'react';
+import { InplaceTextEditor } from '../../generic/inplace-text-editor';
+import { ToastContext } from '../../generic/toast-context';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { useContainer, useUpdateContainer } from '../data/apiHooks';
+import messages from './messages';
 
 interface EditableTitleProps {
   containerId: string;

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
+import { Breadcrumb, Container } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContainer, useContentLibrary } from '../data/apiHooks';
@@ -8,10 +10,8 @@ import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import ErrorAlert from '../../generic/alert-error';
 import Header from '../../header';
-import { Breadcrumb, Container } from '@openedx/paragon';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { Link } from 'react-router-dom';
 import { messages, sectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { useLibraryRoutes } from '../routes';
@@ -127,4 +127,4 @@ export const LibrarySectionPage = () => {
       )}
     </div>
   );
-}
+};

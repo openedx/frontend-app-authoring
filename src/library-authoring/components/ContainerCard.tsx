@@ -169,7 +169,9 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { setSectionId, setSubsectionId, setUnitId, showOnlyPublished } = useLibraryContext();
+  const {
+    setSectionId, setSubsectionId, setUnitId, showOnlyPublished,
+  } = useLibraryContext();
   const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {

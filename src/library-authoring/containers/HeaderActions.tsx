@@ -1,10 +1,10 @@
-import { Button } from "@openedx/paragon";
-import { Add, InfoOutline } from "@openedx/paragon/icons";
-import { useCallback } from "react";
-import { ContainerType } from "../../generic/key-utils";
-import { useLibraryContext } from "../common/context/LibraryContext";
-import { useSidebarContext } from "../common/context/SidebarContext";
-import { useLibraryRoutes } from "../routes";
+import { Button } from '@openedx/paragon';
+import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { useCallback } from 'react';
+import { ContainerType } from '../../generic/key-utils';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryRoutes } from '../routes';
 
 interface HeaderActionsProps {
   containerKey: string;
@@ -67,4 +67,3 @@ export const HeaderActions = ({
     </div>
   );
 };
-

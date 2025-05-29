@@ -162,8 +162,7 @@ export const LibraryProvider = ({
     subsectionId,
     unitId,
     collectionId,
-  ])
-
+  ]);
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {

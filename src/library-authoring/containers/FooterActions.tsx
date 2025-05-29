@@ -1,8 +1,8 @@
-import { Button, useToggle } from "@openedx/paragon";
-import { Add } from "@openedx/paragon/icons";
-import { PickLibraryContentModal } from "../add-content";
-import { useLibraryContext } from "../common/context/LibraryContext";
-import { useSidebarContext } from "../common/context/SidebarContext";
+import { Button, useToggle } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
+import { PickLibraryContentModal } from '../add-content';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface FooterActionsProps {
   addContentBtnText: string;
@@ -48,4 +48,4 @@ export const FooterActions = ({
       </div>
     </div>
   );
-}
+};

@@ -1,27 +1,31 @@
-import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
-import { useCallback, useContext, useEffect, useState } from "react";
-import DraggableList, { SortableItem } from "../../generic/DraggableList";
-import Loading from "../../generic/Loading";
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
+import {
+  ActionRow, Badge, Icon, Stack,
+} from '@openedx/paragon';
+import { useQueryClient } from '@tanstack/react-query';
+import { Description } from '@openedx/paragon/icons';
+import DraggableList, { SortableItem } from '../../generic/DraggableList';
+import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
-import { useLibraryContext } from "../common/context/LibraryContext";
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   libraryAuthoringQueryKeys,
   useContainerChildren,
   useUpdateContainer,
   useUpdateContainerChildren,
-} from "../data/apiHooks";
-import { messages, subsectionMessages, sectionMessages } from "./messages";
-import containerMessages from "../containers/messages";
-import { Container } from "../data/api";
-import { ActionRow, Badge, Icon, Stack } from "@openedx/paragon";
-import { InplaceTextEditor } from "../../generic/inplace-text-editor";
-import { ToastContext } from "../../generic/toast-context";
-import TagCount from "../../generic/tag-count";
-import { ContainerMenu } from "../components/ContainerCard";
-import { useLibraryRoutes } from "../routes";
-import { useQueryClient } from "@tanstack/react-query";
-import { useSidebarContext } from "../common/context/SidebarContext";
-import { Description } from "@openedx/paragon/icons";
+} from '../data/apiHooks';
+import { messages, subsectionMessages, sectionMessages } from './messages';
+import containerMessages from '../containers/messages';
+import { Container } from '../data/api';
+import { InplaceTextEditor } from '../../generic/inplace-text-editor';
+import { ToastContext } from '../../generic/toast-context';
+import TagCount from '../../generic/tag-count';
+import { ContainerMenu } from '../components/ContainerCard';
+import { useLibraryRoutes } from '../routes';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -47,7 +51,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
       await updateMutation.mutateAsync({
-          displayName: newDisplayName,
+        displayName: newDisplayName,
       });
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
       // invalidate parent container children query to see upated name
@@ -65,10 +69,10 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
       <InplaceTextEditor
         onSave={handleSaveDisplayName}
         text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
-        textClassName='font-weight-bold small'
+        textClassName="font-weight-bold small"
         readOnly={readOnly}
       />
-      <ActionRow.Spacer/>
+      <ActionRow.Spacer />
       <Stack
         direction="horizontal"
         gap={3}
@@ -95,8 +99,8 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         />
       </Stack>
     </>
-  )
-}
+  );
+};
 
 /** Component to display container children subsections for section and units for subsection */
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
@@ -168,7 +172,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
         <h4 className="ml-2">
           {insideSection ? (
             <FormattedMessage {...sectionMessages.noChildrenText} />
-          ): (
+          ) : (
             <FormattedMessage {...subsectionMessages.noChildrenText} />
           )}
         </h4>
@@ -202,17 +206,17 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
             onClick={(e: { detail: number; }) => handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
             cardClassName={sidebarComponentInfo?.id === child.originalId ? 'selected' : undefined}
-            actions={
+            actions={(
               <ContainerRow
                 containerKey={containerKey}
                 container={child}
                 readOnly={readOnly || libReadOnly}
               />
-            }
+            )}
           />
 
         ))}
       </DraggableList>
     </div>
   );
-}
+};

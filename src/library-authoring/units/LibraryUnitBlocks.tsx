@@ -1,5 +1,7 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { ActionRow, Badge, Icon, Stack } from '@openedx/paragon';
+import {
+  ActionRow, Badge, Icon, Stack,
+} from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import {

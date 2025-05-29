@@ -36,7 +36,7 @@ interface PickLibraryContentModalProps {
   onClose: () => void;
 }
 
-export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({ isOpen, onClose, }) => {
+export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({ isOpen, onClose }) => {
   const intl = useIntl();
 
   const {
@@ -51,7 +51,9 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     componentPicker: ComponentPicker,
   } = useLibraryContext();
 
-  const { insideCollection, insideUnit, insideSection, insideSubsection } = useLibraryRoutes();
+  const {
+    insideCollection, insideUnit, insideSection, insideSubsection,
+  } = useLibraryRoutes();
 
   // istanbul ignore if: this should never happen
   if (!(collectionId || unitId || sectionId || subsectionId) || !ComponentPicker) {
@@ -63,7 +65,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     (insideSection && sectionId)
     || (insideSubsection && subsectionId)
     || (insideUnit && unitId)
-    || ''
+    || '',
   );
 
   const { showToast } = useContext(ToastContext);
@@ -81,8 +83,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         .catch(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
-    }
-    else if (insideSection || insideSubsection || insideUnit) {
+    } else if (insideSection || insideSubsection || insideUnit) {
       updateContainerChildrenMutation.mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));

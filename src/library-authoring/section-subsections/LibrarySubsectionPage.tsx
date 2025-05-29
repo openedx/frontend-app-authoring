@@ -1,6 +1,10 @@
 import { ReactNode, useEffect, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
+import {
+  Breadcrumb, Container, MenuItem, SelectMenu,
+} from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContentFromSearchIndex, useContentLibrary } from '../data/apiHooks';
@@ -8,10 +12,8 @@ import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import ErrorAlert from '../../generic/alert-error';
 import Header from '../../header';
-import { Breadcrumb, Container, MenuItem, SelectMenu } from '@openedx/paragon';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { Link } from 'react-router-dom';
 import { messages, subsectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { useLibraryRoutes } from '../routes';
@@ -28,28 +30,27 @@ interface OverflowLinksProps {
 const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
   if (typeof to === 'string') {
     return (
-      <Link className='link-muted' to={to}>
+      <Link className="link-muted" to={to}>
         {children}
       </Link>
     );
-  } else {
-    // to is string[] that should be converted to overflow menu
-    const items = to?.map((link, index) => (
-      <MenuItem to={link} as={Link}>
-        {children?.[index]}
-      </MenuItem>
-    ));
-    return (
-      <SelectMenu
-        className="breadcrumb-menu"
-        variant="link"
-        defaultMessage={`${items.length} Sections`}
-      >
-        {items}
-      </SelectMenu>
-    );
   }
-}
+  // to is string[] that should be converted to overflow menu
+  const items = to?.map((link, index) => (
+    <MenuItem to={link} as={Link}>
+      {children?.[index]}
+    </MenuItem>
+  ));
+  return (
+    <SelectMenu
+      className="breadcrumb-menu"
+      variant="link"
+      defaultMessage={`${items.length} Sections`}
+    >
+      {items}
+    </SelectMenu>
+  );
+};
 
 /** Full library subsection page */
 export const LibrarySubsectionPage = () => {
@@ -68,22 +69,24 @@ export const LibrarySubsectionPage = () => {
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   // fetch subsectionData from index as it includes its parent sections as well.
-  const { hits, isLoading, isError, error } = useContentFromSearchIndex(subsectionId ? [subsectionId]: []);
+  const {
+    hits, isLoading, isError, error,
+  } = useContentFromSearchIndex(subsectionId ? [subsectionId] : []);
   const subsectionData = (hits as ContainerHit[])?.[0];
 
   const breadcrumbs = useMemo(() => {
-    const links: Array<{label: string | string[], to: string | string[]}> = [
+    const links: Array<{ label: string | string[], to: string | string[] }> = [
       {
         label: libraryData?.title || '',
         to: `/library/${libraryId}`,
       },
-    ]
+    ];
     const sectionLength = subsectionData?.sections?.displayName?.length || 0;
     if (sectionLength === 1) {
       links.push({
         label: subsectionData.sections?.displayName?.[0] || '',
         to: `/library/${libraryId}/section/${subsectionData?.sections?.key?.[0]}`,
-      })
+      });
     } else if (sectionLength > 1) {
       // Add all sections as a single object containing list of links
       // This is converted to overflow menu by OverflowLinks component
@@ -96,7 +99,7 @@ export const LibrarySubsectionPage = () => {
       links.push({
         label: '',
         to: '',
-      })
+      });
     }
     return (
       <Breadcrumb
@@ -174,4 +177,4 @@ export const LibrarySubsectionPage = () => {
       )}
     </div>
   );
-}
+};
