@@ -10,7 +10,7 @@ import { Add as IconAdd } from '@openedx/paragon/icons';
 
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { useModel } from '../generic/model-store';
-// import SubHeader from '../generic/sub-header/SubHeader';
+import SubHeader from '../generic/sub-header/SubHeader';
 import { USER_ROLES } from '../constants';
 import messages from './messages';
 import CourseTeamSideBar from './course-team-sidebar/CourseTeamSidebar';
@@ -74,7 +74,7 @@ const CourseTeam = ({ courseId }) => {
             <Layout.Element>
               <article>
                 <div>
-                  {/* <SubHeader
+                  <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     headerActions={isAllowActions && (
@@ -88,20 +88,7 @@ const CourseTeam = ({ courseId }) => {
                         {intl.formatMessage(messages.addNewMemberButton)}
                       </Button>
                     )}
-                  /> */}
-                  {isAllowActions && (
-                    <div className="d-flex justify-content-end mb-2">
-                      <Button
-                        variant="primary"
-                        iconBefore={IconAdd}
-                        size="sm"
-                        onClick={openForm}
-                        disabled={isFormVisible}
-                      >
-                        {intl.formatMessage(messages.addNewMemberButton)}
-                      </Button>
-                    </div>
-                  )}
+                  />
                   <section className="course-team-section">
                     <div className="members-container">
                       {isFormVisible && (
