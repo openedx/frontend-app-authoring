@@ -189,6 +189,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
             route = ROUTES.SUBSECTION
           } else if (unitId) {
             route = ROUTES.UNIT;
+          } else {
+            route = ROUTES.COLLECTION;
           }
         } else {
           // We're viewing a Collection, so stay there,

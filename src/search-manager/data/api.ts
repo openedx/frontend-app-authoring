@@ -188,6 +188,8 @@ export interface ContainerHit extends BaseContentHit {
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
   content?: ContainerHitContent;
+  sections?: { displayName?: string[], key?: string[] };
+  subsections?: { displayName?: string[], key?: string[] };
 }
 
 export type HitType = ContentHit | CollectionHit | ContainerHit;

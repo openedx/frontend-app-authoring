@@ -139,16 +139,16 @@ export const LibraryProvider = ({
    * We set them in useEffect
   */
   useEffect(() => {
-    if (!skipUrlUpdate && collectionId === undefined) {
+    if (!skipUrlUpdate && collectionId !== urlCollectionId) {
       setCollectionId(urlCollectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && sectionId === undefined) {
+    if (!skipUrlUpdate && sectionId !== urlSectionId) {
       setSectionId(urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && subsectionId === undefined) {
+    if (!skipUrlUpdate && subsectionId !== urlSubsectionId) {
       setSubsectionId(urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && !unitId) {
+    if (!skipUrlUpdate && unitId !== urlUnitId) {
       setUnitId(urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
   }, [
