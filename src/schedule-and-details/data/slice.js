@@ -31,6 +31,9 @@ const slice = createSlice({
     fetchCourseSettingsSuccess: (state, { payload }) => {
       Object.assign(state.courseSettings, payload);
     },
+    updateCourseDetailsOverview: (state, { payload }) => {
+      state.courseDetails.overview = payload;
+    },
   },
 });
 
@@ -41,6 +44,7 @@ export const {
   updateCourseDetailsSuccess,
   fetchCourseDetailsSuccess,
   fetchCourseSettingsSuccess,
+  updateCourseDetailsOverview,
 } = slice.actions;
 
 export const {
