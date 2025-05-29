@@ -127,18 +127,19 @@ export const LibraryProvider = ({
     selectedItemId: urlSelectedItemId,
   } = params;
   const selectedItemIdIsContainer = !!urlSelectedItemId?.startsWith('lct:');
-  const [componentId, setComponentId] = useState(
-    skipUrlUpdate ? undefined : urlComponentId,
-  );
+  const [componentId, setComponentId] = useState<string | undefined>(undefined);
   const [collectionId, setCollectionId] = useState<string | undefined>(undefined);
   const [unitId, setUnitId] = useState<string | undefined>(undefined);
   const [sectionId, setSectionId] = useState<string | undefined>(undefined);
   const [subsectionId, setSubsectionId] = useState<string | undefined>(undefined);
 
-  /** As container ids are not set when you go back in history sometimes.
+  /** As container and component ids are not set when you go back in history sometimes.
    * We set them in useEffect
   */
   useEffect(() => {
+    if (!skipUrlUpdate && componentId !== urlComponentId) {
+      setCollectionId(urlComponentId);
+    }
     if (!skipUrlUpdate && collectionId !== urlCollectionId) {
       setCollectionId(urlCollectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
