@@ -177,16 +177,12 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
         maxHeight: '200px',
         overflowY: 'hidden',
       };
-    } if (componentId === block.originalId) {
-      return {
-        outline: '2px solid black',
-      };
     }
     return {};
   }, [isDragging, componentId, block]);
 
   const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo?.id === block.id;
+    && sidebarComponentInfo?.id === block.originalId;
 
   return (
     <IframeProvider>
