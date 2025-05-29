@@ -393,7 +393,7 @@ const PSCourseForm = ({
                     <AlertMessage
                         variant="success"
                         icon={CheckCircle}
-                        title="Success"
+                        title="Data saved succesfully"
                         className="success-alert"
                         aria-hidden="true"
                     />
