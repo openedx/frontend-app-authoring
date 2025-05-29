@@ -9,7 +9,6 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import { Link } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { getBlockType } from '../../generic/key-utils';
@@ -33,7 +32,7 @@ type ContainerMenuProps = {
 const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
   const {
-    contextKey,
+    blockType: itemType,
     usageKey: containerId,
     displayName,
   } = hit;
@@ -74,6 +73,13 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     scheduleJumpToCollection();
   }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
 
+  const openContainerPage = useCallback(() => {
+    if (itemType === 'unit') {
+      // Set `doubleClicked` to true to open the unit page
+      navigateTo({ unitId: containerId, doubleClicked: true });
+    }
+  }, [itemType, containerId]);
+
   return (
     <>
       <Dropdown id="container-card-dropdown">
@@ -87,10 +93,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
           data-testid="container-card-menu-toggle"
         />
         <Dropdown.Menu>
-          <Dropdown.Item
-            as={Link}
-            to={`/library/${contextKey}/unit/${containerId}`}
-          >
+          <Dropdown.Item onClick={openContainerPage}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
           <Dropdown.Item onClick={confirmDelete}>
