@@ -26,7 +26,7 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
-import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useRunOnNextRender } from '../../utils';
@@ -177,9 +177,6 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
     return {};
   }, [isDragging, componentId, block]);
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo?.id === block.originalId;
-
   return (
     <IframeProvider>
       <SortableItem
@@ -195,7 +192,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
         isClickable={!readOnly}
         onClick={!readOnly ? (e: { detail: number; }) => handleComponentSelection(e.detail) : undefined}
         disabled={readOnly}
-        cardClassName={selected ? 'selected' : undefined}
+        cardClassName={sidebarComponentInfo?.id === block.originalId ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div

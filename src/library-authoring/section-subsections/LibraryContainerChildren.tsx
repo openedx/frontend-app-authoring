@@ -13,7 +13,7 @@ import {
 import { messages, subsectionMessages, sectionMessages } from "./messages";
 import containerMessages from "../containers/messages";
 import { Container } from "../data/api";
-import { ActionRow, Stack } from "@openedx/paragon";
+import { ActionRow, Badge, Icon, Stack } from "@openedx/paragon";
 import { InplaceTextEditor } from "../../generic/inplace-text-editor";
 import { ToastContext } from "../../generic/toast-context";
 import TagCount from "../../generic/tag-count";
@@ -21,6 +21,7 @@ import { ContainerMenu } from "../components/ContainerCard";
 import { useLibraryRoutes } from "../routes";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSidebarContext } from "../common/context/SidebarContext";
+import { Description } from "@openedx/paragon/icons";
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -41,6 +42,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId);
   const queryClient = useQueryClient();
+  const { showOnlyPublished } = useLibraryContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -62,7 +64,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
     <>
       <InplaceTextEditor
         onSave={handleSaveDisplayName}
-        text={container.displayName}
+        text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
         textClassName='font-weight-bold small'
         readOnly={readOnly}
       />
@@ -74,6 +76,17 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
+        {!showOnlyPublished && container.hasUnpublishedChanges && (
+          <Badge
+            className="px-2 py-1"
+            variant="warning"
+          >
+            <Stack direction="horizontal" gap={1}>
+              <Icon size="xs" src={Description} />
+              <FormattedMessage {...messages.draftChipText} />
+            </Stack>
+          </Badge>
+        )}
         <TagCount size="sm" count={container.tagsCount} />
         <ContainerMenu
           containerKey={container.originalId}
@@ -91,7 +104,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
-  const { openInfoSidebar } = useSidebarContext();
+  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -188,6 +201,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
             isClickable
             onClick={(e: { detail: number; }) => handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
+            cardClassName={sidebarComponentInfo?.id === child.originalId ? 'selected' : undefined}
             actions={
               <ContainerRow
                 containerKey={containerKey}
