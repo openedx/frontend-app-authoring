@@ -42,6 +42,7 @@ import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 import './styles/global-overrides.scss';
+import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 
 const queryClient = new QueryClient();
