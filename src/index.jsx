@@ -68,11 +68,20 @@ const App = () => {
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
           path="/component-picker"
-          element={<ComponentPicker extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              extraFilter={['NOT block_type = "unit", "NOT block_type = "section"', 'NOT block_type = "subsection"']}
+            />
+          )}
         />
         <Route
           path="/component-picker/multiple"
-          element={<ComponentPicker componentPickerMode="multiple" extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              componentPickerMode="multiple"
+              extraFilter={['NOT block_type = "unit", "NOT block_type = "section"', 'NOT block_type = "subsection"']}
+            />
+          )}
         />
         <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />

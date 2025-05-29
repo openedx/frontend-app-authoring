@@ -1,7 +1,6 @@
 import {
   type ReactNode,
   useCallback,
-  useEffect,
   useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
@@ -72,8 +71,8 @@ const HeaderActions = () => {
     }
 
     if (!componentPickerMode) {
-      // Reset URL to library home
-      navigateTo({ componentId: '', collectionId: '', unitId: '' });
+      // If not in component picker mode, reset selected item when opening the info sidebar
+      navigateTo({ selectedItemId: '' });
     }
   }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
 
@@ -151,16 +150,15 @@ const LibraryAuthoringPage = ({
     isLoadingLibraryData,
     showOnlyPublished,
     extraFilter: contextExtraFilter,
-    componentId,
-    collectionId,
-    unitId,
   } = useLibraryContext();
-  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const {
     insideCollections,
     insideComponents,
     insideUnits,
+    insideSections,
+    insideSubsections,
     navigateTo,
   } = useLibraryRoutes();
 
@@ -178,15 +176,15 @@ const LibraryAuthoringPage = ({
     if (insideUnits) {
       return ContentType.units;
     }
+    if (insideSubsections) {
+      return ContentType.subsections;
+    }
+    if (insideSections) {
+      return ContentType.sections;
+    }
     return ContentType.home;
   };
   const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
-
-  useEffect(() => {
-    if (!componentPickerMode) {
-      openInfoSidebar(componentId, collectionId, unitId);
-    }
-  }, []);
 
   if (isLoadingLibraryData) {
     return <Loading />;
@@ -241,31 +239,28 @@ const LibraryAuthoringPage = ({
     components: 'type = "library_block"',
     collections: 'type = "collection"',
     units: 'block_type = "unit"',
+    subsections: 'block_type = "subsection"',
+    sections: 'block_type = "section"',
   };
   if (activeKey !== ContentType.home) {
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
-  /*
-
-  <FilterByPublished key={
-                // It is necessary to re-render `FilterByPublished` every time `FilterByBlockType`
-                // appears or disappears, this is because when the menu is opened it is rendered
-                // in a previous state, causing an inconsistency in its position.
-                // By changing the key we can re-render the component.
-                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
-              }
-  */
-
-  // Disable filtering by block/problem type when viewing the Collections tab.
-  const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
+  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab.
+  const onlyOneType = (insideCollections || insideUnits || insideSections || insideSubsections);
+  const overrideTypesFilter = onlyOneType
+    ? new TypesFilterData()
+    : undefined;
 
   const tabTitles = {
     [ContentType.home]: intl.formatMessage(messages.homeTab),
     [ContentType.collections]: intl.formatMessage(messages.collectionsTab),
     [ContentType.components]: intl.formatMessage(messages.componentsTab),
     [ContentType.units]: intl.formatMessage(messages.unitsTab),
+    [ContentType.subsections]: intl.formatMessage(messages.subsectionsTab),
+    [ContentType.sections]: intl.formatMessage(messages.sectionsTab),
   };
+
   const visibleTabsToRender = visibleTabs.map((contentType) => (
     <Tab key={contentType} eventKey={contentType} title={tabTitles[contentType]} />
   ));
@@ -309,7 +304,7 @@ const LibraryAuthoringPage = ({
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              {!(insideCollections || insideUnits) && <FilterByBlockType />}
+              {!(onlyOneType) && <FilterByBlockType />}
               <LibraryFilterByPublished key={
                 // It is necessary to re-render `LibraryFilterByPublished` every time `FilterByBlockType`
                 // appears or disappears, this is because when the menu is opened it is rendered
