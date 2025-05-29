@@ -62,7 +62,7 @@ export const hasShortVideoDuration = (videos) => {
   if (totalNumber === 0) {
     return true;
   }
-  if (totalNumber > 0 && durations.median <= 600) {
+  if (totalNumber > 0 && durations.median !== null && durations.median <= 600) {
     return true;
   }
 
@@ -76,7 +76,7 @@ export const hasDiverseSequences = (subsections) => {
     return false;
   }
   if (totalVisible > 0) {
-    return ((numWithOneBlockType / totalVisible) < 0.2);
+    return ((numWithOneBlockType / totalVisible) <= 0.2);
   }
 
   return false;
