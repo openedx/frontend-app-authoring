@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Navigate, Routes, Route, useParams,
@@ -15,6 +15,7 @@ import CustomPages from './custom-pages';
 import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import { CourseOutline } from './course-outline';
+import { useCourseOutline } from './course-outline/hooks';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -27,6 +28,7 @@ import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
+import { LmsBook } from '@openedx/paragon/icons'; 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
  *
@@ -43,34 +45,67 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-const CoursePageLayout = ({ children, courseId }) => (
-  <div style={{ display: 'flex', minHeight: '100vh' }}>
-    {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
-    <div style={{
-      minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee',marginLeft: '16px', marginTop: '16px', borderRadius: '16px'
-    }}
-    >
-      <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
+const CoursePageLayout = ({ children, courseId, courseName }) => (
+  <>
+    {/* Breadcrumb and Title */}
+    <div className="ca-breadcrumb-bg">
+      <div className="ca-breadcrumb-container">
+        <div className="ca-breadcrumb">
+        <span className="ca-breadcrumb-icon">
+         <LmsBook className="custom-icon" />
+          My Courses
+        </span>
+          <span className="ca-breadcrumb-divider">/</span>
+          <span className="ca-breadcrumb-current">{courseName || 'Loading...'}</span>
+        </div>
+        <div className="ca-title">
+          {courseName || 'Loading...'}
+        </div>
+      </div>
     </div>
-    <main style={{ flex: 1, paddingTop: '1.5rem' }}>
-      <Suspense>
-        {children}
-      </Suspense>
-    </main>
-  </div>
+    {/* Main layout */}
+    <div className="ca-main-layout">
+      <div>
+        {/* This div is now redundant, but kept for context. You may remove it if not needed. */}
+      </div>
+      {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
+      <div className="ca-sidebar">
+        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
+      </div>
+      <main className="ca-main-content">
+        <Suspense>
+          {children}
+        </Suspense>
+      </main>
+    </div>
+  </>
 );
 
 CoursePageLayout.propTypes = {
   children: PropTypes.node.isRequired,
   courseId: PropTypes.string.isRequired,
+  courseName: PropTypes.string,
 };
 
 const CourseAuthoringRoutes = () => {
   const { courseId } = useParams();
+  const { courseName: storeCourseName } = useCourseOutline({ courseId });
+  const [courseName, setCourseName] = useState('');
+
+  useEffect(() => {
+    // Reset course name immediately on courseId change
+    setCourseName('');
+  }, [courseId]);
+
+  useEffect(() => {
+    // Update when new course name is available
+    if (storeCourseName) {
+      setCourseName(storeCourseName);
+    }
+  }, [storeCourseName]);
 
   // Check if courseId is defined before rendering routes that depend on it
   if (!courseId) {
-    // Optionally render a loading state or a message
     return <div>Loading course information...</div>;
   }
 
@@ -80,7 +115,11 @@ const CourseAuthoringRoutes = () => {
         {/* Base route for Course Outline */}
         <Route
           path="/"
-          element={<CoursePageLayout courseId={courseId}><CourseOutline courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseOutline courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         {/* Redirect explicit /outline to the base path for consistency */}
         <Route
@@ -91,19 +130,35 @@ const CourseAuthoringRoutes = () => {
         {/* Other course-specific routes wrapped in CoursePageLayout */}
         <Route
           path="course_info"
-          element={<CoursePageLayout courseId={courseId}><CourseUpdates courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseUpdates courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="assets"
-          element={<CoursePageLayout courseId={courseId}><FilesPage courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <FilesPage courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="videos"
-          element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <CoursePageLayout courseId={courseId}><VideosPage courseId={courseId} /></CoursePageLayout> : null}
+          element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? (
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <VideosPage courseId={courseId} />
+            </CoursePageLayout>
+          ) : null}
         />
         <Route
           path="pages-and-resources/*"
-          element={<CoursePageLayout courseId={courseId}><PagesAndResources courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <PagesAndResources courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="proctored-exam-settings"
@@ -111,13 +166,21 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="custom-pages/*"
-          element={<CoursePageLayout courseId={courseId}><CustomPages courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CustomPages courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         {DECODED_ROUTES.COURSE_UNIT.map((unitPath) => (
           <Route
             key={unitPath}
             path={unitPath}
-            element={<CoursePageLayout courseId={courseId}><CourseUnit courseId={courseId} /></CoursePageLayout>}
+            element={(
+              <CoursePageLayout courseId={courseId} courseName={courseName}>
+                <CourseUnit courseId={courseId} />
+              </CoursePageLayout>
+            )}
           />
         ))}
         <Route
@@ -130,47 +193,94 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="settings/details"
-          element={<CoursePageLayout courseId={courseId}><ScheduleAndDetails courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <ScheduleAndDetails courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="settings/grading"
-          element={<CoursePageLayout courseId={courseId}><GradingSettings courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <GradingSettings courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="course_team"
-          element={<CoursePageLayout courseId={courseId}><CourseTeam courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseTeam courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="group_configurations"
-          element={<CoursePageLayout courseId={courseId}><GroupConfigurations courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <GroupConfigurations courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="settings/advanced"
-          element={<CoursePageLayout courseId={courseId}><AdvancedSettings courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <AdvancedSettings courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="import"
-          element={<CoursePageLayout courseId={courseId}><CourseImportPage courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseImportPage courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="export"
-          element={<CoursePageLayout courseId={courseId}><CourseExportPage courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseExportPage courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="checklists"
-          element={<CoursePageLayout courseId={courseId}><CourseChecklist courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CourseChecklist courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
         <Route
           path="certificates"
-          element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <CoursePageLayout courseId={courseId}><Certificates courseId={courseId} /></CoursePageLayout> : null}
+          element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? (
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <Certificates courseId={courseId} />
+            </CoursePageLayout>
+          ) : null}
         />
         <Route
           path="textbooks"
-          element={<CoursePageLayout courseId={courseId}><Textbooks courseId={courseId} /></CoursePageLayout>}
+          element={(
+            <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <Textbooks courseId={courseId} />
+            </CoursePageLayout>
+          )}
         />
 
-        {/* Route outside the CourseAuthoringPage layout? */}
-        <Route path="/new-course" element={<PageWrap><CustomCreateNewCourseForm handleOnClickCancel={() => window.history.back()} /></PageWrap>} />
+        {/* Route outside the CourseAuthoringPage layout */}
+        <Route
+          path="/new-course"
+          element={(
+            <PageWrap>
+              <CustomCreateNewCourseForm handleOnClickCancel={() => window.history.back()} />
+            </PageWrap>
+          )}
+        />
       </Routes>
     </CourseAuthoringPage>
   );
