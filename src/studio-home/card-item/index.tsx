@@ -92,7 +92,7 @@ const CardItem: React.FC<Props> = ({
             as={IconButton}
             iconAs={MoreHoriz}
             variant="primary"
-            data-testid="toggle-dropdown"
+            aria-label={intl.formatMessage(messages.btnDropDownText)}
           />
           <Dropdown.Menu>
             {isShowRerunLink && (

@@ -184,7 +184,7 @@ const CoursesTab: React.FC<Props> = ({
             <p data-testid="courses-not-found-alert">
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
             </p>
-            <Button data-testid="clean-filters" variant="primary" onClick={handleCleanFilters}>
+            <Button variant="primary" onClick={handleCleanFilters}>
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
             </Button>
           </Alert>

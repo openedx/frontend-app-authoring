@@ -29,7 +29,7 @@ describe('<CardItem />', () => {
     render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
-    const dropDownMenu = screen.getByTestId('toggle-dropdown');
+    const dropDownMenu = screen.getByRole('button', { name: /course actions/i });
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);
     expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
@@ -42,7 +42,7 @@ describe('<CardItem />', () => {
     render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
-    const dropDownMenu = screen.getByTestId('toggle-dropdown');
+    const dropDownMenu = screen.getByRole('button', { name: /course actions/i });
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);
     expect(btnReRunCourse).toHaveAttribute('href', `/${trimSlashes(props.rerunLink)}`);

@@ -136,7 +136,7 @@ describe('<CoursesTab />', () => {
     const props = { isLoading: false, coursesDataItems: [] };
     const customStoreData = { studioHomeCoursesRequestParams: { isFiltered: true } };
     const { store } = renderComponent(props, customStoreData);
-    const cleanFiltersButton = screen.queryByTestId('clean-filters');
+    const cleanFiltersButton = screen.getByRole('button', { name: /clear filters/i });
     expect(cleanFiltersButton).toBeInTheDocument();
 
     fireEvent.click(cleanFiltersButton!);
