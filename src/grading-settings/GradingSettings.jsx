@@ -117,17 +117,30 @@ const GradingSettings = ({ intl, courseId }) => {
   return (
     <>
       <Container size="xl" className="grading px-4">
-        <div className="mt-5">
-          <AlertMessage
-            show={showSuccessAlert}
-            variant="success"
-            icon={CheckCircle}
-            title={intl.formatMessage(messages.alertSuccess)}
-            aria-hidden="true"
-            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
-          />
-        </div>
+        <PluginSlot
+          id="grading_alert_plugin_slot"
+          pluginProps={{
+            show: showSuccessAlert,
+            variant: 'success',
+            icon: CheckCircle,
+            title: intl.formatMessage(messages.alertSuccess),
+            // aria-hidden: "true",
+            // aria-labelledby: intl.formatMessage(messages.alertSuccessAriaLabelledby),
+            // aria-describedby: intl.formatMessage(messages.alertSuccessAriaDescribedby)
+          }}
+        >
+          <div className="mt-5">
+            <AlertMessage
+              show={showSuccessAlert}
+              variant="success"
+              icon={CheckCircle}
+              title={intl.formatMessage(messages.alertSuccess)}
+              aria-hidden="true"
+              aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+              aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+            />
+          </div>
+        </PluginSlot>
         <div>
           <section className="setting-items mb-4">
             <Layout

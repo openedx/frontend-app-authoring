@@ -220,23 +220,23 @@ const config = {
             }]
         },
         grading_header_plugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-content",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <SubHeader
-                contentTitle={props.contentTitle}
-                description={props.description}
-              />
-            ),
-          },
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "grading-content",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => (
+                        <SubHeader
+                        contentTitle={props.contentTitle}
+                        description={props.description}
+                    />
+                    ),
+                },
+                },
+            ],
         },
-      ],
-    },
     // grading_header_styleplugin_slot: {
     //   plugins: [
     //     {
@@ -335,6 +335,33 @@ const config = {
     //   ],
     // },
     },
+    grading_alert_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "grading-alert",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => (
+                        <div>
+            <AlertMessage
+              show={!showSuccessAlert}
+              variant="success"
+              icon={CheckCircle}
+              title={intl.formatMessage(messages.alertSuccess)}
+              aria-hidden="true"
+              aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+              aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+            />
+          </div>
+                    ),
+                },
+                },
+            ],
+        },
+
+    
 };
 
 export default config;
