@@ -140,7 +140,7 @@ const CourseUnit = ({ courseId }) => {
               />
             ) : null}
           </TransitionReplace>
-          {courseUnit.upstreamInfo.upstreamLink && (
+          {courseUnit.upstreamInfo?.upstreamLink && (
             <AlertMessage
               title={intl.formatMessage(
                 messages.alertLibraryUnitReadOnlyText,
