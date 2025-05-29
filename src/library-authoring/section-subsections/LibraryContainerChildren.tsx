@@ -195,7 +195,6 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               marginBottom: '1rem',
               borderRadius: '8px',
             }}
-            children={null}
             actionStyle={{
               padding: '0.5rem 1rem',
               background: '#FBFAF9',
