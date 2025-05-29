@@ -460,7 +460,7 @@ export const useDeleteXBlockAsset = (usageKey: string) => {
 /**
  * Get the metadata for a collection in a library
  */
-export const useCollection = (libraryId: string, collectionId: string) => (
+export const useCollection = (libraryId: string, collectionId?: string) => (
   useQuery({
     enabled: !!libraryId && !!collectionId,
     queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),

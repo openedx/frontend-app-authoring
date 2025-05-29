@@ -42,7 +42,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
-  const { navigateTo } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
@@ -92,7 +92,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
-          {collectionId && (
+          {insideCollection && (
             <Dropdown.Item onClick={removeFromCollection}>
               <FormattedMessage {...messages.menuRemoveFromCollection} />
             </Dropdown.Item>

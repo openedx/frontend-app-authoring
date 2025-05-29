@@ -38,7 +38,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -139,7 +139,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={confirmDelete}>
           <FormattedMessage {...messages.menuDelete} />
         </Dropdown.Item>
-        {collectionId && (
+        {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>
