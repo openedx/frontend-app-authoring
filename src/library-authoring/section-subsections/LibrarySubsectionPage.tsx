@@ -41,7 +41,7 @@ const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
     ));
     return (
       <SelectMenu
-        className="p-0 ml-0"
+        className="breadcrumb-menu"
         variant="link"
         defaultMessage={`${items.length} Sections`}
       >

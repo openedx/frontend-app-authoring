@@ -163,7 +163,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   }
 
   return (
-    <div className="ml-2 library-container-page">
+    <div className="ml-2 library-container-children">
       {children?.length === 0 && (
         <h4 className="ml-2">
           {insideSection ? (

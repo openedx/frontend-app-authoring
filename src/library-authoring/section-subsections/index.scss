@@ -1,4 +1,4 @@
-.library-container-page {
+.library-container-children {
   .pgn__card {
     border-radius: 8px;
     padding: 0;
@@ -28,5 +28,11 @@
 
   .pgn__card.clickable:hover {
     box-shadow: 0 .125rem .25rem rgb(0 0 0 / .15), 0 .125rem .5rem rgb(0 0 0 / .15);
+  }
+}
+
+.breadcrumb-menu {
+  button {
+    padding: 0px;
   }
 }
