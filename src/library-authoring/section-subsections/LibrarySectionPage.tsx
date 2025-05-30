@@ -31,7 +31,7 @@ export const LibrarySectionPage = () => {
   const { navigateTo } = useLibraryRoutes();
   // Open subsection sidebar on mount
   useEffect(() => {
-    openInfoSidebar({ sectionId });
+    openInfoSidebar();
   }, [sectionId]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);

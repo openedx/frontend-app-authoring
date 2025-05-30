@@ -108,7 +108,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
-  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openUnitInfoSidebar, openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -150,10 +150,10 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     const doubleClicked = numberOfClicks > 1;
     if (insideSection) {
       navigateTo({ subsectionId: child.originalId, doubleClicked });
-      openInfoSidebar({ subsectionId: child.originalId });
+      openInfoSidebar();
     } else if (insideSubsection) {
       navigateTo({ unitId: child.originalId, doubleClicked });
-      openInfoSidebar({ unitId: child.originalId });
+      openUnitInfoSidebar(child.originalId);
     }
   }, [navigateTo, openInfoSidebar]);
 
