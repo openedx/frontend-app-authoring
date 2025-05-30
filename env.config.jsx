@@ -16,6 +16,7 @@ import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
 import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
 import SubHeader from './src/generic/sub-header/SubHeader';
 import SectionSubHeader from './src/generic/section-sub-header';
+import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -253,7 +254,6 @@ const config = {
                 }
             ],
         },
-
         grading_header_plugin_slot: {
             plugins: [
                 {
@@ -272,6 +272,20 @@ const config = {
                         </div>
                     ),
                 },
+                },
+            ],
+        },
+        course_updates_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "course_updates",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => 
+                        <CourseUpdatesNew />
+                    },
                 },
             ],
         }

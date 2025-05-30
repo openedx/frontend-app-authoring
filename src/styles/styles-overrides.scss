@@ -73,7 +73,7 @@
     width: 2.5rem;
     height: 2.5rem;
   }
-  
+
   .grading-scale-segments-and-ticks {
     border: none;
     border-radius: 1rem;
@@ -120,6 +120,43 @@
   }
 }
 
+// Course Updates styles
+
+// Course Updates Main container styles
+.setting-items {
+  article {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid #ced4da;
+  }
+}
+
+// Header subtitle content style
+.sub-header {
+  .sub-header-title-subtitle {
+    display: none;
+  }
+}
+
+.sub-header-instructions {
+  color: var(--text-secondary) !important;
+  font-size: 18px;
+  position: relative;
+}
+
+.sub-header-instructions::after {
+  color: #ced4da !important;
+  font-size: 18px;
+  content: "";
+  display: block;
+  height: 1px;
+  background-color:  #ced4da;
+  margin-top: 8px;
+  margin-left: -1rem !important;
+  margin-right: -1rem !important;
+}
+
 // K styles end
 
 // S Styles Start
@@ -138,11 +175,12 @@
   //   margin-top: 0 !important;
   // }
 
-  .course-team-sidebar{
+  .course-team-sidebar {
     hr {
       border-top: none !important;
     }
   }
+
   .course-team-container {
     margin-top: 0 !important;
   }
@@ -169,7 +207,7 @@
       margin-left: -1rem !important;
       margin-right: -1rem !important;
     }
-    
+
   }
 
   .sub-header-title {
@@ -204,7 +242,7 @@
       margin-bottom: 1rem !important;
       font-size: 20px !important;
     }
-    
+
     .form-helper-text {
       display: none !important;
     }

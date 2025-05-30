@@ -11,7 +11,6 @@ import {
 import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useModel } from '../generic/model-store';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import ProcessingNotification from '../generic/processing-notification';
@@ -34,7 +33,7 @@ import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 
-const CourseUpdates = ({ courseId }) => {
+const CourseUpdatesNew = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
 
@@ -69,9 +68,7 @@ const CourseUpdates = ({ courseId }) => {
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
 
   return (
-    <PluginSlot
-      id="course_updates_plugin_slot"
-    >
+    <>
       <Helmet>
         <title>
           {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
@@ -134,24 +131,24 @@ const CourseUpdates = ({ courseId }) => {
             xs={[{ span: 12 }]}
             xl={[{ span: 12 }]}
           >
-            <Layout.Element className="mt-3">
+            <Layout.Element>
               <article>
                 <div>
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     instruction={intl.formatMessage(messages.sectionInfo)}
-                    headerActions={(
-                      <Button
-                        variant="primary"
-                        iconBefore={AddIcon}
-                        size="sm"
-                        onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                        disabled={isUpdateFormOpen || errors.loadingUpdates}
-                      >
-                        {intl.formatMessage(messages.newUpdateButton)}
-                      </Button>
-                    )}
+                    // headerActions={(
+                    //   <Button
+                    //     variant="primary"
+                    //     iconBefore={AddIcon}
+                    //     size="sm"
+                    //     onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                    //     disabled={isUpdateFormOpen || errors.loadingUpdates}
+                    //   >
+                    //     {intl.formatMessage(messages.newUpdateButton)}
+                    //   </Button>
+                    // )}
                   />
                   <section className="updates-section">
                     {isMainFormOpen && (
@@ -240,12 +237,12 @@ const CourseUpdates = ({ courseId }) => {
           onInternetConnectionFailed={() => null}
         />
       </div>
-    </PluginSlot>
+    </>
   );
 };
 
-CourseUpdates.propTypes = {
+CourseUpdatesNew.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default CourseUpdates;
+export default CourseUpdatesNew;
