@@ -1,5 +1,31 @@
 @import "./global-overrides";
 
+// Help Sidebar styles
+.help-sidebar {
+  @include card-style1;
+  // background-color: white;
+  padding: 1rem;
+  // border-radius: 1rem;
+  margin-top: 0 !important;
+  // border: 1px solid #ced4da;
+
+  .help-sidebar-about-descriptions,
+  .help-sidebar-other-links {
+    padding: 7px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+  }
+
+  .help-sidebar-about-title,
+  .help-sidebar-other-title {
+    margin-bottom: 0.5rem !important;
+  }
+
+  hr {
+    display: none;
+  }
+}
+
 // K styles start
 
 //Grading Sub Header styles
@@ -96,30 +122,6 @@
       }
     }
 
-    // Help Sidebar styles
-    .help-sidebar {
-      background-color: white;
-      padding: 1rem;
-      border-radius: 1rem;
-      margin-top: 0 !important;
-      border: 1px solid #ced4da;
-
-      .help-sidebar-about-descriptions,
-      .help-sidebar-other-links {
-        padding: 7px;
-        border: 1px solid #ced4da;
-        border-radius: 10px;
-      }
-
-      .help-sidebar-about-title,
-      .help-sidebar-other-title {
-        margin-bottom: 0.5rem !important;
-      }
-
-      hr {
-        display: none;
-      }
-    }
   }
 }
 
@@ -135,12 +137,17 @@
     // height: 100%;
   }
 
-  .help-sidebar {
-    @include card-style1;
-    padding: 1rem;
-    margin-top: 0 !important;
-  }
+  // .help-sidebar {
+  //   @include card-style1;
+  //   padding: 1rem;
+  //   margin-top: 0 !important;
+  // }
 
+  .course-team-sidebar{
+    hr {
+      border-top: none !important;
+    }
+  }
   .course-team-container {
     margin-top: 0 !important;
   }
