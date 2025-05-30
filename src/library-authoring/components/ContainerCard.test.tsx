@@ -10,6 +10,7 @@ import { mockContentLibrary } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
 import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
+import { ContainerType } from '../../generic/key-utils';
 
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
@@ -18,7 +19,7 @@ const containerHitSample: ContainerHit = {
   usageKey: 'lct:org1:Demo_Course:unit:unit-display-name-123',
   org: 'org1',
   blockId: 'unit-display-name-123',
-  blockType: 'unit',
+  blockType: ContainerType.Unit,
   breadcrumbs: [{ displayName: 'Demo Lib' }],
   displayName: 'Unit Display Name',
   formatted: {

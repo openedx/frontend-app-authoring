@@ -212,7 +212,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
                 readOnly={readOnly || libReadOnly}
               />
             )}
-          />
+          >
+          </SortableItem>
 
         ))}
       </DraggableList>
