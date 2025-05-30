@@ -157,6 +157,17 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     }
   }, [navigateTo, openInfoSidebar]);
 
+  const getComponentStyle = useCallback((childId: string) => {
+    const style = {
+      marginBottom: '1rem',
+      borderRadius: '8px',
+    };
+    if (activeDraggingId === childId) {
+      style["outline"] = '2px dashed gray'
+    }
+    return style;
+  }, [activeDraggingId]);
+
   if (isLoading) {
     return <Loading />;
   }
@@ -190,11 +201,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
           <SortableItem
             id={child.id}
             key={child.id}
-            componentStyle={{
-              outline: activeDraggingId === child.id && '2px dashed gray',
-              marginBottom: '1rem',
-              borderRadius: '8px',
-            }}
+            componentStyle={getComponentStyle(child.id)}
             actionStyle={{
               padding: '0.5rem 1rem',
               background: '#FBFAF9',

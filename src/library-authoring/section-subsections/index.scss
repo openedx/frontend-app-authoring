@@ -3,27 +3,27 @@
     border-radius: 8px;
     padding: 0;
     margin-bottom: 1rem;
+  }
+
+  .pgn__card.clickable {
+    box-shadow: none;
 
     &::before {
       border: none !important; // Remove default focus
     }
 
     &.selected:not(:focus) {
-      border: 2px $gray-700 solid;
+      outline: 2px $gray-700 solid;
     }
 
     &.selected:focus {
-      border: 3px $gray-700 solid;
+      outline: 3px $gray-700 solid;
     }
 
     &:not(.selected):focus {
       outline: 1px $gray-200 solid;
       outline-offset: 2px;
     }
-  }
-
-  .pgn__card.clickable {
-    box-shadow: none;
   }
 
   .pgn__card.clickable:hover {
