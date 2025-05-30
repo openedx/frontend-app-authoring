@@ -38,6 +38,7 @@ export const HeaderActions = ({
         case ContainerType.Unit:
           openUnitInfoSidebar(containerKey);
           break;
+        /* istanbul ignore next */
         default:
           break;
       }
