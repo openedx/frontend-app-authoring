@@ -16,22 +16,21 @@ let axiosMock: MockAdapter;
 let mockShowToast;
 const mockNavigate = jest.fn();
 const libraryId = 'lib:Axim:TEST';
-const unitId = 'lct:org1:Demo_Course:unit:unit-display-name-123';
 
-const containerHitSample: ContainerHit = {
-  id: 'lctorg1democourse-unit-display-name-123',
+const getContainerHitSample = (containerType: ContainerType = ContainerType.Unit) => ({
+  id: `lctorg1democourse-${containerType}-display-name-123`,
   type: 'library_container',
   contextKey: libraryId,
-  usageKey: unitId,
+  usageKey: `lct:org1:Demo_Course:${containerType}:${containerType}-display-name-123`,
   org: 'org1',
-  blockId: 'unit-display-name-123',
-  blockType: ContainerType.Unit,
+  blockId: `${containerType}-display-name-123`,
+  blockType: containerType,
   breadcrumbs: [{ displayName: 'Demo Lib' }],
-  displayName: 'Unit Display Name',
+  displayName: `${containerType} Display Name`,
   formatted: {
-    displayName: 'Unit Display Formated Name',
+    displayName: `${containerType} Display Formated Name`,
     published: {
-      displayName: 'Published Unit Display Name',
+      displayName: `Published ${containerType} Display Name`,
     },
   },
   created: 1722434322294,
@@ -42,7 +41,7 @@ const containerHitSample: ContainerHit = {
   },
   tags: {},
   publishStatus: PublishStatus.Published,
-};
+} as ContainerHit);
 
 mockContentLibrary.applyMock();
 
@@ -70,21 +69,34 @@ describe('<ContainerCard />', () => {
   });
 
   it('should render the card with title', () => {
-    render(<ContainerCard hit={containerHitSample} />);
+    render(<ContainerCard hit={getContainerHitSample()} />);
 
-    expect(screen.queryByText('Unit Display Formated Name')).toBeInTheDocument();
+    expect(screen.queryByText('unit Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('2')).toBeInTheDocument(); // Component count
   });
 
   it('should render published content', () => {
-    render(<ContainerCard hit={containerHitSample} />, true);
+    render(<ContainerCard hit={getContainerHitSample()} />, true);
 
-    expect(screen.queryByText('Published Unit Display Name')).toBeInTheDocument();
+    expect(screen.queryByText('Published unit Display Name')).toBeInTheDocument();
     expect(screen.queryByText('1')).toBeInTheDocument(); // Published Component Count
   });
 
-  it('should navigate to the container if the open menu clicked', async () => {
-    render(<ContainerCard hit={containerHitSample} />);
+  test.each([
+    {
+      label: 'should navigate to the unit if the open menu clicked',
+      containerType: ContainerType.Unit,
+    },
+    {
+      label: 'should navigate to the section if the open menu clicked',
+      containerType: ContainerType.Section,
+    },
+    {
+      label: 'should navigate to the subsection if the open menu clicked',
+      containerType: ContainerType.Subsection,
+    },
+  ])('$label', async ({ containerType }) => {
+    render(<ContainerCard hit={getContainerHitSample(containerType)} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
@@ -95,15 +107,41 @@ describe('<ContainerCard />', () => {
     expect(openMenuItem).toBeInTheDocument();
     userEvent.click(openMenuItem);
     expect(mockNavigate).toHaveBeenCalledWith({
-      pathname: `/library/${libraryId}/unit/${unitId}`,
+      pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
+      search: '',
+    });
+  });
+
+  test.each([
+    {
+      label: 'should navigate to the unit if the card is double clicked',
+      containerType: ContainerType.Unit,
+    },
+    {
+      label: 'should navigate to the section if the card is double clicked',
+      containerType: ContainerType.Section,
+    },
+    {
+      label: 'should navigate to the subsection if the card is double clicked',
+      containerType: ContainerType.Subsection,
+    },
+  ])('$label', async ({ containerType }) => {
+    render(<ContainerCard hit={getContainerHitSample(containerType)} />);
+
+    // Open menu item
+    const cardItem = await screen.findByText(`${containerType} Display Formated Name`);
+    expect(cardItem).toBeInTheDocument();
+    userEvent.click(cardItem, undefined, { clickCount: 2 });
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
       search: '',
     });
   });
 
   it('should delete the container from the menu & restore the container', async () => {
-    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(200);
+    axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(200);
 
-    render(<ContainerCard hit={containerHitSample} />);
+    render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
@@ -127,7 +165,7 @@ describe('<ContainerCard />', () => {
     // Get restore / undo func from the toast
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryContainerRestoreApiUrl(containerHitSample.usageKey);
+    const restoreUrl = getLibraryContainerRestoreApiUrl(getContainerHitSample().usageKey);
     axiosMock.onPost(restoreUrl).reply(200);
     // restore collection
     restoreFn();
@@ -138,9 +176,9 @@ describe('<ContainerCard />', () => {
   });
 
   it('should show error on delete the container from the menu', async () => {
-    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(400);
+    axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(400);
 
-    render(<ContainerCard hit={containerHitSample} />);
+    render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
@@ -163,7 +201,7 @@ describe('<ContainerCard />', () => {
   });
 
   it('should render no child blocks in card preview', async () => {
-    render(<ContainerCard hit={containerHitSample} />);
+    render(<ContainerCard hit={getContainerHitSample()} />);
 
     expect(screen.queryByTitle('lb:org1:Demo_course:html:text-0')).not.toBeInTheDocument();
     expect(screen.queryByText('+0')).not.toBeInTheDocument();
@@ -171,7 +209,7 @@ describe('<ContainerCard />', () => {
 
   it('should render <=5 child blocks in card preview', async () => {
     const containerWith5Children = {
-      ...containerHitSample,
+      ...getContainerHitSample(),
       content: {
         childUsageKeys: Array(5).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
@@ -184,7 +222,7 @@ describe('<ContainerCard />', () => {
 
   it('should render >5 child blocks with +N in card preview', async () => {
     const containerWith6Children = {
-      ...containerHitSample,
+      ...getContainerHitSample(),
       content: {
         childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
@@ -197,7 +235,7 @@ describe('<ContainerCard />', () => {
 
   it('should render published child blocks when rendering a published card preview', async () => {
     const containerWithPublishedChildren = {
-      ...containerHitSample,
+      ...getContainerHitSample(),
       content: {
         childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
       },
