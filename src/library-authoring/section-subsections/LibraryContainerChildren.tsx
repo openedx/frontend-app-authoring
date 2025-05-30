@@ -158,12 +158,12 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   }, [navigateTo, openInfoSidebar]);
 
   const getComponentStyle = useCallback((childId: string) => {
-    const style = {
+    const style: { marginBottom: string, borderRadius: string, outline?: string } = {
       marginBottom: '1rem',
       borderRadius: '8px',
     };
     if (activeDraggingId === childId) {
-      style["outline"] = '2px dashed gray'
+      style.outline = '2px dashed gray';
     }
     return style;
   }, [activeDraggingId]);
