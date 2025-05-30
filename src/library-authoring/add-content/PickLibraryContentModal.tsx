@@ -9,6 +9,7 @@ import { useAddItemsToCollection, useAddChildrenToContainer } from '../data/apiH
 import genericMessages from '../generic/messages';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from '../routes';
 import messages from './messages';
+import Loading from '../../generic/Loading';
 
 interface PickLibraryContentModalFooterProps {
   onSubmit: () => void;
@@ -53,11 +54,6 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   const {
     insideCollection, insideUnit, insideSection, insideSubsection,
   } = useLibraryRoutes();
-
-  // istanbul ignore if: this should never happen
-  if (!(collectionId || unitId || sectionId || subsectionId) || !ComponentPicker) {
-    throw new Error('collectionId/sectionId/unitId and componentPicker are required');
-  }
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const updateContainerChildrenMutation = useAddChildrenToContainer(
@@ -126,6 +122,15 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     ];
     addBtnText = messages.addToUnitButton;
     visibleTabs = [ContentType.components];
+  }
+
+  // The ids will be set based on current url
+  if (!(collectionId || unitId || sectionId || subsectionId)) {
+    return <Loading />;
+  }
+
+  if (!ComponentPicker) {
+    throw new Error('componentPicker is required');
   }
 
   return (

@@ -12,11 +12,17 @@ import ContainerCard from './ContainerCard';
 import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
+let axiosMock: MockAdapter;
+let mockShowToast;
+const mockNavigate = jest.fn();
+const libraryId = 'lib:Axim:TEST';
+const unitId = 'lct:org1:Demo_Course:unit:unit-display-name-123';
+
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
   type: 'library_container',
-  contextKey: 'lb:org1:Demo_Course',
-  usageKey: 'lct:org1:Demo_Course:unit:unit-display-name-123',
+  contextKey: libraryId,
+  usageKey: unitId,
   org: 'org1',
   blockId: 'unit-display-name-123',
   blockType: ContainerType.Unit,
@@ -37,15 +43,20 @@ const containerHitSample: ContainerHit = {
   tags: {},
   publishStatus: PublishStatus.Published,
 };
-let axiosMock: MockAdapter;
-let mockShowToast;
 
 mockContentLibrary.applyMock();
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
+  path: '/library/:libraryId',
+  params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider
-      libraryId="lib:Axim:TEST"
+      libraryId={libraryId}
       showOnlyPublished={showOnlyPublished}
     >
       {children}
@@ -80,14 +91,13 @@ describe('<ContainerCard />', () => {
     userEvent.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Open menu item
-    const openMenuItem = screen.getByRole('link', { name: 'Open' });
+    const openMenuItem = await screen.findByRole('button', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
-
-    // TODO: To be implemented
-    // expect(openMenuItem).toHaveAttribute(
-    //   'href',
-    //   '/library/lb:org1:Demo_Course/container/container-display-name-123',
-    // );
+    userEvent.click(openMenuItem);
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/unit/${unitId}`,
+      search: '',
+    });
   });
 
   it('should delete the container from the menu & restore the container', async () => {

@@ -37,7 +37,7 @@ const unitId = 'lct:Axim:TEST:unit:test-unit-1';
 const render = (context: 'collection' | 'unit') => baseRender(<PickLibraryContentModal isOpen onClose={onClose} />, {
   path: context === 'collection'
     ? '/library/:libraryId/collection/:collectionId/*'
-    : '/library/:libraryId/container/:unitId/*',
+    : '/library/:libraryId/unit/:unitId/*',
   params: {
     libraryId,
     ...(context === 'collection' && { collectionId: 'collectionId' }),
