@@ -57,6 +57,8 @@ const LibraryLayout = () => (
         ROUTES.COMPONENTS,
         ROUTES.COLLECTIONS,
         ROUTES.UNITS,
+        ROUTES.SECTIONS,
+        ROUTES.SUBSECTIONS,
       ].map((route) => (
         <Route
           key={route}
