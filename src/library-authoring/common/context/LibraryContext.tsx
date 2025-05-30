@@ -137,19 +137,22 @@ export const LibraryProvider = ({
    * We set them in useEffect
   */
   useEffect(() => {
-    if (!skipUrlUpdate && componentId !== urlComponentId) {
-      setCollectionId(urlComponentId);
+    if (skipUrlUpdate) {
+      return;
     }
-    if (!skipUrlUpdate && collectionId !== urlCollectionId) {
+    if (componentId !== urlComponentId) {
+      setComponentId(urlComponentId);
+    }
+    if (collectionId !== urlCollectionId) {
       setCollectionId(urlCollectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && sectionId !== urlSectionId) {
+    if (sectionId !== urlSectionId) {
       setSectionId(urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && subsectionId !== urlSubsectionId) {
+    if (subsectionId !== urlSubsectionId) {
       setSubsectionId(urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
-    if (!skipUrlUpdate && unitId !== urlUnitId) {
+    if (unitId !== urlUnitId) {
       setUnitId(urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
     }
   }, [
@@ -158,11 +161,8 @@ export const LibraryProvider = ({
     urlSubsectionId,
     urlSectionId,
     urlSelectedItemId,
+    urlComponentId,
     skipUrlUpdate,
-    sectionId,
-    subsectionId,
-    unitId,
-    collectionId,
   ]);
 
   const context = useMemo<LibraryContextData>(() => {

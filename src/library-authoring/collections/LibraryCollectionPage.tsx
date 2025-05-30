@@ -101,11 +101,14 @@ const HeaderActions = () => {
 const LibraryCollectionPage = () => {
   const intl = useIntl();
 
-  const { libraryId, collectionId } = useLibraryContext();
-
   const { componentPickerMode } = useComponentPickerContext();
   const {
-    showOnlyPublished, extraFilter: contextExtraFilter, setCollectionId, componentId,
+    libraryId,
+    collectionId,
+    showOnlyPublished,
+    extraFilter: contextExtraFilter,
+    setCollectionId,
+    componentId,
   } = useLibraryContext();
   const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
 
@@ -118,7 +121,7 @@ const LibraryCollectionPage = () => {
 
   useEffect(() => {
     openInfoSidebar(componentId, collectionId, '');
-  }, []);
+  }, [componentId, collectionId]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
