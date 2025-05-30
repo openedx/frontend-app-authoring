@@ -1,6 +1,7 @@
 import {
   type ReactNode,
   useCallback,
+  useEffect,
   useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
@@ -20,7 +21,7 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -136,6 +137,7 @@ const LibraryAuthoringPage = ({
   visibleTabs = allLibraryPageTabs,
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
+  const location = useLocation();
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -184,7 +186,21 @@ const LibraryAuthoringPage = ({
     }
     return ContentType.home;
   };
+
   const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
+
+  useEffect(() => {
+    // Update the active key whenever the route changes. This ensures that the correct tab is selected
+    // when navigating using the browser's back/forward buttons because it does not trigger a re-render.
+    setActiveKey(getActiveKey());
+  }, [location.key, getActiveKey]);
+
+  const handleTabChange = useCallback((key: ContentType) => {
+    setActiveKey(key);
+    if (!componentPickerMode) {
+      navigateTo({ contentType: key });
+    }
+  }, [navigateTo]);
 
   if (isLoadingLibraryData) {
     return <Loading />;
@@ -201,13 +217,6 @@ const LibraryAuthoringPage = ({
   if (!libraryData) {
     return <NotFoundAlert />;
   }
-
-  const handleTabChange = (key: ContentType) => {
-    setActiveKey(key);
-    if (!componentPickerMode) {
-      navigateTo({ contentType: key });
-    }
-  };
 
   const breadcumbs = componentPickerMode && !restrictToLibrary ? (
     <Breadcrumb
