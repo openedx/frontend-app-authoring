@@ -273,6 +273,16 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
+
+        <DeleteConfirmationModal
+          {...{
+            isDeleteConfirmationOpen,
+            closeDeleteConfirmation,
+            handleBulkDelete,
+            selectedRows,
+            fileType,
+          }}
+        />
       </DataTable>
       <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
       {!isEmpty(selectedRows) && (
@@ -286,15 +296,7 @@ const FileTable = ({
           sidebar={infoModalSidebar}
         />
       )}
-      <DeleteConfirmationModal
-        {...{
-          isDeleteConfirmationOpen,
-          closeDeleteConfirmation,
-          handleBulkDelete,
-          selectedRows,
-          fileType,
-        }}
-      />
+
     </div>
   );
 };
