@@ -26,7 +26,7 @@ const CustomIcon = ({
         </Tooltip>
       )}
     >
-      <Icon src={icon} />
+      <Icon src={icon} style={{ color: '#000000' }} />
     </OverlayTrigger>
   );
 };

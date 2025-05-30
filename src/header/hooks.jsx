@@ -1,11 +1,13 @@
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
+import { Badge } from '@openedx/paragon';
 
 import { getPagePath } from '../utils';
 import { getWaffleFlags } from '../data/selectors';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import messages from './messages';
+import courseOptimizerMessages from '../optimizer-page/messages';
 
 export const useContentMenuItems = courseId => {
   const intl = useIntl();
@@ -113,7 +115,12 @@ export const useToolsMenuItems = courseId => {
     },
     ...(waffleFlags.enableCourseOptimizer ? [{
       href: `/course/${courseId}/optimizer`,
-      title: intl.formatMessage(messages['header.links.optimizer']),
+      title: (
+        <>
+          {intl.formatMessage(messages['header.links.optimizer'])}
+          <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.beta)}</Badge>
+        </>
+      ),
     }] : []),
   ];
   return items;

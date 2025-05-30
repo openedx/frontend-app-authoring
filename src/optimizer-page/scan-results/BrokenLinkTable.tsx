@@ -42,11 +42,38 @@ const GoToBlock: FC<{ block: { url: string, displayName: string } }> = ({ block 
   );
 };
 
-const LinksCol: FC<{ block: { url: string, displayName: string }, href: string }> = ({ block, href }) => (
+const iconsMap = {
+  broken: {
+    icon: LinkOff,
+    message1: messages.brokenLabel,
+    message2: messages.brokenInfoTooltip,
+  },
+  locked: {
+    icon: lockedIcon,
+    message1: messages.lockedLabel,
+    message2: messages.lockedInfoTooltip,
+  },
+  manual: {
+    icon: ManualIcon,
+    message1: messages.manualLabel,
+    message2: messages.manualInfoTooltip,
+  },
+};
+
+const LinksCol: FC<{ block: { url: string, displayName: string }, href: string, linkType: string }> = (
+  { block, href, linkType },
+) => (
   <span className="links-container">
     <GoToBlock block={{ url: block.url, displayName: block.displayName || 'Go to block' }} />
-    <Icon className="arrow-forward-ios" src={ArrowForwardIos} />
+    <Icon className="arrow-forward-ios" src={ArrowForwardIos} style={{ color: '#8F8F8F' }} />
     <BrokenLinkHref href={href} />
+    <div style={{ marginLeft: 'auto', marginRight: '10px' }}>
+      <CustomIcon
+        icon={iconsMap[linkType].icon}
+        message1={iconsMap[linkType].message1}
+        message2={iconsMap[linkType].message2}
+      />
+    </div>
   </span>
 );
 
@@ -57,14 +84,13 @@ interface BrokenLinkTableProps {
 
 type TableData = {
   Links: JSX.Element;
-  status: JSX.Element;
 }[];
 
 const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
   filters,
 }) => (
-  <Card className="unit-card rounded-sm pt-2 pl-3 pr-4 mb-2.5">
+  <Card className="unit-card rounded-sm mb-4">
     <p className="unit-header">{unit.displayName}</p>
     <Table
       data={unit.blocks.reduce(
@@ -81,13 +107,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
                 <LinksCol
                   block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
                   href={link}
-                />
-              ),
-              status: (
-                <CustomIcon
-                  icon={LinkOff}
-                  message1={messages.brokenLabel}
-                  message2={messages.brokenInfoTooltip}
+                  linkType="broken"
                 />
               ),
             }));
@@ -103,13 +123,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
                 <LinksCol
                   block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
                   href={link}
-                />
-              ),
-              status: (
-                <CustomIcon
-                  icon={lockedIcon}
-                  message1={messages.lockedLabel}
-                  message2={messages.lockedInfoTooltip}
+                  linkType="locked"
                 />
               ),
             }));
@@ -126,13 +140,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
                 <LinksCol
                   block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
                   href={link}
-                />
-              ),
-              status: (
-                <CustomIcon
-                  icon={ManualIcon}
-                  message1={messages.manualLabel}
-                  message2={messages.manualInfoTooltip}
+                  linkType="manual"
                 />
               ),
             }));
@@ -148,13 +156,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
         {
           key: 'Links',
           columnSortable: false,
-          width: 'col-9',
-          hideHeader: true,
-        },
-        {
-          key: 'status',
-          columnSortable: false,
-          width: 'col-3',
+          width: 'col-12',
           hideHeader: true,
         },
       ]}

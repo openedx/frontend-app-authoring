@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.emptyResultsCard',
     defaultMessage: 'No broken links found',
   },
+  noResultsFound: {
+    id: 'course-authoring.course-optimizer.noResultsFound',
+    defaultMessage: 'No results found',
+  },
   scanHeader: {
     id: 'course-authoring.course-optimizer.scanHeader',
     defaultMessage: 'Scan results',
