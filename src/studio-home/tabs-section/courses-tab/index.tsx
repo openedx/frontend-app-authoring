@@ -13,7 +13,7 @@ import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
-import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
+import { resetStudioHomeCoursesCustomParams, updateStudioHomeCoursesCustomParams } from '../../data/slice';
 import { fetchStudioHomeData } from '../../data/thunks';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
@@ -43,7 +43,6 @@ interface Props {
   isFailed: boolean;
   numPages: number;
   coursesCount: number;
-  isEnabledPagination?: boolean;
 }
 
 const CoursesTab: React.FC<Props> = ({
@@ -55,7 +54,6 @@ const CoursesTab: React.FC<Props> = ({
   isFailed,
   numPages = 0,
   coursesCount = 0,
-  isEnabledPagination = false,
 }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
@@ -89,23 +87,13 @@ const CoursesTab: React.FC<Props> = ({
       activeOnly,
     };
 
-    dispatch(fetchStudioHomeData(locationValue, false, { page, ...customParams }, true));
+    dispatch(fetchStudioHomeData(locationValue, false, { page, ...customParams }));
     dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page, isFiltered: true }));
   };
 
   const handleCleanFilters = () => {
-    const customParams = {
-      currentPage: 1,
-      search: undefined,
-      order: 'display_name',
-      isFiltered: true,
-      cleanFilters: true,
-      archivedOnly: undefined,
-      activeOnly: undefined,
-    };
-
-    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, order: 'display_name' }, true));
-    dispatch(updateStudioHomeCoursesCustomParams(customParams));
+    dispatch(resetStudioHomeCoursesCustomParams());
+    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, order: 'display_name' }));
   };
 
   const isNotFilteringCourses = !isFiltered && !isLoading;
@@ -132,18 +120,16 @@ const CoursesTab: React.FC<Props> = ({
       />
     ) : (
       <div className="courses-tab-container">
-        {isShowProcessing && !isEnabledPagination && <ProcessingCourses />}
-        {isEnabledPagination && (
-          <div className="d-flex flex-row justify-content-between my-4">
-            <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
-            <p data-testid="pagination-info">
-              {intl.formatMessage(messages.coursesPaginationInfo, {
-                length: coursesDataItems.length,
-                total: coursesCount,
-              })}
-            </p>
-          </div>
-        )}
+        <div className="d-flex flex-row align-items-center justify-content-between my-4">
+          {isShowProcessing && <ProcessingCourses />}
+          <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
+          <p data-testid="pagination-info" className="my-0">
+            {intl.formatMessage(messages.coursesPaginationInfo, {
+              length: coursesDataItems.length,
+              total: coursesCount,
+            })}
+          </p>
+        </div>
         {hasCourses ? (
           <>
             {coursesDataItems.map(
@@ -167,12 +153,11 @@ const CoursesTab: React.FC<Props> = ({
                   number={number}
                   run={run}
                   url={url}
-                  isPaginated={isEnabledPagination}
                 />
               ),
             )}
 
-            {numPages > 1 && isEnabledPagination && (
+            {numPages > 1 && (
               <Pagination
                 className="d-flex justify-content-center"
                 paginationLabel="pagination navigation"

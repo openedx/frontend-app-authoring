@@ -15,7 +15,6 @@ import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
 import LibrariesV2Tab from './libraries-v2-tab/index';
-import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
@@ -24,7 +23,6 @@ const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
-  isPaginationCoursesEnabled,
   librariesV1Enabled,
   librariesV2Enabled,
 }) => {
@@ -68,7 +66,7 @@ const TabsSection = ({
   }, [pathname]);
 
   const {
-    courses, libraries, archivedCourses,
+    courses, libraries,
     numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
@@ -99,26 +97,9 @@ const TabsSection = ({
           isFailed={isFailedCoursesPage}
           numPages={numPages}
           coursesCount={coursesCount}
-          isEnabledPagination={isPaginationCoursesEnabled}
         />
       </Tab>,
     );
-
-    if (archivedCourses?.length) {
-      tabs.push(
-        <Tab
-          key={TABS_LIST.archived}
-          eventKey={TABS_LIST.archived}
-          title={intl.formatMessage(messages.archivedTabTitle)}
-        >
-          <ArchivedTab
-            archivedCoursesData={archivedCourses}
-            isLoading={isLoadingCourses}
-            isFailed={isFailedCoursesPage}
-          />
-        </Tab>,
-      );
-    }
 
     if (librariesV2Enabled) {
       tabs.push(
@@ -168,7 +149,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [archivedCourses, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
+  }, [showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
     if (tab === TABS_LIST.courses) {
@@ -196,15 +177,10 @@ const TabsSection = ({
   );
 };
 
-TabsSection.defaultProps = {
-  isPaginationCoursesEnabled: false,
-};
-
 TabsSection.propTypes = {
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
-  isPaginationCoursesEnabled: PropTypes.bool,
   librariesV1Enabled: PropTypes.bool,
   librariesV2Enabled: PropTypes.bool,
 };
