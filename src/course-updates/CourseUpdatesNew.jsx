@@ -143,7 +143,7 @@ const CourseUpdatesNew = ({ courseId }) => {
               xs={[{ span: 12 }]}
               xl={[{ span: 12 }]}
             >
-              <Layout.Element className="mt-3">
+              <Layout.Element>
                 <article>
                   <div>
                     <SubHeader
