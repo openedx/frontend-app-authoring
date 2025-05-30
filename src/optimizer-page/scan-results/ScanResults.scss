@@ -33,11 +33,10 @@
 
     .table{
       margin-bottom: .5rem;
+      table-layout: fixed;
 
       tbody {
         tr {
-          display: flex;
-          align-items: center; 
           border-top: 1px solid #CCCCCC;
 
           td {
@@ -90,23 +89,21 @@
 
   .links-container {
     display: flex;
-    align-items: center;
     gap: 1.5rem;
-    width: 56rem;
   }
 
   .go-to-block-link-container {
-    max-width: 60%;
-    width: fit-content;
-    white-space: nowrap;
-  }
-
-  .broken-link-container {
-    max-width: 95%;
-    width: fit-content;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .broken-link-container {
+    max-width: calc(100% - 150px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
   }
 
   .locked-links-checkbox {
@@ -143,6 +140,10 @@
     align-items: center;
     font-size: small;
     gap: 40px;
+
+    @media (width <= 630px) {
+      flex-direction: column;
+    }
   }
 
   .section-collapsible-header-action-item {
