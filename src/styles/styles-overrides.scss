@@ -1,31 +1,127 @@
 @import "./global-overrides";
 
 // K styles start
+
+//Grading Sub Header styles
 .sub-header-content {
-  display: block !important;
-}
+  margin-top: 0rem;
 
-.section-sub-header {
-  display: block;
-}
-
-.setting-items {
-  article {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 1rem;
+  .sub-header-content-title {
+    font: 1.40625rem;
+    color: #000000;
+    font-weight: 700;
+    line-height: 1.25;
   }
+}
+
+//Grading Horizontal bar (below sub-header) styles
+.border-bottom {
+  border: transparent !important;
+}
+
+.grading-sub-header {
+  display: block;
+  height: 1px;
+  background-color: #ced4da;
+  margin: 10px 0;
+  margin-left: -1rem !important;
+  margin-right: -1rem !important;
+}
+
+// Grading Section sub-header styles
+.section-sub-header {
+  border-bottom: 0;
+
+  h2 {
+    // margin-bottom: 0rem;
+  }
+}
+
+.grading-scale {
+  margin-bottom: 2rem;
+
+  .btn-icon.btn-icon-primary {
+    background-color: white;
+    border: 1.5px solid #ced4da;
+    color: #9e9f9e;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .grading-scale-segments-and-ticks {
+    border: none;
+  }
+
+  .grading-scale-segment, .segment-1{
+    border-radius: 1rem 0rem 0rem 1rem !important;
+  }
+  .grading-scale-segment, .segment-0{
+    border-radius: 0rem 0rem 0rem 0rem !important;
+  }
+}
+
+.grading-description {
+  // display: none !important; // uncomment it when description to be hidden
+}
+
+// Assignment Types Styles
+.course-grading-assignment-wrapper {
+  background-color: #f4f7ff;
+  border: none;
+  border-radius: 10px;
 }
 
 .grading {
-  .help-sidebar {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 1rem;
-    margin-top: 0 !important;
+
+  // Margin for Alert container
+  .mt-5 {
+    margin-top: 0rem !important;
+  }
+
+  // Grading Main container styles
+  .setting-items {
+    article {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ced4da;
+    }
+
+    // Assignment header styles
+    header {
+      display: block;
+
+      h2 {
+        margin-bottom: 0rem;
+      }
+    }
+
+    // Help Sidebar styles
+    .help-sidebar {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-top: 0 !important;
+      border: 1px solid #ced4da;
+
+      .help-sidebar-about-descriptions,
+      .help-sidebar-other-links {
+        padding: 7px;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+      }
+
+      .help-sidebar-about-title,
+      .help-sidebar-other-title {
+        margin-bottom: 0.5rem !important;
+      }
+
+      hr {
+        display: none;
+      }
+    }
   }
 }
-
 
 // K styles end
 
