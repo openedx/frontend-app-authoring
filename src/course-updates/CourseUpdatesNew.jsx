@@ -190,7 +190,7 @@ const CourseUpdatesNew = ({ courseId }) => {
                           </Button> */}
                         </div>
                         <section className="updates-section">
-                          {isMainFormOpen && (
+                          {isMainFormOpen && requestType !== REQUEST_TYPES.edit_handouts && (
                             <UpdateForm
                               isOpen={isUpdateFormOpen}
                               close={closeUpdateForm}
@@ -271,6 +271,15 @@ const CourseUpdatesNew = ({ courseId }) => {
                     )}
                     {activeTab === 'handouts' && (
                       <div className="updates-handouts-container">
+                        {isMainFormOpen && requestType === REQUEST_TYPES.edit_handouts && (
+                          <UpdateForm
+                            isOpen={isUpdateFormOpen}
+                            close={closeUpdateForm}
+                            requestType={requestType}
+                            onSubmit={handleUpdatesSubmit}
+                            courseUpdatesInitialValues={courseUpdatesInitialValues}
+                          />
+                        )}
                         <CourseHandouts
                           contentForHandouts={courseHandouts?.data || ''}
                           onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
