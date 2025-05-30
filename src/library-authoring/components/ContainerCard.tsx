@@ -13,7 +13,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
-import { type ContainerHit, PublishStatus } from '../../search-manager';
+import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
@@ -68,9 +68,11 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ unitId: containerId });
-    openUnitInfoSidebar(containerId);
-    scheduleJumpToCollection();
+    if (itemType === 'unit') {
+      navigateTo({ unitId: containerId });
+      openUnitInfoSidebar(containerId);
+      scheduleJumpToCollection();
+    }
   }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
 
   const openContainerPage = useCallback(() => {
@@ -93,10 +95,10 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
           data-testid="container-card-menu-toggle"
         />
         <Dropdown.Menu>
-          <Dropdown.Item onClick={openContainerPage}>
+          <Dropdown.Item onClick={openContainerPage} disabled={itemType !== 'unit'}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete}>
+          <Dropdown.Item onClick={confirmDelete} disabled={itemType !== 'unit'}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
           {collectionId && (
@@ -104,7 +106,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
               <FormattedMessage {...messages.menuRemoveFromCollection} />
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={showManageCollections}>
+          <Dropdown.Item onClick={showManageCollections} disabled={itemType !== 'unit'}>
             <FormattedMessage {...messages.menuAddToCollection} />
           </Dropdown.Item>
         </Dropdown.Menu>
@@ -119,17 +121,17 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   );
 };
 
-type ContainerCardPreviewProps = {
-  childUsageKeys: Array<string>;
+type UnitCardPreviewProps = {
+  childKeys: Array<string>;
   showMaxChildren?: number;
 };
 
-const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const hiddenChildren = childUsageKeys.length - showMaxChildren;
+const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProps) => {
+  const hiddenChildren = childKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
       {
-        childUsageKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+        childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
           const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
           let classNames;
@@ -170,6 +172,51 @@ const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: Container
   );
 };
 
+type ContainerCardPreviewProps = {
+  hit: ContainerHit,
+};
+
+const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
+  const intl = useIntl();
+  const { showOnlyPublished } = useLibraryContext();
+  const {
+    blockType: itemType,
+    published,
+    content,
+  } = hit;
+
+  if (itemType === 'unit') {
+    const childKeys: Array<string> = (
+      showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
+    ) ?? [];
+
+    return <UnitcardPreview childKeys={childKeys} />;
+  }
+  // TODO Section highlights
+
+  const childNames: Array<string> = (
+    showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames
+  ) ?? [];
+
+  if (childNames) {
+    // Preview with a truncated text with all children display names
+    const childrenText = intl.formatMessage(
+      messages.containerPreviewText,
+      {
+        children: childNames.join(', '),
+      },
+    );
+
+    return (
+      <div className="container-card-preview-text">
+        <Highlight text={childrenText} />
+      </div>
+    );
+  }
+  // Empty preview
+  return null;
+};
+
 type ContainerCardProps = {
   hit: ContainerHit,
 };
@@ -187,7 +234,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     published,
     publishStatus,
     usageKey: unitId,
-    content,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -197,10 +243,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const displayName: string = (
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
-
-  const childUsageKeys: Array<string> = (
-    showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
-  ) ?? [];
 
   const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
     && sidebarComponentInfo.id === unitId;
@@ -221,7 +263,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
-      preview={<ContainerCardPreview childUsageKeys={childUsageKeys} />}
+      preview={<ContainerCardPreview hit={hit} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={(
