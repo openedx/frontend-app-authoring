@@ -67,6 +67,25 @@ body {
   --border-color-hover: #d1d5db;
 }
 
+// Mixins
+@mixin card-style1 {
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+@mixin card-style2 {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+@mixin card-style3 {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
 /* Button Styles */
 .btn {
   border-radius: 4px;
@@ -84,6 +103,7 @@ body {
   color: var(--primary-light);
   background-color: var(--primary);
   border-color: var(--primary);
+  border-radius: 8px;
 
   &:hover {
     background-color: var(--primary-hover);
@@ -118,6 +138,7 @@ body {
   color: var(--primary);
   border-color: var(--primary);
   background-color: transparent;
+  border-radius: 8px;
 
   &:hover {
     color: var(--primary-light);
@@ -151,6 +172,7 @@ body {
   color: var(--primary-light);
   background-color: var(--secondary);
   border-color: var(--secondary);
+  border-radius: 8px;
 
   &:hover {
     background-color: var(--secondary-hover);
@@ -179,6 +201,7 @@ body {
   color: var(--secondary);
   border-color: var(--secondary);
   background-color: transparent;
+  border-radius: 8px;
 
   &:hover {
     color: var(--primary-light);
@@ -212,6 +235,7 @@ body {
   color: var(--primary) !important;
   background-color: transparent;
   border: none !important;
+  border-radius: 8px;
 
   &:hover {
     color: var(--primary-light);
@@ -242,6 +266,7 @@ body {
   color: var(--primary) !important;
   background-color: transparent !important;
   border: none !important;
+  border-radius: 8px;
 
   &:hover {
     color: var(--primary-hover);
@@ -297,7 +322,7 @@ body {
 
 /* Form Controls */
 .form-control {
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #ced4da;
 
   &:focus {

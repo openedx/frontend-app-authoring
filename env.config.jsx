@@ -219,6 +219,41 @@ const config = {
                 },
             }]
         },
+
+        course_team_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-team-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div className="course-team-custom-header">
+                                <div className="course-team-custom-sub-header">
+                                    <span>{props.contentTitle}</span>
+                                    <SubHeader
+                                        headerActions={props.isAllowActions && (
+                                            <Button
+                                                variant="primary"
+                                                iconBefore={props.iconBefore}
+                                                size="sm"
+                                                onClick={props.onClick}
+                                                disabled={props.disabled}
+                                            >
+                                                {props.buttonText}
+                                            </Button>
+                                        )}
+                                    />
+                                </div>
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+                            </div>
+                        ),
+                    },
+                }
+            ],
+        },
+
         grading_header_plugin_slot: {
       plugins: [
         {

@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -74,10 +75,21 @@ const CourseTeam = ({ courseId }) => {
             <Layout.Element>
               <article>
                 <div>
-                  <SubHeader
-                    title={intl.formatMessage(messages.headingTitle)}
-                    subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions && (
+                  <PluginSlot
+                    id="course_team_header_plugin_slot"
+                    pluginProps={{
+                      contentTitle: intl.formatMessage(messages.headingTitle),
+                      isAllowActions,
+                      iconBefore: IconAdd,
+                      onClick: openForm,
+                      disabled: isFormVisible,
+                      buttonText: intl.formatMessage(messages.addNewMemberButton),
+                    }}
+                  >
+                    <SubHeader
+                      title={intl.formatMessage(messages.headingTitle)}
+                      subtitle={intl.formatMessage(messages.headingSubtitle)}
+                      headerActions={isAllowActions && (
                       <Button
                         variant="primary"
                         iconBefore={IconAdd}
@@ -87,8 +99,9 @@ const CourseTeam = ({ courseId }) => {
                       >
                         {intl.formatMessage(messages.addNewMemberButton)}
                       </Button>
-                    )}
-                  />
+                      )}
+                    />
+                  </PluginSlot>
                   <section className="course-team-section">
                     <div className="members-container">
                       {isFormVisible && (

@@ -1,3 +1,5 @@
+@import "./global-overrides";
+
 // K styles start
 .sub-header-content {
   display: block !important;
@@ -31,15 +33,94 @@
 
 .course-team {
   article {
-    background-color: white;
+    @include card-style1;
     padding: 1rem;
-    border-radius: 1rem;
+    width: 100%;
+    // height: 100%;
   }
 
   .help-sidebar {
-    background-color: white;
+    @include card-style1;
     padding: 1rem;
-    border-radius: 1rem;
+    margin-top: 0 !important;
+  }
+
+  .course-team-container {
+    margin-top: 0 !important;
+  }
+
+  .course-team-custom-sub-header {
+    display: flex;
+    justify-content: space-between;
+    // align-items: center;
+    margin-top: 0 !important;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 1.2;
+      letter-spacing: normal;
+    }
+
+  }
+
+  .course-team-custom-header {
+    hr {
+      margin-left: -1rem !important;
+      margin-right: -1rem !important;
+    }
+    
+  }
+
+  .sub-header-title {
+    display: none;
+  }
+
+  .course-team-member {
+    background-color: var(--bg-body) !important;
+    border-radius: 8px !important;
+
+    .member-hint {
+      margin-right: 0 !important;
+      width: 60% !important;
+    }
+  }
+
+  .add-team-member {
+    @include card-style3;
+    background-color: var(--bg-surface) !important;
+  }
+
+  .add-user-form {
+    @include card-style3;
+    background-color: var(--bg-body) !important;
+
+    .form-field {
+      padding: 1.25rem !important;
+      padding-bottom: 0.5rem !important;
+    }
+
+    .form-title {
+      margin-bottom: 1rem !important;
+      font-size: 20px !important;
+    }
+    
+    .form-helper-text {
+      display: none !important;
+    }
+  }
+
+  .pgn__action-row {
+    padding-top: 0 !important;
+    border-top: none !important;
+    padding-left: 1.25rem !important;
+
+    button {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
   }
 }
 
