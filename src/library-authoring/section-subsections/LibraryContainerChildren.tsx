@@ -202,7 +202,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderLeft: '8px solid #E1DDDB',
             }}
             isClickable
-            onClick={(e: { detail: number; }) => handleChildClick(child, e.detail)}
+            onClick={(e) => handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
             cardClassName={sidebarComponentInfo?.id === child.originalId ? 'selected' : undefined}
             actions={(
@@ -212,8 +212,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
                 readOnly={readOnly || libReadOnly}
               />
             )}
-          >
-          </SortableItem>
+          />
 
         ))}
       </DraggableList>
