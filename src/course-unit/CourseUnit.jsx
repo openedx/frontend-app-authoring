@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
-  Container, Layout, Stack, Button, TransitionReplace,
-  Alert,
+  Alert, Container, Layout, Button, TransitionReplace,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -27,8 +26,6 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import Sidebar from './sidebar';
-import SplitTestSidebarInfo from './sidebar/SplitTestSidebarInfo';
 import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
@@ -244,22 +241,15 @@ const CourseUnit = ({ courseId }) => {
               <IframePreviewLibraryXBlockChanges />
             </Layout.Element>
             <Layout.Element>
-              <Stack gap={3}>
-                {isUnitVerticalType && (
-                <CourseAuthoringUnitSidebarSlot
-                  courseId={courseId}
-                  blockId={blockId}
-                  unitTitle={unitTitle}
-                  xBlocks={courseVerticalChildren.children}
-                  readOnly={readOnly}
-                />
-                )}
-                {isSplitTestType && (
-                  <Sidebar data-testid="course-split-test-sidebar">
-                    <SplitTestSidebarInfo />
-                  </Sidebar>
-                )}
-              </Stack>
+              <CourseAuthoringUnitSidebarSlot
+                courseId={courseId}
+                blockId={blockId}
+                unitTitle={unitTitle}
+                xBlocks={courseVerticalChildren.children}
+                readOnly={readOnly}
+                isUnitVerticalType={isUnitVerticalType}
+                isSplitTestType={isSplitTestType}
+              />
             </Layout.Element>
           </Layout>
         </section>
