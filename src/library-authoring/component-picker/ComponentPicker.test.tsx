@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import {
   initializeMocks,
@@ -99,6 +100,44 @@ describe('<ComponentPicker />', () => {
     }, '*');
   });
 
+  it('should open the unit sidebar', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the unit card to open the sidebar
+    fireEvent.click((await screen.findByText('Test Unit')));
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+    expect(sidebar).toBeInTheDocument();
+  });
+
+  it('double clicking a collection should open it', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Mock the collection search result
+    mockSearchResult(mockCollectionResult);
+
+    // Double click on the collection card to open the collection
+    userEvent.dblClick(screen.queryAllByText('Collection 1')[0]);
+
+    // Wait for the collection to load
+    await screen.findByText(/Back to Library/i);
+    await screen.findByText('Introduction to Testing');
+  });
+
   it('should pick component inside a collection using the card', async () => {
     render(<ComponentPicker />);
 
@@ -117,7 +156,7 @@ describe('<ComponentPicker />', () => {
     // Mock the collection search result
     mockSearchResult(mockCollectionResult);
 
-    // Click the add component from the component card
+    // Click the to open the collection
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
 
     // Wait for the collection  to load

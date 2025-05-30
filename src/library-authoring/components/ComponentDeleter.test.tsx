@@ -6,6 +6,7 @@ import {
   initializeMocks,
   waitFor,
 } from '../../testUtils';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import {
   mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
@@ -19,10 +20,19 @@ mockContentSearchConfig.applyMock();
 const mockDelete = mockDeleteLibraryBlock.applyMock();
 const mockRestore = mockRestoreLibraryBlock.applyMock();
 
+const { libraryId } = mockContentLibrary;
 const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
 
 const renderArgs = {
-  extraWrapper: SidebarProvider,
+  path: '/library/:libraryId',
+  params: { libraryId },
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider>
+        { children }
+      </SidebarProvider>
+    </LibraryProvider>
+  ),
 };
 
 let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };

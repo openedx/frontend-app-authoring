@@ -517,7 +517,13 @@
             "context_key": "lib:Axim:TEST",
             "org": "Axim",
             "access_id": "15",
-            "num_children": "0"
+            "num_children": "0",
+            "published": {
+              "display_name": "Test Unit"
+            }
+          },
+          "published": {
+            "display_name": "Test Unit"
           }
         }
       ],

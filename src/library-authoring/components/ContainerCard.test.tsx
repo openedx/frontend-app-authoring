@@ -11,6 +11,13 @@ import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
 import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
   type: 'library_container',
@@ -36,15 +43,20 @@ const containerHitSample: ContainerHit = {
   tags: {},
   publishStatus: PublishStatus.Published,
 };
+
+const libraryId = 'lib:Axim:TEST';
+
 let axiosMock: MockAdapter;
 let mockShowToast;
 
 mockContentLibrary.applyMock();
 
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
+  path: '/library/:libraryId',
+  params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider
-      libraryId="lib:Axim:TEST"
+      libraryId={libraryId}
       showOnlyPublished={showOnlyPublished}
     >
       {children}
@@ -60,14 +72,14 @@ describe('<ContainerCard />', () => {
   it('should render the card with title', () => {
     render(<ContainerCard hit={containerHitSample} />);
 
-    expect(screen.queryByText('Unit Display Formated Name')).toBeInTheDocument();
+    expect(screen.getByText('Unit Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('2')).toBeInTheDocument(); // Component count
   });
 
   it('should render published content', () => {
     render(<ContainerCard hit={containerHitSample} />, true);
 
-    expect(screen.queryByText('Published Unit Display Name')).toBeInTheDocument();
+    expect(screen.getByText('Published Unit Display Name')).toBeInTheDocument();
     expect(screen.queryByText('1')).toBeInTheDocument(); // Published Component Count
   });
 
@@ -79,14 +91,29 @@ describe('<ContainerCard />', () => {
     userEvent.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Open menu item
-    const openMenuItem = screen.getByRole('link', { name: 'Open' });
+    const openMenuItem = screen.getByRole('button', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
 
-    // TODO: To be implemented
-    // expect(openMenuItem).toHaveAttribute(
-    //   'href',
-    //   '/library/lb:org1:Demo_Course/container/container-display-name-123',
-    // );
+    fireEvent.click(openMenuItem);
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/unit/${containerHitSample.usageKey}`,
+      search: '',
+    });
+  });
+
+  it('should navigate to the container if double clicked', async () => {
+    render(<ContainerCard hit={containerHitSample} />);
+
+    // Card title
+    const cardTitle = screen.getByText('Unit Display Formated Name');
+    expect(cardTitle).toBeInTheDocument();
+    userEvent.dblClick(cardTitle);
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/unit/${containerHitSample.usageKey}`,
+      search: '',
+    });
   });
 
   it('should delete the container from the menu & restore the container', async () => {

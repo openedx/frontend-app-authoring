@@ -91,10 +91,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   const handleEdit = useCallback(() => {
-    navigateTo({ componentId: usageKey });
-    openComponentInfoSidebar(usageKey);
+    navigateTo({ selectedItemId: usageKey });
     openComponentEditor(usageKey);
-  }, [usageKey]);
+  }, [usageKey, navigateTo]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
@@ -103,8 +102,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ componentId: usageKey });
-    openComponentInfoSidebar(usageKey);
+    navigateTo({ selectedItemId: usageKey });
     scheduleJumpToCollection();
   }, [
     scheduleJumpToCollection,

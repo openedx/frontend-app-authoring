@@ -164,7 +164,7 @@ const UnitInfo = () => {
       >
         {renderTab(
           UNIT_INFO_TABS.Preview,
-          <LibraryUnitBlocks readOnly />,
+          <LibraryUnitBlocks unitId={unitId} readOnly />,
           intl.formatMessage(messages.previewTabTitle),
         )}
         {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}

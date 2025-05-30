@@ -48,8 +48,7 @@ const CollectionInfo = () => {
     if (componentPickerMode) {
       setCollectionId(collectionId);
     } else {
-      /* istanbul ignore next */
-      navigateTo({ collectionId, doubleClicked: true });
+      navigateTo({ collectionId });
     }
   }, [componentPickerMode, navigateTo]);
 

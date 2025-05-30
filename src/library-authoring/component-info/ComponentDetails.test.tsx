@@ -13,6 +13,7 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentDetails from './ComponentDetails';
 
@@ -24,16 +25,24 @@ mockXBlockOLX.applyMock();
 mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 
+const {
+  libraryId,
+} = mockContentLibrary;
+
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {
+  path: `/library/${libraryId}/components/${usageKey}`,
+  params: { libraryId, selectedItemId: usageKey },
   extraWrapper: ({ children }) => (
-    <SidebarProvider
-      initialSidebarComponentInfo={{
-        id: usageKey,
-        type: SidebarBodyComponentId.ComponentInfo,
-      }}
-    >
-      {children}
-    </SidebarProvider>
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider
+        initialSidebarComponentInfo={{
+          id: usageKey,
+          type: SidebarBodyComponentId.ComponentInfo,
+        }}
+      >
+        {children}
+      </SidebarProvider>
+    </LibraryProvider>
   ),
 });
 

@@ -36,11 +36,13 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
   ) ?? '';
 
   const { navigateTo } = useLibraryRoutes();
-  const openComponent = useCallback(() => {
-    openComponentInfoSidebar(usageKey);
-
+  const selectComponent = useCallback(() => {
     if (!componentPickerMode) {
-      navigateTo({ componentId: usageKey });
+      navigateTo({ selectedItemId: usageKey });
+    } else {
+      // In component picker mode, we want to open the sidebar
+      // without changing the URL
+      openComponentInfoSidebar(usageKey);
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
@@ -63,7 +65,7 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
-      onSelect={openComponent}
+      onSelect={selectComponent}
       selected={selected}
     />
   );
