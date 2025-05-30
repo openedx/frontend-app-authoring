@@ -270,7 +270,15 @@ const CourseUpdatesNew = ({ courseId }) => {
                       </>
                     )}
                     {activeTab === 'handouts' && (
-                      <div className="updates-handouts-container">
+                      <div
+                        className="updates-handouts-container"
+                        style={{
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '1rem',
+                          border: '1px solid #ced4da',
+                        }}
+                      >
                         {isMainFormOpen && requestType === REQUEST_TYPES.edit_handouts && (
                           <UpdateForm
                             isOpen={isUpdateFormOpen}
@@ -280,11 +288,23 @@ const CourseUpdatesNew = ({ courseId }) => {
                             courseUpdatesInitialValues={courseUpdatesInitialValues}
                           />
                         )}
-                        <CourseHandouts
-                          contentForHandouts={courseHandouts?.data || ''}
-                          onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
-                          isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
-                        />
+                        <div
+                          className="handout-card"
+                          style={{
+                            background: '#f5f7fa',
+                            borderRadius: '0.75rem',
+                            border: '1px solid #e5e6e6',
+                            padding: '1rem',
+                            marginBottom: '1rem',
+                            width: '100%',
+                          }}
+                        >
+                          <CourseHandouts
+                            contentForHandouts={courseHandouts?.data || ''}
+                            onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
+                            isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
