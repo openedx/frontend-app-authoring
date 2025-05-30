@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -38,6 +38,7 @@ import AlertMessage from '../generic/alert-message';
 const CourseUpdatesNew = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
+  const [activeTab, setActiveTab] = useState('updates');
 
   const {
     requestType,
@@ -150,10 +151,35 @@ const CourseUpdatesNew = ({ courseId }) => {
                       subtitle={intl.formatMessage(messages.headingSubtitle)}
                       instruction={intl.formatMessage(messages.sectionInfo)}
                     />
-                    <Tabs id="course-updates-tabs">
-                      <Tab eventKey="updates" title={intl.formatMessage(messages.updatesTabTitle)}>
+                    <div className="d-flex align-items-center mb-3" style={{ gap: '1rem' }}>
+                      <div style={{ flex: '1 1 auto' }}>
+                        <Tabs
+                          id="course-updates-tabs"
+                          activeKey={activeTab}
+                          onSelect={setActiveTab}
+                          className="course-updates-tabs"
+                        >
+                          <Tab eventKey="updates" title={intl.formatMessage(messages.updatesTabTitle)} />
+                          <Tab eventKey="handouts" title={intl.formatMessage(messages.handoutsTabTitle)} />
+                        </Tabs>
+                      </div>
+                      {activeTab === 'updates' && (
+                        <Button
+                          variant="primary"
+                          iconBefore={AddIcon}
+                          size="sm"
+                          onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                          disabled={isUpdateFormOpen || errors.loadingUpdates}
+                          style={{ borderRadius: '0.5rem', color: '#fff' }}
+                        >
+                          {intl.formatMessage(messages.newUpdateButton)}
+                        </Button>
+                      )}
+                    </div>
+                    {activeTab === 'updates' && (
+                      <>
                         <div className="d-flex justify-content-end mb-3">
-                          <Button
+                          {/* <Button
                             variant="primary"
                             iconBefore={AddIcon}
                             size="sm"
@@ -161,7 +187,7 @@ const CourseUpdatesNew = ({ courseId }) => {
                             disabled={isUpdateFormOpen || errors.loadingUpdates}
                           >
                             {intl.formatMessage(messages.newUpdateButton)}
-                          </Button>
+                          </Button> */}
                         </div>
                         <section className="updates-section">
                           {isMainFormOpen && (
@@ -217,17 +243,6 @@ const CourseUpdatesNew = ({ courseId }) => {
                                 <ActionRow.Spacer />
                               </ActionRow>
                             )}
-                            <div className="d-flex justify-content-end mb-3">
-                              {/* <Button
-                                variant="primary"
-                                iconBefore={AddIcon}
-                                size="sm"
-                                onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                                disabled={isUpdateFormOpen || errors.loadingUpdates}
-                              >
-                                {intl.formatMessage(messages.newUpdateButton)}
-                              </Button> */}
-                            </div>
                             <DeleteModal
                               isOpen={isDeleteModalOpen}
                               close={closeDeleteModal}
@@ -241,17 +256,17 @@ const CourseUpdatesNew = ({ courseId }) => {
                             )}
                           </div>
                         </section>
-                      </Tab>
-                      <Tab eventKey="handouts" title={intl.formatMessage(messages.handoutsTabTitle)}>
-                        <div className="updates-handouts-container">
-                          <CourseHandouts
-                            contentForHandouts={courseHandouts?.data || ''}
-                            onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
-                            isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
-                          />
-                        </div>
-                      </Tab>
-                    </Tabs>
+                      </>
+                    )}
+                    {activeTab === 'handouts' && (
+                      <div className="updates-handouts-container">
+                        <CourseHandouts
+                          contentForHandouts={courseHandouts?.data || ''}
+                          onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
+                          isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
+                        />
+                      </div>
+                    )}
                   </div>
                 </article>
               </Layout.Element>
