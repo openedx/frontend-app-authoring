@@ -86,6 +86,16 @@ const messages = defineMessages({
     defaultMessage: 'Failed to delete selected course update. Please try again later.',
     description: 'Alert body message for deleting course update errors',
   },
+  updatesTabTitle: {
+    id: 'course-authoring.course-updates.tab.updates',
+    defaultMessage: 'Updates',
+    description: 'Tab label for course updates',
+  },
+  handoutsTabTitle: {
+    id: 'course-authoring.course-updates.tab.handouts',
+    defaultMessage: 'Handouts',
+    description: 'Tab label for course handouts',
+  },
 });
 
 export default messages;

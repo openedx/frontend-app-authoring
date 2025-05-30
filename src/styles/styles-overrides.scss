@@ -157,6 +157,31 @@
   margin-right: -1rem !important;
 }
 
+// Custom styles for CourseUpdatesNew tabs
+.course-updates-new-wrapper .nav-tabs {
+  border-bottom: none !important;
+  margin-bottom: 1.5rem;
+  box-shadow: none !important;
+}
+
+.course-updates-new-wrapper .nav-tabs .nav-link {
+  border: none !important;
+  border-radius: 2rem !important;
+  margin-right: 0.5rem;
+  color: #495057;
+  background: #f5f7fa;
+  padding: 0.35rem 1.5rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.course-updates-new-wrapper .nav-tabs .nav-link.active,
+.course-updates-new-wrapper .nav-tabs .nav-link:focus {
+  background: #2563eb !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
 // K styles end
 
 // S Styles Start

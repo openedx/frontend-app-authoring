@@ -7,6 +7,8 @@ import {
   Button,
   Container,
   Layout,
+  Tabs,
+  Tab,
 } from '@openedx/paragon';
 import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
@@ -74,124 +76,83 @@ const CourseUpdatesNew = ({ courseId }) => {
           {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
         </title>
       </Helmet>
-      <Container size="xl" className="px-4 pt-4">
-        <section className="setting-items mb-4">
-          {errors.loadingUpdates && (
-            <AlertMessage
-              title={intl.formatMessage(messages.loadingUpdatesErrorTitle)}
-              description={intl.formatMessage(messages.loadingUpdatesErrorDescription, { courseId })}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          {errors.loadingHandouts && (
-            <AlertMessage
-              title={intl.formatMessage(messages.loadingHandoutsErrorTitle)}
-              description={intl.formatMessage(messages.loadingHandoutsErrorDescription, { courseId })}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          {errors.creatingUpdate && (
-            <AlertMessage
-              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
-              description={intl.formatMessage(messages.savingNewUpdateErrorAlertDescription)}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          {errors.savingUpdates && (
-            <AlertMessage
-              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
-              description={intl.formatMessage(messages.savingUpdatesErrorDescription)}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          {errors.deletingUpdates && (
-            <AlertMessage
-              title={intl.formatMessage(messages.deletingUpdatesErrorTitle)}
-              description={intl.formatMessage(messages.deletingUpdatesErrorDescription)}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          {errors.savingHandouts && (
-            <AlertMessage
-              title={intl.formatMessage(messages.savingHandoutsErrorTitle)}
-              description={intl.formatMessage(messages.savingHandoutsErrorDescription)}
-              variant="danger"
-              icon={ErrorIcon}
-            />
-          )}
-          <Layout
-            lg={[{ span: 12 }]}
-            md={[{ span: 12 }]}
-            sm={[{ span: 12 }]}
-            xs={[{ span: 12 }]}
-            xl={[{ span: 12 }]}
-          >
-            <Layout.Element>
-              <article>
-                <div>
-                  <SubHeader
-                    title={intl.formatMessage(messages.headingTitle)}
-                    subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    instruction={intl.formatMessage(messages.sectionInfo)}
-                    // headerActions={(
-                    //   <Button
-                    //     variant="primary"
-                    //     iconBefore={AddIcon}
-                    //     size="sm"
-                    //     onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                    //     disabled={isUpdateFormOpen || errors.loadingUpdates}
-                    //   >
-                    //     {intl.formatMessage(messages.newUpdateButton)}
-                    //   </Button>
-                    // )}
-                  />
-                  <section className="updates-section">
-                    {isMainFormOpen && (
-                      <UpdateForm
-                        isOpen={isUpdateFormOpen}
-                        close={closeUpdateForm}
-                        requestType={requestType}
-                        onSubmit={handleUpdatesSubmit}
-                        courseUpdatesInitialValues={courseUpdatesInitialValues}
-                      />
-                    )}
-                    <div className="updates-container">
-                      {courseUpdates.length > 0 && (
-                        <div className="p-4.5">
-                          {courseUpdates.map((courseUpdate, index) => (
-                            isInnerFormOpen(courseUpdate.id) ? (
-                              <UpdateForm
-                                isOpen={isUpdateFormOpen}
-                                close={closeUpdateForm}
-                                requestType={requestType}
-                                isInnerForm
-                                isFirstUpdate={index === 0}
-                                onSubmit={handleUpdatesSubmit}
-                                courseUpdatesInitialValues={courseUpdatesInitialValues}
-                              />
-                            ) : (
-                              <CourseUpdate
-                                dateForUpdate={courseUpdate.date}
-                                contentForUpdate={courseUpdate.content}
-                                onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
-                                onDelete={() => handleOpenDeleteForm(courseUpdate)}
-                                isDisabledButtons={isUpdateFormOpen}
-                              />
-                            )
-                          ))}
-                        </div>
-                      )}
-                      {!courseUpdates.length && (
-                        <ActionRow>
-                          <ActionRow.Spacer />
-                          <span className="small mr-2">
-                            {intl.formatMessage(messages.noCourseUpdates)}
-                          </span>
+      <Container size="xl">
+        <div
+          className="course-updates-new-wrapper"
+          // style={{
+          //   backgroundColor: 'white',
+          //   padding: '1rem',
+          //   borderRadius: '1rem',
+          //   border: '1px solid #ced4da',
+          // }}
+        >
+          <section className="setting-items mb-4">
+            {errors.loadingUpdates && (
+              <AlertMessage
+                title={intl.formatMessage(messages.loadingUpdatesErrorTitle)}
+                description={intl.formatMessage(messages.loadingUpdatesErrorDescription, { courseId })}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            {errors.loadingHandouts && (
+              <AlertMessage
+                title={intl.formatMessage(messages.loadingHandoutsErrorTitle)}
+                description={intl.formatMessage(messages.loadingHandoutsErrorDescription, { courseId })}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            {errors.creatingUpdate && (
+              <AlertMessage
+                title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+                description={intl.formatMessage(messages.savingNewUpdateErrorAlertDescription)}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            {errors.savingUpdates && (
+              <AlertMessage
+                title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+                description={intl.formatMessage(messages.savingUpdatesErrorDescription)}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            {errors.deletingUpdates && (
+              <AlertMessage
+                title={intl.formatMessage(messages.deletingUpdatesErrorTitle)}
+                description={intl.formatMessage(messages.deletingUpdatesErrorDescription)}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            {errors.savingHandouts && (
+              <AlertMessage
+                title={intl.formatMessage(messages.savingHandoutsErrorTitle)}
+                description={intl.formatMessage(messages.savingHandoutsErrorDescription)}
+                variant="danger"
+                icon={ErrorIcon}
+              />
+            )}
+            <Layout
+              lg={[{ span: 12 }]}
+              md={[{ span: 12 }]}
+              sm={[{ span: 12 }]}
+              xs={[{ span: 12 }]}
+              xl={[{ span: 12 }]}
+            >
+              <Layout.Element className="mt-3">
+                <article>
+                  <div>
+                    <SubHeader
+                      title={intl.formatMessage(messages.headingTitle)}
+                      subtitle={intl.formatMessage(messages.headingSubtitle)}
+                      instruction={intl.formatMessage(messages.sectionInfo)}
+                    />
+                    <Tabs id="course-updates-tabs">
+                      <Tab eventKey="updates" title={intl.formatMessage(messages.updatesTabTitle)}>
+                        <div className="d-flex justify-content-end mb-3">
                           <Button
                             variant="primary"
                             iconBefore={AddIcon}
@@ -199,36 +160,104 @@ const CourseUpdatesNew = ({ courseId }) => {
                             onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
                             disabled={isUpdateFormOpen || errors.loadingUpdates}
                           >
-                            {intl.formatMessage(messages.firstUpdateButton)}
+                            {intl.formatMessage(messages.newUpdateButton)}
                           </Button>
-                          <ActionRow.Spacer />
-                        </ActionRow>
-                      )}
-                      <div className="updates-handouts-container">
-                        <CourseHandouts
-                          contentForHandouts={courseHandouts?.data || ''}
-                          onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
-                          isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
-                        />
-                      </div>
-                      <DeleteModal
-                        isOpen={isDeleteModalOpen}
-                        close={closeDeleteModal}
-                        onDeleteSubmit={handleDeleteUpdateSubmit}
-                      />
-                      {isShowProcessingNotification && (
-                        <ProcessingNotification
-                          isShow={isShowProcessingNotification}
-                          title={processingNotificationTitle}
-                        />
-                      )}
-                    </div>
-                  </section>
-                </div>
-              </article>
-            </Layout.Element>
-          </Layout>
-        </section>
+                        </div>
+                        <section className="updates-section">
+                          {isMainFormOpen && (
+                            <UpdateForm
+                              isOpen={isUpdateFormOpen}
+                              close={closeUpdateForm}
+                              requestType={requestType}
+                              onSubmit={handleUpdatesSubmit}
+                              courseUpdatesInitialValues={courseUpdatesInitialValues}
+                            />
+                          )}
+                          <div className="updates-container">
+                            {courseUpdates.length > 0 && (
+                              <div className="p-4.5">
+                                {courseUpdates.map((courseUpdate, index) => (
+                                  isInnerFormOpen(courseUpdate.id) ? (
+                                    <UpdateForm
+                                      isOpen={isUpdateFormOpen}
+                                      close={closeUpdateForm}
+                                      requestType={requestType}
+                                      isInnerForm
+                                      isFirstUpdate={index === 0}
+                                      onSubmit={handleUpdatesSubmit}
+                                      courseUpdatesInitialValues={courseUpdatesInitialValues}
+                                    />
+                                  ) : (
+                                    <CourseUpdate
+                                      dateForUpdate={courseUpdate.date}
+                                      contentForUpdate={courseUpdate.content}
+                                      onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
+                                      onDelete={() => handleOpenDeleteForm(courseUpdate)}
+                                      isDisabledButtons={isUpdateFormOpen}
+                                    />
+                                  )
+                                ))}
+                              </div>
+                            )}
+                            {!courseUpdates.length && (
+                              <ActionRow>
+                                <ActionRow.Spacer />
+                                <span className="small mr-2">
+                                  {intl.formatMessage(messages.noCourseUpdates)}
+                                </span>
+                                <Button
+                                  variant="primary"
+                                  iconBefore={AddIcon}
+                                  size="sm"
+                                  onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                                  disabled={isUpdateFormOpen || errors.loadingUpdates}
+                                >
+                                  {intl.formatMessage(messages.firstUpdateButton)}
+                                </Button>
+                                <ActionRow.Spacer />
+                              </ActionRow>
+                            )}
+                            <div className="d-flex justify-content-end mb-3">
+                              {/* <Button
+                                variant="primary"
+                                iconBefore={AddIcon}
+                                size="sm"
+                                onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                                disabled={isUpdateFormOpen || errors.loadingUpdates}
+                              >
+                                {intl.formatMessage(messages.newUpdateButton)}
+                              </Button> */}
+                            </div>
+                            <DeleteModal
+                              isOpen={isDeleteModalOpen}
+                              close={closeDeleteModal}
+                              onDeleteSubmit={handleDeleteUpdateSubmit}
+                            />
+                            {isShowProcessingNotification && (
+                              <ProcessingNotification
+                                isShow={isShowProcessingNotification}
+                                title={processingNotificationTitle}
+                              />
+                            )}
+                          </div>
+                        </section>
+                      </Tab>
+                      <Tab eventKey="handouts" title={intl.formatMessage(messages.handoutsTabTitle)}>
+                        <div className="updates-handouts-container">
+                          <CourseHandouts
+                            contentForHandouts={courseHandouts?.data || ''}
+                            onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
+                            isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
+                          />
+                        </div>
+                      </Tab>
+                    </Tabs>
+                  </div>
+                </article>
+              </Layout.Element>
+            </Layout>
+          </section>
+        </div>
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert
