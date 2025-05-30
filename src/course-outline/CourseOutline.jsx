@@ -375,6 +375,7 @@ const CourseOutline = ({ courseId }) => {
                                             section,
                                             section.childInfo.children,
                                           )}
+                                          isSectionsExpanded={isSectionsExpanded}
                                           isSelfPaced={statusBarData.isSelfPaced}
                                           isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                           savingStatus={savingStatus}
