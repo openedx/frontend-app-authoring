@@ -235,7 +235,7 @@ const ComponentReviewList = ({
         <BlockCard
           key={info.usageKey}
           info={info}
-          libraryName={outOfSyncComponentsByKey[info.usageKey]?.upstreamContextTitle || ''}
+          libraryName={outOfSyncComponentsByKey[info.usageKey]?.upstreamContextTitle}
           actions={(
             <ActionRow>
               <Button
