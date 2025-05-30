@@ -220,121 +220,27 @@ const config = {
             }]
         },
         grading_header_plugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-content",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <SubHeader
-                contentTitle={props.contentTitle}
-                description={props.description}
-              />
-            ),
-          },
-        },
-      ],
-    },
-    // grading_header_styleplugin_slot: {
-    //   plugins: [
-    //     {
-    //       op: PLUGIN_OPERATIONS.Insert,
-    //       widget: {
-    //         id: "grading-content-style",
-    //         type: DIRECT_PLUGIN,
-    //         priority: 1,
-    //         RenderWidget: (props) => (
-    //           <div>
-    //             <header className="grading-sub-header-content">
-    //             <h2 className="grading-sub-header-content-title">
-    //               {props.contentTitle}
-    //             </h2>
-    //             <span className="grading-desc small">{props.description}</span>
-    //             </header>
-    //           </div>
-    //         ),
-    //       },
-    //     },
-    //   ],
-    // },
-    grading_section_sub_header_plugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-content-sub-header",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <SectionSubHeader
-                title={props.title}
-                description={props.description}
-              />
-            ),
-          },
-        },
-      ],
-    },
-    // grading_sub_header_styleplugin_slot: {
-    //   plugins: [
-    //     {
-    //       op: PLUGIN_OPERATIONS.Insert,
-    //       widget: {
-    //         id: "grading-content-style",
-    //         type: DIRECT_PLUGIN,
-    //         priority: 1,
-    //         RenderWidget: (props) => (
-    //           <div>
-    //             <header className="grading-section-sub-header">
-    //               <h2 className="lead">{props.title}</h2>
-    //               <span className="small grading-rules-desc">
-    //                 {props.description}
-    //               </span>
-    //             </header>
-    //           </div>
-    //         ),
-    //       },
-    //     },
-    //   ],
-    // },
-    grading_assignment_section_sub_header_plugin_slot: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: "grading-assignment-content",
-            type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: (props) => (
-              <header className='mt-4 mx-0 mb-2'>
-                <h2 className="lead">
-                  {props.title}
-                </h2>
-                <span className="small grading-rules-desc">
-                  {props.description}
-                </span>
-              </header>
-            ),
-          },
-        },
-      ],
-    },
-    // help_sidebar_classname_plugin_slot: {
-    //   plugins: [
-    //     {
-    //       op: PLUGIN_OPERATIONS.Insert,
-    //       widget: {
-    //         id: "help-sidebar-classname",
-    //         type: DIRECT_PLUGIN,
-    //         priority: 1,
-    //         RenderWidget: () => {}
-    //       },
-    //     },
-    //   ],
-    // },
-    },
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "grading-content",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => (
+                        <div>
+                            <SubHeader
+                            contentTitle={props.contentTitle}
+                            description={props.description}
+                            />
+                            <span className="grading-sub-header"></span>
+                        </div>
+                    ),
+                },
+                },
+            ],
+        }
+    }
 };
 
 export default config;

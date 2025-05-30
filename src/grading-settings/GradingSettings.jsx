@@ -185,18 +185,10 @@ const GradingSettings = ({ intl, courseId }) => {
                     </section>
                   )}
                   <section>
-                    <PluginSlot
-                      id="grading_section_sub_header_plugin_slot"
-                      pluginProps={{
-                        title: intl.formatMessage(messages.gradingRulesPoliciesSectionTitle),
-                        description: intl.formatMessage(messages.gradingRulesPoliciesSectionDescription),
-                      }}
-                    >
-                      <SectionSubHeader
-                        title={intl.formatMessage(messages.gradingRulesPoliciesSectionTitle)}
-                        description={intl.formatMessage(messages.gradingRulesPoliciesSectionDescription)}
-                      />
-                    </PluginSlot>
+                    <SectionSubHeader
+                      title={intl.formatMessage(messages.gradingRulesPoliciesSectionTitle)}
+                      description={intl.formatMessage(messages.gradingRulesPoliciesSectionDescription)}
+                    />
                     <DeadlineSection
                       setShowSavePrompt={setShowSavePrompt}
                       gracePeriod={gracePeriod}
@@ -205,22 +197,14 @@ const GradingSettings = ({ intl, courseId }) => {
                     />
                   </section>
                   <section>
-                    <PluginSlot
-                      id="grading_assignment_section_sub_header_plugin_slot"
-                      pluginProps={{
-                        title: intl.formatMessage(messages.assignmentTypeSectionTitle),
-                        description: intl.formatMessage(messages.assignmentTypeSectionDescription),
-                      }}
-                    >
-                      <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
-                        <h2 className="lead">
-                          {intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                        </h2>
-                        <span className="small text-gray-700">
-                          {intl.formatMessage(messages.assignmentTypeSectionDescription)}
-                        </span>
-                      </header>
-                    </PluginSlot>
+                    <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
+                      <h2 className="lead">
+                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
+                      </h2>
+                      <span className="small text-gray-700">
+                        {intl.formatMessage(messages.assignmentTypeSectionDescription)}
+                      </span>
+                    </header>
                     <AssignmentSection
                       handleRemoveAssignment={handleRemoveAssignment}
                       setShowSavePrompt={setShowSavePrompt}
