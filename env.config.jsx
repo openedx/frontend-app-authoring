@@ -284,7 +284,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                        <CourseUpdatesNew />
+                        <CourseUpdatesNew courseId={props.courseId}/>
                     },
                 },
             ],

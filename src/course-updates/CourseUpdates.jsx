@@ -71,6 +71,7 @@ const CourseUpdates = ({ courseId }) => {
   return (
     <PluginSlot
       id="course_updates_plugin_slot"
+      pluginProps={{ courseId }}
     >
       <Helmet>
         <title>
