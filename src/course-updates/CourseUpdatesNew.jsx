@@ -202,6 +202,7 @@ const CourseUpdatesNew = ({ courseId }) => {
                           <div className="updates-container">
                             {courseUpdates.length > 0 && (
                               <div className="p-4.5">
+                                <p className="recent-updates">Recent Updates</p>
                                 {courseUpdates.map((courseUpdate, index) => (
                                   <div
                                     key={courseUpdate.id}
