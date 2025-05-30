@@ -1,7 +1,7 @@
 /**
  * Constants and utility hook for the Library Authoring routes.
  */
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   generatePath,
   matchPath,
@@ -11,7 +11,6 @@ import {
   useSearchParams,
   type PathMatch,
 } from 'react-router-dom';
-import { useLibraryContext } from './common/context/LibraryContext';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
@@ -84,7 +83,6 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setUnitId, setCollectionId } = useLibraryContext();
 
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
@@ -130,26 +128,27 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     };
     let route: string;
 
+    if (routeParams.selectedItemId
+     && (['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || ''))) {
+      // These are not valid selectedItemIds, but routes
+      routeParams.selectedItemId = undefined;
+    }
+
     // Update unitId/collectionId in library context if is not undefined.
     // Ids can be cleared from route by passing in empty string so we need to set it.
     if (unitId !== undefined) {
-      setUnitId(unitId);
       routeParams.selectedItemId = undefined;
 
       // If we can have a unitId alongside a routeParams.collectionId, it means we are inside a collection
       // trying to navigate to a unit, so we want to clear the collectionId to not have ambiquity.
       if (routeParams.collectionId !== undefined) {
-        setCollectionId(undefined);
         routeParams.collectionId = undefined;
       }
     } else if (collectionId !== undefined) {
-      setCollectionId(collectionId);
       routeParams.selectedItemId = undefined;
     } else if (contentType) {
       // We are navigating to the library home, so we need to clear the unitId and collectionId
-      setUnitId(undefined);
       routeParams.unitId = undefined;
-      setCollectionId(undefined);
       routeParams.collectionId = undefined;
     }
 
@@ -216,20 +215,21 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     searchParams.delete('sa');
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
-    navigate({
-      pathname: newPath,
-      search: searchParams.toString(),
-    });
+    // Prevent unnecessary navigation if the path is the same.
+    if (newPath !== pathname) {
+      navigate({
+        pathname: newPath,
+        search: searchParams.toString(),
+      });
+    }
   }, [
     navigate,
     params,
     searchParams,
     pathname,
-    setUnitId,
-    setCollectionId,
   ]);
 
-  return {
+  return useMemo(() => ({
     navigateTo,
     insideCollection,
     insideCollections,
@@ -240,5 +240,16 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     insideSubsection,
     insideUnits,
     insideUnit,
-  };
+  }), [
+    navigateTo,
+    insideCollection,
+    insideCollections,
+    insideComponents,
+    insideSections,
+    insideSection,
+    insideSubsections,
+    insideSubsection,
+    insideUnits,
+    insideUnit,
+  ]);
 };
