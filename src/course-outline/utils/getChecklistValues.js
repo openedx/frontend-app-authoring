@@ -32,8 +32,6 @@ const getChecklistValidatedValue = (data, id) => {
       return healthValidators.hasAssignmentDeadlines(assignments, dates);
     case 'videoDuration':
       return healthValidators.hasShortVideoDuration(videos);
-    case 'mobileFriendlyVideo':
-      return healthValidators.hasMobileFriendlyVideos(videos);
     case 'diverseSequences':
       return healthValidators.hasDiverseSequences(subsections);
     case 'weeklyHighlights':

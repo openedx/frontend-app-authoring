@@ -189,8 +189,8 @@ describe('courseCheckValidators utility functions', () => {
   );
 
   describe('hasShortVideoDuration', () => {
-    it('returns true if course run has no videos', () => {
-      expect(validators.hasShortVideoDuration({ totalNumber: 0 })).toEqual(true);
+    it('returns false if course run has no videos', () => {
+      expect(validators.hasShortVideoDuration({ totalNumber: 0 })).toEqual(false);
     });
 
     it('returns true if course run videos have a median duration <= to 600', () => {
@@ -200,22 +200,6 @@ describe('courseCheckValidators utility functions', () => {
 
     it('returns true if course run videos have a median duration > to 600', () => {
       expect(validators.hasShortVideoDuration({ totalNumber: 10, durations: { median: 700 } }))
-        .toEqual(false);
-    });
-  });
-
-  describe('hasMobileFriendlyVideos', () => {
-    it('returns true if course run has no videos', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 0 })).toEqual(true);
-    });
-
-    it('returns true if course run videos are >= 90% mobile friendly', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 10, numMobileEncoded: 9 }))
-        .toEqual(true);
-    });
-
-    it('returns true if course run videos are < 90% mobile friendly', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 10, numMobileEncoded: 8 }))
         .toEqual(false);
     });
   });
@@ -264,6 +248,7 @@ describe('courseCheckValidators utility functions', () => {
   describe('hasShortUnitDepth', () => {
     it('returns true when course run has median number of blocks <= 3', () => {
       const units = {
+        totalVisible: 2,
         numBlocks: {
           median: 3,
         },
@@ -274,6 +259,7 @@ describe('courseCheckValidators utility functions', () => {
 
     it('returns false when course run has median number of blocks > 3', () => {
       const units = {
+        totalVisible: 2,
         numBlocks: {
           median: 4,
         },

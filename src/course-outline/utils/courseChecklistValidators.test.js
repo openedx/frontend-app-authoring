@@ -204,22 +204,6 @@ describe('courseCheckValidators utility functions', () => {
     });
   });
 
-  describe('hasMobileFriendlyVideos', () => {
-    it('returns true if course run has no videos', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 0 })).toEqual(true);
-    });
-
-    it('returns true if course run videos are >= 90% mobile friendly', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 10, numMobileEncoded: 9 }))
-        .toEqual(true);
-    });
-
-    it('returns true if course run videos are < 90% mobile friendly', () => {
-      expect(validators.hasMobileFriendlyVideos({ totalNumber: 10, numMobileEncoded: 8 }))
-        .toEqual(false);
-    });
-  });
-
   describe('hasDiverseSequences', () => {
     it('returns true if < 20% of visible subsections have more than one block type', () => {
       expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 1 }))
@@ -264,6 +248,7 @@ describe('courseCheckValidators utility functions', () => {
   describe('hasShortUnitDepth', () => {
     it('returns true when course run has median number of blocks <= 3', () => {
       const units = {
+        totalVisible: 2,
         numBlocks: {
           median: 3,
         },
@@ -274,6 +259,7 @@ describe('courseCheckValidators utility functions', () => {
 
     it('returns false when course run has median number of blocks > 3', () => {
       const units = {
+        totalVisible: 2,
         numBlocks: {
           median: 4,
         },

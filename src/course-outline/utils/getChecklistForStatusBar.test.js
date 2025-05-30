@@ -89,8 +89,8 @@ describe('getChecklistForStatusBar util functions', () => {
     };
 
     expect(getCourseBestPracticesChecklist(data)).toEqual({
-      totalCourseBestPracticesChecks: 4,
-      completedCourseBestPracticesChecks: 2,
+      totalCourseBestPracticesChecks: 3,
+      completedCourseBestPracticesChecks: 1,
     });
   });
 });

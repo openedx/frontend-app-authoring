@@ -37,10 +37,6 @@ export const checklistItems = {
       pacingTypeFilter: filters.ALL,
     },
     {
-      id: 'mobileFriendlyVideo',
-      pacingTypeFilter: filters.ALL,
-    },
-    {
       id: 'diverseSequences',
       pacingTypeFilter: filters.ALL,
     },
