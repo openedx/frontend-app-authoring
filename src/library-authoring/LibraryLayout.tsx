@@ -32,6 +32,14 @@ const LibraryLayout = () => {
   const collectionId = matchCollection?.params.collectionId;
 
   // The top-level route is `${BASE_ROUTE}/*`, so match will always be non-null.
+  const matchSection = useMatch(`${BASE_ROUTE}${ROUTES.SECTION}`) as PathMatch<'libraryId' | 'sectionId'> | null;
+  const sectionId = matchSection?.params.sectionId;
+
+  // The top-level route is `${BASE_ROUTE}/*`, so match will always be non-null.
+  const matchSubsection = useMatch(`${BASE_ROUTE}${ROUTES.SUBSECTION}`) as PathMatch<'libraryId' | 'subsectionId'> | null;
+  const subsectionId = matchSubsection?.params.subsectionId;
+
+  // The top-level route is `${BASE_ROUTE}/*`, so match will always be non-null.
   const matchUnit = useMatch(`${BASE_ROUTE}${ROUTES.UNIT}`) as PathMatch<'libraryId' | 'unitId'> | null;
   const unitId = matchUnit?.params.unitId;
 
@@ -39,7 +47,7 @@ const LibraryLayout = () => {
     <LibraryProvider
       /** We need to pass the collectionId or unitId as key to the LibraryProvider to force a re-render
         * when we navigate to a collection or unit page. */
-      key={collectionId || unitId}
+      key={collectionId || sectionId || subsectionId || unitId}
       libraryId={libraryId}
       /** The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
@@ -56,7 +64,7 @@ const LibraryLayout = () => {
         </>
       </SidebarProvider>
     </LibraryProvider>
-  ), [collectionId, unitId]);
+  ), [collectionId, unitId, sectionId, subsectionId]);
 
   return (
     <Routes>

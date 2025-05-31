@@ -121,13 +121,17 @@ const LibraryCollectionPage = () => {
 
   useEffect(() => {
     openInfoSidebar(componentId, collectionId, '');
-  }, [componentId, collectionId]);
+  }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
+  if (!collectionId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without collectionId or libraryId URL parameter');
+  }
   // Only show loading if collection data is not fetched from index yet
   // Loading info for search results will be handled by LibraryCollectionComponents component.
-  if (!collectionId || !libraryId || isLibLoading || isLoading) {
+  if (isLibLoading || isLoading) {
     return <Loading />;
   }
 

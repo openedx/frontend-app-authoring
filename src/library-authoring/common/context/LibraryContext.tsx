@@ -3,7 +3,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -127,43 +126,21 @@ export const LibraryProvider = ({
     selectedItemId: urlSelectedItemId,
   } = params;
   const selectedItemIdIsContainer = !!urlSelectedItemId?.startsWith('lct:');
-  const [componentId, setComponentId] = useState<string | undefined>(undefined);
-  const [collectionId, setCollectionId] = useState<string | undefined>(undefined);
-  const [unitId, setUnitId] = useState<string | undefined>(undefined);
-  const [sectionId, setSectionId] = useState<string | undefined>(undefined);
-  const [subsectionId, setSubsectionId] = useState<string | undefined>(undefined);
-
-  /** As container and component ids are not set when you go back in history sometimes.
-   * We set them in useEffect
-  */
-  useEffect(() => {
-    if (skipUrlUpdate) {
-      return;
-    }
-    if (componentId !== urlComponentId) {
-      setComponentId(urlComponentId);
-    }
-    if (collectionId !== urlCollectionId) {
-      setCollectionId(urlCollectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
-    }
-    if (sectionId !== urlSectionId) {
-      setSectionId(urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
-    }
-    if (subsectionId !== urlSubsectionId) {
-      setSubsectionId(urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
-    }
-    if (unitId !== urlUnitId) {
-      setUnitId(urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined));
-    }
-  }, [
-    urlUnitId,
-    urlCollectionId,
-    urlSubsectionId,
-    urlSectionId,
-    urlSelectedItemId,
-    urlComponentId,
-    skipUrlUpdate,
-  ]);
+  const [componentId, setComponentId] = useState(
+    skipUrlUpdate ? undefined : urlComponentId,
+  );
+  const [collectionId, setCollectionId] = useState(
+    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
+  const [unitId, setUnitId] = useState(
+    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
+  const [sectionId, setSectionId] = useState(
+    skipUrlUpdate ? undefined : urlSectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
+  const [subsectionId, setSubsectionId] = useState(
+    skipUrlUpdate ? undefined : urlSubsectionId || (selectedItemIdIsContainer ? urlSelectedItemId : undefined),
+  );
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {

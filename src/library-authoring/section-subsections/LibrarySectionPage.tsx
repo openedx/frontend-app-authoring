@@ -34,6 +34,11 @@ export const LibrarySectionPage = () => {
     openInfoSidebar();
   }, [sectionId]);
 
+  if (!sectionId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without sectionId or libraryId URL parameter');
+  }
+
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
     data: sectionData,
@@ -43,7 +48,7 @@ export const LibrarySectionPage = () => {
   } = useContainer(sectionId);
 
   // show loading if sectionId or libraryId is not set or section or library data is not fetched from index yet
-  if (!sectionId || !libraryId || isLibLoading || isLoading) {
+  if (isLibLoading || isLoading) {
     return <Loading />;
   }
 

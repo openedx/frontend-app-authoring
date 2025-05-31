@@ -110,8 +110,13 @@ export const LibrarySubsectionPage = () => {
     );
   }, [libraryData, subsectionData, libraryId]);
 
+  if (!subsectionId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without subsectionId or libraryId URL parameter');
+  }
+
   // Only show loading if section or library data is not fetched from index yet
-  if (!subsectionId || !libraryId || isLibLoading || isLoading) {
+  if (isLibLoading || isLoading) {
     return <Loading />;
   }
 
