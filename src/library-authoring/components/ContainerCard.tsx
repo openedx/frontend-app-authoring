@@ -65,10 +65,18 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ [`${containerType}Id`]: containerKey });
-    openUnitInfoSidebar(containerKey);
-    scheduleJumpToCollection();
-  }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerKey]);
+    if ([ContainerType.Section, ContainerType.Subsection, ContainerType.Unit].includes(containerType)) {
+      navigateTo({ [`${containerType}Id`]: containerKey });
+      openUnitInfoSidebar(containerKey);
+      scheduleJumpToCollection();
+    }
+  }, [
+    scheduleJumpToCollection,
+    navigateTo,
+    openUnitInfoSidebar,
+    containerKey,
+    containerType,
+  ]);
 
   return (
     <>
