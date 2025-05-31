@@ -35,6 +35,7 @@ import { useLoadOnScroll } from '../hooks';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
 import AlertError from '../generic/alert-error';
+import NewsstandIcon from '../generic/NewsstandIcon';
 
 interface Props {
   courseId: string;
@@ -43,9 +44,10 @@ interface Props {
 interface BlockCardProps {
   info: ContentHit;
   actions?: React.ReactNode;
+  libraryName?: string;
 }
 
-const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
+const BlockCard: React.FC<BlockCardProps> = ({ info, actions, libraryName }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
   const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
@@ -78,6 +80,12 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
               </strong>
             </Stack>
             <Stack direction="horizontal" className="micro" gap={3}>
+              {libraryName && (
+                <Stack direction="horizontal" gap={2}>
+                  <Icon src={NewsstandIcon} size="xs" />
+                  {libraryName}
+                </Stack>
+              )}
               {intl.formatMessage(messages.breadcrumbLabel)}
               <Hyperlink showLaunchIcon={false} destination={getBlockLink()} target="_blank">
                 <Breadcrumb
@@ -227,6 +235,7 @@ const ComponentReviewList = ({
         <BlockCard
           key={info.usageKey}
           info={info}
+          libraryName={outOfSyncComponentsByKey[info.usageKey]?.upstreamContextTitle}
           actions={(
             <ActionRow>
               <Button

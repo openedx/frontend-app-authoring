@@ -3,13 +3,11 @@ import {
   getStudioHomeData,
   sendRequestForCourseCreator,
   handleCourseNotification,
-  getStudioHomeCourses,
   getStudioHomeLibraries,
   getStudioHomeCoursesV2,
 } from './api';
 import {
   fetchStudioHomeDataSuccess,
-  fetchCourseDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
   fetchLibraryDataSuccess,
@@ -20,7 +18,6 @@ function fetchStudioHomeData(
   search,
   hasHomeData,
   requestParams = {},
-  isPaginationEnabled = false,
   shouldFetchCourses = true,
 ) {
   return async (dispatch) => {
@@ -39,14 +36,8 @@ function fetchStudioHomeData(
     if (shouldFetchCourses) {
       dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.IN_PROGRESS }));
       try {
-        if (isPaginationEnabled) {
-          const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
-          dispatch(fetchCourseDataSuccessV2(coursesData));
-        } else {
-          const coursesData = await getStudioHomeCourses(search || '');
-          dispatch(fetchCourseDataSuccess(coursesData));
-        }
-
+        const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
+        dispatch(fetchCourseDataSuccessV2(coursesData));
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
       } catch (error) {
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
