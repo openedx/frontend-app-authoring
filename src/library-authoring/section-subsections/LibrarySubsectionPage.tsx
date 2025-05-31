@@ -37,7 +37,7 @@ const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
   }
   // to is string[] that should be converted to overflow menu
   const items = to?.map((link, index) => (
-    <MenuItem to={link} as={Link}>
+    <MenuItem key={link} to={link} as={Link}>
       {children?.[index]}
     </MenuItem>
   ));
