@@ -70,7 +70,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         onSave={handleSaveDisplayName}
         text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
         textClassName="font-weight-bold small"
-        readOnly={readOnly}
+        readOnly={readOnly || showOnlyPublished}
       />
       <ActionRow.Spacer />
       <Stack

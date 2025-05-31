@@ -228,7 +228,11 @@ const AddComponent = ({
         >
           <ComponentPicker
             showOnlyPublished
-            extraFilter={['NOT block_type = "unit"']}
+            extraFilter={[
+              'NOT block_type = "unit"',
+              'NOT block_type = "subsection"',
+              'NOT block_type = "section"',
+            ]}
             componentPickerMode={isAddLibraryContentModalOpen ? 'single' : 'multiple'}
             onComponentSelected={handleLibraryV2Selection}
             onChangeComponentSelection={setSelectedComponents}

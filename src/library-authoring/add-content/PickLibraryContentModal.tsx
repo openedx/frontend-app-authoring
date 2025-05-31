@@ -116,7 +116,6 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     // show only components
     extraFilter = [
       'NOT block_type = "unit"',
-      'NOT type = "collection"',
       'NOT block_type = "subsection"',
       'NOT block_type = "section"',
     ];

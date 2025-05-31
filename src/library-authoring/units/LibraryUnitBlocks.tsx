@@ -103,7 +103,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (block.publishedDisplayName ?? block.displayName) : block.displayName}
-          readOnly={readOnly}
+          readOnly={readOnly || showOnlyPublished}
         />
       </Stack>
       <ActionRow.Spacer />
