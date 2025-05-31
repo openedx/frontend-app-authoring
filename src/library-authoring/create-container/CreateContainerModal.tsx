@@ -94,7 +94,7 @@ const CreateContainerModal = () => {
     } finally {
       handleClose();
     }
-  }, [containerType, labels, handleClose]);
+  }, [containerType, labels, handleClose, navigateTo]);
 
   return (
     <ModalDialog
