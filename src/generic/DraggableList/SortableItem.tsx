@@ -1,12 +1,11 @@
 import React, { MouseEventHandler } from 'react';
-import type { IntlShape } from 'react-intl';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   ActionRow, Card, Icon, IconButtonWithTooltip,
 } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 interface SortableItemProps {
@@ -19,8 +18,6 @@ interface SortableItemProps {
   onClick?: MouseEventHandler,
   disabled?: boolean,
   cardClassName?: string,
-  // injected
-  intl: IntlShape,
 }
 
 const SortableItem = ({
@@ -33,9 +30,8 @@ const SortableItem = ({
   onClick,
   disabled,
   cardClassName = '',
-  // injected
-  intl,
 }: SortableItemProps) => {
+  const intl = useIntl();
   const {
     attributes,
     listeners,
@@ -93,4 +89,4 @@ const SortableItem = ({
   );
 };
 
-export default injectIntl(SortableItem);
+export default SortableItem;
