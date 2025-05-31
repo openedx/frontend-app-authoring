@@ -65,7 +65,7 @@ import xblockContainerIframeMessages from './xblock-container-iframe/messages';
 import headerNavigationsMessages from './header-navigations/messages';
 import sidebarMessages from './sidebar/messages';
 import messages from './messages';
-import * as selectors from '../data/selectors';
+import * as apiHooks from '../data/apiHooks';
 
 let axiosMock;
 let store;
@@ -833,7 +833,7 @@ describe('<CourseUnit />', () => {
   });
 
   it('handles creating Video xblock and showing editor modal using videogalleryflow', async () => {
-    const waffleSpy = jest.spyOn(selectors, 'getWaffleFlags').mockReturnValue({ useVideoGalleryFlow: true });
+    const waffleSpy = jest.spyOn(apiHooks, 'useWaffleFlags').mockReturnValue({ useVideoGalleryFlow: true });
 
     axiosMock
       .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))

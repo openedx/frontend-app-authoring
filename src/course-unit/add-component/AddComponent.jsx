@@ -8,7 +8,7 @@ import {
 } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
@@ -45,7 +45,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow } = useSelector(getWaffleFlags);
+  const { useVideoGalleryFlow } = useWaffleFlags(); // TODO: should we pass in courseId ?
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {

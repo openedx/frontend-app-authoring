@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import {
   hideProcessingNotification,
@@ -13,7 +13,7 @@ import {
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import { useIframe } from '../../generic/hooks/context/hooks';
@@ -49,7 +49,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [blockType, setBlockType] = useState<string>('');
-  const { useVideoGalleryFlow } = useSelector(getWaffleFlags);
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId);
   const [newBlockId, setNewBlockId] = useState<string>('');
   const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
   const [iframeOffset, setIframeOffset] = useState(0);
