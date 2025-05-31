@@ -13,6 +13,8 @@ export enum SidebarBodyComponentId {
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
   UnitInfo = 'unit-info',
+  SectionInfo = 'section-info',
+  SubsectionInfo = 'subsection-info',
 }
 
 export const COLLECTION_INFO_TABS = {

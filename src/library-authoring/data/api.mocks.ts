@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { camelCaseObject } from '@edx/frontend-platform';
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
-import { getBlockType } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
 import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
 import downstreamLinkInfo from '../../search-manager/data/__mocks__/downstream-links.json';
@@ -493,8 +493,9 @@ mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.contai
 mockGetContainerMetadata.containerIdWithCollections = 'lct:org:lib:unit:container_collections';
 mockGetContainerMetadata.containerData = {
   id: 'lct:org:lib:unit:test-unit-9a2072',
-  containerType: 'unit',
+  containerType: ContainerType.Unit,
   displayName: 'Test Unit',
+  publishedDisplayName: 'Test Unit',
   created: '2024-09-19T10:00:00Z',
   createdBy: 'test_author',
   lastPublished: '2024-09-20T10:00:00Z',
@@ -504,6 +505,7 @@ mockGetContainerMetadata.containerData = {
   modified: '2024-09-20T11:00:00Z',
   hasUnpublishedChanges: true,
   collections: [],
+  tagsCount: 0,
 } satisfies api.Container;
 mockGetContainerMetadata.containerDataWithCollections = {
   ...mockGetContainerMetadata.containerData,

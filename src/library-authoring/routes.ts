@@ -50,6 +50,8 @@ export enum ContentType {
   collections = 'collections',
   components = 'components',
   units = 'units',
+  sections = 'sections',
+  subsections = 'subsections',
 }
 
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
@@ -58,6 +60,8 @@ export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
   contentType?: ContentType,
+  sectionId?: string,
+  subsectionId?: string,
   unitId?: string,
   doubleClicked?: boolean,
 };
@@ -82,7 +86,13 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setComponentId, setUnitId, setCollectionId } = useLibraryContext();
+  const {
+    setComponentId,
+    setSectionId,
+    setSubsectionId,
+    setUnitId,
+    setCollectionId,
+  } = useLibraryContext();
 
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
@@ -97,6 +107,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const navigateTo = useCallback(({
     componentId,
     collectionId,
+    sectionId,
+    subsectionId,
     unitId,
     contentType,
     doubleClicked,
@@ -104,6 +116,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     const {
       collectionId: urlCollectionId,
       componentId: urlComponentId,
+      sectionId: urlSectionId,
+      subsectionId: urlSubsectionId,
       unitId: urlUnitId,
       selectedItemId: urlSelectedItemId,
     } = params;
@@ -113,10 +127,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // Overwrite the current componentId/collectionId params if provided
       ...((componentId !== undefined) && { componentId }),
       ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
+      ...((sectionId !== undefined) && { sectionId, selectedItemId: sectionId }),
+      ...((subsectionId !== undefined) && { subsectionId, selectedItemId: subsectionId }),
       ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
       ...(contentType === ContentType.home && { selectedItemId: urlCollectionId || urlUnitId }),
       ...(contentType === ContentType.components && { componentId: urlComponentId || urlSelectedItemId }),
       ...(contentType === ContentType.collections && { collectionId: urlCollectionId || urlSelectedItemId }),
+      ...(contentType === ContentType.sections && { unitId: urlSectionId || urlSelectedItemId }),
+      ...(contentType === ContentType.subsections && { unitId: urlSubsectionId || urlSelectedItemId }),
       ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
     };
     let route: string;
@@ -125,6 +143,12 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     // Ids can be cleared from route by passing in empty string so we need to set it.
     if (componentId !== undefined) {
       setComponentId(componentId);
+    }
+    if (sectionId !== undefined) {
+      setSectionId(sectionId);
+    }
+    if (subsectionId !== undefined) {
+      setSubsectionId(subsectionId);
     }
     if (unitId !== undefined) {
       setUnitId(unitId);
@@ -140,6 +164,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.COLLECTIONS;
     } else if (contentType === ContentType.units) {
       route = ROUTES.UNITS;
+    } else if (contentType === ContentType.sections) {
+      route = ROUTES.SECTIONS;
+    } else if (contentType === ContentType.subsections) {
+      route = ROUTES.SUBSECTIONS;
     } else if (contentType === ContentType.home) {
       route = ROUTES.HOME;
     } else if (insideCollections) {
@@ -152,13 +180,36 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
           : ROUTES.COLLECTIONS
       );
     } else if (insideCollection) {
-      // We're viewing a Collection, so stay there,
-      // and optionally select a component in that collection.
-      route = ROUTES.COLLECTION;
+      if (doubleClicked) {
+        // if any container is doubleClicked in collections tab
+        // Open the selected container page
+        if (sectionId) {
+          route = ROUTES.SECTION;
+        } else if (subsectionId) {
+          route = ROUTES.SUBSECTION;
+        } else if (unitId) {
+          route = ROUTES.UNIT;
+        } else {
+          route = ROUTES.COLLECTION;
+        }
+      } else {
+        // We're viewing a Collection, so stay there,
+        // and optionally select a component or container in that collection.
+        route = ROUTES.COLLECTION;
+      }
     } else if (insideComponents) {
       // We're inside the Components tab, so stay there,
       // optionally selecting a component.
       route = ROUTES.COMPONENTS;
+    } else if (insideSections) {
+      // We're inside the sections tab,
+      route = (
+        (sectionId && doubleClicked)
+          // now open the previously-selected section,
+          ? ROUTES.SECTION
+          // or stay there to list all sections, or a selected section.
+          : ROUTES.SECTIONS
+      );
     } else if (insideUnits) {
       // We're inside the units tab,
       route = (
@@ -172,6 +223,33 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're viewing a Unit, so stay there,
       // and optionally select a component in that Unit.
       route = ROUTES.UNIT;
+    } else if (insideSubsections) {
+      // We're inside the subsections tab,
+      route = (
+        (subsectionId && doubleClicked)
+          // now open the previously-selected subsection,
+          ? ROUTES.SUBSECTION
+          // or stay there to list all subsections, or a selected subsection.
+          : ROUTES.SUBSECTIONS
+      );
+    } else if (insideSubsection) {
+      route = (
+        (unitId && doubleClicked)
+          // now open the unit,
+          ? ROUTES.UNIT
+          // We're viewing a subsection, so stay there,
+          // and optionally select a unit in that subsection.
+          : ROUTES.SUBSECTION
+      );
+    } else if (insideSection) {
+      route = (
+        (subsectionId && doubleClicked)
+          // now open the subsection,
+          ? ROUTES.SUBSECTION
+          // We're viewing a section, so stay there,
+          // and optionally select a subsection in that section.
+          : ROUTES.SECTION
+      );
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.
@@ -179,6 +257,12 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (collectionId && doubleClicked) {
       // now open the previously-selected collection
       route = ROUTES.COLLECTION;
+    } else if (sectionId && doubleClicked) {
+      // now open the previously-selected section
+      route = ROUTES.SECTION;
+    } else if (subsectionId && doubleClicked) {
+      // now open the previously-selected subsection
+      route = ROUTES.SUBSECTION;
     } else if (unitId && doubleClicked) {
       // now open the previously-selected unit
       route = ROUTES.UNIT;
@@ -198,6 +282,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     searchParams,
     pathname,
     setComponentId,
+    setSectionId,
+    setSubsectionId,
     setUnitId,
     setCollectionId,
   ]);

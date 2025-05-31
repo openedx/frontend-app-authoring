@@ -4,7 +4,7 @@
  * @returns The block type as a string
  */
 export function getBlockType(usageKey: string): string {
-  if (usageKey && usageKey.startsWith('lb:')) {
+  if (usageKey && (usageKey.startsWith('lb:') || usageKey.startsWith('lct:'))) {
     const blockType = usageKey.split(':')[3];
     if (blockType) {
       return blockType;

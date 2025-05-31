@@ -7,7 +7,7 @@ import { useEntityLinks } from '../../course-libraries/data/apiHooks';
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
 import messages from './messages';
-import { useComponentsFromSearchIndex } from '../data/apiHooks';
+import { useContentFromSearchIndex } from '../data/apiHooks';
 
 interface ComponentUsageProps {
   usageKey: string;
@@ -46,7 +46,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
     isLoading: isLoadingIndexDocuments,
-  } = useComponentsFromSearchIndex(downstreamKeys);
+  } = useContentFromSearchIndex(downstreamKeys);
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;

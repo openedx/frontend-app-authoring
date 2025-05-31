@@ -460,7 +460,7 @@ export const useDeleteXBlockAsset = (usageKey: string) => {
 /**
  * Get the metadata for a collection in a library
  */
-export const useCollection = (libraryId: string, collectionId: string) => (
+export const useCollection = (libraryId: string, collectionId?: string) => (
   useQuery({
     enabled: !!libraryId && !!collectionId,
     queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
@@ -695,7 +695,7 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 /**
  * Use this mutation to add components to a container
  */
-export const useAddComponentsToContainer = (containerId?: string) => {
+export const useAddChildrenToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
@@ -805,17 +805,17 @@ export const usePublishContainer = (containerId: string) => {
 };
 
 /**
- * Use this mutations to get a list of components from the search index
+ * Use this mutations to get a list of objects from the search index
  */
-export const useComponentsFromSearchIndex = (componentIds: string[]) => {
+export const useContentFromSearchIndex = (contentIds: string[]) => {
   const { client, indexName } = useContentSearchConnection();
   return useContentSearchResults({
     client,
     indexName,
     searchKeywords: '',
-    extraFilter: [`usage_key IN ["${componentIds.join('","')}"]`],
-    limit: componentIds.length,
-    enabled: !!componentIds.length,
+    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    limit: contentIds.length,
+    enabled: !!contentIds.length,
     skipBlockTypeFetch: true,
   });
 };

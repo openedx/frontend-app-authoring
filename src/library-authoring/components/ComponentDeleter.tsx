@@ -5,7 +5,7 @@ import { School, Warning, Info } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
 import {
-  useComponentsFromSearchIndex,
+  useContentFromSearchIndex,
   useDeleteLibraryBlock,
   useLibraryBlockMetadata,
   useRestoreLibraryBlock,
@@ -69,7 +69,7 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     }
   }, [usageKey, sidebarComponentUsageKey, closeLibrarySidebar]);
 
-  const { hits } = useComponentsFromSearchIndex([usageKey]);
+  const { hits } = useContentFromSearchIndex([usageKey]);
   const componentHit = (hits as ContentHit[])?.[0];
 
   if (!props.isConfirmingDelete) {
