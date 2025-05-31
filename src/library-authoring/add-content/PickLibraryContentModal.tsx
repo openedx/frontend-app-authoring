@@ -129,6 +129,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     return <Loading />;
   }
 
+  // istanbul ignore if: this should never happen, just here to satisfy type checker
   if (!ComponentPicker) {
     throw new Error('componentPicker is required');
   }
