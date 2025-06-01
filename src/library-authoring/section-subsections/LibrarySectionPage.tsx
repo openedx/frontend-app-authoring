@@ -52,13 +52,13 @@ export const LibrarySectionPage = () => {
     return <Loading />;
   }
 
+  if (!libraryData || !sectionData) {
+    return <NotFoundAlert />;
+  }
+
   // istanbul ignore if
   if (isError) {
     return <ErrorAlert error={error} />;
-  }
-
-  if (!libraryData || !sectionData) {
-    return <NotFoundAlert />;
   }
 
   const breadcrumbs = (

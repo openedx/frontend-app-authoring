@@ -473,22 +473,32 @@ mockGetCollectionMetadata.applyMock = () => {
 export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
   switch (containerId) {
     case mockGetContainerMetadata.containerIdError:
+    case mockGetContainerMetadata.sectionIdError:
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
         path: api.getLibraryContainerApiUrl(containerId),
       });
     case mockGetContainerMetadata.containerIdLoading:
+    case mockGetContainerMetadata.sectionIdLoading:
       return new Promise(() => { });
     case mockGetContainerMetadata.containerIdWithCollections:
       return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
+    case mockGetContainerMetadata.sectionId:
+      return Promise.resolve(mockGetContainerMetadata.sectionData);
+    case mockGetContainerMetadata.subsectionId:
+      return Promise.resolve(mockGetContainerMetadata.subsectionData);
     default:
       return Promise.resolve(mockGetContainerMetadata.containerData);
   }
 }
 mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
+mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
+mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
 mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
+mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
 mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
+mockGetContainerMetadata.sectionIdLoading = 'lct:org:lib:section:section_loading';
 mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.containerTagsId;
 mockGetContainerMetadata.containerIdWithCollections = 'lct:org:lib:unit:container_collections';
 mockGetContainerMetadata.containerData = {
@@ -506,6 +516,20 @@ mockGetContainerMetadata.containerData = {
   hasUnpublishedChanges: true,
   collections: [],
   tagsCount: 0,
+} satisfies api.Container;
+mockGetContainerMetadata.sectionData = {
+  ...mockGetContainerMetadata.containerData,
+  id: 'lct:org:lib:section:test-section-1',
+  containerType: ContainerType.Section,
+  displayName: 'Test Section',
+  publishedDisplayName: 'Test Section',
+} satisfies api.Container;
+mockGetContainerMetadata.subsectionData = {
+  ...mockGetContainerMetadata.containerData,
+  id: 'lb:org1:Demo_course:subsection:subsection-0',
+  containerType: ContainerType.Subsection,
+  displayName: 'Test Subsection',
+  publishedDisplayName: 'Test Subsection',
 } satisfies api.Container;
 mockGetContainerMetadata.containerDataWithCollections = {
   ...mockGetContainerMetadata.containerData,
@@ -526,6 +550,7 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
   let numChildren: number;
   switch (containerId) {
     case mockGetContainerMetadata.containerId:
+    case mockGetContainerMetadata.sectionId:
       numChildren = 3;
       break;
     case mockGetContainerChildren.fiveChildren:
@@ -538,14 +563,20 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       numChildren = 0;
       break;
   }
+  let blockType = 'text';
+  if (containerId.includes('section')) {
+    blockType = 'subsection';
+  } else if (containerId.includes('subsection')) {
+    blockType = 'unit';
+  }
   return Promise.resolve(
     Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
       {
         ...child,
         // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `lb:org1:Demo_course:html:text-${idx}`,
-        displayName: `text block ${idx}`,
-        publishedDisplayName: `text block published ${idx}`,
+        id: `lb:org1:Demo_course:${blockType}:${blockType}-${idx}`,
+        displayName: `${blockType} block ${idx}`,
+        publishedDisplayName: `${blockType} block published ${idx}`,
       }
     )),
   );

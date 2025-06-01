@@ -9,7 +9,6 @@ import { useAddItemsToCollection, useAddChildrenToContainer } from '../data/apiH
 import genericMessages from '../generic/messages';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from '../routes';
 import messages from './messages';
-import Loading from '../../generic/Loading';
 
 interface PickLibraryContentModalFooterProps {
   onSubmit: () => void;
