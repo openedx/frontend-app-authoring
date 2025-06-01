@@ -110,7 +110,9 @@ describe('<PickLibraryContentModal />', () => {
               ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
             );
             break;
-          case 'unit' || 'section' || 'subsection':
+          case 'unit':
+          case 'section':
+          case 'subsection':
             expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
               getIdFromContext(context),
               ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
@@ -156,7 +158,9 @@ describe('<PickLibraryContentModal />', () => {
               ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
             );
             break;
-          case 'unit' || 'section' || 'subsection':
+          case 'unit':
+          case 'section':
+          case 'subsection':
             expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
               getIdFromContext(context),
               ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
