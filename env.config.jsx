@@ -174,13 +174,20 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (pluginProps) => {
-                            const { onAddSection, onCollapseAll, isSectionsExpanded, handleExpandAll } = pluginProps || {};
+                            const {
+                                onAddSection,
+                                onCollapseAll,
+                                isSectionsExpanded,
+                                handleExpandAll,
+                                headerActions,
+                            } = pluginProps || {};
                             return (
                                 <StatusBarContent
                                     onAddSection={onAddSection}
                                     onCollapseAll={onCollapseAll}
                                     isSectionsExpanded={isSectionsExpanded}
                                     handleExpandAll={handleExpandAll}
+                                    headerActions={headerActions}
                                 />
                             );
                         },
@@ -274,7 +281,24 @@ const config = {
                 },
                 },
             ],
-        }
+        },
+        courseoutline_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '1rem' }}>
+                                Course Outline
+                            </div>
+                        ),
+                    },
+                },
+            ],
+        },
     }
 };
 

@@ -943,6 +943,7 @@ body {
 
 .ca-breadcrumb .ca-breadcrumb-icon {
   opacity: 0.7;
+
   .custom-icon {
     width: 16px;
     height: 16px;
@@ -968,6 +969,7 @@ body {
 .ca-main-layout {
   display: flex;
   min-height: 100vh;
+  align-items: flex-start;
 }
 
 /* Sidebar styles */
@@ -979,6 +981,14 @@ body {
   margin-left: 16px;
   margin-top: 16px;
   border-radius: 16px;
+  position: sticky;
+  top: 32px;
+  align-self: flex-start;
+  z-index: 2;
+  height: calc(100vh - 32px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Main content styles */
