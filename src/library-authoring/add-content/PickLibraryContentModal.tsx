@@ -123,14 +123,9 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     visibleTabs = [ContentType.components];
   }
 
-  // The ids will be set based on current url
-  if (!(collectionId || unitId || sectionId || subsectionId)) {
-    return <Loading />;
-  }
-
   // istanbul ignore if: this should never happen, just here to satisfy type checker
-  if (!ComponentPicker) {
-    throw new Error('componentPicker is required');
+  if (!(collectionId || unitId || sectionId || subsectionId) || !ComponentPicker) {
+    throw new Error('collectionId/sectionId/unitId and componentPicker are required');
   }
 
   return (
