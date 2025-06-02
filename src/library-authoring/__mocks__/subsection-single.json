@@ -10,16 +10,14 @@
           "block_id": "subsection-1",
           "content": {
             "child_usage_keys": [
-              "lct:UNIX:CS1:unit:library-unit-1-78854a",
-              "lct:UNIX:CS1:unit:unit-with-duplicate-items-5d304b",
-              "lct:UNIX:CS1:unit:cs1-unit-3-6fa47d",
-              "lct:UNIX:CS1:unit:cs1-unit-2-a1cb2d"
+              "lb:org1:Demo_course:unit:unit-0",
+              "lb:org1:Demo_course:unit:unit-1",
+              "lb:org1:Demo_course:unit:unit-2"
             ],
             "child_display_names": [
-              "Library unit 131- EDITED",
-              "Unit with duplicate items",
-              "CS1 Unit 3",
-              "CS1 unit 22"
+              "unit block 0",
+              "unit block 1",
+              "unit block 2"
             ]
           },
           "tags": {},
@@ -52,12 +50,12 @@
             "num_children": 2,
             "content": {
               "child_usage_keys": [
-                "lct:UNIX:CS1:unit:library-unit-1-78854a",
-                "lct:UNIX:CS1:unit:unit-with-duplicate-items-5d304b"
+                "lb:org1:Demo_course:unit:unit-0",
+                "lb:org1:Demo_course:unit:unit-1"
               ],
               "child_display_names": [
-                "Library unit 131- EDITED",
-                "Unit with duplicate items"
+                "unit block 0",
+                "unit block 1"
               ]
             }
           },
@@ -77,16 +75,14 @@
             "block_id": "subsection-1",
             "content": {
               "child_usage_keys": [
-                "lct:UNIX:CS1:unit:library-unit-1-78854a",
-                "lct:UNIX:CS1:unit:unit-with-duplicate-items-5d304b",
-                "lct:UNIX:CS1:unit:cs1-unit-3-6fa47d",
-                "lct:UNIX:CS1:unit:cs1-unit-2-a1cb2d"
+                "lb:org1:Demo_course:unit:unit-0",
+                "lb:org1:Demo_course:unit:unit-1",
+                "lb:org1:Demo_course:unit:unit-2"
               ],
               "child_display_names": [
-                "Library unit 131- EDITED",
-                "Unit with duplicate items",
-                "CS1 Unit 3",
-                "CS1 unit 22"
+                "unit block 0",
+                "unit block 1",
+                "unit block 2"
               ]
             },
             "tags": {},
@@ -119,12 +115,12 @@
               "num_children": "2",
               "content": {
                 "child_usage_keys": [
-                  "lct:UNIX:CS1:unit:library-unit-1-78854a",
-                  "lct:UNIX:CS1:unit:unit-with-duplicate-items-5d304b"
+                  "lb:org1:Demo_course:unit:unit-0",
+                  "lb:org1:Demo_course:unit:unit-1"
                 ],
                 "child_display_names": [
-                  "Library unit 131- EDITED",
-                  "Unit with duplicate items"
+                  "unit block 0",
+                  "unit block 1"
                 ]
               }
             },

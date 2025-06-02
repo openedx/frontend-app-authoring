@@ -120,13 +120,13 @@ export const LibrarySubsectionPage = () => {
     return <Loading />;
   }
 
+  if (!libraryData || !subsectionData) {
+    return <NotFoundAlert />;
+  }
+
   // istanbul ignore if
   if (isError) {
     return <ErrorAlert error={error} />;
-  }
-
-  if (!libraryData || !subsectionData) {
-    return <NotFoundAlert />;
   }
 
   return (
