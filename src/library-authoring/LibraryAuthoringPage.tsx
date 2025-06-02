@@ -190,9 +190,11 @@ const LibraryAuthoringPage = ({
   const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
 
   useEffect(() => {
-    // Update the active key whenever the route changes. This ensures that the correct tab is selected
-    // when navigating using the browser's back/forward buttons because it does not trigger a re-render.
-    setActiveKey(getActiveKey());
+    if (!componentPickerMode) {
+      // Update the active key whenever the route changes. This ensures that the correct tab is selected
+      // when navigating using the browser's back/forward buttons because it does not trigger a re-render.
+      setActiveKey(getActiveKey());
+    }
   }, [location.key, getActiveKey]);
 
   const handleTabChange = useCallback((key: ContentType) => {
