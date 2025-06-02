@@ -52,6 +52,51 @@ describe('<ComponentPicker />', () => {
     mockSearchResult({ ...mockResult });
   });
 
+  it('should be able to switch tabs', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
+
+    // Navigate to the components tab
+    screen.logTestingPlaygroundURL();
+    const componentsTab = screen.getByRole('tab', { name: 'Components' });
+    fireEvent.click(componentsTab);
+    expect(componentsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the collections tab
+    const collectionsTab = screen.getByRole('tab', { name: 'Collections' });
+    fireEvent.click(collectionsTab);
+    expect(collectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the units tab
+    const unitsTab = screen.getByRole('tab', { name: 'Units' });
+    fireEvent.click(unitsTab);
+    expect(unitsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the subsections tab
+    const subsectionsTab = screen.getByRole('tab', { name: 'Subsections' });
+    fireEvent.click(subsectionsTab);
+    expect(subsectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the subsections tab
+    const sectionsTab = screen.getByRole('tab', { name: 'Sections' });
+    fireEvent.click(sectionsTab);
+    expect(sectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Go back to Home tab
+    const allContentTab = screen.getByRole('tab', { name: 'All Content' });
+    fireEvent.click(screen.getByRole('tab', { name: 'All Content' }));
+    expect(allContentTab).toHaveAttribute('aria-selected', 'true');
+  });
+
   it('should pick component using the component card button', async () => {
     render(<ComponentPicker />);
 
