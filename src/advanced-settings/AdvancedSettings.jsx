@@ -13,7 +13,7 @@ import { useModel } from '../generic/model-store';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
-// import SubHeader from '../generic/sub-header/SubHeader';
+import SubHeader from '../generic/sub-header/SubHeader';
 import AlertMessage from '../generic/alert-message';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
@@ -25,7 +25,6 @@ import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import getPageHeadTitle from '../generic/utils';
-import './AdvancedSettings.scss';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -167,44 +166,38 @@ const AdvancedSettings = ({ intl, courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              {/* <SubHeader
+              <SubHeader
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
                 contentTitle={intl.formatMessage(messages.policy)}
-              /> */}
+              />
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <div className="d-flex justify-content-between mb-2">
-                      <div>
-                        <h2 className="sub-header-content-title mb-2">{intl.formatMessage(messages.policy)}</h2>
-                        <div className="small warning-msg">
-                          <FormattedMessage
-                            id="course-authoring.advanced-settings.policies.description"
-                            defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                            values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
-                          />
-                        </div>
-                      </div>
-                      <div className="deprecated-btn-align">
-                        <Button
-                          variant={showDeprecated ? 'outline-brand' : 'tertiary'}
-                          onClick={() => setShowDeprecated(!showDeprecated)}
-                          size="sm"
-                        >
-                          <FormattedMessage
-                            id="course-authoring.advanced-settings.deprecated.button.text"
-                            defaultMessage="{visibility} deprecated settings"
-                            values={{
-                              visibility:
+                    <div className="small warning-msg">
+                      <FormattedMessage
+                        id="course-authoring.advanced-settings.policies.description"
+                        defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
+                        values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
+                      />
+                    </div>
+                    <div className="setting-items-deprecated-setting">
+                      <Button
+                        variant={showDeprecated ? 'outline-brand' : 'tertiary'}
+                        onClick={() => setShowDeprecated(!showDeprecated)}
+                        size="sm"
+                      >
+                        <FormattedMessage
+                          id="course-authoring.advanced-settings.deprecated.button.text"
+                          defaultMessage="{visibility} deprecated settings"
+                          values={{
+                            visibility:
                                 showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
                                   : intl.formatMessage(messages.deprecatedButtonShowText),
-                            }}
-                          />
-                        </Button>
-                      </div>
+                          }}
+                        />
+                      </Button>
                     </div>
-                    <hr className="mb-4" style={{ border: 'none', borderTop: '1px solid #ddd', margin: '0 0 1rem 0' }} />
                     <ul className="setting-items-list p-0">
                       {Object.keys(advancedSettingsData).map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
@@ -231,12 +224,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <div className="settings-sidebar-top">
-                <SettingsSidebar
-                  courseId={courseId}
-                  proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
-                />
-              </div>
+              <SettingsSidebar
+                courseId={courseId}
+                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+              />
             </Layout.Element>
           </Layout>
         </section>
