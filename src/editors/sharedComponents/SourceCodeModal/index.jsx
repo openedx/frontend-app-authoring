@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -41,6 +40,7 @@ const SourceCodeModal = ({
         <CodeEditor
           innerRef={ref}
           value={value}
+          lang="html" // hardcoded value to do lookup on CODEMIRROR_LANGUAGES
         />
       </div>
     </BaseModal>
