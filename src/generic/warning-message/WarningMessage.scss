@@ -1,0 +1,39 @@
+.warning-message-card {
+  background-color: #fff8eb !important;
+  border: solid 1px #ffdc9a !important;
+  border-radius: 8px !important;
+}
+
+.warning-message-content {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+.warning-message-icon {
+//   width: 28px;
+//   height: 28px;
+//   background: #ffb94a;
+//   border-radius: 50%;
+  color: #dd6b20;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   flex-shrink: 0;
+}
+
+.warning-message-heading {
+  color: #2d3748;
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 500;
+//   letter-spacing: normal;
+}
+
+.warning-message-text {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: normal;
+//   line-height: normal;
+//   letter-spacing: normal;
+  margin-left: 0;
+}

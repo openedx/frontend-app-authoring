@@ -6,6 +6,7 @@ import {
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
@@ -166,38 +167,59 @@ const AdvancedSettings = ({ intl, courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
+              {/* <PluginSlot
+                id="advanced_settings_header_plugin_slot"
+                pluginProps={{
+                  contentTitle: intl.formatMessage(messages.policy),
+                  title: intl.formatMessage(messages.headingTitle),
+                }}
+              > */}
               <SubHeader
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
                 contentTitle={intl.formatMessage(messages.policy)}
               />
+              {/* </PluginSlot> */}
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <div className="small warning-msg">
-                      <FormattedMessage
-                        id="course-authoring.advanced-settings.policies.description"
-                        defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                        values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
-                      />
-                    </div>
-                    <div className="setting-items-deprecated-setting">
-                      <Button
-                        variant={showDeprecated ? 'outline-brand' : 'tertiary'}
-                        onClick={() => setShowDeprecated(!showDeprecated)}
-                        size="sm"
-                      >
+                    <PluginSlot
+                      id="advanced_settings_header_plugin_slot"
+                      pluginProps={{
+                        onClick: () => setShowDeprecated(!showDeprecated),
+                        variant: showDeprecated ? 'outline-brand' : 'tertiary',
+                        hideDeprecatedMessage: intl.formatMessage(messages.deprecatedButtonHideText),
+                        showDeprecatedMessage: intl.formatMessage(messages.deprecatedButtonShowText),
+                        showDeprecated,
+                        headerTitle: intl.formatMessage(messages.headingTitle),
+                        headerContentTitle: intl.formatMessage(messages.policy),
+                      }}
+                    >
+                      <div className="small warning-msg">
                         <FormattedMessage
-                          id="course-authoring.advanced-settings.deprecated.button.text"
-                          defaultMessage="{visibility} deprecated settings"
-                          values={{
-                            visibility:
+                          id="course-authoring.advanced-settings.policies.description"
+                          defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
+                          values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
+                        />
+                      </div>
+                      <div className="setting-items-deprecated-setting">
+                        <Button
+                          variant={showDeprecated ? 'outline-brand' : 'tertiary'}
+                          onClick={() => setShowDeprecated(!showDeprecated)}
+                          size="sm"
+                        >
+                          <FormattedMessage
+                            id="course-authoring.advanced-settings.deprecated.button.text"
+                            defaultMessage="{visibility} deprecated settings"
+                            values={{
+                              visibility:
                                 showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
                                   : intl.formatMessage(messages.deprecatedButtonShowText),
-                          }}
-                        />
-                      </Button>
-                    </div>
+                            }}
+                          />
+                        </Button>
+                      </div>
+                    </PluginSlot>
                     <ul className="setting-items-list p-0">
                       {Object.keys(advancedSettingsData).map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
@@ -205,16 +227,19 @@ const AdvancedSettings = ({ intl, courseId }) => {
                           return null;
                         }
                         return (
-                          <SettingCard
+                          <PluginSlot
                             key={settingName}
-                            settingData={settingData}
-                            name={settingName}
-                            showSaveSettingsPrompt={showSaveSettingsPrompt}
-                            saveSettingsPrompt={saveSettingsPrompt}
-                            setEdited={setEditedSettings}
-                            handleBlur={handleSettingBlur}
-                            isEditableState={isEditableState}
-                            setIsEditableState={setIsEditableState}
+                            id="advanced_settings_card_plugin_slot"
+                            pluginProps={{
+                              settingData,
+                              name: settingName,
+                              showSaveSettingsPrompt,
+                              saveSettingsPrompt,
+                              setEdited: setEditedSettings,
+                              handleBlur: handleSettingBlur,
+                              isEditableState,
+                              setIsEditableState,
+                            }}
                           />
                         );
                       })}
