@@ -151,7 +151,7 @@
   content: "";
   display: block;
   height: 1px;
-  background-color:  #ced4da;
+  background-color: #ced4da;
   margin-top: 8px;
   margin-left: -1rem !important;
   margin-right: -1rem !important;
@@ -187,12 +187,35 @@
 
 .updates-container {
   grid-template-columns: none;
+  border-radius: 12px !important;
+  border: solid 1px #e5e6e6 !important;
+
+  .p-4\.5 {
+    padding: 1rem !important;
+  }
+
+  .update-card,
+  .update-form {
+    background-color: #f2f5ff !important;
+  }
 }
 
-.recent-updates, .course-handouts .course-handouts-header .course-handouts-header__title {
+.updates-section {
+  .update-form {
+    background-color: #f2f5ff !important;
+    padding: 1rem !important;
+  }
+}
+
+.recent-updates,
+.course-handouts .course-handouts-header .course-handouts-header__title {
   color: #111;
   font-size: 1.40625rem;
   font-weight: 400;
+}
+
+.course-update .course-update-header {
+  margin-bottom: 0rem;
 }
 
 // K styles end

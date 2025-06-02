@@ -208,10 +208,11 @@ const CourseUpdatesNew = ({ courseId }) => {
                                     key={courseUpdate.id}
                                     className="update-card"
                                     style={{
-                                      background: '#f5f7fa',
-                                      borderRadius: '0.75rem',
+                                      background: '#f5f5f5',
+                                      borderRadius: '1rem',
                                       padding: '1rem',
                                       marginBottom: '1rem',
+                                      border: 'solid 1px #e5e6e6',
                                     }}
                                   >
                                     {isInnerFormOpen(courseUpdate.id) ? (
