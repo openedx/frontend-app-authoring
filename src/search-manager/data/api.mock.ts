@@ -4,7 +4,6 @@ import fetchMock from 'fetch-mock-jest';
 import type { MultiSearchResponse } from 'meilisearch';
 import mockLinksResult from './__mocks__/downstream-links.json';
 import * as api from './api';
-import { mockGetContainerMetadata } from '../../library-authoring/data/api.mocks';
 
 /**
  * Mock getContentSearchConfig()
@@ -29,7 +28,7 @@ mockContentSearchConfig.applyMock = () => (
  */
 export function mockSearchResult(
   mockResponse: MultiSearchResponse,
-  filterFn?: (requestData: any) => MultiSearchResponse
+  filterFn?: (requestData: any) => MultiSearchResponse,
 ) {
   fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, (_url, req) => {
     const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -42,7 +41,7 @@ export function mockSearchResult(
     // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
     // eslint-disable-next-line no-underscore-dangle, no-param-reassign
     mockResponse.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-    return filterFn?.(requestData) || newMockResponse
+    return filterFn?.(requestData) || newMockResponse;
   }, { overwriteRoutes: true });
 }
 
