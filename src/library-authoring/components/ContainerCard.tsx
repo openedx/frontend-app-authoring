@@ -69,18 +69,17 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
 
   const showManageCollections = useCallback(() => {
     if (itemType === 'unit') {
-      navigateTo({ unitId: containerId });
-      openUnitInfoSidebar(containerId);
+      navigateTo({ selectedItemId: containerId });
       scheduleJumpToCollection();
     }
   }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
 
-  const openContainerPage = useCallback(() => {
+  const openContainer = useCallback(() => {
     if (itemType === 'unit') {
       // Set `doubleClicked` to true to open the unit page
-      navigateTo({ unitId: containerId, doubleClicked: true });
+      navigateTo({ unitId: containerId });
     }
-  }, [itemType, containerId]);
+  }, [navigateTo, containerId]);
 
   return (
     <>
@@ -95,7 +94,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
           data-testid="container-card-menu-toggle"
         />
         <Dropdown.Menu>
-          <Dropdown.Item onClick={openContainerPage} disabled={itemType !== 'unit'}>
+          <Dropdown.Item onClick={openContainer} disabled={itemType !== 'unit'}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
           <Dropdown.Item onClick={confirmDelete} disabled={itemType !== 'unit'}>
@@ -223,7 +222,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { setUnitId, showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext();
   const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
@@ -233,7 +232,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     numChildren,
     published,
     publishStatus,
-    usageKey: unitId,
+    usageKey: containerId,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -245,19 +244,25 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   ) ?? '';
 
   const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
-    && sidebarComponentInfo.id === unitId;
+    && sidebarComponentInfo.id === containerId;
 
   const { navigateTo } = useLibraryRoutes();
 
-  const openContainer = useCallback((e?: React.MouseEvent) => {
-    if (itemType === 'unit') {
-      openUnitInfoSidebar(unitId);
-      setUnitId(unitId);
-      if (!componentPickerMode) {
-        navigateTo({ unitId, doubleClicked: (e?.detail || 0) > 1 });
+  const selectContainer = useCallback((e?: React.MouseEvent) => {
+    const doubleClicked = (e?.detail || 0) > 1;
+
+    if (!componentPickerMode) {
+      if (doubleClicked) {
+        navigateTo({ unitId: containerId });
+      } else {
+        navigateTo({ selectedItemId: containerId });
       }
+    } else {
+      // In component picker mode, we want to open the sidebar
+      // without changing the URL
+      openUnitInfoSidebar(containerId);
     }
-  }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);
+  }, [containerId, itemType, openUnitInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
@@ -269,14 +274,14 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <AddComponentWidget usageKey={unitId} blockType={itemType} />
+            <AddComponentWidget usageKey={containerId} blockType={itemType} />
           ) : (
             <ContainerMenu hit={hit} />
           )}
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
-      onSelect={openContainer}
+      onSelect={selectContainer}
       selected={selected}
     />
   );

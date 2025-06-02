@@ -216,15 +216,33 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the components tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
+    const componentsTab = screen.getByRole('tab', { name: 'Components' });
+    fireEvent.click(componentsTab);
+    expect(componentsTab).toHaveAttribute('aria-selected', 'true');
     expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the collections tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
+    const collectionsTab = screen.getByRole('tab', { name: 'Collections' });
+    fireEvent.click(collectionsTab);
+    expect(collectionsTab).toHaveAttribute('aria-selected', 'true');
     expect(await screen.findByText('No matching collections found in this library.')).toBeInTheDocument();
 
     // Navigate to the units tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Units' }));
+    const unitsTab = screen.getByRole('tab', { name: 'Units' });
+    fireEvent.click(unitsTab);
+    expect(unitsTab).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
+
+    // Navigate to the subsections tab
+    const subsectionsTab = screen.getByRole('tab', { name: 'Subsections' });
+    fireEvent.click(subsectionsTab);
+    expect(subsectionsTab).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
+
+    // Navigate to the subsections tab
+    const sectionsTab = screen.getByRole('tab', { name: 'Sections' });
+    fireEvent.click(sectionsTab);
+    expect(sectionsTab).toHaveAttribute('aria-selected', 'true');
     expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Go back to Home tab
