@@ -6,6 +6,7 @@ import {
   Form,
   Icon,
   IconButton,
+  Truncate,
   Stack,
 } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
@@ -68,9 +69,9 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   // In that case, we show the new text instead of the original in read-only mode as an optimistic update.
   if (readOnly || pendingSaveText) {
     return (
-      <span className={textClassName}>
+      <Truncate className={textClassName}>
         {pendingSaveText || text}
-      </span>
+      </Truncate>
     );
   }
 
@@ -91,9 +92,9 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
           />
         )
         : (
-          <span className={textClassName}>
+          <Truncate className={textClassName}>
             {text}
-          </span>
+          </Truncate>
         )}
       <IconButton
         src={Edit}

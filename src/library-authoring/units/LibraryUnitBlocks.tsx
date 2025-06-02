@@ -49,12 +49,12 @@ interface LibraryBlockMetadataWithUniqueId extends LibraryBlockMetadata {
 
 interface ComponentBlockProps {
   block: LibraryBlockMetadataWithUniqueId;
-  preview?: boolean;
+  readOnly?: boolean;
   isDragging?: boolean;
 }
 
 /** Component header */
-const BlockHeader = ({ block }: ComponentBlockProps) => {
+const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
@@ -98,13 +98,13 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         gap={2}
         className="font-weight-bold"
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (block.publishedDisplayName ?? block.displayName) : block.displayName}
+          readOnly={readOnly}
         />
       </Stack>
       <ActionRow.Spacer />
@@ -112,7 +112,6 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         direction="horizontal"
         gap={3}
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
         {!showOnlyPublished && block.hasUnpublishedChanges && (
@@ -126,15 +125,15 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
             </Stack>
           </Badge>
         )}
-        <TagCount size="sm" count={block.tagsCount} onClick={jumpToManageTags} />
-        <ComponentMenu usageKey={block.originalId} />
+        <TagCount size="sm" count={block.tagsCount} onClick={readOnly ? undefined : jumpToManageTags} />
+        {!readOnly && <ComponentMenu usageKey={block.originalId} />}
       </Stack>
     </>
   );
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => {
+const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
 
@@ -189,16 +188,16 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle()}
-        actions={<BlockHeader block={block} />}
+        actions={<BlockHeader block={block} readOnly={readOnly} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB',
         }}
-        isClickable
-        onClick={(e: { detail: number; }) => handleComponentSelection(e.detail)}
-        disabled={preview}
+        isClickable={!readOnly}
+        onClick={!readOnly ? (e: { detail: number; }) => handleComponentSelection(e.detail) : undefined}
+        disabled={readOnly}
         cardClassName={selected ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -223,12 +222,12 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
 
 interface LibraryUnitBlocksProps {
   /** set to true if it is rendered as preview
-  * This disables drag and drop
+  * This disables drag and drop, title edit and menus
   */
-  preview?: boolean;
+  readOnly?: boolean;
 }
 
-export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
+export const LibraryUnitBlocks = ({ readOnly: componentReadOnly }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadataWithUniqueId[]>([]);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
@@ -236,7 +235,9 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { unitId, readOnly, showOnlyPublished } = useLibraryContext();
+  const { unitId, readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
+
+  const readOnly = componentReadOnly || libraryReadOnly;
 
   const { openAddContentSidebar } = useSidebarContext();
 
@@ -301,10 +302,11 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             key={`${block.originalId}-${idx}-${block.modified}`}
             block={block}
             isDragging={hidePreviewFor === block.id}
+            readOnly={readOnly}
           />
         ))}
       </DraggableList>
-      {!preview && (
+      {!readOnly && (
         <div className="d-flex">
           <div className="w-100 mr-2">
             <Button
