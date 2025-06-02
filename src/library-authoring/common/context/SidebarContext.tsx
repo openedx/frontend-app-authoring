@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
+import { getContainerTypeFromId } from '../../../generic/key-utils';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
@@ -189,8 +190,15 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      if (selectedItemId.includes(':unit:')) {
+      const containerType = getContainerTypeFromId(selectedItemId);
+      if (containerType === 'unit') {
         openUnitInfoSidebar(selectedItemId);
+      } else if (containerType === 'section') {
+        // istanbul ignore next
+        // Open section info sidebar
+      } else if (containerType === 'subsection') {
+        // istanbul ignore next
+        // Open subsection info sidebar
       } else if (selectedItemId.startsWith('lb:')) {
         openComponentInfoSidebar(selectedItemId);
       } else {
