@@ -130,7 +130,7 @@ describe('<ComponentCard />', () => {
     fireEvent.click(editOption);
     // Verify that the url is updated to component url i.e. component is selected
     expect(mockNavigate).toHaveBeenCalledWith({
-      pathname: `/library/${libraryId}/component/${contentHit.usageKey}`,
+      pathname: `/library/${libraryId}/${contentHit.usageKey}`,
       search: '',
     });
   });
