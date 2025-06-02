@@ -7,7 +7,7 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary, mockGetContainerChildren, mockGetContainerMetadata } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import UnitInfo from './UnitInfo';
+import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 
@@ -21,7 +21,7 @@ const { containerId } = mockGetContainerMetadata;
 
 const render = (showOnlyPublished: boolean = false) => {
   const params: { libraryId: string, unitId?: string } = { libraryId, unitId: containerId };
-  return baseRender(<UnitInfo />, {
+  return baseRender(<ContainerInfo />, {
     path: '/library/:libraryId/:unitId?',
     params,
     extraWrapper: ({ children }) => (
@@ -32,7 +32,7 @@ const render = (showOnlyPublished: boolean = false) => {
         <SidebarProvider
           initialSidebarComponentInfo={{
             id: containerId,
-            type: SidebarBodyComponentId.UnitInfo,
+            type: SidebarBodyComponentId.ContainerInfo,
           }}
         >
           {children}
@@ -44,7 +44,7 @@ const render = (showOnlyPublished: boolean = false) => {
 let axiosMock: MockAdapter;
 let mockShowToast;
 
-describe('<UnitInfo />', () => {
+describe('<ContainerInfo />', () => {
   beforeEach(() => {
     ({ axiosMock, mockShowToast } = initializeMocks());
   });
@@ -54,8 +54,8 @@ describe('<UnitInfo />', () => {
     render();
 
     // Open menu
-    expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('unit-info-menu-toggle'));
+    expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-info-menu-toggle'));
 
     // Click on Delete Item
     const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
@@ -105,7 +105,7 @@ describe('<UnitInfo />', () => {
 
   it('show only published content', async () => {
     render(true);
-    expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
+    expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
     expect(screen.getByText(/text block published 1/i)).toBeInTheDocument();
   });
 

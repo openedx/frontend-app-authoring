@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
-import { getContainerTypeFromId } from '../../../generic/key-utils';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
@@ -17,7 +16,7 @@ export enum SidebarBodyComponentId {
   Info = 'info',
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
-  UnitInfo = 'unit-info',
+  ContainerInfo = 'container-info',
 }
 
 export const COLLECTION_INFO_TABS = {
@@ -39,26 +38,32 @@ export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
   Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
 );
 
-export const UNIT_INFO_TABS = {
+export const CONTAINER_INFO_TABS = {
   Preview: 'preview',
   Manage: 'manage',
   Usage: 'usage',
   Settings: 'settings',
 } as const;
-export type UnitInfoTab = typeof UNIT_INFO_TABS[keyof typeof UNIT_INFO_TABS];
-export const isUnitInfoTab = (tab: string): tab is UnitInfoTab => (
-  Object.values<string>(UNIT_INFO_TABS).includes(tab)
+export type ContainerInfoTab = typeof CONTAINER_INFO_TABS[keyof typeof CONTAINER_INFO_TABS];
+export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab => (
+  Object.values<string>(CONTAINER_INFO_TABS).includes(tab)
 );
 
-type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | UnitInfoTab;
+export const DEFAULT_TAB = {
+  component: COMPONENT_INFO_TABS.Preview,
+  container: CONTAINER_INFO_TABS.Preview,
+  collection: COLLECTION_INFO_TABS.Manage,
+};
+
+type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | ContainerInfoTab;
 const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
-  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isUnitInfoTab(tab)
+  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isContainerInfoTab(tab)
     ? tab : undefined
 );
 
 export interface DefaultTabs {
   component: ComponentInfoTab;
-  unit: UnitInfoTab;
+  container: ContainerInfoTab;
   collection: CollectionInfoTab;
 }
 
@@ -80,7 +85,7 @@ export type SidebarContextData = {
   openLibrarySidebar: () => void;
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
-  openUnitInfoSidebar: (usageKey: string) => void;
+  openContainerInfoSidebar: (usageKey: string) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
@@ -118,11 +123,7 @@ export const SidebarProvider = ({
     initialSidebarComponentInfo,
   );
 
-  const [defaultTab, setDefaultTab] = useState<DefaultTabs>({
-    component: COMPONENT_INFO_TABS.Preview,
-    unit: UNIT_INFO_TABS.Preview,
-    collection: COLLECTION_INFO_TABS.Manage,
-  });
+  const [defaultTab, setDefaultTab] = useState<DefaultTabs>(DEFAULT_TAB);
   const [hiddenTabs, setHiddenTabs] = useState<Array<SidebarInfoTab>>([]);
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
@@ -166,16 +167,16 @@ export const SidebarProvider = ({
     });
   }, []);
 
-  const openUnitInfoSidebar = useCallback((usageKey: string) => {
+  const openContainerInfoSidebar = useCallback((usageKey: string) => {
     setSidebarComponentInfo({
       id: usageKey,
-      type: SidebarBodyComponentId.UnitInfo,
+      type: SidebarBodyComponentId.ContainerInfo,
     });
   }, []);
 
   // Set the initial sidebar state based on the URL parameters and context.
   const { selectedItemId } = useParams();
-  const { unitId, collectionId } = useLibraryContext();
+  const { collectionId, containerId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   useEffect(() => {
@@ -190,15 +191,8 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      const containerType = getContainerTypeFromId(selectedItemId);
-      if (containerType === 'unit') {
-        openUnitInfoSidebar(selectedItemId);
-      } else if (containerType === 'section') {
-        // istanbul ignore next
-        // Open section info sidebar
-      } else if (containerType === 'subsection') {
-        // istanbul ignore next
-        // Open subsection info sidebar
+      if (selectedItemId.startsWith('lct:')) {
+        openContainerInfoSidebar(selectedItemId);
       } else if (selectedItemId.startsWith('lb:')) {
         openComponentInfoSidebar(selectedItemId);
       } else {
@@ -206,12 +200,12 @@ export const SidebarProvider = ({
       }
     } else if (collectionId) {
       openCollectionInfoSidebar(collectionId);
-    } else if (unitId) {
-      openUnitInfoSidebar(unitId);
+    } else if (containerId) {
+      openContainerInfoSidebar(containerId);
     } else {
       openLibrarySidebar();
     }
-  }, [selectedItemId]);
+  }, [selectedItemId, collectionId, containerId]);
 
   const context = useMemo<SidebarContextData>(() => {
     const contextValue = {
@@ -221,7 +215,7 @@ export const SidebarProvider = ({
       openComponentInfoSidebar,
       sidebarComponentInfo,
       openCollectionInfoSidebar,
-      openUnitInfoSidebar,
+      openContainerInfoSidebar,
       sidebarAction,
       setSidebarAction,
       resetSidebarAction,
@@ -241,7 +235,7 @@ export const SidebarProvider = ({
     openComponentInfoSidebar,
     sidebarComponentInfo,
     openCollectionInfoSidebar,
-    openUnitInfoSidebar,
+    openContainerInfoSidebar,
     sidebarAction,
     setSidebarAction,
     resetSidebarAction,
@@ -270,18 +264,14 @@ export function useSidebarContext(): SidebarContextData {
       openLibrarySidebar: () => {},
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
-      openUnitInfoSidebar: () => {},
+      openContainerInfoSidebar: () => {},
       sidebarAction: SidebarActions.None,
       setSidebarAction: () => {},
       resetSidebarAction: () => {},
       sidebarTab: COMPONENT_INFO_TABS.Preview,
       setSidebarTab: () => {},
       sidebarComponentInfo: undefined,
-      defaultTab: {
-        component: COMPONENT_INFO_TABS.Preview,
-        unit: UNIT_INFO_TABS.Preview,
-        collection: COLLECTION_INFO_TABS.Manage,
-      },
+      defaultTab: DEFAULT_TAB,
       setDefaultTab: () => {},
       hiddenTabs: [],
       setHiddenTabs: () => {},

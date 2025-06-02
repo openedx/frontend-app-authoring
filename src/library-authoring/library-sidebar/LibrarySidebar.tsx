@@ -9,7 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { ContainerInfoHeader, UnitInfo } from '../containers';
+import { ContainerInfoHeader, ContainerInfo } from '../containers';
 import {
   COMPONENT_INFO_TABS, SidebarActions, SidebarBodyComponentId, useSidebarContext,
 } from '../common/context/SidebarContext';
@@ -41,7 +41,7 @@ const LibrarySidebar = () => {
     // Show Manage tab if JumpToManageCollections or JumpToManageTags action is set
     if (jumpToCollections || jumpToTags) {
       // COMPONENT_INFO_TABS.Manage works for containers as well as its value
-      // is same as UNIT_INFO_TABS.Manage.
+      // is same as CONTAINER_INFO_TABS.Manage.
       setSidebarTab(COMPONENT_INFO_TABS.Manage);
     }
   }, [jumpToCollections, setSidebarTab, jumpToTags]);
@@ -51,7 +51,7 @@ const LibrarySidebar = () => {
     [SidebarBodyComponentId.Info]: <LibraryInfo />,
     [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
     [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
-    [SidebarBodyComponentId.UnitInfo]: <UnitInfo />,
+    [SidebarBodyComponentId.ContainerInfo]: <ContainerInfo />,
     unknown: null,
   };
 
@@ -60,7 +60,7 @@ const LibrarySidebar = () => {
     [SidebarBodyComponentId.Info]: <LibraryInfoHeader />,
     [SidebarBodyComponentId.ComponentInfo]: <ComponentInfoHeader />,
     [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader />,
-    [SidebarBodyComponentId.UnitInfo]: <ContainerInfoHeader />,
+    [SidebarBodyComponentId.ContainerInfo]: <ContainerInfoHeader />,
     unknown: null,
   };
 

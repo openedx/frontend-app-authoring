@@ -38,7 +38,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const { libraryId, collectionId } = useLibraryContext();
   const {
     sidebarComponentInfo,
-    openUnitInfoSidebar,
+    openContainerInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
@@ -69,7 +69,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const showManageCollections = useCallback(() => {
     navigateTo({ selectedItemId: containerId });
     scheduleJumpToCollection();
-  }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
+  }, [scheduleJumpToCollection, navigateTo, openContainerInfoSidebar, containerId]);
 
   const openContainer = useCallback(() => {
     navigateTo({ unitId: containerId });
@@ -172,7 +172,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openContainerInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -197,7 +197,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
+  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ContainerInfo
     && sidebarComponentInfo.id === containerId;
 
   const { navigateTo } = useLibraryRoutes();
@@ -214,9 +214,9 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     } else {
       // In component picker mode, we want to open the sidebar
       // without changing the URL
-      openUnitInfoSidebar(containerId);
+      openContainerInfoSidebar(containerId);
     }
-  }, [containerId, itemType, openUnitInfoSidebar, navigateTo]);
+  }, [containerId, itemType, openContainerInfoSidebar, navigateTo]);
 
   return (
     <BaseCard

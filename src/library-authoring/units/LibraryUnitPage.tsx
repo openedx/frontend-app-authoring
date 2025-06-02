@@ -19,7 +19,12 @@ import Header from '../../header';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext,
+  COLLECTION_INFO_TABS,
+  COMPONENT_INFO_TABS,
+  SidebarBodyComponentId,
+  CONTAINER_INFO_TABS,
+  DEFAULT_TAB,
+  useSidebarContext,
 } from '../common/context/SidebarContext';
 import { useContainer, useUpdateContainer, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
@@ -76,7 +81,7 @@ const HeaderActions = () => {
   const {
     openAddContentSidebar,
     closeLibrarySidebar,
-    openUnitInfoSidebar,
+    openContainerInfoSidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
@@ -86,14 +91,14 @@ const HeaderActions = () => {
     throw new Error('it should not be possible to render HeaderActions without a unitId');
   }
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
+  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.ContainerInfo
     && sidebarComponentInfo?.id === unitId;
 
   const handleOnClickInfoSidebar = useCallback(() => {
     if (infoSidebarIsOpen) {
       closeLibrarySidebar();
     } else {
-      openUnitInfoSidebar(unitId);
+      openContainerInfoSidebar(unitId);
     }
 
     if (!componentPickerMode) {
@@ -147,15 +152,14 @@ export const LibraryUnitPage = () => {
     setDefaultTab({
       collection: COLLECTION_INFO_TABS.Details,
       component: COMPONENT_INFO_TABS.Manage,
-      unit: UNIT_INFO_TABS.Manage,
+      container: CONTAINER_INFO_TABS.Manage,
     });
-    setHiddenTabs([COMPONENT_INFO_TABS.Preview, UNIT_INFO_TABS.Preview]);
+    setHiddenTabs([
+      COMPONENT_INFO_TABS.Preview,
+      CONTAINER_INFO_TABS.Preview,
+    ]);
     return () => {
-      setDefaultTab({
-        component: COMPONENT_INFO_TABS.Preview,
-        unit: UNIT_INFO_TABS.Preview,
-        collection: COLLECTION_INFO_TABS.Manage,
-      });
+      setDefaultTab(DEFAULT_TAB);
       setHiddenTabs([]);
     };
   }, [setDefaultTab, setHiddenTabs]);

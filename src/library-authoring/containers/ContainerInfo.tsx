@@ -16,9 +16,9 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  type UnitInfoTab,
-  UNIT_INFO_TABS,
-  isUnitInfoTab,
+  type ContainerInfoTab,
+  CONTAINER_INFO_TABS,
+  isContainerInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
@@ -28,6 +28,7 @@ import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
 import { useContainer, usePublishContainer } from '../data/apiHooks';
+import { ContainerType, getContainerTypeFromId } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 
 type ContainerMenuProps = {
@@ -35,22 +36,22 @@ type ContainerMenuProps = {
   displayName: string,
 };
 
-const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
+const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
   const intl = useIntl();
 
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
 
   return (
     <>
-      <Dropdown id="unit-info-dropdown">
+      <Dropdown id="container-info-dropdown">
         <Dropdown.Toggle
-          id="unit-info-menu-toggle"
+          id="container-info-menu-toggle"
           as={IconButton}
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
           alt={intl.formatMessage(componentMessages.containerCardMenuAlt)}
-          data-testid="unit-info-menu-toggle"
+          data-testid="container-info-menu-toggle"
         />
         <Dropdown.Menu>
           <Dropdown.Item onClick={confirmDelete}>
@@ -68,7 +69,22 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
   );
 };
 
-const UnitInfo = () => {
+type ContainerPreviewProps = {
+  containerId: string,
+};
+
+const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
+  const containerType = getContainerTypeFromId(containerId);
+  switch (containerType) {
+    case ContainerType.Unit:
+      return <LibraryUnitBlocks unitId={containerId} readOnly />;
+    // TODO: section/subsection preview
+    default:
+      return <div />;
+  }
+};
+
+const ContainerInfo = () => {
   const intl = useIntl();
 
   const { libraryId, readOnly } = useLibraryContext();
@@ -82,25 +98,29 @@ const UnitInfo = () => {
     sidebarComponentInfo,
     resetSidebarAction,
   } = useSidebarContext();
-  const { insideUnit } = useLibraryRoutes();
+  const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
 
-  const tab: UnitInfoTab = (
-    sidebarTab && isUnitInfoTab(sidebarTab)
-  ) ? sidebarTab : defaultTab.unit;
+  const containerId = sidebarComponentInfo?.id;
+  const containerType = containerId ? getContainerTypeFromId(containerId) : undefined;
+  const { data: container } = useContainer(containerId);
+  const publishContainer = usePublishContainer(containerId!);
 
-  const unitId = sidebarComponentInfo?.id;
-  const { data: container } = useContainer(unitId);
-  const publishContainer = usePublishContainer(unitId!);
+  const defaultContainerTab = defaultTab.container;
+  const tab: ContainerInfoTab = (
+    sidebarTab && isContainerInfoTab(sidebarTab)
+  ) ? sidebarTab : defaultContainerTab;
 
-  const showOpenUnitButton = !insideUnit && !componentPickerMode;
+  const showOpenButton = !componentPickerMode && !(
+    insideUnit || insideSubsection || insideSection
+  );
 
   /* istanbul ignore next */
-  const handleTabChange = (newTab: UnitInfoTab) => {
+  const handleTabChange = (newTab: ContainerInfoTab) => {
     resetSidebarAction();
     setSidebarTab(newTab);
   };
 
-  const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
+  const renderTab = useCallback((infoTab: ContainerInfoTab, title: string, component?: React.ReactNode) => {
     if (hiddenTabs.includes(infoTab)) {
       // For some reason, returning anything other than empty list breaks the tab style
       return [];
@@ -110,9 +130,9 @@ const UnitInfo = () => {
         {component}
       </Tab>
     );
-  }, [hiddenTabs, defaultTab.unit, unitId]);
+  }, [hiddenTabs, defaultContainerTab, containerId]);
 
-  const handlePublish = React.useCallback(async () => {
+  const handlePublish = useCallback(async () => {
     try {
       await publishContainer.mutateAsync();
       showToast(intl.formatMessage(messages.publishContainerSuccess));
@@ -121,21 +141,21 @@ const UnitInfo = () => {
     }
   }, [publishContainer]);
 
-  if (!container || !unitId) {
+  if (!container || !containerId || !containerType) {
     return null;
   }
 
   return (
     <Stack>
       <div className="d-flex flex-wrap">
-        {showOpenUnitButton && (
+        {showOpenButton && (
           <Button
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
             as={Link}
-            to={`/library/${libraryId}/unit/${unitId}`}
+            to={`/library/${libraryId}/${containerType}/${containerId}`}
           >
-            {intl.formatMessage(messages.openUnitButton)}
+            {intl.formatMessage(messages.openButton)}
           </Button>
         )}
         {!componentPickerMode && !readOnly && (
@@ -148,9 +168,9 @@ const UnitInfo = () => {
             {intl.formatMessage(messages.publishContainerButton)}
           </Button>
         )}
-        {showOpenUnitButton && ( // Check: should we still show this on the unit page?
-          <UnitMenu
-            containerId={unitId}
+        {showOpenButton && (
+          <ContainerMenu
+            containerId={containerId}
             displayName={container.displayName}
           />
         )}
@@ -158,20 +178,28 @@ const UnitInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey={defaultTab.unit}
+        defaultActiveKey={defaultContainerTab}
         activeKey={tab}
         onSelect={handleTabChange}
       >
         {renderTab(
-          UNIT_INFO_TABS.Preview,
-          <LibraryUnitBlocks unitId={unitId} readOnly />,
+          CONTAINER_INFO_TABS.Preview,
           intl.formatMessage(messages.previewTabTitle),
+          <ContainerPreview containerId={containerId} />,
         )}
-        {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
+        {renderTab(
+          CONTAINER_INFO_TABS.Manage,
+          intl.formatMessage(messages.manageTabTitle),
+          <ContainerOrganize />,
+        )}
+        {renderTab(
+          CONTAINER_INFO_TABS.Settings,
+          intl.formatMessage(messages.settingsTabTitle),
+          // TODO: container settings component
+        )}
       </Tabs>
     </Stack>
   );
 };
 
-export default UnitInfo;
+export default ContainerInfo;

@@ -33,10 +33,10 @@ export const ROUTES = {
   COLLECTION: '/collection/:collectionId/:selectedItemId?',
   // LibrarySectionPage route:
   // * with a selected sectionId and/or an optionally selected subsectionId.
-  SECTION: '/section/:sectionId/:subsectionId?',
+  SECTION: '/section/:sectionId/:selectedItemId?',
   // LibrarySubsectionPage route:
   // * with a selected subsectionId and/or an optionally selected unitId.
-  SUBSECTION: '/subsection/:subsectionId/:unitId?',
+  SUBSECTION: '/subsection/:subsectionId/:selectedItemId?',
   // LibraryUnitPage route:
   // * with a selected unitId and/or an optionally selected componentId.
   UNIT: '/unit/:unitId/:selectedItemId?',
