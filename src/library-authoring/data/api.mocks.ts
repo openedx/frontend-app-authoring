@@ -568,20 +568,23 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       numChildren = 0;
       break;
   }
-  let blockType = 'text';
+  let blockType = 'html';
+  let name = 'text';
   if (containerId.includes('subsection')) {
     blockType = 'unit';
+    name = blockType;
   } else if (containerId.includes('section')) {
     blockType = 'subsection';
+    name = blockType;
   }
   return Promise.resolve(
     Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
       {
         ...child,
         // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `lb:org1:Demo_course:${blockType}:${blockType}-${idx}`,
-        displayName: `${blockType} block ${idx}`,
-        publishedDisplayName: `${blockType} block published ${idx}`,
+        id: `lb:org1:Demo_course:${blockType}:${name}-${idx}`,
+        displayName: `${name} block ${idx}`,
+        publishedDisplayName: `${name} block published ${idx}`,
       }
     )),
   );
