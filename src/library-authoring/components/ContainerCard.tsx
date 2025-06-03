@@ -197,7 +197,7 @@ const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
     showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames
   ) ?? [];
 
-  if (childNames) {
+  if (childNames.length > 0) {
     // Preview with a truncated text with all children display names
     const childrenText = intl.formatMessage(
       messages.containerPreviewText,
