@@ -54,7 +54,7 @@ describe('hooks module', () => {
       redirectFn('test-video-url');
 
       expect(appHooks.navigateTo).toHaveBeenCalledWith(
-        '/authoring/course/course-v1:test/editor/video/block-123?selectedVideoUrl=test-video-url',
+        '/course/course-v1:test/editor/video/block-123?selectedVideoUrl=test-video-url',
       );
     });
 
@@ -69,7 +69,7 @@ describe('hooks module', () => {
       redirectFn('test-video-url');
 
       expect(appHooks.navigateTo).toHaveBeenCalledWith(
-        '/authoring/course/course-v1:test/editor/video/block-123?customType=test-video-url',
+        '/course/course-v1:test/editor/video/block-123?customType=test-video-url',
       );
     });
   });
