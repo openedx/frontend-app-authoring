@@ -26,16 +26,11 @@ export type LibraryContextData = {
   libraryData?: ContentLibrary;
   readOnly: boolean;
   isLoadingLibraryData: boolean;
-  /** The ID of the current collection/unit/subsection/section, on the sidebar OR page */
+  /** The ID of the current collection/container, on the sidebar OR page */
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
-  unitId: string | undefined;
-  setUnitId: (unitId?: string) => void;
-  sectionId: string | undefined;
-  setSectionId: (sectionId?: string) => void;
-  subsectionId: string | undefined;
-  setSubsectionId: (subsectionId?: string) => void;
   containerId: string | undefined;
+  setContainerId: (containerId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // Additional filtering
@@ -118,23 +113,14 @@ export const LibraryProvider = ({
   const params = useParams();
   const {
     collectionId: urlCollectionId,
-    unitId: urlUnitId,
-    sectionId: urlSectionId,
-    subsectionId: urlSubsectionId,
+    containerId: urlContainerId,
   } = params;
   const [collectionId, setCollectionId] = useState(
     skipUrlUpdate ? undefined : urlCollectionId,
   );
-  const [unitId, setUnitId] = useState(
-    skipUrlUpdate ? undefined : urlUnitId,
+  const [containerId, setContainerId] = useState(
+    skipUrlUpdate ? undefined : urlContainerId,
   );
-  const [sectionId, setSectionId] = useState(
-    skipUrlUpdate ? undefined : urlSectionId,
-  );
-  const [subsectionId, setSubsectionId] = useState(
-    skipUrlUpdate ? undefined : urlSubsectionId,
-  );
-  const containerId = unitId || subsectionId || sectionId;
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
@@ -142,13 +128,8 @@ export const LibraryProvider = ({
       libraryData,
       collectionId,
       setCollectionId,
-      unitId,
-      setUnitId,
-      sectionId,
-      setSectionId,
-      subsectionId,
-      setSubsectionId,
       containerId,
+      setContainerId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
@@ -170,13 +151,8 @@ export const LibraryProvider = ({
     libraryData,
     collectionId,
     setCollectionId,
-    unitId,
-    setUnitId,
-    subsectionId,
-    setSubsectionId,
-    sectionId,
-    setSectionId,
     containerId,
+    setContainerId,
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,

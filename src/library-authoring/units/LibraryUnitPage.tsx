@@ -26,19 +26,18 @@ import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
-import { ContainerType } from '../../generic/key-utils';
 
 export const LibraryUnitPage = () => {
   const intl = useIntl();
 
   const {
     libraryId,
-    unitId,
+    containerId,
   } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('unitId is required');
+  if (!containerId) {
+    throw new Error('containerId is required');
   }
 
   const {
@@ -69,11 +68,11 @@ export const LibraryUnitPage = () => {
     isLoading,
     isError,
     error,
-  } = useContainer(unitId);
+  } = useContainer(containerId);
 
-  if (!unitId || !libraryId) {
+  if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without unitId or libraryId URL parameter');
+    throw new Error('Rendered without containerId or libraryId URL parameter');
   }
 
   // Only show loading if unit or library data is not fetched from index yet
@@ -125,11 +124,10 @@ export const LibraryUnitPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={unitId} />} />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
               headerActions={(
                 <HeaderActions
-                  containerKey={unitId}
-                  containerType={ContainerType.Unit}
+                  containerKey={containerId}
                   infoBtnText={intl.formatMessage(messages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(messages.addContentButton)}
                 />
@@ -139,7 +137,7 @@ export const LibraryUnitPage = () => {
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryUnitBlocks unitId={unitId} />
+            <LibraryUnitBlocks unitId={containerId} />
             <FooterActions
               addContentBtnText={intl.formatMessage(messages.newContentButton)}
               addExistingContentBtnText={intl.formatMessage(messages.addExistingContentButton)}

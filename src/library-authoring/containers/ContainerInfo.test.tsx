@@ -20,9 +20,9 @@ const { libraryId } = mockContentLibrary;
 const { containerId } = mockGetContainerMetadata;
 
 const render = (showOnlyPublished: boolean = false) => {
-  const params: { libraryId: string, unitId?: string } = { libraryId, unitId: containerId };
+  const params: { libraryId: string, selectedItemId?: string } = { libraryId, selectedItemId: containerId };
   return baseRender(<ContainerInfo />, {
-    path: '/library/:libraryId/:unitId?',
+    path: '/library/:libraryId/:selectedItemId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider

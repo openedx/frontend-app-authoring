@@ -15,19 +15,18 @@ import { messages, sectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
-import { ContainerType } from '../../generic/key-utils';
 
 /** Full library section page */
 export const LibrarySectionPage = () => {
   const intl = useIntl();
-  const { libraryId, sectionId } = useLibraryContext();
+  const { libraryId, containerId } = useLibraryContext();
   const {
     sidebarComponentInfo,
   } = useSidebarContext();
 
-  if (!sectionId || !libraryId) {
+  if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without sectionId or libraryId URL parameter');
+    throw new Error('Rendered without containerId or libraryId URL parameter');
   }
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
@@ -36,9 +35,9 @@ export const LibrarySectionPage = () => {
     isLoading,
     isError,
     error,
-  } = useContainer(sectionId);
+  } = useContainer(containerId);
 
-  // show loading if sectionId or libraryId is not set or section or library data is not fetched from index yet
+  // show loading if containerId or libraryId is not set or section or library data is not fetched from index yet
   if (isLibLoading || isLoading) {
     return <Loading />;
   }
@@ -91,12 +90,11 @@ export const LibrarySectionPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={sectionId} />} />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
               breadcrumbs={breadcrumbs}
               headerActions={(
                 <HeaderActions
-                  containerKey={sectionId}
-                  containerType={ContainerType.Section}
+                  containerKey={containerId}
                   infoBtnText={intl.formatMessage(sectionMessages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(sectionMessages.newContentButton)}
                 />
@@ -105,7 +103,7 @@ export const LibrarySectionPage = () => {
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryContainerChildren containerKey={sectionId} />
+            <LibraryContainerChildren containerKey={containerId} />
             <FooterActions
               addContentBtnText={intl.formatMessage(sectionMessages.addContentButton)}
               addExistingContentBtnText={intl.formatMessage(sectionMessages.addExistingContentButton)}

@@ -41,9 +41,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   const {
     libraryId,
     collectionId,
-    sectionId,
-    subsectionId,
-    unitId,
+    containerId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
      * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
      * Sidebar > AddContent > ComponentPicker */
@@ -56,9 +54,9 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const updateContainerChildrenMutation = useAddItemsToContainer(
-    (insideSection && sectionId)
-    || (insideSubsection && subsectionId)
-    || (insideUnit && unitId)
+    (insideSection && containerId)
+    || (insideSubsection && containerId)
+    || (insideUnit && containerId)
     || '',
   );
 
@@ -92,9 +90,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     insideSubsection,
     insideUnit,
     collectionId,
-    sectionId,
-    subsectionId,
-    unitId,
+    containerId,
   ]);
 
   // determine filter an visibleTabs based on current location
@@ -123,8 +119,8 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   }
 
   // istanbul ignore if: this should never happen, just here to satisfy type checker
-  if (!(collectionId || unitId || sectionId || subsectionId) || !ComponentPicker) {
-    throw new Error('collectionId/sectionId/unitId and componentPicker are required');
+  if (!(collectionId || containerId) || !ComponentPicker) {
+    throw new Error('collectionId/containerId and componentPicker are required');
   }
 
   return (

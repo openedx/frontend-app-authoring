@@ -86,7 +86,6 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
         <TagCount size="sm" count={container.tagsCount} />
         <ContainerMenu
           containerKey={container.originalId}
-          containerType={container.containerType}
           displayName={container.displayName}
         />
       </Stack>
@@ -99,7 +98,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
-  const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
+  const { navigateTo, insideSection } = useLibraryRoutes();
   const { sidebarComponentInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
@@ -142,10 +141,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
       navigateTo({ selectedItemId: child.originalId });
-    } else if (insideSection) {
-      navigateTo({ subsectionId: child.originalId });
-    } else if (insideSubsection) {
-      navigateTo({ unitId: child.originalId });
+    } else {
+      navigateTo({ containerId: child.originalId });
     }
   }, [navigateTo]);
 

@@ -11,7 +11,7 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
+import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -27,11 +27,10 @@ import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   containerKey: string;
-  containerType: ContainerType;
   displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
@@ -69,7 +68,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   }, [scheduleJumpToCollection, navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
-    navigateTo({ [`${containerType}Id`]: containerKey });
+    navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
   return (
@@ -207,21 +206,9 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     } else if (!doubleClicked) {
       navigateTo({ selectedItemId: containerKey });
     } else {
-      switch (itemType) {
-        case ContainerType.Unit:
-          navigateTo({ unitId: containerKey });
-          break;
-        case ContainerType.Section:
-          navigateTo({ sectionId: containerKey });
-          break;
-        case ContainerType.Subsection:
-          navigateTo({ subsectionId: containerKey });
-          break;
-        default:
-          break;
-      }
+      navigateTo({ containerId: containerKey });
     }
-  }, [containerKey, itemType, openContainerInfoSidebar, navigateTo]);
+  }, [containerKey, openContainerInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
@@ -237,7 +224,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           ) : (
             <ContainerMenu
               containerKey={containerKey}
-              containerType={itemType}
               displayName={hit.displayName}
             />
           )}

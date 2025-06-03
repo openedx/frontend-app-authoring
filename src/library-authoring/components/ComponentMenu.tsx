@@ -28,7 +28,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    unitId,
+    containerId,
     openComponentEditor,
   } = useLibraryContext();
 
@@ -42,9 +42,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addComponentToContainerMutation = useAddItemsToContainer(unitId);
+  const addComponentToContainerMutation = useAddItemsToContainer(containerId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
-  const removeContainerComponentsMutation = useRemoveContainerChildren(unitId);
+  const removeContainerComponentsMutation = useRemoveContainerChildren(containerId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const { copyToClipboard } = useClipboard();
 
@@ -129,7 +129,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        {unitId && (
+        {containerId && (
           <Dropdown.Item onClick={removeFromContainer}>
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>

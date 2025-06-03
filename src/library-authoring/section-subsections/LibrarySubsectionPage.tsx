@@ -18,7 +18,6 @@ import { messages, subsectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
-import { ContainerType } from '../../generic/key-utils';
 import { ContainerHit } from '../../search-manager';
 
 interface OverflowLinksProps {
@@ -54,7 +53,7 @@ const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
 /** Full library subsection page */
 export const LibrarySubsectionPage = () => {
   const intl = useIntl();
-  const { libraryId, subsectionId } = useLibraryContext();
+  const { libraryId, containerId } = useLibraryContext();
   const {
     sidebarComponentInfo,
   } = useSidebarContext();
@@ -63,7 +62,7 @@ export const LibrarySubsectionPage = () => {
   // fetch subsectionData from index as it includes its parent sections as well.
   const {
     hits, isLoading, isError, error,
-  } = useContentFromSearchIndex(subsectionId ? [subsectionId] : []);
+  } = useContentFromSearchIndex(containerId ? [containerId] : []);
   const subsectionData = (hits as ContainerHit[])?.[0];
 
   const breadcrumbs = useMemo(() => {
@@ -102,9 +101,9 @@ export const LibrarySubsectionPage = () => {
     );
   }, [libraryData, subsectionData, libraryId]);
 
-  if (!subsectionId || !libraryId) {
+  if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without subsectionId or libraryId URL parameter');
+    throw new Error('Rendered without containerId or libraryId URL parameter');
   }
 
   // Only show loading if section or library data is not fetched from index yet
@@ -142,12 +141,11 @@ export const LibrarySubsectionPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={subsectionId} />} />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
               breadcrumbs={breadcrumbs}
               headerActions={(
                 <HeaderActions
-                  containerKey={subsectionId}
-                  containerType={ContainerType.Subsection}
+                  containerKey={containerId}
                   infoBtnText={intl.formatMessage(subsectionMessages.infoButtonText)}
                   addContentBtnText={intl.formatMessage(subsectionMessages.newContentButton)}
                 />
@@ -156,7 +154,7 @@ export const LibrarySubsectionPage = () => {
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryContainerChildren containerKey={subsectionId} />
+            <LibraryContainerChildren containerKey={containerId} />
             <FooterActions
               addContentBtnText={intl.formatMessage(subsectionMessages.addContentButton)}
               addExistingContentBtnText={intl.formatMessage(subsectionMessages.addExistingContentButton)}

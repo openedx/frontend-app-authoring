@@ -48,10 +48,10 @@ const render = (collectionId?: string) => {
     ),
   });
 };
-const renderWithUnit = (unitId: string) => {
-  const params: { libraryId: string, unitId?: string } = { libraryId, unitId };
+const renderWithUnit = (containerId: string) => {
+  const params: { libraryId: string, containerId?: string } = { libraryId, containerId };
   return baseRender(<AddContent />, {
-    path: '/library/:libraryId/unit/:unitId?',
+    path: '/library/:libraryId/unit/:containerId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider

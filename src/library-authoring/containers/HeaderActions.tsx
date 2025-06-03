@@ -1,21 +1,18 @@
 import { Button } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { useCallback } from 'react';
-import { ContainerType } from '../../generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 
 interface HeaderActionsProps {
   containerKey: string;
-  containerType: ContainerType;
   infoBtnText: string;
   addContentBtnText: string;
 }
 
 export const HeaderActions = ({
   containerKey,
-  containerType,
   infoBtnText,
   addContentBtnText,
 }: HeaderActionsProps) => {
@@ -34,17 +31,10 @@ export const HeaderActions = ({
     if (infoSidebarIsOpen) {
       closeLibrarySidebar();
     } else {
-      switch (containerType) {
-        case ContainerType.Unit:
-          openContainerInfoSidebar(containerKey);
-          break;
-        /* istanbul ignore next */
-        default:
-          break;
-      }
+      openContainerInfoSidebar(containerKey);
     }
-    navigateTo({ [`${containerType}Id`]: containerKey });
-  }, [containerKey, infoSidebarIsOpen, navigateTo]);
+    navigateTo({ containerId: containerKey });
+  }, [containerKey, infoSidebarIsOpen, navigateTo, openContainerInfoSidebar]);
 
   return (
     <div className="header-actions">

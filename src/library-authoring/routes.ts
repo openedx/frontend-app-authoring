@@ -11,6 +11,7 @@ import {
   useSearchParams,
   type PathMatch,
 } from 'react-router-dom';
+import { ContainerType, getBlockType } from '../generic/key-utils';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
@@ -20,11 +21,11 @@ export const ROUTES = {
   COMPONENTS: '/components/:selectedItemId?',
   // * Collections tab, with an optionally selected collectionId in the sidebar.
   COLLECTIONS: '/collections/:selectedItemId?',
-  // * Sections tab, with an optionally selected sectionId in the sidebar.
+  // * Sections tab, with an optionally selected section in the sidebar.
   SECTIONS: '/sections/:selectedItemId?',
-  // * Subsections tab, with an optionally selected subsectionId in the sidebar.
+  // * Subsections tab, with an optionally selected subsection in the sidebar.
   SUBSECTIONS: '/subsections/:selectedItemId?',
-  // * Units tab, with an optionally selected unitId in the sidebar.
+  // * Units tab, with an optionally selected unit in the sidebar.
   UNITS: '/units/:selectedItemId?',
   // * All Content tab, with an optionally selected collection or unit in the sidebar.
   HOME: '/:selectedItemId?',
@@ -32,14 +33,14 @@ export const ROUTES = {
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:selectedItemId?',
   // LibrarySectionPage route:
-  // * with a selected sectionId and/or an optionally selected subsectionId.
-  SECTION: '/section/:sectionId/:selectedItemId?',
+  // * with a selected containerId and an optionally selected subsection.
+  SECTION: '/section/:containerId/:selectedItemId?',
   // LibrarySubsectionPage route:
-  // * with a selected subsectionId and/or an optionally selected unitId.
-  SUBSECTION: '/subsection/:subsectionId/:selectedItemId?',
+  // * with a selected containerId and an optionally selected unit.
+  SUBSECTION: '/subsection/:containerId/:selectedItemId?',
   // LibraryUnitPage route:
-  // * with a selected unitId and/or an optionally selected componentId.
-  UNIT: '/unit/:unitId/:selectedItemId?',
+  // * with a selected containerId and/or an optionally selected componentId.
+  UNIT: '/unit/:containerId/:selectedItemId?',
 };
 
 export enum ContentType {
@@ -56,10 +57,8 @@ export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
 export type NavigateToData = {
   selectedItemId?: string,
   collectionId?: string,
+  containerId?: string,
   contentType?: ContentType,
-  sectionId?: string,
-  subsectionId?: string,
-  unitId?: string,
 };
 
 export type LibraryRoutesData = {
@@ -118,18 +117,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const navigateTo = useCallback(({
     selectedItemId,
     collectionId,
-    sectionId,
-    subsectionId,
-    unitId,
+    containerId,
     contentType,
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
       // Overwrite the params with the provided values.
       ...((selectedItemId !== undefined) && { selectedItemId }),
-      ...((sectionId !== undefined) && { sectionId }),
-      ...((subsectionId !== undefined) && { subsectionId }),
-      ...((unitId !== undefined) && { unitId }),
+      ...((containerId !== undefined) && { containerId }),
       ...((collectionId !== undefined) && { collectionId }),
     };
     let route: string;
@@ -140,24 +135,22 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       routeParams.selectedItemId = undefined;
     }
 
-    // Update sectionId/subsectionId/unitId/collectionId in library context if is not undefined.
+    // Update containerId/collectionId in library context if is not undefined.
     // Ids can be cleared from route by passing in empty string so we need to set it.
-    if (unitId !== undefined || sectionId !== undefined || subsectionId !== undefined) {
+    if (containerId !== undefined) {
       routeParams.selectedItemId = undefined;
 
-      // If we can have a unitId/subsectionId/sectionId alongside a routeParams.collectionId,
+      // If we can have a containerId alongside a routeParams.collectionId,
       // it means we are inside a collection trying to navigate to a unit/section/subsection,
-      // so we want to clear the collectionId to not have ambiquity.
+      // so we want to clear the collectionId to not have ambiguity.
       if (routeParams.collectionId !== undefined) {
         routeParams.collectionId = undefined;
       }
     } else if (collectionId !== undefined) {
       routeParams.selectedItemId = undefined;
     } else if (contentType) {
-      // We are navigating to the library home, so we need to clear the sectionId, subsectionId, unitId and collectionId
-      routeParams.unitId = undefined;
-      routeParams.sectionId = undefined;
-      routeParams.subsectionId = undefined;
+      // We are navigating to the library home, so we need to clear the containerId and collectionId
+      routeParams.containerId = undefined;
       routeParams.collectionId = undefined;
     }
 
@@ -174,9 +167,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // FIXME: We are using the Collection key, not the full OpaqueKey. So we
       // can't directly use the selectedItemId to determine if it's a collection.
       // We need to change this to use the full OpaqueKey in the future.
-      if (routeParams.selectedItemId?.includes(':unit:')
-        || routeParams.selectedItemId?.includes(':subsection:')
-        || routeParams.selectedItemId?.includes(':section:')
+      if (routeParams.selectedItemId?.startsWith('lct:')
         || routeParams.selectedItemId?.startsWith('lb:')) {
         routeParams.selectedItemId = undefined;
       }
@@ -201,12 +192,24 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.SECTIONS;
     } else if (contentType === ContentType.home) {
       route = ROUTES.HOME;
-    } else if (routeParams.unitId) {
-      route = ROUTES.UNIT;
-    } else if (routeParams.subsectionId) {
-      route = ROUTES.SUBSECTION;
-    } else if (routeParams.sectionId) {
-      route = ROUTES.SECTION;
+    } else if (routeParams.containerId) {
+      const containerType = getBlockType(routeParams.containerId);
+      switch (containerType) {
+        case ContainerType.Unit:
+          route = ROUTES.UNIT;
+          break;
+        case ContainerType.Subsection:
+          route = ROUTES.SUBSECTION;
+          break;
+        case ContainerType.Section:
+          route = ROUTES.SECTION;
+          break;
+        default:
+          // Fall back to home if unrecognized container type
+          route = ROUTES.HOME;
+          routeParams.containerId = undefined;
+          break;
+      }
     } else if (routeParams.collectionId) {
       route = ROUTES.COLLECTION;
       // From here, we will just stay in the current route
