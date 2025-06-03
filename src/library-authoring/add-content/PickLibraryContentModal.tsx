@@ -105,7 +105,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     // show only subsections
     extraFilter = ['block_type = "subsection"'];
     addBtnText = messages.addToSectionButton;
-    visibleTabs = [ContentType.home];
+    visibleTabs = [ContentType.subsections];
   } else if (insideSubsection) {
     // show only units
     extraFilter = ['block_type = "unit"'];
