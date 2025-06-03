@@ -203,7 +203,7 @@ const CustomStatusBar = ({
         </Form.Group>
 
         )}
-        {renderViewLiveButton && renderViewLiveButton()}
+        {/* {renderViewLiveButton && renderViewLiveButton()} */}
       </Stack>
       <ContentTagsDrawerSheet
         id={courseId}

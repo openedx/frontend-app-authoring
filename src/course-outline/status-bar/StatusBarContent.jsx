@@ -1,40 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@openedx/paragon';
-// import { Icon } from '@openedx/paragon';
-import {
-  Add, ArrowRight as ArrowDownIcon, ArrowDropUp as ArrowUpIcon, VerticalAlignCenter,
-} from '@openedx/paragon/icons';
+import { ActionRow } from '@openedx/paragon';
 
 const StatusBarContent = ({
-  onAddSection, onCollapseAll, isSectionsExpanded, handleExpandAll,
+  contentTitle,
+  description,
+  instruction,
+  headerActions,
+  hideBorder,
+  withSubHeaderContent,
 }) => (
-  <div className="d-flex justify-content-between align-items-center mt-4">
-    <h4>Content</h4>
-    <div className="d-flex align-items-center">
-      <Icon
-        src={Add}
-        onClick={onAddSection}
-        className="mx-2"
-        aria-label="Add Section"
-        data-tooltip="New Section"
-      />
-      <Icon
-        src={isSectionsExpanded ? VerticalAlignCenter : VerticalAlignCenter}
-        onClick={handleExpandAll}
-        className="mx-2 "
-        aria-label={isSectionsExpanded ? 'Collapse All' : 'Expand All'}
-        data-tooltip={isSectionsExpanded ? 'Collapse All' : 'Expand All'}
-      />
-    </div>
+  <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-3`}>
+    <header className="sub-header">
+      {headerActions && (
+        <ActionRow className="ml-auto flex-shrink-0 sub-header-actions">
+          {headerActions}
+        </ActionRow>
+      )}
+    </header>
+    {contentTitle && withSubHeaderContent && (
+      <header className="sub-header-content">
+        <h2 className="sub-header-content-title">{contentTitle}</h2>
+        <span className="small text-gray-700">{description}</span>
+      </header>
+    )}
+    {instruction && (
+      <p className="sub-header-instructions mb-4">{instruction}</p>
+    )}
   </div>
 );
 
-StatusBarContent.propTypes = {
-  onAddSection: PropTypes.func.isRequired,
-  onCollapseAll: PropTypes.func.isRequired,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  handleExpandAll: PropTypes.func.isRequired,
+StatusBarContent.defaultProps = {
+  instruction: '',
+  description: '',
+  subtitle: '',
+  breadcrumbs: '',
+  contentTitle: '',
+  headerActions: null,
+  titleActions: null,
+  hideBorder: false,
+  withSubHeaderContent: true,
 };
 
+StatusBarContent.propTypes = {
+  title: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.string,
+  ]).isRequired,
+  subtitle: PropTypes.string,
+  breadcrumbs: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.string,
+  ]),
+  contentTitle: PropTypes.string,
+  description: PropTypes.string,
+  instruction: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.string,
+  ]),
+  headerActions: PropTypes.node,
+  titleActions: PropTypes.node,
+  hideBorder: PropTypes.bool,
+  withSubHeaderContent: PropTypes.bool,
+};
 export default StatusBarContent;
+
