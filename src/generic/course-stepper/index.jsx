@@ -9,6 +9,7 @@ import {
 import { Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const CourseStepper = ({
   steps,
@@ -76,6 +77,10 @@ const CourseStepper = ({
           >
             <div className="course-stepper__step-icon">
               <Icon src={stepIcon} alt={title} data-testid={`${title}-icon`} />
+              <PluginSlot
+                id="course_export_stepper_plugin_slot"
+                pluginProps={{ index, steps }}
+              />
             </div>
             <div className="course-stepper__step-info">
               <h3 className="h4 title course-stepper__step-title font-weight-600">{title}</h3>

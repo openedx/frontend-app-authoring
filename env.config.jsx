@@ -401,6 +401,25 @@ const config = {
                 },
             ],
         },
+        course_export_stepper_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-stepper",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div>
+                                {props.index !== props.steps.length - 1 && (
+                                    <span className="course-stepper__icon-line" />
+                                )}
+                            </div>
+                        ),
+                    },
+                },
+            ],
+        },
     }
 };
 

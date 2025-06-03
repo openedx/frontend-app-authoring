@@ -260,14 +260,29 @@
 
   .course-stepper {
     display: flex;
+
     .course-stepper__step {
       // display: flex;
       flex-direction: column;
+
+      &:not(:last-child) {
+        border-bottom: transparent !important;
+      }
     }
 
     .course-stepper__step-icon {
       // position: relative;
       margin-left: 2rem;
+
+      .course-stepper__icon-line {
+        display: block;
+        height: 4px;
+        width: 100%;
+        background: #178253;
+        margin-left: 3rem;
+        margin-right: 8px;
+        border-radius: 2px;
+      }
 
       // & svg {
       //   position: absolute;
@@ -278,22 +293,6 @@
       // }
     }
   }
-
-  // .course-stepper__step-icon::after {
-  //   content: "";
-  //   display: block;
-  //   height: 1px;
-  //   background-color: #1ace41;
-  //   margin: 10px;
-  // }
-
-  // .stepper-line {
-  //   content: "";
-  //   display: block;
-  //   height: 1px;
-  //   background-color: #1ace41;
-  //   margin: 10px;
-  // }
 }
 
 // K styles end

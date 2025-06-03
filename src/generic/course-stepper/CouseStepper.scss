@@ -5,9 +5,9 @@
     padding: 1.25rem 0;
     opacity: .5;
 
-    // &:not(:last-child) {
-    //   border-bottom: 1px solid $gray-200;
-    // }
+    &:not(:last-child) {
+      border-bottom: 1px solid $gray-200;
+    }
 
     .course-stepper__step-icon {
       position: relative;
