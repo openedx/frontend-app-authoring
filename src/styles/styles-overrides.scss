@@ -259,20 +259,23 @@
   }
 
   .course-stepper {
+    display: flex;
     .course-stepper__step {
-      display: table-cell;
+      // display: flex;
+      flex-direction: column;
     }
 
     .course-stepper__step-icon {
-      position: relative;
+      // position: relative;
+      margin-left: 2rem;
 
-      & svg {
-        position: absolute;
-        // top: .875rem;
-        // top: -1.125rem;
-        margin-left: 4rem;
-        // left: 1.25rem;
-      }
+      // & svg {
+      //   position: absolute;
+      //   // top: .875rem;
+      //   // top: -1.125rem;
+      //   margin-left: 4rem;
+      //   // left: 1.25rem;
+      // }
     }
   }
 
@@ -284,13 +287,13 @@
   //   margin: 10px;
   // }
 
-  .stepper-line {
-    content: "";
-    display: block;
-    height: 1px;
-    background-color: #1ace41;
-    margin: 10px;
-  }
+  // .stepper-line {
+  //   content: "";
+  //   display: block;
+  //   height: 1px;
+  //   background-color: #1ace41;
+  //   margin: 10px;
+  // }
 }
 
 // K styles end
