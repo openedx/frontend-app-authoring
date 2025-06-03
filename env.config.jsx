@@ -15,9 +15,11 @@ import FormSwitchGroup from './src/generic/FormSwitchGroup';
 import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
 import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
 import SubHeader from './src/generic/sub-header/SubHeader';
-import SectionSubHeader from './src/generic/section-sub-header';
 import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
 import CourseExportPageNew from './src/export-page/CourseExportPageNew'
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import WarningMessage from './src/generic/warning-message/WarningMessage';
+import SettingCard from './src/advanced-settings/setting-card/SettingCard';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -176,13 +178,20 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (pluginProps) => {
-                            const { onAddSection, onCollapseAll, isSectionsExpanded, handleExpandAll } = pluginProps || {};
+                            const {
+                                onAddSection,
+                                onCollapseAll,
+                                isSectionsExpanded,
+                                handleExpandAll,
+                                headerActions,
+                            } = pluginProps || {};
                             return (
                                 <StatusBarContent
                                     onAddSection={onAddSection}
                                     onCollapseAll={onCollapseAll}
                                     isSectionsExpanded={isSectionsExpanded}
                                     handleExpandAll={handleExpandAll}
+                                    headerActions={headerActions}
                                 />
                             );
                         },
@@ -255,6 +264,77 @@ const config = {
                 }
             ],
         },
+
+        advanced_settings_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "advanced-settings-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div className="advanced-settings-custom-header">
+                                <div className="advanced-settings-custom-sub-header">
+                                    <div className="advanced-settings-custom-sub-header-title">
+                                        <SubHeader
+                                            title={props.headerTitle}
+                                            contentTitle={props.headerContentTitle}
+                                        />
+                                    </div>
+
+                                    <div className="custom-setting-items-deprecated-setting">
+                                        <Button
+                                            variant={'outline-primary'}
+                                            onClick={() => props.onClick()}
+                                            size="sm"
+                                        >
+                                            <FormattedMessage
+                                                id="course-authoring.advanced-settings.deprecated.button.text"
+                                                defaultMessage="{visibility} deprecated settings"
+                                                values={{
+                                                    visibility:
+                                                        props.showDeprecated ? props.hideDeprecatedMessage
+                                                            : props.showDeprecatedMessage,
+                                                }}
+                                            />
+                                        </Button>
+                                    </div>
+                                </div>
+                                
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+
+                                <div className="warning-message-container">
+                                    <WarningMessage message="Do not modify these policies unless you are familiar with their purpose." />
+                                </div>
+                            </div>
+                        ),
+                    },
+                }
+            ],
+        },
+
+        advanced_settings_card_plugin_slot: {
+            plugins: [
+              {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                  id: "my-advanced-settings-card",
+                  type: DIRECT_PLUGIN,
+                  priority: 1,
+                  RenderWidget: (props) => (
+                    <div className={`custom-setting-card ${props.settingData?.deprecated ? 'show-deprecated-style' : ''}`}>
+                        <SettingCard {...props} />
+                        {props.settingData?.deprecated && (
+                            <span className="deprecated-label">Deprecated</span>
+                        )}
+                    </div>
+                  ),
+                },
+              },
+            ],
+          },
+
         grading_header_plugin_slot: {
             plugins: [
                 {
@@ -303,7 +383,24 @@ const config = {
                     },
                 },
             ],
-        }
+        },
+        courseoutline_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '1rem' }}>
+                                Course Outline
+                            </div>
+                        ),
+                    },
+                },
+            ],
+        },
     }
 };
 
