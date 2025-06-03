@@ -257,6 +257,40 @@
     background-color: #ced4da;
     margin-top: 1.5rem;
   }
+
+  .course-stepper {
+    .course-stepper__step {
+      display: table-cell;
+    }
+
+    .course-stepper__step-icon {
+      position: relative;
+
+      & svg {
+        position: absolute;
+        // top: .875rem;
+        // top: -1.125rem;
+        margin-left: 4rem;
+        // left: 1.25rem;
+      }
+    }
+  }
+
+  // .course-stepper__step-icon::after {
+  //   content: "";
+  //   display: block;
+  //   height: 1px;
+  //   background-color: #1ace41;
+  //   margin: 10px;
+  // }
+
+  .stepper-line {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #1ace41;
+    margin: 10px;
+  }
 }
 
 // K styles end
