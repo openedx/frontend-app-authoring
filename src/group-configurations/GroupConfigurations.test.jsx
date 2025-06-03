@@ -1,12 +1,10 @@
-import MockAdapter from 'axios-mock-adapter';
-import { render, waitFor, within } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
+import {
+  initializeMocks,
+  render,
+  waitFor,
+  within,
+} from '../testUtils';
 import { RequestStatus } from '../data/constants';
-import initializeStore from '../store';
 import { executeThunk } from '../utils';
 import { getContentStoreApiUrl } from './data/api';
 import { fetchGroupConfigurationsQuery } from './data/thunk';
@@ -22,27 +20,13 @@ const courseId = 'course-v1:org+101+101';
 const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurations[0];
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 
-const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <GroupConfigurations courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = () => render(<GroupConfigurations courseId={courseId} />);
 
 describe('<GroupConfigurations />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getContentStoreApiUrl(courseId))
       .reply(200, groupConfigurationResponseMock);
