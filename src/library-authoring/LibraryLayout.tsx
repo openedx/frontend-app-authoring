@@ -19,7 +19,9 @@ import { LibraryUnitPage } from './units';
 import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { libraryId, collectionId, unitId, sectionId, subsectionId } = useParams();
+  const {
+    libraryId, collectionId, unitId, sectionId, subsectionId,
+  } = useParams();
 
   if (libraryId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.

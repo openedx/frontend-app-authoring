@@ -150,12 +150,10 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
       navigateTo({ selectedItemId: child.originalId });
-    } else {
-      if (insideSection) {
-        navigateTo({ subsectionId: child.originalId });
-      } else if (insideSubsection) {
-        navigateTo({ unitId: child.originalId });
-      }
+    } else if (insideSection) {
+      navigateTo({ subsectionId: child.originalId });
+    } else if (insideSubsection) {
+      navigateTo({ unitId: child.originalId });
     }
   }, [navigateTo]);
 

@@ -69,7 +69,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   }, [scheduleJumpToCollection, navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
-    navigateTo({[`${containerType}Id`]: containerKey });
+    navigateTo({ [`${containerType}Id`]: containerKey });
   }, [navigateTo, containerKey]);
 
   return (
@@ -214,23 +214,21 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
         default:
           break;
       }
+    } else if (!doubleClicked) {
+      navigateTo({ selectedItemId: containerKey });
     } else {
-      if (!doubleClicked) {
-        navigateTo({ selectedItemId: containerKey });
-      } else {
-        switch (itemType) {
-          case ContainerType.Unit:
-            navigateTo({ unitId: containerKey });
-            break;
-          case ContainerType.Section:
-            navigateTo({ sectionId: containerKey });
-            break;
-          case ContainerType.Subsection:
-            navigateTo({ subsectionId: containerKey });
-            break;
-          default:
-            break;
-        }
+      switch (itemType) {
+        case ContainerType.Unit:
+          navigateTo({ unitId: containerKey });
+          break;
+        case ContainerType.Section:
+          navigateTo({ sectionId: containerKey });
+          break;
+        case ContainerType.Subsection:
+          navigateTo({ subsectionId: containerKey });
+          break;
+        default:
+          break;
       }
     }
   }, [containerKey, itemType, openUnitInfoSidebar, navigateTo]);

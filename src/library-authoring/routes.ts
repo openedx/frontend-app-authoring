@@ -145,8 +145,9 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     if (unitId !== undefined || sectionId !== undefined || subsectionId !== undefined) {
       routeParams.selectedItemId = undefined;
 
-      // If we can have a unitId/subsectionId/sectionId alongside a routeParams.collectionId, it means we are inside a collection
-      // trying to navigate to a unit/section/subsection, so we want to clear the collectionId to not have ambiquity.
+      // If we can have a unitId/subsectionId/sectionId alongside a routeParams.collectionId,
+      // it means we are inside a collection trying to navigate to a unit/section/subsection,
+      // so we want to clear the collectionId to not have ambiquity.
       if (routeParams.collectionId !== undefined) {
         routeParams.collectionId = undefined;
       }
