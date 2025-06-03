@@ -79,15 +79,15 @@ const CourseExportPageNew = ({ intl, courseId }) => {
                 <div className="export-card">
                   <Card>
                     <Card.Header
-                      className="h3 px-3 text-black mb-4"
+                      className="h3 px-3 text-black mb-4 course-card-header"
                       title={intl.formatMessage(messages.titleUnderButton)}
                     />
                     {isShowExportButton && (
-                    <Card.Section className="px-3 py-1">
+                    <Card.Section className="px-3 py-1 course-card-section">
                       <Button
                         size="lg"
                         block
-                        className="mb-4"
+                        className="mb-3"
                         onClick={() => dispatch(startExportingCourse(courseId))}
                         iconBefore={ArrowCircleDownIcon}
                       >

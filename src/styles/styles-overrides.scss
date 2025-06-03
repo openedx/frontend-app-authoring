@@ -235,7 +235,27 @@
   .collapsible-card,
   .collapsible-card-lg {
     background-color: #f4f7ff;
-    margin: -1rem !important;
+    margin-top: -1rem !important;
+  }
+
+  .course-card-header {
+    margin-top: -1rem !important;
+    margin-bottom: 1rem !important;
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+  }
+
+  .course-card-section {
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+  }
+
+  .course-card-section::after {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #ced4da;
+    margin-top: 1.5rem;
   }
 }
 
@@ -368,21 +388,21 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        
+
         .custom-setting-items-deprecated-setting {
           margin-top: -1rem;
         }
-        
+
         .border-bottom {
           display: block !important;
-  
+
           .sub-header-title {
             font-size: 20px !important;
             font-weight: 600 !important;
             line-height: 1.2 !important;
             letter-spacing: normal !important;
           }
-  
+
           .sub-header-content-title {
             font-size: 16px !important;
             font-weight: 400 !important;
@@ -392,8 +412,8 @@
         }
       }
 
-      
-      
+
+
       .setting-items-list {
         .setting-card {
           background-color: var(--bg-body) !important;
@@ -417,7 +437,7 @@
           }
         }
 
-        .pgn__card-header-content  {
+        .pgn__card-header-content {
           margin-top: 1.438rem !important;
           margin-bottom: 1.438rem !important;
         }
@@ -436,8 +456,10 @@
 
           .deprecated-label {
             position: absolute;
-            left: 1.5rem; /* aligns with card content padding */
-            bottom: 0.4rem; /* just above the card's bottom padding */
+            left: 1.5rem;
+            /* aligns with card content padding */
+            bottom: 0.4rem;
+            /* just above the card's bottom padding */
             color: #e53e3e;
             background: none;
             font-size: 13px;
@@ -445,6 +467,7 @@
             z-index: 2;
             pointer-events: none;
           }
+
           .setting-card {
             position: relative; // ensure the card is the positioning context
           }
@@ -462,74 +485,90 @@
 
 // N Styles Start
 .course-outline-container {
-//  header{
-//   background-color: white;
-//   padding: 1rem;
-//   border-radius: 1rem;
-//   border: solid 1px var(--border-color);
-//  }
-.outline-status-bar{
-  margin-bottom: 1rem;
-}
+
+  //  header{
+  //   background-color: white;
+  //   padding: 1rem;
+  //   border-radius: 1rem;
+  //   border: solid 1px var(--border-color);
+  //  }
+  .outline-status-bar {
+    margin-bottom: 1rem;
+  }
+
   article {
     background-color: white;
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
   }
- 
+
   .help-sidebar {
     background-color: white;
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
     margin-top: 0px !important;
-    .outline-sidebar-section{
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 12px;
-    hr{
-      display: none;
-    }
+
+    .outline-sidebar-section {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 12px;
+
+      hr {
+        display: none;
+      }
     }
   }
-  .sub-header .btn-primary{
+
+  .sub-header .btn-primary {
     border-radius: 8px;
   }
-  .course-outline-section .btn-outline-primary{
+
+  .course-outline-section .btn-outline-primary {
     border-radius: 8px;
     border: solid 1px #616061;
     color: var(--text-muted);
   }
+
   .sub-header .sub-header-actions .ml-auto {
     margin-right: auto !important;
     margin-left: 0px !important;
     margin-top: 1rem;
   }
+
   .sub-header .sub-header-actions {
     border-top: 1px solid var(--border-color);
   }
-  .section-card .section-card__subsections .btn-outline-primary{
+
+  .section-card .section-card__subsections .btn-outline-primary {
     border: 1px solid var(--border-color);
   }
-  .item-card-header .m-0 .form-control{
+
+  .item-card-header .m-0 .form-control {
     border: 1px solid var(--border-color);
   }
-  .section-card .section-card__subsections .subsection-card__units .extend-margin .btn-icon-primary{
+
+  .section-card .section-card__subsections .subsection-card__units .extend-margin .btn-icon-primary {
     color: var(--text-primary) !important;
   }
-  .row .btn-icon-secondary{
+
+  .row .btn-icon-secondary {
     color: var(--text-primary) !important;
   }
-  .section-card__subsections .extend-margin .subsection-card .btn-icon-primary{
+
+  .section-card__subsections .extend-margin .subsection-card .btn-icon-primary {
     color: var(--text-primary) !important;
   }
-  .item-card-header .btn-icon-primary{
+
+  .item-card-header .btn-icon-primary {
     color: var(--text-primary) !important;
   }
-  .pt-4 .mx-0{
+
+  .pt-4 .mx-0 {
     background-color: #f2f5ff !important;
   }
 }
+
 // N Styles End
