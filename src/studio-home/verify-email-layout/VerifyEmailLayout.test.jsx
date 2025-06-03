@@ -1,61 +1,21 @@
-import { render } from '@testing-library/react';
-import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-
-import initializeStore from '../../store';
+// @ts-check
+import { initializeMocks, render } from '../../testUtils';
 import messages from './messages';
 import VerifyEmailLayout from '.';
 
-let store;
-
-const mockPathname = '/foo-bar';
 const fakeAuthenticatedUser = {
+  userId: 7,
   email: 'email@fake.com',
   username: 'fake-user',
 };
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
-
-jest.mock('@edx/frontend-platform/auth');
-
-getAuthenticatedUser.mockImplementation(() => fakeAuthenticatedUser);
-
-const RootWrapper = () => (
-  <IntlProvider locale="en" messages={{}}>
-    <AppProvider store={store}>
-      <VerifyEmailLayout />
-    </AppProvider>
-  </IntlProvider>
-);
-
 describe('<VerifyEmailLayout />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-
-    store = initializeStore({
-      courseDetail: {
-        courseId: 'id',
-        status: 'sucessful',
-      },
-    });
+    initializeMocks({ user: fakeAuthenticatedUser });
   });
 
   it('renders successfully', () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = render(<VerifyEmailLayout />);
 
     expect(
       getByText(`Thanks for signing up, ${fakeAuthenticatedUser.username}!`, {

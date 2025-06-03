@@ -7,14 +7,11 @@ import {
   waitFor,
 } from '../../testUtils';
 import PageGrid from './PageGrid';
-import { executeThunk } from '../../utils';
 import { getApiWaffleFlagsUrl } from '../../data/api';
-import { fetchWaffleFlags } from '../../data/thunks';
 
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
 let container;
-let store;
 let axiosMock;
 const courseId = '123';
 const mockPageConfig = [
@@ -50,7 +47,6 @@ const renderComponent = () => {
 describe('LiveSettings', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
@@ -60,7 +56,6 @@ describe('LiveSettings', () => {
         useNewScheduleDetailsPage: true,
         useNewCourseOutlinePage: true,
       });
-    await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
 
   it('should render three cards', async () => {
