@@ -92,9 +92,9 @@ const CourseStepper = ({
                   {percent}%
                 </p>
               )}
-              {/* <p className="course-stepper__step-description font-weight-400">
+              <p className="course-stepper__step-description font-weight-400">
                 {isErrorMessageShow ? errorMessage : description}
-              </p> */}
+              </p>
             </div>
           </div>
         );

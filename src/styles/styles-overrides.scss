@@ -260,9 +260,10 @@
 
   .course-stepper {
     display: flex;
+    justify-content: space-between;
+    // margin: 0rem -7rem 0rem -1rem;
 
     .course-stepper__step {
-      // display: flex;
       flex-direction: column;
 
       &:not(:last-child) {
@@ -271,27 +272,48 @@
     }
 
     .course-stepper__step-icon {
-      // position: relative;
       margin-left: 2rem;
 
       .course-stepper__icon-line {
         display: block;
         height: 4px;
         width: 100%;
-        background: #178253;
+        background: #2cc84d;
         margin-left: 3rem;
         margin-right: 8px;
         border-radius: 2px;
       }
 
-      // & svg {
-      //   position: absolute;
-      //   // top: .875rem;
-      //   // top: -1.125rem;
-      //   margin-left: 4rem;
-      //   // left: 1.25rem;
-      // }
+      & svg {
+        color: #2cc84d;
+      }
     }
+  }
+}
+
+.done {
+  width: 100% !important;
+}
+
+.course-stepper .course-stepper__step .course-stepper__step-title {
+  color: #2cc84d !important;
+  width: min-content;
+}
+
+.course-stepper__step-description {
+  display: none;
+}
+
+.ml-5\.5 {
+  margin-left: 0rem !important;
+}
+
+.small {
+  .row {
+    background-color: #f5f5f5;
+    margin: 0rem;
+    padding: 1rem 0rem;
+    border-radius: 1rem;
   }
 }
 
