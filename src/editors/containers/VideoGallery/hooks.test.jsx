@@ -141,7 +141,7 @@ describe('hooks module', () => {
       });
 
       expect(appHooks.navigateTo).toHaveBeenCalledWith(
-        '/authoring/course/course-v1:id/editor/video/block-v1:id?selectedVideoId=video123',
+        '/course/course-v1:id/editor/video/block-v1:id?selectedVideoId=video123',
       );
     });
 
