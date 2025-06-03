@@ -17,6 +17,7 @@ import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
 import SubHeader from './src/generic/sub-header/SubHeader';
 import SectionSubHeader from './src/generic/section-sub-header';
 import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
+import CourseExportPageNew from './src/export-page/CourseExportPageNew'
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -285,6 +286,20 @@ const config = {
                     priority: 1,
                     RenderWidget: (props) => 
                         <CourseUpdatesNew courseId={props.courseId}/>
+                    },
+                },
+            ],
+        },
+        course_export_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "course_export",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => 
+                        <CourseExportPageNew courseId={props.courseId}/>
                     },
                 },
             ],

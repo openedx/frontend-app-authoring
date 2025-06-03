@@ -218,6 +218,27 @@
   margin-bottom: 0rem;
 }
 
+// Course export styles
+.export-warning {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: solid 1px #ffdc9a;
+  background-color: #fff8eb;
+}
+
+.export-card {
+  padding: 16px 16px 24px 15px;
+  border-radius: 12px;
+  background-color: #f4f7ff;
+
+  .card,
+  .collapsible-card,
+  .collapsible-card-lg {
+    background-color: #f4f7ff;
+    margin: -1rem !important;
+  }
+}
+
 // K styles end
 
 // S Styles Start

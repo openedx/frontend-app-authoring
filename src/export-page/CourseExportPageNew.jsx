@@ -10,7 +10,6 @@ import Cookies from 'universal-cookie';
 import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
@@ -27,7 +26,7 @@ import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
 
-const CourseExportPage = ({ intl, courseId }) => {
+const CourseExportPageNew = ({ intl, courseId }) => {
   const dispatch = useDispatch();
   const exportTriggered = useSelector(getExportTriggered);
   const courseDetails = useModel('courseDetails', courseId);
@@ -50,10 +49,7 @@ const CourseExportPage = ({ intl, courseId }) => {
   }, []);
 
   return (
-    <PluginSlot
-      id="course_export_plugin_slot"
-      pluginProps={{ courseId }}
-    >
+    <>
       <Helmet>
         <title>
           {intl.formatMessage(messages.pageTitle, {
@@ -63,7 +59,7 @@ const CourseExportPage = ({ intl, courseId }) => {
           })}
         </title>
       </Helmet>
-      <Container size="xl" className="mt-4 px-4 export">
+      <Container size="xl" className="px-4 export">
         <section className="setting-items mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -78,14 +74,15 @@ const CourseExportPage = ({ intl, courseId }) => {
                   title={intl.formatMessage(messages.headingTitle)}
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p className="small">{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
-                <p className="small">{intl.formatMessage(messages.description2)}</p>
-                <Card>
-                  <Card.Header
-                    className="h3 px-3 text-black mb-4"
-                    title={intl.formatMessage(messages.titleUnderButton)}
-                  />
-                  {isShowExportButton && (
+                <p className="small sub-header-instructions">{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
+                <p className="small export-warning">{intl.formatMessage(messages.description2)}</p>
+                <div className="export-card">
+                  <Card>
+                    <Card.Header
+                      className="h3 px-3 text-black mb-4"
+                      title={intl.formatMessage(messages.titleUnderButton)}
+                    />
+                    {isShowExportButton && (
                     <Card.Section className="px-3 py-1">
                       <Button
                         size="lg"
@@ -97,9 +94,10 @@ const CourseExportPage = ({ intl, courseId }) => {
                         {intl.formatMessage(messages.buttonTitle)}
                       </Button>
                     </Card.Section>
-                  )}
-                </Card>
-                {exportTriggered && <ExportStepper courseId={courseId} />}
+                    )}
+                  </Card>
+                  {exportTriggered && <ExportStepper courseId={courseId} />}
+                </div>
                 <ExportFooter />
               </article>
             </Layout.Element>
@@ -117,15 +115,15 @@ const CourseExportPage = ({ intl, courseId }) => {
           onInternetConnectionFailed={() => null}
         />
       </div>
-    </PluginSlot>
+    </>
   );
 };
 
-CourseExportPage.propTypes = {
+CourseExportPageNew.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-CourseExportPage.defaultProps = {};
+CourseExportPageNew.defaultProps = {};
 
-export default injectIntl(CourseExportPage);
+export default injectIntl(CourseExportPageNew);
