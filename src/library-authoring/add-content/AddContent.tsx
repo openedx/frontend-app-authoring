@@ -141,17 +141,13 @@ const AddContentView = ({
       // Only show libraryContentButton
       return [libraryContentButtonData];
     }
-    // istanbul ignore if
     if (insideSection) {
       // Should only allow adding subsections
-      throw new Error('Not implemented');
-      // return [subsectionButtonData];
+      return [subsectionButtonData];
     }
-    // istanbul ignore if
     if (insideSubsection) {
       // Should only allow adding units
-      throw new Error('Not implemented');
-      // return [unitButtonData];
+      return [unitButtonData];
     }
     // except for libraryContentButton, show everthing.
     return [
@@ -178,15 +174,19 @@ const AddContentView = ({
           onClose={closeAddLibraryContentModal}
         />
       )}
-      <hr className="w-100 bg-gray-500" />
-      {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
-      {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
-        <AddContentButton
-          key={`add-content-${contentType.blockType}`}
-          contentType={contentType}
-          onCreateContent={onCreateContent}
-        />
-      ))}
+      {(!insideSection && !insideSubsection) && (
+        <>
+          <hr className="w-100 bg-gray-500" />
+          {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
+          {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
+            <AddContentButton
+              key={`add-content-${contentType.blockType}`}
+              contentType={contentType}
+              onCreateContent={onCreateContent}
+            />
+          ))}
+        </>
+      )}
     </>
   );
 };
@@ -258,6 +258,8 @@ const AddContent = () => {
   const {
     libraryId,
     collectionId,
+    sectionId,
+    subsectionId,
     openCreateCollectionModal,
     setCreateContainerModalType,
     openComponentEditor,
@@ -265,6 +267,8 @@ const AddContent = () => {
   } = useLibraryContext();
   const {
     insideCollection,
+    insideSection,
+    insideSubsection,
     insideUnit,
   } = useLibraryRoutes();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
@@ -352,7 +356,10 @@ const AddContent = () => {
         showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
       });
     }
-    if (unitId && insideUnit) {
+    if ((unitId && insideUnit)
+        || (sectionId && insideSection)
+        || (subsectionId && insideSubsection)
+        || (subsectionId && insideSubsection)) {
       addComponentsToContainerMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
       });

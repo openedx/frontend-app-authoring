@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
-import { useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
+import { useAddItemsToContainer, useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import { ContainerType } from '../../generic/key-utils';
@@ -22,12 +22,21 @@ const CreateContainerModal = () => {
   const {
     collectionId,
     libraryId,
+    sectionId,
+    subsectionId,
     createContainerModalType,
     setCreateContainerModalType,
   } = useLibraryContext();
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const {
+    navigateTo,
+    insideCollection,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
-  const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
+  const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
+  const containerId = insideSection ? sectionId : subsectionId || '';
+  const updateContainerItemsMutation = useAddItemsToContainer(containerId)
   const { showToast } = React.useContext(ToastContext);
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
@@ -78,13 +87,17 @@ const CreateContainerModal = () => {
 
   const handleCreate = React.useCallback(async (values) => {
     try {
+      const canStandAlone = !(insideCollection || insideSection || insideSubsection)
       const container = await create.mutateAsync({
+        canStandAlone,
         containerType,
         ...values,
       });
       // link container to parent
       if (collectionId && insideCollection) {
-        await updateItemsMutation.mutateAsync([container.id]);
+        await updateCollectionItemsMutation.mutateAsync([container.id]);
+      } else if ((subsectionId && insideSubsection) || (sectionId && insideSection)) {
+        await updateContainerItemsMutation.mutateAsync([container.id]);
       }
       // Navigate to the new container
       navigateTo({ [`${containerType}Id`]: container.id });

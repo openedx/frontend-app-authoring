@@ -63,6 +63,38 @@ const renderWithUnit = (unitId: string) => {
     ),
   });
 };
+
+const renderWithSection = (sectionId: string) => {
+  const params: { libraryId: string, sectionId?: string } = { libraryId, sectionId };
+  return baseRender(<AddContent />, {
+    path: '/library/:libraryId/section/:sectionId?',
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+      >
+        { children }
+        <ComponentEditorModal />
+      </LibraryProvider>
+    ),
+  });
+};
+
+const renderWithSubsection = (subsectionId: string) => {
+  const params: { libraryId: string, subsectionId?: string } = { libraryId, subsectionId };
+  return baseRender(<AddContent />, {
+    path: '/library/:libraryId/subsection/:subsectionId?',
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+      >
+        { children }
+        <ComponentEditorModal />
+      </LibraryProvider>
+    ),
+  });
+};
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
@@ -393,5 +425,31 @@ describe('<AddContent />', () => {
     expect(axiosMock.history.post[2].url).toEqual(linkUrl);
 
     expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this container.');
+  });
+
+  it('should only show subsection button when inside a section', async () => {
+    mockClipboardEmpty.applyMock();
+    const sectionId = 'lct:orf1:lib1:section:test-1';
+    renderWithSection(sectionId);
+
+    expect(await screen.findByRole('button', { name: 'Subsection' })).toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Unit' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Text' })).not.toBeInTheDocument();
+  });
+
+  it('should only show unit button when inside a subsection', async () => {
+    mockClipboardEmpty.applyMock();
+    const subsectionId = 'lct:orf1:lib1:subsection:test-1';
+    renderWithSubsection(subsectionId);
+
+    expect(await screen.findByRole('button', { name: 'Unit' })).toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subsection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Text' })).not.toBeInTheDocument();
   });
 });
