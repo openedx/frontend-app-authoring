@@ -6,6 +6,7 @@ import {
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
@@ -13,7 +14,7 @@ import { useModel } from '../generic/model-store';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
-// import SubHeader from '../generic/sub-header/SubHeader';
+import SubHeader from '../generic/sub-header/SubHeader';
 import AlertMessage from '../generic/alert-message';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
@@ -25,7 +26,6 @@ import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import getPageHeadTitle from '../generic/utils';
-import './AdvancedSettings.scss';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -167,26 +167,42 @@ const AdvancedSettings = ({ intl, courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              {/* <SubHeader
+              {/* <PluginSlot
+                id="advanced_settings_header_plugin_slot"
+                pluginProps={{
+                  contentTitle: intl.formatMessage(messages.policy),
+                  title: intl.formatMessage(messages.headingTitle),
+                }}
+              > */}
+              <SubHeader
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
                 contentTitle={intl.formatMessage(messages.policy)}
-              /> */}
+              />
+              {/* </PluginSlot> */}
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <div className="d-flex justify-content-between mb-2">
-                      <div>
-                        <h2 className="sub-header-content-title mb-2">{intl.formatMessage(messages.policy)}</h2>
-                        <div className="small warning-msg">
-                          <FormattedMessage
-                            id="course-authoring.advanced-settings.policies.description"
-                            defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                            values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
-                          />
-                        </div>
+                    <PluginSlot
+                      id="advanced_settings_header_plugin_slot"
+                      pluginProps={{
+                        onClick: () => setShowDeprecated(!showDeprecated),
+                        variant: showDeprecated ? 'outline-brand' : 'tertiary',
+                        hideDeprecatedMessage: intl.formatMessage(messages.deprecatedButtonHideText),
+                        showDeprecatedMessage: intl.formatMessage(messages.deprecatedButtonShowText),
+                        showDeprecated,
+                        headerTitle: intl.formatMessage(messages.headingTitle),
+                        headerContentTitle: intl.formatMessage(messages.policy),
+                      }}
+                    >
+                      <div className="small warning-msg">
+                        <FormattedMessage
+                          id="course-authoring.advanced-settings.policies.description"
+                          defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
+                          values={{ notice: <strong style={{ color: '#FFA500' }}>Warning: </strong> }}
+                        />
                       </div>
-                      <div className="deprecated-btn-align">
+                      <div className="setting-items-deprecated-setting">
                         <Button
                           variant={showDeprecated ? 'outline-brand' : 'tertiary'}
                           onClick={() => setShowDeprecated(!showDeprecated)}
@@ -203,8 +219,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
                           />
                         </Button>
                       </div>
-                    </div>
-                    <hr className="mb-4" style={{ border: 'none', borderTop: '1px solid #ddd', margin: '0 0 1rem 0' }} />
+                    </PluginSlot>
                     <ul className="setting-items-list p-0">
                       {Object.keys(advancedSettingsData).map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
@@ -212,16 +227,19 @@ const AdvancedSettings = ({ intl, courseId }) => {
                           return null;
                         }
                         return (
-                          <SettingCard
+                          <PluginSlot
                             key={settingName}
-                            settingData={settingData}
-                            name={settingName}
-                            showSaveSettingsPrompt={showSaveSettingsPrompt}
-                            saveSettingsPrompt={saveSettingsPrompt}
-                            setEdited={setEditedSettings}
-                            handleBlur={handleSettingBlur}
-                            isEditableState={isEditableState}
-                            setIsEditableState={setIsEditableState}
+                            id="advanced_settings_card_plugin_slot"
+                            pluginProps={{
+                              settingData,
+                              name: settingName,
+                              showSaveSettingsPrompt,
+                              saveSettingsPrompt,
+                              setEdited: setEditedSettings,
+                              handleBlur: handleSettingBlur,
+                              isEditableState,
+                              setIsEditableState,
+                            }}
                           />
                         );
                       })}
@@ -231,12 +249,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <div className="settings-sidebar-top">
-                <SettingsSidebar
-                  courseId={courseId}
-                  proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
-                />
-              </div>
+              <SettingsSidebar
+                courseId={courseId}
+                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+              />
             </Layout.Element>
           </Layout>
         </section>
