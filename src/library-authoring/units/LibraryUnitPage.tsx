@@ -19,7 +19,6 @@ import {
 import { useContainer, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
@@ -31,24 +30,18 @@ export const LibraryUnitPage = () => {
   const {
     libraryId,
     unitId,
-    componentId,
-    collectionId,
   } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!unitId) {
+    throw new Error('unitId is required');
+  }
+
   const {
-    openInfoSidebar,
     sidebarComponentInfo,
     setDefaultTab,
     setHiddenTabs,
   } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
-
-  // Open unit or component sidebar on mount
-  useEffect(() => {
-    // includes componentId to open correct sidebar on page mount from url
-    openInfoSidebar(componentId, collectionId, unitId);
-    // avoid including componentId in dependencies to prevent flicker on closing sidebar.
-    // See below useEffect that clears componentId on closing sidebar.
-  }, [unitId, collectionId]);
 
   useEffect(() => {
     setDefaultTab({
@@ -143,7 +136,7 @@ export const LibraryUnitPage = () => {
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryUnitBlocks />
+            <LibraryUnitBlocks unitId={unitId} />
             <FooterActions
               addContentBtnText={intl.formatMessage(messages.newContentButton)}
               addExistingContentBtnText={intl.formatMessage(messages.addExistingContentButton)}
@@ -156,7 +149,7 @@ export const LibraryUnitPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
+          <LibrarySidebar />
         </div>
       )}
     </div>

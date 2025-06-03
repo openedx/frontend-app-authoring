@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb, Container } from '@openedx/paragon';
@@ -14,7 +13,6 @@ import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { messages, sectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
-import { useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 import { ContainerType } from '../../generic/key-utils';
@@ -24,15 +22,8 @@ export const LibrarySectionPage = () => {
   const intl = useIntl();
   const { libraryId, sectionId } = useLibraryContext();
   const {
-    openInfoSidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
-
-  const { navigateTo } = useLibraryRoutes();
-  // Open subsection sidebar on mount
-  useEffect(() => {
-    openInfoSidebar();
-  }, [sectionId]);
 
   if (!sectionId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -127,7 +118,7 @@ export const LibrarySectionPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
+          <LibrarySidebar />
         </div>
       )}
     </div>

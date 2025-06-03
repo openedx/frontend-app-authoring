@@ -108,7 +108,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
-  const { openUnitInfoSidebar, openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { sidebarComponentInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -148,14 +148,16 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
 
   const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
     const doubleClicked = numberOfClicks > 1;
-    if (insideSection) {
-      navigateTo({ subsectionId: child.originalId, doubleClicked });
-      openInfoSidebar();
-    } else if (insideSubsection) {
-      navigateTo({ unitId: child.originalId, doubleClicked });
-      openUnitInfoSidebar(child.originalId);
+    if (!doubleClicked) {
+      navigateTo({ selectedItemId: child.originalId });
+    } else {
+      if (insideSection) {
+        navigateTo({ subsectionId: child.originalId });
+      } else if (insideSubsection) {
+        navigateTo({ unitId: child.originalId });
+      }
     }
-  }, [navigateTo, openInfoSidebar]);
+  }, [navigateTo]);
 
   const getComponentStyle = useCallback((childId: string) => {
     const style: { marginBottom: string, borderRadius: string, outline?: string } = {

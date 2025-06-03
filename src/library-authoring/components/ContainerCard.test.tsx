@@ -71,14 +71,14 @@ describe('<ContainerCard />', () => {
   it('should render the card with title', () => {
     render(<ContainerCard hit={getContainerHitSample()} />);
 
-    expect(screen.queryByText('unit Display Formated Name')).toBeInTheDocument();
+    expect(screen.getByText('unit Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('2')).toBeInTheDocument(); // Component count
   });
 
   it('should render published content', () => {
     render(<ContainerCard hit={getContainerHitSample()} />, true);
 
-    expect(screen.queryByText('Published unit Display Name')).toBeInTheDocument();
+    expect(screen.getByText('Published unit Display Name')).toBeInTheDocument();
     expect(screen.queryByText('1')).toBeInTheDocument(); // Published Component Count
   });
 

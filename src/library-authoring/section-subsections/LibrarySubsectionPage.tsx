@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import {
@@ -16,7 +16,6 @@ import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { messages, subsectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
-import { useLibraryRoutes } from '../routes';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
 import { ContainerType } from '../../generic/key-utils';
@@ -57,15 +56,8 @@ export const LibrarySubsectionPage = () => {
   const intl = useIntl();
   const { libraryId, subsectionId } = useLibraryContext();
   const {
-    openInfoSidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
-
-  const { navigateTo } = useLibraryRoutes();
-  // Open subsection sidebar on mount
-  useEffect(() => {
-    openInfoSidebar();
-  }, [subsectionId]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   // fetch subsectionData from index as it includes its parent sections as well.
@@ -177,7 +169,7 @@ export const LibrarySubsectionPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
+          <LibrarySidebar />
         </div>
       )}
     </div>

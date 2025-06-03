@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -108,9 +107,8 @@ const LibraryCollectionPage = () => {
     showOnlyPublished,
     extraFilter: contextExtraFilter,
     setCollectionId,
-    componentId,
   } = useLibraryContext();
-  const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const {
     data: collectionData,
@@ -118,10 +116,6 @@ const LibraryCollectionPage = () => {
     isError,
     error,
   } = useCollection(libraryId, collectionId);
-
-  useEffect(() => {
-    openInfoSidebar(componentId, collectionId, '');
-  }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 

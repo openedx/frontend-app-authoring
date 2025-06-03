@@ -14,6 +14,7 @@ import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
 import messages from './messages';
 import { ComponentPicker } from '../../library-authoring/component-picker';
+import { ContentType } from '../../library-authoring/routes';
 import { messageTypes } from '../constants';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { useEventListener } from '../../generic/hooks';
@@ -228,11 +229,8 @@ const AddComponent = ({
         >
           <ComponentPicker
             showOnlyPublished
-            extraFilter={[
-              'NOT block_type = "unit"',
-              'NOT block_type = "subsection"',
-              'NOT block_type = "section"',
-            ]}
+            extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+            visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
             componentPickerMode={isAddLibraryContentModalOpen ? 'single' : 'multiple'}
             onComponentSelected={handleLibraryV2Selection}
             onChangeComponentSelection={setSelectedComponents}

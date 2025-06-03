@@ -31,6 +31,7 @@ import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
+import { ContentType } from './library-authoring/routes';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -68,11 +69,22 @@ const App = () => {
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
           path="/component-picker"
-          element={<ComponentPicker extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+              visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
+            />
+          )}
         />
         <Route
           path="/component-picker/multiple"
-          element={<ComponentPicker componentPickerMode="multiple" extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              componentPickerMode="multiple"
+              extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+              visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
+            />
+          )}
         />
         <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />

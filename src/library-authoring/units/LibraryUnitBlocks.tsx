@@ -58,7 +58,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
-  const { openComponentInfoSidebar, setSidebarAction } = useSidebarContext();
+  const { setSidebarAction } = useSidebarContext();
 
   const updateMutation = useUpdateXBlockFields(block.originalId);
 
@@ -85,8 +85,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
 
   /* istanbul ignore next */
   const jumpToManageTags = () => {
-    navigateTo({ componentId: block.originalId });
-    openComponentInfoSidebar(block.originalId);
+    navigateTo({ selectedItemId: block.originalId });
     scheduleJumpToTags();
   };
 
@@ -136,23 +135,17 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
   const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
 
-  const {
-    unitId, collectionId, componentId, openComponentEditor,
-  } = useLibraryContext();
-
-  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openComponentEditor } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
-    navigateTo({ componentId: block.originalId });
+    navigateTo({ selectedItemId: block.originalId });
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
       openComponentEditor(block.originalId);
-    } else {
-      // open current component sidebar
-      openInfoSidebar(block.originalId, collectionId, unitId);
     }
-  }, [block, collectionId, unitId, navigateTo, canEditComponent, openComponentEditor, openInfoSidebar]);
+  }, [block, navigateTo, canEditComponent, openComponentEditor]);
 
   useEffect(() => {
     if (block.isNew) {
@@ -177,7 +170,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
       };
     }
     return {};
-  }, [isDragging, componentId, block]);
+  }, [isDragging, block]);
 
   return (
     <IframeProvider>
@@ -217,20 +210,21 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
 };
 
 interface LibraryUnitBlocksProps {
+  unitId: string;
   /** set to true if it is rendered as preview
   * This disables drag and drop, title edit and menus
   */
   readOnly?: boolean;
 }
 
-export const LibraryUnitBlocks = ({ readOnly: componentReadOnly }: LibraryUnitBlocksProps) => {
+export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadataWithUniqueId[]>([]);
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { unitId, readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
 
   const readOnly = componentReadOnly || libraryReadOnly;
 

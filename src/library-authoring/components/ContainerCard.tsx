@@ -16,7 +16,7 @@ import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
@@ -36,7 +36,6 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   const { libraryId, collectionId } = useLibraryContext();
   const {
     sidebarComponentInfo,
-    openUnitInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
@@ -65,18 +64,13 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   });
 
   const showManageCollections = useCallback(() => {
-    if ([ContainerType.Section, ContainerType.Subsection, ContainerType.Unit].includes(containerType)) {
-      navigateTo({ [`${containerType}Id`]: containerKey });
-      openUnitInfoSidebar(containerKey);
-      scheduleJumpToCollection();
-    }
-  }, [
-    scheduleJumpToCollection,
-    navigateTo,
-    openUnitInfoSidebar,
-    containerKey,
-    containerType,
-  ]);
+    navigateTo({ selectedItemId: containerKey });
+    scheduleJumpToCollection();
+  }, [scheduleJumpToCollection, navigateTo, containerKey]);
+
+  const openContainer = useCallback(() => {
+    navigateTo({[`${containerType}Id`]: containerKey });
+  }, [navigateTo, containerKey]);
 
   return (
     <>
@@ -91,10 +85,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
           data-testid="container-card-menu-toggle"
         />
         <Dropdown.Menu>
-          <Dropdown.Item
-            // required to set container ID in library context
-            onClick={() => navigateTo({ [`${containerType}Id`]: containerKey, doubleClicked: true })}
-          >
+          <Dropdown.Item onClick={openContainer}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
           <Dropdown.Item onClick={confirmDelete}>
@@ -177,9 +168,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const {
-    setSectionId, setSubsectionId, setUnitId, showOnlyPublished,
-  } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext();
   const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
@@ -205,39 +194,44 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
-    && sidebarComponentInfo.id === containerKey;
+  const selected = sidebarComponentInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
-  const openContainer = useCallback((e?: React.MouseEvent) => {
-    switch (itemType) {
-      case ContainerType.Unit:
-        openUnitInfoSidebar(containerKey);
-        if (!componentPickerMode) {
-          navigateTo({ unitId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
-        } else {
-          setUnitId(containerKey);
+  const selectContainer = useCallback((e?: React.MouseEvent) => {
+    const doubleClicked = (e?.detail || 0) > 1;
+    if (componentPickerMode) {
+      switch (itemType) {
+        case ContainerType.Unit:
+          openUnitInfoSidebar(containerKey);
+          break;
+        case ContainerType.Section:
+          // TODO: open section sidebar
+          break;
+        case ContainerType.Subsection:
+          // TODO: open subsection sidebar
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (!doubleClicked) {
+        navigateTo({ selectedItemId: containerKey });
+      } else {
+        switch (itemType) {
+          case ContainerType.Unit:
+            navigateTo({ unitId: containerKey });
+            break;
+          case ContainerType.Section:
+            navigateTo({ sectionId: containerKey });
+            break;
+          case ContainerType.Subsection:
+            navigateTo({ subsectionId: containerKey });
+            break;
+          default:
+            break;
         }
-        break;
-      case ContainerType.Section:
-        // TODO: open section sidebar
-        if (!componentPickerMode) {
-          navigateTo({ sectionId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
-        } else {
-          setSectionId(containerKey);
-        }
-        break;
-      case ContainerType.Subsection:
-        // TODO: open subsection sidebar
-        if (!componentPickerMode) {
-          navigateTo({ subsectionId: containerKey, doubleClicked: (e?.detail || 0) > 1 });
-        } else {
-          setSubsectionId(containerKey);
-        }
-        break;
-      default:
-        break;
+      }
     }
   }, [containerKey, itemType, openUnitInfoSidebar, navigateTo]);
 
@@ -262,7 +256,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
-      onSelect={openContainer}
+      onSelect={selectContainer}
       selected={selected}
     />
   );

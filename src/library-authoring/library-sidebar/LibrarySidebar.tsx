@@ -17,10 +17,6 @@ import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
 
-interface LibrarySidebarProps {
-  onSidebarClose?: () => void;
-}
-
 /**
  * Sidebar container for library pages.
  *
@@ -30,7 +26,7 @@ interface LibrarySidebarProps {
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
+const LibrarySidebar = () => {
   const intl = useIntl();
   const {
     sidebarAction,
@@ -71,11 +67,6 @@ const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
   const buildBody = () : React.ReactNode => bodyComponentMap[sidebarComponentInfo?.type || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarComponentInfo?.type || 'unknown'];
 
-  const handleSidebarClose = () => {
-    closeLibrarySidebar();
-    onSidebarClose?.();
-  };
-
   return (
     <Stack gap={4} className="p-3 text-primary-700">
       <Stack direction="horizontal" className="d-flex justify-content-between">
@@ -85,7 +76,7 @@ const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
           src={Close}
           iconAs={Icon}
           alt={intl.formatMessage(messages.closeButtonAlt)}
-          onClick={handleSidebarClose}
+          onClick={closeLibrarySidebar}
           size="inline"
         />
       </Stack>
