@@ -1,24 +1,19 @@
-import { useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
+import { useContext } from 'react';
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContainer, useUpdateContainer } from '../data/apiHooks';
 import messages from './messages';
 
-const ContainerInfoHeader = () => {
+interface EditableTitleProps {
+  containerId: string;
+}
+
+export const ContainerEditableTitle = ({ containerId }: EditableTitleProps) => {
   const intl = useIntl();
 
   const { readOnly } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
-
-  const containerId = sidebarComponentInfo?.id;
-  // istanbul ignore if: this should never happen
-  if (!containerId) {
-    throw new Error('containerId is required');
-  }
 
   const { data: container } = useContainer(containerId);
 
@@ -36,6 +31,7 @@ const ContainerInfoHeader = () => {
     }
   };
 
+  // istanbul ignore if: this should never happen
   if (!container) {
     return null;
   }
@@ -45,9 +41,6 @@ const ContainerInfoHeader = () => {
       onSave={handleSaveDisplayName}
       text={container.displayName}
       readOnly={readOnly}
-      textClassName="font-weight-bold m-1.5"
     />
   );
 };
-
-export default ContainerInfoHeader;

@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
-import { getContainerTypeFromId } from '../../../generic/key-utils';
+import { getBlockType } from '../../../generic/key-utils';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
@@ -18,6 +18,8 @@ export enum SidebarBodyComponentId {
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
   UnitInfo = 'unit-info',
+  SectionInfo = 'section-info',
+  SubsectionInfo = 'subsection-info',
 }
 
 export const COLLECTION_INFO_TABS = {
@@ -190,7 +192,12 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      const containerType = getContainerTypeFromId(selectedItemId);
+      let containerType: undefined | string;
+      try {
+        containerType = getBlockType(selectedItemId);
+      } catch {
+        // ignore
+      }
       if (containerType === 'unit') {
         openUnitInfoSidebar(selectedItemId);
       } else if (containerType === 'section') {

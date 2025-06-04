@@ -6,7 +6,6 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
-import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -20,14 +19,13 @@ import { useLibraryRoutes } from '../routes';
 /** Common modal to create section, subsection or unit in library */
 const CreateContainerModal = () => {
   const intl = useIntl();
-  const navigate = useNavigate();
   const {
     collectionId,
     libraryId,
     createContainerModalType,
     setCreateContainerModalType,
   } = useLibraryContext();
-  const { insideCollection } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
   const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const { showToast } = React.useContext(ToastContext);
@@ -89,14 +87,14 @@ const CreateContainerModal = () => {
         await updateItemsMutation.mutateAsync([container.id]);
       }
       // Navigate to the new container
-      navigate(`/library/${libraryId}/${containerType}/${container.id}`);
+      navigateTo({ [`${containerType}Id`]: container.id });
       showToast(labels.successMsg);
     } catch (error) {
       showToast(labels.errorMsg);
     } finally {
       handleClose();
     }
-  }, [containerType, labels, handleClose]);
+  }, [containerType, labels, handleClose, navigateTo]);
 
   return (
     <ModalDialog

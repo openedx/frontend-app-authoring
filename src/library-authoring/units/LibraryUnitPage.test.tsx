@@ -187,6 +187,7 @@ describe('<LibraryUnitPage />', () => {
 
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
+    expect((await screen.findAllByText('Test Unit')).length).toBeGreaterThan(1);
     const component = await screen.findByText('text block 0');
     // Card is 3 levels up the component name div
     userEvent.click(component.parentElement!.parentElement!.parentElement!);
