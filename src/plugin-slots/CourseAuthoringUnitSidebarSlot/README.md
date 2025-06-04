@@ -1,17 +1,27 @@
 # CourseAuthoringUnitSidebarSlot
 
-### Slot ID: `org.openedx.frontend.authoring.course_unit_sidebar.v1`
+The component currently holds 2 versions of the slot. Version 2 wraps version 1 and hence, is a
+superset of version 1.
+
+### Slot IDs:
+* `org.openedx.frontend.authoring.course_unit_sidebar.v2`
+* `org.openedx.frontend.authoring.course_unit_sidebar.v1`
 
 ### Slot ID Aliases
-* `course_authoring_unit_sidebar_slot`
+* `org.openedx.frontend.authoring.course_unit_sidebar.v1` - `course_authoring_unit_sidebar_slot`
 
 ### Plugin Props:
+
+#### Version 1
 
 * `courseId` - String.
 * `blockId` - String. The usage id of the current unit being viewed / edited.
 * `unitTitle` - String. The name of the current unit being viewed / edited.
 * `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
 * `readOnly` - Boolean. True if the user should not be able to edit the contents of the unit.
+
+#### Extra props in Version 2
+
 * `isUnitVerticalType` - Boolean. If the unit category is `vertical`.
 * `isSplitTestType` - Boolean. If the unit category is `split_test`.
 
@@ -31,7 +41,7 @@ import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 
 const config = {
   pluginSlots: {
-    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v2': {
       keepDefault: true,
       plugins: [
         {
@@ -65,11 +75,11 @@ const ProblemBlocks = ({unitTitle, xBlocks}) => (
       }
     </ul>
   </>
-); 
+);
 
 const config = {
   pluginSlots: {
-    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v2': {
       keepDefault: true,
       plugins: [
         {
