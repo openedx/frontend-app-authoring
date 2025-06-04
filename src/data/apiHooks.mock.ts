@@ -10,7 +10,7 @@ import * as apiHooks from './apiHooks';
  *    .reply(200, { useNewCourseOutlinePage: true }); // etc
  */
 export function mockWaffleFlags(overrides: Partial<Record<WaffleFlagName, boolean>> = {}) {
-  jest.spyOn(apiHooks, 'useWaffleFlags').mockImplementation(() => ({
+  return jest.spyOn(apiHooks, 'useWaffleFlags').mockImplementation(() => ({
     id: undefined,
     isLoading: false,
     isError: false,
