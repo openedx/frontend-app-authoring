@@ -107,6 +107,7 @@
       padding: 1rem;
       border-radius: 1rem;
       border: 1px solid #ced4da;
+      height: 100%;
     }
 
     // Assignment header styles
@@ -220,100 +221,111 @@
 }
 
 // Course export styles
-.export-warning {
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: solid 1px #ffdc9a;
-  background-color: #fff8eb;
-}
+.export {
 
-.export-card {
-  padding: 16px 16px 24px 15px;
-  border-radius: 12px;
-  background-color: #f4f7ff;
+  .setting-items {
+    article {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ced4da;
+      height: 100%;
+    }
+  }
 
-  .card,
-  .collapsible-card,
-  .collapsible-card-lg {
+  .export-warning {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: solid 1px #ffdc9a;
+    background-color: #fff8eb;
+  }
+
+  .export-card {
+    padding: 16px 16px 24px 15px;
+    border-radius: 12px;
     background-color: #f4f7ff;
-    margin-top: -1rem !important;
-  }
 
-  .course-card-header {
-    margin-top: -1rem !important;
-    margin-bottom: 1rem !important;
-    padding-left: 0rem !important;
-    padding-right: 0rem !important;
-  }
-
-  .course-card-section {
-    padding-left: 0rem !important;
-    padding-right: 0rem !important;
-  }
-
-  .course-card-section::after {
-    content: "";
-    display: block;
-    height: 1px;
-    background-color: #ced4da;
-    margin-top: 1.5rem;
-  }
-
-  .course-stepper {
-    display: flex;
-    justify-content: space-between;
-    // margin: 0rem -7rem 0rem -1rem;
-
-    .course-stepper__step {
-      flex-direction: column;
-
-      &:not(:last-child) {
-        border-bottom: transparent !important;
-      }
+    a {
+      margin-left: 0rem !important;
     }
 
-    .course-stepper__step-icon {
-      margin-left: 2rem;
+    .card,
+    .collapsible-card,
+    .collapsible-card-lg {
+      background-color: #f4f7ff;
+      margin-top: -1rem !important;
+    }
 
-      .course-stepper__icon-line {
-        display: block;
-        height: 4px;
-        width: 100%;
-        background: #2cc84d;
-        margin-left: 3rem;
-        margin-right: 8px;
-        border-radius: 2px;
+    .course-card-header {
+      margin-top: -1rem !important;
+      margin-bottom: 1rem !important;
+      padding-left: 0rem !important;
+      padding-right: 0rem !important;
+    }
+
+    .course-card-section {
+      padding-left: 0rem !important;
+      padding-right: 0rem !important;
+    }
+
+    .course-card-section::after {
+      content: "";
+      display: block;
+      height: 1px;
+      background-color: #ced4da;
+      margin-top: 1.5rem;
+    }
+
+    .course-stepper {
+      display: flex;
+      justify-content: space-between;
+      // margin: 0rem -7rem 0rem -1rem;
+
+      .course-stepper__step {
+        flex-direction: column;
+
+        &:not(:last-child) {
+          border-bottom: transparent !important;
+        }
       }
 
-      & svg {
-        color: #2cc84d;
+      .course-stepper__step-icon {
+        margin-left: 2rem;
+
+        .course-stepper__icon-line {
+          display: block;
+          height: 4px;
+          width: 100%;
+          background: #2cc84d;
+          margin-left: 3rem;
+          margin-right: 8px;
+          border-radius: 2px;
+        }
+
+        & svg {
+          color: #2cc84d;
+        }
       }
     }
   }
-}
 
-.done {
-  width: 100% !important;
-}
+  .done {
+    width: 100% !important;
+  }
 
-.course-stepper .course-stepper__step .course-stepper__step-title {
-  color: #2cc84d !important;
-  width: min-content;
-}
+  .course-stepper .course-stepper__step .course-stepper__step-title {
+    color: #2cc84d !important;
+    width: min-content;
+  }
 
-.course-stepper__step-description {
-  display: none;
-}
+  .course-stepper__step-description {
+    display: none;
+  }
 
-.ml-5\.5 {
-  margin-left: 0rem !important;
-}
-
-.small {
-  .row {
+  footer {
     background-color: #f5f5f5;
     margin: 0rem;
-    padding: 1rem 0rem;
+    padding: 1rem;
     border-radius: 1rem;
   }
 }
