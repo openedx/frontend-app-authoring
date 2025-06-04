@@ -324,7 +324,7 @@
 .advanced-settings {
 
   .setting-header {
-    display: none !important;
+    margin-top: 0 !important;
   }
 
   .setting-items {
@@ -434,6 +434,163 @@
     .border-bottom {
       display: none !important;
     }
+  }
+}
+
+.alert-toast {
+  width: auto !important;
+}
+
+.certificates {
+  article {
+    @include card-style1;
+    padding: 1rem;
+
+    .certificates-custom-sub-header-title {
+
+      .border-bottom {
+        margin-bottom: 0 !important;
+      }
+
+      .sub-header {
+        .sub-header-title {
+          @include sub-header-title-style1;
+          padding-top: 0.5rem;
+        }
+
+        .sub-header-actions {
+          margin-bottom: 0 !important;
+          
+          button, a {
+            padding: 0.4rem 1.5rem;
+            font-size: 1rem !important;
+          }
+        }
+      }
+      
+    }
+
+    .certificates-custom-header {
+      margin-bottom: 1rem;
+
+      hr {
+        margin-left: -1rem !important;
+        margin-right: -1rem !important;
+      }
+    }
+
+    .certificates-custom-sub-header {
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      @include card-style3;
+      background-color: var(--bg-body) !important;
+    }
+
+    .certificates-card-form {
+
+      .pgn__vstack {
+        gap: 0 !important;
+      }
+
+      .section-title {
+        @include section-title-style1;
+      }
+
+      label {
+        @include section-title-style3;
+      }
+
+      .pgn__form-control-description {
+        font-size: 14px !important;
+        margin-top: 0rem !important;
+      }
+
+      .certificate-details {
+        padding-bottom: 1rem !important;
+        margin-bottom: 1rem !important;
+        border-bottom: 1px solid var(--border-color);
+        hr {
+          display: none !important;
+        }
+
+        .section-title {
+          @include section-title-style1;
+        }
+
+        .certificate-details__info-paragraph {
+          strong {
+            @include section-title-style2;
+          }
+          margin-bottom: 0.5rem !important;
+          @include section-title-style3;
+        }
+
+        // .certificate-details__info {}
+      }
+
+      .pgn__card-footer {
+        button {
+          padding: 0.4rem 1.5rem;
+          font-size: 1rem !important;
+        }
+      }
+    }
+
+    .certificate-signatories {
+      hr {
+        display: none !important;
+      }
+
+      p {
+        @include section-title-style3;
+        color: var(--text-secondary) !important;
+      }
+
+      .signatory-form {
+       @include card-style1;
+       background-color: var(--bg-surface) !important;
+       padding: 1rem !important;
+       margin-bottom: 1rem !important;
+
+       .section-title {
+        margin-bottom: -1rem !important;
+       }
+
+       .pgn__stack-gap--2 {
+         button {
+          margin-top: -0.5rem !important;
+          padding: 0.4rem 1.5rem;
+          font-size: 1rem !important;
+        }
+       }
+      }
+
+      .btn-outline-primary {
+        padding: 0.4rem 1rem;
+        font-size: 1rem !important;
+        width: fit-content !important;
+        margin-top: 0 !important;
+      }
+
+      .signatory {
+        @include card-style1;
+        background-color: var(--bg-surface) !important;
+
+        .signatory__text {
+          b {
+            @include section-title-style2;
+          }
+          @include section-title-style3;
+          color: var(--text-primary) !important;
+        }
+      }
+    }
+  }
+
+  .help-sidebar-about {
+    margin-bottom: 1rem !important;
   }
 }
 

@@ -334,6 +334,42 @@ const config = {
             ],
           },
 
+          certificates_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "certificates-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div className="certificates-custom-header">
+                                <div className="certificates-custom-sub-header">
+                                    <div className="certificates-custom-sub-header-title">
+                                        <SubHeader
+                                            title={props.title}
+                                            headerActions={props.headerActions}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+
+                            </div>
+                        ),
+                    },
+                }
+            ],
+        },
+
+        certificates_header_hide_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                }
+            ],
+        },
+
         grading_header_plugin_slot: {
             plugins: [
                 {
