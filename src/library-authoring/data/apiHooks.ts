@@ -61,12 +61,10 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
-  allContainers: (libraryId?: string) => {
-    return [
-      ...libraryAuthoringQueryKeys.contentLibraryContent(libraryId),
-      'container',
-    ];
-  },
+  allContainers: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.contentLibraryContent(libraryId),
+    'container',
+  ],
   container: (containerId?: string) => {
     const baseKey = containerId
       ? libraryAuthoringQueryKeys.allContainers(getLibraryId(containerId))
