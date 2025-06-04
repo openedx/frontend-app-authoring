@@ -45,7 +45,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow, useReactMarkdownEditor } = useWaffleFlags(); // TODO: should we pass in courseId ?
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
@@ -266,7 +266,6 @@ const AddComponent = ({
               courseId={courseId}
               blockType={blockType}
               blockId={newBlockId}
-              isMarkdownEditorEnabledForCourse={useReactMarkdownEditor}
               studioEndpointUrl={getConfig().STUDIO_BASE_URL}
               lmsEndpointUrl={getConfig().LMS_BASE_URL}
               onClose={closeXBlockEditorModal}

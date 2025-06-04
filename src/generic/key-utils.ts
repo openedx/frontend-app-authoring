@@ -27,6 +27,11 @@ export function getLibraryId(usageKey: string): string {
   throw new Error(`Invalid usageKey: ${usageKey}`);
 }
 
+/** Check if this is a course key */
+export function isCourseKey(learningContextKey: string | undefined | null): learningContextKey is string {
+  return typeof learningContextKey === 'string' && learningContextKey.startsWith('course-v1:');
+}
+
 /** Check if this is a V2 library key. */
 export function isLibraryKey(learningContextKey: string | undefined | null): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('lib:');
