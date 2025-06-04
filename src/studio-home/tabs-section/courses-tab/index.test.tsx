@@ -1,11 +1,10 @@
-import React from 'react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-
+import {
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+} from '../../../testUtils';
 import { COURSE_CREATOR_STATES } from '../../../constants';
-import initializeStore from '../../../store';
 import { studioHomeMock } from '../../__mocks__';
 import { initialState } from '../../factories/mockApiResponses';
 
@@ -31,42 +30,27 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
   };
 
   // Initialize the store with the custom initial state
-  const store = initializeStore(customInitialState);
+  const { reduxStore: store } = initializeMocks({ initialState: customInitialState });
 
   return {
     ...render(
-      <AppProvider store={store}>
-        <IntlProvider locale="en" messages={{}}>
-          <CoursesTab
-            coursesDataItems={studioHomeMock.courses}
-            showNewCourseContainer={showNewCourseContainer}
-            onClickNewCourse={onClickNewCourse}
-            isShowProcessing={isShowProcessing}
-            isLoading={isLoading}
-            isFailed={isFailed}
-            numPages={numPages}
-            coursesCount={coursesCount}
-            {...overrideProps}
-          />
-        </IntlProvider>
-      </AppProvider>,
+      <CoursesTab
+        coursesDataItems={studioHomeMock.courses}
+        showNewCourseContainer={showNewCourseContainer}
+        onClickNewCourse={onClickNewCourse}
+        isShowProcessing={isShowProcessing}
+        isLoading={isLoading}
+        isFailed={isFailed}
+        numPages={numPages}
+        coursesCount={coursesCount}
+        {...overrideProps}
+      />,
     ),
     store,
   };
 };
 
 describe('<CoursesTab />', () => {
-  beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-  });
-
   it('should render correctly', async () => {
     renderComponent();
     const coursesPaginationInfo = screen.getByTestId('pagination-info');

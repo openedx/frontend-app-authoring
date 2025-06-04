@@ -1,4 +1,4 @@
-import { useState, FC } from 'react';
+import { FC } from 'react';
 import {
   Collapsible,
   Icon,
@@ -14,6 +14,11 @@ import lockedIcon from './lockedIcon';
 import ManualIcon from './manualIcon';
 
 interface Props {
+  index: number;
+  handleToggle: Function;
+  isOpen: boolean;
+  hasPrevAndIsOpen: boolean;
+  hasNextAndIsOpen: boolean;
   title: string;
   children: React.ReactNode;
   brokenNumber: number;
@@ -23,10 +28,19 @@ interface Props {
 }
 
 const SectionCollapsible: FC<Props> = ({
-  title, children, brokenNumber = 0, manualNumber = 0, lockedNumber = 0, className = '',
+  index,
+  handleToggle,
+  isOpen,
+  hasPrevAndIsOpen,
+  hasNextAndIsOpen,
+  title,
+  children,
+  brokenNumber,
+  manualNumber,
+  lockedNumber,
+  className,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const styling = 'card-lg rounded-sm shadow-outline';
+  const styling = `card-lg open-section-rounded ${hasPrevAndIsOpen ? 'closed-section-rounded-top' : ''} ${hasNextAndIsOpen ? 'closed-section-rounded-bottom' : ''}`;
   const collapsibleTitle = (
     <div className={className}>
       <div className="section-collapsible-header-item">
@@ -34,18 +48,18 @@ const SectionCollapsible: FC<Props> = ({
         <strong>{title}</strong>
       </div>
       <div className="section-collapsible-header-actions">
-        <span>
+        <div className="section-collapsible-header-action-item">
           <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} />
-          {brokenNumber}
-        </span>
-        <span>
+          <p>{brokenNumber}</p>
+        </div>
+        <div className="section-collapsible-header-action-item">
           <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} />
-          {manualNumber}
-        </span>
-        <span>
+          <p>{manualNumber}</p>
+        </div>
+        <div className="section-collapsible-header-action-item">
           <CustomIcon icon={lockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} />
-          {lockedNumber}
-        </span>
+          <p>{lockedNumber}</p>
+        </div>
       </div>
     </div>
   );
@@ -63,9 +77,9 @@ const SectionCollapsible: FC<Props> = ({
         iconWhenClosed=""
         iconWhenOpen=""
         open={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
+        onToggle={() => handleToggle(index)}
       >
-        <Collapsible.Body>{children}</Collapsible.Body>
+        <Collapsible.Body className="section-collapsible-item-body">{children}</Collapsible.Body>
       </Collapsible>
     </div>
   );

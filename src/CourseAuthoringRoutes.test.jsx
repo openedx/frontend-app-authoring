@@ -1,7 +1,5 @@
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
-import { executeThunk } from './utils';
 import { getApiWaffleFlagsUrl } from './data/api';
-import { fetchWaffleFlags } from './data/thunks';
 import {
   screen, initializeMocks, render, waitFor,
 } from './testUtils';
@@ -11,7 +9,6 @@ const pagesAndResourcesMockText = 'Pages And Resources';
 const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
 const customPagesMockText = 'Custom Pages';
-let store;
 const mockComponentFn = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -51,12 +48,10 @@ jest.mock('./custom-pages/CustomPages', () => (props) => {
 
 describe('<CourseAuthoringRoutes>', () => {
   beforeEach(async () => {
-    const { axiosMock, reduxStore } = initializeMocks();
-    store = reduxStore;
+    const { axiosMock } = initializeMocks();
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {});
-    await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
 
   it('renders the PagesAndResources component when the pages and resources route is active', async () => {
