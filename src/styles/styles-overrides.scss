@@ -601,6 +601,13 @@
     .card {
       @include card-style3;
       background-color: var(--bg-body) !important;
+
+      .pgn__action-row {
+        button {
+          padding: 0.4rem 1.5rem;
+          font-size: 1rem !important;
+        }
+      }
     }
 
     .certificates-card-form {
@@ -618,8 +625,11 @@
       }
 
       .pgn__form-control-description {
-        font-size: 14px !important;
         margin-top: 0rem !important;
+
+        span {
+          font-size: 12px !important;
+        }
       }
 
       .certificate-details {
@@ -692,6 +702,7 @@
       .signatory {
         @include card-style1;
         background-color: var(--bg-surface) !important;
+        margin-bottom: 1rem !important;
 
         .signatory__text {
           b {
