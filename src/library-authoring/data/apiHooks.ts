@@ -9,10 +9,10 @@ import {
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { getLibraryId } from '../../generic/key-utils';
+import { ContainerType, getBlockType, getLibraryId } from '../../generic/key-utils';
 import * as api from './api';
 import { VersionSpec } from '../LibraryBlock';
-import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
+import { ContainerHit, ContentHit, useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -613,6 +613,7 @@ export const useUpdateContainer = (containerId: string) => {
   const libraryId = getLibraryId(containerId);
   const queryClient = useQueryClient();
   const containerQueryKey = libraryAuthoringQueryKeys.container(containerId);
+  const { hits } = useContentFromSearchIndex([containerId]);
   return useMutation({
     mutationFn: (data: api.UpdateContainerDataRequest) => api.updateContainerMetadata(containerId, data),
     onMutate: (data) => {
@@ -632,6 +633,29 @@ export const useUpdateContainer = (containerId: string) => {
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: containerQueryKey });
+      // invalidate all parent container children query that container this container as child
+      // to see upated name
+      const containerType = getBlockType(containerId);
+      if (containerType === ContainerType.Unit) {
+        const containerData = (hits as ContentHit[])?.[0];
+        containerData?.units?.key?.map((key) => {
+          queryClient.invalidateQueries({
+            queryKey: libraryAuthoringQueryKeys.containerChildren(key),
+          });
+        })
+      } else if ([ContainerType.Subsection, ContainerType.Section].includes(containerType as ContainerType)) {
+        const containerData = (hits as ContainerHit[])?.[0];
+        containerData?.sections?.key?.map((key) => {
+          queryClient.invalidateQueries({
+            queryKey: libraryAuthoringQueryKeys.containerChildren(key),
+          });
+        })
+        containerData?.subsections?.key?.map((key) => {
+          queryClient.invalidateQueries({
+            queryKey: libraryAuthoringQueryKeys.containerChildren(key),
+          });
+        })
+      }
     },
   });
 };

@@ -5,14 +5,12 @@ import {
 import {
   ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
-import { useQueryClient } from '@tanstack/react-query';
 import { Description } from '@openedx/paragon/icons';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  libraryAuthoringQueryKeys,
   useContainerChildren,
   useUpdateContainer,
   useUpdateContainerChildren,
@@ -41,11 +39,10 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
 }
 
-const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId);
-  const queryClient = useQueryClient();
   const { showOnlyPublished } = useLibraryContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -54,10 +51,6 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
-      // invalidate parent container children query to see upated name
-      queryClient.invalidateQueries({
-        queryKey: libraryAuthoringQueryKeys.containerChildren(containerKey),
-      });
     } catch (err) {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
       throw err;
