@@ -32,11 +32,11 @@ export async function editUnitDisplayName(unitId, displayName) {
 }
 
 /**
- * Get an object containing course section vertical data.
+ * Fetch vertical block data from the container_handler endpoint.
  * @param {string} unitId
  * @returns {Promise<Object>}
  */
-export async function getCourseSectionVerticalData(unitId) {
+export async function getVerticalData(unitId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseSectionVerticalApiUrl(unitId));
 
