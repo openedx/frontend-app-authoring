@@ -137,6 +137,20 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(await screen.findByText(`${childType} block 2`)).toBeInTheDocument();
     });
 
+    it(`shows ${cType} data with no children`, async () => {
+      const cId = cType === ContainerType.Section
+        ? mockGetContainerMetadata.sectionIdEmpty
+        : mockGetContainerMetadata.subsectionIdEmpty;
+      renderLibrarySectionPage(cId, undefined, cType);
+      expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+      // Unit title
+      expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
+      // unit info button
+      expect(await screen.findByRole('button', { name: new RegExp(`${cType} Info`, 'i') })).toBeInTheDocument();
+      // check all children components are rendered.
+      expect(await screen.findByText(`This ${cType} is empty`)).toBeInTheDocument();
+    });
+
     it(`can rename ${cType}`, async () => {
       const cId = cType === ContainerType.Section
         ? mockGetContainerMetadata.sectionId

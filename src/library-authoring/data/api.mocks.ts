@@ -487,8 +487,10 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.containerIdWithCollections:
       return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
     case mockGetContainerMetadata.sectionId:
+    case mockGetContainerMetadata.sectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.sectionData);
     case mockGetContainerMetadata.subsectionId:
+    case mockGetContainerMetadata.subsectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.subsectionData);
     default:
       return Promise.resolve(mockGetContainerMetadata.containerData);
@@ -497,6 +499,8 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
 mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
 mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
+mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
 mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
 mockGetContainerMetadata.subsectionIdError = 'lct:org:lib:section:section_error';
