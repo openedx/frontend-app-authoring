@@ -42,8 +42,6 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
         setPendingSaveText(inputText);
         try {
           await onSave(inputText);
-        } catch {
-          // don't propagate the exception
         } finally {
           // reset the pending save text
           setPendingSaveText(undefined);

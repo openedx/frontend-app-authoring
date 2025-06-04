@@ -53,7 +53,6 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
     } catch (err) {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
-      throw err;
     }
   };
 
