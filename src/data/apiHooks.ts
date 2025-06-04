@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getWaffleFlags, waffleFlagDefaults, type WaffleFlagsStatus } from './api';
+import { getWaffleFlags, waffleFlagDefaults } from './api';
 
 /**
  * Get the waffle flags (which enable/disable specific features). They may
@@ -15,15 +15,18 @@ export const useWaffleFlags = (courseId?: string) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
-  let dataOrDefault: WaffleFlagsStatus | undefined = data;
-  if (dataOrDefault === undefined && courseId) {
+  let globalDefaults: typeof waffleFlagDefaults | undefined;
+  if (data === undefined && courseId) {
     // If course-specific waffle flags were requested, first default to the
     // global (studio-wide) flags until we've loaded the course-specific ones.
-    dataOrDefault = queryClient.getQueryData(['waffleFlags', undefined]);
+    globalDefaults = queryClient.getQueryData(['waffleFlags', undefined]);
   }
-  if (dataOrDefault === undefined) {
-    /** Default flag values to use while loading the actual values */
-    dataOrDefault = { id: courseId, ...waffleFlagDefaults };
-  }
-  return { ...dataOrDefault, isLoading, isError };
+  return {
+    ...waffleFlagDefaults,
+    ...globalDefaults, // Only used if we're requesting course-specific flags.
+    ...data, // the actual flag values loaded from the server
+    id: courseId,
+    isLoading,
+    isError,
+  };
 };
