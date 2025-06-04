@@ -19,15 +19,20 @@ export const CourseAuthoringUnitSidebarSlot = (
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <PluginSlot
-    id="org.openedx.frontend.authoring.course_unit_sidebar.v1"
-    idAliases={['course_authoring_unit_sidebar_slot']}
+    id="org.openedx.frontend.authoring.course_unit_sidebar.v2"
     pluginProps={{
-      blockId, courseId, unitTitle, xBlocks, readOnly,
+      blockId, courseId, unitTitle, xBlocks, readOnly, isUnitVerticalType, isSplitTestType,
     }}
   >
     <Stack gap={3}>
       {isUnitVerticalType && (
-        <>
+        <PluginSlot
+          id="org.openedx.frontend.authoring.course_unit_sidebar.v1"
+          idAliases={['course_authoring_unit_sidebar_slot']}
+          pluginProps={{
+            blockId, courseId, unitTitle, xBlocks, readOnly,
+          }}
+        >
           <Sidebar data-testid="course-unit-sidebar">
             <PublishControls blockId={blockId} />
           </Sidebar>
@@ -39,7 +44,7 @@ export const CourseAuthoringUnitSidebarSlot = (
           <Sidebar data-testid="course-unit-location-sidebar">
             <LocationInfo />
           </Sidebar>
-        </>
+        </PluginSlot>
       )}
       {isSplitTestType && (
         <Sidebar data-testid="course-split-test-sidebar">
