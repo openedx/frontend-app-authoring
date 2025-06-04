@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
-import { getContainerTypeFromId } from '../../../generic/key-utils';
+import { getBlockType } from '../../../generic/key-utils';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
@@ -192,7 +192,10 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      const containerType = getContainerTypeFromId(selectedItemId);
+      let containerType = undefined;
+      try {
+        containerType = getBlockType(selectedItemId);
+      } catch {}
       if (containerType === 'unit') {
         openUnitInfoSidebar(selectedItemId);
       } else if (containerType === 'section') {

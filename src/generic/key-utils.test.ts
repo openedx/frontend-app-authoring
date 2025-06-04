@@ -4,7 +4,6 @@ import {
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
-  getContainerTypeFromId,
   ContainerType,
 } from './key-utils';
 
@@ -14,6 +13,9 @@ describe('component utils', () => {
       ['lb:org:lib:html:id', 'html'],
       ['lb:OpenCraftX:ALPHA:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'html'],
       ['lb:Axim:beta:problem:571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'problem'],
+      ['lct:org:lib:unit:my-unit-9284e2', 'unit'],
+      ['lct:org:lib:section:my-section-9284e2', 'section'],
+      ['lct:org:lib:subsection:my-section-9284e2', 'subsection'],
     ]) {
       it(`returns '${expected}' for usage key '${input}'`, () => {
         expect(getBlockType(input)).toStrictEqual(expected);
@@ -96,18 +98,6 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${libraryKey}' and collection Id '${collectionId}'`, () => {
         expect(buildCollectionUsageKey(libraryKey, collectionId)).toStrictEqual(expected);
-      });
-    }
-  });
-
-  describe('getContainerTypeFromId', () => {
-    for (const [input, expected] of [
-      ['lct:org:lib:unit:my-unit-9284e2', ContainerType.Unit],
-      ['lct:OpenCraftX:ALPHA:my-unit-a3223f', undefined],
-      ['', undefined],
-    ]) {
-      it(`returns '${expected}' for container key '${input}'`, () => {
-        expect(getContainerTypeFromId(input!)).toStrictEqual(expected);
       });
     }
   });
