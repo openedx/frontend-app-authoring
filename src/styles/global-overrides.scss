@@ -86,6 +86,34 @@ body {
   background-color: var(--bg-surface);
 }
 
+@mixin sub-header-title-style1 {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+}
+
+@mixin section-title-style1 {
+  font-size: 18px !important;
+  font-weight: 500 !important; 
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;  
+}
+
+@mixin section-title-style2 {
+  font-size: 16px !important;
+  font-weight: 500 !important; 
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;  
+}
+
+@mixin section-title-style3 {
+  font-size: 16px !important;
+  font-weight: 400 !important; 
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;  
+}
+
 /* Button Styles */
 .btn {
   border-radius: 4px;
