@@ -23,7 +23,7 @@ import {
   useLibraryPasteClipboard,
   useBlockTypesMetadata,
   useAddItemsToCollection,
-  useAddChildrenToContainer,
+  useAddItemsToContainer,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
@@ -268,7 +268,7 @@ const AddContent = () => {
     insideUnit,
   } = useLibraryRoutes();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddChildrenToContainer(unitId);
+  const addComponentsToContainerMutation = useAddItemsToContainer(unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);

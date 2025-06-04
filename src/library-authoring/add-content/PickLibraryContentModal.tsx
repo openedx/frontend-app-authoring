@@ -5,7 +5,7 @@ import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
-import { useAddItemsToCollection, useAddChildrenToContainer } from '../data/apiHooks';
+import { useAddItemsToCollection, useAddItemsToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from '../routes';
 import messages from './messages';
@@ -55,7 +55,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   } = useLibraryRoutes();
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  const updateContainerChildrenMutation = useAddChildrenToContainer(
+  const updateContainerChildrenMutation = useAddItemsToContainer(
     (insideSection && sectionId)
     || (insideSubsection && subsectionId)
     || (insideUnit && unitId)

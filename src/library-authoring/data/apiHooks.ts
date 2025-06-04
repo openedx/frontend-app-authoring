@@ -693,17 +693,17 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 );
 
 /**
- * Use this mutation to add components to a container
+ * Use this mutation to add items to a container
  */
-export const useAddChildrenToContainer = (containerId?: string) => {
+export const useAddItemsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (componentIds: string[]) => {
+    mutationFn: async (itemIds: string[]) => {
       // istanbul ignore if: this should never happen
       if (!containerId) {
         return undefined;
       }
-      return api.addComponentsToContainer(containerId, componentIds);
+      return api.addComponentsToContainer(containerId, itemIds);
     },
     onSettled: () => {
       // istanbul ignore if: this should never happen
