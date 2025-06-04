@@ -55,7 +55,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      <PluginSlot id="course_outline_header_plugin_slot">
+      <PluginSlot id="header_plugin_slot">
         {inProgress ? !isEditor && <Loading />
           : (!isEditor && (
             <Header
