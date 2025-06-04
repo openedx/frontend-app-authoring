@@ -20,6 +20,7 @@ import CourseExportPageNew from './src/export-page/CourseExportPageNew'
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import WarningMessage from './src/generic/warning-message/WarningMessage';
 import SettingCard from './src/advanced-settings/setting-card/SettingCard';
+import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -416,6 +417,20 @@ const config = {
                                 )}
                             </div>
                         ),
+                    },
+                },
+            ],
+        },
+        export_sidebar_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "export_footer",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => 
+                        <ExportSidebarNew />
                     },
                 },
             ],
