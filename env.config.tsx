@@ -9,12 +9,12 @@ import { Icon } from '@openedx/paragon';
 const config = {
     ...process.env,
     pluginSlots: {
-        header_plugin_slot: {
+        course_outline_header_plugin_slot: {
             plugins: [
                 {
                     op: PLUGIN_OPERATIONS.Hide,
                     widget: {
-                        id: 'header_plugin_slot',
+                        id: 'course_outline_header_plugin_slot',
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: () => <div>This is Header</div>, // Render "This is Header" text
