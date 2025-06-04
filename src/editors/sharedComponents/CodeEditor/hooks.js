@@ -100,7 +100,7 @@ export const createCodeMirrorDomNode = ({
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const languageExtension = CODEMIRROR_LANGUAGES[lang]();
+    const languageExtension = CODEMIRROR_LANGUAGES[lang] ? CODEMIRROR_LANGUAGES[lang]() : xml();
     const cleanText = cleanHTML({ initialText });
     const newState = EditorState.create({
       doc: cleanText,
