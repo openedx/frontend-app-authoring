@@ -33,7 +33,6 @@ const ContainerInfoHeader = () => {
       showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
     } catch (err) {
       showToast(intl.formatMessage(messages.updateContainerErrorMsg));
-      throw err;
     }
   };
 

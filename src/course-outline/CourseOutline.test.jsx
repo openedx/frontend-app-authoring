@@ -11,7 +11,6 @@ import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -308,13 +307,15 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new section list is saved when dragged', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const expandAllButton = await findByTestId('expand-collapse-all-button');
+    fireEvent.click(expandAllButton);
+    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[6];
+    const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .onPut(getCourseBlockApiUrl(section.id))
       .reply(200, { dummy: 'value' });
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -333,13 +334,15 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section list is restored to original order when API call fails', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const expandAllButton = await findByTestId('expand-collapse-all-button');
+    fireEvent.click(expandAllButton);
+    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[6];
+    const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .onPut(getCourseBlockApiUrl(section.id))
       .reply(500);
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -414,8 +417,6 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const units = await within(subsectionElement).findAllByTestId('unit-card');
     expect(units.length).toBe(1);
 
@@ -440,8 +441,6 @@ describe('<CourseOutline />', () => {
     render(<RootWrapper />);
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const units = await within(subsectionElement).findAllByTestId('unit-card');
     expect(units.length).toBe(1);
 
@@ -482,7 +481,7 @@ describe('<CourseOutline />', () => {
       courseId, excludeGraded: true, all: true,
     }), store.dispatch);
 
-    expect(getByText('4/9 completed')).toBeInTheDocument();
+    expect(getByText('3/8 completed')).toBeInTheDocument();
   });
 
   it('render alerts if checklist api fails', async () => {
@@ -665,8 +664,6 @@ describe('<CourseOutline />', () => {
     await checkEditTitle(section, subsectionElement, subsection, 'New subsection name', 'subsection');
 
     // check unit
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
     await checkEditTitle(section, unitElement, unit, 'New unit name', 'unit');
@@ -679,8 +676,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -719,8 +714,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -790,8 +783,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1500,8 +1491,6 @@ describe('<CourseOutline />', () => {
 
     const [firstSection] = await findAllByTestId('section-card');
     const [firstSubsection] = await within(firstSection).findAllByTestId('subsection-card');
-    const subsectionExpandButton = await within(firstSubsection).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(subsectionExpandButton);
     const [firstUnit] = await within(firstSubsection).findAllByTestId('unit-card');
     const unitDropdownButton = await within(firstUnit).findByTestId('unit-card-header__menu-button');
 
@@ -1861,8 +1850,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [, subsection] = section.childInfo.children;
     const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [, secondUnit] = subsection.childInfo.children;
     const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1902,8 +1889,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [firstSubsection, subsection] = section.childInfo.children;
     const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1939,8 +1924,6 @@ describe('<CourseOutline />', () => {
     const [subsection] = secondSection.childInfo.children;
     const firstSectionLastSubsection = firstSection.childInfo.children[firstSection.childInfo.children.length - 1];
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1985,8 +1968,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [firstSubsection, subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const lastUnitIdx = firstSubsection.childInfo.children.length - 1;
     const unit = firstSubsection.childInfo.children[lastUnitIdx];
     const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
@@ -2024,8 +2005,6 @@ describe('<CourseOutline />', () => {
     const secondSectionLastSubsection = secondSection.childInfo.children[lastSubIndex];
     const thirdSectionFirstSubsection = thirdSection.childInfo.children[0];
     const subsectionElement = (await within(sectionElement).findAllByTestId('subsection-card'))[lastSubIndex];
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const lastUnitIdx = secondSectionLastSubsection.childInfo.children.length - 1;
     const unit = secondSectionLastSubsection.childInfo.children[lastUnitIdx];
     const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
@@ -2070,8 +2049,6 @@ describe('<CourseOutline />', () => {
     const sections = await findAllByTestId('section-card');
     const [sectionElement] = sections;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     // get first and only unit in the subsection
     const [firstUnit] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -2091,8 +2068,6 @@ describe('<CourseOutline />', () => {
     const lastSection = sections[sections.length - 1];
     // it has only one subsection
     const [lastSubsectionElement] = await within(lastSection).findAllByTestId('subsection-card');
-    const lastExpandBtn = await within(lastSubsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(lastExpandBtn));
     // get last and the only unit in the subsection
     const [lastUnit] = await within(lastSubsectionElement).findAllByTestId('unit-card');
 
@@ -2113,6 +2088,9 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
 
     const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
@@ -2144,6 +2122,9 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
 
     const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
@@ -2173,8 +2154,6 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const section = store.getState().courseOutline.sectionsList[2];
     const [subsection] = section.childInfo.children;
-    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2209,8 +2188,6 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const section = store.getState().courseOutline.sectionsList[2];
     const [subsection] = section.childInfo.children;
-    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2248,8 +2225,6 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    userEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 

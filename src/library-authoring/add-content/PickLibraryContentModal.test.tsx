@@ -33,25 +33,44 @@ const mockAddComponentsToContainer = jest.fn();
 jest.spyOn(api, 'addItemsToCollection').mockImplementation(mockAddItemsToCollection);
 jest.spyOn(api, 'addComponentsToContainer').mockImplementation(mockAddComponentsToContainer);
 const unitId = 'lct:Axim:TEST:unit:test-unit-1';
+const sectionId = 'lct:Axim:TEST:section:test-section-1';
+const subsectionId = 'lct:Axim:TEST:subsection:test-subsection-1';
+type ContextType = 'collection' | 'unit' | 'section' | 'subsection';
 
-const render = (context: 'collection' | 'unit') => baseRender(<PickLibraryContentModal isOpen onClose={onClose} />, {
-  path: context === 'collection'
-    ? '/library/:libraryId/collection/:collectionId/*'
-    : '/library/:libraryId/container/:unitId/*',
-  params: {
-    libraryId,
-    ...(context === 'collection' && { collectionId: 'collectionId' }),
-    ...(context === 'unit' && { unitId }),
+const getIdFromContext = (context: ContextType) => {
+  switch (context) {
+    case 'section':
+      return sectionId;
+    case 'subsection':
+      return subsectionId;
+    case 'unit':
+      return unitId;
+    default:
+      return '';
+  }
+};
+
+const render = (context: ContextType) => baseRender(
+  <PickLibraryContentModal isOpen onClose={onClose} />,
+  {
+    path: `/library/:libraryId/${context}/:${context}Id/*`,
+    params: {
+      libraryId,
+      ...(context === 'collection' && { collectionId: 'collectionId' }),
+      ...(context === 'unit' && { unitId }),
+      ...(context === 'section' && { sectionId }),
+      ...(context === 'subsection' && { subsectionId }),
+    },
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+        componentPicker={ComponentPicker}
+      >
+        {children}
+      </LibraryProvider>
+    ),
   },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      componentPicker={ComponentPicker}
-    >
-      {children}
-    </LibraryProvider>
-  ),
-});
+);
 
 describe('<PickLibraryContentModal />', () => {
   beforeEach(async () => {
@@ -61,7 +80,12 @@ describe('<PickLibraryContentModal />', () => {
     jest.clearAllMocks();
   });
 
-  ['collection' as const, 'unit' as const].forEach((context) => {
+  [
+    'collection' as const,
+    'unit' as const,
+    'section' as const,
+    'subsection' as const,
+  ].forEach((context) => {
     it(`can pick components from the modal (${context})`, async () => {
       render(context);
 
@@ -78,17 +102,24 @@ describe('<PickLibraryContentModal />', () => {
       fireEvent.click(screen.getByRole('button', { name: /add to .*/i }));
 
       await waitFor(() => {
-        if (context === 'collection') {
-          expect(mockAddItemsToCollection).toHaveBeenCalledWith(
-            libraryId,
-            'collectionId',
-            ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
-          );
-        } else {
-          expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
-            unitId,
-            ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
-          );
+        switch (context) {
+          case 'collection':
+            expect(mockAddItemsToCollection).toHaveBeenCalledWith(
+              libraryId,
+              'collectionId',
+              ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
+            );
+            break;
+          case 'unit':
+          case 'section':
+          case 'subsection':
+            expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
+              getIdFromContext(context),
+              ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
+            );
+            break;
+          default:
+            break;
         }
       });
       expect(onClose).toHaveBeenCalled();
@@ -119,17 +150,24 @@ describe('<PickLibraryContentModal />', () => {
       fireEvent.click(screen.getByRole('button', { name: /add to .*/i }));
 
       await waitFor(() => {
-        if (context === 'collection') {
-          expect(mockAddItemsToCollection).toHaveBeenCalledWith(
-            libraryId,
-            'collectionId',
-            ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
-          );
-        } else {
-          expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
-            unitId,
-            ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
-          );
+        switch (context) {
+          case 'collection':
+            expect(mockAddItemsToCollection).toHaveBeenCalledWith(
+              libraryId,
+              'collectionId',
+              ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
+            );
+            break;
+          case 'unit':
+          case 'section':
+          case 'subsection':
+            expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
+              getIdFromContext(context),
+              ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
+            );
+            break;
+          default:
+            break;
         }
       });
       expect(onClose).toHaveBeenCalled();

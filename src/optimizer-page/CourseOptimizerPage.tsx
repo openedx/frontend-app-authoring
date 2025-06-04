@@ -1,13 +1,12 @@
 /* eslint-disable no-param-reassign */
 import {
-  useEffect, useRef, FC, MutableRefObject,
+  useEffect, useState, useRef, FC, MutableRefObject,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container, Layout, Button, Card,
+  Badge, Container, Layout, Button, Card,
 } from '@openedx/paragon';
-import { Search as SearchIcon } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 
 import CourseStepper from '../generic/course-stepper';
@@ -60,6 +59,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const interval = useRef<number | undefined>(undefined);
   const courseDetails = useModel('courseDetails', courseId);
   const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
+  const [showStepper, setShowStepper] = useState(false);
 
   const intl = useIntl();
 
@@ -96,6 +96,22 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
     };
   }, [linkCheckInProgress, linkCheckResult]);
 
+  const stepperVisibleCondition = linkCheckPresent && ((!linkCheckResult || linkCheckInProgress) && currentStage !== 2);
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (stepperVisibleCondition) {
+      setShowStepper(true);
+    } else {
+      timeout = setTimeout(() => {
+        // ignoring below line as we didn't wrote tests for scanning process
+        // istanbul ignore next
+        setShowStepper(false);
+      }, 2500);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [stepperVisibleCondition]);
+
   if (isLoadingDenied || isSavingDenied) {
     if (interval.current) { clearInterval(interval.current); }
 
@@ -129,30 +145,37 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
             <Layout.Element>
               <article>
                 <SubHeader
-                  title={intl.formatMessage(messages.headingTitle)}
+                  hideBorder
+                  title={
+                    (
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        {intl.formatMessage(messages.headingTitle)}
+                        <Badge variant="primary" className="ml-2">{intl.formatMessage(messages.beta)}</Badge>
+                      </span>
+                    )
+                  }
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p className="small opt-desc-mb">{intl.formatMessage(messages.description)}</p>
                 <Card>
                   <Card.Header
-                    className="h3 px-3 text-black mb-4"
+                    className="scan-header h3 px-3 text-black mb-2"
                     title={intl.formatMessage(messages.card1Title)}
                   />
+                  <p className="px-3 py-1 small ">{intl.formatMessage(messages.description)}</p>
                   {isShowExportButton && (
                   <Card.Section className="px-3 py-1">
-                    <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                     <Button
-                      size="lg"
+                      size="md"
                       block
-                      className="mb-4"
+                      className="mb-3"
                       onClick={() => dispatch(startLinkCheck(courseId))}
-                      iconBefore={SearchIcon}
                     >
                       {intl.formatMessage(messages.buttonTitle)}
                     </Button>
+                    <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                   </Card.Section>
                   )}
-                  {linkCheckPresent && (
+                  {showStepper && (
                   <Card.Section className="px-3 py-1">
                     <CourseStepper
                       // @ts-ignore

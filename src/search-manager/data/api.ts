@@ -3,6 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
   Filter, MeiliSearch, MultiSearchQuery,
 } from 'meilisearch';
+import { ContainerType } from '../../generic/key-utils';
 
 export const getContentSearchConfigUrl = () => new URL(
   'api/content_search/v2/studio/',
@@ -183,12 +184,14 @@ interface ContainerHitContent {
 }
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';
-  blockType: 'unit' | 'subsection' | 'section'; // This should be expanded to include other container types
+  blockType: ContainerType; // This should be expanded to include other container types
   numChildren?: number;
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
   content?: ContainerHitContent;
+  sections?: { displayName?: string[], key?: string[] };
+  subsections?: { displayName?: string[], key?: string[] };
 }
 
 export type HitType = ContentHit | CollectionHit | ContainerHit;

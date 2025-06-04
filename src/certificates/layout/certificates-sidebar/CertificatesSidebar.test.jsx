@@ -1,14 +1,9 @@
-import { render, waitFor } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-
-import initializeStore from '../../../store';
+// @ts-check
 import CertificatesSidebar from './CertificatesSidebar';
 import messages from './messages';
+import { initializeMocks, render, waitFor } from '../../../testUtils';
 
 const courseId = 'course-123';
-let store;
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -17,25 +12,11 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <CertificatesSidebar courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) => render(<CertificatesSidebar courseId={courseId} {...props} />);
 
 describe('CertificatesSidebar', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('renders correctly', async () => {

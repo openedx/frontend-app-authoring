@@ -41,16 +41,6 @@ const messages = defineMessages({
     defaultMessage: 'There was an error updating the component.',
     description: 'Message when there is an error when updating the component',
   },
-  updateContainerSuccessMsg: {
-    id: 'course-authoring.library-authoring.update-container-success-msg',
-    defaultMessage: 'Container updated successfully.',
-    description: 'Message displayed when container is updated successfully',
-  },
-  updateContainerErrorMsg: {
-    id: 'course-authoring.library-authoring.update-container-error-msg',
-    defaultMessage: 'Failed to update container.',
-    description: 'Message displayed when container update fails',
-  },
   orderUpdatedMsg: {
     id: 'course-authoring.library-authoring.unit-component.order-updated-msg.text',
     defaultMessage: 'Order updated',
