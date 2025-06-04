@@ -29,7 +29,7 @@ import {
   useDeleteContainer,
   useRestoreContainer,
   useContainerChildren,
-  useAddComponentsToContainer,
+  useAddItemsToContainer,
   useUpdateContainerChildren,
   useRemoveContainerChildren,
   usePublishContainer,
@@ -265,7 +265,7 @@ describe('library api hooks', () => {
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
-    const { result } = renderHook(() => useAddComponentsToContainer(containerId), { wrapper });
+    const { result } = renderHook(() => useAddItemsToContainer(containerId), { wrapper });
     await result.current.mutateAsync([componentId]);
 
     expect(axiosMock.history.post[0].url).toEqual(url);

@@ -16,9 +16,12 @@ import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 import { LibraryUnitPage } from './units';
+import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { libraryId, collectionId, unitId } = useParams();
+  const {
+    libraryId, collectionId, unitId, sectionId, subsectionId,
+  } = useParams();
 
   if (libraryId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -31,7 +34,7 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
         * when we navigate to a collection or unit page. This is necessary to make the back/forward navigation
         * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
         * */
-      key={collectionId || unitId}
+      key={collectionId || sectionId || subsectionId || unitId}
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
@@ -69,6 +72,14 @@ const LibraryLayout = () => (
       <Route
         path={ROUTES.COLLECTION}
         Component={LibraryCollectionPage}
+      />
+      <Route
+        path={ROUTES.SECTION}
+        Component={LibrarySectionPage}
+      />
+      <Route
+        path={ROUTES.SUBSECTION}
+        Component={LibrarySubsectionPage}
       />
       <Route
         path={ROUTES.UNIT}

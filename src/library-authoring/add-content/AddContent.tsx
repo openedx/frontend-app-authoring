@@ -23,13 +23,13 @@ import {
   useLibraryPasteClipboard,
   useBlockTypesMetadata,
   useAddItemsToCollection,
-  useAddComponentsToContainer,
+  useAddItemsToContainer,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 import { blockTypes } from '../../editors/data/constants/app';
 
-import { ContentType as LibraryContentTypes, useLibraryRoutes } from '../routes';
+import { useLibraryRoutes } from '../routes';
 import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
@@ -88,10 +88,7 @@ const AddContentView = ({
   closeAddLibraryContentModal,
 }: AddContentViewProps) => {
   const intl = useIntl();
-  const {
-    componentPicker,
-    unitId,
-  } = useLibraryContext();
+  const { componentPicker } = useLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -128,9 +125,6 @@ const AddContentView = ({
     disabled: false,
     blockType: 'libraryContent',
   };
-
-  const extraFilter = unitId ? ['NOT block_type = "unit"', 'NOT type = "collections"'] : undefined;
-  const visibleTabs = unitId ? [LibraryContentTypes.components] : undefined;
 
   /** List container content types that should be displayed based on current path */
   const visibleContentTypes = useMemo(() => {
@@ -182,8 +176,6 @@ const AddContentView = ({
         <PickLibraryContentModal
           isOpen={isAddLibraryContentModalOpen}
           onClose={closeAddLibraryContentModal}
-          extraFilter={extraFilter}
-          visibleTabs={visibleTabs}
         />
       )}
       <hr className="w-100 bg-gray-500" />
@@ -276,7 +268,7 @@ const AddContent = () => {
     insideUnit,
   } = useLibraryRoutes();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddComponentsToContainer(unitId);
+  const addComponentsToContainerMutation = useAddItemsToContainer(unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);

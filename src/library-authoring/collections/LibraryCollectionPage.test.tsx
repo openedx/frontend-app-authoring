@@ -139,7 +139,7 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
 
-    expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
+    expect((await screen.findAllByText('This collection is currently empty.')).length).toEqual(2);
 
     const addComponentButton = screen.getAllByRole('button', { name: /new/i })[1];
     fireEvent.click(addComponentButton);
