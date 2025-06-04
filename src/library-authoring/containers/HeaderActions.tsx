@@ -44,7 +44,7 @@ export const HeaderActions = ({
       }
     }
     navigateTo({ [`${containerType}Id`]: containerKey });
-  }, [containerKey, infoSidebarIsOpen]);
+  }, [containerKey, infoSidebarIsOpen, navigateTo]);
 
   return (
     <div className="header-actions">

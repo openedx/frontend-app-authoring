@@ -192,10 +192,12 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      let containerType = undefined;
+      let containerType: undefined | string;
       try {
         containerType = getBlockType(selectedItemId);
-      } catch {}
+      } catch {
+        // ignore
+      }
       if (containerType === 'unit') {
         openUnitInfoSidebar(selectedItemId);
       } else if (containerType === 'section') {

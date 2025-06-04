@@ -10,8 +10,8 @@ import messages from './messages';
 
 interface SortableItemProps {
   id: string,
-  children?: React.ReactNode | null,
-  actions: React.ReactNode | null,
+  children?: React.ReactNode,
+  actions: React.ReactNode,
   actionStyle?: {},
   componentStyle?: {},
   isClickable?: boolean,

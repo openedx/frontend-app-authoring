@@ -4,7 +4,6 @@ import {
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
-  ContainerType,
 } from './key-utils';
 
 describe('component utils', () => {
