@@ -14,6 +14,13 @@ import {
   fetchCourseDataSuccessV2,
 } from './slice';
 
+/**
+ * Load both the "Studio Home" data and the course list. Store it in the Redux state.
+ *
+ * TODO: this should be replaced with two separate React Query hooks - one that calls
+ * useQuery() to load the "studio home" data, and another that calls useQuery() to
+ * load the course list.
+ */
 function fetchStudioHomeData(
   search,
   hasHomeData,
