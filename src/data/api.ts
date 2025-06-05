@@ -24,29 +24,12 @@ export async function getCourseDetail(courseId: string, username: string) {
   return normalizeCourseDetail(data);
 }
 
-export type WaffleFlagName = (
-  | 'enableCourseOptimizer'
-  | 'useNewAdvancedSettingsPage'
-  | 'useNewCertificatesPage'
-  | 'useNewCourseOutlinePage'
-  | 'useNewCourseTeamPage'
-  | 'useNewCustomPages'
-  | 'useNewExportPage'
-  | 'useNewFilesUploadsPage'
-  | 'useNewGradingPage'
-  | 'useNewGroupConfigurationsPage'
-  | 'useNewHomePage'
-  | 'useNewImportPage'
-  | 'useNewScheduleDetailsPage'
-  | 'useNewTextbooksPage'
-  | 'useNewUnitPage'
-  | 'useNewUpdatesPage'
-  | 'useNewVideoUploadsPage'
-  | 'useReactMarkdownEditor'
-  | 'useVideoGalleryFlow'
-);
-
-/** The default values of waffle flags. helpful if you're overriding them for a test case. */
+/**
+ * The default values of waffle flags, used while we're loading the "real"
+ * values from Studio's REST API, and/or if we fail to load them.
+ * May drift from edx-platform's actual defaults!
+ * TODO: clarify our strategy here: https://github.com/openedx/frontend-app-authoring/issues/2094
+ */
 export const waffleFlagDefaults = {
   enableCourseOptimizer: false,
   useNewHomePage: true,
@@ -67,10 +50,22 @@ export const waffleFlagDefaults = {
   useNewGroupConfigurationsPage: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
-} satisfies Record<WaffleFlagName, boolean>;
+} as const;
+
+export type WaffleFlagName = keyof typeof waffleFlagDefaults;
 
 export type WaffleFlagsStatus = { id: string | undefined } & Record<WaffleFlagName, boolean>;
 
+/**
+ * Get Waffle Flags from Studio's REST API.
+ * Don't use this directly; use the `useWaffleFlags()` hook.
+ *
+ * A `mockWaffleFlags()` method is available if you need to override this in
+ * tests.
+ *
+ * @param courseId Get the flags for a specific course, which may be different
+ *    than the system-wide flags.
+ */
 export async function getWaffleFlags(courseId?: string): Promise<WaffleFlagsStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getApiWaffleFlagsUrl(courseId));
