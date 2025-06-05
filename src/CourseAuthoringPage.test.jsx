@@ -4,7 +4,7 @@ import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
 import { executeThunk } from './utils';
 import { fetchCourseApps } from './pages-and-resources/data/thunks';
-import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
+import { fetchCourseDetail } from './data/thunks';
 import { getApiWaffleFlagsUrl } from './data/api';
 import { initializeMocks, render } from './testUtils';
 
@@ -26,7 +26,6 @@ beforeEach(async () => {
   axiosMock
     .onGet(getApiWaffleFlagsUrl(courseId))
     .reply(200, {});
-  await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
 });
 
 describe('Editor Pages Load no header', () => {

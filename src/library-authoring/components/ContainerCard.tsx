@@ -11,12 +11,12 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { getBlockType } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
@@ -26,31 +26,28 @@ import ContainerDeleter from './ContainerDeleter';
 import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
-  hit: ContainerHit,
+  containerKey: string;
+  containerType: ContainerType;
+  displayName: string;
 };
 
-const ContainerMenu = ({ hit } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
-  const {
-    usageKey: containerId,
-    displayName,
-  } = hit;
   const { libraryId, collectionId } = useLibraryContext();
   const {
     sidebarComponentInfo,
-    openContainerInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
-  const { navigateTo } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
   const removeFromCollection = () => {
-    removeComponentsMutation.mutateAsync([containerId]).then(() => {
-      if (sidebarComponentInfo?.id === containerId) {
+    removeComponentsMutation.mutateAsync([containerKey]).then(() => {
+      if (sidebarComponentInfo?.id === containerKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -67,13 +64,13 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: containerId });
+    navigateTo({ selectedItemId: containerKey });
     scheduleJumpToCollection();
-  }, [scheduleJumpToCollection, navigateTo, openContainerInfoSidebar, containerId]);
+  }, [scheduleJumpToCollection, navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
-    navigateTo({ unitId: containerId });
-  }, [navigateTo, containerId]);
+    navigateTo({ [`${containerType}Id`]: containerKey });
+  }, [navigateTo, containerKey]);
 
   return (
     <>
@@ -94,7 +91,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
-          {collectionId && (
+          {insideCollection && (
             <Dropdown.Item onClick={removeFromCollection}>
               <FormattedMessage {...messages.menuRemoveFromCollection} />
             </Dropdown.Item>
@@ -107,7 +104,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
       <ContainerDeleter
         isOpen={isConfirmingDelete}
         close={cancelDelete}
-        containerId={containerId}
+        containerId={containerKey}
         displayName={displayName}
       />
     </>
@@ -181,7 +178,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     numChildren,
     published,
     publishStatus,
-    usageKey: containerId,
+    usageKey: containerKey,
     content,
   } = hit;
 
@@ -197,26 +194,34 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ContainerInfo
-    && sidebarComponentInfo.id === containerId;
+  const selected = sidebarComponentInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
   const selectContainer = useCallback((e?: React.MouseEvent) => {
     const doubleClicked = (e?.detail || 0) > 1;
-
-    if (!componentPickerMode) {
-      if (doubleClicked) {
-        navigateTo({ unitId: containerId });
-      } else {
-        navigateTo({ selectedItemId: containerId });
-      }
-    } else {
+    if (componentPickerMode) {
       // In component picker mode, we want to open the sidebar
       // without changing the URL
-      openContainerInfoSidebar(containerId);
+      openContainerInfoSidebar(containerKey);
+    } else if (!doubleClicked) {
+      navigateTo({ selectedItemId: containerKey });
+    } else {
+      switch (itemType) {
+        case ContainerType.Unit:
+          navigateTo({ unitId: containerKey });
+          break;
+        case ContainerType.Section:
+          navigateTo({ sectionId: containerKey });
+          break;
+        case ContainerType.Subsection:
+          navigateTo({ subsectionId: containerKey });
+          break;
+        default:
+          break;
+      }
     }
-  }, [containerId, itemType, openContainerInfoSidebar, navigateTo]);
+  }, [containerKey, itemType, openContainerInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
@@ -228,9 +233,13 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <AddComponentWidget usageKey={containerId} blockType={itemType} />
+            <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu hit={hit} />
+            <ContainerMenu
+              containerKey={containerKey}
+              containerType={itemType}
+              displayName={hit.displayName}
+            />
           )}
         </ActionRow>
       )}

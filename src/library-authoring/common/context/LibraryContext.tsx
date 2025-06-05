@@ -31,10 +31,10 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   unitId: string | undefined;
   setUnitId: (unitId?: string) => void;
-  subsectionId: string | undefined;
-  setSubsectionId: (subsectionId?: string) => void;
   sectionId: string | undefined;
   setSectionId: (sectionId?: string) => void;
+  subsectionId: string | undefined;
+  setSubsectionId: (subsectionId?: string) => void;
   containerId: string | undefined;
   // Only show published components
   showOnlyPublished: boolean;
@@ -119,8 +119,8 @@ export const LibraryProvider = ({
   const {
     collectionId: urlCollectionId,
     unitId: urlUnitId,
-    subsectionId: urlSubsectionId,
     sectionId: urlSectionId,
+    subsectionId: urlSubsectionId,
   } = params;
   const [collectionId, setCollectionId] = useState(
     skipUrlUpdate ? undefined : urlCollectionId,
@@ -128,11 +128,11 @@ export const LibraryProvider = ({
   const [unitId, setUnitId] = useState(
     skipUrlUpdate ? undefined : urlUnitId,
   );
-  const [subsectionId, setSubsectionId] = useState(
-    skipUrlUpdate ? undefined : urlSubsectionId,
-  );
   const [sectionId, setSectionId] = useState(
     skipUrlUpdate ? undefined : urlSectionId,
+  );
+  const [subsectionId, setSubsectionId] = useState(
+    skipUrlUpdate ? undefined : urlSubsectionId,
   );
   const containerId = unitId || subsectionId || sectionId;
 
@@ -144,10 +144,10 @@ export const LibraryProvider = ({
       setCollectionId,
       unitId,
       setUnitId,
-      subsectionId,
-      setSubsectionId,
       sectionId,
       setSectionId,
+      subsectionId,
+      setSubsectionId,
       containerId,
       readOnly,
       isLoadingLibraryData,
@@ -176,6 +176,7 @@ export const LibraryProvider = ({
     setSubsectionId,
     sectionId,
     setSectionId,
+    containerId,
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,

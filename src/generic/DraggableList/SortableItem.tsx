@@ -1,13 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
+import React, { MouseEventHandler } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   ActionRow, Card, Icon, IconButtonWithTooltip,
 } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+
+interface SortableItemProps {
+  id: string,
+  children?: React.ReactNode,
+  actions: React.ReactNode,
+  actionStyle?: {},
+  componentStyle?: {},
+  isClickable?: boolean,
+  onClick?: MouseEventHandler,
+  disabled?: boolean,
+  cardClassName?: string,
+}
 
 const SortableItem = ({
   id,
@@ -19,9 +30,8 @@ const SortableItem = ({
   onClick,
   disabled,
   cardClassName = '',
-  // injected
-  intl,
-}) => {
+}: SortableItemProps) => {
+  const intl = useIntl();
   const {
     attributes,
     listeners,
@@ -78,26 +88,5 @@ const SortableItem = ({
     </div>
   );
 };
-SortableItem.defaultProps = {
-  componentStyle: null,
-  actions: null,
-  actionStyle: null,
-  isClickable: false,
-  onClick: null,
-  disabled: false,
-};
-SortableItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  actions: PropTypes.node,
-  actionStyle: PropTypes.shape({}),
-  componentStyle: PropTypes.shape({}),
-  isClickable: PropTypes.bool,
-  onClick: PropTypes.func,
-  disabled: PropTypes.bool,
-  cardClassName: PropTypes.string,
-  // injected
-  intl: intlShape.isRequired,
-};
 
-export default injectIntl(SortableItem);
+export default SortableItem;

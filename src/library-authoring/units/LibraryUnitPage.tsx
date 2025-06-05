@@ -1,11 +1,9 @@
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
-  Button,
   Container,
 } from '@openedx/paragon';
-import { Add, InfoOutline } from '@openedx/paragon/icons';
-import { useCallback, useContext, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
@@ -13,121 +11,22 @@ import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import ErrorAlert from '../../generic/alert-error';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
-import { ToastContext } from '../../generic/toast-context';
 import Header from '../../header';
-import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   COLLECTION_INFO_TABS,
   COMPONENT_INFO_TABS,
-  SidebarBodyComponentId,
   CONTAINER_INFO_TABS,
   DEFAULT_TAB,
   useSidebarContext,
 } from '../common/context/SidebarContext';
-import { useContainer, useUpdateContainer, useContentLibrary } from '../data/apiHooks';
+import { useContainer, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
-
-interface EditableTitleProps {
-  unitId: string;
-}
-
-const EditableTitle = ({ unitId }: EditableTitleProps) => {
-  const intl = useIntl();
-
-  const { readOnly } = useLibraryContext();
-
-  const { data: container } = useContainer(unitId);
-
-  const updateMutation = useUpdateContainer(unitId);
-  const { showToast } = useContext(ToastContext);
-
-  const handleSaveDisplayName = async (newDisplayName: string) => {
-    try {
-      await updateMutation.mutateAsync({
-        displayName: newDisplayName,
-      });
-      showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
-    } catch (err) {
-      showToast(intl.formatMessage(messages.updateContainerErrorMsg));
-      throw err;
-    }
-  };
-
-  // istanbul ignore if: this should never happen
-  if (!container) {
-    return null;
-  }
-
-  return (
-    <InplaceTextEditor
-      onSave={handleSaveDisplayName}
-      text={container.displayName}
-      readOnly={readOnly}
-    />
-  );
-};
-
-const HeaderActions = () => {
-  const intl = useIntl();
-
-  const { componentPickerMode } = useComponentPickerContext();
-  const { unitId, readOnly } = useLibraryContext();
-  const {
-    openAddContentSidebar,
-    closeLibrarySidebar,
-    openContainerInfoSidebar,
-    sidebarComponentInfo,
-  } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
-
-  // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('it should not be possible to render HeaderActions without a unitId');
-  }
-
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.ContainerInfo
-    && sidebarComponentInfo?.id === unitId;
-
-  const handleOnClickInfoSidebar = useCallback(() => {
-    if (infoSidebarIsOpen) {
-      closeLibrarySidebar();
-    } else {
-      openContainerInfoSidebar(unitId);
-    }
-
-    if (!componentPickerMode) {
-      navigateTo({ unitId });
-    }
-  }, [unitId, infoSidebarIsOpen]);
-
-  return (
-    <div className="header-actions">
-      <Button
-        className="normal-border"
-        iconBefore={InfoOutline}
-        variant="outline-primary rounded-0"
-        onClick={handleOnClickInfoSidebar}
-      >
-        {intl.formatMessage(messages.infoButtonText)}
-      </Button>
-      <Button
-        className="ml-2"
-        iconBefore={Add}
-        variant="primary rounded-0"
-        disabled={readOnly}
-        onClick={openAddContentSidebar}
-      >
-        {intl.formatMessage(messages.addContentButton)}
-      </Button>
-    </div>
-  );
-};
+import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
+import { ContainerType } from '../../generic/key-utils';
 
 export const LibraryUnitPage = () => {
   const intl = useIntl();
@@ -164,11 +63,6 @@ export const LibraryUnitPage = () => {
     };
   }, [setDefaultTab, setHiddenTabs]);
 
-  if (!unitId || !libraryId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without unitId or libraryId URL parameter');
-  }
-
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
     data: unitData,
@@ -176,6 +70,11 @@ export const LibraryUnitPage = () => {
     isError,
     error,
   } = useContainer(unitId);
+
+  if (!unitId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without unitId or libraryId URL parameter');
+  }
 
   // Only show loading if unit or library data is not fetched from index yet
   if (isLibLoading || isLoading) {
@@ -226,14 +125,25 @@ export const LibraryUnitPage = () => {
         <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
-              title={<SubHeaderTitle title={<EditableTitle unitId={unitId} />} />}
-              headerActions={<HeaderActions />}
+              title={<SubHeaderTitle title={<ContainerEditableTitle containerId={unitId} />} />}
+              headerActions={(
+                <HeaderActions
+                  containerKey={unitId}
+                  containerType={ContainerType.Unit}
+                  infoBtnText={intl.formatMessage(messages.infoButtonText)}
+                  addContentBtnText={intl.formatMessage(messages.addContentButton)}
+                />
+              )}
               breadcrumbs={breadcrumbs}
               hideBorder
             />
           </div>
           <Container className="px-4 py-4">
             <LibraryUnitBlocks unitId={unitId} />
+            <FooterActions
+              addContentBtnText={intl.formatMessage(messages.newContentButton)}
+              addExistingContentBtnText={intl.formatMessage(messages.addExistingContentButton)}
+            />
           </Container>
         </Container>
       </div>

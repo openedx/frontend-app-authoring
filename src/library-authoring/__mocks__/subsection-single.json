@@ -1,0 +1,148 @@
+{
+  "comment": "This mock is captured from a real search result and roughly edited to match the mocks in src/library-authoring/data/api.mocks.ts",
+  "note": "The _formatted fields have been removed from this result and should be re-added programatically when mocking.",
+  "results": [
+    {
+      "indexUid": "studio_content",
+      "hits": [
+        {
+          "display_name": "Test Subsection",
+          "block_id": "subsection-1",
+          "content": {
+            "child_usage_keys": [
+              "lb:org1:Demo_course:unit:unit-0",
+              "lb:org1:Demo_course:unit:unit-1",
+              "lb:org1:Demo_course:unit:unit-2"
+            ],
+            "child_display_names": [
+              "unit block 0",
+              "unit block 1",
+              "unit block 2"
+            ]
+          },
+          "tags": {},
+          "collections": {
+            "display_name": [
+              "Collection 1"
+            ],
+            "key": [
+              "collection-1"
+            ]
+          },
+          "id": "lctunixcs1subsectiontest-subsection-4-861b09-bc0507a2",
+          "type": "library_container",
+          "breadcrumbs": [
+            {
+              "display_name": "CS 1"
+            }
+          ],
+          "created": 1748341802.87277,
+          "modified": 1748790449.393821,
+          "last_published": 1748536425.317183,
+          "publish_status": "modified",
+          "usage_key": "lct:UNIX:CS1:subsection:test-subsection-4-861b09",
+          "block_type": "subsection",
+          "context_key": "lib:UNIX:CS1",
+          "org": "UNIX",
+          "access_id": 1,
+          "published": {
+            "display_name": "Test subsection 42",
+            "num_children": 2,
+            "content": {
+              "child_usage_keys": [
+                "lb:org1:Demo_course:unit:unit-0",
+                "lb:org1:Demo_course:unit:unit-1"
+              ],
+              "child_display_names": [
+                "unit block 0",
+                "unit block 1"
+              ]
+            }
+          },
+          "num_children": 4,
+          "sections": {
+            "display_name": [
+              "Test section",
+              "Test section 51"
+            ],
+            "key": [
+              "lct:org:lib:section:test-section-1",
+              "lct:org:lib:section:test-section-2"
+            ]
+          },
+          "_formatted": {
+            "display_name": "Test Subsection",
+            "block_id": "subsection-1",
+            "content": {
+              "child_usage_keys": [
+                "lb:org1:Demo_course:unit:unit-0",
+                "lb:org1:Demo_course:unit:unit-1",
+                "lb:org1:Demo_course:unit:unit-2"
+              ],
+              "child_display_names": [
+                "unit block 0",
+                "unit block 1",
+                "unit block 2"
+              ]
+            },
+            "tags": {},
+            "collections": {
+              "display_name": [
+                "Collection 1"
+              ],
+              "key": [
+                "collection-1"
+              ]
+            },
+            "id": "lctunixcs1subsectiontest-subsection-4-861b09-bc0507a2",
+            "type": "library_container",
+            "breadcrumbs": [
+              {
+                "display_name": "CS 1"
+              }
+            ],
+            "created": "1748341802.87277",
+            "modified": "1748790449.393821",
+            "last_published": "1748536425.317183",
+            "publish_status": "modified",
+            "usage_key": "lct:UNIX:CS1:subsection:test-subsection-4-861b09",
+            "block_type": "subsection",
+            "context_key": "lib:UNIX:CS1",
+            "org": "UNIX",
+            "access_id": "1",
+            "published": {
+              "display_name": "Test subsection 42",
+              "num_children": "2",
+              "content": {
+                "child_usage_keys": [
+                  "lb:org1:Demo_course:unit:unit-0",
+                  "lb:org1:Demo_course:unit:unit-1"
+                ],
+                "child_display_names": [
+                  "unit block 0",
+                  "unit block 1"
+                ]
+              }
+            },
+            "num_children": "4",
+            "sections": {
+              "display_name": [
+                "Test section 11",
+                "Test section 51"
+              ],
+              "key": [
+                "lct:UNIX:CS1:section:test-section-1-415565",
+                "lct:UNIX:CS1:section:test-section-5-0c65f3"
+              ]
+            }
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 1,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 10
+    }
+  ]
+}

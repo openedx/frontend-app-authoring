@@ -15,7 +15,7 @@ import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
 import CourseOptimizerPage, { pollLinkCheckDuringScan } from './CourseOptimizerPage';
 import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
-import mockApiResponse from './mocks/mockApiResponse';
+import { mockApiResponse, mockApiResponseForNoResultFound } from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
 
 let store;
@@ -37,8 +37,8 @@ const OptimizerPage = () => (
   </AppProvider>
 );
 
-const setupOptimizerPage = async () => {
-  axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponse);
+const setupOptimizerPage = async (apiResponse = mockApiResponse) => {
+  axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, apiResponse);
   const optimizerPage = render(<OptimizerPage />);
 
   // Click the scan button
@@ -168,6 +168,29 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(screen.getByText(messages.buttonTitle.defaultMessage));
       await waitFor(() => {
         expect(screen.getByText(generalMessages.supportText.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    it('should show only locked links when lockedLinks filter is selected', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        queryByText,
+        container,
+      } = await setupOptimizerPage();
+      // Check if the modal is opened
+      expect(getByText('Locked')).toBeInTheDocument();
+      // Select the broken links checkbox
+      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      await waitFor(() => {
+        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
       });
     });
 
@@ -321,6 +344,21 @@ describe('CourseOptimizerPage', () => {
         expect(getByText('Test Broken Links')).toBeInTheDocument();
         expect(getByText('Test Manual Links')).toBeInTheDocument();
         expect(getByText('Test Locked Links')).toBeInTheDocument();
+      });
+    });
+
+    it('should show no results found message when filter with no links is selected', async () => {
+      const {
+        getByText,
+        getByLabelText,
+      } = await setupOptimizerPage(mockApiResponseForNoResultFound);
+      // Check if the modal is opened
+      expect(getByText('Locked')).toBeInTheDocument();
+      // Select the broken links checkbox
+      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
+
+      await waitFor(() => {
+        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
       });
     });
   });

@@ -13,7 +13,7 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
 import {
-  useAddComponentsToContainer,
+  useAddItemsToContainer,
   useRemoveContainerChildren,
   useRemoveItemsFromCollection,
 } from '../data/apiHooks';
@@ -38,11 +38,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addComponentToContainerMutation = useAddComponentsToContainer(unitId);
+  const addComponentToContainerMutation = useAddItemsToContainer(unitId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
   const removeContainerComponentsMutation = useRemoveContainerChildren(unitId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
@@ -137,7 +137,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={confirmDelete}>
           <FormattedMessage {...messages.menuDelete} />
         </Dropdown.Item>
-        {collectionId && (
+        {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>

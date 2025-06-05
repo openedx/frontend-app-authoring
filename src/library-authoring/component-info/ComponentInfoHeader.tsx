@@ -36,7 +36,6 @@ const ComponentInfoHeader = () => {
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
     } catch (err) {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
-      throw err;
     }
   };
 

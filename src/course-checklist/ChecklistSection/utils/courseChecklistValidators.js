@@ -35,18 +35,8 @@ export const hasAssignmentDeadlines = (assignments, dates) => {
 
 export const hasShortVideoDuration = (videos) => {
   if (videos.totalNumber === 0) {
-    return true;
-  } if (videos.totalNumber > 0 && videos.durations.median <= 600) {
-    return true;
-  }
-
-  return false;
-};
-
-export const hasMobileFriendlyVideos = (videos) => {
-  if (videos.totalNumber === 0) {
-    return true;
-  } if (videos.totalNumber > 0 && (videos.numMobileEncoded / videos.totalNumber) >= 0.9) {
+    return false;
+  } if (videos.totalNumber > 0 && videos.durations.median !== null && videos.durations.median <= 600) {
     return true;
   }
 
@@ -57,7 +47,7 @@ export const hasDiverseSequences = (subsections) => {
   if (subsections.totalVisible === 0) {
     return false;
   } if (subsections.totalVisible > 0) {
-    return ((subsections.numWithOneBlockType / subsections.totalVisible) < 0.2);
+    return ((subsections.numWithOneBlockType / subsections.totalVisible) <= 0.2);
   }
 
   return false;
@@ -68,7 +58,7 @@ export const hasWeeklyHighlights = sections => (
 );
 
 export const hasShortUnitDepth = units => (
-  units.numBlocks.median <= 3
+  units.numBlocks.median <= 3 && units.totalVisible > 0
 );
 
 export const hasProctoringEscalationEmail = proctoring => (

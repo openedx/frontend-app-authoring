@@ -1,16 +1,14 @@
 /* eslint-disable react/prop-types */
-import MockAdapter from 'axios-mock-adapter';
-import {
-  act, render, screen, waitFor, within,
-} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
-import initializeStore from '../../store';
+import {
+  act,
+  render,
+  screen,
+  waitFor,
+  within,
+  initializeMocks,
+} from '../../testUtils';
 import { executeThunk } from '../../utils';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
@@ -59,35 +57,23 @@ jest.mock('../../generic/hooks/context/hooks', () => ({
 }));
 
 const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <IframeProvider>
-        <AddComponent
-          blockId={blockId}
-          isUnitVerticalType
-          parentLocator={blockId}
-          addComponentTemplateData={{}}
-          handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
-          {...props}
-        />
-      </IframeProvider>
-    </IntlProvider>
-  </AppProvider>,
+  <IframeProvider>
+    <AddComponent
+      blockId={blockId}
+      isUnitVerticalType
+      parentLocator={blockId}
+      addComponentTemplateData={{}}
+      handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
+      {...props}
+    />
+  </IframeProvider>,
 );
 
 describe('<AddComponent />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    store = mocks.reduxStore;
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);

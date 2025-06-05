@@ -47,8 +47,8 @@ export enum ContentType {
   collections = 'collections',
   components = 'components',
   units = 'units',
-  subsections = 'subsections',
   sections = 'sections',
+  subsections = 'subsections',
 }
 
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
@@ -57,6 +57,8 @@ export type NavigateToData = {
   selectedItemId?: string,
   collectionId?: string,
   contentType?: ContentType,
+  sectionId?: string,
+  subsectionId?: string,
   unitId?: string,
 };
 
@@ -116,6 +118,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const navigateTo = useCallback(({
     selectedItemId,
     collectionId,
+    sectionId,
+    subsectionId,
     unitId,
     contentType,
   }: NavigateToData = {}) => {
@@ -123,6 +127,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       ...params,
       // Overwrite the params with the provided values.
       ...((selectedItemId !== undefined) && { selectedItemId }),
+      ...((sectionId !== undefined) && { sectionId }),
+      ...((subsectionId !== undefined) && { subsectionId }),
       ...((unitId !== undefined) && { unitId }),
       ...((collectionId !== undefined) && { collectionId }),
     };
@@ -134,21 +140,24 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       routeParams.selectedItemId = undefined;
     }
 
-    // Update unitId/collectionId in library context if is not undefined.
+    // Update sectionId/subsectionId/unitId/collectionId in library context if is not undefined.
     // Ids can be cleared from route by passing in empty string so we need to set it.
-    if (unitId !== undefined) {
+    if (unitId !== undefined || sectionId !== undefined || subsectionId !== undefined) {
       routeParams.selectedItemId = undefined;
 
-      // If we can have a unitId alongside a routeParams.collectionId, it means we are inside a collection
-      // trying to navigate to a unit, so we want to clear the collectionId to not have ambiquity.
+      // If we can have a unitId/subsectionId/sectionId alongside a routeParams.collectionId,
+      // it means we are inside a collection trying to navigate to a unit/section/subsection,
+      // so we want to clear the collectionId to not have ambiquity.
       if (routeParams.collectionId !== undefined) {
         routeParams.collectionId = undefined;
       }
     } else if (collectionId !== undefined) {
       routeParams.selectedItemId = undefined;
     } else if (contentType) {
-      // We are navigating to the library home, so we need to clear the unitId and collectionId
+      // We are navigating to the library home, so we need to clear the sectionId, subsectionId, unitId and collectionId
       routeParams.unitId = undefined;
+      routeParams.sectionId = undefined;
+      routeParams.subsectionId = undefined;
       routeParams.collectionId = undefined;
     }
 
@@ -194,6 +203,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.HOME;
     } else if (routeParams.unitId) {
       route = ROUTES.UNIT;
+    } else if (routeParams.subsectionId) {
+      route = ROUTES.SUBSECTION;
+    } else if (routeParams.sectionId) {
+      route = ROUTES.SECTION;
     } else if (routeParams.collectionId) {
       route = ROUTES.COLLECTION;
       // From here, we will just stay in the current route

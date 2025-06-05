@@ -28,7 +28,7 @@ import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
 import { useContainer, usePublishContainer } from '../data/apiHooks';
-import { ContainerType, getContainerTypeFromId } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 
 type ContainerMenuProps = {
@@ -74,7 +74,7 @@ type ContainerPreviewProps = {
 };
 
 const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
-  const containerType = getContainerTypeFromId(containerId);
+  const containerType = getBlockType(containerId);
   switch (containerType) {
     case ContainerType.Unit:
       return <LibraryUnitBlocks unitId={containerId} readOnly />;
@@ -101,7 +101,7 @@ const ContainerInfo = () => {
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
 
   const containerId = sidebarComponentInfo?.id;
-  const containerType = containerId ? getContainerTypeFromId(containerId) : undefined;
+  const containerType = containerId ? getBlockType(containerId) : undefined;
   const { data: container } = useContainer(containerId);
   const publishContainer = usePublishContainer(containerId!);
 
