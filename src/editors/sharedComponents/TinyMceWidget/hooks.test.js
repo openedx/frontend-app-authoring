@@ -194,7 +194,12 @@ describe('TinyMceEditor hooks', () => {
       const lmsEndpointUrl = getConfig().LMS_BASE_URL;
       it('returns updated src for text editor to update content', () => {
         const expected = `<img src="/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="/${baseAssetUrl}@test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}@correct.png" />`;
-        const actual = module.replaceStaticWithAsset({ initialContent, learningContextId });
+        const actual = module.replaceStaticWithAsset({
+          initialContent,
+          learningContextId,
+          validateAssetUrl: false,
+
+        });
         expect(actual).toEqual(expected);
       });
       it('returns updated src with absolute url for expandable editor to update content', () => {
@@ -205,6 +210,7 @@ describe('TinyMceEditor hooks', () => {
           editorType,
           lmsEndpointUrl,
           learningContextId,
+          validateAssetUrl: false,
         });
         expect(actual).toEqual(expected);
       });
