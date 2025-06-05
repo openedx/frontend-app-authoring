@@ -84,10 +84,12 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={container.tagsCount} />
-        <ContainerMenu
-          containerKey={container.originalId}
-          displayName={container.displayName}
-        />
+        {!readOnly && (
+          <ContainerMenu
+            containerKey={container.originalId}
+            displayName={container.displayName}
+          />
+        )}
       </Stack>
     </>
   );

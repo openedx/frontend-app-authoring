@@ -24,6 +24,7 @@ import {
 import ContainerOrganize from './ContainerOrganize';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
+import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
@@ -75,13 +76,10 @@ type ContainerPreviewProps = {
 
 const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
   const containerType = getBlockType(containerId);
-  switch (containerType) {
-    case ContainerType.Unit:
-      return <LibraryUnitBlocks unitId={containerId} readOnly />;
-    // TODO: section/subsection preview
-    default:
-      return <div />;
+  if (containerType === ContainerType.Unit) {
+    return <LibraryUnitBlocks unitId={containerId} readOnly />;
   }
+  return <LibraryContainerChildren containerKey={containerId} readOnly />;
 };
 
 const ContainerInfo = () => {
