@@ -32,6 +32,7 @@ import { getFileSizeToClosestByte } from '../../utils';
 import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
 import FileValidationModal from './FileValidationModal';
+import './FilesPage.scss';
 
 const FilesPage = ({
   courseId,
