@@ -276,5 +276,10 @@ const messages = defineMessages({
     defaultMessage: 'Failed to undo remove component operation',
     description: 'Message to display on failure to undo delete component',
   },
+  containerPreviewText: {
+    id: 'course-authoring.library-authoring.container.preview.text',
+    defaultMessage: 'Contains {children}.',
+    description: 'Preview message for section/subsections with the names of children separated by commas',
+  },
 });
 export default messages;
