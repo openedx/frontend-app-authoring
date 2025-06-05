@@ -10,7 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
 
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
@@ -56,7 +56,7 @@ const CardItem: React.FC<Props> = ({
     courseCreatorStatus,
     rerunCreatorStatus,
   } = useSelector(getStudioHomeData);
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags();
 
   const destinationUrl: string = path ?? (
     waffleFlags.useNewCourseOutlinePage && !isLibraries

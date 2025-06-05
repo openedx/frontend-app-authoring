@@ -1,28 +1,25 @@
+// @ts-check
 import React from 'react';
-import {
-  FormattedMessage,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 
 import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
 
-const SettingsSidebar = ({ intl, courseId, proctoredExamSettingsUrl }) => (
+const SettingsSidebar = ({ courseId, proctoredExamSettingsUrl = '' }) => (
   <HelpSidebar
     courseId={courseId}
     proctoredExamSettingsUrl={proctoredExamSettingsUrl}
     showOtherSettings
   >
     <h4 className="help-sidebar-about-title">
-      {intl.formatMessage(messages.about)}
+      <FormattedMessage {...messages.about} />
     </h4>
     <p className="help-sidebar-about-descriptions">
-      {intl.formatMessage(messages.aboutDescription1)}
+      <FormattedMessage {...messages.aboutDescription1} />
     </p>
     <p className="help-sidebar-about-descriptions">
-      {intl.formatMessage(messages.aboutDescription2)}
+      <FormattedMessage {...messages.aboutDescription2} />
     </p>
     <p className="help-sidebar-about-descriptions">
       <FormattedMessage
@@ -34,14 +31,9 @@ const SettingsSidebar = ({ intl, courseId, proctoredExamSettingsUrl }) => (
   </HelpSidebar>
 );
 
-SettingsSidebar.defaultProps = {
-  proctoredExamSettingsUrl: '',
-};
-
 SettingsSidebar.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
   proctoredExamSettingsUrl: PropTypes.string,
 };
 
-export default injectIntl(SettingsSidebar);
+export default SettingsSidebar;
