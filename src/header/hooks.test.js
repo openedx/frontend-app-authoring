@@ -121,8 +121,6 @@ describe('header utils', () => {
 
     it('when course optimizer enabled should include optimizer option', () => {
       mockWaffleFlags({
-        useNewVideoUploadsPage: false,
-        useNewCertificatesPage: false,
         enableCourseOptimizer: true,
       });
       const optimizerItem = renderHook(() => useToolsMenuItems('course-123')).result.current.find(
@@ -133,8 +131,6 @@ describe('header utils', () => {
 
     it('when course optimizer disabled should not include optimizer option', () => {
       mockWaffleFlags({
-        useNewVideoUploadsPage: false,
-        useNewCertificatesPage: false,
         enableCourseOptimizer: false,
       });
       const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123')).result.current.map((item) => item.title);
