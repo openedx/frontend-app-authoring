@@ -1,3 +1,4 @@
+import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -10,10 +11,10 @@ import { apiUrls } from '../data/api';
 import initializeStore from '../../store';
 import TaxonomyDetailPage from './TaxonomyDetailPage';
 
-let store;
+let store: any;
 const mockNavigate = jest.fn();
 const mockMutate = jest.fn();
-let axiosMock;
+let axiosMock: MockAdapter;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
@@ -32,7 +33,7 @@ jest.mock('../tag-list/TagListTable', () => jest.fn(() => <>Mock TagListTable</>
 
 const queryClient = new QueryClient();
 
-const RootWrapper = () => (
+const RootWrapper: React.FC = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -64,7 +65,7 @@ describe('<TaxonomyDetailPage />', () => {
 
   it('shows the spinner before the query is complete', () => {
     // Use unresolved promise to keep the Loading visible
-    axiosMock.onGet(apiUrls.taxonomy(1)).reply(() => new Promise());
+    axiosMock.onGet(apiUrls.taxonomy(1)).reply(() => new Promise(() => {}));
     const { getByRole } = render(<RootWrapper />);
     const spinner = getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');

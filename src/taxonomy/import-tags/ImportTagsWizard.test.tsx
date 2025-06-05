@@ -1,3 +1,4 @@
+import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -11,17 +12,16 @@ import {
   waitFor,
   screen,
 } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
 import { TaxonomyContext } from '../common/context';
 import { ImportTagsWizard } from './ImportTagsWizard';
 
-let store;
+let store: any;
 
 const queryClient = new QueryClient();
-let axiosMock;
+let axiosMock: MockAdapter;
 
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
@@ -33,7 +33,7 @@ const mockSetAlertError = jest.fn();
 const context = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertProps: null,
+  alertError: null,
   setAlertError: mockSetAlertError,
 };
 
@@ -46,7 +46,13 @@ const sampleTaxonomy = {
   name: 'Test Taxonomy',
 };
 
-const RootWrapper = ({ onClose, reimport, taxonomy }) => (
+interface RootWrapperProps {
+  onClose: () => void;
+  reimport: boolean;
+  taxonomy: typeof sampleTaxonomy | undefined;
+}
+
+const RootWrapper: React.FC<RootWrapperProps> = ({ onClose, reimport, taxonomy }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -57,15 +63,6 @@ const RootWrapper = ({ onClose, reimport, taxonomy }) => (
     </IntlProvider>
   </AppProvider>
 );
-
-RootWrapper.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  reimport: PropTypes.bool.isRequired,
-  taxonomy: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-};
 
 describe('<ImportTagsWizard />', () => {
   beforeEach(() => {
@@ -140,7 +137,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
 
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+    const makeJson = (filename: string) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     axiosMock.onPut(planImportUrl).replyOnce(200, { plan: 'Import plan' });
@@ -248,7 +245,7 @@ describe('<ImportTagsWizard />', () => {
     const onClose = jest.fn();
     const {
       findByTestId, getByRole, getByTestId, getByText, queryByTestId,
-    } = render(<RootWrapper taxonomy={null} onClose={onClose} />);
+    } = render(<RootWrapper taxonomy={undefined} onClose={onClose} reimport={false} />);
 
     // Check that there is no export step
     expect(await queryByTestId('export-step')).not.toBeInTheDocument();
@@ -269,7 +266,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(continueButton).toHaveAttribute('aria-disabled', 'true');
 
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+    const makeJson = (filename: string) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
