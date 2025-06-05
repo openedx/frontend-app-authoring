@@ -111,7 +111,7 @@ describe('<InplaceTextEditor />', () => {
     expect(screen.getByText('Test text')).toBeInTheDocument();
   });
 
-  it('should dissapear edit button while editing', async () => {
+  it('should disappear edit button while editing', async () => {
     render(<InplaceTextEditor text="Test text" onSave={mockOnSave} />);
 
     const title = screen.getByText('Test text');
