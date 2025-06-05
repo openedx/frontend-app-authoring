@@ -1359,7 +1359,6 @@ describe('<CourseUnit />', () => {
           },
         });
 
-      // await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       userEvent.click(screen.getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
