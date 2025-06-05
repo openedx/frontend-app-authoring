@@ -481,7 +481,7 @@ describe('<CourseOutline />', () => {
       courseId, excludeGraded: true, all: true,
     }), store.dispatch);
 
-    expect(getByText('4/9 completed')).toBeInTheDocument();
+    expect(getByText('3/8 completed')).toBeInTheDocument();
   });
 
   it('render alerts if checklist api fails', async () => {
