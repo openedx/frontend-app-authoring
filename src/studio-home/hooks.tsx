@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RequestStatus } from '../data/constants';
@@ -15,8 +15,8 @@ import {
 import { updateSavingStatuses } from './data/slice';
 
 const useStudioHome = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams(); // The query string (location.search)
   const studioHomeData = useSelector(getStudioHomeData);
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const { isFiltered } = studioHomeCoursesParams;
@@ -31,14 +31,31 @@ const useStudioHome = () => {
   const isLoadingPage = studioHomeLoadingStatus === RequestStatus.IN_PROGRESS;
   const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
+  // FIXME: data should be loaded with React Query, not useEffect().
+  // To avoid a bug where changes in the "search all courses" query would trigger a reload,
+  // we need to remove the search 'q' from 'searchParams' and just limit this to the search
+  // parameters like 'active_only' that affect the course list. But really we need to replace
+  // fetchStudioHomeData() with separate React Query hooks - see docstring on that method.
+  // TODO: this whole thing is a bit weird; we sort of read the params from the search query,
+  // so if you enter the URL /home?archived_only=true it only shows archived courses, but the
+  // UI filters won't match it, and when you change the filters it doesn't update the search query.
+  // We should either use the search query as the only state / source of truth or ignore it entirely.
+  const courseListQuery = new URLSearchParams();
+  for (const key of ['org', 'search', 'order', 'active_only', 'archived_only', 'page']) {
+    // istanbul ignore if: this functionality is only partially implemented - see above
+    if (searchParams.has(key)) {
+      courseListQuery.set(key, searchParams.get(key)!);
+    }
+  }
+  const courseListQueryString = courseListQuery.size ? `?${courseListQuery.toString()}` : '';
   useEffect(() => {
-    dispatch(fetchStudioHomeData(location.search ?? ''));
+    dispatch(fetchStudioHomeData(courseListQueryString));
     setShowNewCourseContainer(false);
-  }, [location.search]);
+  }, [courseListQueryString]);
 
   useEffect(() => {
     const firstPage = 1;
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, order: 'display_name' }));
+    dispatch(fetchStudioHomeData(courseListQueryString, false, { page: firstPage, order: 'display_name' }));
   }, []);
 
   useEffect(() => {
