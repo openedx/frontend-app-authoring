@@ -101,7 +101,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo, insideSection } = useLibraryRoutes();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -202,7 +202,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
             isClickable
             onClick={(e) => handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarComponentInfo?.id === child.originalId ? 'selected' : undefined}
+            cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
             actions={(
               <ContainerRow
                 containerKey={containerKey}

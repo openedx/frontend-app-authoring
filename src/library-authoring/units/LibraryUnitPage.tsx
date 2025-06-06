@@ -41,7 +41,7 @@ export const LibraryUnitPage = () => {
   }
 
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     setDefaultTab,
     setHiddenTabs,
   } = useSidebarContext();
@@ -145,7 +145,7 @@ export const LibraryUnitPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"

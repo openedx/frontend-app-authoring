@@ -33,7 +33,7 @@ const render = ({
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: containerId,
           type: SidebarBodyComponentId.ComponentInfo,
         }}

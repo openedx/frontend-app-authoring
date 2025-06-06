@@ -33,7 +33,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   } = useLibraryContext();
 
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openComponentInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
@@ -54,7 +54,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeCollectionComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -74,7 +74,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     };
 
     removeContainerComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }

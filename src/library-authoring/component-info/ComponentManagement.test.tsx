@@ -51,7 +51,7 @@ const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentMa
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: usageKey,
           type: SidebarBodyComponentId.ComponentInfo,
         }}

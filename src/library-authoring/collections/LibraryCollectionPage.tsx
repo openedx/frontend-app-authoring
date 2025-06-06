@@ -45,7 +45,7 @@ const HeaderActions = () => {
     closeLibrarySidebar,
     openAddContentSidebar,
     openCollectionInfoSidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
   } = useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
 
@@ -54,8 +54,8 @@ const HeaderActions = () => {
     throw new Error('it should not be possible to render HeaderActions without a collectionId');
   }
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.CollectionInfo
-    && sidebarComponentInfo?.id === collectionId;
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyComponentId.CollectionInfo
+    && sidebarItemInfo?.id === collectionId;
 
   const handleOnClickInfoSidebar = () => {
     if (infoSidebarIsOpen) {
@@ -108,7 +108,7 @@ const LibraryCollectionPage = () => {
     extraFilter: contextExtraFilter,
     setCollectionId,
   } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const {
     data: collectionData,
@@ -224,7 +224,7 @@ const LibraryCollectionPage = () => {
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>

@@ -12,9 +12,9 @@ const CollectionInfoHeader = () => {
   const intl = useIntl();
 
   const { libraryId, readOnly } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const collectionId = sidebarComponentInfo?.id;
+  const collectionId = sidebarItemInfo?.id;
 
   // istanbul ignore if: this should never happen
   if (!collectionId) {

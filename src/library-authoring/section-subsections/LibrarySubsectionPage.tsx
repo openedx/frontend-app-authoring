@@ -54,9 +54,7 @@ const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
 export const LibrarySubsectionPage = () => {
   const intl = useIntl();
   const { libraryId, containerId } = useLibraryContext();
-  const {
-    sidebarComponentInfo,
-  } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   // fetch subsectionData from index as it includes its parent sections as well.
@@ -162,7 +160,7 @@ export const LibrarySubsectionPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"

@@ -18,7 +18,7 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { openComponentInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openComponentInfoSidebar, sidebarItemInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const {
@@ -46,8 +46,8 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo.id === usageKey;
+  const selected = sidebarItemInfo?.type === SidebarBodyComponentId.ComponentInfo
+    && sidebarItemInfo.id === usageKey;
 
   return (
     <BaseCard

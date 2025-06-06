@@ -21,7 +21,7 @@ export const LibrarySectionPage = () => {
   const intl = useIntl();
   const { libraryId, containerId } = useLibraryContext();
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
   } = useSidebarContext();
 
   if (!containerId || !libraryId) {
@@ -111,7 +111,7 @@ export const LibrarySectionPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"

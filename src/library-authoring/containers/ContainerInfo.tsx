@@ -93,12 +93,12 @@ const ContainerInfo = () => {
     hiddenTabs,
     sidebarTab,
     setSidebarTab,
-    sidebarComponentInfo,
+    sidebarItemInfo,
     resetSidebarAction,
   } = useSidebarContext();
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
 
-  const containerId = sidebarComponentInfo?.id;
+  const containerId = sidebarItemInfo?.id;
   const containerType = containerId ? getBlockType(containerId) : undefined;
   const { data: container } = useContainer(containerId);
   const publishContainer = usePublishContainer(containerId!);

@@ -30,7 +30,7 @@ const render = (showOnlyPublished: boolean = false) => {
         showOnlyPublished={showOnlyPublished}
       >
         <SidebarProvider
-          initialSidebarComponentInfo={{
+          initialSidebarItemInfo={{
             id: containerId,
             type: SidebarBodyComponentId.ContainerInfo,
           }}

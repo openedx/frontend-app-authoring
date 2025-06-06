@@ -24,7 +24,7 @@ const render = () => baseRender(<ComponentPreview />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: usageKey,
           type: SidebarBodyComponentId.ComponentInfo,
         }}

@@ -29,7 +29,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const { closeLibrarySidebar, sidebarComponentInfo } = useSidebarContext();
+  const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
   const {
     contextKey,
     blockId,
@@ -49,7 +49,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
 
   const deleteCollectionMutation = useDeleteCollection(contextKey, blockId);
   const deleteCollection = useCallback(async () => {
-    if (sidebarComponentInfo?.id === blockId) {
+    if (sidebarItemInfo?.id === blockId) {
       // Close sidebar if current collection is open to avoid displaying
       // deleted collection in sidebar
       closeLibrarySidebar();
@@ -68,7 +68,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
     } finally {
       closeDeleteModal();
     }
-  }, [sidebarComponentInfo?.id]);
+  }, [sidebarItemInfo?.id]);
 
   const openCollection = useCallback(() => {
     navigateTo({ collectionId: blockId });
@@ -116,7 +116,7 @@ type CollectionCardProps = {
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { setCollectionId, showOnlyPublished } = useLibraryContext();
-  const { openCollectionInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openCollectionInfoSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     type: itemType,
@@ -133,8 +133,8 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
 
   const { displayName = '', description = '' } = formatted;
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.CollectionInfo
-    && sidebarComponentInfo.id === collectionId;
+  const selected = sidebarItemInfo?.type === SidebarBodyComponentId.CollectionInfo
+    && sidebarItemInfo.id === collectionId;
 
   const { navigateTo } = useLibraryRoutes();
   const selectCollection = useCallback((e?: React.MouseEvent) => {

@@ -31,7 +31,7 @@ const render = (libraryId: string = mockLibraryId) => baseRender(<CollectionInfo
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: collectionId,
           type: SidebarBodyComponentId.CollectionInfo,
         }}

@@ -34,7 +34,7 @@ const render = (
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
       <LibraryProvider libraryId={libraryId} showOnlyPublished={showOnlyPublished}>
         <SidebarProvider
-          initialSidebarComponentInfo={{
+          initialSidebarItemInfo={{
             id: usageKey,
             type: SidebarBodyComponentId.ComponentInfo,
           }}

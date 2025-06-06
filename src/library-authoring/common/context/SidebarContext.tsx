@@ -67,7 +67,7 @@ export interface DefaultTabs {
   collection: CollectionInfoTab;
 }
 
-export interface SidebarComponentInfo {
+export interface SidebarItemInfo {
   type: SidebarBodyComponentId;
   id: string;
 }
@@ -86,7 +86,7 @@ export type SidebarContextData = {
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   openContainerInfoSidebar: (usageKey: string) => void;
-  sidebarComponentInfo?: SidebarComponentInfo;
+  sidebarItemInfo?: SidebarItemInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
   resetSidebarAction: () => void;
@@ -109,7 +109,7 @@ const SidebarContext = createContext<SidebarContextData | undefined>(undefined);
 type SidebarProviderProps = {
   children?: React.ReactNode;
   /** Only used for testing */
-  initialSidebarComponentInfo?: SidebarComponentInfo;
+  initialSidebarItemInfo?: SidebarItemInfo;
 };
 
 /**
@@ -117,10 +117,10 @@ type SidebarProviderProps = {
  */
 export const SidebarProvider = ({
   children,
-  initialSidebarComponentInfo,
+  initialSidebarItemInfo,
 }: SidebarProviderProps) => {
-  const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
-    initialSidebarComponentInfo,
+  const [sidebarItemInfo, setSidebarItemInfo] = useState<SidebarItemInfo | undefined>(
+    initialSidebarItemInfo,
   );
 
   const [defaultTab, setDefaultTab] = useState<DefaultTabs>(DEFAULT_TAB);
@@ -144,31 +144,31 @@ export const SidebarProvider = ({
   }, [setSidebarAction]);
 
   const closeLibrarySidebar = useCallback(() => {
-    setSidebarComponentInfo(undefined);
+    setSidebarItemInfo(undefined);
   }, []);
   const openAddContentSidebar = useCallback(() => {
-    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
+    setSidebarItemInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
   const openLibrarySidebar = useCallback(() => {
-    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
+    setSidebarItemInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
 
   const openComponentInfoSidebar = useCallback((usageKey: string) => {
-    setSidebarComponentInfo({
+    setSidebarItemInfo({
       id: usageKey,
       type: SidebarBodyComponentId.ComponentInfo,
     });
   }, []);
 
   const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
-    setSidebarComponentInfo({
+    setSidebarItemInfo({
       id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,
     });
   }, []);
 
   const openContainerInfoSidebar = useCallback((usageKey: string) => {
-    setSidebarComponentInfo({
+    setSidebarItemInfo({
       id: usageKey,
       type: SidebarBodyComponentId.ContainerInfo,
     });
@@ -180,7 +180,7 @@ export const SidebarProvider = ({
   const { componentPickerMode } = useComponentPickerContext();
 
   useEffect(() => {
-    if (initialSidebarComponentInfo) {
+    if (initialSidebarItemInfo) {
       // If the sidebar is already open with a selected item, we don't need to do anything.
       return;
     }
@@ -213,7 +213,7 @@ export const SidebarProvider = ({
       openAddContentSidebar,
       openLibrarySidebar,
       openComponentInfoSidebar,
-      sidebarComponentInfo,
+      sidebarItemInfo,
       openCollectionInfoSidebar,
       openContainerInfoSidebar,
       sidebarAction,
@@ -233,7 +233,7 @@ export const SidebarProvider = ({
     openAddContentSidebar,
     openLibrarySidebar,
     openComponentInfoSidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openCollectionInfoSidebar,
     openContainerInfoSidebar,
     sidebarAction,
@@ -270,7 +270,7 @@ export function useSidebarContext(): SidebarContextData {
       resetSidebarAction: () => {},
       sidebarTab: COMPONENT_INFO_TABS.Preview,
       setSidebarTab: () => {},
-      sidebarComponentInfo: undefined,
+      sidebarItemInfo: undefined,
       defaultTab: DEFAULT_TAB,
       setDefaultTab: () => {},
       hiddenTabs: [],

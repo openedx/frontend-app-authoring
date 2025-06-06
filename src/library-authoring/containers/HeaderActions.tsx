@@ -19,13 +19,13 @@ export const HeaderActions = ({
   const { readOnly } = useLibraryContext();
   const {
     closeLibrarySidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openContainerInfoSidebar,
     openAddContentSidebar,
   } = useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.id === containerKey;
+  const infoSidebarIsOpen = sidebarItemInfo?.id === containerKey;
 
   const handleOnClickInfoSidebar = useCallback(() => {
     if (infoSidebarIsOpen) {

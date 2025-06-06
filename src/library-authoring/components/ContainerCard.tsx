@@ -34,7 +34,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
@@ -46,7 +46,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-      if (sidebarComponentInfo?.id === containerKey) {
+      if (sidebarItemInfo?.id === containerKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -168,7 +168,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openContainerInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openContainerInfoSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -193,7 +193,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
 
-  const selected = sidebarComponentInfo?.id === containerKey;
+  const selected = sidebarItemInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
