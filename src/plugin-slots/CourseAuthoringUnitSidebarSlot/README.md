@@ -2,7 +2,8 @@
 
 ### Slot ID: `org.openedx.frontend.authoring.course_unit_sidebar.v2`
 
-### Slot ID Aliases: `course_authoring_unit_sidebar_slot_v2`
+### Slot ID Aliases
+* `course_authoring_unit_sidebar_slot_v2`
 
 ### Previous Version: [`org.openedx.frontend.authoring.course_unit_sidebar.v1`](./README.v1.md)
 
