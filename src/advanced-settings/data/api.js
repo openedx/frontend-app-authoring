@@ -2,7 +2,6 @@
 import {
   camelCaseObject,
   getConfig,
-  modifyObjectKeys,
   snakeCaseObject,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -21,12 +20,12 @@ export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
   const objectFormatted = camelCaseObject(data);
-  return modifyObjectKeys(objectFormatted, (key) => {
+  Object.keys(objectFormatted).forEach((key) => {
     if (objectFormatted[key]?.value) {
       objectFormatted[key].value = snakeCaseObject(objectFormatted[key].value);
     }
-    return key;
   });
+  return objectFormatted;
 }
 
 /**
@@ -39,12 +38,12 @@ export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
     .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
   const objectFormatted = camelCaseObject(data);
-  return modifyObjectKeys(objectFormatted, (key) => {
+  Object.keys(objectFormatted).forEach((key) => {
     if (objectFormatted[key]?.value) {
       objectFormatted[key].value = snakeCaseObject(objectFormatted[key].value);
     }
-    return key;
   });
+  return objectFormatted;
 }
 
 /**
