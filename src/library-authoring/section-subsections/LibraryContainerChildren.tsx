@@ -42,11 +42,13 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
 
   return (
     <>
-      <ContainerEditableTitle 
+      <ContainerEditableTitle
         containerId={container.originalId}
         readOnly={readOnly || showOnlyPublished}
         textClassName="font-weight-bold small"
-        placeHolderText={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
+        placeHolderText={
+          showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName
+        }
       />
       <ActionRow.Spacer />
       <Stack
