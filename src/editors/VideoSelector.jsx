@@ -23,7 +23,6 @@ const VideoSelector = ({
       studioEndpointUrl,
     },
   });
-  // istanbul ignore if
   if (loading) {
     return null;
   }
