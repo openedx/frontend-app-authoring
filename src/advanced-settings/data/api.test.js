@@ -26,27 +26,24 @@ describe('courseSettings API', () => {
   });
 
   describe('getCourseAdvancedSettings', () => {
-    it('should fetch and format course advanced settings', async () => {
+    it('should fetch and unformat course advanced settings', async () => {
       const fakeData = {
         keyCamelCase: {
           value: {
-            oneOption: 'content-1',
-            two_option: 'content-2',
-            threeOption: 'threeContent',
+            snake_case: 'snake_case',
+            camelCase: 'camelCase',
+            PascalCase: 'PascalCase',
+            'kebab-case': 'kebab-case',
+            UPPER_CASE: 'UPPER_CASE',
+            lowercase: 'lowercase',
+            UPPERCASE: 'UPPERCASE',
+            'Title Case': 'Title Case',
+            'dot.case': 'dot.case',
+            SCREAMING_SNAKE_CASE: 'SCREAMING_SNAKE_CASE',
+            MixedCase: 'MixedCase',
+            'Train-Case': 'Train-Case',
             nestedOption: {
               anotherOption: 'nestedContent',
-            },
-          },
-        },
-      };
-      const expected = {
-        keyCamelCase: {
-          value: {
-            one_option: 'content-1',
-            two_option: 'content-2',
-            three_option: 'threeContent',
-            nested_option: {
-              another_option: 'nestedContent',
             },
           },
         },
@@ -58,32 +55,29 @@ describe('courseSettings API', () => {
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0`,
       );
-      expect(result).toEqual(expected);
+      expect(result).toEqual(fakeData);
     });
   });
 
   describe('updateCourseAdvancedSettings', () => {
-    it('should update and format course advanced settings', async () => {
+    it('should update and unformat course advanced settings', async () => {
       const fakeData = {
         keyCamelCase: {
           value: {
-            oneOption: 'content-1',
-            two_option: 'content-2',
-            threeOption: 'threeContent',
+            snake_case: 'snake_case',
+            camelCase: 'camelCase',
+            PascalCase: 'PascalCase',
+            'kebab-case': 'kebab-case',
+            UPPER_CASE: 'UPPER_CASE',
+            lowercase: 'lowercase',
+            UPPERCASE: 'UPPERCASE',
+            'Title Case': 'Title Case',
+            'dot.case': 'dot.case',
+            SCREAMING_SNAKE_CASE: 'SCREAMING_SNAKE_CASE',
+            MixedCase: 'MixedCase',
+            'Train-Case': 'Train-Case',
             nestedOption: {
               anotherOption: 'nestedContent',
-            },
-          },
-        },
-      };
-      const expected = {
-        keyCamelCase: {
-          value: {
-            one_option: 'content-1',
-            two_option: 'content-2',
-            three_option: 'threeContent',
-            nested_option: {
-              another_option: 'nestedContent',
             },
           },
         },
@@ -97,27 +91,30 @@ describe('courseSettings API', () => {
         `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024`,
         {},
       );
-      expect(result).toEqual(expected);
+      expect(result).toEqual(fakeData);
     });
   });
 
   describe('getProctoringExamErrors', () => {
-    it('should fetch proctoring errors and return camelCase object', async () => {
+    it('should fetch proctoring errors and return unformat object', async () => {
       const fakeData = {
         keyCamelCase: {
           value: {
-            oneOption: 'content-1',
-            two_option: 'content-2',
-            threeOption: 'threeContent',
-          },
-        },
-      };
-      const expected = {
-        keyCamelCase: {
-          value: {
-            oneOption: 'content-1',
-            twoOption: 'content-2',
-            threeOption: 'threeContent',
+            snake_case: 'snake_case',
+            camelCase: 'camelCase',
+            PascalCase: 'PascalCase',
+            'kebab-case': 'kebab-case',
+            UPPER_CASE: 'UPPER_CASE',
+            lowercase: 'lowercase',
+            UPPERCASE: 'UPPERCASE',
+            'Title Case': 'Title Case',
+            'dot.case': 'dot.case',
+            SCREAMING_SNAKE_CASE: 'SCREAMING_SNAKE_CASE',
+            MixedCase: 'MixedCase',
+            'Train-Case': 'Train-Case',
+            nestedOption: {
+              anotherOption: 'nestedContent',
+            },
           },
         },
       };
@@ -128,7 +125,7 @@ describe('courseSettings API', () => {
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         `${process.env.STUDIO_BASE_URL}/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024`,
       );
-      expect(result).toEqual(expected);
+      expect(result).toEqual(fakeData);
     });
   });
 });
