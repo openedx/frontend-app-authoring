@@ -114,7 +114,7 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
   return (
-    <Stack direction="vertical">
+    <Stack direction="vertical" className="mt-1.5">
       {title}
       {showReadOnlyBadge && (
         <div>
