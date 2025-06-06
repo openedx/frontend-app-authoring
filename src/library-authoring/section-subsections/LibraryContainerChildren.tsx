@@ -12,13 +12,11 @@ import ErrorAlert from '../../generic/alert-error';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
-  useUpdateContainer,
   useUpdateContainerChildren,
 } from '../data/apiHooks';
 import { messages, subsectionMessages, sectionMessages } from './messages';
-import containerMessages from '../containers/messages';
+import { ContainerEditableTitle } from '../containers';
 import { Container } from '../data/api';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { ContainerMenu } from '../components/ContainerCard';
@@ -40,29 +38,15 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
 }
 
 const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
-  const intl = useIntl();
-  const { showToast } = useContext(ToastContext);
-  const updateMutation = useUpdateContainer(container.originalId);
   const { showOnlyPublished } = useLibraryContext();
-
-  const handleSaveDisplayName = async (newDisplayName: string) => {
-    try {
-      await updateMutation.mutateAsync({
-        displayName: newDisplayName,
-      });
-      showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
-    } catch (err) {
-      showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
-    }
-  };
 
   return (
     <>
-      <InplaceTextEditor
-        onSave={handleSaveDisplayName}
-        text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
-        textClassName="font-weight-bold small"
+      <ContainerEditableTitle 
+        containerId={container.originalId}
         readOnly={readOnly || showOnlyPublished}
+        textClassName="font-weight-bold small"
+        placeHolderText={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
       />
       <ActionRow.Spacer />
       <Stack

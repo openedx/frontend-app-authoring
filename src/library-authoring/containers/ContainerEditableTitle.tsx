@@ -8,15 +8,29 @@ import messages from './messages';
 
 interface EditableTitleProps {
   containerId: string;
+  readOnly?: boolean;
   textClassName?: string;
+  // In some cases, the title is already available, but it's retrieved in a list of containers.
+  // In these cases, it's necessary to use this `ContainerEditableTitle` for the optimistic update to work.
+  // By using `placeHolderText`, we can give the illusion that the data has already been loaded before using the real data.
+  placeHolderText?: string;
 }
 
-export const ContainerEditableTitle = ({ containerId, textClassName }: EditableTitleProps) => {
+export const ContainerEditableTitle = ({
+  containerId,
+  readOnly,
+  textClassName,
+  placeHolderText,
+}: EditableTitleProps) => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly: libReadOnly, showOnlyPublished } = useLibraryContext();
 
-  const { data: container } = useContainer(containerId);
+  if (!readOnly) {
+    readOnly = libReadOnly;
+  }
+
+  const { data: container, isLoading } = useContainer(containerId);
 
   const updateMutation = useUpdateContainer(containerId);
   const { showToast } = useContext(ToastContext);
@@ -32,15 +46,19 @@ export const ContainerEditableTitle = ({ containerId, textClassName }: EditableT
     }
   };
 
-  // istanbul ignore if: this should never happen
-  if (!container) {
-    return null;
+  let textTitle;
+  if (isLoading && placeHolderText) {
+    textTitle = placeHolderText;
+  } else if (isLoading || !container) {
+    textTitle = '';
+  } else {
+    textTitle = showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName
   }
 
   return (
     <InplaceTextEditor
       onSave={handleSaveDisplayName}
-      text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
+      text={textTitle}
       readOnly={readOnly}
       textClassName={textClassName}
     />
