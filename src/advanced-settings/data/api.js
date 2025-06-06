@@ -1,8 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import {
-  camelCaseObject,
   getConfig,
-  snakeCaseObject,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '../../utils';
@@ -19,15 +17,7 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
 export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
-  // we start with: { camelCaseField: { value: { shouldBeSnakeCase: '123' } }, ... }
-  const objectFormatted = camelCaseObject(data);
-  // we want: { camelCaseField: { value: { should_be_snake_case: '123' } }, ... }
-  Object.keys(objectFormatted).forEach((key) => {
-    if (objectFormatted[key]?.value) {
-      objectFormatted[key].value = snakeCaseObject(objectFormatted[key].value);
-    }
-  });
-  return objectFormatted;
+  return data;
 }
 
 /**
@@ -39,15 +29,7 @@ export async function getCourseAdvancedSettings(courseId) {
 export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
     .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
-  // we start with: { camelCaseField: { value: { shouldBeSnakeCase: '123' } }, ... }
-  const objectFormatted = camelCaseObject(data);
-  // we want: { camelCaseField: { value: { should_be_snake_case: '123' } }, ... }
-  Object.keys(objectFormatted).forEach((key) => {
-    if (objectFormatted[key]?.value) {
-      objectFormatted[key].value = snakeCaseObject(objectFormatted[key].value);
-    }
-  });
-  return objectFormatted;
+  return data;
 }
 
 /**
@@ -57,5 +39,5 @@ export async function updateCourseAdvancedSettings(courseId, settings) {
  */
 export async function getProctoringExamErrors(courseId) {
   const { data } = await getAuthenticatedHttpClient().get(`${getProctoringErrorsApiUrl()}${courseId}`);
-  return camelCaseObject(data);
+  return data;
 }
