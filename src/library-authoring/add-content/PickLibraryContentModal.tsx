@@ -53,12 +53,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   } = useLibraryRoutes();
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  const updateContainerChildrenMutation = useAddItemsToContainer(
-    (insideSection && containerId)
-    || (insideSubsection && containerId)
-    || (insideUnit && containerId)
-    || '',
-  );
+  const updateContainerChildrenMutation = useAddItemsToContainer(containerId);
 
   const { showToast } = useContext(ToastContext);
 
@@ -75,7 +70,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         .catch(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
-    } else if (insideSection || insideSubsection || insideUnit) {
+    } else if ((insideSection || insideSubsection || insideUnit) && containerId) {
       updateContainerChildrenMutation.mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));
