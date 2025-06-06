@@ -1,20 +1,10 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
-  getConfig, camelCaseObject, modifyObjectKeys, snakeCaseObject,
-} from '@edx/frontend-platform';
-import {
   getCourseAdvancedSettings,
   updateCourseAdvancedSettings,
   getProctoringExamErrors,
 } from './api';
 import { convertObjectToSnakeCase } from '../../utils';
-
-jest.mock('@edx/frontend-platform', () => ({
-  getConfig: jest.fn(),
-  camelCaseObject: jest.fn(),
-  modifyObjectKeys: jest.fn(),
-  snakeCaseObject: jest.fn(),
-}));
 
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),
@@ -33,70 +23,112 @@ describe('courseSettings API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getAuthenticatedHttpClient.mockReturnValue(mockHttpClient);
-    getConfig.mockReturnValue({ STUDIO_BASE_URL: 'http://studio.test' });
   });
 
   describe('getCourseAdvancedSettings', () => {
     it('should fetch and format course advanced settings', async () => {
-      const fakeData = { key: { value: 'some_value' } };
-      const camelCased = { key: { value: 'some_value' } };
-      const modified = { key: { value: 'some_value_snake' } };
+      const fakeData = {
+        keyCamelCase: {
+          value: {
+            oneOption: 'content-1',
+            two_option: 'content-2',
+            threeOption: 'threeContent',
+            nestedOption: {
+              anotherOption: 'nestedContent',
+            },
+          },
+        },
+      };
+      const expected = {
+        keyCamelCase: {
+          value: {
+            one_option: 'content-1',
+            two_option: 'content-2',
+            three_option: 'threeContent',
+            nested_option: {
+              another_option: 'nestedContent',
+            },
+          },
+        },
+      };
 
       mockHttpClient.get.mockResolvedValue({ data: fakeData });
-      camelCaseObject.mockReturnValue(camelCased);
-      snakeCaseObject.mockReturnValue('some_value_snake');
-      modifyObjectKeys.mockImplementation((obj, fn) => {
-        Object.keys(obj).forEach(fn);
-        return modified;
-      });
 
       const result = await getCourseAdvancedSettings('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'http://studio.test/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0',
+        `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0`,
       );
-      expect(result).toEqual(modified);
+      expect(result).toEqual(expected);
     });
   });
 
   describe('updateCourseAdvancedSettings', () => {
     it('should update and format course advanced settings', async () => {
-      const input = { key: 'value' };
-      const snakeInput = { key: 'snake_value' };
-      const serverData = { key: { value: 'server_value' } };
-      const camelCased = { key: { value: 'server_value' } };
-      const modified = { key: { value: 'formatted_value' } };
+      const fakeData = {
+        keyCamelCase: {
+          value: {
+            oneOption: 'content-1',
+            two_option: 'content-2',
+            threeOption: 'threeContent',
+            nestedOption: {
+              anotherOption: 'nestedContent',
+            },
+          },
+        },
+      };
+      const expected = {
+        keyCamelCase: {
+          value: {
+            one_option: 'content-1',
+            two_option: 'content-2',
+            three_option: 'threeContent',
+            nested_option: {
+              another_option: 'nestedContent',
+            },
+          },
+        },
+      };
 
-      convertObjectToSnakeCase.mockReturnValue(snakeInput);
-      mockHttpClient.patch.mockResolvedValue({ data: serverData });
-      camelCaseObject.mockReturnValue(camelCased);
-      snakeCaseObject.mockReturnValue('formatted_value');
-      modifyObjectKeys.mockImplementation((obj, fn) => {
-        Object.keys(obj).forEach(fn);
-        return modified;
-      });
+      convertObjectToSnakeCase.mockReturnValue({});
+      mockHttpClient.patch.mockResolvedValue({ data: fakeData });
 
-      const result = await updateCourseAdvancedSettings('course-v1:Test+T101+2024', input);
+      const result = await updateCourseAdvancedSettings('course-v1:Test+T101+2024', {});
       expect(mockHttpClient.patch).toHaveBeenCalledWith(
-        'http://studio.test/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024',
-        snakeInput,
+        `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024`,
+        {},
       );
-      expect(result).toEqual(modified);
+      expect(result).toEqual(expected);
     });
   });
 
   describe('getProctoringExamErrors', () => {
     it('should fetch proctoring errors and return camelCase object', async () => {
-      const fakeErrors = { errors: [] };
-      const camelCased = { errors: [] };
+      const fakeData = {
+        keyCamelCase: {
+          value: {
+            oneOption: 'content-1',
+            two_option: 'content-2',
+            threeOption: 'threeContent',
+          },
+        },
+      };
+      const expected = {
+        keyCamelCase: {
+          value: {
+            oneOption: 'content-1',
+            twoOption: 'content-2',
+            threeOption: 'threeContent',
+          },
+        },
+      };
 
-      mockHttpClient.get.mockResolvedValue({ data: fakeErrors });
-      camelCaseObject.mockReturnValue(camelCased);
+      mockHttpClient.get.mockResolvedValue({ data: fakeData });
 
       const result = await getProctoringExamErrors('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'http://studio.test/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024',
+        `${process.env.STUDIO_BASE_URL}/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024`,
       );
-      expect(result).toEqual(camelCased);
+      expect(result).toEqual(expected);
     });
   });
 });
