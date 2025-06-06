@@ -8,12 +8,13 @@ import messages from './messages';
 
 interface EditableTitleProps {
   containerId: string;
+  textClassName?: string;
 }
 
-export const ContainerEditableTitle = ({ containerId }: EditableTitleProps) => {
+export const ContainerEditableTitle = ({ containerId, textClassName }: EditableTitleProps) => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext();
 
   const { data: container } = useContainer(containerId);
 
@@ -39,8 +40,9 @@ export const ContainerEditableTitle = ({ containerId }: EditableTitleProps) => {
   return (
     <InplaceTextEditor
       onSave={handleSaveDisplayName}
-      text={container.displayName}
+      text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
       readOnly={readOnly}
+      textClassName={textClassName}
     />
   );
 };
