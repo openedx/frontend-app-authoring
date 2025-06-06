@@ -199,8 +199,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
-            isClickable
-            onClick={(e) => handleChildClick(child, e.detail)}
+            isClickable={!readOnly}
+            onClick={(e) => !readOnly && handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
             cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
             actions={(

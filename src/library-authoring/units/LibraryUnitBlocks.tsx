@@ -184,7 +184,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={!readOnly ? (e) => handleComponentSelection(e.detail) : undefined}
+        onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
         disabled={readOnly}
         cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
       >
