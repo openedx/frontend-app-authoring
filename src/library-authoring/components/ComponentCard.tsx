@@ -6,7 +6,7 @@ import {
 import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -46,7 +46,7 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
-  const selected = sidebarItemInfo?.type === SidebarBodyComponentId.ComponentInfo
+  const selected = sidebarItemInfo?.type === SidebarBodyItemId.ComponentInfo
     && sidebarItemInfo.id === usageKey;
 
   return (

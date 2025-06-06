@@ -30,7 +30,7 @@ import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
@@ -54,7 +54,7 @@ const HeaderActions = () => {
     throw new Error('it should not be possible to render HeaderActions without a collectionId');
   }
 
-  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyComponentId.CollectionInfo
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo
     && sidebarItemInfo?.id === collectionId;
 
   const handleOnClickInfoSidebar = () => {

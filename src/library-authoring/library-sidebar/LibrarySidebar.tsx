@@ -11,7 +11,7 @@ import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, ContainerInfo } from '../containers';
 import {
-  COMPONENT_INFO_TABS, SidebarActions, SidebarBodyComponentId, useSidebarContext,
+  COMPONENT_INFO_TABS, SidebarActions, SidebarBodyItemId, useSidebarContext,
 } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
@@ -47,20 +47,20 @@ const LibrarySidebar = () => {
   }, [jumpToCollections, setSidebarTab, jumpToTags]);
 
   const bodyComponentMap = {
-    [SidebarBodyComponentId.AddContent]: <AddContent />,
-    [SidebarBodyComponentId.Info]: <LibraryInfo />,
-    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
-    [SidebarBodyComponentId.ContainerInfo]: <ContainerInfo />,
+    [SidebarBodyItemId.AddContent]: <AddContent />,
+    [SidebarBodyItemId.Info]: <LibraryInfo />,
+    [SidebarBodyItemId.ComponentInfo]: <ComponentInfo />,
+    [SidebarBodyItemId.CollectionInfo]: <CollectionInfo />,
+    [SidebarBodyItemId.ContainerInfo]: <ContainerInfo />,
     unknown: null,
   };
 
   const headerComponentMap = {
-    [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
-    [SidebarBodyComponentId.Info]: <LibraryInfoHeader />,
-    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfoHeader />,
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader />,
-    [SidebarBodyComponentId.ContainerInfo]: <ContainerInfoHeader />,
+    [SidebarBodyItemId.AddContent]: <AddContentHeader />,
+    [SidebarBodyItemId.Info]: <LibraryInfoHeader />,
+    [SidebarBodyItemId.ComponentInfo]: <ComponentInfoHeader />,
+    [SidebarBodyItemId.CollectionInfo]: <CollectionInfoHeader />,
+    [SidebarBodyItemId.ContainerInfo]: <ContainerInfoHeader />,
     unknown: null,
   };
 

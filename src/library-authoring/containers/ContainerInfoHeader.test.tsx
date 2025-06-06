@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import * as api from '../data/api';
 import ContainerInfoHeader from './ContainerInfoHeader';
@@ -33,7 +33,7 @@ const render = (libraryId: string = mockLibraryId) => baseRender(<ContainerInfoH
       <SidebarProvider
         initialSidebarItemInfo={{
           id: containerId,
-          type: SidebarBodyComponentId.ContainerInfo,
+          type: SidebarBodyItemId.ContainerInfo,
         }}
       >
         { children }

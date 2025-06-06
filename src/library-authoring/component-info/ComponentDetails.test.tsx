@@ -14,7 +14,7 @@ import {
   mockXBlockOLX,
 } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentDetails from './ComponentDetails';
 
 mockContentSearchConfig.applyMock();
@@ -37,7 +37,7 @@ const render = (usageKey: string) => baseRender(<ComponentDetails />, {
       <SidebarProvider
         initialSidebarItemInfo={{
           id: usageKey,
-          type: SidebarBodyComponentId.ComponentInfo,
+          type: SidebarBodyItemId.ComponentInfo,
         }}
       >
         {children}

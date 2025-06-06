@@ -41,7 +41,7 @@ import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
@@ -61,7 +61,7 @@ const HeaderActions = () => {
 
   const { componentPickerMode } = useComponentPickerContext();
 
-  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyComponentId.Info;
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.Info;
 
   const { navigateTo } = useLibraryRoutes();
   const handleOnClickInfoSidebar = useCallback(() => {

@@ -11,7 +11,7 @@ import {
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfo from './ComponentInfo';
 import { getXBlockPublishApiUrl } from '../data/api';
 
@@ -35,7 +35,7 @@ const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => (
       <SidebarProvider
         initialSidebarItemInfo={{
           id: sidebarComponentUsageKey,
-          type: SidebarBodyComponentId.ComponentInfo,
+          type: SidebarBodyItemId.ComponentInfo,
         }}
       >
         {children}

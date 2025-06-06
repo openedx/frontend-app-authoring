@@ -9,7 +9,7 @@ import { mockContentLibrary, mockGetContainerChildren, mockGetContainerMetadata 
 import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 
 mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
@@ -32,7 +32,7 @@ const render = (showOnlyPublished: boolean = false) => {
         <SidebarProvider
           initialSidebarItemInfo={{
             id: containerId,
-            type: SidebarBodyComponentId.ContainerInfo,
+            type: SidebarBodyItemId.ContainerInfo,
           }}
         >
           {children}

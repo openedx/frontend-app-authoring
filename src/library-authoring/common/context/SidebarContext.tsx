@@ -11,7 +11,7 @@ import { useStateWithUrlSearchParam } from '../../../hooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
-export enum SidebarBodyComponentId {
+export enum SidebarBodyItemId {
   AddContent = 'add-content',
   Info = 'info',
   ComponentInfo = 'component-info',
@@ -68,7 +68,7 @@ export interface DefaultTabs {
 }
 
 export interface SidebarItemInfo {
-  type: SidebarBodyComponentId;
+  type: SidebarBodyItemId;
   id: string;
 }
 
@@ -147,30 +147,30 @@ export const SidebarProvider = ({
     setSidebarItemInfo(undefined);
   }, []);
   const openAddContentSidebar = useCallback(() => {
-    setSidebarItemInfo({ id: '', type: SidebarBodyComponentId.AddContent });
+    setSidebarItemInfo({ id: '', type: SidebarBodyItemId.AddContent });
   }, []);
   const openLibrarySidebar = useCallback(() => {
-    setSidebarItemInfo({ id: '', type: SidebarBodyComponentId.Info });
+    setSidebarItemInfo({ id: '', type: SidebarBodyItemId.Info });
   }, []);
 
   const openComponentInfoSidebar = useCallback((usageKey: string) => {
     setSidebarItemInfo({
       id: usageKey,
-      type: SidebarBodyComponentId.ComponentInfo,
+      type: SidebarBodyItemId.ComponentInfo,
     });
   }, []);
 
   const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
     setSidebarItemInfo({
       id: newCollectionId,
-      type: SidebarBodyComponentId.CollectionInfo,
+      type: SidebarBodyItemId.CollectionInfo,
     });
   }, []);
 
   const openContainerInfoSidebar = useCallback((usageKey: string) => {
     setSidebarItemInfo({
       id: usageKey,
-      type: SidebarBodyComponentId.ContainerInfo,
+      type: SidebarBodyItemId.ContainerInfo,
     });
   }, []);
 

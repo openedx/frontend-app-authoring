@@ -13,7 +13,7 @@ import {
   mockXBlockOLX,
 } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import * as apiHooks from '../data/apiHooks';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { getXBlockAssetsApiUrl } from '../data/api';
@@ -36,7 +36,7 @@ const render = (
         <SidebarProvider
           initialSidebarItemInfo={{
             id: usageKey,
-            type: SidebarBodyComponentId.ComponentInfo,
+            type: SidebarBodyItemId.ComponentInfo,
           }}
         >
           {children}

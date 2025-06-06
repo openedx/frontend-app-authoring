@@ -12,7 +12,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { type CollectionHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
 import { ToastContext } from '../../generic/toast-context';
@@ -133,7 +133,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
 
   const { displayName = '', description = '' } = formatted;
 
-  const selected = sidebarItemInfo?.type === SidebarBodyComponentId.CollectionInfo
+  const selected = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo
     && sidebarItemInfo.id === collectionId;
 
   const { navigateTo } = useLibraryRoutes();

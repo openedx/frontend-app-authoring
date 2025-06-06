@@ -8,7 +8,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import ContainerOrganize from './ContainerOrganize';
 
@@ -35,7 +35,7 @@ const render = ({
       <SidebarProvider
         initialSidebarItemInfo={{
           id: containerId,
-          type: SidebarBodyComponentId.ComponentInfo,
+          type: SidebarBodyItemId.ComponentInfo,
         }}
       >
         {children}
