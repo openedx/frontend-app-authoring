@@ -132,9 +132,9 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(await screen.findByRole('button', { name: new RegExp(`${cType} Info`, 'i') })).toBeInTheDocument();
       expect((await screen.findAllByRole('button', { name: 'Drag to reorder' })).length).toEqual(3);
       // check all children components are rendered.
-      expect(await screen.findByText(`${childType} block 0`)).toBeInTheDocument();
-      expect(await screen.findByText(`${childType} block 1`)).toBeInTheDocument();
-      expect(await screen.findByText(`${childType} block 2`)).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 0`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 1`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 2`))[0]).toBeInTheDocument();
     });
 
     it(`shows ${cType} data with no children`, async () => {
@@ -148,7 +148,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       // unit info button
       expect(await screen.findByRole('button', { name: new RegExp(`${cType} Info`, 'i') })).toBeInTheDocument();
       // check all children components are rendered.
-      expect(await screen.findByText(`This ${cType} is empty`)).toBeInTheDocument();
+      expect((await screen.findAllByText(`This ${cType} is empty`))[0]).toBeInTheDocument();
     });
 
     it(`can rename ${cType}`, async () => {
@@ -157,7 +157,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-      expect(await screen.findByText(`Test ${cType}`)).toBeInTheDocument();
+      expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
 
       const editContainerTitleButton = (await screen.findAllByRole(
         'button',
@@ -190,7 +190,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-      expect(await screen.findByText(`Test ${cType}`)).toBeInTheDocument();
+      expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
 
       const editContainerTitleButton = (await screen.findAllByRole(
         'button',
@@ -224,8 +224,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       axiosMock.onPatch(url).reply(200);
       renderLibrarySectionPage(undefined, undefined, cType);
 
-      // Wait loading of the component
-      await screen.findByText(`${childType} block 0`);
+      // Wait loading of the component (on page and in sidebar)
+      await screen.findAllByText(`${childType} block 0`);
 
       const editButton = (await screen.findAllByRole(
         'button',
@@ -257,8 +257,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       axiosMock.onPatch(url).reply(400);
       renderLibrarySectionPage(undefined, undefined, cType);
 
-      // Wait loading of the component
-      await screen.findByText(`${childType} block 0`);
+      // Wait loading of the component (on page and in sidebar)
+      await screen.findAllByText(`${childType} block 0`);
 
       const editButton = screen.getAllByRole(
         'button',
@@ -339,7 +339,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
 
     it(`should open ${childType} page on double click`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
-      const subsection = await screen.findByText(`${childType} block 0`);
+      const subsection = (await screen.findAllByText(`${childType} block 0`))[0];
       // trigger double click
       userEvent.click(subsection.parentElement!, undefined, { clickCount: 2 });
       expect((await screen.findAllByText(new RegExp(`Test ${childType}`, 'i')))[0]).toBeInTheDocument();

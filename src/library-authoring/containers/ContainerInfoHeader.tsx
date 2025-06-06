@@ -12,9 +12,9 @@ const ContainerInfoHeader = () => {
   const intl = useIntl();
 
   const { readOnly } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const containerId = sidebarComponentInfo?.id;
+  const containerId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!containerId) {
     throw new Error('containerId is required');

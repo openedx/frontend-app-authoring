@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import * as api from '../data/api';
 import CollectionInfoHeader from './CollectionInfoHeader';
@@ -31,9 +31,9 @@ const render = (libraryId: string = mockLibraryId) => baseRender(<CollectionInfo
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: collectionId,
-          type: SidebarBodyComponentId.CollectionInfo,
+          type: SidebarBodyItemId.CollectionInfo,
         }}
       >
         { children }

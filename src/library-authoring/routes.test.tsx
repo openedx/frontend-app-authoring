@@ -141,7 +141,7 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          unitId: 'lct:org:lib:unit:unitId',
+          containerId: 'lct:org:lib:unit:unitId',
         },
         path: '/unit/lct:org:lib:unit:unitId',
       },
@@ -503,7 +503,7 @@ describe('Library Authoring routes', () => {
         path: `/library/:libraryId${origin.path}/*`,
         params: {
           libraryId: mockContentLibrary.libraryId,
-          unitId: '',
+          containerId: '',
           collectionId: '',
           selectedItemId: '',
           ...origin.params,

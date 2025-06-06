@@ -28,12 +28,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    unitId,
+    containerId,
     openComponentEditor,
   } = useLibraryContext();
 
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openComponentInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
@@ -42,9 +42,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addComponentToContainerMutation = useAddItemsToContainer(unitId);
+  const addItemToContainerMutation = useAddItemsToContainer(containerId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
-  const removeContainerComponentsMutation = useRemoveContainerChildren(unitId);
+  const removeContainerItemMutation = useRemoveContainerChildren(containerId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const { copyToClipboard } = useClipboard();
 
@@ -54,7 +54,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeCollectionComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -66,15 +66,15 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromContainer = () => {
     const restoreComponent = () => {
-      addComponentToContainerMutation.mutateAsync([usageKey]).then(() => {
+      addItemToContainerMutation.mutateAsync([usageKey]).then(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
       }).catch(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
       });
     };
 
-    removeContainerComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+    removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -129,7 +129,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        {unitId && (
+        {containerId && (
           <Dropdown.Item onClick={removeFromContainer}>
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>

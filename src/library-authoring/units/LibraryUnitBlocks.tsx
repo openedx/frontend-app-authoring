@@ -135,7 +135,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
   const { navigateTo } = useLibraryRoutes();
 
   const { openComponentEditor } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
     navigateTo({ selectedItemId: block.originalId });
@@ -184,9 +184,9 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={!readOnly ? (e) => handleComponentSelection(e.detail) : undefined}
+        onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
         disabled={readOnly}
-        cardClassName={sidebarComponentInfo?.id === block.originalId ? 'selected' : undefined}
+        cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div

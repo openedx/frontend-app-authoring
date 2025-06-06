@@ -8,7 +8,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
@@ -51,9 +51,9 @@ const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentMa
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: usageKey,
-          type: SidebarBodyComponentId.ComponentInfo,
+          type: SidebarBodyItemId.ComponentInfo,
         }}
       >
         {children}

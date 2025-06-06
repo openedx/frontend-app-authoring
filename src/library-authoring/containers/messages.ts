@@ -1,10 +1,10 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  openUnitButton: {
+  openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
-    description: 'Button text to open unit',
+    description: 'Button text to open container',
   },
   previewTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.preview-tab.title',

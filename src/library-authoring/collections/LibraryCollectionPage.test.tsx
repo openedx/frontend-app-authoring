@@ -445,9 +445,10 @@ describe('<LibraryCollectionPage />', () => {
   ])('$label', async ({ containerType }) => {
     await renderLibraryCollectionPage();
     const containerTitle = `This is a Test ${containerType}`;
+    const containerId = `lct:org:libId:${containerType}:1`;
     const containerUrl = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(containerUrl).reply(200, {
-      id: 'container-id',
+      id: containerId,
       slug: 'this-is-a-test',
       title: containerTitle,
     });
@@ -491,6 +492,6 @@ describe('<LibraryCollectionPage />', () => {
     // Check that the unit was added to the collection
     expect(axiosMock.history.patch.length).toBe(1);
     expect(axiosMock.history.patch[0].url).toBe(collectionUrl);
-    expect(axiosMock.history.patch[0].data).toContain('"usage_keys":["container-id"]');
+    expect(axiosMock.history.patch[0].data).toContain(`"usage_keys":["${containerId}"]`);
   });
 });

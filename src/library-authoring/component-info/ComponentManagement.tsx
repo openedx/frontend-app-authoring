@@ -17,7 +17,7 @@ import messages from './messages';
 const ComponentManagement = () => {
   const intl = useIntl();
   const { readOnly, isLoadingLibraryData } = useLibraryContext();
-  const { sidebarComponentInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
+  const { sidebarItemInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
   const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
@@ -40,7 +40,7 @@ const ComponentManagement = () => {
     }
   }, [tagsCollapseIsOpen, collectionsCollapseIsOpen]);
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');

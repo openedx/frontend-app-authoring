@@ -38,9 +38,9 @@ interface Props {
 
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const intl = useIntl();
-  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
+  const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
-  const sidebarComponentUsageKey = sidebarComponentInfo?.id;
+  const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
   const restoreComponent = useCallback(async () => {

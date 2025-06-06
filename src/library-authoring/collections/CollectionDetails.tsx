@@ -39,8 +39,8 @@ const BlockCount = ({
 
 const CollectionStatsWidget = () => {
   const { libraryId } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
-  const collectionId = sidebarComponentInfo?.id;
+  const { sidebarItemInfo } = useSidebarContext();
+  const collectionId = sidebarItemInfo?.id;
 
   const { data: blockTypes } = useGetBlockTypes([
     `context_key = "${libraryId}"`,
@@ -100,9 +100,9 @@ const CollectionDetails = () => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { libraryId, readOnly } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const collectionId = sidebarComponentInfo?.id;
+  const collectionId = sidebarItemInfo?.id;
   // istanbul ignore next: This should never happen
   if (!collectionId) {
     throw new Error('collectionId is required');
