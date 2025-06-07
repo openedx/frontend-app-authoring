@@ -44,6 +44,43 @@ export const useContentSearchConnection = (): {
   return { client, indexName, hasConnectionError };
 };
 
+export const buildSearchQueryKey = ({
+  client,
+  indexName,
+  extraFilter,
+  searchKeywords,
+  blockTypesFilter,
+  problemTypesFilter,
+  publishStatusFilter,
+  tagsFilter,
+  sort,
+}: {
+  client?: MeiliSearch;
+  indexName?: string;
+  extraFilter?: Filter;
+  searchKeywords: string;
+  blockTypesFilter: string[];
+  problemTypesFilter: string[];
+  publishStatusFilter: PublishStatus[];
+  tagsFilter: string[];
+  sort: SearchSortOption[];
+}) => (
+  [
+    'content_search',
+    'results',
+    client?.config.apiKey,
+    client?.config.host,
+    indexName,
+    extraFilter,
+    searchKeywords,
+    blockTypesFilter,
+    problemTypesFilter,
+    publishStatusFilter,
+    tagsFilter,
+    sort,
+  ]
+);
+
 /**
  * Get the results of a search
  */
@@ -87,11 +124,8 @@ export const useContentSearchResults = ({
 }) => {
   const query = useInfiniteQuery({
     enabled: enabled && client !== undefined && indexName !== undefined,
-    queryKey: [
-      'content_search',
-      'results',
-      client?.config.apiKey,
-      client?.config.host,
+    queryKey: buildSearchQueryKey({
+      client,
       indexName,
       extraFilter,
       searchKeywords,
@@ -100,7 +134,7 @@ export const useContentSearchResults = ({
       publishStatusFilter,
       tagsFilter,
       sort,
-    ],
+    }),
     queryFn: ({ pageParam = 0 }) => {
       // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
