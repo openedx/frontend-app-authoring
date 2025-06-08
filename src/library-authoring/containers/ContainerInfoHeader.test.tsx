@@ -25,7 +25,7 @@ const {
   libraryIdReadOnly,
 } = mockContentLibrary;
 
-const { containerId } = mockGetContainerMetadata;
+const { unitId: containerId } = mockGetContainerMetadata;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<ContainerInfoHeader />, {
   extraWrapper: ({ children }) => (

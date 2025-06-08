@@ -17,7 +17,7 @@ mockGetContainerMetadata.applyMock();
 mockGetContainerChildren.applyMock();
 
 const { libraryId } = mockContentLibrary;
-const { containerId } = mockGetContainerMetadata;
+const { unitId: containerId } = mockGetContainerMetadata;
 
 const render = (showOnlyPublished: boolean = false) => {
   const params: { libraryId: string, selectedItemId?: string } = { libraryId, selectedItemId: containerId };
