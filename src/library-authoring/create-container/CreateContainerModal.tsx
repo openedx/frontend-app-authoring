@@ -36,7 +36,7 @@ const CreateContainerModal = () => {
   const create = useCreateLibraryContainer(libraryId);
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const containerId = insideSection ? sectionId : subsectionId || '';
-  const updateContainerItemsMutation = useAddItemsToContainer(containerId)
+  const updateContainerItemsMutation = useAddItemsToContainer(containerId);
   const { showToast } = React.useContext(ToastContext);
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
@@ -87,7 +87,7 @@ const CreateContainerModal = () => {
 
   const handleCreate = React.useCallback(async (values) => {
     try {
-      const canStandAlone = !(insideCollection || insideSection || insideSubsection)
+      const canStandAlone = !(insideCollection || insideSection || insideSubsection);
       const container = await create.mutateAsync({
         canStandAlone,
         containerType,
