@@ -49,7 +49,7 @@ export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab => (
   Object.values<string>(CONTAINER_INFO_TABS).includes(tab)
 );
 
-export const DEFAULT_TAB = {
+const DEFAULT_TAB = {
   component: COMPONENT_INFO_TABS.Preview,
   container: CONTAINER_INFO_TABS.Preview,
   collection: COLLECTION_INFO_TABS.Manage,
@@ -93,9 +93,7 @@ export type SidebarContextData = {
   sidebarTab: SidebarInfoTab;
   setSidebarTab: (tab: SidebarInfoTab) => void;
   defaultTab: DefaultTabs;
-  setDefaultTab: (tabs: DefaultTabs) => void;
   hiddenTabs: Array<SidebarInfoTab>;
-  setHiddenTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
 /**
@@ -175,7 +173,7 @@ export const SidebarProvider = ({
   }, []);
 
   // Set the initial sidebar state based on the URL parameters and context.
-  const { selectedItemId } = useParams();
+  const { selectedItemId, containerId: selectedContainerId } = useParams();
   const { collectionId, containerId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
@@ -205,7 +203,20 @@ export const SidebarProvider = ({
     } else {
       openLibrarySidebar();
     }
-  }, [selectedItemId, collectionId, containerId]);
+
+    // Hide the Preview tab if we're inside a collection
+    if (selectedContainerId) {
+      setDefaultTab({
+        collection: COLLECTION_INFO_TABS.Details,
+        component: COMPONENT_INFO_TABS.Manage,
+        container: CONTAINER_INFO_TABS.Manage,
+      });
+      setHiddenTabs([
+        COMPONENT_INFO_TABS.Preview,
+        CONTAINER_INFO_TABS.Preview,
+      ]);
+    }
+  }, [selectedItemId, selectedContainerId, collectionId, containerId]);
 
   const context = useMemo<SidebarContextData>(() => {
     const contextValue = {
@@ -222,9 +233,7 @@ export const SidebarProvider = ({
       sidebarTab,
       setSidebarTab,
       defaultTab,
-      setDefaultTab,
       hiddenTabs,
-      setHiddenTabs,
     };
 
     return contextValue;
@@ -242,9 +251,7 @@ export const SidebarProvider = ({
     sidebarTab,
     setSidebarTab,
     defaultTab,
-    setDefaultTab,
     hiddenTabs,
-    setHiddenTabs,
   ]);
 
   return (
@@ -272,9 +279,7 @@ export function useSidebarContext(): SidebarContextData {
       setSidebarTab: () => {},
       sidebarItemInfo: undefined,
       defaultTab: DEFAULT_TAB,
-      setDefaultTab: () => {},
       hiddenTabs: [],
-      setHiddenTabs: () => {},
     };
   }
   return ctx;

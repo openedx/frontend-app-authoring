@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
@@ -13,13 +12,7 @@ import SubHeader from '../../generic/sub-header/SubHeader';
 import ErrorAlert from '../../generic/alert-error';
 import Header from '../../header';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import {
-  COLLECTION_INFO_TABS,
-  COMPONENT_INFO_TABS,
-  CONTAINER_INFO_TABS,
-  DEFAULT_TAB,
-  useSidebarContext,
-} from '../common/context/SidebarContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContainer, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
@@ -40,27 +33,7 @@ export const LibraryUnitPage = () => {
     throw new Error('containerId is required');
   }
 
-  const {
-    sidebarItemInfo,
-    setDefaultTab,
-    setHiddenTabs,
-  } = useSidebarContext();
-
-  useEffect(() => {
-    setDefaultTab({
-      collection: COLLECTION_INFO_TABS.Details,
-      component: COMPONENT_INFO_TABS.Manage,
-      container: CONTAINER_INFO_TABS.Manage,
-    });
-    setHiddenTabs([
-      COMPONENT_INFO_TABS.Preview,
-      CONTAINER_INFO_TABS.Preview,
-    ]);
-    return () => {
-      setDefaultTab(DEFAULT_TAB);
-      setHiddenTabs([]);
-    };
-  }, [setDefaultTab, setHiddenTabs]);
+  const { sidebarItemInfo } = useSidebarContext();
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const {
