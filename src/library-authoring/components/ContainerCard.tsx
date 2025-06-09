@@ -11,7 +11,7 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
+import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -27,15 +27,14 @@ import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   containerKey: string;
-  containerType: ContainerType;
   displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
@@ -47,7 +46,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-      if (sidebarComponentInfo?.id === containerKey) {
+      if (sidebarItemInfo?.id === containerKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -69,7 +68,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   }, [scheduleJumpToCollection, navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
-    navigateTo({ [`${containerType}Id`]: containerKey });
+    navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
   return (
@@ -88,7 +87,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
           <Dropdown.Item onClick={openContainer}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete} disabled={containerType !== 'unit'}>
+          <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
           {insideCollection && (
@@ -96,7 +95,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
               <FormattedMessage {...messages.menuRemoveFromCollection} />
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={showManageCollections} disabled={containerType !== 'unit'}>
+          <Dropdown.Item onClick={showManageCollections}>
             <FormattedMessage {...messages.menuAddToCollection} />
           </Dropdown.Item>
         </Dropdown.Menu>
@@ -214,7 +213,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openContainerInfoSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -234,44 +233,22 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const selected = sidebarComponentInfo?.id === containerKey;
+  const selected = sidebarItemInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
   const selectContainer = useCallback((e?: React.MouseEvent) => {
     const doubleClicked = (e?.detail || 0) > 1;
     if (componentPickerMode) {
-      switch (itemType) {
-        case ContainerType.Unit:
-          openUnitInfoSidebar(containerKey);
-          break;
-        case ContainerType.Section:
-          // TODO: open section sidebar
-          break;
-        case ContainerType.Subsection:
-          // TODO: open subsection sidebar
-          break;
-        default:
-          break;
-      }
+      // In component picker mode, we want to open the sidebar
+      // without changing the URL
+      openContainerInfoSidebar(containerKey);
     } else if (!doubleClicked) {
       navigateTo({ selectedItemId: containerKey });
     } else {
-      switch (itemType) {
-        case ContainerType.Unit:
-          navigateTo({ unitId: containerKey });
-          break;
-        case ContainerType.Section:
-          navigateTo({ sectionId: containerKey });
-          break;
-        case ContainerType.Subsection:
-          navigateTo({ subsectionId: containerKey });
-          break;
-        default:
-          break;
-      }
+      navigateTo({ containerId: containerKey });
     }
-  }, [containerKey, itemType, openUnitInfoSidebar, navigateTo]);
+  }, [containerKey, openContainerInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
@@ -287,7 +264,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           ) : (
             <ContainerMenu
               containerKey={containerKey}
-              containerType={itemType}
               displayName={hit.displayName}
             />
           )}

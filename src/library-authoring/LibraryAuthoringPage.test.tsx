@@ -771,7 +771,7 @@ describe('<LibraryAuthoringPage />', () => {
     const title = `This is a Test ${containerType}`;
     const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(url).reply(200, {
-      id: '1',
+      id: `lct:org:libId:${containerType}:1`,
       slug: 'this-is-a-test',
       title,
     });

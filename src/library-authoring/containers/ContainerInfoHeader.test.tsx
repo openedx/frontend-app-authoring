@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import * as api from '../data/api';
 import ContainerInfoHeader from './ContainerInfoHeader';
@@ -25,15 +25,15 @@ const {
   libraryIdReadOnly,
 } = mockContentLibrary;
 
-const { containerId } = mockGetContainerMetadata;
+const { unitId: containerId } = mockGetContainerMetadata;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<ContainerInfoHeader />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: containerId,
-          type: SidebarBodyComponentId.UnitInfo,
+          type: SidebarBodyItemId.ContainerInfo,
         }}
       >
         { children }

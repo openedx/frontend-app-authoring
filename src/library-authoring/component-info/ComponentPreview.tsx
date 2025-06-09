@@ -42,9 +42,9 @@ const ComponentPreview = () => {
 
   const [isModalOpen, openModal, closeModal] = useToggle();
   const { showOnlyPublished } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');

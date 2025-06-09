@@ -87,7 +87,7 @@ const CreateContainerModal = () => {
         await updateItemsMutation.mutateAsync([container.id]);
       }
       // Navigate to the new container
-      navigateTo({ [`${containerType}Id`]: container.id });
+      navigateTo({ containerId: container.id });
       showToast(labels.successMsg);
     } catch (error) {
       showToast(labels.errorMsg);
