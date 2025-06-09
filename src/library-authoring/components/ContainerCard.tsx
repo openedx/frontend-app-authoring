@@ -11,7 +11,7 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
+import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -27,11 +27,10 @@ import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   containerKey: string;
-  containerType: ContainerType;
   displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
@@ -88,7 +87,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
           <Dropdown.Item onClick={openContainer}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete} disabled={containerType !== 'unit'}>
+          <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
           {insideCollection && (
@@ -265,7 +264,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           ) : (
             <ContainerMenu
               containerKey={containerKey}
-              containerType={itemType}
               displayName={hit.displayName}
             />
           )}
