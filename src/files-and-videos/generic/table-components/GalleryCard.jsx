@@ -30,7 +30,15 @@ const GalleryCard = ({
   return (
     <PluginSlot
       id="gallery_card_plugin_slot"
-      pluginProps={{ original }}
+      pluginProps={{
+        original,
+        handleBulkDownload,
+        handleLockFile,
+        handleOpenDeleteConfirmation,
+        handleOpenFileInfo,
+        thumbnailPreview,
+        fileType,
+      }}
     >
       <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
         <Card.Header

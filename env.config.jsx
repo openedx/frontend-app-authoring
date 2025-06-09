@@ -492,11 +492,20 @@ const config = {
                 {
                     op: PLUGIN_OPERATIONS.Insert,
                     widget: {
-                        id: "files_page",
+                        id: "gallery_card",
                         type: DIRECT_PLUGIN,
                         priority: 1,
-                        RenderWidget: (props) => 
-                            <GalleryCardNew original={props.original}/>
+                        RenderWidget: (props) => (
+                            <GalleryCardNew
+                                original={props.original}
+                                handleBulkDownload={props.handleBulkDownload}
+                                handleLockFile={props.handleLockFile}
+                                handleOpenDeleteConfirmation={props.handleOpenDeleteConfirmation}
+                                handleOpenFileInfo={props.handleOpenFileInfo}
+                                thumbnailPreview={props.thumbnailPreview}
+                                fileType={props.fileType}
+                            />
+                        ),
                     },
                 },
             ],
