@@ -11,9 +11,9 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { getBlockType } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
-import { type ContainerHit, PublishStatus } from '../../search-manager';
+import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
@@ -27,10 +27,11 @@ import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   containerKey: string;
+  containerType: ContainerType;
   displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
@@ -87,7 +88,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           <Dropdown.Item onClick={openContainer}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete}>
+          <Dropdown.Item onClick={confirmDelete} disabled={containerType !== 'unit'}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
           {insideCollection && (
@@ -110,17 +111,17 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   );
 };
 
-type ContainerCardPreviewProps = {
-  childUsageKeys: Array<string>;
+type UnitCardPreviewProps = {
+  childKeys: Array<string>;
   showMaxChildren?: number;
 };
 
-const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const hiddenChildren = childUsageKeys.length - showMaxChildren;
+const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProps) => {
+  const hiddenChildren = childKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
       {
-        childUsageKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+        childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
           const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
           let classNames;
@@ -161,6 +162,51 @@ const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: Container
   );
 };
 
+type ContainerCardPreviewProps = {
+  hit: ContainerHit,
+};
+
+const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
+  const intl = useIntl();
+  const { showOnlyPublished } = useLibraryContext();
+  const {
+    blockType: itemType,
+    published,
+    content,
+  } = hit;
+
+  if (itemType === 'unit') {
+    const childKeys: Array<string> = (
+      showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
+    ) ?? [];
+
+    return <UnitcardPreview childKeys={childKeys} />;
+  }
+  // TODO Section highlights
+
+  const childNames: Array<string> = (
+    showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames
+  ) ?? [];
+
+  if (childNames.length > 0) {
+    // Preview with a truncated text with all children display names
+    const childrenText = intl.formatMessage(
+      messages.containerPreviewText,
+      {
+        children: childNames.join(', '),
+      },
+    );
+
+    return (
+      <div className="container-card-preview-text">
+        <Highlight text={childrenText} />
+      </div>
+    );
+  }
+  // Empty preview
+  return null;
+};
+
 type ContainerCardProps = {
   hit: ContainerHit,
 };
@@ -178,7 +224,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     published,
     publishStatus,
     usageKey: containerKey,
-    content,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -188,10 +233,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const displayName: string = (
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
-
-  const childUsageKeys: Array<string> = (
-    showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
-  ) ?? [];
 
   const selected = sidebarItemInfo?.id === containerKey;
 
@@ -214,7 +255,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
-      preview={<ContainerCardPreview childUsageKeys={childUsageKeys} />}
+      preview={<ContainerCardPreview hit={hit} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={(
@@ -224,6 +265,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           ) : (
             <ContainerMenu
               containerKey={containerKey}
+              containerType={itemType}
               displayName={hit.displayName}
             />
           )}

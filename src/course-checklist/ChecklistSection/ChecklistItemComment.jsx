@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedNumber } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import { ModeComment } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import messages from './messages';
 
 const ChecklistItemComment = ({
@@ -13,7 +12,7 @@ const ChecklistItemComment = ({
   checkId,
   data,
 }) => {
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const getPathToCourseOutlinePage = (assignmentId) => (waffleFlags.useNewCourseOutlinePage
     ? `/course/${courseId}#${assignmentId}` : `${getConfig().STUDIO_BASE_URL}/course/${courseId}#${assignmentId}`);

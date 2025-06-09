@@ -1,10 +1,9 @@
-import { useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { type Container, useToggle } from '@openedx/paragon';
 
-import { getWaffleFlags } from '../data/selectors';
+import { useWaffleFlags } from '../data/apiHooks';
 import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
@@ -31,7 +30,7 @@ const Header = ({
   containerProps = {},
 }: HeaderProps) => {
   const intl = useIntl();
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags();
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 

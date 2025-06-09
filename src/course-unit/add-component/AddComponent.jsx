@@ -8,7 +8,7 @@ import {
 } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
@@ -45,7 +45,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow, useReactMarkdownEditor } = useSelector(getWaffleFlags);
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
@@ -266,7 +266,6 @@ const AddComponent = ({
               courseId={courseId}
               blockType={blockType}
               blockId={newBlockId}
-              isMarkdownEditorEnabledForCourse={useReactMarkdownEditor}
               studioEndpointUrl={getConfig().STUDIO_BASE_URL}
               lmsEndpointUrl={getConfig().LMS_BASE_URL}
               onClose={closeXBlockEditorModal}

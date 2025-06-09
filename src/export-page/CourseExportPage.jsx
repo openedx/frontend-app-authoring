@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Button, Card,
 } from '@openedx/paragon';
@@ -27,7 +27,8 @@ import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
 
-const CourseExportPage = ({ intl, courseId }) => {
+const CourseExportPage = ({ courseId }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const exportTriggered = useSelector(getExportTriggered);
   const courseDetails = useModel('courseDetails', courseId);
@@ -128,10 +129,7 @@ const CourseExportPage = ({ intl, courseId }) => {
 };
 
 CourseExportPage.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-CourseExportPage.defaultProps = {};
-
-export default injectIntl(CourseExportPage);
+export default CourseExportPage;
