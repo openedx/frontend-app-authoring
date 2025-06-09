@@ -69,6 +69,7 @@ const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
     { label: 'Import', path: `/course/${courseId}/import` },
     { label: 'Export', path: `/course/${courseId}/export` },
     { label: 'Files', path: `/course/${courseId}/assets` },
+    { label: 'Pages & Resources', path: `/course/${courseId}/pages-and-resources` },
     // Add other relevant course authoring pages here
   ];
     // --- END ADAPT ---

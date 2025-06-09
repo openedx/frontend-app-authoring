@@ -1,10 +1,12 @@
 .course-sidebar-nav {
     border-radius: 16px;
-    width: 220px;
+    // width: 220px;
+    width: auto;
     padding: 24px 0 0 0;
     background: #fff;
     border: 1px solid var(--border-color);
-    height: 100%;
+    // height: 100%;
+    height: auto;
 }
 
 .course-sidebar-list {
