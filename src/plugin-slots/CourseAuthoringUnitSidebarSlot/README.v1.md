@@ -17,6 +17,15 @@
 The slot wraps the sidebar that is displayed on the unit editor page. It can
 be used to add additional sidebar components or modify the existing sidebar.
 
+> [!IMPORTANT]
+> This document describes an older version `v1` of the `CourseAuthoringUnitSidebarSlot`.
+> It is recommended to use the `org.openedx.frontend.authoring.course_unit_sidebar.v2` slot ID for new plugins.
+
+The `v1` slot has the following limitations compared to the `v2` version:
+* It renders conditionally based on the `isUnitVerticalType` prop, which means the plugins won't be rendered in other scenarios like unit with library blocks.
+* It does **not** wrap the `SplitTestSidebarInfo` component. So it can't be hidden from the sidebar by overriding the components in the slot.
+* As it is not the primary child component of the sidebar, CSS styling for inserted components face limitations, such as an inability to be `sticky` or achieve 100% height.
+
 ## Example 1
 
 ![Screenshot of the unit sidebar surrounded by border](./images/unit_sidebar_with_border.png)
