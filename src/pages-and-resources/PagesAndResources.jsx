@@ -8,6 +8,7 @@ import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, Hyperlink } from '@openedx/paragon';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 
@@ -68,9 +69,13 @@ const PagesAndResources = ({ courseId, intl }) => {
   const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
 
   return (
+  // <PluginSlot
+  //   id="pages_resources_plugin_slot"
+  //   pluginProps={{ courseId }}
+  // >
     <PagesAndResourcesProvider courseId={courseId}>
-      <main className="container container-mw-md px-3">
-        <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+      <main className="container container-mw-md px-3 resources">
+        <div className="d-flex justify-content-between my-4 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
           <Hyperlink
             destination={learningCourseURL}
@@ -81,6 +86,8 @@ const PagesAndResources = ({ courseId, intl }) => {
             <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
+
+        <span className="pages_bar" />
 
         <Routes>
           <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
@@ -103,6 +110,7 @@ const PagesAndResources = ({ courseId, intl }) => {
         }
       </main>
     </PagesAndResourcesProvider>
+  // {/* </PluginSlot> */}
   );
 };
 
