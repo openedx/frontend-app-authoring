@@ -347,6 +347,18 @@
 
 .files-table {
 
+  .pgn__data-table th {
+    background-color: #e7ebfa !important;
+    
+    .pgn__icon {
+      display: none !important;
+    }
+  }
+
+  .pgn__data-table.is-striped tr:nth-child(even) {
+    background-color: transparent !important;
+  }
+
   hr {
     margin: 0px -1rem 0px -1rem;
   }
