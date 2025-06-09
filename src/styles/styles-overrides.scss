@@ -397,6 +397,44 @@
   padding: 0.5rem 0.5rem 0.5rem 0.5rem !important;
 }
 
+// Pages & Resources
+
+.resources {
+  display: block !important;
+  background-color: white;
+  // padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #ced4da;
+  height: 100%;
+  margin-left: 1rem !important;
+
+  .pages_bar {
+     content: "";
+      display: block;
+      height: 1px;
+      background-color: #ced4da;
+      margin: 1.5rem -1rem 1rem -1rem;
+  }
+
+  .card {
+      border: 1px solid #ced4da;
+      display: block !important;
+  }
+
+  .pgn__card .pgn__card-header .pgn__card-header-content {
+    margin-top: 1rem !important;
+    flex-direction: row !important;
+  }
+
+  .pgn__card .pgn__card-header .pgn__card-header-title-sm {
+    padding-right: 1rem;
+  }
+
+  .pgn__card .pgn__card-header .pgn__card-header-actions {
+    margin-top: 11px;
+  }
+}
+
 // K styles end
 
 // S Styles Start
@@ -642,14 +680,15 @@
 
         .sub-header-actions {
           margin-bottom: 0 !important;
-          
-          button, a {
+
+          button,
+          a {
             padding: 0.4rem 1.5rem;
             font-size: 1rem !important;
           }
         }
       }
-      
+
     }
 
     .certificates-custom-header {
@@ -703,6 +742,7 @@
         padding-bottom: 1rem !important;
         margin-bottom: 1rem !important;
         border-bottom: 1px solid var(--border-color);
+
         hr {
           display: none !important;
         }
@@ -715,6 +755,7 @@
           strong {
             @include section-title-style2;
           }
+
           margin-bottom: 0.5rem !important;
           @include section-title-style3;
         }
@@ -741,22 +782,22 @@
       }
 
       .signatory-form {
-       @include card-style1;
-       background-color: var(--bg-surface) !important;
-       padding: 1rem !important;
-       margin-bottom: 1rem !important;
+        @include card-style1;
+        background-color: var(--bg-surface) !important;
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
 
-       .section-title {
-        margin-bottom: -1rem !important;
-       }
-
-       .pgn__stack-gap--2 {
-         button {
-          margin-top: -0.5rem !important;
-          padding: 0.4rem 1.5rem;
-          font-size: 1rem !important;
+        .section-title {
+          margin-bottom: -1rem !important;
         }
-       }
+
+        .pgn__stack-gap--2 {
+          button {
+            margin-top: -0.5rem !important;
+            padding: 0.4rem 1.5rem;
+            font-size: 1rem !important;
+          }
+        }
       }
 
       .btn-outline-primary {
@@ -775,6 +816,7 @@
           b {
             @include section-title-style2;
           }
+
           @include section-title-style3;
           color: var(--text-primary) !important;
         }

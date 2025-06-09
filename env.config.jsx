@@ -23,6 +23,7 @@ import SettingCard from './src/advanced-settings/setting-card/SettingCard';
 import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
 import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
 import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
+import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -506,6 +507,20 @@ const config = {
                                 fileType={props.fileType}
                             />
                         ),
+                    },
+                },
+            ],
+        },
+        pages_resources_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "pages_resources",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => 
+                        <PagesAndResourcesNew courseId={props.courseId} />
                     },
                 },
             ],
