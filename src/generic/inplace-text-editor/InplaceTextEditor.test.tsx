@@ -110,4 +110,25 @@ describe('<InplaceTextEditor />', () => {
     // Show original text
     expect(screen.getByText('Test text')).toBeInTheDocument();
   });
+
+  it('should disappear edit button while editing', async () => {
+    render(<InplaceTextEditor text="Test text" onSave={mockOnSave} />);
+
+    const title = screen.getByText('Test text');
+    expect(title).toBeInTheDocument();
+
+    const editButton = screen.getByRole('button', { name: /edit/i });
+    expect(editButton).toBeInTheDocument();
+    fireEvent.click(editButton);
+
+    const textBox = screen.getByRole('textbox');
+    expect(editButton).not.toBeInTheDocument();
+
+    fireEvent.change(textBox, { target: { value: 'New text' } });
+    fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
+
+    expect(textBox).not.toBeInTheDocument();
+    expect(mockOnSave).toHaveBeenCalledWith('New text');
+    expect(await screen.findByRole('button', { name: /edit/i })).toBeInTheDocument();
+  });
 });
