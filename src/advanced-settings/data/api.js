@@ -1,8 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import {
+  camelCaseObject,
   getConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { camelCase } from 'lodash';
 import { convertObjectToSnakeCase } from '../../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -17,7 +19,19 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
 export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
-  return data;
+  const keepValues = {};
+  Object.keys(data).forEach((key) => {
+    keepValues[camelCase(key)] = { value: data[key].value };
+  });
+  const formattedData = {};
+  const formattedCamelCaseData = camelCaseObject(data);
+  Object.keys(formattedCamelCaseData).forEach((key) => {
+    formattedData[key] = {
+      ...formattedCamelCaseData[key],
+      value: keepValues[key]?.value,
+    };
+  });
+  return formattedData;
 }
 
 /**
@@ -29,7 +43,19 @@ export async function getCourseAdvancedSettings(courseId) {
 export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
     .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
-  return data;
+  const keepValues = {};
+  Object.keys(data).forEach((key) => {
+    keepValues[camelCase(key)] = { value: data[key].value };
+  });
+  const formattedData = {};
+  const formattedCamelCaseData = camelCaseObject(data);
+  Object.keys(formattedCamelCaseData).forEach((key) => {
+    formattedData[key] = {
+      ...formattedCamelCaseData[key],
+      value: keepValues[key]?.value,
+    };
+  });
+  return formattedData;
 }
 
 /**
@@ -39,5 +65,17 @@ export async function updateCourseAdvancedSettings(courseId, settings) {
  */
 export async function getProctoringExamErrors(courseId) {
   const { data } = await getAuthenticatedHttpClient().get(`${getProctoringErrorsApiUrl()}${courseId}`);
-  return data;
+  const keepValues = {};
+  Object.keys(data).forEach((key) => {
+    keepValues[camelCase(key)] = { value: data[key].value };
+  });
+  const formattedData = {};
+  const formattedCamelCaseData = camelCaseObject(data);
+  Object.keys(formattedCamelCaseData).forEach((key) => {
+    formattedData[key] = {
+      ...formattedCamelCaseData[key],
+      value: keepValues[key]?.value,
+    };
+  });
+  return formattedData;
 }
