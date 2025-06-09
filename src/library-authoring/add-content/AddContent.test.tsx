@@ -48,10 +48,10 @@ const render = (collectionId?: string) => {
     ),
   });
 };
-const renderWithUnit = (unitId: string) => {
-  const params: { libraryId: string, unitId?: string } = { libraryId, unitId };
+const renderWithContainer = (containerId: string) => {
+  const params: { libraryId: string, containerId?: string } = { libraryId, containerId };
   return baseRender(<AddContent />, {
-    path: '/library/:libraryId/unit/:unitId?',
+    path: '/library/:libraryId/unit/:containerId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
@@ -360,7 +360,7 @@ describe('<AddContent />', () => {
 
   it('should not show collection, unit, section and subsection buttons when create component in unit', async () => {
     const unitId = 'lct:orf1:lib1:unit:test-1';
-    renderWithUnit(unitId);
+    renderWithContainer(unitId);
 
     expect(await screen.findByRole('button', { name: 'Text' })).toBeInTheDocument();
 
@@ -383,7 +383,7 @@ describe('<AddContent />', () => {
     axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
     axiosMock.onPost(linkUrl).reply(200);
 
-    renderWithUnit(unitId);
+    renderWithContainer(unitId);
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
@@ -411,7 +411,7 @@ describe('<AddContent />', () => {
     axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
     axiosMock.onPost(linkUrl).reply(400);
 
-    renderWithUnit(unitId);
+    renderWithContainer(unitId);
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);

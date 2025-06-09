@@ -41,7 +41,7 @@ import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
@@ -56,12 +56,12 @@ const HeaderActions = () => {
     openAddContentSidebar,
     openLibrarySidebar,
     closeLibrarySidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
   } = useSidebarContext();
 
   const { componentPickerMode } = useComponentPickerContext();
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.Info;
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.Info;
 
   const { navigateTo } = useLibraryRoutes();
   const handleOnClickInfoSidebar = useCallback(() => {
@@ -75,7 +75,7 @@ const HeaderActions = () => {
       // If not in component picker mode, reset selected item when opening the info sidebar
       navigateTo({ selectedItemId: '' });
     }
-  }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
+  }, [navigateTo, sidebarItemInfo, closeLibrarySidebar, openLibrarySidebar]);
 
   return (
     <div className="header-actions">
@@ -114,7 +114,7 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
   return (
-    <Stack direction="vertical">
+    <Stack direction="vertical" className="mt-1.5">
       {title}
       {showReadOnlyBadge && (
         <div>
@@ -153,7 +153,7 @@ const LibraryAuthoringPage = ({
     showOnlyPublished,
     extraFilter: contextExtraFilter,
   } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const {
     insideCollections,
@@ -333,7 +333,7 @@ const LibraryAuthoringPage = ({
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>

@@ -20,7 +20,7 @@ import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
-    libraryId, collectionId, unitId, sectionId, subsectionId,
+    libraryId, collectionId, containerId,
   } = useParams();
 
   if (libraryId === undefined) {
@@ -30,11 +30,11 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
 
   return (
     <LibraryProvider
-      /** NOTE: We need to pass the collectionId or unitId as key to the LibraryProvider to force a re-render
-        * when we navigate to a collection or unit page. This is necessary to make the back/forward navigation
+      /** NOTE: We need to pass the collectionId or containerId as key to the LibraryProvider to force a re-render
+        * when we navigate to a collection or container page. This is necessary to make the back/forward navigation
         * work correctly, as the LibraryProvider needs to rebuild the state from the URL.
         * */
-      key={collectionId || sectionId || subsectionId || unitId}
+      key={collectionId || containerId}
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:

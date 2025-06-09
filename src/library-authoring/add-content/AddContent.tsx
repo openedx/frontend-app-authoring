@@ -258,21 +258,19 @@ const AddContent = () => {
   const {
     libraryId,
     collectionId,
-    sectionId,
-    subsectionId,
+    containerId,
     openCreateCollectionModal,
     setCreateContainerModalType,
     openComponentEditor,
-    unitId,
   } = useLibraryContext();
   const {
     insideCollection,
-    insideSection,
-    insideSubsection,
     insideUnit,
+    insideSubsection,
+    insideSection,
   } = useLibraryRoutes();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddItemsToContainer(unitId);
+  const addComponentsToContainerMutation = useAddItemsToContainer(containerId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
@@ -356,10 +354,7 @@ const AddContent = () => {
         showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
       });
     }
-    if ((unitId && insideUnit)
-        || (sectionId && insideSection)
-        || (subsectionId && insideSubsection)
-        || (subsectionId && insideSubsection)) {
+    if (containerId && (insideUnit || insideSubsection || insideSection)) {
       addComponentsToContainerMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
       });

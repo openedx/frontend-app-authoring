@@ -11,9 +11,9 @@ import { ComponentUsage } from './ComponentUsage';
 import messages from './messages';
 
 const ComponentDetails = () => {
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
