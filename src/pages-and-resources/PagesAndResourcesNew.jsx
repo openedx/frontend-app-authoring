@@ -1,18 +1,17 @@
-import React, { useContext, useEffect, Suspense } from 'react';
+import React, { useContext, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
 import { Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { Button, Hyperlink } from '@openedx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 
 import PageGrid from './pages/PageGrid';
-import { fetchCourseApps } from './data/thunks';
 import { useModels, useModel } from '../generic/model-store';
 import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
@@ -25,10 +24,11 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchCourseApps(courseId));
-  }, [courseId]);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(fetchCourseApps(courseId));
+  //   console.log(courseId, "IDDDD");
+  // }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
   const loadingStatus = useSelector(getLoadingStatus);
