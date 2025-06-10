@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, initializeMocks } from '../testUtils';
+import { render, screen, initializeMocks } from '../testUtils';
 import VideoSelectorPage from './VideoSelectorPage';
 
 const props = {
@@ -15,13 +15,13 @@ describe('Video Selector Page', () => {
   });
 
   test('rendering correctly with expected Input', () => {
-    const { getByText } = render(<VideoSelectorPage {...props} />);
-    expect(getByText('Add video to your course')).toBeInTheDocument();
+    render(<VideoSelectorPage {...props} />);
+    expect(screen.getByText('Add video to your course')).toBeInTheDocument();
   });
 
   test('rendering with props to null', () => {
     const errorMessage = 'An unexpected error occurred. Please click the button below to refresh the page.';
-    const { getByText } = render(<VideoSelectorPage />);
-    expect(getByText(errorMessage)).toBeInTheDocument();
+    render(<VideoSelectorPage />);
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 });

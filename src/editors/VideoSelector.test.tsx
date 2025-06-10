@@ -1,11 +1,22 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import * as reactRedux from 'react-redux';
+import { Provider } from 'react-redux';
 import * as hooks from './hooks';
 import VideoSelector from './VideoSelector';
-import { render, initializeMocks } from '../testUtils';
-import editorStore from './data/store';
+import { render as baseRender, initializeMocks, screen } from '../testUtils';
+
 import { EditorContextProvider } from './EditorContext';
+import editorStore from './data/store';
+
+const render = (ui) => baseRender(ui, {
+  extraWrapper: ({ children }) => (
+    <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
+      <Provider store={editorStore}>
+        {children}
+      </Provider>
+    </EditorContextProvider>
+  ),
+});
 
 const defaultProps = {
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
@@ -21,28 +32,20 @@ describe('VideoSelector', () => {
 
   test('renders VideoGallery when loading is false', () => {
     jest.spyOn(hooks, 'useInitializeApp').mockReturnValue(false);
-    const { getByText } = render(
-      <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-        <Provider store={editorStore}>
-          <VideoSelector {...defaultProps} />
-        </Provider>
-      </EditorContextProvider>,
-    );
-    expect(getByText('Add video to your course')).toBeInTheDocument();
+    render(<VideoSelector {...defaultProps} />);
+    expect(screen.getByText('Add video to your course')).toBeInTheDocument();
   });
 
+  // TODO: transform into user-centric test to follow the best practices:
+  // "testing the application components in the way the user would use it"
   test('renders nothing when loading is true', () => {
     jest.spyOn(hooks, 'useInitializeApp').mockReturnValue(true);
-    const { queryByText } = render(
-      <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-        <Provider store={editorStore}>
-          <VideoSelector {...defaultProps} />
-        </Provider>
-      </EditorContextProvider>,
-    );
-    expect(queryByText('Add video to your course')).not.toBeInTheDocument();
+    render(<VideoSelector {...defaultProps} />);
+    expect(screen.queryByText('Add video to your course')).not.toBeInTheDocument();
   });
 
+  // TODO: transform into user-centric test to follow the best practices:
+  // "testing the application components in the way the user would use it"
   test('calls initializeApp hook with dispatch, and passed data', () => {
     const initData = {
       blockType: 'video',
@@ -51,13 +54,7 @@ describe('VideoSelector', () => {
     const mockDispatch = jest.fn();
     jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockDispatch);
     jest.spyOn(hooks, 'useInitializeApp');
-    render(
-      <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-        <Provider store={editorStore}>
-          <VideoSelector {...defaultProps} />
-        </Provider>
-      </EditorContextProvider>,
-    );
+    render(<VideoSelector {...defaultProps} />);
     expect(hooks.useInitializeApp).toHaveBeenCalledWith({
       dispatch: mockDispatch,
       data: initData,

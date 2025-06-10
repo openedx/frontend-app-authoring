@@ -1,14 +1,7 @@
 import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
 import userEvent from '@testing-library/user-event';
 import { render, screen, initializeMocks } from '../../../testUtils';
 import Gallery from './Gallery';
-
-const intlWrapper = (ui) => (
-  <IntlProvider locale="en" messages={{}}>
-    {ui}
-  </IntlProvider>
-);
 
 const baseProps = {
   galleryIsEmpty: false,
@@ -42,27 +35,26 @@ jest.mock('./GalleryLoadMoreButton', () => function mockGalleryLoadMoreButton(pr
 
 describe('Gallery', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     initializeMocks();
   });
 
   it('renders spinner when not loaded and allowLazyLoad is false', () => {
-    render(intlWrapper(<Gallery {...baseProps} isLoaded={false} allowLazyLoad={false} />));
+    render(<Gallery {...baseProps} isLoaded={false} allowLazyLoad={false} />);
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders empty gallery message when galleryIsEmpty is true', () => {
-    render(intlWrapper(<Gallery {...baseProps} galleryIsEmpty />));
+    render(<Gallery {...baseProps} galleryIsEmpty />);
     expect(screen.getByText('Empty Gallery')).toBeInTheDocument();
   });
 
   it('renders empty search message when searchIsEmpty is true', () => {
-    render(intlWrapper(<Gallery {...baseProps} searchIsEmpty />));
+    render(<Gallery {...baseProps} searchIsEmpty />);
     expect(screen.getByText('No search results.')).toBeInTheDocument();
   });
 
   it('renders gallery with SelectableBox.Set and GalleryCard for each asset', () => {
-    render(intlWrapper(<Gallery {...baseProps} />));
+    render(<Gallery {...baseProps} />);
     expect(screen.getByText('GalleryCard 1')).toBeInTheDocument();
     expect(screen.getByText('GalleryCard 2')).toBeInTheDocument();
     expect(screen.getByText('GalleryCard 1').closest('[data-mock="GalleryCard"]')).toBeInTheDocument();
@@ -71,12 +63,12 @@ describe('Gallery', () => {
   });
 
   it('renders GalleryLoadMoreButton when allowLazyLoad is true and isLibrary is false', () => {
-    render(intlWrapper(<Gallery {...baseProps} allowLazyLoad isLibrary={false} />));
+    render(<Gallery {...baseProps} allowLazyLoad isLibrary={false} />);
     expect(screen.getByRole('button', { name: /load more/i })).toBeInTheDocument();
   });
 
   it('does not render GalleryLoadMoreButton when isLibrary is true', () => {
-    render(intlWrapper(<Gallery {...baseProps} allowLazyLoad isLibrary />));
+    render(<Gallery {...baseProps} allowLazyLoad isLibrary />);
     expect(screen.queryByRole('button', { name: /load more/i })).not.toBeInTheDocument();
   });
 
@@ -89,12 +81,12 @@ describe('Gallery', () => {
       emptyGalleryLabel: { id: 'emptyGalleryMsg', defaultMessage: 'Empty Gallery' },
       isLoaded: true,
     };
-    render(intlWrapper(<Gallery {...minimalProps} />));
+    render(<Gallery {...minimalProps} />);
     expect(screen.getByText('GalleryCard 1')).toBeInTheDocument();
   });
 
   it('GalleryLoadMoreButton receives correct props', () => {
-    render(intlWrapper(<Gallery {...baseProps} allowLazyLoad isLibrary={false} assetCount={5} />));
+    render(<Gallery {...baseProps} allowLazyLoad isLibrary={false} assetCount={5} />);
     const btn = screen.getByRole('button', { name: /load more/i });
     userEvent.click(btn);
     expect(baseProps.fetchNextPage).toHaveBeenCalled();

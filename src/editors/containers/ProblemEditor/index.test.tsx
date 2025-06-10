@@ -18,9 +18,8 @@ const baseProps = {
   blockValue: { foo: 'bar' },
 };
 
-describe('ProblemEditorInternal', () => {
+describe('ProblemEditor', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     initializeMocks();
   });
 
@@ -58,7 +57,6 @@ describe('ProblemEditorInternal', () => {
       blockFailed
       problemType={null}
     />);
-    // The FormattedMessage renders the defaultMessage
     expect(screen.getByText(messages.blockFailed.defaultMessage)).toBeInTheDocument();
   });
 
