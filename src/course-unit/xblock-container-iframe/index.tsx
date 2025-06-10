@@ -218,13 +218,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
           />
         </div>
       </StandardModal>
-      <StandardModal
-        title={intl.formatMessage(messages.blockEditorModalTitle)}
-        isOpen={isXBlockEditorModalOpen}
-        onClose={closeXBlockEditorModal}
-        isOverflowVisible={false}
-        size="xl"
-      >
+      {isXBlockEditorModalOpen && (
         <div className="editor-page">
           <EditorPage
             courseId={courseId}
@@ -237,7 +231,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
             returnFunction={/* istanbul ignore next */ () => onXBlockSave}
           />
         </div>
-      </StandardModal>
+      )}
       {Object.keys(accessManagedXBlockData).length ? (
         <ConfigureModal
           isXBlockComponent
