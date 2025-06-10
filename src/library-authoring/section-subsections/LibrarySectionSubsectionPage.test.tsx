@@ -126,15 +126,18 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         : mockGetContainerMetadata.subsectionId;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-      // Unit title
+      // Container title -- on main page + sidebar
       expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
-      // unit info button
+      // Container info button shown
       expect(await screen.findByRole('button', { name: new RegExp(`${cType} Info`, 'i') })).toBeInTheDocument();
+      // Reorder children buttons shown
       expect((await screen.findAllByRole('button', { name: 'Drag to reorder' })).length).toEqual(3);
-      // check all children components are rendered.
-      expect((await screen.findAllByText(`${childType} block 0`))[0]).toBeInTheDocument();
-      expect((await screen.findAllByText(`${childType} block 1`))[0]).toBeInTheDocument();
-      expect((await screen.findAllByText(`${childType} block 2`))[0]).toBeInTheDocument();
+      // Check all children components are rendered only once.
+      expect(await screen.findByText(`${childType} block 0`)).toBeInTheDocument();
+      expect(await screen.findByText(`${childType} block 1`)).toBeInTheDocument();
+      expect(await screen.findByText(`${childType} block 2`)).toBeInTheDocument();
+      // Check no Preview tab is shown
+      expect(screen.queryByText('Preview')).not.toBeInTheDocument();
     });
 
     it(`shows ${cType} data with no children`, async () => {
@@ -143,12 +146,14 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         : mockGetContainerMetadata.subsectionIdEmpty;
       renderLibrarySectionPage(cId, undefined, cType);
       expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-      // Unit title
+      // Container title -- rendered on main page + sidebar
       expect((await screen.findAllByText(`Test ${cType}`))[0]).toBeInTheDocument();
-      // unit info button
+      // Container info button shown
       expect(await screen.findByRole('button', { name: new RegExp(`${cType} Info`, 'i') })).toBeInTheDocument();
-      // check all children components are rendered.
-      expect((await screen.findAllByText(`This ${cType} is empty`))[0]).toBeInTheDocument();
+      // Check "no children" text is rendered.
+      expect(await screen.findByText(`This ${cType} is empty`)).toBeInTheDocument();
+      // Check no Preview tab is shown
+      expect(screen.queryByText('Preview')).not.toBeInTheDocument();
     });
 
     it(`can rename ${cType}`, async () => {
@@ -219,20 +224,36 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(mockShowToast).toHaveBeenCalledWith('Failed to update container.');
     });
 
+    it(`should preview child in sidebar by clicking child on ${cType} page`, async () => {
+      const url = getLibraryContainerApiUrl(`lb:org1:Demo_course:${childType}:${childType}-0`);
+      axiosMock.onPatch(url).reply(200);
+      renderLibrarySectionPage(undefined, undefined, cType);
+
+      // Wait loading of the children
+      const child = await screen.findByText(`${childType} block 0`);
+      // Check no Preview tab is shown
+      expect(screen.queryByText('Preview')).not.toBeInTheDocument();
+
+      fireEvent.click(child);
+
+      // Check Preview tab shows the selected child
+      expect(await screen.findByText('Preview')).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 0`)).length === 2);
+    });
+
     it(`should rename child by clicking edit icon besides name in ${cType} page`, async () => {
       const url = getLibraryContainerApiUrl(`lb:org1:Demo_course:${childType}:${childType}-0`);
       axiosMock.onPatch(url).reply(200);
       renderLibrarySectionPage(undefined, undefined, cType);
 
-      // Wait loading of the component (on page and in sidebar)
-      await screen.findAllByText(`${childType} block 0`);
+      // Wait loading of the children
+      await screen.findByText(`${childType} block 0`);
 
       const editButton = (await screen.findAllByRole(
         'button',
         { name: /edit/i },
       ))[1]; // 0 is the Section Title, 1 is the first subsection on the list
       fireEvent.click(editButton);
-      screen.debug(editButton);
 
       expect(await screen.findByRole('textbox', { name: /text input/i })).toBeInTheDocument();
 
@@ -257,8 +278,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       axiosMock.onPatch(url).reply(400);
       renderLibrarySectionPage(undefined, undefined, cType);
 
-      // Wait loading of the component (on page and in sidebar)
-      await screen.findAllByText(`${childType} block 0`);
+      // Wait loading of the children
+      await screen.findByText(`${childType} block 0`);
 
       const editButton = screen.getAllByRole(
         'button',
@@ -339,9 +360,9 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
 
     it(`should open ${childType} page on double click`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
-      const subsection = (await screen.findAllByText(`${childType} block 0`))[0];
+      const child = await screen.findByText(`${childType} block 0`);
       // trigger double click
-      userEvent.click(subsection.parentElement!, undefined, { clickCount: 2 });
+      userEvent.click(child.parentElement!, undefined, { clickCount: 2 });
       expect((await screen.findAllByText(new RegExp(`Test ${childType}`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });

@@ -173,7 +173,7 @@ export const SidebarProvider = ({
   }, []);
 
   // Set the initial sidebar state based on the URL parameters and context.
-  const { selectedItemId, containerId: selectedContainerId } = useParams();
+  const { selectedItemId } = useParams();
   const { collectionId, containerId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
@@ -203,9 +203,13 @@ export const SidebarProvider = ({
     } else {
       openLibrarySidebar();
     }
+  }, [selectedItemId, collectionId, containerId]);
 
-    // Hide the Preview tab if we're inside a collection
-    if (selectedContainerId) {
+  useEffect(() => {
+    // Hide the Preview tab (and replace Preview as the default tab),
+    // when the sidebar is showing the current container.
+    // We do this because the container page already shows a preview.
+    if (containerId && !selectedItemId) {
       setDefaultTab({
         collection: COLLECTION_INFO_TABS.Details,
         component: COMPONENT_INFO_TABS.Manage,
@@ -215,8 +219,11 @@ export const SidebarProvider = ({
         COMPONENT_INFO_TABS.Preview,
         CONTAINER_INFO_TABS.Preview,
       ]);
+    } else {
+      setDefaultTab(DEFAULT_TAB);
+      setHiddenTabs([]);
     }
-  }, [selectedItemId, selectedContainerId, collectionId, containerId]);
+  }, [selectedItemId, containerId]);
 
   const context = useMemo<SidebarContextData>(() => {
     const contextValue = {
