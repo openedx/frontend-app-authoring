@@ -1,127 +1,123 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { Spinner } from '@openedx/paragon';
-import { thunkActions, selectors } from '../../data/redux';
-import { RequestKeys } from '../../data/constants/requests';
-import { ProblemEditorInternal as ProblemEditor, mapStateToProps, mapDispatchToProps } from '.';
+import { render, screen, initializeMocks } from '../../../testUtils';
+import { ProblemEditorInternal } from './index';
+import messages from './messages';
 
-jest.mock('./components/EditProblemView', () => 'EditProblemView');
-jest.mock('./components/SelectTypeModal', () => 'SelectTypeModal');
-
-jest.mock('react', () => {
-  const updateState = jest.fn();
-  return {
-    ...jest.requireActual('react'),
-    updateState,
-    useState: jest.fn(val => ([{ state: val }, jest.fn().mockName('setState')])),
-  };
+// Mock child components for easy selection
+jest.mock('./components/SelectTypeModal', () => function mockSelectTypeModal(props: any) {
+  return <div>SelectTypeModal {props.onClose && 'withOnClose'}</div>;
+});
+jest.mock('./components/EditProblemView', () => function mockEditProblemView(props: any) {
+  return <div>EditProblemView {props.onClose && 'withOnClose'} {props.returnFunction && 'withReturnFunction'}</div>;
 });
 
-jest.mock('../../data/redux', () => ({
-  thunkActions: {
-    problem: {
-      initializeProblemEditor: jest.fn().mockName('thunkActions.problem.initializeProblem'),
-    },
-  },
-  selectors: {
-    app: {
-      blockValue: jest.fn(state => ({ blockValue: state })),
-      shouldCreateBlock: jest.fn(state => ({ shouldCreateBlock: state })),
-    },
-    problem: {
-      problemType: jest.fn(state => ({ problemType: state })),
-    },
-    requests: {
-      isFinished: jest.fn((state, params) => ({ isFinished: { state, params } })),
-      isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
-    },
-  },
-}));
+const baseProps = {
+  onClose: jest.fn(),
+  returnFunction: jest.fn(),
+  initializeProblemEditor: jest.fn(),
+  blockValue: { foo: 'bar' },
+};
 
 describe('ProblemEditor', () => {
-  const props = {
-    onClose: jest.fn().mockName('props.onClose'),
-    // redux
-    problemType: null,
-    blockValue: { data: { data: 'eDiTablE Text' } },
-    blockFinished: false,
-    blockFailed: false,
-    initializeProblemEditor: jest.fn().mockName('args.intializeProblemEditor'),
-    advancedSettingsFinished: false,
-  };
-  describe('snapshots', () => {
-    test('renders as expected with default behavior', () => {
-      expect(shallow(<ProblemEditor {...props} />).snapshot).toMatchSnapshot();
-    });
-    test('block loaded, studio view and assets not yet loaded, Spinner appears', () => {
-      const wrapper = shallow(<ProblemEditor {...props} blockFinished />);
-      expect(wrapper.instance.findByType(Spinner)).toBeTruthy();
-    });
-    test('advanceSettings loaded, block and studio view not yet loaded, Spinner appears', () => {
-      const wrapper = shallow(<ProblemEditor {...props} advancedSettingsFinished />);
-      expect(wrapper.instance.findByType(Spinner)).toBeTruthy();
-    });
-    test('block failed, message appears', () => {
-      const wrapper = shallow(<ProblemEditor
-        {...props}
-        blockFinished
-        advancedSettingsFinished
-        blockFailed
-      />);
-      expect(wrapper.snapshot).toMatchSnapshot();
-    });
-    test('renders SelectTypeModal', () => {
-      const wrapper = shallow(<ProblemEditor
-        {...props}
-        blockFinished
-        advancedSettingsFinished
-      />);
-      expect(wrapper.instance.findByType('SelectTypeModal')).toHaveLength(1);
-    });
-    test('renders EditProblemView', () => {
-      const wrapper = shallow(<ProblemEditor
-        {...props}
-        problemType="multiplechoiceresponse"
-        blockFinished
-        advancedSettingsFinished
-      />);
-      expect(wrapper.instance.findByType('EditProblemView')).toHaveLength(1);
-    });
+  beforeEach(() => {
+    initializeMocks();
   });
 
-  describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' } as any;
-    test('blockValue from app.blockValue', () => {
-      expect(
-        mapStateToProps(testState).blockValue,
-      ).toEqual(selectors.app.blockValue(testState));
-    });
-    test('problemType from problem.problemType', () => {
-      expect(
-        mapStateToProps(testState).problemType,
-      ).toEqual(selectors.problem.problemType(testState));
-    });
-    test('blockFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).blockFinished,
-      ).toEqual(
-        selectors.app.shouldCreateBlock(testState)
-        || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }),
-      );
-    });
-    test('advancedSettingsFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).advancedSettingsFinished,
-      ).toEqual(
-        selectors.app.shouldCreateBlock(testState)
-        || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAdvancedSettings }),
-      );
-    });
+  it('renders Spinner when blockFinished is false', () => {
+    const { container } = render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished={false}
+      advancedSettingsFinished
+      blockFailed={false}
+      problemType={null}
+    />);
+    const spinner = container.querySelector('.pgn__spinner');
+    expect(spinner).toBeInTheDocument();
+    expect(spinner).toHaveAttribute('screenreadertext', 'Loading Problem Editor');
   });
-  describe('mapDispatchToProps', () => {
-    test('initializeProblemEditor from thunkActions.problem.initializeProblem', () => {
-      expect(mapDispatchToProps.initializeProblemEditor).toEqual(thunkActions.problem.initializeProblem);
-    });
+
+  it('renders Spinner when advancedSettingsFinished is false', () => {
+    const { container } = render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished={false}
+      blockFailed={false}
+      problemType={null}
+    />);
+    const spinner = container.querySelector('.pgn__spinner');
+    expect(spinner).toBeInTheDocument();
+    expect(spinner).toHaveAttribute('screenreadertext', 'Loading Problem Editor');
+  });
+
+  it('renders block failed message when blockFailed is true', () => {
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished
+      blockFailed
+      problemType={null}
+    />);
+    expect(screen.getByText(messages.blockFailed.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders SelectTypeModal when problemType is null', () => {
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished
+      blockFailed={false}
+      problemType={null}
+    />);
+    expect(screen.getByText(/SelectTypeModal/)).toBeInTheDocument();
+  });
+
+  it('renders EditProblemView when problemType is not null', () => {
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished
+      blockFailed={false}
+      problemType="advanced"
+    />);
+    expect(screen.getByText(/EditProblemView/)).toBeInTheDocument();
+  });
+
+  it('calls initializeProblemEditor when blockFinished and not blockFailed', () => {
+    const initializeProblemEditor = jest.fn();
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished
+      blockFailed={false}
+      problemType={null}
+      initializeProblemEditor={initializeProblemEditor}
+    />);
+    expect(initializeProblemEditor).toHaveBeenCalledWith(baseProps.blockValue);
+  });
+
+  it('does not call initializeProblemEditor if blockFinished is false', () => {
+    const initializeProblemEditor = jest.fn();
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished={false}
+      advancedSettingsFinished
+      blockFailed={false}
+      problemType={null}
+      initializeProblemEditor={initializeProblemEditor}
+    />);
+    expect(initializeProblemEditor).not.toHaveBeenCalled();
+  });
+
+  it('does not call initializeProblemEditor if blockFailed is true', () => {
+    const initializeProblemEditor = jest.fn();
+    render(<ProblemEditorInternal
+      {...baseProps}
+      blockFinished
+      advancedSettingsFinished
+      blockFailed
+      problemType={null}
+      initializeProblemEditor={initializeProblemEditor}
+    />);
+    expect(initializeProblemEditor).not.toHaveBeenCalled();
   });
 });
