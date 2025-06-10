@@ -345,7 +345,7 @@
 
   .pgn__data-table th {
     background-color: #e7ebfa !important;
-    
+
     .pgn__icon {
       display: none !important;
     }
@@ -409,16 +409,16 @@
   margin-left: 1rem !important;
 
   .pages_bar {
-     content: "";
-      display: block;
-      height: 1px;
-      background-color: #ced4da;
-      margin: 1.5rem -1rem 1rem -1rem;
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #ced4da;
+    margin: 1.5rem -1rem 1rem -1rem;
   }
 
   .card {
-      border: 1px solid #ced4da;
-      display: block !important;
+    border: 1px solid #ced4da;
+    display: block !important;
   }
 
   .pgn__card .pgn__card-header .pgn__card-header-content {
@@ -432,6 +432,60 @@
 
   .pgn__card .pgn__card-header .pgn__card-header-actions {
     margin-top: 11px;
+  }
+}
+
+// Textbooks
+.textbook-card {
+
+  padding: 0rem !important;
+
+  .setting-items {
+    article {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ced4da;
+      height: 100%;
+      margin-right: -0.5rem;
+    }
+  }
+
+  .pages_bar {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #ced4da;
+    margin: -1rem -1rem 1rem -1rem;
+  }
+
+  .textbook-form {
+    background-color: #f4f7ff;
+    box-shadow: none;
+    
+    .form-chapters-fields {
+      display: block;
+    }
+
+    .pgn__action-row {
+      justify-content: flex-start;
+    }
+
+    .btn-icon.btn-icon-sm {
+      height: 2.5rem;
+    }
+
+    .button-style {
+      border: 1px solid #ced4da; 
+      margin-bottom: 0.5rem; 
+      border-radius: 8px;
+      margin-right: 6px;
+    }
+
+    .cancel-button{
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+    }
   }
 }
 

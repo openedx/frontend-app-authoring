@@ -10,6 +10,7 @@ import {
 import { Add as AddIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -65,6 +66,21 @@ const Textbooks = ({ courseId }) => {
           {`${courseDetails?.name} | ${intl.formatMessage(messages.headingTitle)}`}
         </title>
       </Helmet>
+      <PluginSlot
+        id="textbook_plugin_slot"
+        pluginProps={{
+          courseId,
+          textbooks,
+          isLoading,
+          isTextbookFormOpen,
+          openTextbookForm,
+          closeTextbookForm,
+          handleTextbookFormSubmit,
+          handleSavingStatusDispatch,
+          handleTextbookEditFormSubmit,
+          handleTextbookDeleteSubmit,
+        }}
+      >
       <Container size="xl" className="px-4">
         <section className="mb-4 mt-5">
           <SubHeader
@@ -125,6 +141,7 @@ const Textbooks = ({ courseId }) => {
           </Layout>
         </section>
       </Container>
+      </PluginSlot>
       <ProcessingNotification
         isShow={showProcessingNotification}
         title={processingNotificationTitle}
