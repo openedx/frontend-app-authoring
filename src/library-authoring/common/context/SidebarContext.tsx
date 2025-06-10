@@ -206,10 +206,12 @@ export const SidebarProvider = ({
   }, [selectedItemId, collectionId, containerId]);
 
   useEffect(() => {
-    // Hide the Preview tab (and replace Preview as the default tab),
-    // when the sidebar is showing the current container.
-    // We do this because the container page already shows a preview.
-    if (containerId && !selectedItemId) {
+    // Hide the Preview tab (and replace Preview as the default tab) on the container page when:
+    // * the sidebar is showing the current container, OR
+    // * the sidebar is showing a selected component.
+    // We do this to avoid duplicating content between the
+    // Section/Subsection main pages and the container sidebar.
+    if (containerId && (!selectedItemId || selectedItemId.startsWith('lb:'))) {
       setDefaultTab({
         collection: COLLECTION_INFO_TABS.Details,
         component: COMPONENT_INFO_TABS.Manage,

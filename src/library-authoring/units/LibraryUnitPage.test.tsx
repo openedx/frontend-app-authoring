@@ -190,7 +190,7 @@ describe('<LibraryUnitPage />', () => {
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText('Test Unit')).length).toBeGreaterThan(1);
-    // No Preview tab shown in sidebar yet
+    // No Preview tab shown in sidebar
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
     const component = await screen.findByText('text block 0');
@@ -202,8 +202,8 @@ describe('<LibraryUnitPage />', () => {
 
     // The mock data for the sidebar has a title of "text block 0"
     expect(await findByText('text block 0')).toBeInTheDocument();
-    // Preview tab shown in sidebar
-    expect(await findByText('Preview')).toBeInTheDocument();
+    // Preview tab still not shown in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
     const closeButton = await findByRole('button', { name: /close/i });
     userEvent.click(closeButton);

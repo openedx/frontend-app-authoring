@@ -79,6 +79,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     containerId?: string,
     libraryId?: string,
     cType: ContainerType = ContainerType.Section,
+    childId?: string,
   ) => {
     const libId = libraryId || mockContentLibrary.libraryId;
     const defaultId = cType === ContainerType.Section
@@ -88,7 +89,10 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     render(<LibraryLayout />, {
       path,
       routerProps: {
-        initialEntries: [`/library/${libId}/${cType}/${cId}`],
+        initialEntries: [childId
+          ? `/library/${libId}/${cType}/${cId}/${childId}`
+          : `/library/${libId}/${cType}/${cId}`,
+        ],
       },
     });
   };
@@ -224,21 +228,28 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(mockShowToast).toHaveBeenCalledWith('Failed to update container.');
     });
 
-    it(`should preview child in sidebar by clicking child on ${cType} page`, async () => {
-      const url = getLibraryContainerApiUrl(`lb:org1:Demo_course:${childType}:${childType}-0`);
+    it(`should preview child in sidebar by clicking ${childType} on ${cType} page`, async () => {
+      const childId = `lct:org1:Demo_course:${childType}:${childType}-0`;
+      const url = getLibraryContainerApiUrl(childId);
       axiosMock.onPatch(url).reply(200);
       renderLibrarySectionPage(undefined, undefined, cType);
 
       // Wait loading of the children
       const child = await screen.findByText(`${childType} block 0`);
-      // Check no Preview tab is shown
+      // No Preview tab is shown yet
       expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
+      // Select the child
       fireEvent.click(child);
-
-      // Check Preview tab shows the selected child
-      expect(await screen.findByText('Preview')).toBeInTheDocument();
       expect((await screen.findAllByText(`${childType} block 0`)).length === 2);
+
+      // Because the Preview show/hide is dependent on the selected item
+      // being in the URL, and because our test router doesn't change
+      // paths, we have to explicitly navigate to the child page to check
+      // the Preview tab is shown. Boo.
+      renderLibrarySectionPage(undefined, undefined, cType, childId);
+      expect((await screen.findAllByText(`${childType} block 0`)).length === 2);
+      expect(await screen.findByText('Preview')).toBeInTheDocument();
     });
 
     it(`should rename child by clicking edit icon besides name in ${cType} page`, async () => {
