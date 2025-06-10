@@ -22,8 +22,7 @@ const CreateContainerModal = () => {
   const {
     collectionId,
     libraryId,
-    sectionId,
-    subsectionId,
+    containerId,
     createContainerModalType,
     setCreateContainerModalType,
   } = useLibraryContext();
@@ -35,7 +34,6 @@ const CreateContainerModal = () => {
   } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  const containerId = insideSection ? sectionId : subsectionId || '';
   const updateContainerItemsMutation = useAddItemsToContainer(containerId);
   const { showToast } = React.useContext(ToastContext);
 
@@ -96,7 +94,7 @@ const CreateContainerModal = () => {
       // link container to parent
       if (collectionId && insideCollection) {
         await updateCollectionItemsMutation.mutateAsync([container.id]);
-      } else if ((subsectionId && insideSubsection) || (sectionId && insideSection)) {
+      } else if (containerId && (insideSection || insideSubsection)) {
         await updateContainerItemsMutation.mutateAsync([container.id]);
       }
       // Navigate to the new container
