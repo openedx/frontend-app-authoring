@@ -48,10 +48,10 @@ const render = (collectionId?: string) => {
     ),
   });
 };
-const renderWithContainer = (containerId: string) => {
+const renderWithContainer = (containerId: string, containerType: 'unit' | 'section' | 'subsection' = 'unit') => {
   const params: { libraryId: string, containerId?: string } = { libraryId, containerId };
   return baseRender(<AddContent />, {
-    path: '/library/:libraryId/unit/:containerId?',
+    path: `/library/:libraryId/${containerType}/:containerId?`,
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
@@ -64,37 +64,7 @@ const renderWithContainer = (containerId: string) => {
   });
 };
 
-const renderWithSection = (sectionId: string) => {
-  const params: { libraryId: string, sectionId?: string } = { libraryId, sectionId };
-  return baseRender(<AddContent />, {
-    path: '/library/:libraryId/section/:sectionId?',
-    params,
-    extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-      >
-        { children }
-        <ComponentEditorModal />
-      </LibraryProvider>
-    ),
-  });
-};
 
-const renderWithSubsection = (subsectionId: string) => {
-  const params: { libraryId: string, subsectionId?: string } = { libraryId, subsectionId };
-  return baseRender(<AddContent />, {
-    path: '/library/:libraryId/subsection/:subsectionId?',
-    params,
-    extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-      >
-        { children }
-        <ComponentEditorModal />
-      </LibraryProvider>
-    ),
-  });
-};
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
@@ -430,7 +400,7 @@ describe('<AddContent />', () => {
   it('should only show subsection button when inside a section', async () => {
     mockClipboardEmpty.applyMock();
     const sectionId = 'lct:orf1:lib1:section:test-1';
-    renderWithSection(sectionId);
+    renderWithContainer(sectionId, 'section');
 
     expect(await screen.findByRole('button', { name: 'Subsection' })).toBeInTheDocument();
 
@@ -443,7 +413,7 @@ describe('<AddContent />', () => {
   it('should only show unit button when inside a subsection', async () => {
     mockClipboardEmpty.applyMock();
     const subsectionId = 'lct:orf1:lib1:subsection:test-1';
-    renderWithSubsection(subsectionId);
+    renderWithContainer(subsectionId, 'subsection');
 
     expect(await screen.findByRole('button', { name: 'Unit' })).toBeInTheDocument();
 
