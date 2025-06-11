@@ -25,6 +25,7 @@ import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
 import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
 import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
 import TextbooksNew from './src/textbooks/TextbooksNew';
+import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -536,6 +537,43 @@ const config = {
                         priority: 1,
                         RenderWidget: (props) => 
                         <TextbooksNew {...props} />
+                    },
+                },
+            ],
+        },
+        custom_pages_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "custom_pages",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => 
+                        <CustomPagesNew {...props} />
+                    },
+                },
+            ],
+        },
+        edit_modal_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "custom_pages",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => 
+                        <div className='edit-modal'>
+                            <EditorPage
+                            courseId={courseId}
+                            blockType="html"
+                            blockId={pageId}
+                            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+                            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+                            returnFunction={onClose}
+                            />
+                        </div>
                     },
                 },
             ],

@@ -462,7 +462,7 @@
   .textbook-form {
     background-color: #f4f7ff;
     box-shadow: none;
-    
+
     .form-chapters-fields {
       display: block;
     }
@@ -476,15 +476,80 @@
     }
 
     .button-style {
-      border: 1px solid #ced4da; 
-      margin-bottom: 0.5rem; 
+      border: 1px solid #ced4da;
+      margin-bottom: 0.5rem;
       border-radius: 8px;
       margin-right: 6px;
     }
 
-    .cancel-button{
+    .cancel-button {
       border: 1px solid var(--primary);
       border-radius: 8px;
+    }
+  }
+}
+
+// Custom pages
+
+.custom-pages {
+  padding: 0 1rem !important;
+
+  .setting-items {
+    article {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid #ced4da;
+      height: 100%;
+      margin-right: -0.5rem;
+    }
+
+    hr {
+      margin: 1rem -1rem 1rem -1rem;
+    }
+
+    .page-note {
+      // @include card-style1;
+      background-color: var(--warning-light);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 0 !important;
+      // border: 1px solid #ced4da;
+    }
+
+    .card-border {
+      padding: 7px;
+      border: 1px solid #ced4da;
+      border-radius: 10px;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .pgn__modal-header {
+      position: sticky;
+    }
+
+    .pgn__modal-body {
+      padding: 1rem !important;
+      overflow: none !important;
+    }
+
+    .fixed-bottom {
+      position: sticky;
+    }
+
+    .edit-modal {
+      position: 'relative';
+      height: '50%';
+      top: '50%';
+      left: '50%';
+      right: 0;
+      bottom: 0;
+      overflow-y: 'scroll';
+      background-color: 'white';
+      z-index: 10;
+      transform: 'translate(-50%, -114%)';
+      box-shadow: '0 0 10px rgba(0,0,0,0.3)';
+      border-radius: '8px';
     }
   }
 }

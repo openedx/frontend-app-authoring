@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 import EditorPage from '../editors/EditorPage';
 
@@ -9,6 +10,10 @@ const EditModal = ({
   courseId,
   onClose,
 }) => (
+  <PluginSlot
+    id="edit_modal_plugin_slot"
+    pluginProps={{ courseId }}
+  >
   <div
     style={{
       position: 'fixed',
@@ -32,6 +37,7 @@ const EditModal = ({
       returnFunction={onClose}
     />
   </div>
+  </PluginSlot>
 );
 
 EditModal.propTypes = {
