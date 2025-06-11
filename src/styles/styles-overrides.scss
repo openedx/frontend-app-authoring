@@ -1,5 +1,9 @@
 @import "./global-overrides";
 
+.course-sidebar-nav {
+  width: auto;
+}
+
 // Help Sidebar styles
 .help-sidebar {
   @include card-style1;
@@ -328,6 +332,73 @@
     padding: 1rem;
     border-radius: 1rem;
   }
+}
+
+// Files & Uploads styles
+
+.files_and_uploads {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #ced4da;
+  height: 100%;
+  margin: 0rem 1rem;
+}
+
+.files-table {
+
+  .pgn__data-table th {
+    background-color: #e7ebfa !important;
+    
+    .pgn__icon {
+      display: none !important;
+    }
+  }
+
+  .pgn__data-table.is-striped tr:nth-child(even) {
+    background-color: transparent !important;
+  }
+
+  hr {
+    margin: 0px -1rem 0px -1rem;
+  }
+
+  .files-card-section {
+    .btn-icon {
+      width: 2rem !important;
+      height: 2rem !important;
+      border-radius: 50%;
+      margin-right: 2px !important;
+      // padding: 0 !important;
+      // display: inline-flex;
+      // justify-content: center;
+      // border: none;
+    }
+  }
+
+
+  .pgn__data-table-wrapper .pgn__data-table-card-view {
+    margin-left: 0 !important;
+  }
+
+  .bg-light-200 {
+    background-color: white !important;
+  }
+
+  @media (min-width: 1200px) {
+    .col-xl-2 {
+      max-width: 25%;
+    }
+  }
+}
+
+.ted-card {
+  background-color: #e7ebfa;
+  width: 200px;
+}
+
+.files-card-section {
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem !important;
 }
 
 // K styles end

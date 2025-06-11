@@ -25,6 +25,8 @@ import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
 import CourseChecklistCustom from './src/plugins-components/CourseChecklistCustom';
 import ChecklistItemBody from './src/course-checklist/ChecklistSection/ChecklistItemBody';
 import ChecklistItemComment from './src/course-checklist/ChecklistSection/ChecklistItemComment';
+import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
+import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -549,6 +551,43 @@ const config = {
                     priority: 1,
                     RenderWidget: (props) => 
                         <ExportSidebarNew />
+                    },
+                },
+            ],
+        },
+        files_page_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "files_page",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => 
+                            <FilesPageNew courseId={props.courseId} />
+                    },
+                },
+            ],
+        },
+        gallery_card_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "gallery_card",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <GalleryCardNew
+                                original={props.original}
+                                handleBulkDownload={props.handleBulkDownload}
+                                handleLockFile={props.handleLockFile}
+                                handleOpenDeleteConfirmation={props.handleOpenDeleteConfirmation}
+                                handleOpenFileInfo={props.handleOpenFileInfo}
+                                thumbnailPreview={props.thumbnailPreview}
+                                fileType={props.fileType}
+                            />
+                        ),
                     },
                 },
             ],

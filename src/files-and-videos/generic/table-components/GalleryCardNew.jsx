@@ -8,11 +8,10 @@ import {
   Truncate,
 } from '@openedx/paragon';
 import { ClosedCaption } from '@openedx/paragon/icons';
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import FileMenu from '../FileMenu';
 import FileThumbnail from '../ThumbnailPreview';
 
-const GalleryCard = ({
+const GalleryCardNew = ({
   className,
   original,
   handleBulkDownload,
@@ -28,20 +27,8 @@ const GalleryCard = ({
   };
 
   return (
-    <PluginSlot
-      id="gallery_card_plugin_slot"
-      pluginProps={{
-        original,
-        handleBulkDownload,
-        handleLockFile,
-        handleOpenDeleteConfirmation,
-        handleOpenFileInfo,
-        thumbnailPreview,
-        fileType,
-      }}
-    >
-    <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
-      <Card.Header
+    <Card className={`${className} gallery-card ted-card`} data-testid={`grid-card-${original.id}`}>
+      {/* <Card.Header
         className="pr-0 pt-2 pb-2"
         actions={(
           <ActionRow>
@@ -65,8 +52,37 @@ const GalleryCard = ({
             />
           </ActionRow>
         )}
-      />
-      <Card.Section className="pr-3 pl-3 pt-0 pb-0">
+      /> */}
+      <Card.Section className="pt-1 files-card-section">
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ wordBreak: 'break-word', marginRight: '1.25rem' }}>
+            <Truncate lines={1} className="font-weight-bold picture-title">
+              {original.displayName}
+            </Truncate>
+          </div>
+          <div style={{ marginRight: '-1rem' }}>
+            <ActionRow>
+              <FileMenu
+                externalUrl={original.externalUrl}
+                handleLock={lockFile}
+                locked={original.locked}
+                openAssetInfo={() => handleOpenFileInfo(original)}
+                portableUrl={original.portableUrl}
+                id={original.id}
+                fileType={fileType}
+                onDownload={() => handleBulkDownload([{
+                  original: {
+                    id: original.id,
+                    displayName:
+                  original.displayName,
+                    downloadLink: original?.downloadLink,
+                  },
+                }])}
+                openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
+              />
+            </ActionRow>
+          </div>
+        </div>
         <div className="row align-items-center justify-content-center m-0">
           <FileThumbnail
             thumbnail={original.thumbnail}
@@ -75,31 +91,27 @@ const GalleryCard = ({
             displayName={original.displayName}
             id={original.id}
             status={original.status}
-            imageSize={{ height: '76px', width: '135.71px' }}
+            // imageSize={{ height: '76px', width: '135.71px' }}
+            imageSize={{ height: '118px', width: '180px' }}
+            // imageSize
             thumbnailPreview={thumbnailPreview}
           />
         </div>
-        <div style={{ wordBreak: 'break-word' }}>
-          <Truncate lines={1} className="font-weight-bold mt-2 picture-title">
-            {original.displayName}
-          </Truncate>
-        </div>
       </Card.Section>
-      <Card.Footer className="p-3 pt-4 row m-0 flex-row-reverse justify-content-between align-items-center">
+      {/* <Card.Footer className="p-3 pt-4 row m-0 flex-row-reverse justify-content-between align-items-center">
         <Chip>
           {original.wrapperType}
         </Chip>
         {original.transcripts?.length > 0 && <Icon size="lg" src={ClosedCaption} className="m-0 text-primary-500" />}
-      </Card.Footer>
+      </Card.Footer> */}
     </Card>
-    </PluginSlot>
   );
 };
 
-GalleryCard.defaultProps = {
+GalleryCardNew.defaultProps = {
   className: null,
 };
-GalleryCard.propTypes = {
+GalleryCardNew.propTypes = {
   className: PropTypes.string,
   original: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
@@ -121,4 +133,4 @@ GalleryCard.propTypes = {
   fileType: PropTypes.string.isRequired,
 };
 
-export default GalleryCard;
+export default GalleryCardNew;

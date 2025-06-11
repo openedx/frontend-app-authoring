@@ -10,7 +10,7 @@ import {
   MenuItem,
   useToggle,
 } from '@openedx/paragon';
-import { MoreHoriz } from '@openedx/paragon/icons';
+import { MoreHoriz, MoreVert } from '@openedx/paragon/icons';
 
 import messages from '../../messages';
 
@@ -38,7 +38,7 @@ const MoreInfoColumn = ({
   return (
     <>
       <IconButton
-        src={MoreHoriz}
+        src={MoreVert}
         iconAs={Icon}
         onClick={toggle}
         ref={setTarget}
