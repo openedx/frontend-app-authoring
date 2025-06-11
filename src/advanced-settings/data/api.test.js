@@ -4,14 +4,9 @@ import {
   updateCourseAdvancedSettings,
   getProctoringExamErrors,
 } from './api';
-import { convertObjectToSnakeCase } from '../../utils';
 
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),
-}));
-
-jest.mock('../../utils', () => ({
-  convertObjectToSnakeCase: jest.fn(),
 }));
 
 describe('courseSettings API', () => {
@@ -83,7 +78,6 @@ describe('courseSettings API', () => {
         },
       };
 
-      convertObjectToSnakeCase.mockReturnValue({});
       mockHttpClient.patch.mockResolvedValue({ data: fakeData });
 
       const result = await updateCourseAdvancedSettings('course-v1:Test+T101+2024', {});
