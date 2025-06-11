@@ -36,11 +36,6 @@ const messages = defineMessages({
     defaultMessage: 'Select video',
     description: 'Video picker modal title.',
   },
-  blockEditorModalTitle: {
-    id: 'course-authoring.course-unit.modal.block-editor-title.text',
-    defaultMessage: 'Edit component',
-    description: 'Block editor modal title.',
-  },
   modalContainerTitle: {
     id: 'course-authoring.course-unit.modal.container.title',
     defaultMessage: 'Add {componentTitle} component',
