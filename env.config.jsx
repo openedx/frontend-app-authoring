@@ -31,6 +31,7 @@ import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew
 import TextbooksNew from './src/textbooks/TextbooksNew';
 import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
+import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
@@ -651,6 +652,20 @@ const config = {
                         priority: 1,
                         RenderWidget: (props) => 
                         <CustomPagesNew {...props} />
+                    },
+                },
+            ],
+        },
+        import_sidebar_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "import_sidebar",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) =>
+                        <ImportSidebarNew />
                     },
                 },
             ],

@@ -554,6 +554,23 @@
   }
 }
 
+// Import page
+
+.import {
+  .pgn__dropzone {
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .pages_bar {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #ced4da;
+    margin: 1rem -1rem 0rem -1rem;
+  }
+}
+
 // K styles end
 
 // S Styles Start

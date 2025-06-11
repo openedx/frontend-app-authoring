@@ -9,6 +9,7 @@ import {
 import Cookies from 'universal-cookie';
 import { Helmet } from 'react-helmet';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import SubHeader from '../generic/sub-header/SubHeader';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { RequestStatus } from '../data/constants';
@@ -72,12 +73,16 @@ const CourseImportPage = ({ intl, courseId }) => {
                 <p className="small">{intl.formatMessage(messages.description1)}</p>
                 <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <p className="small">{intl.formatMessage(messages.description3)}</p>
+
+                <span className="pages_bar" />
                 <FileSection courseId={courseId} />
                 {importTriggered && <ImportStepper courseId={courseId} />}
               </article>
             </Layout.Element>
             <Layout.Element>
+              <PluginSlot id="import_sidebar_plugin_slot" pluginProps={{ courseId }}>
               <ImportSidebar courseId={courseId} />
+              </PluginSlot>
             </Layout.Element>
           </Layout>
         </section>
