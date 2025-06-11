@@ -29,6 +29,7 @@ import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
 import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
+import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
 
 // Load environment variables from .env file
 const config = {
@@ -454,6 +455,22 @@ const config = {
                     }
                 }
             ]
+        },
+
+        create_library_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "create-library-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomCreateLibrary {...props} />
+                        ),
+                    },
+                }
+            ],
         },
 
         grading_header_plugin_slot: {

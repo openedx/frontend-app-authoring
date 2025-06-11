@@ -858,6 +858,45 @@
   }
 }
 
+.custom-create-library-container {
+  @include card-style1;
+  padding: 1rem;
+  margin-left: 1rem !important;
+  width: 99% !important;
+  margin-right: 1rem !important;
+  max-width: 100% !important;
+  margin-top: 1.5rem !important;
+
+  hr {
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .sub-header-title {
+    @include sub-header-title-style1;
+  }
+
+  .sub-header{
+    margin-bottom: -0.5rem !important;
+  }
+
+  .bottom-button-container {
+    button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem !important;
+    }
+  }
+
+  .btn-icon.btn-icon-secondary:hover {
+    background-color: var(--secondary-hover) !important;
+  }
+
+  .pgn__form-control-decorator-group {
+    padding-bottom: 0 !important;
+  }
+}
+
 // S Styles End
 
 // N Styles Start

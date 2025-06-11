@@ -12,6 +12,7 @@ import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { REGEX_RULES } from '../../constants';
 import Header from '../../header';
 import FormikControl from '../../generic/FormikControl';
@@ -51,7 +52,23 @@ const CreateLibrary = () => {
   }
 
   return (
-    <>
+    <PluginSlot
+      id="create_library_plugin_slot"
+      pluginProps={{
+        messages,
+        formatMessage: intl.formatMessage,
+        specialCharsRule,
+        noSpaceRule,
+        validSlugIdRegex,
+        mutate,
+        isOrganizationListLoading,
+        organizationListData,
+        handleOnClickCancel,
+        isLoading,
+        isError,
+        error,
+      }}
+    >
       <Header isHiddenMainMenu />
       <Container size="xl" className="p-4 mt-3">
         <SubHeader
@@ -145,7 +162,7 @@ const CreateLibrary = () => {
         {isError && (<AlertError error={error} />)}
       </Container>
       <StudioFooter />
-    </>
+    </PluginSlot>
   );
 };
 
