@@ -1,6 +1,8 @@
-import { render, screen, waitFor, initializeMocks } from '../../testUtils';
 import MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
+import {
+  render, screen, waitFor, initializeMocks,
+} from '../../testUtils';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
 import CreateContainerModal from './CreateContainerModal';
@@ -59,11 +61,13 @@ const renderWithLibraryProvider = (libraryId: string, options: {
   path?: string;
   params?: Record<string, string>;
 } = {}) => {
-  const { collectionId, containerId, path, params } = options;
-  
+  const {
+    collectionId, containerId, path, params,
+  } = options;
+
   axiosMock.onGet(`/api/libraries/v2/${libraryId}/`).reply(200, mockLibraryData);
   axiosMock.onGet(`/api/libraries/v2/${libraryId}/block_types/`).reply(200, mockBlockTypesData);
-  
+
   return render(
     <LibraryProvider libraryId={libraryId}>
       <AddContent />
@@ -77,7 +81,7 @@ const renderWithLibraryProvider = (libraryId: string, options: {
         ...(containerId && { containerId }),
         ...params,
       },
-    }
+    },
   );
 };
 
