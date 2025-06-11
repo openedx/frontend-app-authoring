@@ -493,6 +493,17 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.subsectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.subsectionData);
     default:
+      if (containerId.startsWith('lct:org1:Demo_course_generated:')) {
+        const lastPart = containerId.split(':').pop();
+        if (lastPart) {
+          const [name, idx] = lastPart.split('-');
+          return Promise.resolve({
+            ...mockGetContainerMetadata.containerData,
+            displayName: `${name} block ${idx}`,
+            publishedDisplayName: `${name} block published ${idx}`,
+          });
+        }
+      }
       return Promise.resolve(mockGetContainerMetadata.containerData);
   }
 }
@@ -574,19 +585,22 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
   }
   let blockType = 'html';
   let name = 'text';
+  let typeNamespace = 'lb';
   if (containerId.includes('subsection')) {
     blockType = 'unit';
     name = blockType;
+    typeNamespace = 'lct';
   } else if (containerId.includes('section')) {
     blockType = 'subsection';
     name = blockType;
+    typeNamespace = 'lct';
   }
   return Promise.resolve(
     Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
       {
         ...child,
         // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `lb:org1:Demo_course:${blockType}:${name}-${idx}`,
+        id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
         displayName: `${name} block ${idx}`,
         publishedDisplayName: `${name} block published ${idx}`,
       }
