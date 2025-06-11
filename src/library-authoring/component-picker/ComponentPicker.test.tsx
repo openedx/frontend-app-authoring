@@ -377,16 +377,15 @@ describe('<ComponentPicker />', () => {
     expect(screen.getByRole('tab', { name: /units/i })).toBeInTheDocument();
   });
 
-  it('should display only unit tab', async () => {
+  it('should display only units', async () => {
     render(<ComponentPicker visibleTabs={[ContentType.units]} />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
 
-    expect(await screen.findByRole('tab', { name: /units/i })).toBeInTheDocument();
-    expect(screen.queryByRole('tab', { name: /all content/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('tab', { name: /collections/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('tab', { name: /components/i })).not.toBeInTheDocument();
+    expect(await screen.findByText('Published Test Unit')).toBeInTheDocument();
+    // No tabs shown when only one tab is visible
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 
   it('should not display never published filter', async () => {
