@@ -15,12 +15,11 @@ import {
   Breadcrumb,
   Button,
   Container,
-  Icon,
   Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
+import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useLocation } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
@@ -224,15 +223,10 @@ const LibraryAuthoringPage = ({
     <Breadcrumb
       links={[
         {
-          label: '',
-          to: '',
-        },
-        {
           label: intl.formatMessage(messages.returnToLibrarySelection),
           onClick: returnToLibrarySelection,
         },
       ]}
-      spacer={<Icon src={ArrowBack} size="sm" />}
       linkAs={Link}
     />
   ) : undefined;
