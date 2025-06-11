@@ -283,7 +283,7 @@ mockXBlockFields.dataHtml = {
   metadata: { displayName: 'Introduction to Testing' },
 } satisfies api.XBlockFields;
 // Mock of another "regular" HTML (Text) block:
-mockXBlockFields.usageKey0 = 'lb:org1:Demo_course:html:text-0';
+mockXBlockFields.usageKey0 = 'lb:org1:Demo_course_generated:html:text-0';
 mockXBlockFields.dataHtml0 = {
   displayName: 'text block 0',
   data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
