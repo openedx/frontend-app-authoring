@@ -26,6 +26,7 @@ import GalleryCardNew from './src/files-and-videos/generic/table-components/Gall
 import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
 import TextbooksNew from './src/textbooks/TextbooksNew';
 import CustomPagesNew from './src/custom-pages/CustomPagesNew';
+import EditorPage from './src/editors/EditorPage';
 
 // Example custom component for the schedule_and_details_plugin_slot
 
@@ -555,29 +556,29 @@ const config = {
                 },
             ],
         },
-        edit_modal_plugin_slot: {
-            plugins: [
-                {
-                    op: PLUGIN_OPERATIONS.Insert,
-                    widget: {
-                        id: "custom_pages",
-                        type: DIRECT_PLUGIN,
-                        priority: 1,
-                        RenderWidget: (props) => 
-                        <div className='edit-modal'>
-                            <EditorPage
-                            courseId={courseId}
-                            blockType="html"
-                            blockId={pageId}
-                            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
-                            lmsEndpointUrl={getConfig().LMS_BASE_URL}
-                            returnFunction={onClose}
-                            />
-                        </div>
-                    },
-                },
-            ],
-        },
+        // edit_modal_plugin_slot: {
+        //     plugins: [
+        //         {
+        //             op: PLUGIN_OPERATIONS.Insert,
+        //             widget: {
+        //                 id: "custom_pages",
+        //                 type: DIRECT_PLUGIN,
+        //                 priority: 1,
+        //                 RenderWidget: (props) => 
+        //                 <div className='edit-modal'>
+        //                     <EditorPage
+        //                     courseId={courseId}
+        //                     blockType="html"
+        //                     blockId={pageId}
+        //                     studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+        //                     lmsEndpointUrl={getConfig().LMS_BASE_URL}
+        //                     returnFunction={onClose}
+        //                     />
+        //                 </div>
+        //             },
+        //         },
+        //     ],
+        // },
     }
 };
 
