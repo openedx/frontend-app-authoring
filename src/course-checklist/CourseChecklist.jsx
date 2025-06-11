@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Stack } from '@openedx/paragon';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
@@ -52,37 +53,59 @@ const CourseChecklist = ({
           })}
         </title>
       </Helmet>
-      <Container size="xl" className="p-4 pt-4.5">
-        <SubHeader
-          title={intl.formatMessage(messages.headingTitle)}
-          subtitle={intl.formatMessage(messages.headingSubtitle)}
-        />
-        <AriaLiveRegion
-          {...{
-            isCourseLaunchChecklistLoading,
-            isCourseBestPracticeChecklistLoading,
-            enableQuality,
-          }}
-        />
-        <Stack gap={4}>
-          <ChecklistSection
-            dataHeading={intl.formatMessage(messages.launchChecklistLabel)}
-            data={launchData}
-            idPrefix="launchChecklist"
-            isLoading={isCourseLaunchChecklistLoading}
-            updateLinks={updateLinks}
+      <PluginSlot
+        id="course_checklist_plugin_slot"
+        pluginProps={{
+          courseId,
+          courseDetails,
+          enableQuality,
+          updateLinks,
+          loadingStatus,
+          launchData,
+          bestPracticeData,
+          isCourseLaunchChecklistLoading,
+          isCourseBestPracticeChecklistLoading,
+          intl,
+          messages,
+          formatMessage: intl.formatMessage,
+          headingSubtitle: intl.formatMessage(messages.headingSubtitle),
+          headingTitle: intl.formatMessage(messages.headingTitle),
+          launchChecklistLabel: intl.formatMessage(messages.launchChecklistLabel),
+          bestPracticesChecklistLabel: intl.formatMessage(messages.bestPracticesChecklistLabel),
+        }}
+      >
+        <Container size="xl" className="p-4 pt-4.5">
+          <SubHeader
+            title={intl.formatMessage(messages.headingTitle)}
+            subtitle={intl.formatMessage(messages.headingSubtitle)}
           />
-          {enableQuality && (
+          <AriaLiveRegion
+            {...{
+              isCourseLaunchChecklistLoading,
+              isCourseBestPracticeChecklistLoading,
+              enableQuality,
+            }}
+          />
+          <Stack gap={4}>
             <ChecklistSection
-              dataHeading={intl.formatMessage(messages.bestPracticesChecklistLabel)}
-              data={bestPracticeData}
-              idPrefix="bestPracticesChecklist"
-              isLoading={isCourseBestPracticeChecklistLoading}
+              dataHeading={intl.formatMessage(messages.launchChecklistLabel)}
+              data={launchData}
+              idPrefix="launchChecklist"
+              isLoading={isCourseLaunchChecklistLoading}
               updateLinks={updateLinks}
             />
-          )}
-        </Stack>
-      </Container>
+            {enableQuality && (
+              <ChecklistSection
+                dataHeading={intl.formatMessage(messages.bestPracticesChecklistLabel)}
+                data={bestPracticeData}
+                idPrefix="bestPracticesChecklist"
+                isLoading={isCourseBestPracticeChecklistLoading}
+                updateLinks={updateLinks}
+              />
+            )}
+          </Stack>
+        </Container>
+      </PluginSlot>
     </>
   );
 };

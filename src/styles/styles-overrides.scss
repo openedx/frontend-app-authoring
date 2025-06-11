@@ -948,6 +948,112 @@
   }
 }
 
+.custom-checklist-container {
+  @include card-style1;
+  padding: 1rem;
+  margin-left: 1rem !important;
+
+  .sub-header-title {
+    @include sub-header-title-style1;
+    margin-bottom: 0 !important;
+  }
+
+  .custom-checklist-divider {
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .custom-checklist-sections {
+
+    .container-fluid {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .lead {
+      @include section-title-style1;
+    }
+
+    .custom-checklist-section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .lead {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+
+  .custom-checklist-section-progress-bar {
+    margin-top: 0.5rem;
+    height: 1rem;
+    border-radius: 24px;
+    background-color: #e0e0e0 !important;
+    border: none !important;
+    margin-bottom: 2rem;
+
+    .progress-bar {
+      background-color: var(--primary) !important;
+      border: none !important;
+      border-radius: 24px !important;
+    }
+  }
+
+  .checklist-item-complete {
+    @include card-style3;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--bg-body) !important;
+  }
+
+  .checklist-item-card {
+    @include card-style3;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--bg-surface);
+    // margin-bottom: 1rem !important;
+  }
+}
+
+.custom-create-library-container {
+  @include card-style1;
+  padding: 1rem;
+  margin-left: 1rem !important;
+  width: 99% !important;
+  margin-right: 1rem !important;
+  max-width: 100% !important;
+  margin-top: 1.5rem !important;
+
+  hr {
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .sub-header-title {
+    @include sub-header-title-style1;
+  }
+
+  .sub-header{
+    margin-bottom: -0.5rem !important;
+  }
+
+  .bottom-button-container {
+    button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem !important;
+    }
+  }
+
+  .btn-icon.btn-icon-secondary:hover {
+    background-color: var(--secondary-hover) !important;
+  }
+
+  .pgn__form-control-decorator-group {
+    padding-bottom: 0 !important;
+  }
+}
+
 // S Styles End
 
 // N Styles Start

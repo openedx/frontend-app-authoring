@@ -9,7 +9,8 @@ import {
     Icon,
     IconButton,
     Dropdown,
-    Button
+    Button,
+    ProgressBar
 } from '@openedx/paragon';
 import FormSwitchGroup from './src/generic/FormSwitchGroup';
 import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
@@ -21,6 +22,9 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import WarningMessage from './src/generic/warning-message/WarningMessage';
 import SettingCard from './src/advanced-settings/setting-card/SettingCard';
 import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
+import CourseChecklistCustom from './src/plugins-components/CourseChecklistCustom';
+import ChecklistItemBody from './src/course-checklist/ChecklistSection/ChecklistItemBody';
+import ChecklistItemComment from './src/course-checklist/ChecklistSection/ChecklistItemComment';
 import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
 import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
 import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
@@ -29,6 +33,7 @@ import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
 
 // Example custom component for the schedule_and_details_plugin_slot
+import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
 
 // Load environment variables from .env file
 const config = {
@@ -374,6 +379,100 @@ const config = {
             plugins: [
                 {
                     op: PLUGIN_OPERATIONS.Hide,
+                }
+            ],
+        },
+
+        course_checklist_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-checklist-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CourseChecklistCustom {...props} />
+                        ),
+                    },
+                }
+            ],
+        },
+
+        course_checklist_section_title_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-checklist-section-title",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div className="custom-checklist-section-title-container">
+                                <div className="custom-checklist-section-title">
+                                    <h3 aria-describedby={props.getCompletionCountID()} className="lead">{props.dataHeading}</h3>
+                                    <div data-testid="completion-subheader">
+                                        {props.getCompletionCount(props.checks, props.totalCompletedChecks)}
+                                    </div>
+                                </div>
+                                <ProgressBar
+                                        now={(props.totalCompletedChecks / (props.checks?.length || 1)) * 100}
+                                        // srOnlyText={`${props.totalCompletedChecks} of ${props.checks?.length || 1} completed`}
+                                        className="custom-checklist-section-progress-bar"
+                                    />
+                            </div>
+                        ),
+                    },
+                }
+            ],
+        },
+
+        course_checklist_section_completion_subheader_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                }
+            ]
+        },
+
+        course_checklist_section_checklist_item_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-checklist-section-checklist-item",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div
+                                className={`checklist-item-card border py-3 px-4 ${props.isCompleted && 'checklist-item-complete'}`}
+                                id={`checklist-item-${props.checkId}`}
+                                data-testid={`checklist-item-${props.checkId}`}
+                                key={props.checkId}
+                            >
+                                <ChecklistItemBody {...{ checkId: props.checkId, isCompleted: props.isCompleted, updateLink: props.updateLink }} />
+                                <div data-testid={`comment-section-${props.checkId}`}>
+                                    <ChecklistItemComment {...{ checkId: props.checkId, outlineUrl: props.outlineUrl, data: props.data }} />
+                                </div>
+                            </div>
+                        )
+                    }
+                }
+            ]
+        },
+
+        create_library_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "create-library-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomCreateLibrary {...props} />
+                        ),
+                    },
                 }
             ],
         },
