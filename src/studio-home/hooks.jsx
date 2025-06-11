@@ -69,7 +69,10 @@ const useStudioHome = () => {
   } = studioHomeData;
 
   const isShowOrganizationDropdown = optimizationEnabled && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
-  const isShowEmailStaff = courseCreatorStatus === COURSE_CREATOR_STATES.disallowedForThisSite && !!studioRequestEmail;
+  const isShowEmailStaff = ![
+    COURSE_CREATOR_STATES.disallowedForThisSite,
+    COURSE_CREATOR_STATES.granted,
+  ].includes(courseCreatorStatus) && !!studioRequestEmail;
   const isShowProcessing = allowCourseReruns && rerunCreatorStatus && inProcessCourseActions?.length > 0;
   const hasAbilityToCreateNewCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const anyQueryIsPending = [deleteNotificationSavingStatus, courseCreatorSavingStatus, savingCreateRerunStatus]
