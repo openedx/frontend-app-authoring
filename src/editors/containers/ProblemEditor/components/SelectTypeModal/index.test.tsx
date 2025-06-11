@@ -1,12 +1,9 @@
-import { Provider } from 'react-redux';
 import {
   fireEvent,
-  render,
   screen,
   initializeMocks,
 } from '../../../../../testUtils';
-import editorStore from '../../../../data/store';
-import { EditorContextProvider } from '../../../../EditorContext';
+import render from '../../../../testRender';
 import * as hooks from './hooks';
 import SelectTypeModal from '.';
 
@@ -20,11 +17,7 @@ describe('SelectTypeModal', () => {
     jest.spyOn(hooks, 'onSelect').mockImplementation(mockSelect);
     // This is a new-style test, unlike most of the old snapshot-based editor tests.
     render(
-      <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-        <Provider store={editorStore}>
-          <SelectTypeModal onClose={mockClose} />
-        </Provider>
-      </EditorContextProvider>,
+      <SelectTypeModal onClose={mockClose} />,
     );
 
     // First we see the menu of problem types:

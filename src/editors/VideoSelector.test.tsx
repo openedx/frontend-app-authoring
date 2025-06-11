@@ -1,22 +1,9 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
-import { Provider } from 'react-redux';
 import * as hooks from './hooks';
 import VideoSelector from './VideoSelector';
-import { render as baseRender, initializeMocks, screen } from '../testUtils';
-
-import { EditorContextProvider } from './EditorContext';
-import editorStore from './data/store';
-
-const render = (ui) => baseRender(ui, {
-  extraWrapper: ({ children }) => (
-    <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-      <Provider store={editorStore}>
-        {children}
-      </Provider>
-    </EditorContextProvider>
-  ),
-});
+import render from './testRender';
+import { initializeMocks, screen } from '../testUtils';
 
 const defaultProps = {
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',

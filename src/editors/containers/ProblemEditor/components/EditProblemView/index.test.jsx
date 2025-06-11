@@ -1,12 +1,8 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import {
-  render as baseRender, screen, fireEvent, initializeMocks,
-} from '../../../../../testUtils';
+import { screen, fireEvent, initializeMocks } from '../../../../../testUtils';
+import render from '../../../../testRender';
 import { EditProblemViewInternal, mapStateToProps } from './index';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
-import { EditorContextProvider } from '../../../../EditorContext';
-import editorStore from '../../../../data/store';
 import { selectors } from '../../../../data/redux';
 
 const { saveBlock } = require('../../../../hooks');
@@ -43,16 +39,6 @@ jest.mock('./hooks', () => ({
   })),
   getContent: jest.fn(() => 'content'),
 }));
-
-const render = (ui) => baseRender(ui, {
-  extraWrapper: ({ children }) => (
-    <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-      <Provider store={editorStore}>
-        {children}
-      </Provider>
-    </EditorContextProvider>
-  ),
-});
 
 describe('EditProblemView', () => {
   const baseProps = {
