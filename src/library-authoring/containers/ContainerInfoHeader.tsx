@@ -2,9 +2,9 @@ import { useSidebarContext } from '../common/context/SidebarContext';
 import { ContainerEditableTitle } from './ContainerEditableTitle';
 
 const ContainerInfoHeader = () => {
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const containerId = sidebarComponentInfo?.id;
+  const containerId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!containerId) {
     throw new Error('containerId is required');

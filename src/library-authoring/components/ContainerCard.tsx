@@ -11,9 +11,9 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
+import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
-import { type ContainerHit, PublishStatus } from '../../search-manager';
+import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
@@ -27,15 +27,14 @@ import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   containerKey: string;
-  containerType: ContainerType;
   displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, containerType, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
@@ -47,7 +46,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-      if (sidebarComponentInfo?.id === containerKey) {
+      if (sidebarItemInfo?.id === containerKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -69,7 +68,7 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   }, [scheduleJumpToCollection, navigateTo, containerKey]);
 
   const openContainer = useCallback(() => {
-    navigateTo({ [`${containerType}Id`]: containerKey });
+    navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
   return (
@@ -111,17 +110,17 @@ export const ContainerMenu = ({ containerKey, containerType, displayName } : Con
   );
 };
 
-type ContainerCardPreviewProps = {
-  childUsageKeys: Array<string>;
+type UnitCardPreviewProps = {
+  childKeys: Array<string>;
   showMaxChildren?: number;
 };
 
-const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const hiddenChildren = childUsageKeys.length - showMaxChildren;
+const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProps) => {
+  const hiddenChildren = childKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
       {
-        childUsageKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+        childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
           const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
           let classNames;
@@ -162,6 +161,51 @@ const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: Container
   );
 };
 
+type ContainerCardPreviewProps = {
+  hit: ContainerHit,
+};
+
+const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
+  const intl = useIntl();
+  const { showOnlyPublished } = useLibraryContext();
+  const {
+    blockType: itemType,
+    published,
+    content,
+  } = hit;
+
+  if (itemType === 'unit') {
+    const childKeys: Array<string> = (
+      showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
+    ) ?? [];
+
+    return <UnitcardPreview childKeys={childKeys} />;
+  }
+  // TODO Section highlights
+
+  const childNames: Array<string> = (
+    showOnlyPublished ? published?.content?.childDisplayNames : content?.childDisplayNames
+  ) ?? [];
+
+  if (childNames.length > 0) {
+    // Preview with a truncated text with all children display names
+    const childrenText = intl.formatMessage(
+      messages.containerPreviewText,
+      {
+        children: childNames.join(', '),
+      },
+    );
+
+    return (
+      <div className="container-card-preview-text">
+        <Highlight text={childrenText} />
+      </div>
+    );
+  }
+  // Empty preview
+  return null;
+};
+
 type ContainerCardProps = {
   hit: ContainerHit,
 };
@@ -169,7 +213,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openContainerInfoSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -179,7 +223,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     published,
     publishStatus,
     usageKey: containerKey,
-    content,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -190,54 +233,28 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const childUsageKeys: Array<string> = (
-    showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
-  ) ?? [];
-
-  const selected = sidebarComponentInfo?.id === containerKey;
+  const selected = sidebarItemInfo?.id === containerKey;
 
   const { navigateTo } = useLibraryRoutes();
 
   const selectContainer = useCallback((e?: React.MouseEvent) => {
     const doubleClicked = (e?.detail || 0) > 1;
     if (componentPickerMode) {
-      switch (itemType) {
-        case ContainerType.Unit:
-          openUnitInfoSidebar(containerKey);
-          break;
-        case ContainerType.Section:
-          // TODO: open section sidebar
-          break;
-        case ContainerType.Subsection:
-          // TODO: open subsection sidebar
-          break;
-        default:
-          break;
-      }
+      // In component picker mode, we want to open the sidebar
+      // without changing the URL
+      openContainerInfoSidebar(containerKey);
     } else if (!doubleClicked) {
       navigateTo({ selectedItemId: containerKey });
     } else {
-      switch (itemType) {
-        case ContainerType.Unit:
-          navigateTo({ unitId: containerKey });
-          break;
-        case ContainerType.Section:
-          navigateTo({ sectionId: containerKey });
-          break;
-        case ContainerType.Subsection:
-          navigateTo({ subsectionId: containerKey });
-          break;
-        default:
-          break;
-      }
+      navigateTo({ containerId: containerKey });
     }
-  }, [containerKey, itemType, openUnitInfoSidebar, navigateTo]);
+  }, [containerKey, openContainerInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
       itemType={itemType}
       displayName={displayName}
-      preview={<ContainerCardPreview childUsageKeys={childUsageKeys} />}
+      preview={<ContainerCardPreview hit={hit} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={(
@@ -247,7 +264,6 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           ) : (
             <ContainerMenu
               containerKey={containerKey}
-              containerType={itemType}
               displayName={hit.displayName}
             />
           )}

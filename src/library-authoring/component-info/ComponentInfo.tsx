@@ -34,7 +34,7 @@ import PublishConfirmationModal from '../components/PublishConfirmationModal';
 const AddComponentWidget = () => {
   const intl = useIntl();
 
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const {
     componentPickerMode,
@@ -44,7 +44,7 @@ const AddComponentWidget = () => {
     selectedComponents,
   } = useComponentPickerContext();
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
@@ -105,7 +105,7 @@ const ComponentInfo = () => {
   const {
     sidebarTab,
     setSidebarTab,
-    sidebarComponentInfo,
+    sidebarItemInfo,
     defaultTab,
     hiddenTabs,
     resetSidebarAction,
@@ -127,7 +127,7 @@ const ComponentInfo = () => {
     setSidebarTab(newTab);
   };
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');

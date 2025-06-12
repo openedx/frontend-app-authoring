@@ -472,7 +472,7 @@ mockGetCollectionMetadata.applyMock = () => {
  */
 export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
   switch (containerId) {
-    case mockGetContainerMetadata.containerIdError:
+    case mockGetContainerMetadata.unitIdError:
     case mockGetContainerMetadata.sectionIdError:
     case mockGetContainerMetadata.subsectionIdError:
       throw createAxiosError({
@@ -480,11 +480,11 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
         message: 'Not found.',
         path: api.getLibraryContainerApiUrl(containerId),
       });
-    case mockGetContainerMetadata.containerIdLoading:
+    case mockGetContainerMetadata.unitIdLoading:
     case mockGetContainerMetadata.sectionIdLoading:
     case mockGetContainerMetadata.subsectionIdLoading:
       return new Promise(() => { });
-    case mockGetContainerMetadata.containerIdWithCollections:
+    case mockGetContainerMetadata.unitIdWithCollections:
       return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
     case mockGetContainerMetadata.sectionId:
     case mockGetContainerMetadata.sectionIdEmpty:
@@ -496,19 +496,19 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
       return Promise.resolve(mockGetContainerMetadata.containerData);
   }
 }
-mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
+mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
 mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
 mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
-mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
+mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
 mockGetContainerMetadata.subsectionIdError = 'lct:org:lib:section:section_error';
-mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
+mockGetContainerMetadata.unitIdLoading = 'lct:org:lib:unit:container_loading';
 mockGetContainerMetadata.sectionIdLoading = 'lct:org:lib:section:section_loading';
 mockGetContainerMetadata.subsectionIdLoading = 'lct:org:lib:subsection:subsection_loading';
-mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.containerTagsId;
-mockGetContainerMetadata.containerIdWithCollections = 'lct:org:lib:unit:container_collections';
+mockGetContainerMetadata.unitIdForTags = mockContentTaxonomyTagsData.containerTagsId;
+mockGetContainerMetadata.unitIdWithCollections = 'lct:org:lib:unit:container_collections';
 mockGetContainerMetadata.containerData = {
   id: 'lct:org:lib:unit:test-unit-9a2072',
   containerType: ContainerType.Unit,
@@ -541,7 +541,7 @@ mockGetContainerMetadata.subsectionData = {
 } satisfies api.Container;
 mockGetContainerMetadata.containerDataWithCollections = {
   ...mockGetContainerMetadata.containerData,
-  id: mockGetContainerMetadata.containerIdWithCollections,
+  id: mockGetContainerMetadata.unitIdWithCollections,
   collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.Container;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
@@ -557,7 +557,7 @@ mockGetContainerMetadata.applyMock = () => {
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
   switch (containerId) {
-    case mockGetContainerMetadata.containerId:
+    case mockGetContainerMetadata.unitId:
     case mockGetContainerMetadata.sectionId:
     case mockGetContainerMetadata.subsectionId:
       numChildren = 3;

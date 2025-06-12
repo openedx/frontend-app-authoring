@@ -54,6 +54,7 @@ export interface ContentDetails {
   htmlContent?: string;
   capaContent?: string;
   childUsageKeys?: Array<string>;
+  childDisplayNames?: Array<string>;
   [k: string]: any;
 }
 
@@ -179,6 +180,7 @@ export interface CollectionHit extends BaseContentHit {
  */
 interface ContainerHitContent {
   childUsageKeys?: string[],
+  childDisplayNames?: string[],
 }
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';

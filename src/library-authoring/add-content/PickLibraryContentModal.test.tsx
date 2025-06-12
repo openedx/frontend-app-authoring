@@ -53,13 +53,13 @@ const getIdFromContext = (context: ContextType) => {
 const render = (context: ContextType) => baseRender(
   <PickLibraryContentModal isOpen onClose={onClose} />,
   {
-    path: `/library/:libraryId/${context}/:${context}Id/*`,
+    path: `/library/:libraryId/${context}/:${context === 'collection' ? context : 'container' }Id/*`,
     params: {
       libraryId,
       ...(context === 'collection' && { collectionId: 'collectionId' }),
-      ...(context === 'unit' && { unitId }),
-      ...(context === 'section' && { sectionId }),
-      ...(context === 'subsection' && { subsectionId }),
+      ...(context === 'unit' && { containerId: unitId }),
+      ...(context === 'section' && { containerId: sectionId }),
+      ...(context === 'subsection' && { containerId: subsectionId }),
     },
     extraWrapper: ({ children }) => (
       <LibraryProvider
