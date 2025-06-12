@@ -92,17 +92,19 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
           />
         )
         : (
-          <Truncate className={textClassName}>
-            {text}
-          </Truncate>
+          <>
+            <Truncate className={textClassName}>
+              {text}
+            </Truncate>
+            <IconButton
+              src={Edit}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.editTextButtonAlt)}
+              onClick={handleEdit}
+              size="sm"
+            />
+          </>
         )}
-      <IconButton
-        src={Edit}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.editTextButtonAlt)}
-        onClick={handleEdit}
-        size="inline"
-      />
     </Stack>
   );
 };

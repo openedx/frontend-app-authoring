@@ -615,7 +615,7 @@ export const useUpdateContainer = (containerId: string) => {
   return useMutation({
     mutationFn: (data: api.UpdateContainerDataRequest) => api.updateContainerMetadata(containerId, data),
     onMutate: (data) => {
-      const previousData = queryClient.getQueryData(containerQueryKey) as api.CollectionMetadata;
+      const previousData = queryClient.getQueryData(containerQueryKey) as api.Container;
       queryClient.setQueryData(containerQueryKey, {
         ...previousData,
         ...data,

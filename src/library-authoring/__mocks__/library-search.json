@@ -494,7 +494,7 @@
           ],
           "created": 1742221203.895054,
           "modified": 1742221203.895054,
-          "usage_key": "lct:Axim:TEST:unit:test-unit-9284e2",
+          "usage_key": "lct:org:lib:unit:test-unit-9a207",
           "block_type": "unit",
           "context_key": "lib:Axim:TEST",
           "org": "Axim",
@@ -512,12 +512,18 @@
             ],
             "created": "1742221203.895054",
             "modified": "1742221203.895054",
-            "usage_key": "lct:Axim:TEST:unit:test-unit-9284e2",
+            "usage_key": "lct:org:lib:unit:test-unit-9a207",
             "block_type": "unit",
             "context_key": "lib:Axim:TEST",
             "org": "Axim",
             "access_id": "15",
-            "num_children": "0"
+            "num_children": "0",
+            "published": {
+              "display_name": "Published Test Unit"
+            }
+          },
+          "published": {
+            "display_name": "Published Test Unit"
           }
         }
       ],
