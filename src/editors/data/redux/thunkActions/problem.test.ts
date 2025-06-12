@@ -10,7 +10,6 @@ import {
 } from './problem';
 import { checkboxesOLXWithFeedbackAndHintsOLX, advancedProblemOlX, blankProblemOLX } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
 import { ProblemTypeKeys } from '../../constants/problem';
-import * as requests from './requests';
 
 const mockOlx = 'SOmEVALue';
 const mockBuildOlx = jest.fn(() => mockOlx);
@@ -72,20 +71,11 @@ describe('problem thunkActions', () => {
     );
   });
   test('switchToMarkdownEditor dispatches correct actions', () => {
-    switchToMarkdownEditor()(dispatch, getState);
+    switchToMarkdownEditor()(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(
       actions.problem.updateField({
         isMarkdownEditorEnabled: true,
-      }),
-    );
-
-    expect(dispatch).toHaveBeenCalledWith(
-      requests.saveBlock({
-        content: {
-          settings: { markdown_edited: true },
-          olx: blockValue.data.data,
-        },
       }),
     );
   });
@@ -110,7 +100,7 @@ describe('problem thunkActions', () => {
 
     test('dispatches switchToMarkdownEditor when editorType is markdown', () => {
       switchEditor('markdown')(dispatch, getState);
-      expect(switchToMarkdownEditorMock).toHaveBeenCalledWith(dispatch, getState);
+      expect(switchToMarkdownEditorMock).toHaveBeenCalledWith(dispatch);
     });
   });
 
