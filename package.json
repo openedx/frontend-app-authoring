@@ -101,7 +101,7 @@
     "universal-cookie": "^4.0.4",
     "uuid": "^11.1.0",
     "xmlchecker": "^0.1.0",
-    "yup": "0.31.1"
+    "yup": "0.32.11"
   },
   "devDependencies": {
     "@edx/react-unit-test-utils": "^4.0.0",
