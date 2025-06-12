@@ -3,7 +3,7 @@ import {
   screen,
   initializeMocks,
 } from '../../../../../testUtils';
-import render from '../../../../testRender';
+import editorRender from '../../../../editorTestRender';
 import * as hooks from './hooks';
 import SelectTypeModal from '.';
 
@@ -16,7 +16,7 @@ describe('SelectTypeModal', () => {
     const mockSelect = jest.fn();
     jest.spyOn(hooks, 'onSelect').mockImplementation(mockSelect);
     // This is a new-style test, unlike most of the old snapshot-based editor tests.
-    render(
+    editorRender(
       <SelectTypeModal onClose={mockClose} />,
     );
 

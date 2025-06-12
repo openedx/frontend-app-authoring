@@ -35,10 +35,6 @@ describe('TypeRow Component', () => {
     initializeMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   test('renders label and Check icon when not selected', () => {
     const { container } = render(<TypeRow {...defaultProps} />);
     expect(screen.getByText('Multiple Choice')).toBeInTheDocument();

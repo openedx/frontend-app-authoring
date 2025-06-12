@@ -2,13 +2,9 @@ import React from 'react';
 import {
   screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
-import render from '../../../../../testRender';
+import editorRender from '../../../../../editorTestRender';
 import SelectTypeWrapper from './index';
 import * as hooks from '../hooks';
-
-jest.mock('@openedx/paragon/icons', () => ({
-  Close: 'CloseIcon',
-}));
 
 describe('SelectTypeWrapper', () => {
   const mockOnClose = jest.fn();
@@ -18,7 +14,7 @@ describe('SelectTypeWrapper', () => {
   });
 
   it('renders component with provided content', () => {
-    render(
+    editorRender(
       <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
         <div>Child Content</div>
       </SelectTypeWrapper>,
@@ -27,7 +23,7 @@ describe('SelectTypeWrapper', () => {
   });
 
   it('calls onClose when close button is clicked', () => {
-    render(
+    editorRender(
       <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
         <div />
       </SelectTypeWrapper>,
@@ -37,7 +33,7 @@ describe('SelectTypeWrapper', () => {
   });
 
   it('calls onClose when cancel button is clicked', () => {
-    render(
+    editorRender(
       <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
         <div />
       </SelectTypeWrapper>,
@@ -50,7 +46,7 @@ describe('SelectTypeWrapper', () => {
     const onSelectMock = jest.fn();
     jest.spyOn(hooks, 'onSelect').mockImplementation(onSelectMock);
 
-    render(
+    editorRender(
       <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
         <div />
       </SelectTypeWrapper>,
@@ -68,7 +64,7 @@ describe('SelectTypeWrapper', () => {
   });
 
   it('disables select button when selected is empty', () => {
-    render(
+    editorRender(
       <SelectTypeWrapper selected="" onClose={mockOnClose}>
         <div />
       </SelectTypeWrapper>,
@@ -78,7 +74,7 @@ describe('SelectTypeWrapper', () => {
   });
 
   it('enables select button when selected is not empty', () => {
-    render(
+    editorRender(
       <SelectTypeWrapper selected="bar" onClose={mockOnClose}>
         <div />
       </SelectTypeWrapper>,

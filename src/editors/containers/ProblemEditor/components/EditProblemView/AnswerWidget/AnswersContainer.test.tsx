@@ -13,8 +13,6 @@ jest.mock(
   () => jest.fn(({ children, ...props }) => <button type="button" {...props}>{children}</button>),
 );
 
-jest.mock('@openedx/paragon/icons', () => ({ Add: 'AddIcon' }));
-
 jest.mock('./hooks', () => ({
   useAnswerContainer: jest.fn(),
   isSingleAnswerProblem: jest.fn(() => false),
