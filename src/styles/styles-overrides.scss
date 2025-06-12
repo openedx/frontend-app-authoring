@@ -77,8 +77,11 @@
 
   .grading-scale-segments-and-ticks {
     border: none;
-    border-radius: 1rem;
-    overflow: hidden;
+    border-radius: 1rem !important;
+    // overflow: hidden;
+    .grading-scale-tick {
+      margin-top: 3rem !important;
+    }
   }
 }
 
