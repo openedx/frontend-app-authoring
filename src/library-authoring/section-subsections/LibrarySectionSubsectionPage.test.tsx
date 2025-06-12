@@ -345,5 +345,21 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect((await screen.findAllByText(new RegExp(`Test ${childType}`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });
+
+    it(`should open manage tags on click tag count in ${cType} page`, async () => {
+      const cId = cType === ContainerType.Section
+        ? mockGetContainerMetadata.sectionId
+        : mockGetContainerMetadata.subsectionId;
+      renderLibrarySectionPage(cId, undefined, cType);
+      // check all children components are rendered.
+      expect((await screen.findAllByText(`${childType} block 0`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 1`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 2`))[0]).toBeInTheDocument();
+
+      const tagCountButton = screen.getByTestId(`tag-count-lb:org1:Demo_course:${childType}:${childType}-0----0`);
+      fireEvent.click(tagCountButton);
+
+      expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
+    });
   });
 });
