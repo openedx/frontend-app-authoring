@@ -600,6 +600,7 @@ export interface Container {
   id: string;
   containerType: 'unit';
   displayName: string;
+  publishedDisplayName: string;
   lastPublished: string | null;
   publishedBy: string | null;
   createdBy: string | null;
