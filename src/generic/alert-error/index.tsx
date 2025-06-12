@@ -31,7 +31,7 @@ const AlertError: React.FC<AlertErrorProps> = ({ error, title, onDismiss }) => {
       onClose={onDismiss}
     >
       {title && <Alert.Heading>{title}</Alert.Heading>}
-      {error instanceof Object && 'message' in error ? error.message : String(error)}
+      {error instanceof Object && 'message' in error ? String(error.message) : String(error)}
       <br />
       {errorDetails && (
         <pre>

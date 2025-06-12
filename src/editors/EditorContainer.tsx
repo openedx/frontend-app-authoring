@@ -55,7 +55,7 @@ const EditorContainer: React.FC<Props> = ({
     <div className="editor-page">
       <AlertMessage
         className="m-3"
-        show={upstreamLibRef}
+        show={!!upstreamLibRef}
         variant="warning"
         icon={WarningIcon}
         title={intl.formatMessage(messages.libraryBlockEditWarningTitle)}
