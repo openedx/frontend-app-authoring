@@ -4,11 +4,6 @@ import {
 } from '../../../../../testUtils';
 import EditConfirmationButtons from './EditConfirmationButtons';
 
-jest.mock('@openedx/paragon/icons', () => ({
-  Check: 'CheckIcon',
-  Close: 'CloseIcon',
-}));
-
 describe('EditConfirmationButtons', () => {
   beforeEach(() => {
     initializeMocks();
@@ -18,10 +13,10 @@ describe('EditConfirmationButtons', () => {
     render(
       <EditConfirmationButtons updateTitle={jest.fn()} cancelEdit={jest.fn()} />,
     );
-    const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toContainHTML('checkicon');
-    expect(buttons[1]).toContainHTML('closeicon');
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    expect(cancelButton).toBeInTheDocument();
+    const saveButton = screen.getByRole('button', { name: /save/i });
+    expect(saveButton).toBeInTheDocument();
   });
 
   it('calls updateTitle when save button is clicked', () => {
@@ -29,7 +24,7 @@ describe('EditConfirmationButtons', () => {
     render(
       <EditConfirmationButtons updateTitle={updateTitleMock} cancelEdit={jest.fn()} />,
     );
-    fireEvent.click(screen.getAllByRole('button')[0]);
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
     expect(updateTitleMock).toHaveBeenCalled();
   });
 
@@ -38,7 +33,7 @@ describe('EditConfirmationButtons', () => {
     render(
       <EditConfirmationButtons updateTitle={jest.fn()} cancelEdit={cancelEditMock} />,
     );
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
     expect(cancelEditMock).toHaveBeenCalled();
   });
 });
