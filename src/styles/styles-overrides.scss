@@ -557,9 +557,13 @@
 // Import page
 
 .import {
+  article {
+    height: 100%;
+  }
   .pgn__dropzone {
     height: auto;
     border-radius: 8px;
+    border: 1px dashed #2b2399;
   }
 
   .pages_bar {
