@@ -9,6 +9,7 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Error } from '@openedx/paragon/icons';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useContentLibraryV2List } from '../../../library-authoring';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
@@ -59,7 +60,23 @@ const LibrariesV2Tab: React.FC<Props> = () => {
   );
 
   return (
-    <>
+    <PluginSlot
+      id="libraries_v2_plugin_slot"
+      pluginProps={{
+        isError,
+        isLoading,
+        isFiltered,
+        filterParams,
+        setFilterParams,
+        setCurrentPage,
+        data,
+        intl,
+        hasV2Libraries,
+        handleClearFilters,
+        handlePageSelect,
+        currentPage,
+      }}
+    >
       <Alert variant="info">
         {intl.formatMessage(
           messages.librariesV2TabBetaText,
@@ -138,7 +155,7 @@ const LibrariesV2Tab: React.FC<Props> = () => {
           }
         </div>
       )}
-    </>
+    </PluginSlot>
   );
 };
 

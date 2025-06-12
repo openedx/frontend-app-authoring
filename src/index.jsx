@@ -44,6 +44,7 @@ import Layout from './Layout';
 import './styles/global-overrides.scss';
 import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
+import LibrariesV2Tab from 'studio-home/tabs-section/libraries-v2-tab';
 
 const queryClient = new QueryClient();
 
@@ -69,7 +70,7 @@ const App = () => {
         {/* <Route path="/home" element={<StudioHome />} /> */}
         <Route path="/widgets-create" element={<CreateWidgets />} />
         <Route path="/my-courses" element={<MyCourses />} />
-        <Route path="/libraries" element={<StudioHome />} />
+        <Route path="/libraries" element={<LibrariesV2Tab />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />

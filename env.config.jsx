@@ -35,6 +35,7 @@ import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
+import CustomLibrariesV2 from './src/studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2';
 
 // Load environment variables from .env file
 const config = {
@@ -472,6 +473,22 @@ const config = {
                         priority: 1,
                         RenderWidget: (props) => (
                             <CustomCreateLibrary {...props} />
+                        ),
+                    },
+                }
+            ],
+        },
+
+        libraries_v2_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "libraries-v2-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomLibrariesV2 {...props} />
                         ),
                     },
                 }
