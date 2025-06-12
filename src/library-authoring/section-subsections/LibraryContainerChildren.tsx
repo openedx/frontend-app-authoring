@@ -15,7 +15,7 @@ import {
   useUpdateContainerChildren,
 } from '../data/apiHooks';
 import { messages, subsectionMessages, sectionMessages } from './messages';
-import { ContainerEditableTitle } from '../containers';
+import { ContainerEditableTitle } from '../containers/ContainerEditableTitle';
 import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
