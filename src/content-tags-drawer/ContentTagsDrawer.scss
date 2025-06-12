@@ -37,3 +37,9 @@
     min-height: 100vh;
   }
 }
+
+// Fix a bug with a toast on edit tags sheet component: can't click on close toast button
+// https://github.com/openedx/frontend-app-authoring/issues/1898
+#toast-root[data-focus-on-hidden] {
+  pointer-events: initial !important;
+}
