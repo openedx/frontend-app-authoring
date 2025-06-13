@@ -6,7 +6,9 @@ import { getContainerEntityLinks, getEntityLinks, getEntityLinksSummaryByDownstr
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
   courseLibraries: (courseId?: string) => [...courseLibrariesQueryKeys.all, courseId],
-  courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey, upstreamContainerKey }: {
+  courseReadyToSyncLibraries: ({
+    courseId, readyToSync, upstreamUsageKey, upstreamContainerKey,
+  }: {
     courseId?: string,
     readyToSync?: boolean,
     upstreamUsageKey?: string,
@@ -93,4 +95,3 @@ export const useContainerEntityLinks = ({
     enabled: courseId !== undefined || upstreamContainerKey !== undefined || readyToSync !== undefined,
   })
 );
-

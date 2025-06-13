@@ -35,7 +35,11 @@ const ContainerDeleter = ({
   const { showToast } = useContext(ToastContext);
   const { hits } = useContentFromSearchIndex([containerId]);
   const containerData = (hits as ContainerHit[])?.[0];
-  const { data: dataDownstreamLinks, isLoading, isError } = useContainerEntityLinks({ upstreamContainerKey: containerId });
+  const {
+    data: dataDownstreamLinks,
+    isLoading,
+    isError,
+  } = useContainerEntityLinks({ upstreamContainerKey: containerId });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const messageMap = useMemo(() => {
@@ -50,7 +54,7 @@ const ContainerDeleter = ({
           // Update below fields when sections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSectionCourseMessaage,
-        }
+        };
       case ContainerType.Subsection:
         return {
           title: intl.formatMessage(messages.deleteSubsectionWarningTitle),
@@ -60,7 +64,7 @@ const ContainerDeleter = ({
           // Update below fields when subsections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSubsectionCourseMessaage,
-        }
+        };
       default:
         return {
           title: intl.formatMessage(messages.deleteUnitWarningTitle),
@@ -70,14 +74,14 @@ const ContainerDeleter = ({
           // Update below fields when unit are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteUnitCourseMessage,
-        }
+        };
     }
   }, [containerId, displayName, containerData]);
 
   const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
     unitName: <b>{displayName}</b>,
     message: (
-      <div className='text-danger-900'>
+      <div className="text-danger-900">
         {messageMap.parentCount > 0 && (
           <div className="d-flex align-items-center mt-2">
             <Icon className="mr-2" src={Error} />
