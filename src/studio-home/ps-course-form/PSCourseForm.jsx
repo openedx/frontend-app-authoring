@@ -404,7 +404,7 @@ const PSCourseForm = ({
                     <Col xs={12} className="pr-0 pb-0">
                         <Form className="course-form" onSubmit={handleSubmit}>
                             <Row>
-                                <Col xs={12} md={8}>
+                                <Col xs={12} md={8} className="col-cs">
                                     <div>
                                         {children}
                                     </div>

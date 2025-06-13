@@ -3,7 +3,7 @@ import React, {
     useEffect,
     useRef,
     useCallback,
-    useMemo
+    useMemo,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -377,11 +377,31 @@ const CustomScheduleAndDetails = (props) => {
         setTouched({});
     }, [handleResetValues]);
 
-    // Modify handleUpdateValues to track save attempt
     const handleSaveChanges = useCallback(() => {
         setHasAttemptedSave(true);
         handleUpdateValues();
     }, [handleUpdateValues]);
+
+    // Scroll to top when save is successful and alert is shown
+    useEffect(() => {
+        if (showSuccessfulAlert && !isQueryPending && hasAttemptedSave) {
+            // Immediate scroll attempt
+            window.scrollTo(0, 0);
+            // Use a longer timeout to ensure DOM is fully updated
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Fallback to instant scroll if smooth doesn't work
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                    // Additional fallback using scrollIntoView
+                    const alertElement = document.querySelector('.alert-container');
+                    if (alertElement) {
+                        alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            }, 300);
+        }
+    }, [showSuccessfulAlert, isQueryPending, hasAttemptedSave]);
 
     return (
         <div className="custom-schedule-details">
@@ -428,6 +448,7 @@ const CustomScheduleAndDetails = (props) => {
                                 onFieldBlur={(field) => setTouched(prev => ({ ...prev, [field]: true }))}
                                 allowedImageTypes={props.allowedImageTypes || ['image/jpeg', 'image/png']}
                             >
+                                <h3 className="title-class">Schedule & Details</h3>
                                 <BasicSection
                                     org={editedValues?.org}
                                     courseNumber={editedValues?.courseId}
