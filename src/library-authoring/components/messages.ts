@@ -201,20 +201,45 @@ const messages = defineMessages({
     defaultMessage: 'Delete Unit',
     description: 'Title text for the warning displayed before deleting a Unit',
   },
+  deleteSubsectionWarningTitle: {
+    id: 'course-authoring.library-authoring.subsection.delete-confirmation-title',
+    defaultMessage: 'Delete Subsection',
+    description: 'Title text for the warning displayed before deleting a Subsection',
+  },
+  deleteSectionWarningTitle: {
+    id: 'course-authoring.library-authoring.section.delete-confirmation-title',
+    defaultMessage: 'Delete Section',
+    description: 'Title text for the warning displayed before deleting a Section',
+  },
   deleteUnitConfirm: {
     id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
     defaultMessage: 'Delete {unitName}? {message}',
     description: 'Confirmation text to display before deleting a unit',
   },
-  deleteUnitConfirmMsg1: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-1',
-    defaultMessage: 'Any course instances will stop receiving updates.',
-    description: 'First part of confirmation message to display before deleting a unit',
+  deleteUnitParentMessage: {
+    id: 'course-authoring.library-authoring.unit.delete-parent-message',
+    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentNames} in this library.',
+    description: 'Parent usage details shown before deleting a unit',
   },
-  deleteUnitConfirmMsg2: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-2',
-    defaultMessage: 'Any components will remain in the library.',
-    description: 'Second part of confirmation message to display before deleting a unit',
+  deleteSubsectionParentMessage: {
+    id: 'course-authoring.library-authoring.subsection.delete-parent-message',
+    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentNames} in this library.',
+    description: 'Parent usage details shown before deleting a subsection',
+  },
+  deleteUnitCourseMessage: {
+    id: 'course-authoring.library-authoring.unit.delete-course-usage-message',
+    defaultMessage: 'This unit is used {courseCount} times in courses, and will stop receiving updates there.',
+    description: 'Course usage details shown before deleting a unit',
+  },
+  deleteSubsectionCourseMessaage: {
+    id: 'course-authoring.library-authoring.subsection.delete-parent-message',
+    defaultMessage: 'This subsection is used {courseCount} times in courses, and will stop receiving updates there.',
+    description: 'Course usage details shown before deleting a subsection',
+  },
+  deleteSectionCourseMessaage: {
+    id: 'course-authoring.library-authoring.section.delete-parent-message',
+    defaultMessage: 'This section is used {courseCount} times in courses, and will stop receiving updates there.',
+    description: 'Course usage details shown before deleting a section',
   },
   deleteUnitSuccess: {
     id: 'course-authoring.library-authoring.unit.delete.success',
