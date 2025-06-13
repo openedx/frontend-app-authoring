@@ -1,15 +1,8 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { Button, IconButton } from '@openedx/paragon';
-
-import { thunkActions } from '../../../../../../data/redux';
-import { ImportTranscriptCardInternal as ImportTranscriptCard, mapDispatchToProps, mapStateToProps } from './ImportTranscriptCard';
-
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useContext: jest.fn(() => ({ transcripts: ['error.transcripts', jest.fn().mockName('error.setTranscripts')] })),
-}));
+import {
+  render, screen, fireEvent, initializeMocks,
+} from 'CourseAuthoring/testUtils';
+import { ImportTranscriptCardInternal as ImportTranscriptCard } from './ImportTranscriptCard';
 
 jest.mock('../../../../../../data/redux', () => ({
   thunkActions: {
@@ -19,40 +12,47 @@ jest.mock('../../../../../../data/redux', () => ({
   },
 }));
 
-describe('ImportTranscriptCard', () => {
-  const props = {
-    setOpen: jest.fn().mockName('setOpen'),
-    importTranscript: jest.fn().mockName('args.importTranscript'),
-  };
-  let el;
-  describe('snapshots', () => {
-    test('snapshots: renders as expected with default props', () => {
-      expect(
-        shallow(<ImportTranscriptCard {...props} />).snapshot,
-      ).toMatchSnapshot();
-    });
+describe('ImportTranscriptCard (RTL)', () => {
+  const mockSetOpen = jest.fn();
+  const mockImportTranscript = jest.fn();
+
+  beforeEach(() => {
+    initializeMocks();
   });
-  describe('behavior inspection', () => {
-    beforeEach(() => {
-      el = shallow(<ImportTranscriptCard {...props} />);
-    });
-    test('close behavior is linked to IconButton', () => {
-      expect(el.instance.findByType(IconButton)[0]
-        .props.onClick).toBeDefined();
-    });
-    test('import behavior is linked to Button onClick', () => {
-      expect(el.instance.findByType(Button)[0]
-        .props.onClick).toEqual(props.importTranscript);
-    });
+
+  it('renders header, message, and button', () => {
+    render(
+      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+    );
+    expect(screen.getByText('Import transcript from YouTube?')).toBeInTheDocument();
+    expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Import Transcript' })).toBeInTheDocument();
   });
-  describe('mapStateToProps', () => {
-    it('returns an empty object', () => {
-      expect(mapStateToProps()).toEqual({});
-    });
+
+  it('calls setOpen(false) when close IconButton is clicked', () => {
+    const { container } = render(
+      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+    );
+    const closeButton = container.querySelector('.btn-icon-primary');
+    fireEvent.click(closeButton);
+    expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
-  describe('mapDispatchToProps', () => {
-    test('updateField from thunkActions.video.importTranscript', () => {
-      expect(mapDispatchToProps.importTranscript).toEqual(thunkActions.video.importTranscript);
-    });
+
+  it('calls importTranscript when import button is clicked', () => {
+    render(
+      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+    );
+    const importBtn = screen.getByRole('button', { name: 'Import Transcript' });
+    fireEvent.click(importBtn);
+    expect(mockImportTranscript).toHaveBeenCalled();
+  });
+
+  it('defaultProps: setOpen defaults to true', () => {
+    expect(ImportTranscriptCard.defaultProps.setOpen).toBe(true);
+  });
+
+  it('propTypes: importTranscript is required, setOpen is optional', () => {
+    expect(ImportTranscriptCard.propTypes.importTranscript).toBeDefined();
+    expect(ImportTranscriptCard.propTypes.setOpen).toBeDefined();
   });
 });

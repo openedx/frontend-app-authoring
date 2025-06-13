@@ -143,3 +143,9 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
   </Body>
 </Advanced>
 `;
+
+exports[`CollapsibleFormWidget snapshots: renders with open={true} when there is error 1`] = `
+<[object Object]>
+  [Function]
+</[object Object]>
+`;
