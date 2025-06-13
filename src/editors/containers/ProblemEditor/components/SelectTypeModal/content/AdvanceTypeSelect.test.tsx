@@ -1,48 +1,46 @@
-import 'CourseAuthoring/editors/setupEditorTest';
-import { shallow } from '@edx/react-unit-test-utils';
-
+import React from 'react';
+import {
+  render, screen, fireEvent, initializeMocks,
+} from '../../../../../../testUtils';
 import AdvanceTypeSelect from './AdvanceTypeSelect';
+import { ProblemTypeKeys, AdvanceProblems } from '../../../../../data/constants/problem';
 
 describe('AdvanceTypeSelect', () => {
-  const props = {
-    selected: 'blankadvanced' as const,
-    setSelected: jest.fn().mockName('setSelect'),
-  };
-  describe('snapshots', () => {
-    test('snapshots: renders as expected with default props', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is circuitschematic', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="circuitschematic" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is customgrader', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="customgrader" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is formularesponse', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="formularesponse" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is imageresponse', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="imageresponse" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is jsinputresponse', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="jsinputresponse" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with problemType is problemwithhint', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="problemwithhint" />).snapshot,
-      ).toMatchSnapshot();
-    });
+  const setSelected = jest.fn();
+
+  beforeEach(() => {
+    initializeMocks();
+    setSelected.mockClear();
+  });
+
+  it('component shows on screen', () => {
+    const selected = 'blankadvanced';
+    render(<AdvanceTypeSelect selected={selected} setSelected={setSelected} />);
+    const container = screen.getByRole('radiogroup');
+    expect(container).toBeInTheDocument();
+  });
+
+  it('calls setSelected with the correct value when a radio is selected', () => {
+    const selected = 'blankadvanced';
+    render(<AdvanceTypeSelect selected={selected} setSelected={setSelected} />);
+    const nextType = 'circuitschematic';
+    const radio = screen.getByLabelText(AdvanceProblems[nextType].title);
+    fireEvent.click(radio);
+    expect(setSelected).toHaveBeenCalledWith(nextType);
+  });
+
+  it('calls setSelected with SINGLESELECT when back button is clicked', () => {
+    const selected = 'blankadvanced';
+    render(<AdvanceTypeSelect selected={selected} setSelected={setSelected} />);
+    const backButton = screen.getByRole('button', { name: /Go Back/i });
+    fireEvent.click(backButton);
+    expect(setSelected).toHaveBeenCalledWith(ProblemTypeKeys.SINGLESELECT);
+  });
+
+  it('checks the correct radio is selected', () => {
+    const selected = 'circuitschematic';
+    render(<AdvanceTypeSelect selected={selected} setSelected={setSelected} />);
+    const radio = screen.getByLabelText(AdvanceProblems[selected].title);
+    expect(radio).toBeChecked();
   });
 });

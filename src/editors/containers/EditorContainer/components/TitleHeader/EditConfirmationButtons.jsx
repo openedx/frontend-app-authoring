@@ -17,6 +17,7 @@ const EditConfirmationButtons = ({
       <IconButtonWithTooltip
         tooltipPlacement="left"
         tooltipContent={intl.formatMessage(messages.saveTitleEdit)}
+        alt={intl.formatMessage(messages.saveAltText)}
         src={Check}
         iconAs={Icon}
         onClick={updateTitle}
@@ -24,6 +25,7 @@ const EditConfirmationButtons = ({
       <IconButtonWithTooltip
         tooltipPlacement="right"
         tooltipContent={intl.formatMessage(messages.cancelTitleEdit)}
+        alt={intl.formatMessage(messages.cancelAltText)}
         src={Close}
         iconAs={Icon}
         onClick={cancelEdit}
