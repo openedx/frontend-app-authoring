@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getStudioHomeCoursesParams } from '../../../data/selectors';

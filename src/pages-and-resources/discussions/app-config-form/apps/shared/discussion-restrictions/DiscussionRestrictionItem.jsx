@@ -3,7 +3,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
-import { startCase, toLower } from 'lodash';
+import startCase from 'lodash/startCase';
+import toLower from 'lodash/toLower';
 
 import messages from '../../../messages';
 import RestrictDatesInput from './RestrictDatesInput';

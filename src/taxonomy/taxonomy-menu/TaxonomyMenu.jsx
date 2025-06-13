@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import { pickBy } from 'lodash';
+import pickBy from 'lodash/pickBy';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 

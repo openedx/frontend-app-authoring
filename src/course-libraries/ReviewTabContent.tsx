@@ -14,7 +14,8 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import { tail, keyBy } from 'lodash';
+import tail from 'lodash/tail';
+import keyBy from 'lodash/keyBy';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';

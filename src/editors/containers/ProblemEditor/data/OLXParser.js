@@ -2,9 +2,11 @@
 /* eslint no-eval: 0 */
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import {
-  get, has, keys, isArray, isEmpty,
-} from 'lodash';
+import get from 'lodash/get';
+import has from 'lodash/has';
+import keys from 'lodash/keys';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 import {
   ProblemTypeKeys,
   RichTextProblems,

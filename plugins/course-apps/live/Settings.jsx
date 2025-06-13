@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { camelCase } from 'lodash';
+import camelCase from 'lodash/camelCase';
 import { Icon } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';

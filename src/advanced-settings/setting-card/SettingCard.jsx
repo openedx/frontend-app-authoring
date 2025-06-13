@@ -10,7 +10,7 @@ import {
 } from '@openedx/paragon';
 import { InfoOutline, Warning } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
 

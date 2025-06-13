@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { camelCase, isEmpty } from 'lodash';
+import camelCase from 'lodash/camelCase';
+import isEmpty from 'lodash/isEmpty';
 import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
 import {

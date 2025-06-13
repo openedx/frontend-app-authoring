@@ -2,7 +2,7 @@
 import saveAs from 'file-saver';
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 ensureConfig([
   'STUDIO_BASE_URL',

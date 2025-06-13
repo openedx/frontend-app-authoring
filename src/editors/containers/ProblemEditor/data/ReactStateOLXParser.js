@@ -1,4 +1,5 @@
-import { get, has } from 'lodash';
+import get from 'lodash/get';
+import has from 'lodash/has';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';

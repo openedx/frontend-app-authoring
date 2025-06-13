@@ -1,5 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
-import { isArray, isEmpty } from 'lodash';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 import {
   ASPECT_RATIO,
   ASPECT_RATIO_ERROR_MARGIN,

@@ -4,7 +4,7 @@ This sorting strategy was copied over from https://github.com/clauderic/dnd-kit/
 to resolve issues with variable sized draggables.
 */
 import { CollisionDetection, DroppableContainer } from '@dnd-kit/core';
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 
 const collision = (dropppableContainer?: DroppableContainer) => ({
   id: dropppableContainer?.id ?? '',

@@ -9,7 +9,7 @@ import {
 } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import LanguageSelect from './LanguageSelect';
 import TranscriptMenu from './TranscriptMenu';
 import messages from './messages';

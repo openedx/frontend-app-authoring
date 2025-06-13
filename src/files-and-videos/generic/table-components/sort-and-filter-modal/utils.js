@@ -1,4 +1,6 @@
-import { isArray, isEmpty } from 'lodash';
+// @ts-check
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 
 export const getFilterOptions = (columns) => {
   const allOptions = [];

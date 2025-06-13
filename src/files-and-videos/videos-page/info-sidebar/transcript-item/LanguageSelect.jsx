@@ -10,7 +10,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { Check, ExpandMore, ExpandLess } from '@openedx/paragon/icons';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 const LanguageSelect = ({
   value,

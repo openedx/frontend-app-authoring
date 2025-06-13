@@ -1,5 +1,5 @@
 import fetchMock from 'fetch-mock-jest';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import MockAdapter from 'axios-mock-adapter/types';
 
 import {

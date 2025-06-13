@@ -1,4 +1,6 @@
-import { has, find, isEmpty } from 'lodash';
+import has from 'lodash/has';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 // This 'module' self-import hack enables mocking during tests.

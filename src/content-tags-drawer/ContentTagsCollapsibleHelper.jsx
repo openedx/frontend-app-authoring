@@ -1,7 +1,7 @@
 // @ts-check
 import React from 'react';
 import { useCheckboxSetValues } from '@openedx/paragon';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { useContentTaxonomyTagsUpdater } from './data/apiHooks';
 import { ContentTagsDrawerContext } from './common/context';

@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import { includes } from 'lodash';
+import includes from 'lodash/includes';
 
 import {
   ShowAnswerTypesKeys,

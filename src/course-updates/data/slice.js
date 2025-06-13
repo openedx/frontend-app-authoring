@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 
 const initialState = {
   courseUpdates: [],

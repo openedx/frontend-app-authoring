@@ -1,6 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 
 const API_PATH_PATTERN = 'textbooks';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;

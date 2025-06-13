@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 
-import {
-  includes, isEmpty, isFinite, isNaN, isNil,
-} from 'lodash';
+import includes from 'lodash/includes';
+import isEmpty from 'lodash/isEmpty';
+import isFinite from 'lodash/isFinite';
+import isNaN from 'lodash/isNaN';
+import isNil from 'lodash/isNil';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.

@@ -1,4 +1,4 @@
-import { has } from 'lodash';
+import has from 'lodash/has';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';

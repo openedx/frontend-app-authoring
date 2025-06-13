@@ -8,7 +8,7 @@ import {
   ModalDialog,
   useToggle,
 } from '@openedx/paragon';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import messages from './messages';
 

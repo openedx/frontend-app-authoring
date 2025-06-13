@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { DataTable } from '@openedx/paragon';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';

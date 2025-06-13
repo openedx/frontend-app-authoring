@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { uniqBy } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import { getConfig } from '@edx/frontend-platform';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';

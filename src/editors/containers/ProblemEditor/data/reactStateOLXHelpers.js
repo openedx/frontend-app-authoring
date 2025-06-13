@@ -1,4 +1,4 @@
-import { flatten } from 'lodash';
+import flatten from 'lodash/flatten';
 
 /**
  * flattenSubNodes - appends a nodes children to a given array 'subNodes' in a flattened format.

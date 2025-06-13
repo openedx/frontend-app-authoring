@@ -1,4 +1,6 @@
-import { isEmpty, isArray } from 'lodash';
+// @ts-check
+import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 import messages from '../messages';
 
 const getFilterDisplayName = (column, values) => {

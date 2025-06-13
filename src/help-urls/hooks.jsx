@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import { fetchHelpUrls } from './data/thunks';
 import { getPages, selectHelpUrlsByNames } from './data/selectors';

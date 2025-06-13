@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import { MeiliSearch, type Filter } from 'meilisearch';
-import { union } from 'lodash';
+import union from 'lodash/union';
 
 import {
   type HitType,

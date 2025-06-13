@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import { useClipboard } from '../../../generic/clipboard';
 import { handleResponseErrors } from '../../../generic/saving-error-alert';

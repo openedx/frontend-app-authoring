@@ -1,8 +1,9 @@
+// @ts-check
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Icon } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 
 import { transformKeysToCamelCase } from '../../utils';
 

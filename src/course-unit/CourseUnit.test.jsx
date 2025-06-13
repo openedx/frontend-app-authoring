@@ -13,7 +13,8 @@ import {
   setConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { cloneDeep, set } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import set from 'lodash/set';
 
 import {
   getCourseSectionVerticalApiUrl,

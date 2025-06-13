@@ -1,4 +1,5 @@
-import { isEmpty } from 'lodash';
+// @ts-check
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Generate the string for the page <title>

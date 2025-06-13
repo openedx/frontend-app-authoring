@@ -1,7 +1,7 @@
 // @ts-check
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { useContentData, useContentTaxonomyTagsData, useContentTaxonomyTagsUpdater } from './data/apiHooks';
 import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import { extractOrgFromContentId, languageExportId } from './utils';

@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { camelCaseObject } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../../../data/constants';

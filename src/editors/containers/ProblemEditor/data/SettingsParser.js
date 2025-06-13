@@ -1,6 +1,8 @@
-import {
-  get, isEmpty, isFinite, isNil,
-} from 'lodash';
+// @ts-check
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isFinite from 'lodash/isFinite';
+import isNil from 'lodash/isNil';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 

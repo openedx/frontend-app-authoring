@@ -13,7 +13,7 @@ import {
 } from '@openedx/paragon';
 import { Tag, KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import SelectableBox from '../editors/sharedComponents/SelectableBox';
 import messages from './messages';
