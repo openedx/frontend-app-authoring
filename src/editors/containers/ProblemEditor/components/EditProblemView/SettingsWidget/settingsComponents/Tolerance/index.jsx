@@ -50,12 +50,20 @@ const ToleranceCard = ({
   tolerance,
   answers,
   updateSettings,
+  correctAnswerCount,
   // inject
   intl,
 }) => {
   const isAnswerRange = isAnswerRangeSet({ answers });
+  const hasMultipleCorrectAnswers = correctAnswerCount > 1;
   let summary = getSummary({ tolerance, intl });
   useEffect(() => { summary = getSummary({ tolerance, intl }); }, [tolerance]);
+  useEffect(() => {
+    if (hasMultipleCorrectAnswers) {
+      updateSettings({ tolerance: { value: null, type: ToleranceTypes.none.type } });
+    }
+  }, [tolerance, hasMultipleCorrectAnswers]);
+
   return (
     <SettingsOption
       title={intl.formatMessage(messages.toleranceSettingTitle)}
@@ -70,6 +78,16 @@ const ToleranceCard = ({
          <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
        </Alert>
        )}
+      {
+        hasMultipleCorrectAnswers
+        && (
+          <Alert
+            variant="info"
+          >
+            <FormattedMessage {...messages.toleranceMultipleAnswersWarning} />
+          </Alert>
+        )
+      }
       <div className="mb-3">
         <span>
           <FormattedMessage {...messages.toleranceSettingText} />
@@ -79,7 +97,7 @@ const ToleranceCard = ({
         <Form.Control
           as="select"
           onChange={handleToleranceTypeChange({ updateSettings, tolerance, answers })}
-          disabled={isAnswerRange}
+          disabled={isAnswerRange || hasMultipleCorrectAnswers}
           value={tolerance.type}
         >
           {Object.keys(ToleranceTypes).map((toleranceType) => (
@@ -91,7 +109,7 @@ const ToleranceCard = ({
             </option>
           ))}
         </Form.Control>
-        { tolerance?.type !== ToleranceTypes.none.type && !isAnswerRange
+        { tolerance?.type !== ToleranceTypes.none.type && (!isAnswerRange || !hasMultipleCorrectAnswers)
           && (
           <Form.Control
             className="mt-4"
@@ -114,6 +132,7 @@ ToleranceCard.propTypes = {
     type: PropTypes.string,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.any]),
   }).isRequired,
+  correctAnswerCount: PropTypes.number.isRequired,
   answers: PropTypes.arrayOf(PropTypes.shape({
     correct: PropTypes.bool,
     id: PropTypes.string,

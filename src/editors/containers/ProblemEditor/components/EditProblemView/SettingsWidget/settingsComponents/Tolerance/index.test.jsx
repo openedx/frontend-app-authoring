@@ -110,6 +110,40 @@ describe('ToleranceCard', () => {
       expect(NumberText).toBeDefined();
       expect(screen.getByTestId('select').getAttributeNames().includes('disabled')).toBeTruthy();
     });
+    it('If there are multiple correct answers, show multiple correct answers warning message and disable dropdown.', () => {
+      const rangeprops = {
+        answers: [{
+          id: 'A',
+          correct: true,
+          selectedFeedback: '',
+          title: 'An Answer A',
+          isAnswerRange: false,
+          unselectedFeedback: '',
+        },
+        {
+          id: 'B',
+          correct: true,
+          selectedFeedback: '',
+          title: 'An Answer B',
+          isAnswerRange: false,
+          unselectedFeedback: '',
+        },
+        ],
+        updateSettings: jest.fn(),
+        intl: {
+          formatMessage,
+        },
+      };
+
+      render(<ToleranceCard
+        tolerance={mockToleranceNumber}
+        correctAnswerCount={2}
+        {...rangeprops}
+      />);
+      const warningMessage = screen.getByText(messages.toleranceMultipleAnswersWarning.defaultMessage);
+      expect(warningMessage).toBeDefined();
+      expect(screen.getByTestId('select').getAttributeNames().includes('disabled')).toBeTruthy();
+    });
   });
   describe('Type Select', () => {
     it('Renders the types for selection', async () => {
