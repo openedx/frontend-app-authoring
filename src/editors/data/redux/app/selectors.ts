@@ -27,6 +27,7 @@ export const simpleSelectors = {
   videos: mkSimpleSelector(app => app.videos),
   showRawEditor: mkSimpleSelector(app => app.showRawEditor),
   isMarkdownEditorEnabledForCourse: mkSimpleSelector(app => app.isMarkdownEditorEnabledForCourse),
+  waffleFlags: mkSimpleSelector(app => app.waffleFlags),
 };
 
 export const returnUrl = createSelector(
@@ -114,6 +115,11 @@ export const analytics = createSelector(
   (blockId, blockType, learningContextId) => (
     { blockId, blockType, learningContextId }
   ),
+);
+
+export const getWaffleFlags = createSelector(
+  [simpleSelectors.waffleFlags],
+  (waffleFlags) => waffleFlags,
 );
 
 export default {
