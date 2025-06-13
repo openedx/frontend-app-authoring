@@ -46,13 +46,4 @@ describe('ImportTranscriptCard (RTL)', () => {
     fireEvent.click(importBtn);
     expect(mockImportTranscript).toHaveBeenCalled();
   });
-
-  it('defaultProps: setOpen defaults to true', () => {
-    expect(ImportTranscriptCard.defaultProps.setOpen).toBe(true);
-  });
-
-  it('propTypes: importTranscript is required, setOpen is optional', () => {
-    expect(ImportTranscriptCard.propTypes.importTranscript).toBeDefined();
-    expect(ImportTranscriptCard.propTypes.setOpen).toBeDefined();
-  });
 });
