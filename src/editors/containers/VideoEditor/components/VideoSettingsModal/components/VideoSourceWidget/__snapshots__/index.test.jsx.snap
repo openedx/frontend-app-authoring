@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VideoSourceWidget snapshots snapshots: renders as expected with default props 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
+  subtitle={null}
   title="Video source"
 >
   <ErrorAlert
@@ -154,12 +155,13 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       id="authoring.videoeditor.videoSource.fallbackVideo.addButtonLabel"
     />
   </Button>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSharingEnabledForCourse=true 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
+  subtitle={null}
   title="Video source"
 >
   <ErrorAlert
@@ -311,5 +313,5 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
       id="authoring.videoeditor.videoSource.fallbackVideo.addButtonLabel"
     />
   </Button>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
