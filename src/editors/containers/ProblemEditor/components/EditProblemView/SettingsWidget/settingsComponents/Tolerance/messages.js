@@ -26,6 +26,11 @@ const messages = defineMessages({
     defaultMessage: 'Tolerance cannot be applied to an answer range',
     description: 'a warning to users that tolerance cannot be aplied to an answer range.',
   },
+  toleranceMultipleAnswersWarning: {
+    id: 'problemEditor.settings.tolerance.toleranceMultipleAnswersWarning',
+    defaultMessage: 'Tolerance cannot be applied to multiple correct answers',
+    description: 'a warning to users that tolerance cannot be aplied to multiple correct answers.',
+  },
   typesPercentage: {
     id: 'problemEditor.settings.tolerance.type.percent',
     defaultMessage: 'Percentage',
