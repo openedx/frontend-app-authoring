@@ -32,7 +32,7 @@ const CreateContainerModal = () => {
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
   const labels = React.useMemo(() => {
-    if (createContainerModalType === ContainerType.Chapter) {
+    if (createContainerModalType === ContainerType.Section) {
       return {
         modalTitle: intl.formatMessage(messages.createSectionModalTitle),
         validationError: intl.formatMessage(messages.createSectionModalNameInvalid),
@@ -42,7 +42,7 @@ const CreateContainerModal = () => {
         errorMsg: intl.formatMessage(messages.createSectionError),
       };
     }
-    if (createContainerModalType === ContainerType.Sequential) {
+    if (createContainerModalType === ContainerType.Subsection) {
       return {
         modalTitle: intl.formatMessage(messages.createSubsectionModalTitle),
         validationError: intl.formatMessage(messages.createSubsectionModalNameInvalid),
@@ -65,21 +65,10 @@ const CreateContainerModal = () => {
   /** Call close for section, subsection and unit as the operation is idempotent */
   const handleClose = () => setCreateContainerModalType(undefined);
 
-  /** Calculate containerType based on type of open modal */
-  const containerType = React.useMemo(() => {
-    if (createContainerModalType === ContainerType.Chapter) {
-      return ContainerType.Section;
-    }
-    if (createContainerModalType === ContainerType.Sequential) {
-      return ContainerType.Subsection;
-    }
-    return ContainerType.Unit;
-  }, [createContainerModalType]);
-
   const handleCreate = React.useCallback(async (values) => {
     try {
       const container = await create.mutateAsync({
-        containerType,
+        containerType: createContainerModalType,
         ...values,
       });
       // link container to parent
@@ -94,7 +83,7 @@ const CreateContainerModal = () => {
     } finally {
       handleClose();
     }
-  }, [containerType, labels, handleClose, navigateTo]);
+  }, [createContainerModalType, labels, handleClose, navigateTo]);
 
   return (
     <ModalDialog
