@@ -13,6 +13,7 @@ import {
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import SubHeader from '../../generic/sub-header/SubHeader';
@@ -182,50 +183,69 @@ const LibraryCollectionPage = () => {
   }
 
   return (
-    <div className="d-flex">
-      <div className="flex-grow-1">
-        {!componentPickerMode && (
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            isLibrary
-          />
-        )}
-        <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
-          <SearchContextProvider
-            extraFilter={extraFilter}
-          >
-            <SubHeader
-              title={(
-                <SubHeaderTitle
-                  title={collectionData.title}
-                  infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
-                />
-              )}
-              breadcrumbs={breadcumbs}
-              headerActions={<HeaderActions />}
+    <PluginSlot
+      id="library_authoring_collection_page_plugin_slot"
+      pluginProps={{
+        componentPickerMode,
+        libraryData,
+        extraFilter,
+        subHeaderTitle: <SubHeaderTitle
+          title={collectionData.title}
+          infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
+        />,
+        breadcrumbTitle: collectionData.title,
+        breadcumbs,
+        headerActions: <HeaderActions />,
+        intl,
+        libraryId,
+        sidebarComponentInfo,
+      }}
+    >
+      <div className="d-flex">
+        <div className="flex-grow-1">
+          {!componentPickerMode && (
+            <Header
+              number={libraryData.slug}
+              title={libraryData.title}
+              org={libraryData.org}
+              contextId={libraryId}
+              isLibrary
             />
-            <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
-            <div className="d-flex mt-3 mb-4 align-items-center">
-              <FilterByTags />
-              <FilterByBlockType />
-              <ClearFiltersButton />
-              <div className="flex-grow-1" />
-              <SearchSortWidget />
-            </div>
-            <LibraryCollectionComponents />
-          </SearchContextProvider>
-        </Container>
-        <StudioFooter />
-      </div>
-      {!!sidebarComponentInfo?.type && (
-        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar />
+          )}
+          <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
+            <SearchContextProvider
+              extraFilter={extraFilter}
+            >
+              <SubHeader
+                title={(
+                  <SubHeaderTitle
+                    title={collectionData.title}
+                    infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
+                  />
+                )}
+                breadcrumbs={breadcumbs}
+                headerActions={<HeaderActions />}
+              />
+              <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
+              <div className="d-flex mt-3 mb-4 align-items-center">
+                <FilterByTags />
+                <FilterByBlockType />
+                <ClearFiltersButton />
+                <div className="flex-grow-1" />
+                <SearchSortWidget />
+              </div>
+              <LibraryCollectionComponents />
+            </SearchContextProvider>
+          </Container>
+          <StudioFooter />
         </div>
-      )}
-    </div>
+        {!!sidebarComponentInfo?.type && (
+          <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
+            <LibrarySidebar />
+          </div>
+        )}
+      </div>
+    </PluginSlot>
   );
 };
 

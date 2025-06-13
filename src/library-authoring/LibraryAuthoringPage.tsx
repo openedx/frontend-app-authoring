@@ -22,6 +22,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
@@ -220,10 +221,30 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   }
 
   return (
-    <div className="d-flex">
-      <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-        {!componentPickerMode && (
+    <PluginSlot
+      id="library_authoring_page_plugin_slot"
+      pluginProps={{
+        libraryId,
+        libraryData,
+        componentPickerMode,
+        restrictToLibrary,
+        showOnlyPublished,
+        sidebarComponentInfo,
+        openInfoSidebar,
+        extraFilter,
+        subHeaderTitle: <SubHeaderTitle title={libraryData.title} />,
+        intl,
+        headerActions: <HeaderActions />,
+        breadcumbs,
+        activeKey,
+        handleTabChange,
+        contentType: activeKey,
+      }}
+    >
+      <div className="d-flex">
+        <div className="flex-grow-1">
+          <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+          {!componentPickerMode && (
           <Header
             number={libraryData.slug}
             title={libraryData.title}
@@ -234,46 +255,48 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               size: undefined,
             }}
           />
-        )}
-        <Container className="px-4 mt-4 mb-5 library-authoring-page">
-          <SearchContextProvider
-            extraFilter={extraFilter}
-          >
-            <SubHeader
-              title={<SubHeaderTitle title={libraryData.title} />}
-              subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
-              breadcrumbs={breadcumbs}
-              headerActions={<HeaderActions />}
-            />
-            <SearchKeywordsField className="w-50" />
-            <div className="d-flex mt-3 align-items-center">
-              <FilterByTags />
-              <FilterByBlockType />
-              <ClearFiltersButton />
-              <div className="flex-grow-1" />
-              <SearchSortWidget />
-            </div>
-            <Tabs
-              variant="tabs"
-              activeKey={activeKey}
-              onSelect={handleTabChange}
-              className="my-3"
+          )}
+          <Container className="px-4 mt-4 mb-5 library-authoring-page">
+            <SearchContextProvider
+              extraFilter={extraFilter}
             >
-              <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
-              <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
-            </Tabs>
-            <LibraryContent contentType={activeKey} />
-          </SearchContextProvider>
-        </Container>
-        {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}
-      </div>
-      {!!sidebarComponentInfo?.type && (
+              <SubHeader
+                title={<SubHeaderTitle title={libraryData.title} />}
+                subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
+                breadcrumbs={breadcumbs}
+                headerActions={<HeaderActions />}
+              />
+              <SearchKeywordsField className="w-50" />
+              <div className="d-flex mt-3 align-items-center">
+                <FilterByTags />
+                <FilterByBlockType />
+                <ClearFiltersButton />
+                <div className="flex-grow-1" />
+                <SearchSortWidget />
+              </div>
+              <Tabs
+                variant="tabs"
+                activeKey={activeKey}
+                onSelect={handleTabChange}
+                className="my-3"
+              >
+                <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
+                <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
+                <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
+              </Tabs>
+              <LibraryContent contentType={activeKey} />
+            </SearchContextProvider>
+          </Container>
+          {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}
+        </div>
+        {!!sidebarComponentInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>
-      )}
-    </div>
+        )}
+      </div>
+    </PluginSlot>
+
   );
 };
 

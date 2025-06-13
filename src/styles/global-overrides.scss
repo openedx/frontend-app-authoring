@@ -440,6 +440,22 @@ body {
   }
 }
 
+.nav-tabs {
+
+  .nav-link.active:focus::before, .nav-link:focus::before, .nav-link:focus-visible::before {
+    border: none !important;
+  }
+
+  .nav-link {
+    color: var(--text-primary) !important;
+  }
+
+  .nav-link.active {
+    color: var(--primary) !important;
+    border-bottom: 2px solid var(--primary) !important;
+  }
+}
+
 /* Modal Styles */
 .pgn__modal {
   .pgn__modal-header {

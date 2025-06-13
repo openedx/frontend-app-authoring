@@ -36,7 +36,8 @@ import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
 // Example custom component for the schedule_and_details_plugin_slot
 import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
 import CustomLibrariesV2 from './src/studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2';
-
+import CustomLibraryAuthoringPage from './src/library-authoring/CustomLibraryAuthoringPage';
+import CustomLibraryCollectionPage from './src/library-authoring/collections/CustomLibraryCollectionPage';
 // Load environment variables from .env file
 const config = {
     ...process.env,
@@ -489,6 +490,38 @@ const config = {
                         priority: 1,
                         RenderWidget: (props) => (
                             <CustomLibrariesV2 {...props} />
+                        ),
+                    },
+                }
+            ],
+        },
+
+        library_authoring_page_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "library-authoring-page-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomLibraryAuthoringPage {...props} />
+                        ),
+                    },
+                }
+            ],
+        },
+
+        library_authoring_collection_page_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "library-authoring-collection-page-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomLibraryCollectionPage {...props} />
                         ),
                     },
                 }
