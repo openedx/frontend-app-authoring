@@ -1,4 +1,9 @@
-import { useState, useMemo, FC } from 'react';
+import {
+  useEffect,
+  useState,
+  useMemo,
+  FC,
+} from 'react';
 import {
   Card,
   Chip,
@@ -34,6 +39,7 @@ interface Props {
 }
 
 const ScanResults: FC<Props> = ({ data }) => {
+  let hasSectionsRendered = false;
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
   const initialFilters = {
@@ -42,6 +48,7 @@ const ScanResults: FC<Props> = ({ data }) => {
     externalForbiddenLinks: false,
   };
   const [filters, setFilters] = useState(initialFilters);
+  const [openStates, setOpenStates] = useState<boolean[]>([]);
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>(null);
 
   const {
@@ -55,16 +62,50 @@ const ScanResults: FC<Props> = ({ data }) => {
     add, remove, set, clear,
   }] = useCheckboxSetValues(activeFilters);
 
+  useEffect(() => {
+    setOpenStates(data?.sections ? data.sections.map(() => false) : []);
+  }, [data?.sections]);
   if (!data?.sections) {
     return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
   }
 
   const { sections } = data;
+  const handleToggle = (index: number) => {
+    setOpenStates(prev => prev.map((isOpened, i) => (i === index ? !isOpened : isOpened)));
+  };
   const filterOptions = [
     { name: intl.formatMessage(messages.brokenLabel), value: 'brokenLinks' },
     { name: intl.formatMessage(messages.manualLabel), value: 'externalForbiddenLinks' },
     { name: intl.formatMessage(messages.lockedLabel), value: 'lockedLinks' },
   ];
+  const shouldSectionRender = (sectionIndex: number): boolean => (
+    (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+    || (filters.brokenLinks && brokenLinksCounts[sectionIndex] > 0)
+    || (filters.externalForbiddenLinks && externalForbiddenLinksCounts[sectionIndex] > 0)
+    || (filters.lockedLinks && lockedLinksCounts[sectionIndex] > 0)
+  );
+
+  const findPreviousVisibleSection = (currentIndex: number): number => {
+    let prevIndex = currentIndex - 1;
+    while (prevIndex >= 0) {
+      if (shouldSectionRender(prevIndex)) {
+        return prevIndex;
+      }
+      prevIndex--;
+    }
+    return -1;
+  };
+
+  const findNextVisibleSection = (currentIndex: number): number => {
+    let nextIndex = currentIndex + 1;
+    while (nextIndex < sections.length) {
+      if (shouldSectionRender(nextIndex)) {
+        return nextIndex;
+      }
+      nextIndex++;
+    }
+    return -1;
+  };
 
   return (
     <div className="scan-results">
@@ -135,37 +176,59 @@ const ScanResults: FC<Props> = ({ data }) => {
         </div>
       )}
 
-      {sections?.map((section, index) => (
-        <SectionCollapsible
-          key={section.id}
-          title={section.displayName}
-          brokenNumber={brokenLinksCounts[index]}
-          manualNumber={externalForbiddenLinksCounts[index]}
-          lockedNumber={lockedLinksCounts[index]}
-          className="section-collapsible-header"
-        >
-          {section.subsections.map((subsection) => (
-            <>
-              {subsection.units.map((unit) => {
-                if (
-                  (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-                  || (filters.brokenLinks && unit.blocks.some(block => block.brokenLinks.length > 0))
-                  || (filters.externalForbiddenLinks
-                      && unit.blocks.some(block => block.externalForbiddenLinks.length > 0))
-                  || (filters.lockedLinks && unit.blocks.some(block => block.lockedLinks.length > 0))
-                ) {
-                  return (
-                    <div className="unit">
-                      <BrokenLinkTable unit={unit} filters={filters} />
-                    </div>
-                  );
-                }
-                return null;
-              })}
-            </>
-          ))}
-        </SectionCollapsible>
-      ))}
+      {sections?.map((section, index) => {
+        if (!shouldSectionRender(index)) {
+          return null;
+        }
+        hasSectionsRendered = true;
+        return (
+          <SectionCollapsible
+            index={index}
+            handleToggle={handleToggle}
+            isOpen={openStates[index]}
+            hasPrevAndIsOpen={index > 0 ? (() => {
+              const prevVisibleIndex = findPreviousVisibleSection(index);
+              return prevVisibleIndex >= 0 && openStates[prevVisibleIndex];
+            })() : true}
+            hasNextAndIsOpen={index < sections.length - 1 ? (() => {
+              const nextVisibleIndex = findNextVisibleSection(index);
+              return nextVisibleIndex >= 1 && openStates[nextVisibleIndex];
+            })() : true}
+            key={section.id}
+            title={section.displayName}
+            brokenNumber={brokenLinksCounts[index]}
+            manualNumber={externalForbiddenLinksCounts[index]}
+            lockedNumber={lockedLinksCounts[index]}
+            className="section-collapsible-header"
+          >
+            {section.subsections.map((subsection) => (
+              <>
+                {subsection.units.map((unit) => {
+                  if (
+                    (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+                    || (filters.brokenLinks && unit.blocks.some(block => block.brokenLinks.length > 0))
+                    || (filters.externalForbiddenLinks
+                        && unit.blocks.some(block => block.externalForbiddenLinks.length > 0))
+                    || (filters.lockedLinks && unit.blocks.some(block => block.lockedLinks.length > 0))
+                  ) {
+                    return (
+                      <div className="unit">
+                        <BrokenLinkTable unit={unit} filters={filters} />
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </>
+            ))}
+          </SectionCollapsible>
+        );
+      })}
+      {hasSectionsRendered === false && (
+        <div className="no-results-found-container">
+          <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+        </div>
+      )}
     </div>
   );
 };

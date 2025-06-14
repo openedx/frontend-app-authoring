@@ -1,4 +1,4 @@
-import mockApiResponse from './mocks/mockApiResponse';
+import { mockApiResponse } from './mocks/mockApiResponse';
 import { countBrokenLinks } from './utils';
 
 describe('countBrokenLinks', () => {
