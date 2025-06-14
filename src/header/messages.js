@@ -23,13 +23,13 @@ const messages = defineMessages({
   },
   'header.links.libraries': {
     id: 'header.links.libraries',
-    defaultMessage: 'Libraries',
-    description: 'Link to Linked Libraries page in a course',
+    defaultMessage: 'Library Updates',
+    description: 'Link to Linked Libraries updates page in a course',
   },
   'header.links.updates': {
     id: 'header.links.updates',
-    defaultMessage: 'Updates',
-    description: 'Link to Studio Updates page',
+    defaultMessage: 'Course Updates',
+    description: 'Link to Studio Course Updates page',
   },
   'header.links.pages': {
     id: 'header.links.pages',

@@ -32,7 +32,6 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
-  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -46,6 +45,7 @@ import { SidebarBodyComponentId, useSidebarContext } from './common/context/Side
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
+import LibraryFilterByPublished from './generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -246,6 +246,17 @@ const LibraryAuthoringPage = ({
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
+  /*
+
+  <FilterByPublished key={
+                // It is necessary to re-render `FilterByPublished` every time `FilterByBlockType`
+                // appears or disappears, this is because when the menu is opened it is rendered
+                // in a previous state, causing an inconsistency in its position.
+                // By changing the key we can re-render the component.
+                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
+              }
+  */
+
   // Disable filtering by block/problem type when viewing the Collections tab.
   const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
 
@@ -299,7 +310,14 @@ const LibraryAuthoringPage = ({
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!(insideCollections || insideUnits) && <FilterByBlockType />}
-              <FilterByPublished />
+              <LibraryFilterByPublished key={
+                // It is necessary to re-render `LibraryFilterByPublished` every time `FilterByBlockType`
+                // appears or disappears, this is because when the menu is opened it is rendered
+                // in a previous state, causing an inconsistency in its position.
+                // By changing the key we can re-render the component.
+                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
+              }
+              />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
