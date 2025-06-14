@@ -142,7 +142,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#0B8E77, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -167,7 +167,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#0B8E77, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
