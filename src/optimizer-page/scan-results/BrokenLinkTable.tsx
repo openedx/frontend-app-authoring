@@ -160,7 +160,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
           {
             accessor: 'Links',
             width: 'col-12',
-          }
+          },
         ]}
       />
     </Card>
