@@ -21,7 +21,16 @@ const messages = {
     defaultMessage: 'Upload or embed a new video',
     description: 'Label for upload button',
   },
-
+  videoUploadModalTitle: {
+    id: 'authoring.selectvideomodal.upload.title',
+    defaultMessage: 'Upload or embed a new video',
+    description: 'Label for upload modal',
+  },
+  videoEditorModalTitle: {
+    id: 'authoring.selectvideomodal.edit.title',
+    defaultMessage: 'Edit selected video',
+    description: 'Label for editor modal',
+  },
   // Sort Dropdown
   sortByDateNewest: {
     id: 'authoring.selectvideomodal.sort.datenewest.label',

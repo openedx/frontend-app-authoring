@@ -22,7 +22,7 @@ type BaseCardProps = {
   tags: ContentHitTags;
   actions: React.ReactNode;
   hasUnpublishedChanges?: boolean;
-  onSelect: () => void;
+  onSelect: (e?: React.MouseEvent) => void;
   selected?: boolean;
 };
 
