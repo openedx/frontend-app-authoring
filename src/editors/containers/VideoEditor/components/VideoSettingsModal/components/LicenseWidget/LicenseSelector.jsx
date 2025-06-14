@@ -3,8 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -22,12 +21,11 @@ import { LicenseLevel, LicenseNames, LicenseTypes } from '../../../../../../data
 const LicenseSelector = ({
   license,
   level,
-  // injected
-  intl,
   // redux
   courseLicenseType,
   updateField,
 }) => {
+  const intl = useIntl();
   const { levelDescription } = hooks.determineText({ level });
   const onLicenseChange = hooks.onSelectLicense({ dispatch: useDispatch() });
   const ref = React.useRef();
@@ -74,8 +72,6 @@ const LicenseSelector = ({
 LicenseSelector.propTypes = {
   license: PropTypes.string.isRequired,
   level: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
   // redux
   courseLicenseType: PropTypes.string.isRequired,
   updateField: PropTypes.func.isRequired,
@@ -90,4 +86,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const LicenseSelectorInternal = LicenseSelector; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseSelector));
+export default connect(mapStateToProps, mapDispatchToProps)(LicenseSelector);

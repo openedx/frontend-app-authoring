@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LicenseWidget snapshots snapshots: renders as expected with default props 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
+  fontSize=""
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
@@ -25,7 +26,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
     gap={4}
   >
     <Fragment>
-      <injectIntl(ShimmedIntlComponent)
+      <[object Object]
         level="course"
         license="all-rights-reserved"
       />
@@ -64,11 +65,12 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
       </Button>
     </Fragment>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary true 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
+  fontSize=""
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
@@ -92,7 +94,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
     gap={4}
   >
     <Fragment>
-      <injectIntl(ShimmedIntlComponent)
+      <[object Object]
         level="library"
         license="all-rights-reserved"
       />
@@ -114,11 +116,12 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
       />
     </Fragment>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType defined 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
+  fontSize=""
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
@@ -142,7 +145,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
     gap={4}
   >
     <Fragment>
-      <injectIntl(ShimmedIntlComponent)
+      <[object Object]
         level="block"
         license="all-rights-reserved"
       />
@@ -164,5 +167,5 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
       />
     </Fragment>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
