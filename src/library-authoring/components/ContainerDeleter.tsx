@@ -37,8 +37,6 @@ const ContainerDeleter = ({
   const containerData = (hits as ContainerHit[])?.[0];
   const {
     data: dataDownstreamLinks,
-    isLoading,
-    isError,
   } = useContainerEntityLinks({ upstreamContainerKey: containerId });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
@@ -153,13 +151,13 @@ const ContainerDeleter = ({
     });
   }, [sidebarItemInfo, showToast, deleteContainerMutation]);
 
-  if (!isOpen || isLoading || isError) {
+  if (!isOpen) {
     return null;
   }
 
   return (
     <DeleteModal
-      isOpen
+      isOpen={isOpen}
       close={close}
       variant="warning"
       title={messageMap?.title}
