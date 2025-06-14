@@ -41,14 +41,16 @@ const EditableTitle = ({ unitId }: EditableTitleProps) => {
   const updateMutation = useUpdateContainer(unitId);
   const { showToast } = useContext(ToastContext);
 
-  const handleSaveDisplayName = (newDisplayName: string) => {
-    updateMutation.mutateAsync({
-      displayName: newDisplayName,
-    }).then(() => {
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        displayName: newDisplayName,
+      });
       showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
-    }).catch(() => {
+    } catch (err) {
       showToast(intl.formatMessage(messages.updateContainerErrorMsg));
-    });
+      throw err;
+    }
   };
 
   // istanbul ignore if: this should never happen

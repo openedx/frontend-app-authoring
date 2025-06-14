@@ -11,6 +11,13 @@ import { ContentHit } from '../../search-manager';
 import ComponentCard from './ComponentCard';
 import { PublishStatus } from '../../search-manager/data/api';
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 const contentHit: ContentHit = {
   id: '1',
   usageKey: 'lb:org1:demolib:html:a1fa8bdd-dc67-4976-9bf5-0ea75a9bca3d',
@@ -41,6 +48,8 @@ const contentHit: ContentHit = {
 
 const libraryId = 'lib:org1:Demo_Course';
 const render = () => baseRender(<ComponentCard hit={contentHit} />, {
+  path: '/library/:libraryId',
+  params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       { children }
@@ -102,6 +111,26 @@ describe('<ComponentCard />', () => {
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith('Copying');
       expect(mockShowToast).toHaveBeenCalledWith('Error copying to clipboard');
+    });
+  });
+
+  it('should select component on clicking edit menu option', async () => {
+    initializeMocks();
+    render();
+
+    // Open menu
+    const menu = await screen.findByTestId('component-card-menu-toggle');
+    expect(menu).toBeInTheDocument();
+    fireEvent.click(menu);
+
+    // Click copy to clipboard
+    const editOption = await screen.findByRole('button', { name: 'Edit' });
+    expect(editOption).toBeInTheDocument();
+    fireEvent.click(editOption);
+    // Verify that the url is updated to component url i.e. component is selected
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/component/${contentHit.usageKey}`,
+      search: '',
     });
   });
 });

@@ -370,7 +370,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(searchBox, { target: { value: 'words to find' } });
 
     // Default sort option changes to "Most Relevant"
-    expect(screen.getAllByText('Most Relevant').length).toEqual(2);
+    expect((await screen.findAllByText('Most Relevant')).length).toEqual(2);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('"sort":[]'),

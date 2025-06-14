@@ -26,14 +26,16 @@ const CollectionInfoHeader = () => {
   const updateMutation = useUpdateCollection(libraryId, collectionId);
   const { showToast } = useContext(ToastContext);
 
-  const handleSaveTitle = (newTitle: string) => {
-    updateMutation.mutateAsync({
-      title: newTitle,
-    }).then(() => {
+  const handleSaveTitle = async (newTitle: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        title: newTitle,
+      });
       showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
-    }).catch(() => {
+    } catch (err) {
       showToast(intl.formatMessage(messages.updateCollectionErrorMsg));
-    });
+      throw err;
+    }
   };
 
   if (!collection) {
@@ -46,7 +48,6 @@ const CollectionInfoHeader = () => {
       text={collection.title}
       readOnly={readOnly}
       textClassName="font-weight-bold m-1.5"
-      alwaysShowEditButton
     />
   );
 };

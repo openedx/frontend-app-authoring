@@ -26,16 +26,18 @@ const ComponentInfoHeader = () => {
   const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);
 
-  const handleSaveDisplayName = (newDisplayName: string) => {
-    updateMutation.mutateAsync({
-      metadata: {
-        display_name: newDisplayName,
-      },
-    }).then(() => {
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        metadata: {
+          display_name: newDisplayName,
+        },
+      });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    }).catch(() => {
+    } catch (err) {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
-    });
+      throw err;
+    }
   };
 
   if (!xblockFields) {
@@ -48,7 +50,6 @@ const ComponentInfoHeader = () => {
       text={xblockFields?.displayName}
       readOnly={readOnly}
       textClassName="font-weight-bold m-1.5"
-      alwaysShowEditButton
     />
   );
 };
