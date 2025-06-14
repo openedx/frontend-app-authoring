@@ -9,7 +9,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
-
+import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {
@@ -22,12 +22,13 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
+  createDiscussionsTopics,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
-  fetchCourseOutlineIndexQuery,
+  fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
   updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import initializeStore from '../store';
@@ -47,7 +48,7 @@ import CourseOutline from './CourseOutline';
 import configureModalMessages from '../generic/configure-modal/messages';
 import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
 import messages from './messages';
-import { getClipboardUrl } from '../generic/data/api';
+import { getApiBaseUrl, getClipboardUrl } from '../generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
@@ -115,6 +116,10 @@ jest.mock('../library-authoring/component-picker', () => ({
   },
 }));
 
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
+}));
+
 const queryClient = new QueryClient();
 
 jest.mock('@dnd-kit/core', () => ({
@@ -172,7 +177,11 @@ describe('<CourseOutline />', () => {
         courseId, gradedOnly: true, validateOras: true, all: true,
       }))
       .reply(200, courseLaunchMock);
+    axiosMock
+      .onPost(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`)
+      .reply(200, {});
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
+    await executeThunk(syncDiscussionsTopics(courseId), store.dispatch);
   });
 
   afterEach(() => {
@@ -186,6 +195,16 @@ describe('<CourseOutline />', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
+    axiosMock
+      .onGet(createDiscussionsTopics(courseId))
+      .reply(500, 'some internal error');
+
+    await executeThunk(syncDiscussionsTopics(), store.dispatch);
+
+    expect(logError).toHaveBeenCalledTimes(1);
   });
 
   it('handles course outline fetch api errors', async () => {
@@ -238,8 +257,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -261,8 +280,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -407,10 +426,10 @@ describe('<CourseOutline />', () => {
       });
     const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
     await act(async () => fireEvent.click(newUnitButton));
-    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post.length).toBe(2);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       parent_locator: subsection.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
@@ -441,11 +460,11 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    waitFor(() => expect(axiosMock.history.post.length).toBe(2));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       type: COMPONENT_TYPES.libraryV2,
       category: 'vertical',
       parent_locator: subsection.id,
@@ -886,8 +905,8 @@ describe('<CourseOutline />', () => {
     const saveButton = await findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       publish: 'republish',
       metadata: {
         visible_to_staff_only: true,
@@ -986,8 +1005,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1122,8 +1141,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1242,8 +1261,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1342,8 +1361,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1438,8 +1457,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(2);
+    expect(axiosMock.history.post[1].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));

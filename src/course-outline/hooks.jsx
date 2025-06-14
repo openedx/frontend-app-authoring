@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
+import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
 import { getWaffleFlags } from '../data/selectors';
 import { RequestStatus } from '../data/constants';
@@ -25,6 +26,7 @@ import {
   getCurrentSubsection,
   getCustomRelativeDatesActiveFlag,
   getErrors,
+  getCreatedOn,
 } from './data/selectors';
 import {
   addNewSectionQuery,
@@ -53,7 +55,7 @@ import {
   setUnitOrderListQuery,
   pasteClipboardContent,
   dismissNotificationQuery,
-  addUnitFromLibrary,
+  addUnitFromLibrary, syncDiscussionsTopics,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -73,7 +75,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
   } = useSelector(getOutlineIndexData);
-
+  const createdOn = useSelector(getCreatedOn);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -291,6 +293,12 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
     dispatch(fetchCourseLaunchQuery({ courseId }));
   }, [courseId]);
+
+  useEffect(() => {
+    if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {
+      dispatch(syncDiscussionsTopics);
+    }
+  }, [createdOn]);
 
   useEffect(() => {
     setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);

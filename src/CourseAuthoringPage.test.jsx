@@ -102,4 +102,20 @@ describe('Course authoring page', () => {
     expect(await wrapper.findByTestId(contentTestId)).toBeInTheDocument();
     expect(wrapper.queryByTestId('notFoundAlert')).not.toBeInTheDocument();
   });
+  const mockStoreDenied = async () => {
+    const studioApiBaseUrl = getConfig().STUDIO_BASE_URL;
+    const courseAppsApiUrl = `${studioApiBaseUrl}/api/course_apps/v1/apps`;
+
+    axiosMock.onGet(
+      `${courseAppsApiUrl}/${courseId}`,
+    ).reply(403);
+    await executeThunk(fetchCourseApps(courseId), store.dispatch);
+  };
+  test('renders PermissionDeniedAlert when courseAppsApiStatus is DENIED', async () => {
+    mockPathname = '/editor/';
+    await mockStoreDenied();
+
+    const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
+    expect(await wrapper.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+  });
 });
