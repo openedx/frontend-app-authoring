@@ -44,53 +44,66 @@ const ContainerDeleter = ({
 
   const messageMap = useMemo(() => {
     const containerType = containerData?.blockType;
+    let parentCount = 0;
+    let parentMessage: React.ReactNode;
     switch (containerType) {
       case ContainerType.Section:
         return {
           title: intl.formatMessage(messages.deleteSectionWarningTitle),
-          parentCount: 0,
-          parentNames: '',
-          parentMessage: {},
+          parentMessage: '',
           // Update below fields when sections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSectionCourseMessaage,
         };
       case ContainerType.Subsection:
+        parentCount = containerData?.sections?.displayName?.length || 0;
+        if (parentCount === 1) {
+          parentMessage = intl.formatMessage(
+            messages.deleteSubsectionParentMessage,
+            { parentName: <b>{containerData?.sections?.displayName?.[0]}</b> },
+          );
+        } else if (parentCount > 1) {
+          parentMessage = intl.formatMessage(messages.deleteSubsectionMultipleParentMessage, {
+            parentCount: <b>{parentCount}</b>,
+          });
+        }
         return {
           title: intl.formatMessage(messages.deleteSubsectionWarningTitle),
-          parentCount: containerData?.sections?.displayName?.length || 0,
-          parentNames: containerData?.sections?.displayName?.join(', '),
-          parentMessage: messages.deleteSubsectionParentMessage,
+          parentMessage,
           // Update below fields when subsections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSubsectionCourseMessaage,
         };
       default:
+        parentCount = containerData?.subsections?.displayName?.length || 0;
+        if (parentCount === 1) {
+          parentMessage = intl.formatMessage(
+            messages.deleteUnitParentMessage,
+            { parentName: <b>{containerData?.subsections?.displayName?.[0]}</b> },
+          );
+        } else if (parentCount > 1) {
+          parentMessage = intl.formatMessage(messages.deleteUnitMultipleParentMessage, {
+            parentCount: <b>{parentCount}</b>,
+          });
+        }
         return {
           title: intl.formatMessage(messages.deleteUnitWarningTitle),
-          parentCount: containerData?.subsections?.displayName?.length || 0,
-          parentNames: containerData?.subsections?.displayName?.join(', '),
-          parentMessage: messages.deleteUnitParentMessage,
+          parentMessage,
           // Update below fields when unit are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteUnitCourseMessage,
         };
     }
-  }, [containerId, displayName, containerData]);
+  }, [containerData, downstreamCount, messages, intl]);
 
   const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
     unitName: <b>{displayName}</b>,
     message: (
       <div className="text-danger-900">
-        {messageMap.parentCount > 0 && (
+        {messageMap.parentMessage && (
           <div className="d-flex align-items-center mt-2">
             <Icon className="mr-2" src={Error} />
-            <span>
-              {intl.formatMessage(messageMap.parentMessage, {
-                parentNames: <b>{messageMap.parentNames}</b>,
-                parentCount: messageMap.parentCount,
-              })}
-            </span>
+            <span>{messageMap.parentMessage}</span>
           </div>
         )}
         {(messageMap.courseCount || 0) > 0 && (
@@ -98,8 +111,8 @@ const ContainerDeleter = ({
             <Icon className="mr-2" src={School} />
             <span>
               {intl.formatMessage(messageMap.courseMessage, {
-                courseCount: <b>{messageMap.courseCount}</b>,
-                parentCount: messageMap.parentCount,
+                courseCount: messageMap.courseCount,
+                courseCountText: <b>{messageMap.courseCount}</b>,
               })}
             </span>
           </div>
