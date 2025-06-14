@@ -218,27 +218,37 @@ const messages = defineMessages({
   },
   deleteUnitParentMessage: {
     id: 'course-authoring.library-authoring.unit.delete-parent-message',
-    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentNames} in this library.',
+    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentName} in this library.',
     description: 'Parent usage details shown before deleting a unit',
   },
   deleteSubsectionParentMessage: {
     id: 'course-authoring.library-authoring.subsection.delete-parent-message',
-    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentNames} in this library.',
+    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentName} in this library.',
     description: 'Parent usage details shown before deleting a subsection',
+  },
+  deleteUnitMultipleParentMessage: {
+    id: 'course-authoring.library-authoring.unit.delete-multiple-parent-message',
+    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentCount, plural, one {1 Subsection} other {{parentCount} Subsections}} in this library.',
+    description: 'Parent usage details shown before deleting a unit part of multiple subsections',
+  },
+  deleteSubsectionMultipleParentMessage: {
+    id: 'course-authoring.library-authoring.subsection.delete-multiple-parent-message',
+    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentCount, plural, one {1 Section} other {{parentCount} Sections}} in this library.',
+    description: 'Parent usage details shown before deleting a subsection part of multiple sections',
   },
   deleteUnitCourseMessage: {
     id: 'course-authoring.library-authoring.unit.delete-course-usage-message',
-    defaultMessage: 'This unit is used {courseCount} times in courses, and will stop receiving updates there.',
+    defaultMessage: 'This unit is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a unit',
   },
   deleteSubsectionCourseMessaage: {
     id: 'course-authoring.library-authoring.subsection.delete-parent-message',
-    defaultMessage: 'This subsection is used {courseCount} times in courses, and will stop receiving updates there.',
+    defaultMessage: 'This subsection is used {courseCount, plural, one {1 time} other {{courseCount} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a subsection',
   },
   deleteSectionCourseMessaage: {
     id: 'course-authoring.library-authoring.section.delete-parent-message',
-    defaultMessage: 'This section is used {courseCount} times in courses, and will stop receiving updates there.',
+    defaultMessage: 'This section is used {courseCount, plural, one {1 time} other {{courseCount} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a section',
   },
   deleteUnitSuccess: {
