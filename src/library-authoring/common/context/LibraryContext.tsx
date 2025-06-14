@@ -29,8 +29,6 @@ export type LibraryContextData = {
   /** The ID of the current collection/component/unit, on the sidebar OR page */
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
-  componentId: string | undefined;
-  setComponentId: (componentId?: string) => void;
   unitId: string | undefined;
   setUnitId: (unitId?: string) => void;
   // Only show published components
@@ -115,19 +113,13 @@ export const LibraryProvider = ({
   const params = useParams();
   const {
     collectionId: urlCollectionId,
-    componentId: urlComponentId,
     unitId: urlUnitId,
-    selectedItemId: urlSelectedItemId,
   } = params;
-  const selectedItemIdIsUnit = !!urlSelectedItemId?.startsWith('lct:');
-  const [componentId, setComponentId] = useState(
-    skipUrlUpdate ? undefined : urlComponentId,
-  );
   const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+    skipUrlUpdate ? undefined : urlCollectionId,
   );
   const [unitId, setUnitId] = useState(
-    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+    skipUrlUpdate ? undefined : urlUnitId,
   );
 
   const context = useMemo<LibraryContextData>(() => {
@@ -138,8 +130,6 @@ export const LibraryProvider = ({
       setCollectionId,
       unitId,
       setUnitId,
-      componentId,
-      setComponentId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
@@ -163,8 +153,6 @@ export const LibraryProvider = ({
     setCollectionId,
     unitId,
     setUnitId,
-    componentId,
-    setComponentId,
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,

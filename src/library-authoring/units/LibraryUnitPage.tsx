@@ -16,6 +16,7 @@ import ErrorAlert from '../../generic/alert-error';
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
 import Header from '../../header';
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext,
@@ -70,6 +71,7 @@ const EditableTitle = ({ unitId }: EditableTitleProps) => {
 const HeaderActions = () => {
   const intl = useIntl();
 
+  const { componentPickerMode } = useComponentPickerContext();
   const { unitId, readOnly } = useLibraryContext();
   const {
     openAddContentSidebar,
@@ -93,7 +95,10 @@ const HeaderActions = () => {
     } else {
       openUnitInfoSidebar(unitId);
     }
-    navigateTo({ unitId, componentId: '' });
+
+    if (!componentPickerMode) {
+      navigateTo({ unitId });
+    }
   }, [unitId, infoSidebarIsOpen]);
 
   return (
@@ -125,24 +130,18 @@ export const LibraryUnitPage = () => {
   const {
     libraryId,
     unitId,
-    componentId,
-    collectionId,
   } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!unitId) {
+    throw new Error('unitId is required');
+  }
+
   const {
-    openInfoSidebar,
     sidebarComponentInfo,
     setDefaultTab,
     setHiddenTabs,
   } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
-
-  // Open unit or component sidebar on mount
-  useEffect(() => {
-    // includes componentId to open correct sidebar on page mount from url
-    openInfoSidebar(componentId, collectionId, unitId);
-    // avoid including componentId in dependencies to prevent flicker on closing sidebar.
-    // See below useEffect that clears componentId on closing sidebar.
-  }, [unitId, collectionId]);
 
   useEffect(() => {
     setDefaultTab({
@@ -230,7 +229,7 @@ export const LibraryUnitPage = () => {
             />
           </div>
           <Container className="px-4 py-4">
-            <LibraryUnitBlocks />
+            <LibraryUnitBlocks unitId={unitId} />
           </Container>
         </Container>
       </div>
@@ -239,7 +238,7 @@ export const LibraryUnitPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
+          <LibrarySidebar />
         </div>
       )}
     </div>

@@ -19,6 +19,8 @@ const {
 const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
 
 const render = () => baseRender(<ComponentPreview />, {
+  path: `/library/${libraryId}/components/${usageKey}`,
+  params: { libraryId, selectedItemId: usageKey },
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
