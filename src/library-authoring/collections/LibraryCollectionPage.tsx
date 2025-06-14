@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -22,7 +21,6 @@ import NotFoundAlert from '../../generic/NotFoundAlert';
 import {
   ClearFiltersButton,
   FilterByBlockType,
-  FilterByPublished,
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
@@ -32,10 +30,11 @@ import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
+import LibraryFilterByPublished from '../generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -46,7 +45,7 @@ const HeaderActions = () => {
     closeLibrarySidebar,
     openAddContentSidebar,
     openCollectionInfoSidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
   } = useSidebarContext();
   const { navigateTo } = useLibraryRoutes();
 
@@ -55,8 +54,8 @@ const HeaderActions = () => {
     throw new Error('it should not be possible to render HeaderActions without a collectionId');
   }
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.CollectionInfo
-    && sidebarComponentInfo?.id === collectionId;
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.CollectionInfo
+    && sidebarItemInfo?.id === collectionId;
 
   const handleOnClickInfoSidebar = () => {
     if (infoSidebarIsOpen) {
@@ -101,18 +100,15 @@ const HeaderActions = () => {
 const LibraryCollectionPage = () => {
   const intl = useIntl();
 
-  const { libraryId, collectionId } = useLibraryContext();
-
-  if (!collectionId || !libraryId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without collectionId or libraryId URL parameter');
-  }
-
   const { componentPickerMode } = useComponentPickerContext();
   const {
-    showOnlyPublished, extraFilter: contextExtraFilter, setCollectionId, componentId,
+    libraryId,
+    collectionId,
+    showOnlyPublished,
+    extraFilter: contextExtraFilter,
+    setCollectionId,
   } = useLibraryContext();
-  const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const {
     data: collectionData,
@@ -121,12 +117,12 @@ const LibraryCollectionPage = () => {
     error,
   } = useCollection(libraryId, collectionId);
 
-  useEffect(() => {
-    openInfoSidebar(componentId, collectionId, '');
-  }, []);
-
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
+  if (!collectionId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without collectionId or libraryId URL parameter');
+  }
   // Only show loading if collection data is not fetched from index yet
   // Loading info for search results will be handled by LibraryCollectionComponents component.
   if (isLibLoading || isLoading) {
@@ -218,7 +214,7 @@ const LibraryCollectionPage = () => {
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
-              <FilterByPublished />
+              <LibraryFilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
@@ -228,7 +224,7 @@ const LibraryCollectionPage = () => {
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>

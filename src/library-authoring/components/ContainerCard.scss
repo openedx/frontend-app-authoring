@@ -1,0 +1,7 @@
+.container-card-preview-text {
+    display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+};

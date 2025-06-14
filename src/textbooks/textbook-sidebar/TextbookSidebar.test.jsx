@@ -1,41 +1,17 @@
-import MockAdapter from 'axios-mock-adapter';
-import { render, waitFor } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
-import initializeStore from '../../store';
+// @ts-check
+import { initializeMocks, render, waitFor } from '../../testUtils';
 import { getHelpUrlsApiUrl } from '../../help-urls/data/api';
 import { helpUrls } from '../../help-urls/__mocks__';
 import TextbookSidebar from './TextbookSidebar';
 import messages from './messages';
 
-let axiosMock;
-let store;
 const courseId = 'course-v1:org+101+101';
 
-const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <TextbookSidebar courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = () => render(<TextbookSidebar courseId={courseId} />);
 
 describe('<TextbookSidebar />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const { axiosMock } = initializeMocks();
     axiosMock
       .onGet(getHelpUrlsApiUrl())
       .reply(200, helpUrls);

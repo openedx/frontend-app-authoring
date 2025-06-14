@@ -1,13 +1,19 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import { CalendarViewDay, School, Warning } from '@openedx/paragon/icons';
+import { School, Warning, Info } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useDeleteLibraryBlock, useLibraryBlockMetadata, useRestoreLibraryBlock } from '../data/apiHooks';
+import {
+  useContentFromSearchIndex,
+  useDeleteLibraryBlock,
+  useLibraryBlockMetadata,
+  useRestoreLibraryBlock,
+} from '../data/apiHooks';
 import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import { type ContentHit } from '../../search-manager';
 
 /**
  * Helper component to load and display the name of the block.
@@ -32,9 +38,9 @@ interface Props {
 
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const intl = useIntl();
-  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
+  const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
-  const sidebarComponentUsageKey = sidebarComponentInfo?.id;
+  const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
   const restoreComponent = useCallback(async () => {
@@ -63,8 +69,19 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     }
   }, [usageKey, sidebarComponentUsageKey, closeLibrarySidebar]);
 
+  const { hits } = useContentFromSearchIndex([usageKey]);
+  const componentHit = (hits as ContentHit[])?.[0];
+
   if (!props.isConfirmingDelete) {
     return null;
+  }
+
+  let unitsMessage;
+  const unitsLength = componentHit?.units?.displayName?.length ?? 0;
+  if (unitsLength === 1) {
+    unitsMessage = componentHit?.units?.displayName?.[0];
+  } else if (unitsLength > 1) {
+    unitsMessage = `${unitsLength} units`;
   }
 
   const deleteText = intl.formatMessage(messages.deleteComponentConfirm, {
@@ -73,12 +90,23 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
       <>
         <div className="d-flex mt-2">
           <Icon className="mr-2" src={School} />
-          {intl.formatMessage(messages.deleteComponentConfirmMsg1)}
+          {unitsMessage
+            ? intl.formatMessage(messages.deleteComponentConfirmCourseSmall)
+            : intl.formatMessage(messages.deleteComponentConfirmCourse)}
         </div>
-        <div className="d-flex mt-2">
-          <Icon className="mr-2" src={CalendarViewDay} />
-          {intl.formatMessage(messages.deleteComponentConfirmMsg2)}
-        </div>
+        {unitsMessage && (
+          <div className="d-flex mt-3 small text-danger-900">
+            <Icon className="mr-2 mt-2" src={Info} />
+            <div>
+              <FormattedMessage
+                {...messages.deleteComponentConfirmUnits}
+                values={{
+                  unit: <strong>{unitsMessage}</strong>,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </>
     ),
   });

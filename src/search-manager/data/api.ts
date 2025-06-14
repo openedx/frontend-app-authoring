@@ -3,6 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
   Filter, MeiliSearch, MultiSearchQuery,
 } from 'meilisearch';
+import { ContainerType } from '../../generic/key-utils';
 
 export const getContentSearchConfigUrl = () => new URL(
   'api/content_search/v2/studio/',
@@ -31,6 +32,8 @@ export enum PublishStatus {
   NeverPublished = 'never',
 }
 
+export const allPublishFilters: PublishStatus[] = Object.values(PublishStatus);
+
 /**
  * Get the content search configuration from the CMS.
  */
@@ -51,6 +54,7 @@ export interface ContentDetails {
   htmlContent?: string;
   capaContent?: string;
   childUsageKeys?: Array<string>;
+  childDisplayNames?: Array<string>;
   [k: string]: any;
 }
 
@@ -142,6 +146,7 @@ export interface ContentHit extends BaseContentHit {
   content?: ContentDetails;
   lastPublished: number | null;
   collections: { displayName?: string[], key?: string[] };
+  units: { displayName?: string[], key?: string[] };
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
@@ -175,15 +180,18 @@ export interface CollectionHit extends BaseContentHit {
  */
 interface ContainerHitContent {
   childUsageKeys?: string[],
+  childDisplayNames?: string[],
 }
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';
-  blockType: 'unit'; // This should be expanded to include other container types
+  blockType: ContainerType; // This should be expanded to include other container types
   numChildren?: number;
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
   content?: ContainerHitContent;
+  sections?: { displayName?: string[], key?: string[] };
+  subsections?: { displayName?: string[], key?: string[] };
 }
 
 export type HitType = ContentHit | CollectionHit | ContainerHit;
@@ -285,6 +293,8 @@ export async function fetchSearchResults({
   // The second query is to get the possible values for the "block types" filter
   if (!skipBlockTypeFetch) {
     queries.push({
+      // We send search keywords so that the search results coincide with the filter counts.
+      q: searchKeywords,
       indexUid: indexName,
       facets: ['block_type', 'content.problem_types', 'publish_status'],
       filter: [

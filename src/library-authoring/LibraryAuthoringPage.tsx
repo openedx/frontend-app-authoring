@@ -15,13 +15,12 @@ import {
   Breadcrumb,
   Button,
   Container,
-  Icon,
   Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
-import { Link } from 'react-router-dom';
+import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { Link, useLocation } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -32,7 +31,6 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
-  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -42,10 +40,11 @@ import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
+import LibraryFilterByPublished from './generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -56,12 +55,12 @@ const HeaderActions = () => {
     openAddContentSidebar,
     openLibrarySidebar,
     closeLibrarySidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
   } = useSidebarContext();
 
   const { componentPickerMode } = useComponentPickerContext();
 
-  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.Info;
+  const infoSidebarIsOpen = sidebarItemInfo?.type === SidebarBodyItemId.Info;
 
   const { navigateTo } = useLibraryRoutes();
   const handleOnClickInfoSidebar = useCallback(() => {
@@ -72,10 +71,10 @@ const HeaderActions = () => {
     }
 
     if (!componentPickerMode) {
-      // Reset URL to library home
-      navigateTo({ componentId: '', collectionId: '', unitId: '' });
+      // If not in component picker mode, reset selected item when opening the info sidebar
+      navigateTo({ selectedItemId: '' });
     }
-  }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
+  }, [navigateTo, sidebarItemInfo, closeLibrarySidebar, openLibrarySidebar]);
 
   return (
     <div className="header-actions">
@@ -114,7 +113,7 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
   return (
-    <Stack direction="vertical">
+    <Stack direction="vertical" className="mt-1.5">
       {title}
       {showReadOnlyBadge && (
         <div>
@@ -137,6 +136,7 @@ const LibraryAuthoringPage = ({
   visibleTabs = allLibraryPageTabs,
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
+  const location = useLocation();
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -151,16 +151,15 @@ const LibraryAuthoringPage = ({
     isLoadingLibraryData,
     showOnlyPublished,
     extraFilter: contextExtraFilter,
-    componentId,
-    collectionId,
-    unitId,
   } = useLibraryContext();
-  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const {
     insideCollections,
     insideComponents,
     insideUnits,
+    insideSections,
+    insideSubsections,
     navigateTo,
   } = useLibraryRoutes();
 
@@ -178,15 +177,31 @@ const LibraryAuthoringPage = ({
     if (insideUnits) {
       return ContentType.units;
     }
+    if (insideSubsections) {
+      return ContentType.subsections;
+    }
+    if (insideSections) {
+      return ContentType.sections;
+    }
     return ContentType.home;
   };
+
   const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
 
   useEffect(() => {
     if (!componentPickerMode) {
-      openInfoSidebar(componentId, collectionId, unitId);
+      // Update the active key whenever the route changes. This ensures that the correct tab is selected
+      // when navigating using the browser's back/forward buttons because it does not trigger a re-render.
+      setActiveKey(getActiveKey());
     }
-  }, []);
+  }, [location.key, getActiveKey]);
+
+  const handleTabChange = useCallback((key: ContentType) => {
+    setActiveKey(key);
+    if (!componentPickerMode) {
+      navigateTo({ contentType: key });
+    }
+  }, [navigateTo]);
 
   if (isLoadingLibraryData) {
     return <Loading />;
@@ -204,26 +219,14 @@ const LibraryAuthoringPage = ({
     return <NotFoundAlert />;
   }
 
-  const handleTabChange = (key: ContentType) => {
-    setActiveKey(key);
-    if (!componentPickerMode) {
-      navigateTo({ contentType: key });
-    }
-  };
-
   const breadcumbs = componentPickerMode && !restrictToLibrary ? (
     <Breadcrumb
       links={[
-        {
-          label: '',
-          to: '',
-        },
         {
           label: intl.formatMessage(messages.returnToLibrarySelection),
           onClick: returnToLibrarySelection,
         },
       ]}
-      spacer={<Icon src={ArrowBack} size="sm" />}
       linkAs={Link}
     />
   ) : undefined;
@@ -241,20 +244,28 @@ const LibraryAuthoringPage = ({
     components: 'type = "library_block"',
     collections: 'type = "collection"',
     units: 'block_type = "unit"',
+    subsections: 'block_type = "subsection"',
+    sections: 'block_type = "section"',
   };
   if (activeKey !== ContentType.home) {
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
-  // Disable filtering by block/problem type when viewing the Collections tab.
-  const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
+  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab.
+  const onlyOneType = (insideCollections || insideUnits || insideSections || insideSubsections);
+  const overrideTypesFilter = onlyOneType
+    ? new TypesFilterData()
+    : undefined;
 
   const tabTitles = {
     [ContentType.home]: intl.formatMessage(messages.homeTab),
     [ContentType.collections]: intl.formatMessage(messages.collectionsTab),
     [ContentType.components]: intl.formatMessage(messages.componentsTab),
     [ContentType.units]: intl.formatMessage(messages.unitsTab),
+    [ContentType.subsections]: intl.formatMessage(messages.subsectionsTab),
+    [ContentType.sections]: intl.formatMessage(messages.sectionsTab),
   };
+
   const visibleTabsToRender = visibleTabs.map((contentType) => (
     <Tab key={contentType} eventKey={contentType} title={tabTitles[contentType]} />
   ));
@@ -298,8 +309,15 @@ const LibraryAuthoringPage = ({
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              {!(insideCollections || insideUnits) && <FilterByBlockType />}
-              <FilterByPublished />
+              {!(onlyOneType) && <FilterByBlockType />}
+              <LibraryFilterByPublished key={
+                // It is necessary to re-render `LibraryFilterByPublished` every time `FilterByBlockType`
+                // appears or disappears, this is because when the menu is opened it is rendered
+                // in a previous state, causing an inconsistency in its position.
+                // By changing the key we can re-render the component.
+                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
+              }
+              />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
@@ -309,7 +327,7 @@ const LibraryAuthoringPage = ({
         </Container>
         {!componentPickerMode && <StudioFooterSlot containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarComponentInfo?.type && (
+      {!!sidebarItemInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>

@@ -6,10 +6,10 @@
   .section {
     &.is-open {
       &:not(:first-child) {
-        margin-top: 1rem;
+        margin-top: 1.5rem;
       }
 
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
   }
 
@@ -29,11 +29,31 @@
   .unit-card{
     border: 1px solid #BCBCBC;
     box-shadow: 0 1px 2px rgb(0 0 0 / .15);
+    padding: 14px 32px 4px !important;
+
+    .table{
+      margin-bottom: .5rem;
+      table-layout: fixed;
+
+      tbody {
+        tr {
+          border-top: 1px solid #CCCCCC;
+
+          td {
+            padding: 16px 0;
+            border-top: none !important;
+          }
+
+          td:nth-child(2) {
+            padding: 16px 0 16px 24px;
+          }
+        }
+      }
+    }
   }
 
   /* Subsection Header */
   .unit-header {
-    margin-left: .5rem;
     margin-top: 10px;
     font-size: 14px;
     font-weight: 700;
@@ -69,24 +89,21 @@
 
   .links-container {
     display: flex;
-    align-items: center;
     gap: 1.5rem;
-    width:38rem;
   }
 
   .go-to-block-link-container {
-    max-width: 20rem;
-    width: fit-content;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .broken-link-container {
-    max-width: 20rem;
-    text-wrap: nowrap;
+    max-width: calc(100% - 150px);
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-grow: 1;
   }
 
   .locked-links-checkbox {
@@ -108,12 +125,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    color: #000000 !important;
+    gap: 24px;
   }
   
   .section-collapsible-header-item {
     display: flex;
     align-items: center;
-    gap: .2rem;
+    gap: 8px;
   }
 
   .section-collapsible-header-actions {
@@ -122,27 +141,47 @@
     font-size: small;
     gap: 40px;
 
-    span {
+    @media (width <= 630px) {
+      flex-direction: column;
+    }
+  }
+
+  .section-collapsible-header-action-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #000000;
+    font-variant-numeric: lining-nums tabular-nums;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+
+    p{
+      width: 20px;
+      margin: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      color: var(--gray-700, #454545);
-      font-variant-numeric: lining-nums tabular-nums;
-      font-family: Inter, sans-serif;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 28px;
+      align-self: center;
     }
   }
 
   .section-collapsible-item-container {
     box-shadow: 0 1px 2px rgb(0 0 0 / .15);
+
+    .collapsible-trigger{
+      border: none;
+    }
   }
 
   .section-collapsible-item {
-    margin-right: -24px;
+    margin-right: -36px;
+  }
+
+  .section-collapsible-item-body {
+    margin: -16px -9px -12px -10px;
   }
 
   .scan-header-title-container {
@@ -198,12 +237,14 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
+  padding-left: 0;
 }
 
 .scan-results-active-filters-chip {
   border-radius: 6px;
   border: 1px solid var(--light-300, #F2F0EF);
   background: var(--extras-white, #FFFFFF);
+  margin-left: 0
 }
 
 .clear-all-btn {
@@ -215,6 +256,51 @@
 }
 
 .filter-modal {
-  margin-left: -1.5rem;
   padding: 16px 16px 1px;
+}
+
+.no-results-found-container{
+  display: flex;
+  height: 94px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+}
+
+.no-results-found{
+  color: var(--gray-700, #454545);
+  font-family: Inter, sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.scan-header {
+  & .pgn__card-header-content {
+    margin-top: 1.5rem !important;
+  }
+}
+
+.open-section-rounded {
+  border: .5px solid rgb(0 0 0 / .15);
+
+  &.is-open {
+    &:not(:first-child) {
+      border-radius: 8px;
+    }
+
+    border-radius: 8px;
+  }
+}
+
+.closed-section-rounded-top {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.closed-section-rounded-bottom {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
 }

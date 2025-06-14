@@ -18,7 +18,6 @@ import {
   editCourseItemQuery,
   editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
-  fetchCourseUnitQuery,
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
@@ -196,7 +195,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   }, [savingStatus]);
 
   useEffect(() => {
-    dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
     dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
     handleNavigate(sequenceId);

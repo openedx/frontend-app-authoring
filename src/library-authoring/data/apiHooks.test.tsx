@@ -29,7 +29,7 @@ import {
   useDeleteContainer,
   useRestoreContainer,
   useContainerChildren,
-  useAddComponentsToContainer,
+  useAddItemsToContainer,
   useUpdateContainerChildren,
   useRemoveContainerChildren,
   usePublishContainer,
@@ -265,7 +265,7 @@ describe('library api hooks', () => {
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
-    const { result } = renderHook(() => useAddComponentsToContainer(containerId), { wrapper });
+    const { result } = renderHook(() => useAddItemsToContainer(containerId), { wrapper });
     await result.current.mutateAsync([componentId]);
 
     expect(axiosMock.history.post[0].url).toEqual(url);
@@ -309,6 +309,26 @@ describe('library api hooks', () => {
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
     });
+  });
+
+  it('should invalidate subsection when added to section', async () => {
+    const spy = jest.spyOn(queryClient, 'invalidateQueries');
+    const subsectionId1 = 'lct:org:lib:subsection:1';
+    const subsectionId2 = 'lct:org:lib:subsection:2';
+    const sectionId = 'lct:org:lib:section:1';
+    const url = getLibraryContainerChildrenApiUrl(sectionId);
+
+    axiosMock.onPost(url).reply(200);
+
+    const { result } = renderHook(() => useAddItemsToContainer(sectionId), { wrapper });
+
+    await result.current.mutateAsync([subsectionId1, subsectionId2]);
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
+
+    // Two call for `containerChildren` and library predicate
+    // and two more calls to invalidate the subsections.
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 
   describe('publishContainer', () => {

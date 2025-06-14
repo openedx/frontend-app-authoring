@@ -598,8 +598,9 @@ export async function createLibraryContainer(
 
 export interface Container {
   id: string;
-  containerType: 'unit';
+  containerType: ContainerType;
   displayName: string;
+  publishedDisplayName: string | null;
   lastPublished: string | null;
   publishedBy: string | null;
   createdBy: string | null;
@@ -609,6 +610,7 @@ export interface Container {
   created: string;
   modified: string;
   collections: CollectionMetadata[];
+  tagsCount: number;
 }
 
 /**
@@ -656,7 +658,7 @@ export async function restoreContainer(containerId: string) {
 export async function getLibraryContainerChildren(
   containerId: string,
   published: boolean = false,
-): Promise<LibraryBlockMetadata[]> {
+): Promise<LibraryBlockMetadata[] | Container[]> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerChildrenApiUrl(containerId, published),
   );

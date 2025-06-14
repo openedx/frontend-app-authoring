@@ -139,7 +139,7 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
 
-    expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
+    expect((await screen.findAllByText('This collection is currently empty.')).length).toEqual(2);
 
     const addComponentButton = screen.getAllByRole('button', { name: /new/i })[1];
     fireEvent.click(addComponentButton);
@@ -315,7 +315,7 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.change(searchBox, { target: { value: 'words to find' } });
 
     // Default sort option changes to "Most Relevant"
-    expect(screen.getAllByText('Most Relevant').length).toEqual(2);
+    expect((await screen.findAllByText('Most Relevant')).length).toEqual(2);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('"sort":[]'),
@@ -429,14 +429,28 @@ describe('<LibraryCollectionPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should create a unit inside a collection', async () => {
+  test.each([
+    {
+      label: 'should create a unit inside a collection',
+      containerType: 'unit',
+    },
+    {
+      label: 'should create a section inside a collection',
+      containerType: 'section',
+    },
+    {
+      label: 'should create a subsection inside a collection',
+      containerType: 'subsection',
+    },
+  ])('$label', async ({ containerType }) => {
     await renderLibraryCollectionPage();
-    const unitTitle = 'This is a Test';
+    const containerTitle = `This is a Test ${containerType}`;
+    const containerId = `lct:org:libId:${containerType}:1`;
     const containerUrl = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
     axiosMock.onPost(containerUrl).reply(200, {
-      id: 'unit-1',
+      id: containerId,
       slug: 'this-is-a-test',
-      title: unitTitle,
+      title: containerTitle,
     });
     const collectionUrl = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
@@ -444,7 +458,7 @@ describe('<LibraryCollectionPage />', () => {
     );
     axiosMock.onPatch(collectionUrl).reply(200);
 
-    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Test Collection/i })).toBeInTheDocument();
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
 
     // Open Add content sidebar
@@ -454,16 +468,16 @@ describe('<LibraryCollectionPage />', () => {
 
     // Open New unit Modal
     const sidebar = screen.getByTestId('library-sidebar');
-    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
-    fireEvent.click(newUnitButton);
-    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
-    expect(unitModalHeading).toBeInTheDocument();
+    const newContainerButton = within(sidebar).getAllByRole('button', { name: new RegExp(containerType, 'i') })[0];
+    fireEvent.click(newContainerButton);
+    const containerModalHeading = await screen.findByRole('heading', { name: new RegExp(`new ${containerType}`, 'i') });
+    expect(containerModalHeading).toBeInTheDocument();
 
     // Fill the form
     const createButton = screen.getByRole('button', { name: /create/i });
-    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+    const nameField = screen.getByRole('textbox', { name: new RegExp(`name your ${containerType}`, 'i') });
 
-    fireEvent.change(nameField, { target: { value: unitTitle } });
+    fireEvent.change(nameField, { target: { value: containerTitle } });
     fireEvent.click(createButton);
 
     // Check success
@@ -471,13 +485,13 @@ describe('<LibraryCollectionPage />', () => {
 
     // Check that the unit was created
     expect(axiosMock.history.post[0].url).toBe(containerUrl);
-    expect(axiosMock.history.post[0].data).toContain(`"display_name":"${unitTitle}"`);
-    expect(axiosMock.history.post[0].data).toContain('"container_type":"unit"');
-    expect(mockShowToast).toHaveBeenCalledWith('Unit created successfully');
+    expect(axiosMock.history.post[0].data).toContain(`"display_name":"${containerTitle}"`);
+    expect(axiosMock.history.post[0].data).toContain(`"container_type":"${containerType}"`);
+    expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`${containerType} created successfully`, 'i')));
 
     // Check that the unit was added to the collection
     expect(axiosMock.history.patch.length).toBe(1);
     expect(axiosMock.history.patch[0].url).toBe(collectionUrl);
-    expect(axiosMock.history.patch[0].data).toContain('"usage_keys":["unit-1"]');
+    expect(axiosMock.history.patch[0].data).toContain(`"usage_keys":["${containerId}"]`);
   });
 });

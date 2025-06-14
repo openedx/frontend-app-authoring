@@ -1,33 +1,7 @@
-import { screen, render } from '@testing-library/react';
-import { useSelector } from 'react-redux';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+// @ts-check
+import { screen, render, initializeMocks } from '../../testUtils';
 import PageSettingButton from './PageSettingButton';
-
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-}));
-
-jest.mock('react-router-dom', () => {
-  // eslint-disable-next-line global-require
-  const PropTypes = require('prop-types');
-
-  const Link = ({ children, to }) => <a href={to}>{children}</a>;
-
-  Link.propTypes = {
-    children: PropTypes.node.isRequired,
-    to: PropTypes.string.isRequired,
-  };
-
-  return {
-    useNavigate: jest.fn(),
-    Link,
-  };
-});
-
-const mockWaffleFlags = {
-  useNewTextbooksPage: true,
-  useNewCustomPages: true,
-};
+import { mockWaffleFlags } from '../../data/apiHooks.mock';
 
 const defaultProps = {
   id: 'page_id',
@@ -36,20 +10,16 @@ const defaultProps = {
   allowedOperations: { configure: true, enable: true },
 };
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
-    <PageSettingButton {...defaultProps} {...props} />
-  </IntlProvider>,
-);
+const renderComponent = (props = {}) => render(<PageSettingButton {...defaultProps} {...props} />);
+
+mockWaffleFlags();
 
 describe('PageSettingButton', () => {
   beforeEach(() => {
-    useSelector.mockClear();
+    initializeMocks();
   });
 
   it('renders the settings button with the new textbooks page link when useNewTextbooksPage is true', () => {
-    useSelector.mockReturnValue(mockWaffleFlags);
-
     renderComponent({ legacyLink: 'http://legacylink.com/textbooks' });
 
     const linkElement = screen.getByRole('link');
@@ -57,15 +27,13 @@ describe('PageSettingButton', () => {
   });
 
   it('does not render link when legacyLink prop value incorrect', () => {
-    useSelector.mockReturnValue(mockWaffleFlags);
-
     renderComponent({ legacyLink: 'http://legacylink.com/some-value' });
 
     expect(screen.queryByRole('link')).toBeNull();
   });
 
   it('renders the settings button with the legacy link when useNewTextbooksPage is false', () => {
-    useSelector.mockReturnValue({ ...mockWaffleFlags, useNewTextbooksPage: false });
+    mockWaffleFlags({ useNewTextbooksPage: false });
 
     renderComponent({ legacyLink: 'http://legacylink.com/textbooks' });
 
@@ -74,8 +42,6 @@ describe('PageSettingButton', () => {
   });
 
   it('renders the settings button with the new custom pages link when useNewCustomPages is true', () => {
-    useSelector.mockReturnValue(mockWaffleFlags);
-
     renderComponent();
 
     const linkElement = screen.getByRole('link');
@@ -83,7 +49,7 @@ describe('PageSettingButton', () => {
   });
 
   it('renders the settings button with the legacy link when useNewCustomPages is false', () => {
-    useSelector.mockReturnValue({ ...mockWaffleFlags, useNewCustomPages: false });
+    mockWaffleFlags({ useNewCustomPages: false });
 
     renderComponent();
 

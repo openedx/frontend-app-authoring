@@ -5,7 +5,6 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 import {
   hideProcessingNotification,
@@ -14,9 +13,9 @@ import {
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
-import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import {
   fetchCourseSectionVerticalData,
@@ -36,6 +35,7 @@ import messages from './messages';
 import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
 import { useIframeContent } from '../../generic/hooks/useIframeContent';
 import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
 import EditorPage from '../../editors/EditorPage';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
@@ -43,12 +43,13 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [blockType, setBlockType] = useState<string>('');
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId);
   const [newBlockId, setNewBlockId] = useState<string>('');
   const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
   const [iframeOffset, setIframeOffset] = useState(0);
@@ -71,24 +72,25 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
+    closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, sendMessageToIframe]);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);
     setNewBlockId(id);
-    showXBlockEditorModal();
-  }, [showXBlockEditorModal]);
+    if (type === 'video' && useVideoGalleryFlow) {
+      showVideoSelectorModal();
+    } else {
+      showXBlockEditorModal();
+    }
+  }, [showVideoSelectorModal, showXBlockEditorModal]);
 
   const handleDuplicateXBlock = useCallback(
-    (type: string, usageId: string) => {
+    (usageId: string) => {
       unitXBlockActions.handleDuplicate(usageId);
-      if (supportedEditors[type]) {
-        // istanbul ignore next
-        handleEditXBlock(type, usageId);
-      }
     },
-    [unitXBlockActions, courseId, navigate],
+    [unitXBlockActions, courseId],
   );
 
   const handleDeleteXBlock = (usageId: string) => {
@@ -199,12 +201,24 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         onDeleteSubmit={onDeleteSubmit}
       />
       <StandardModal
-        title={intl.formatMessage(messages.blockEditorModalTitle)}
-        isOpen={isXBlockEditorModalOpen}
-        onClose={closeXBlockEditorModal}
+        title={intl.formatMessage(messages.videoPickerModalTitle)}
+        isOpen={isVideoSelectorModalOpen}
+        onClose={closeVideoSelectorModal}
         isOverflowVisible={false}
         size="xl"
       >
+        <div className="selector-page">
+          <VideoSelectorPage
+            blockId={newBlockId}
+            courseId={courseId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onCancel={closeVideoSelectorModal}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+          />
+        </div>
+      </StandardModal>
+      {isXBlockEditorModalOpen && (
         <div className="editor-page">
           <EditorPage
             courseId={courseId}
@@ -216,7 +230,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
             returnFunction={/* istanbul ignore next */ () => onXBlockSave}
           />
         </div>
-      </StandardModal>
+      )}
       {Object.keys(accessManagedXBlockData).length ? (
         <ConfigureModal
           isXBlockComponent

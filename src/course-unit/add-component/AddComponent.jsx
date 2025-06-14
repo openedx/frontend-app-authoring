@@ -8,14 +8,17 @@ import {
 } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
 import messages from './messages';
 import { ComponentPicker } from '../../library-authoring/component-picker';
+import { ContentType } from '../../library-authoring/routes';
 import { messageTypes } from '../constants';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { useEventListener } from '../../generic/hooks';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
 import EditorPage from '../../editors/EditorPage';
 
 const AddComponent = ({
@@ -32,6 +35,7 @@ const AddComponent = ({
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
   const blockId = addComponentTemplateData.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
 
   const [blockType, setBlockType] = useState(null);
@@ -41,6 +45,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
@@ -61,8 +66,9 @@ const AddComponent = ({
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
+    closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, sendMessageToIframe]);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
 
   const handleLibraryV2Selection = useCallback((selection) => {
     handleCreateNewCourseXBlock({
@@ -80,7 +86,6 @@ const AddComponent = ({
       case COMPONENT_TYPES.dragAndDrop:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId });
         break;
-      case COMPONENT_TYPES.video:
       case COMPONENT_TYPES.problem:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
           setCourseId(courseKey);
@@ -88,6 +93,21 @@ const AddComponent = ({
           setNewBlockId(locator);
           showXBlockEditorModal();
         });
+        break;
+      case COMPONENT_TYPES.video:
+        handleCreateNewCourseXBlock(
+          { type, parentLocator: blockId },
+          /* istanbul ignore next */ ({ courseKey, locator }) => {
+            setCourseId(courseKey);
+            setBlockType(type);
+            setNewBlockId(locator);
+            if (useVideoGalleryFlow) {
+              showVideoSelectorModal();
+            } else {
+              showXBlockEditorModal();
+            }
+          },
+        );
         break;
         // TODO: The library functional will be a bit different of current legacy (CMS)
         //  behaviour and this ticket is on hold (blocked by other development team).
@@ -209,19 +229,32 @@ const AddComponent = ({
         >
           <ComponentPicker
             showOnlyPublished
-            extraFilter={['NOT block_type = "unit"']}
+            extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+            visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
             componentPickerMode={isAddLibraryContentModalOpen ? 'single' : 'multiple'}
             onComponentSelected={handleLibraryV2Selection}
             onChangeComponentSelection={setSelectedComponents}
           />
         </StandardModal>
         <StandardModal
-          title={intl.formatMessage(messages.blockEditorModalTitle)}
-          isOpen={isXBlockEditorModalOpen}
-          onClose={closeXBlockEditorModal}
+          title={intl.formatMessage(messages.videoPickerModalTitle)}
+          isOpen={isVideoSelectorModalOpen}
+          onClose={closeVideoSelectorModal}
           isOverflowVisible={false}
           size="xl"
         >
+          <div className="selector-page">
+            <VideoSelectorPage
+              blockId={newBlockId}
+              courseId={courseId}
+              studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+              lmsEndpointUrl={getConfig().LMS_BASE_URL}
+              onCancel={closeVideoSelectorModal}
+              returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+            />
+          </div>
+        </StandardModal>
+        {isXBlockEditorModalOpen && (
           <div className="editor-page">
             <EditorPage
               courseId={courseId}
@@ -233,7 +266,7 @@ const AddComponent = ({
               returnFunction={/* istanbul ignore next */ () => onXBlockSave}
             />
           </div>
-        </StandardModal>
+        )}
       </div>
     );
   }

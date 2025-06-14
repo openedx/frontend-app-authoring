@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout,
 } from '@openedx/paragon';
@@ -24,7 +24,8 @@ import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
 
-const CourseImportPage = ({ intl, courseId }) => {
+const CourseImportPage = ({ courseId }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const cookies = new Cookies();
   const courseDetails = useModel('courseDetails', courseId);
@@ -104,10 +105,7 @@ const CourseImportPage = ({ intl, courseId }) => {
 };
 
 CourseImportPage.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-CourseImportPage.defaultProps = {};
-
-export default injectIntl(CourseImportPage);
+export default CourseImportPage;

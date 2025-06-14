@@ -1,6 +1,10 @@
+// @ts-check
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import EditorContainer from './EditorContainer';
+import { mockWaffleFlags } from '../data/apiHooks.mock';
+
+mockWaffleFlags();
 
 const mockPathname = '/editor/';
 jest.mock('react-router-dom', () => ({

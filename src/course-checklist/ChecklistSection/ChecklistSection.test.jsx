@@ -4,9 +4,7 @@ import {
   initializeMocks, render, screen, within,
 } from '../../testUtils';
 import { getApiWaffleFlagsUrl } from '../../data/api';
-import { fetchWaffleFlags } from '../../data/thunks';
 import { generateCourseLaunchData } from '../factories/mockApiResponses';
-import { executeThunk } from '../../utils';
 import { checklistItems } from './utils/courseChecklistData';
 import messages from './messages';
 
@@ -34,7 +32,7 @@ const renderComponent = (props) => {
 
 describe('ChecklistSection', () => {
   beforeEach(async () => {
-    const { axiosMock, reduxStore } = initializeMocks();
+    const { axiosMock } = initializeMocks();
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {
@@ -43,7 +41,6 @@ describe('ChecklistSection', () => {
         useNewScheduleDetailsPage: true,
         useNewCourseOutlinePage: true,
       });
-    await executeThunk(fetchWaffleFlags(courseId), reduxStore.dispatch);
   });
 
   it('a heading using the dataHeading prop', () => {

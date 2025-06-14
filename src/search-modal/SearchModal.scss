@@ -66,4 +66,13 @@
       background-color: unset;
     }
   }
+
+  // Fix a bug with search modal: very long text is not truncated with an ellipsis
+  // https://github.com/openedx/frontend-app-authoring/issues/1900
+  .hit-description {
+    display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

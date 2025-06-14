@@ -71,15 +71,20 @@ const messages = defineMessages({
     defaultMessage: 'Delete {componentName}? {message}',
     description: 'Confirmation text to display before deleting a component',
   },
-  deleteComponentConfirmMsg1: {
+  deleteComponentConfirmCourse: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-msg-1',
     defaultMessage: 'If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
     description: 'First part of confirmation message to display before deleting a component',
   },
-  deleteComponentConfirmMsg2: {
-    id: 'course-authoring.library-authoring.component.delete-confirmation-msg-2',
-    defaultMessage: 'If this component has been used in any units, it will also be deleted from those units.',
-    description: 'Second part of confirmation message to display before deleting a component',
+  deleteComponentConfirmCourseSmall: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-text.course-small',
+    defaultMessage: 'Any course instances will stop receiving library updates.',
+    description: 'Small message text about courses when deleting a component',
+  },
+  deleteComponentConfirmUnits: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-text.units',
+    defaultMessage: 'By deleting this component, you will also be deleting it from {unit} in this library.',
+    description: 'Message text about units when deleting a component',
   },
   deleteComponentCancelButton: {
     id: 'course-authoring.library-authoring.component.cancel-delete-button',
@@ -270,6 +275,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.undo-remove-component-from-container-failed',
     defaultMessage: 'Failed to undo remove component operation',
     description: 'Message to display on failure to undo delete component',
+  },
+  containerPreviewText: {
+    id: 'course-authoring.library-authoring.container.preview.text',
+    defaultMessage: 'Contains {children}.',
+    description: 'Preview message for section/subsections with the names of children separated by commas',
   },
 });
 export default messages;

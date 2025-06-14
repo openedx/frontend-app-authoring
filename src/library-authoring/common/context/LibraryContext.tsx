@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
+import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
@@ -25,13 +26,11 @@ export type LibraryContextData = {
   libraryData?: ContentLibrary;
   readOnly: boolean;
   isLoadingLibraryData: boolean;
-  /** The ID of the current collection/component/unit, on the sidebar OR page */
+  /** The ID of the current collection/container, on the sidebar OR page */
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
-  componentId: string | undefined;
-  setComponentId: (componentId?: string) => void;
-  unitId: string | undefined;
-  setUnitId: (unitId?: string) => void;
+  containerId: string | undefined;
+  setContainerId: (containerId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // Additional filtering
@@ -40,10 +39,9 @@ export type LibraryContextData = {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  // "Create New Unit" modal
-  isCreateUnitModalOpen: boolean;
-  openCreateUnitModal: () => void;
-  closeCreateUnitModal: () => void;
+  // "Create new container" modal
+  createContainerModalType: ContainerType | undefined;
+  setCreateContainerModalType: (containerType?: ContainerType) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is the component being edited. */
   componentBeingEdited: ComponentEditorInfo | undefined;
@@ -91,7 +89,7 @@ export const LibraryProvider = ({
   componentPicker,
 }: LibraryProviderProps) => {
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
-  const [isCreateUnitModalOpen, openCreateUnitModal, closeCreateUnitModal] = useToggle(false);
+  const [createContainerModalType, setCreateContainerModalType] = useState<ContainerType | undefined>(undefined);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
@@ -111,23 +109,17 @@ export const LibraryProvider = ({
 
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
-  // Parse the initial collectionId and/or componentId from the current URL params
+  // Parse the initial collectionId and/or container ID(s) from the current URL params
   const params = useParams();
   const {
     collectionId: urlCollectionId,
-    componentId: urlComponentId,
-    unitId: urlUnitId,
-    selectedItemId: urlSelectedItemId,
+    containerId: urlContainerId,
   } = params;
-  const selectedItemIdIsUnit = !!urlSelectedItemId?.startsWith('lct:');
-  const [componentId, setComponentId] = useState(
-    skipUrlUpdate ? undefined : urlComponentId,
-  );
   const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : urlCollectionId || (!selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+    skipUrlUpdate ? undefined : urlCollectionId,
   );
-  const [unitId, setUnitId] = useState(
-    skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsUnit ? urlSelectedItemId : undefined),
+  const [containerId, setContainerId] = useState(
+    skipUrlUpdate ? undefined : urlContainerId,
   );
 
   const context = useMemo<LibraryContextData>(() => {
@@ -136,10 +128,8 @@ export const LibraryProvider = ({
       libraryData,
       collectionId,
       setCollectionId,
-      unitId,
-      setUnitId,
-      componentId,
-      setComponentId,
+      containerId,
+      setContainerId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
@@ -147,9 +137,8 @@ export const LibraryProvider = ({
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
       closeCreateCollectionModal,
-      isCreateUnitModalOpen,
-      openCreateUnitModal,
-      closeCreateUnitModal,
+      createContainerModalType,
+      setCreateContainerModalType,
       componentBeingEdited,
       openComponentEditor,
       closeComponentEditor,
@@ -162,10 +151,8 @@ export const LibraryProvider = ({
     libraryData,
     collectionId,
     setCollectionId,
-    unitId,
-    setUnitId,
-    componentId,
-    setComponentId,
+    containerId,
+    setContainerId,
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,
@@ -173,9 +160,6 @@ export const LibraryProvider = ({
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
-    isCreateUnitModalOpen,
-    openCreateUnitModal,
-    closeCreateUnitModal,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,

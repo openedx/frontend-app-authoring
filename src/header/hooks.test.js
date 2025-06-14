@@ -3,6 +3,7 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import { renderHook } from '@testing-library/react';
 import messages from './messages';
 import { useContentMenuItems, useToolsMenuItems, useSettingMenuItems } from './hooks';
+import { mockWaffleFlags } from '../data/apiHooks.mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -10,6 +11,14 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
     formatMessage: jest.fn(message => message.defaultMessage),
   }),
 }));
+
+// Bypass React Query for waffle flags, and just return the default values.
+mockWaffleFlags({
+  // Some flags can be enabled with either a config value or a waffle flag.
+  // For test purposes, we'll configure the video upload page using the config, so leave the waffle flag off.
+  useNewVideoUploadsPage: false,
+  useNewCertificatesPage: false,
+});
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -45,7 +54,7 @@ describe('header utils', () => {
         librariesV2Enabled: true,
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123')).result.current;
-      expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Libraries' });
+      expect(actualItems[1]).toEqual({ href: '/course/course-123/libraries', title: 'Library Updates' });
     });
   });
 
@@ -84,11 +93,6 @@ describe('header utils', () => {
   });
 
   describe('getToolsMenuItems', () => {
-    beforeEach(() => {
-      useSelector.mockReturnValue({
-        waffleFlags: jest.fn(),
-      });
-    });
     it('when tags enabled should include export tags option', () => {
       setConfig({
         ...getConfig(),
@@ -116,13 +120,19 @@ describe('header utils', () => {
     });
 
     it('when course optimizer enabled should include optimizer option', () => {
-      useSelector.mockReturnValue({ enableCourseOptimizer: true });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123')).result.current.map((item) => item.title);
-      expect(actualItemsTitle).toContain(messages['header.links.optimizer'].defaultMessage);
+      mockWaffleFlags({
+        enableCourseOptimizer: true,
+      });
+      const optimizerItem = renderHook(() => useToolsMenuItems('course-123')).result.current.find(
+        item => item.href === '/course/course-123/optimizer',
+      );
+      expect(optimizerItem).toBeDefined();
     });
 
     it('when course optimizer disabled should not include optimizer option', () => {
-      useSelector.mockReturnValue({ enableCourseOptimizer: false });
+      mockWaffleFlags({
+        enableCourseOptimizer: false,
+      });
       const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123')).result.current.map((item) => item.title);
       expect(actualItemsTitle).not.toContain(messages['header.links.optimizer'].defaultMessage);
     });

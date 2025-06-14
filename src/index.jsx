@@ -31,6 +31,7 @@ import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
+import { ContentType } from './library-authoring/routes';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -68,11 +69,22 @@ const App = () => {
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
           path="/component-picker"
-          element={<ComponentPicker extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+              visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
+            />
+          )}
         />
         <Route
           path="/component-picker/multiple"
-          element={<ComponentPicker componentPickerMode="multiple" extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker
+              componentPickerMode="multiple"
+              extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+              visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
+            />
+          )}
         />
         <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
@@ -158,7 +170,6 @@ initialize({
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
         ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'false',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
-        ENABLE_HOME_PAGE_COURSE_API_V2: process.env.ENABLE_HOME_PAGE_COURSE_API_V2 === 'true',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
         LIBRARY_UNSUPPORTED_BLOCKS: (process.env.LIBRARY_UNSUPPORTED_BLOCKS || 'conditional,step-builder,problem-builder').split(','),

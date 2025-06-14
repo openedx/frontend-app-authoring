@@ -6,7 +6,7 @@ import {
 import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -18,7 +18,7 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { openComponentInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openComponentInfoSidebar, sidebarItemInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const {
@@ -36,16 +36,18 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
   ) ?? '';
 
   const { navigateTo } = useLibraryRoutes();
-  const openComponent = useCallback(() => {
-    openComponentInfoSidebar(usageKey);
-
+  const selectComponent = useCallback(() => {
     if (!componentPickerMode) {
-      navigateTo({ componentId: usageKey });
+      navigateTo({ selectedItemId: usageKey });
+    } else {
+      // In component picker mode, we want to open the sidebar
+      // without changing the URL
+      openComponentInfoSidebar(usageKey);
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo.id === usageKey;
+  const selected = sidebarItemInfo?.type === SidebarBodyItemId.ComponentInfo
+    && sidebarItemInfo.id === usageKey;
 
   return (
     <BaseCard
@@ -63,7 +65,7 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
-      onSelect={openComponent}
+      onSelect={selectComponent}
       selected={selected}
     />
   );
