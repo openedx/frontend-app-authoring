@@ -19,9 +19,8 @@ export interface PaginatedData<T> {
   results: T,
 }
 
-export interface PublishableEntityLink {
+export interface BasePublishableEntityLink {
   id: number;
-  upstreamUsageKey: string;
   upstreamContextKey: string;
   upstreamContextTitle: string;
   upstreamVersion: number;
@@ -32,6 +31,14 @@ export interface PublishableEntityLink {
   created: string;
   updated: string;
   readyToSync: boolean;
+}
+
+export interface PublishableEntityLink extends BasePublishableEntityLink {
+  upstreamUsageKey: string;
+}
+
+export interface ContainerPublishableEntityLink extends BasePublishableEntityLink {
+  upstreamContainerKey: string;
 }
 
 export interface PublishableEntityLinkSummary {
@@ -63,7 +70,7 @@ export const getContainerEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
   upstreamContainerKey?: string,
-): Promise<PublishableEntityLink[]> => {
+): Promise<ContainerPublishableEntityLink[]> => {
   const { data } = await getAuthenticatedHttpClient()
     .get(getContainerEntityLinksByDownstreamContextUrl(), {
       params: {
