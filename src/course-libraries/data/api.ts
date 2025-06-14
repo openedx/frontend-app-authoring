@@ -4,6 +4,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/`;
+export const getContainerEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstream-containers/`;
 
 export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
 
@@ -18,9 +19,8 @@ export interface PaginatedData<T> {
   results: T,
 }
 
-export interface PublishableEntityLink {
+export interface BasePublishableEntityLink {
   id: number;
-  upstreamUsageKey: string;
   upstreamContextKey: string;
   upstreamContextTitle: string;
   upstreamVersion: number;
@@ -31,6 +31,14 @@ export interface PublishableEntityLink {
   created: string;
   updated: string;
   readyToSync: boolean;
+}
+
+export interface PublishableEntityLink extends BasePublishableEntityLink {
+  upstreamUsageKey: string;
+}
+
+export interface ContainerPublishableEntityLink extends BasePublishableEntityLink {
+  upstreamContainerKey: string;
 }
 
 export interface PublishableEntityLinkSummary {
@@ -52,6 +60,23 @@ export const getEntityLinks = async (
         course_id: downstreamContextKey,
         ready_to_sync: readyToSync,
         upstream_usage_key: upstreamUsageKey,
+        no_page: true,
+      },
+    });
+  return camelCaseObject(data);
+};
+
+export const getContainerEntityLinks = async (
+  downstreamContextKey?: string,
+  readyToSync?: boolean,
+  upstreamContainerKey?: string,
+): Promise<ContainerPublishableEntityLink[]> => {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getContainerEntityLinksByDownstreamContextUrl(), {
+      params: {
+        course_id: downstreamContextKey,
+        ready_to_sync: readyToSync,
+        upstream_container_key: upstreamContainerKey,
         no_page: true,
       },
     });

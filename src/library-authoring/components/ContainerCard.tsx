@@ -100,12 +100,14 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <ContainerDeleter
-        isOpen={isConfirmingDelete}
-        close={cancelDelete}
-        containerId={containerKey}
-        displayName={displayName}
-      />
+      {isConfirmingDelete && (
+        <ContainerDeleter
+          isOpen={isConfirmingDelete}
+          close={cancelDelete}
+          containerId={containerKey}
+          displayName={displayName}
+        />
+      )}
     </>
   );
 };

@@ -1,15 +1,18 @@
 import {
   useQuery,
 } from '@tanstack/react-query';
-import { getEntityLinks, getEntityLinksSummaryByDownstreamContext } from './api';
+import { getContainerEntityLinks, getEntityLinks, getEntityLinksSummaryByDownstreamContext } from './api';
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
   courseLibraries: (courseId?: string) => [...courseLibrariesQueryKeys.all, courseId],
-  courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey }: {
+  courseReadyToSyncLibraries: ({
+    courseId, readyToSync, upstreamUsageKey, upstreamContainerKey,
+  }: {
     courseId?: string,
     readyToSync?: boolean,
     upstreamUsageKey?: string,
+    upstreamContainerKey?: string,
     pageSize?: number,
   }) => {
     const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all];
@@ -21,6 +24,9 @@ export const courseLibrariesQueryKeys = {
     }
     if (upstreamUsageKey !== undefined) {
       key.push(upstreamUsageKey);
+    }
+    if (upstreamContainerKey !== undefined) {
+      key.push(upstreamContainerKey);
     }
     return key;
   },
@@ -61,5 +67,31 @@ export const useEntityLinksSummaryByDownstreamContext = (courseId?: string) => (
     queryKey: courseLibrariesQueryKeys.courseLibrariesSummary(courseId),
     queryFn: () => getEntityLinksSummaryByDownstreamContext(courseId!),
     enabled: courseId !== undefined,
+  })
+);
+
+/**
+ * Hook to fetch list of publishable entity links for containers by course key.
+ * (That is, get a list of the library containers used in the given course.)
+ */
+export const useContainerEntityLinks = ({
+  courseId, readyToSync, upstreamContainerKey,
+}: {
+  courseId?: string,
+  readyToSync?: boolean,
+  upstreamContainerKey?: string,
+}) => (
+  useQuery({
+    queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries({
+      courseId,
+      readyToSync,
+      upstreamContainerKey,
+    }),
+    queryFn: () => getContainerEntityLinks(
+      courseId,
+      readyToSync,
+      upstreamContainerKey,
+    ),
+    enabled: courseId !== undefined || upstreamContainerKey !== undefined || readyToSync !== undefined,
   })
 );
