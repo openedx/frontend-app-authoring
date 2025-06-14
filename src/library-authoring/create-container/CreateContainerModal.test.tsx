@@ -1,0 +1,121 @@
+import userEvent from '@testing-library/user-event';
+import {
+  render, screen, waitFor, initializeMocks,
+} from '../../testUtils';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import CreateContainerModal from './CreateContainerModal';
+import AddContent from '../add-content/AddContent';
+import { mockContentLibrary, mockBlockTypesMetadata } from '../data/api.mocks';
+
+const { libraryId } = mockContentLibrary;
+
+describe('CreateContainerModal container linking', () => {
+  let axiosMock;
+  let mockShowToast;
+
+  beforeEach(() => {
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
+    jest.clearAllMocks();
+    mockContentLibrary.applyMock();
+    mockBlockTypesMetadata.applyMock();
+    axiosMock.onPost(`/api/libraries/v2/${libraryId}/containers/`).reply(200, {
+      id: 'lct:org:lib:section:new-section',
+      containerType: 'section',
+      displayName: 'Test Container',
+      publishedDisplayName: 'Test Container',
+      created: '2024-09-19T10:00:00Z',
+      createdBy: 'test_author',
+      lastPublished: null,
+      publishedBy: null,
+      lastDraftCreated: null,
+      lastDraftCreatedBy: null,
+      modified: '2024-09-20T11:00:00Z',
+      hasUnpublishedChanges: true,
+      collections: [],
+      tagsCount: 0,
+    });
+  });
+
+  function renderWithProvider(content) {
+    return render(content, {
+      path: '/library/:libraryId',
+      params: { libraryId },
+      extraWrapper: ({ children: wrappedChildren }) => (
+        <LibraryProvider libraryId={libraryId}>
+          {wrappedChildren}
+        </LibraryProvider>
+      ),
+    });
+  }
+
+  it('links container to collection when inside a collection', async () => {
+    renderWithProvider(
+      <>
+        <AddContent />
+        <CreateContainerModal />
+      </>,
+    );
+    // Disambiguate: select the "Section" button by exact match
+    const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
+    userEvent.click(sectionButton);
+    const nameInput = await screen.findByLabelText(/name your section/i);
+    userEvent.type(nameInput, 'Test Section');
+    const createButton = await screen.findByRole('button', { name: /create/i });
+    userEvent.click(createButton);
+    await waitFor(() => {
+      expect(axiosMock.history.post).toHaveLength(1);
+    });
+    expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+      can_stand_alone: true,
+      container_type: 'section',
+      display_name: 'Test Section',
+    });
+  });
+
+  it('links container to section when inside a section', async () => {
+    renderWithProvider(
+      <>
+        <AddContent />
+        <CreateContainerModal />
+      </>,
+    );
+    // Disambiguate: select the "Subsection" button by exact match
+    const subsectionButton = await screen.findByRole('button', { name: /^Subsection$/ });
+    userEvent.click(subsectionButton);
+    const nameInput = await screen.findByLabelText(/name your subsection/i);
+    userEvent.type(nameInput, 'Test Subsection');
+    const createButton = await screen.findByRole('button', { name: /create/i });
+    userEvent.click(createButton);
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
+    });
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+      can_stand_alone: true,
+      container_type: 'subsection',
+      display_name: 'Test Subsection',
+    });
+  });
+
+  it('handles linking error gracefully', async () => {
+    axiosMock.onPost(`/api/libraries/v2/${libraryId}/containers/`).reply(500);
+    renderWithProvider(
+      <>
+        <AddContent />
+        <CreateContainerModal />
+      </>,
+    );
+    // Disambiguate: select the "Section" button by exact match
+    const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
+    userEvent.click(sectionButton);
+    const nameInput = await screen.findByLabelText(/name your section/i);
+    userEvent.type(nameInput, 'Test Section');
+    const createButton = await screen.findByRole('button', { name: /create/i });
+    userEvent.click(createButton);
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(/error/i));
+    });
+  });
+});
