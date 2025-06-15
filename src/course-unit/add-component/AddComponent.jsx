@@ -254,13 +254,7 @@ const AddComponent = ({
             />
           </div>
         </StandardModal>
-        <StandardModal
-          title={intl.formatMessage(messages.blockEditorModalTitle)}
-          isOpen={isXBlockEditorModalOpen}
-          onClose={closeXBlockEditorModal}
-          isOverflowVisible={false}
-          size="xl"
-        >
+        {isXBlockEditorModalOpen && (
           <div className="editor-page">
             <EditorPage
               courseId={courseId}
@@ -272,7 +266,7 @@ const AddComponent = ({
               returnFunction={/* istanbul ignore next */ () => onXBlockSave}
             />
           </div>
-        </StandardModal>
+        )}
       </div>
     );
   }
