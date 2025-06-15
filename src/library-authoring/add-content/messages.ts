@@ -36,6 +36,16 @@ const messages = defineMessages({
     defaultMessage: 'Add to Unit',
     description: 'Button to add library content to a unit.',
   },
+  addToSectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-section',
+    defaultMessage: 'Add to Section',
+    description: 'Button to add library content to a section.',
+  },
+  addToSubsectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-subsection',
+    defaultMessage: 'Add to Subsection',
+    description: 'Button to add library content to a subsection.',
+  },
   selectedComponents: {
     id: 'course-authoring.library-authoring.add-content.selected-components',
     defaultMessage: '{count, plural, one {# Selected Component} other {# Selected Components}}',

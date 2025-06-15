@@ -34,7 +34,6 @@ const CollectionInfoHeader = () => {
       showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
     } catch (err) {
       showToast(intl.formatMessage(messages.updateCollectionErrorMsg));
-      throw err;
     }
   };
 

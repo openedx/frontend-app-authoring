@@ -1,8 +1,8 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Button, Icon, Stack, useToggle,
+  ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
-import { Add, Description } from '@openedx/paragon/icons';
+import { Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import {
   useCallback, useContext, useEffect, useState,
@@ -18,7 +18,6 @@ import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import Loading from '../../generic/Loading';
 import TagCount from '../../generic/tag-count';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
@@ -27,9 +26,9 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes, ContentType } from '../routes';
+import { useLibraryRoutes } from '../routes';
 import messages from './messages';
-import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useRunOnNextRender } from '../../utils';
@@ -73,7 +72,6 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
     } catch (err) {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
-      throw err;
     }
   };
 
@@ -103,7 +101,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (block.publishedDisplayName ?? block.displayName) : block.displayName}
-          readOnly={readOnly}
+          readOnly={readOnly || showOnlyPublished}
         />
       </Stack>
       <ActionRow.Spacer />
@@ -173,9 +171,6 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
     return {};
   }, [isDragging, block]);
 
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo?.id === block.originalId;
-
   return (
     <IframeProvider>
       <SortableItem
@@ -189,9 +184,9 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={!readOnly ? (e: { detail: number; }) => handleComponentSelection(e.detail) : undefined}
+        onClick={!readOnly ? (e) => handleComponentSelection(e.detail) : undefined}
         disabled={readOnly}
-        cardClassName={selected ? 'selected' : undefined}
+        cardClassName={sidebarComponentInfo?.id === block.originalId ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -224,7 +219,6 @@ interface LibraryUnitBlocksProps {
 export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadataWithUniqueId[]>([]);
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
@@ -232,8 +226,6 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
   const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
 
   const readOnly = componentReadOnly || libraryReadOnly;
-
-  const { openAddContentSidebar } = useSidebarContext();
 
   const orderMutator = useUpdateContainerChildren(unitId);
   const {
@@ -300,40 +292,6 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
           />
         ))}
       </DraggableList>
-      {!readOnly && (
-        <div className="d-flex">
-          <div className="w-100 mr-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={openAddContentSidebar}
-              block
-            >
-              {intl.formatMessage(messages.newContentButton)}
-            </Button>
-          </div>
-          <div className="w-100 ml-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={showAddLibraryContentModal}
-              block
-            >
-              {intl.formatMessage(messages.addExistingContentButton)}
-            </Button>
-            <PickLibraryContentModal
-              isOpen={isAddLibraryContentModalOpen}
-              onClose={closeAddLibraryContentModal}
-              extraFilter={['NOT block_type = "unit"', 'NOT type = "collection"']}
-              visibleTabs={[ContentType.components]}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

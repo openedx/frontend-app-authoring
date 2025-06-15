@@ -5,9 +5,9 @@ import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
-import { useAddItemsToCollection, useAddComponentsToContainer } from '../data/apiHooks';
+import { useAddItemsToCollection, useAddItemsToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
-import type { ContentType } from '../routes';
+import { allLibraryPageTabs, ContentType, useLibraryRoutes } from '../routes';
 import messages from './messages';
 
 interface PickLibraryContentModalFooterProps {
@@ -33,21 +33,16 @@ const PickLibraryContentModalFooter: React.FC<PickLibraryContentModalFooterProps
 interface PickLibraryContentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  extraFilter?: string[];
-  visibleTabs?: ContentType[],
 }
 
-export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({
-  isOpen,
-  onClose,
-  extraFilter,
-  visibleTabs,
-}) => {
+export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({ isOpen, onClose }) => {
   const intl = useIntl();
 
   const {
     libraryId,
     collectionId,
+    sectionId,
+    subsectionId,
     unitId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
      * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
@@ -55,13 +50,17 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     componentPicker: ComponentPicker,
   } = useLibraryContext();
 
-  // istanbul ignore if: this should never happen
-  if (!(collectionId || unitId) || !ComponentPicker) {
-    throw new Error('collectionId/unitId and componentPicker are required');
-  }
+  const {
+    insideCollection, insideUnit, insideSection, insideSubsection,
+  } = useLibraryRoutes();
 
   const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
-  const updateUnitComponentsMutation = useAddComponentsToContainer(unitId);
+  const updateContainerChildrenMutation = useAddItemsToContainer(
+    (insideSection && sectionId)
+    || (insideSubsection && subsectionId)
+    || (insideUnit && unitId)
+    || '',
+  );
 
   const { showToast } = useContext(ToastContext);
 
@@ -70,7 +69,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   const onSubmit = useCallback(() => {
     const usageKeys = selectedComponents.map(({ usageKey }) => usageKey);
     onClose();
-    if (collectionId) {
+    if (insideCollection && collectionId) {
       updateCollectionItemsMutation.mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
@@ -78,9 +77,8 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         .catch(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
-    }
-    if (unitId) {
-      updateUnitComponentsMutation.mutateAsync(usageKeys)
+    } else if (insideSection || insideSubsection || insideUnit) {
+      updateContainerChildrenMutation.mutateAsync(usageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));
         })
@@ -88,7 +86,46 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
           showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
         });
     }
-  }, [selectedComponents]);
+  }, [
+    selectedComponents,
+    insideSection,
+    insideSubsection,
+    insideUnit,
+    collectionId,
+    sectionId,
+    subsectionId,
+    unitId,
+  ]);
+
+  // determine filter an visibleTabs based on current location
+  let extraFilter = ['NOT type = "collection"'];
+  let visibleTabs = allLibraryPageTabs.filter((tab) => tab !== ContentType.collections);
+  let addBtnText = messages.addToCollectionButton;
+  if (insideSection) {
+    // show only subsections
+    extraFilter = ['block_type = "subsection"'];
+    addBtnText = messages.addToSectionButton;
+    visibleTabs = [ContentType.subsections];
+  } else if (insideSubsection) {
+    // show only units
+    extraFilter = ['block_type = "unit"'];
+    addBtnText = messages.addToSubsectionButton;
+    visibleTabs = [ContentType.units];
+  } else if (insideUnit) {
+    // show only components
+    extraFilter = [
+      'NOT block_type = "unit"',
+      'NOT block_type = "subsection"',
+      'NOT block_type = "section"',
+    ];
+    addBtnText = messages.addToUnitButton;
+    visibleTabs = [ContentType.components];
+  }
+
+  // istanbul ignore if: this should never happen, just here to satisfy type checker
+  if (!(collectionId || unitId || sectionId || subsectionId) || !ComponentPicker) {
+    throw new Error('collectionId/sectionId/unitId and componentPicker are required');
+  }
 
   return (
     <StandardModal
@@ -101,10 +138,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         <PickLibraryContentModalFooter
           onSubmit={onSubmit}
           selectedComponents={selectedComponents}
-          buttonText={(collectionId
-            ? intl.formatMessage(messages.addToCollectionButton)
-            : intl.formatMessage(messages.addToUnitButton)
-          )}
+          buttonText={intl.formatMessage(addBtnText)}
         />
       )}
     >
