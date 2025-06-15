@@ -10,7 +10,11 @@ import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
-import { useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
+import {
+  useAddItemsToCollection,
+  useAddItemsToContainer,
+  useCreateLibraryContainer,
+} from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import { ContainerType } from '../../generic/key-utils';
@@ -21,18 +25,25 @@ const CreateContainerModal = () => {
   const intl = useIntl();
   const {
     collectionId,
+    containerId,
     libraryId,
     createContainerModalType,
     setCreateContainerModalType,
   } = useLibraryContext();
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const {
+    navigateTo,
+    insideCollection,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
-  const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
+  const addItemsToCollection = useAddItemsToCollection(libraryId, collectionId);
+  const addItemsToContainer = useAddItemsToContainer(containerId);
   const { showToast } = React.useContext(ToastContext);
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
   const labels = React.useMemo(() => {
-    if (createContainerModalType === ContainerType.Chapter) {
+    if (createContainerModalType === ContainerType.Section) {
       return {
         modalTitle: intl.formatMessage(messages.createSectionModalTitle),
         validationError: intl.formatMessage(messages.createSectionModalNameInvalid),
@@ -42,7 +53,7 @@ const CreateContainerModal = () => {
         errorMsg: intl.formatMessage(messages.createSectionError),
       };
     }
-    if (createContainerModalType === ContainerType.Sequential) {
+    if (createContainerModalType === ContainerType.Subsection) {
       return {
         modalTitle: intl.formatMessage(messages.createSubsectionModalTitle),
         validationError: intl.formatMessage(messages.createSubsectionModalNameInvalid),
@@ -65,36 +76,39 @@ const CreateContainerModal = () => {
   /** Call close for section, subsection and unit as the operation is idempotent */
   const handleClose = () => setCreateContainerModalType(undefined);
 
-  /** Calculate containerType based on type of open modal */
-  const containerType = React.useMemo(() => {
-    if (createContainerModalType === ContainerType.Chapter) {
-      return ContainerType.Section;
-    }
-    if (createContainerModalType === ContainerType.Sequential) {
-      return ContainerType.Subsection;
-    }
-    return ContainerType.Unit;
-  }, [createContainerModalType]);
-
   const handleCreate = React.useCallback(async (values) => {
     try {
       const container = await create.mutateAsync({
-        containerType,
+        containerType: createContainerModalType,
         ...values,
       });
-      // link container to parent
-      if (collectionId && insideCollection) {
-        await updateItemsMutation.mutateAsync([container.id]);
-      }
       // Navigate to the new container
       navigateTo({ containerId: container.id });
+
+      // Link container to parent after navigating -- we may still show an
+      // error if this linking fails, but at least the user can see that
+      // the container was created.
+      if (collectionId && insideCollection) {
+        await addItemsToCollection.mutateAsync([container.id]);
+      }
+      if (containerId && (insideSection || insideSubsection)) {
+        await addItemsToContainer.mutateAsync([container.id]);
+      }
+
       showToast(labels.successMsg);
     } catch (error) {
       showToast(labels.errorMsg);
     } finally {
       handleClose();
     }
-  }, [containerType, labels, handleClose, navigateTo]);
+  }, [
+    addItemsToCollection,
+    addItemsToContainer,
+    createContainerModalType,
+    handleClose,
+    labels,
+    navigateTo,
+  ]);
 
   return (
     <ModalDialog

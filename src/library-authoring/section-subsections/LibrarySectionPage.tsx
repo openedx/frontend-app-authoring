@@ -8,6 +8,7 @@ import { useContainer, useContentLibrary } from '../data/apiHooks';
 import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import ErrorAlert from '../../generic/alert-error';
+import { ContainerType } from '../../generic/key-utils';
 import Header from '../../header';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
@@ -105,6 +106,7 @@ export const LibrarySectionPage = () => {
           <Container className="px-4 py-4">
             <LibraryContainerChildren containerKey={containerId} />
             <FooterActions
+              addContentType={ContainerType.Subsection}
               addContentBtnText={intl.formatMessage(sectionMessages.addContentButton)}
               addExistingContentBtnText={intl.formatMessage(sectionMessages.addExistingContentButton)}
             />
