@@ -185,15 +185,19 @@ const AddContentView = ({
     }
     // istanbul ignore if
     if (insideSection) {
-      // Should only allow adding subsections
-      throw new Error('Not implemented');
-      // return [subsectionButton];
+      // Only allow adding subsections
+      return [
+        existingContentButton,
+        subsectionButton,
+      ];
     }
     // istanbul ignore if
     if (insideSubsection) {
-      // Should only allow adding units
-      throw new Error('Not implemented');
-      // return [unitButton];
+      // Only allow adding units
+      return [
+        existingContentButton,
+        unitButton,
+      ];
     }
     // except for existing content, show everything.
     return [
