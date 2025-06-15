@@ -17,7 +17,7 @@ import { type ContainerHit, Highlight, PublishStatus } from '../../search-manage
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveItemsFromCollection } from '../data/apiHooks';
+import { useRemoveContainerChildren, useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -32,28 +32,43 @@ type ContainerMenuProps = {
 
 export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { libraryId, collectionId } = useLibraryContext();
+  const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const {
+    navigateTo,
+    insideCollection,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
+  const removeContainerMutation = useRemoveContainerChildren(containerId);
 
-  const removeFromCollection = () => {
-    removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-      if (sidebarItemInfo?.id === containerKey) {
+  const handleRemove = () => {
+    if (insideCollection) {
+      removeComponentsMutation.mutateAsync([containerKey]).then(() => {
+        if (sidebarItemInfo?.id === containerKey) {
         // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
-    });
+          closeLibrarySidebar();
+        }
+        showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
+      });
+    } else if (insideSection || insideSubsection) {
+      removeContainerMutation.mutateAsync([containerKey]).then(() => {
+        showToast(intl.formatMessage(messages.removeComponentFromContainerSuccess));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+      });
+    }
   };
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
@@ -70,6 +85,16 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   const openContainer = useCallback(() => {
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
+
+  const containerType = getBlockType(containerKey);
+
+  // Determine the parent container type for the remove message
+  const getParentContainerType = () => {
+    if (insideCollection) return 'collection';
+    if (insideSubsection) return 'subsection';
+    if (insideSection) return 'section';
+    return containerType;
+  };
 
   return (
     <>
@@ -90,9 +115,15 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
-          {insideCollection && (
-            <Dropdown.Item onClick={removeFromCollection}>
-              <FormattedMessage {...messages.menuRemoveFromCollection} />
+          {(insideCollection || insideSection || insideSubsection) && (
+            <Dropdown.Item onClick={handleRemove}>
+              <FormattedMessage
+                id={messages.menuRemoveFromContainer.id}
+                defaultMessage={messages.menuRemoveFromContainer.defaultMessage}
+                values={{
+                  containerType: getParentContainerType(),
+                }}
+              />
             </Dropdown.Item>
           )}
           <Dropdown.Item onClick={showManageCollections}>
