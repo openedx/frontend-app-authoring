@@ -28,7 +28,7 @@ describe('<CardItem />', () => {
     const props = studioHomeMock.archivedCourses[0];
     render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
-    expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
+    expect(courseTitleLink).toHaveAttribute('href', `${props.url}`);
     const dropDownMenu = screen.getByRole('button', { name: /course actions/i });
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);
@@ -41,7 +41,7 @@ describe('<CardItem />', () => {
     const props = studioHomeMock.archivedCourses[0];
     render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
-    expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
+    expect(courseTitleLink).toHaveAttribute('href', `${props.url}`);
     const dropDownMenu = screen.getByRole('button', { name: /course actions/i });
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);

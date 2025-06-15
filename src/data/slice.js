@@ -9,25 +9,6 @@ const slice = createSlice({
     courseId: null,
     status: null,
     canChangeProvider: null,
-    waffleFlags: {
-      useNewHomePage: true,
-      useNewCustomPages: true,
-      useNewScheduleDetailsPage: true,
-      useNewAdvancedSettingsPage: true,
-      useNewGradingPage: true,
-      useNewUpdatesPage: true,
-      useNewImportPage: false,
-      useNewExportPage: true,
-      useNewFilesUploadsPage: true,
-      useNewVideoUploadsPage: true,
-      useNewCourseOutlinePage: true,
-      useNewUnitPage: false,
-      useNewCourseTeamPage: true,
-      useNewCertificatesPage: true,
-      useNewTextbooksPage: true,
-      useNewGroupConfigurationsPage: true,
-      useVideoGalleryFlow: false,
-    },
   },
   reducers: {
     updateStatus: (state, { payload }) => {
@@ -37,16 +18,12 @@ const slice = createSlice({
     updateCanChangeProviders: (state, { payload }) => {
       state.canChangeProviders = payload.canChangeProviders;
     },
-    fetchWaffleFlagsSuccess: (state, { payload }) => {
-      state.waffleFlags = payload.waffleFlags;
-    },
   },
 });
 
 export const {
   updateStatus,
   updateCanChangeProviders,
-  fetchWaffleFlagsSuccess,
 } = slice.actions;
 
 export const {

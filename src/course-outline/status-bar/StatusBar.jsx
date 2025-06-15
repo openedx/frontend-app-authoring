@@ -8,12 +8,11 @@ import {
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import { AppContext } from '@edx/frontend-platform/react';
-import { useSelector } from 'react-redux';
 
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { useContentTagsCount } from '../../generic/data/apiHooks';
 import messages from './messages';
@@ -46,7 +45,7 @@ const StatusBar = ({
 }) => {
   const intl = useIntl();
   const { config } = useContext(AppContext);
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const {
     courseReleaseDate,

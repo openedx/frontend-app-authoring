@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { otherLinkURLParams } from './constants';
 import messages from './messages';
 import HelpSidebarLink from './HelpSidebarLink';
@@ -26,7 +25,7 @@ const HelpSidebar = ({
     scheduleAndDetails,
     groupConfigurations,
   } = otherLinkURLParams;
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags();
 
   const showOtherLink = (params) => !pathname.includes(params);
   const generateLegacyURL = (urlParameter) => {
