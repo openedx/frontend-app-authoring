@@ -9,7 +9,12 @@ export { default as SearchKeywordsField } from './SearchKeywordsField';
 export { default as SearchSortWidget } from './SearchSortWidget';
 export { default as Stats } from './Stats';
 export { HIGHLIGHT_PRE_TAG, HIGHLIGHT_POST_TAG, PublishStatus } from './data/api';
-export { useContentSearchConnection, useContentSearchResults, useGetBlockTypes } from './data/apiHooks';
+export {
+  useContentSearchConnection,
+  useContentSearchResults,
+  useGetBlockTypes,
+  buildSearchQueryKey,
+} from './data/apiHooks';
 export { TypesFilterData } from './hooks';
 
 export type {
