@@ -1,3 +1,4 @@
+import { logError } from '@edx/frontend-platform/logging';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
@@ -30,7 +31,7 @@ import {
   setVideoSharingOption,
   setCourseItemOrderList,
   pasteBlock,
-  dismissNotification,
+  dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
   addSection,
@@ -91,6 +92,16 @@ export function fetchCourseOutlineIndexQuery(courseId) {
           errors: getErrorDetails(error, false),
         }));
       }
+    }
+  };
+}
+
+export function syncDiscussionsTopics(courseId) {
+  return async () => {
+    try {
+      await createDiscussionsTopics(courseId);
+    } catch (error) {
+      logError(error);
     }
   };
 }

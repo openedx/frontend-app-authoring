@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import {
   initializeMocks,
@@ -14,6 +15,7 @@ import {
   mockGetCollectionMetadata,
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
+  mockGetContainerMetadata,
 } from '../data/api.mocks';
 
 import { ComponentPicker } from './ComponentPicker';
@@ -40,6 +42,7 @@ mockContentSearchConfig.applyMock();
 mockGetCollectionMetadata.applyMock();
 mockGetContentLibraryV2List.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockGetContainerMetadata.applyMock();
 
 let postMessageSpy: jest.SpyInstance;
 
@@ -49,6 +52,50 @@ describe('<ComponentPicker />', () => {
     postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
     mockSearchResult({ ...mockResult });
+  });
+
+  it('should be able to switch tabs', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
+
+    // Navigate to the components tab
+    const componentsTab = screen.getByRole('tab', { name: 'Components' });
+    fireEvent.click(componentsTab);
+    expect(componentsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the collections tab
+    const collectionsTab = screen.getByRole('tab', { name: 'Collections' });
+    fireEvent.click(collectionsTab);
+    expect(collectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the units tab
+    const unitsTab = screen.getByRole('tab', { name: 'Units' });
+    fireEvent.click(unitsTab);
+    expect(unitsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the subsections tab
+    const subsectionsTab = screen.getByRole('tab', { name: 'Subsections' });
+    fireEvent.click(subsectionsTab);
+    expect(subsectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Navigate to the subsections tab
+    const sectionsTab = screen.getByRole('tab', { name: 'Sections' });
+    fireEvent.click(sectionsTab);
+    expect(sectionsTab).toHaveAttribute('aria-selected', 'true');
+
+    // Go back to Home tab
+    const allContentTab = screen.getByRole('tab', { name: 'All Content' });
+    fireEvent.click(screen.getByRole('tab', { name: 'All Content' }));
+    expect(allContentTab).toHaveAttribute('aria-selected', 'true');
   });
 
   it('should pick component using the component card button', async () => {
@@ -99,6 +146,45 @@ describe('<ComponentPicker />', () => {
     }, '*');
   });
 
+  it('should open the unit sidebar', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the unit card to open the sidebar
+    fireEvent.click((await screen.findByText('Published Test Unit')));
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+    expect(sidebar).toBeInTheDocument();
+    await waitFor(() => expect(within(sidebar).getByText('Published Test Unit')).toBeInTheDocument());
+  });
+
+  it('double clicking a collection should open it', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Mock the collection search result
+    mockSearchResult(mockCollectionResult);
+
+    // Double click on the collection card to open the collection
+    userEvent.dblClick(screen.queryAllByText('Collection 1')[0]);
+
+    // Wait for the collection to load
+    await screen.findByText(/Back to Library/i);
+    await screen.findByText('Introduction to Testing');
+  });
+
   it('should pick component inside a collection using the card', async () => {
     render(<ComponentPicker />);
 
@@ -117,7 +203,7 @@ describe('<ComponentPicker />', () => {
     // Mock the collection search result
     mockSearchResult(mockCollectionResult);
 
-    // Click the add component from the component card
+    // Click the to open the collection
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
 
     // Wait for the collection  to load
@@ -301,5 +387,44 @@ describe('<ComponentPicker />', () => {
     expect(screen.queryByRole('tab', { name: /all content/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: /collections/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: /components/i })).not.toBeInTheDocument();
+  });
+
+  it('should not display never published filter', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    const filterButton = await screen.findByRole('button', { name: /publish status/i });
+    fireEvent.click(filterButton);
+
+    // Verify the filters. Note: It's hard to verify the `published` filter,
+    // because there are many components with that text on the screen, but that's not the important thing.
+    expect(screen.getByText(/modified since publish/i)).toBeInTheDocument();
+    expect(screen.queryByText(/never published/i)).not.toBeInTheDocument();
+  });
+
+  it('should not display never published filter in collection page', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the collection card to open the sidebar
+    fireEvent.click(screen.queryAllByText('Collection 1')[0]);
+
+    // Wait for the content library to load
+    const filterButton = await screen.findByRole('button', { name: /publish status/i });
+    fireEvent.click(filterButton);
+
+    // Verify the filters. Note: It's hard to verify the `published` filter,
+    // because there are many components with that text on the screen, but that's not the important thing.
+    expect(screen.getByText(/modified since publish/i)).toBeInTheDocument();
+    expect(screen.queryByText(/never published/i)).not.toBeInTheDocument();
   });
 });

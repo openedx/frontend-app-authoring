@@ -1,35 +1,15 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-
+// @ts-check
+import { initializeMocks, render } from '../../testUtils';
 import CourseTeamSidebar from './CourseTeamSidebar';
 import messages from './messages';
-import initializeStore from '../../store';
 
 const courseId = 'course-123';
-let store;
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <CourseTeamSidebar courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) => render(<CourseTeamSidebar courseId={courseId} {...props} />);
 
 describe('<CourseTeamSidebar />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('render CourseTeamSidebar component correctly', () => {

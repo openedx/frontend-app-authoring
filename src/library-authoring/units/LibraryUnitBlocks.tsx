@@ -1,8 +1,8 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Button, Icon, Stack, useToggle,
+  ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
-import { Add, Description } from '@openedx/paragon/icons';
+import { Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import {
   useCallback, useContext, useEffect, useState,
@@ -18,7 +18,6 @@ import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import Loading from '../../generic/Loading';
 import TagCount from '../../generic/tag-count';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
@@ -27,9 +26,9 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes, ContentType } from '../routes';
+import { useLibraryRoutes } from '../routes';
 import messages from './messages';
-import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useRunOnNextRender } from '../../utils';
@@ -49,30 +48,31 @@ interface LibraryBlockMetadataWithUniqueId extends LibraryBlockMetadata {
 
 interface ComponentBlockProps {
   block: LibraryBlockMetadataWithUniqueId;
-  preview?: boolean;
+  readOnly?: boolean;
   isDragging?: boolean;
 }
 
 /** Component header */
-const BlockHeader = ({ block }: ComponentBlockProps) => {
+const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
-  const { openComponentInfoSidebar, setSidebarAction } = useSidebarContext();
+  const { setSidebarAction } = useSidebarContext();
 
   const updateMutation = useUpdateXBlockFields(block.originalId);
 
-  const handleSaveDisplayName = (newDisplayName: string) => {
-    updateMutation.mutateAsync({
-      metadata: {
-        display_name: newDisplayName,
-      },
-    }).then(() => {
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        metadata: {
+          display_name: newDisplayName,
+        },
+      });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    }).catch(() => {
+    } catch (err) {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
-    });
+    }
   };
 
   /* istanbul ignore next */
@@ -84,8 +84,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
 
   /* istanbul ignore next */
   const jumpToManageTags = () => {
-    navigateTo({ componentId: block.originalId });
-    openComponentInfoSidebar(block.originalId);
+    navigateTo({ selectedItemId: block.originalId });
     scheduleJumpToTags();
   };
 
@@ -96,13 +95,13 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         gap={2}
         className="font-weight-bold"
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (block.publishedDisplayName ?? block.displayName) : block.displayName}
+          readOnly={readOnly || showOnlyPublished}
         />
       </Stack>
       <ActionRow.Spacer />
@@ -110,7 +109,6 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         direction="horizontal"
         gap={3}
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
         {!showOnlyPublished && block.hasUnpublishedChanges && (
@@ -124,35 +122,29 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
             </Stack>
           </Badge>
         )}
-        <TagCount size="sm" count={block.tagsCount} onClick={jumpToManageTags} />
-        <ComponentMenu usageKey={block.originalId} />
+        <TagCount size="sm" count={block.tagsCount} onClick={readOnly ? undefined : jumpToManageTags} />
+        {!readOnly && <ComponentMenu usageKey={block.originalId} />}
       </Stack>
     </>
   );
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => {
+const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
 
-  const {
-    unitId, collectionId, componentId, openComponentEditor,
-  } = useLibraryContext();
-
-  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
+  const { openComponentEditor } = useLibraryContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
-    navigateTo({ componentId: block.originalId });
+    navigateTo({ selectedItemId: block.originalId });
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
       openComponentEditor(block.originalId);
-    } else {
-      // open current component sidebar
-      openInfoSidebar(block.originalId, collectionId, unitId);
     }
-  }, [block, collectionId, unitId, navigateTo, canEditComponent, openComponentEditor, openInfoSidebar]);
+  }, [block, navigateTo, canEditComponent, openComponentEditor]);
 
   useEffect(() => {
     if (block.isNew) {
@@ -175,33 +167,26 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
         maxHeight: '200px',
         overflowY: 'hidden',
       };
-    } if (componentId === block.originalId) {
-      return {
-        outline: '2px solid black',
-      };
     }
     return {};
-  }, [isDragging, componentId, block]);
-
-  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
-    && sidebarComponentInfo?.id === block.id;
+  }, [isDragging, block]);
 
   return (
     <IframeProvider>
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle()}
-        actions={<BlockHeader block={block} />}
+        actions={<BlockHeader block={block} readOnly={readOnly} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB',
         }}
-        isClickable
-        onClick={(e: { detail: number; }) => handleComponentSelection(e.detail)}
-        disabled={preview}
-        cardClassName={selected ? 'selected' : undefined}
+        isClickable={!readOnly}
+        onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
+        disabled={readOnly}
+        cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -224,25 +209,23 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
 };
 
 interface LibraryUnitBlocksProps {
+  unitId: string;
   /** set to true if it is rendered as preview
-  * This disables drag and drop
+  * This disables drag and drop, title edit and menus
   */
-  preview?: boolean;
+  readOnly?: boolean;
 }
 
-export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
+export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadataWithUniqueId[]>([]);
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
-  const unitId = sidebarComponentInfo?.id;
+  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
 
-  const { openAddContentSidebar } = useSidebarContext();
+  const readOnly = componentReadOnly || libraryReadOnly;
 
   const orderMutator = useUpdateContainerChildren(unitId);
   const {
@@ -305,43 +288,10 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             key={`${block.originalId}-${idx}-${block.modified}`}
             block={block}
             isDragging={hidePreviewFor === block.id}
+            readOnly={readOnly}
           />
         ))}
       </DraggableList>
-      {!preview && (
-        <div className="d-flex">
-          <div className="w-100 mr-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={openAddContentSidebar}
-              block
-            >
-              {intl.formatMessage(messages.newContentButton)}
-            </Button>
-          </div>
-          <div className="w-100 ml-2">
-            <Button
-              className="ml-2"
-              iconBefore={Add}
-              variant="outline-primary rounded-0"
-              disabled={readOnly}
-              onClick={showAddLibraryContentModal}
-              block
-            >
-              {intl.formatMessage(messages.addExistingContentButton)}
-            </Button>
-            <PickLibraryContentModal
-              isOpen={isAddLibraryContentModalOpen}
-              onClose={closeAddLibraryContentModal}
-              extraFilter={['NOT block_type = "unit"', 'NOT type = "collection"']}
-              visibleTabs={[ContentType.components]}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

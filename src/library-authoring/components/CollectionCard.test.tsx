@@ -2,13 +2,20 @@ import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
 import {
-  initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within,
+  initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within, fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
 import messages from './messages';
 import { getLibraryCollectionApiUrl, getLibraryCollectionRestoreApiUrl } from '../data/api';
+
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
 
 const collectionHitSample: CollectionHit = {
   id: 'lib-collectionorg1democourse-collection-display-name',
@@ -36,7 +43,11 @@ const collectionHitSample: CollectionHit = {
 let axiosMock: MockAdapter;
 let mockShowToast;
 
+const libraryId = 'lib:org1:Demo_Course';
+
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
+  path: '/library/:libraryId',
+  params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider
       libraryId="lib:Axim:TEST"
@@ -78,10 +89,33 @@ describe('<CollectionCard />', () => {
     userEvent.click(screen.getByTestId('collection-card-menu-toggle'));
 
     // Open menu item
-    const openMenuItem = screen.getByRole('link', { name: 'Open' });
+    const openMenuItem = screen.getByRole('button', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
 
-    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name');
+    fireEvent.click(openMenuItem);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({
+        pathname: `/library/${libraryId}/collection/${collectionHitSample.blockId}`,
+        search: '',
+      });
+    });
+  });
+
+  it('should navigate to the collection if double clicked', async () => {
+    render(<CollectionCard hit={collectionHitSample} />);
+
+    // Card title
+    const cardTitle = screen.getByText('Collection Display Formated Name');
+    expect(cardTitle).toBeInTheDocument();
+    userEvent.dblClick(cardTitle);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({
+        pathname: `/library/${libraryId}/collection/${collectionHitSample.blockId}`,
+        search: '',
+      });
+    });
   });
 
   it('should show confirmation box, delete collection and show toast to undo deletion', async () => {

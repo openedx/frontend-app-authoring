@@ -487,4 +487,39 @@ describe('<SearchUI />', () => {
       expect(queryByLabelText(/^Lightcast/i)).toBeInTheDocument();
     });
   });
+
+  describe('searchKeywords', () => {
+    let rendered: RenderResult;
+    beforeEach(async () => {
+      rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
+      // Wait for initial search request
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    });
+
+    it('should update search results when keywords are entered', async () => {
+      const { getByRole, getByText } = rendered;
+      const searchBox = getByRole('searchbox');
+      fireEvent.change(searchBox, { target: { value: 'test search' } });
+      await waitFor(() => {
+        expect(fetchMock).toHaveLastFetched((_url, req) => {
+          const requestData = JSON.parse(req.body?.toString() ?? '');
+          // Check both the first and second query.q
+          return requestData?.queries[0]?.q === 'test search'
+            && requestData?.queries[1]?.q === 'test search';
+        });
+      });
+      expect(getByText('6 results found')).toBeInTheDocument();
+      expect(getByText(mockResultDisplayName)).toBeInTheDocument();
+    });
+
+    it('should clear search keywords when clear button is clicked', async () => {
+      const { getByRole, getByText } = rendered;
+      const searchBox = getByRole('searchbox');
+      fireEvent.change(searchBox, { target: { value: 'test search' } });
+      const clearButton = getByRole('button', { name: /clear/i });
+      fireEvent.click(clearButton);
+      expect(searchBox).toHaveValue('');
+      expect(getByText('Start searching to find content')).toBeInTheDocument();
+    });
+  });
 });

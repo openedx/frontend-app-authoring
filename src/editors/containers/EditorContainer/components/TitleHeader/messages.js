@@ -27,10 +27,20 @@ const messages = defineMessages({
     defaultMessage: 'Cancel',
     description: 'Screen reader label title for icon button to edit the xblock title',
   },
+  cancelAltText: {
+    id: 'authoring.texteditor.header.cancelAltText',
+    defaultMessage: 'Cancel',
+    description: 'Alt text for icon button to cancel edit the xblock title',
+  },
   saveTitleEdit: {
     id: 'authoring.texteditor.header.saveTitleEdit',
     defaultMessage: 'Save',
     description: 'Screen reader label title for icon button to edit the xblock title',
+  },
+  saveAltText: {
+    id: 'authoring.texteditor.header.saveAltText',
+    defaultMessage: 'Save',
+    description: 'Alt text for icon button to save edit the xblock title',
   },
 });
 

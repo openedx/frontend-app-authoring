@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { camelCaseObject } from '@edx/frontend-platform';
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
-import { getBlockType } from '../../generic/key-utils';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
 import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
 import downstreamLinkInfo from '../../search-manager/data/__mocks__/downstream-links.json';
@@ -472,29 +472,48 @@ mockGetCollectionMetadata.applyMock = () => {
  */
 export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
   switch (containerId) {
-    case mockGetContainerMetadata.containerIdError:
+    case mockGetContainerMetadata.unitIdError:
+    case mockGetContainerMetadata.sectionIdError:
+    case mockGetContainerMetadata.subsectionIdError:
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
         path: api.getLibraryContainerApiUrl(containerId),
       });
-    case mockGetContainerMetadata.containerIdLoading:
+    case mockGetContainerMetadata.unitIdLoading:
+    case mockGetContainerMetadata.sectionIdLoading:
+    case mockGetContainerMetadata.subsectionIdLoading:
       return new Promise(() => { });
-    case mockGetContainerMetadata.containerIdWithCollections:
+    case mockGetContainerMetadata.unitIdWithCollections:
       return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
+    case mockGetContainerMetadata.sectionId:
+    case mockGetContainerMetadata.sectionIdEmpty:
+      return Promise.resolve(mockGetContainerMetadata.sectionData);
+    case mockGetContainerMetadata.subsectionId:
+    case mockGetContainerMetadata.subsectionIdEmpty:
+      return Promise.resolve(mockGetContainerMetadata.subsectionData);
     default:
       return Promise.resolve(mockGetContainerMetadata.containerData);
   }
 }
-mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
-mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
-mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
-mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.containerTagsId;
-mockGetContainerMetadata.containerIdWithCollections = 'lct:org:lib:unit:container_collections';
+mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
+mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
+mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
+mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
+mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
+mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
+mockGetContainerMetadata.subsectionIdError = 'lct:org:lib:section:section_error';
+mockGetContainerMetadata.unitIdLoading = 'lct:org:lib:unit:container_loading';
+mockGetContainerMetadata.sectionIdLoading = 'lct:org:lib:section:section_loading';
+mockGetContainerMetadata.subsectionIdLoading = 'lct:org:lib:subsection:subsection_loading';
+mockGetContainerMetadata.unitIdForTags = mockContentTaxonomyTagsData.containerTagsId;
+mockGetContainerMetadata.unitIdWithCollections = 'lct:org:lib:unit:container_collections';
 mockGetContainerMetadata.containerData = {
   id: 'lct:org:lib:unit:test-unit-9a2072',
-  containerType: 'unit',
+  containerType: ContainerType.Unit,
   displayName: 'Test Unit',
+  publishedDisplayName: 'Published Test Unit',
   created: '2024-09-19T10:00:00Z',
   createdBy: 'test_author',
   lastPublished: '2024-09-20T10:00:00Z',
@@ -504,10 +523,25 @@ mockGetContainerMetadata.containerData = {
   modified: '2024-09-20T11:00:00Z',
   hasUnpublishedChanges: true,
   collections: [],
+  tagsCount: 0,
+} satisfies api.Container;
+mockGetContainerMetadata.sectionData = {
+  ...mockGetContainerMetadata.containerData,
+  id: 'lct:org:lib:section:test-section-1',
+  containerType: ContainerType.Section,
+  displayName: 'Test section',
+  publishedDisplayName: 'Test section',
+} satisfies api.Container;
+mockGetContainerMetadata.subsectionData = {
+  ...mockGetContainerMetadata.containerData,
+  id: 'lb:org1:Demo_course:subsection:subsection-0',
+  containerType: ContainerType.Subsection,
+  displayName: 'Test subsection',
+  publishedDisplayName: 'Test subsection',
 } satisfies api.Container;
 mockGetContainerMetadata.containerDataWithCollections = {
   ...mockGetContainerMetadata.containerData,
-  id: mockGetContainerMetadata.containerIdWithCollections,
+  id: mockGetContainerMetadata.unitIdWithCollections,
   collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.Container;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
@@ -523,7 +557,9 @@ mockGetContainerMetadata.applyMock = () => {
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
   switch (containerId) {
-    case mockGetContainerMetadata.containerId:
+    case mockGetContainerMetadata.unitId:
+    case mockGetContainerMetadata.sectionId:
+    case mockGetContainerMetadata.subsectionId:
       numChildren = 3;
       break;
     case mockGetContainerChildren.fiveChildren:
@@ -536,14 +572,23 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       numChildren = 0;
       break;
   }
+  let blockType = 'html';
+  let name = 'text';
+  if (containerId.includes('subsection')) {
+    blockType = 'unit';
+    name = blockType;
+  } else if (containerId.includes('section')) {
+    blockType = 'subsection';
+    name = blockType;
+  }
   return Promise.resolve(
     Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
       {
         ...child,
         // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `lb:org1:Demo_course:html:text-${idx}`,
-        displayName: `text block ${idx}`,
-        publishedDisplayName: `text block published ${idx}`,
+        id: `lb:org1:Demo_course:${blockType}:${name}-${idx}`,
+        displayName: `${name} block ${idx}`,
+        publishedDisplayName: `${name} block published ${idx}`,
       }
     )),
   );

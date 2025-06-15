@@ -10,7 +10,6 @@ import {
 import { executeThunk } from '../utils';
 import { RequestStatus } from '../data/constants';
 import { getApiWaffleFlagsUrl } from '../data/api';
-import { fetchWaffleFlags } from '../data/thunks';
 import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
@@ -62,7 +61,6 @@ describe('CustomPages', () => {
         useNewScheduleDetailsPage: true,
         useNewCourseOutlinePage: true,
       });
-    await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
   it('should ', async () => {
     renderComponent();

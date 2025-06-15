@@ -19,9 +19,9 @@ import messages from './messages';
 export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
   const { readOnly } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen in production
   if (!usageKey) {
     throw new Error('sidebarComponentUsageKey is required to render ComponentAdvancedAssets');

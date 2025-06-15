@@ -85,10 +85,10 @@ describe('<ManageCollections />', () => {
   });
 
   it('should show all collections in library and allow users to select for the current container', async () => {
-    const url = getLibraryContainerCollectionsUrl(mockGetContainerMetadata.containerIdWithCollections);
+    const url = getLibraryContainerCollectionsUrl(mockGetContainerMetadata.unitIdWithCollections);
     axiosMock.onPatch(url).reply(200);
     render(<ManageCollections
-      opaqueKey={mockGetContainerMetadata.containerIdWithCollections}
+      opaqueKey={mockGetContainerMetadata.unitIdWithCollections}
       collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
       useUpdateCollectionsHook={useUpdateContainerCollections}
     />);

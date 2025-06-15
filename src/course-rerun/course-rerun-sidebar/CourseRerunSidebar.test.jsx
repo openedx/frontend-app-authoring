@@ -1,43 +1,15 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-
-import initializeStore from '../../store';
+// @ts-check
+import { initializeMocks, render } from '../../testUtils';
 import CourseRerunSideBar from '.';
 import messages from './messages';
 
-let store;
-const mockPathname = '/foo-bar';
 const courseId = '123';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
-
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <CourseRerunSideBar courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) => render(<CourseRerunSideBar courseId={courseId} {...props} />);
 
 describe('<CourseRerunSideBar />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('render CourseRerunSideBar successfully', () => {

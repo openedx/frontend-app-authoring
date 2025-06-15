@@ -1,39 +1,42 @@
-import 'CourseAuthoring/editors/setupEditorTest';
-
-import { shallow } from '@edx/react-unit-test-utils';
+import React from 'react';
+import {
+  render, screen, fireEvent, initializeMocks,
+} from '../../../../../../testUtils';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ProblemTypeSelect from './ProblemTypeSelect';
 
 describe('ProblemTypeSelect', () => {
-  const props = {
-    setSelected: jest.fn(),
-  };
+  beforeEach(() => {
+    initializeMocks();
+  });
 
-  describe('snapshot', () => {
-    test('SINGLESELECT', () => {
-      expect(shallow(
-        <ProblemTypeSelect {...props} selected={ProblemTypeKeys.SINGLESELECT} />,
-      ).snapshot).toMatchSnapshot();
-    });
-    test('MULTISELECT', () => {
-      expect(shallow(
-        <ProblemTypeSelect {...props} selected={ProblemTypeKeys.MULTISELECT} />,
-      ).snapshot).toMatchSnapshot();
-    });
-    test('DROPDOWN', () => {
-      expect(shallow(
-        <ProblemTypeSelect {...props} selected={ProblemTypeKeys.DROPDOWN} />,
-      ).snapshot).toMatchSnapshot();
-    });
-    test('NUMERIC', () => {
-      expect(shallow(
-        <ProblemTypeSelect {...props} selected={ProblemTypeKeys.NUMERIC} />,
-      ).snapshot).toMatchSnapshot();
-    });
-    test('TEXTINPUT', () => {
-      expect(shallow(
-        <ProblemTypeSelect {...props} selected={ProblemTypeKeys.TEXTINPUT} />,
-      ).snapshot).toMatchSnapshot();
-    });
+  it('renders the component with the selected element checked', () => {
+    render(<ProblemTypeSelect setSelected={jest.fn()} selected={ProblemTypeKeys.SINGLESELECT} />);
+    expect(screen.getByRole('radiogroup')).toBeInTheDocument();
+    const radioSingle = screen.getByDisplayValue('multiplechoiceresponse');
+    expect(radioSingle).toBeChecked();
+  });
+
+  it('does not render advanced element', () => {
+    render(<ProblemTypeSelect setSelected={jest.fn()} selected={ProblemTypeKeys.MULTISELECT} />);
+    expect(screen.getByRole('radiogroup')).toBeInTheDocument();
+    expect(screen.queryByText('advanced')).not.toBeInTheDocument();
+  });
+
+  it('should call setSelected with correct value when clicking one option', () => {
+    const mockSetSelected = jest.fn();
+    render(<ProblemTypeSelect setSelected={mockSetSelected} selected={ProblemTypeKeys.NUMERIC} />);
+    const multiSelectOption = screen.getByRole('button', { name: 'Multi-select' });
+    fireEvent.click(multiSelectOption);
+    expect(mockSetSelected).toHaveBeenCalledWith('choiceresponse');
+  });
+
+  it('should call setSelected with blankadvanced when clicking the advanced button', () => {
+    const mockSetSelected = jest.fn();
+    render(<ProblemTypeSelect setSelected={mockSetSelected} selected={ProblemTypeKeys.MULTISELECT} />);
+    const button = screen.getByRole('button', { name: 'Advanced problem types' });
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
+    expect(mockSetSelected).toHaveBeenCalledWith('blankadvanced');
   });
 });

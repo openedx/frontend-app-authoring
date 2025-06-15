@@ -1,12 +1,9 @@
-import React from 'react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
-
-import initializeStore from '../store';
+import {
+  render as baseRender,
+  fireEvent,
+  initializeMocks,
+  waitFor,
+} from '../testUtils';
 import { executeThunk } from '../utils';
 import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';
@@ -28,39 +25,22 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   />
 )));
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
-
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <AdvancedSettings intl={injectIntl} courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>
+const render = () => baseRender(
+  <AdvancedSettings courseId={courseId} />,
+  { path: mockPathname },
 );
 
 describe('<AdvancedSettings />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(200, advancedSettingsMock);
   });
   it('should render without errors', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = render();
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       const advancedSettingsElement = getByText(messages.headingTitle.defaultMessage, {
@@ -72,7 +52,7 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should render setting element', async () => {
-    const { getByText, queryByText } = render(<RootWrapper />);
+    const { getByText, queryByText } = render();
     await waitFor(() => {
       const advancedModuleListTitle = getByText(/Advanced Module List/i);
       expect(advancedModuleListTitle).toBeInTheDocument();
@@ -80,7 +60,7 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should change to onСhange', async () => {
-    const { getByLabelText } = render(<RootWrapper />);
+    const { getByLabelText } = render();
     await waitFor(() => {
       const textarea = getByLabelText(/Advanced Module List/i);
       expect(textarea).toBeInTheDocument();
@@ -89,7 +69,7 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should display a warning alert', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+    const { getByLabelText, getByText } = render();
     await waitFor(() => {
       const textarea = getByLabelText(/Advanced Module List/i);
       fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
@@ -100,7 +80,7 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should display a tooltip on clicking on the icon', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+    const { getByLabelText, getByText } = render();
     await waitFor(() => {
       const button = getByLabelText(/Show help text/i);
       fireEvent.click(button);
@@ -108,7 +88,7 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should change deprecated button text ', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = render();
     await waitFor(() => {
       const showDeprecatedItemsBtn = getByText(/Show Deprecated Settings/i);
       expect(showDeprecatedItemsBtn).toBeInTheDocument();
@@ -118,7 +98,7 @@ describe('<AdvancedSettings />', () => {
     expect(getByText('Certificate web/html view enabled')).toBeInTheDocument();
   });
   it('should reset to default value on click on Cancel button', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+    const { getByLabelText, getByText } = render();
     let textarea;
     await waitFor(() => {
       textarea = getByLabelText(/Advanced Module List/i);
@@ -129,7 +109,7 @@ describe('<AdvancedSettings />', () => {
     expect(textarea.value).toBe('[]');
   });
   it('should update the textarea value and display the updated value after clicking "Change manually"', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+    const { getByLabelText, getByText } = render();
     let textarea;
     await waitFor(() => {
       textarea = getByLabelText(/Advanced Module List/i);
@@ -141,7 +121,7 @@ describe('<AdvancedSettings />', () => {
     expect(textarea.value).toBe('[3, 2, 1,');
   });
   it('should show success alert after save', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+    const { getByLabelText, getByText } = render();
     let textarea;
     await waitFor(() => {
       textarea = getByLabelText(/Advanced Module List/i);

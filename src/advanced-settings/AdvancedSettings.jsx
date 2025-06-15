@@ -5,7 +5,7 @@ import {
   Container, Button, Layout, StatefulButton, TransitionReplace,
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
@@ -26,7 +26,8 @@ import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import getPageHeadTitle from '../generic/utils';
 
-const AdvancedSettings = ({ intl, courseId }) => {
+const AdvancedSettings = ({ courseId }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
@@ -278,8 +279,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
 };
 
 AdvancedSettings.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(AdvancedSettings);
+export default AdvancedSettings;

@@ -1,13 +1,8 @@
-import MockAdapter from 'axios-mock-adapter';
-import { cleanup, render, waitFor } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+// @ts-check
 import userEvent from '@testing-library/user-event';
 
+import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
-import initializeStore from '../store';
 import { executeThunk } from '../utils';
 import { getTextbooksApiUrl } from './data/api';
 import { fetchTextbooksQuery } from './data/thunk';
@@ -20,27 +15,14 @@ let store;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
-const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <Textbooks courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = () => render(<Textbooks courseId={courseId} />);
 
 describe('<Textbooks />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
       .reply(200, textbooksMock);
@@ -73,7 +55,6 @@ describe('<Textbooks />', () => {
   });
 
   it('renders Textbooks component with empty placeholder correctly', async () => {
-    cleanup();
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
       .reply(200, emptyTextbooksMock);

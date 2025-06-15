@@ -1,13 +1,13 @@
-import { getConfig, initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
-import initializeStore from '../store';
+import {
+  initializeMocks,
+  fireEvent,
+  render,
+  waitFor,
+} from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
@@ -37,26 +37,13 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => mCookie);
 });
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <CourseExportPage intl={injectIntl} courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>
-);
+const renderComponent = () => render(<CourseExportPage courseId={courseId} />);
 
 describe('<CourseExportPage />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
@@ -64,7 +51,7 @@ describe('<CourseExportPage />', () => {
     cookies.get.mockReturnValue(null);
   });
   it('should render page title correctly', async () => {
-    render(<RootWrapper />);
+    renderComponent();
     await waitFor(() => {
       const helmet = Helmet.peek();
       expect(helmet.title).toEqual(
@@ -73,7 +60,7 @@ describe('<CourseExportPage />', () => {
     });
   });
   it('should render without errors', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
@@ -86,7 +73,7 @@ describe('<CourseExportPage />', () => {
     });
   });
   it('should start exporting on click', async () => {
-    const { getByText, container } = render(<RootWrapper />);
+    const { getByText, container } = renderComponent();
     const button = container.querySelector('.btn-primary');
     fireEvent.click(button);
     expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
@@ -95,7 +82,7 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.EXPORTING, exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' } });
-    const { getByText, queryByText, container } = render(<RootWrapper />);
+    const { getByText, queryByText, container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
@@ -108,45 +95,45 @@ describe('<CourseExportPage />', () => {
   });
   it('should fetch status without clicking when cookies has', async () => {
     cookies.get.mockReturnValue({ date: 1679787000 });
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
     expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
   });
   it('should show download path for relative path', async () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' });
-    const { getByText, container } = render(<RootWrapper />);
+    const { getByText, container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
-    expect(downloadButton).toBeInTheDocument();
-    expect(downloadButton.getAttribute('href')).toEqual(`${getConfig().STUDIO_BASE_URL}/test-download-path.test`);
+    await waitFor(() => {
+      const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
+      expect(downloadButton).toBeInTheDocument();
+      expect(downloadButton.getAttribute('href')).toEqual(`${getConfig().STUDIO_BASE_URL}/test-download-path.test`);
+    }, { timeout: 4_000 });
   });
   it('should show download path for absolute path', async () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: 'http://test-download-path.test' });
-    const { getByText, container } = render(<RootWrapper />);
+    const { getByText, container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
-    expect(downloadButton).toBeInTheDocument();
-    expect(downloadButton.getAttribute('href')).toEqual('http://test-download-path.test');
+    await waitFor(() => {
+      const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
+      expect(downloadButton).toBeInTheDocument();
+      expect(downloadButton.getAttribute('href')).toEqual('http://test-download-path.test');
+    }, { timeout: 4_000 });
   });
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(403);
-    const { getByRole, container } = render(<RootWrapper />);
+    const { getByRole, container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    expect(getByRole('alert')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByRole('alert')).toBeInTheDocument();
+    }, { timeout: 4_000 });
     const { loadingStatus } = store.getState().courseExport;
     expect(loadingStatus).toEqual(RequestStatus.DENIED);
   });
@@ -155,12 +142,12 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(404);
-    const { container } = render(<RootWrapper />);
+    const { container } = renderComponent();
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    const { loadingStatus } = store.getState().courseExport;
-    expect(loadingStatus).toEqual(RequestStatus.FAILED);
+    await waitFor(() => {
+      const { loadingStatus } = store.getState().courseExport;
+      expect(loadingStatus).toEqual(RequestStatus.FAILED);
+    }, { timeout: 4_000 });
   });
 });

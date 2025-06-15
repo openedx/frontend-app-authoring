@@ -1,62 +1,133 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { EditProblemViewInternal as EditProblemView } from '.';
-import { AnswerWidgetInternal as AnswerWidget } from './AnswerWidget';
+import { screen, fireEvent, initializeMocks } from '../../../../../testUtils';
+import editorRender from '../../../../editorTestRender';
+import { EditProblemViewInternal, mapStateToProps } from './index';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
-import RawEditor from '../../../../sharedComponents/RawEditor';
-import { formatMessage } from '../../../../testUtils';
+import { selectors } from '../../../../data/redux';
 
-describe('EditorProblemView component', () => {
-  test('renders simple view', () => {
-    const wrapper = shallow(<EditProblemView
-      problemType={ProblemTypeKeys.SINGLESELECT}
-      problemState={{}}
-      assets={{}}
-      intl={{ formatMessage }}
-    />);
-    expect(wrapper.snapshot).toMatchSnapshot();
+const { saveBlock } = require('../../../../hooks');
+const { saveWarningModalToggle } = require('./hooks');
 
-    const AnswerWidgetComponent = wrapper.shallowWrapper.props.children[1].props.children[1].props.children;
-    expect(AnswerWidgetComponent.props.problemType).toBe(ProblemTypeKeys.SINGLESELECT);
-    expect(wrapper.instance.findByType(RawEditor).length).toBe(0);
+jest.mock('./AnswerWidget', () => function mockAnswerWidget() {
+  return <div>AnswerWidget</div>;
+});
+jest.mock('./SettingsWidget', () => function mockSettingsWidget() {
+  return <div>SettingsWidget</div>;
+});
+jest.mock('./QuestionWidget', () => function mmockQuestionWidget() {
+  return <div>QuestionWidget</div>;
+});
+jest.mock('../../../EditorContainer', () => function mockEditorContainer({ children }) {
+  return <section>{children}</section>;
+});
+jest.mock('../../../../sharedComponents/RawEditor', () => function mockRawEditor({ lang, content }) {
+  return <div>{lang}:{content}</div>;
+});
+jest.mock('./ExplanationWidget', () => function mockExplanationWidget() {
+  return <div>ExplanationWidget</div>;
+});
+jest.mock('../../../../hooks', () => ({
+  saveBlock: jest.fn(),
+}));
+jest.mock('./hooks', () => ({
+  checkIfEditorsDirty: jest.fn(() => false),
+  parseState: jest.fn(() => () => 'parsed-content'),
+  saveWarningModalToggle: jest.fn(() => ({
+    isSaveWarningModalOpen: true,
+    openSaveWarningModal: jest.fn(),
+    closeSaveWarningModal: jest.fn(),
+  })),
+  getContent: jest.fn(() => 'content'),
+}));
+
+describe('EditProblemView', () => {
+  const baseProps = {
+    problemType: 'standard',
+    isMarkdownEditorEnabled: false,
+    problemState: { rawOLX: '<problem></problem>', rawMarkdown: '## Problem' },
+    lmsEndpointUrl: null,
+    returnUrl: '/return',
+    analytics: {},
+    isDirty: false,
+    returnFunction: jest.fn(),
+  };
+
+  beforeEach(() => {
+    initializeMocks();
   });
 
-  test('renders raw editor for advanced problem type', () => {
-    const wrapper = shallow(<EditProblemView
-      problemType={ProblemTypeKeys.ADVANCED}
-      isMarkdownEditorEnabled={false}
-      problemState={{ rawOLX: '<problem>...</problem>' }}
-      assets={{}}
-      intl={{ formatMessage }}
-    />);
-
-    expect(wrapper.snapshot).toMatchSnapshot();
-
-    const rawEditor = wrapper.instance.findByType(RawEditor);
-    expect(rawEditor.length).toBe(1);
-    expect(rawEditor[0].props.lang).toBe('xml');
-
-    const answerWidget = wrapper.instance.findByType(AnswerWidget);
-    expect(answerWidget.length).toBe(0); // since advanced problem type skips AnswerWidget
+  it('renders standard problem widgets', () => {
+    editorRender(<EditProblemViewInternal {...baseProps} />);
+    expect(screen.getByText('QuestionWidget')).toBeInTheDocument();
+    expect(screen.getByText('ExplanationWidget')).toBeInTheDocument();
+    expect(screen.getByText('AnswerWidget')).toBeInTheDocument();
+    expect(screen.getByText('SettingsWidget')).toBeInTheDocument();
+    expect(screen.queryByText(/xml:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/markdown:/)).not.toBeInTheDocument();
   });
 
-  test('renders markdown editor when isMarkdownEditorEnabled is true', () => {
-    const wrapper = shallow(<EditProblemView
-      problemType={ProblemTypeKeys.SINGLESELECT}
-      isMarkdownEditorEnabled
-      problemState={{ rawMarkdown: '# Markdown content' }}
-      assets={{}}
-      intl={{ formatMessage }}
-    />);
+  it('renders advanced problem with RawEditor', () => {
+    editorRender(<EditProblemViewInternal {...baseProps} problemType={ProblemTypeKeys.ADVANCED} />);
+    expect(screen.getByText('xml:<problem></problem>')).toBeInTheDocument();
+    expect(screen.getByText('SettingsWidget')).toBeInTheDocument();
+  });
 
-    expect(wrapper.snapshot).toMatchSnapshot();
+  it('renders markdown editor with RawEditor', () => {
+    editorRender(<EditProblemViewInternal {...baseProps} isMarkdownEditorEnabled />);
+    expect(screen.getByText('markdown:## Problem')).toBeInTheDocument();
+  });
 
-    const rawEditor = wrapper.instance.findByType(RawEditor);
-    expect(rawEditor.length).toBe(1);
-    expect(rawEditor[0].props.lang).toBe('markdown');
+  it('shows AlertModal with correct title/body for standard', () => {
+    editorRender(<EditProblemViewInternal {...baseProps} />);
+    expect(screen.getAllByText('No correct answer has been specified.').length).toBeGreaterThan(0);
+  });
 
-    const answerWidget = wrapper.instance.findByType(AnswerWidget);
-    expect(answerWidget.length).toBe(0); // since markdown view skips AnswerWidget
+  it('calls saveBlock when save button is clicked', () => {
+    editorRender(<EditProblemViewInternal {...baseProps} />);
+    const saveBtn = screen.getByRole('button', { name: 'Ok' });
+    fireEvent.click(saveBtn);
+    expect(saveBlock).toHaveBeenCalled();
+  });
+
+  it('calls closeSaveWarningModal when cancel button is clicked', () => {
+    const closeSaveWarningModal = jest.fn();
+    saveWarningModalToggle.mockReturnValue({
+      isSaveWarningModalOpen: true,
+      openSaveWarningModal: jest.fn(),
+      closeSaveWarningModal,
+    });
+    editorRender(<EditProblemViewInternal {...baseProps} />);
+    const cancelBtn = screen.getByRole('button', { name: 'Cancel' });
+    fireEvent.click(cancelBtn);
+    expect(closeSaveWarningModal).toHaveBeenCalled();
+  });
+
+  it('sets isMarkdownEditorEnabled true only if both selectors return true', () => {
+    const state = { };
+
+    selectors.problem = {
+      isMarkdownEditorEnabled: jest.fn(() => true),
+      problemType: jest.fn(),
+      completeState: jest.fn(),
+      isDirty: jest.fn(),
+    };
+    selectors.app = {
+      isMarkdownEditorEnabledForCourse: jest.fn(() => true),
+      analytics: jest.fn(),
+      lmsEndpointUrl: jest.fn(),
+      returnUrl: jest.fn(),
+    };
+
+    const props = mapStateToProps(state);
+    expect(selectors.problem.isMarkdownEditorEnabled).toHaveBeenCalledWith(state);
+    expect(selectors.app.isMarkdownEditorEnabledForCourse).toHaveBeenCalledWith(state);
+    expect(props.isMarkdownEditorEnabled).toBe(true);
+
+    selectors.problem.isMarkdownEditorEnabled.mockReturnValue(false);
+    expect(mapStateToProps(state).isMarkdownEditorEnabled).toBe(false);
+
+    selectors.problem.isMarkdownEditorEnabled.mockReturnValue(true);
+    selectors.app.isMarkdownEditorEnabledForCourse.mockReturnValue(false);
+    expect(mapStateToProps(state).isMarkdownEditorEnabled).toBe(false);
   });
 });

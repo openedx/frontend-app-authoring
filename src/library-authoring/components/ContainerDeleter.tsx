@@ -24,7 +24,7 @@ const ContainerDeleter = ({
 }: ContainerDeleterProps) => {
   const intl = useIntl();
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     closeLibrarySidebar,
   } = useSidebarContext();
   const deleteContainerMutation = useDeleteContainer(containerId);
@@ -63,7 +63,7 @@ const ContainerDeleter = ({
 
   const onDelete = useCallback(async () => {
     await deleteContainerMutation.mutateAsync().then(() => {
-      if (sidebarComponentInfo?.id === containerId) {
+      if (sidebarItemInfo?.id === containerId) {
         closeLibrarySidebar();
       }
       showToast(
@@ -78,7 +78,7 @@ const ContainerDeleter = ({
     }).finally(() => {
       close();
     });
-  }, [sidebarComponentInfo, showToast, deleteContainerMutation]);
+  }, [sidebarItemInfo, showToast, deleteContainerMutation]);
 
   return (
     <DeleteModal

@@ -59,10 +59,6 @@ export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
     {
-      id: 'mobileFriendlyVideo',
-      pacingTypeFilter: CHECKLIST_FILTERS.ALL,
-    },
-    {
       id: 'diverseSequences',
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },

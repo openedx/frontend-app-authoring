@@ -62,20 +62,7 @@ export const hasShortVideoDuration = (videos) => {
   if (totalNumber === 0) {
     return true;
   }
-  if (totalNumber > 0 && durations.median <= 600) {
-    return true;
-  }
-
-  return false;
-};
-
-export const hasMobileFriendlyVideos = (videos) => {
-  const { totalNumber, numMobileEncoded } = videos;
-
-  if (totalNumber === 0) {
-    return true;
-  }
-  if (totalNumber > 0 && (numMobileEncoded / totalNumber) >= 0.9) {
+  if (totalNumber > 0 && durations.median !== null && durations.median <= 600) {
     return true;
   }
 
@@ -89,7 +76,7 @@ export const hasDiverseSequences = (subsections) => {
     return false;
   }
   if (totalVisible > 0) {
-    return ((numWithOneBlockType / totalVisible) < 0.2);
+    return ((numWithOneBlockType / totalVisible) <= 0.2);
   }
 
   return false;
@@ -101,6 +88,6 @@ export const hasWeeklyHighlights = (sections) => {
   return highlightsActiveForCourse && highlightsEnabled;
 };
 
-export const hasShortUnitDepth = (units) => units.numBlocks.median <= 3;
+export const hasShortUnitDepth = (units) => units.numBlocks.median <= 3 && units.totalVisible > 0;
 
 export const hasProctoringEscalationEmail = (proctoring) => proctoring.hasProctoringEscalationEmail;

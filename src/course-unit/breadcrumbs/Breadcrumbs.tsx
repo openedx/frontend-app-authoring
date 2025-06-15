@@ -7,13 +7,13 @@ import {
 } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import { getCourseSectionVertical } from '../data/selectors';
 import { adoptCourseSectionUrl } from '../utils';
 
 const Breadcrumbs = ({ courseId, parentUnitId }: { courseId: string, parentUnitId: string }) => {
   const { ancestorXblocks = [] } = useSelector(getCourseSectionVertical);
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const getPathToCourseOutlinePage = (url) => (waffleFlags.useNewCourseOutlinePage
     ? url : `${getConfig().STUDIO_BASE_URL}${url}`);

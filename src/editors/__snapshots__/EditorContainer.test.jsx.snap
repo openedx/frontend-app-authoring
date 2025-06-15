@@ -52,7 +52,7 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
     className="m-3"
     description="Edits made here will only be reflected in this course. These edits may be overridden later if updates are accepted."
     icon={[Function]}
-    show="lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd"
+    show={true}
     title="Editing Content from a Library"
     variant="warning"
   />
@@ -60,7 +60,6 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
     blockId="company-id1"
     blockType="html"
     courseId="cOuRsEId"
-    isMarkdownEditorEnabledForCourse={true}
     lmsEndpointUrl="http://localhost:18000"
     onClose={null}
     returnFunction={null}

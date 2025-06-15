@@ -6,21 +6,33 @@ import {
   initializeMocks,
   waitFor,
 } from '../../testUtils';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import {
   mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
 } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
+import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 
 mockContentLibrary.applyMock(); // Not required, but avoids 404 errors in the logs when <LibraryProvider> loads data
 mockLibraryBlockMetadata.applyMock();
+mockContentSearchConfig.applyMock();
 const mockDelete = mockDeleteLibraryBlock.applyMock();
 const mockRestore = mockRestoreLibraryBlock.applyMock();
 
+const { libraryId } = mockContentLibrary;
 const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
 
 const renderArgs = {
-  extraWrapper: SidebarProvider,
+  path: '/library/:libraryId',
+  params: { libraryId },
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider>
+        { children }
+      </SidebarProvider>
+    </LibraryProvider>
+  ),
 };
 
 let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
@@ -29,6 +41,13 @@ describe('<ComponentDeleter />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     mockShowToast = mocks.mockShowToast;
+    mockSearchResult({
+      results: [ // @ts-ignore
+        {
+          hits: [],
+        },
+      ],
+    });
   });
 
   it('is invisible when isConfirmingDelete is false', async () => {
@@ -76,5 +95,69 @@ describe('<ComponentDeleter />', () => {
       expect(mockRestore).toHaveBeenCalled();
       expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
     });
+  });
+
+  it('should show units message if `unitsData` is set with one unit', async () => {
+    const mockCancel = jest.fn();
+    mockSearchResult({
+      results: [ // @ts-ignore
+        {
+          hits: [{
+            units: {
+              displayName: ['Unit 1'],
+              key: ['unit1'],
+            },
+          }],
+        },
+      ],
+    });
+    render(
+      <ComponentDeleter
+        usageKey={usageKey}
+        isConfirmingDelete
+        cancelDelete={mockCancel}
+      />,
+      renderArgs,
+    );
+
+    const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
+    expect(modal).toBeVisible();
+
+    expect(await screen.findByText(
+      /by deleting this component, you will also be deleting it from in this library\./i,
+    )).toBeInTheDocument();
+    expect(screen.getByText(/unit 1/i)).toBeInTheDocument();
+  });
+
+  it('should show units message if `unitsData` is set with multiple units', async () => {
+    const mockCancel = jest.fn();
+    mockSearchResult({
+      results: [ // @ts-ignore
+        {
+          hits: [{
+            units: {
+              displayName: ['Unit 1', 'Unit 2'],
+              key: ['unit1', 'unit2'],
+            },
+          }],
+        },
+      ],
+    });
+    render(
+      <ComponentDeleter
+        usageKey={usageKey}
+        isConfirmingDelete
+        cancelDelete={mockCancel}
+      />,
+      renderArgs,
+    );
+
+    const modal = await screen.findByRole('dialog', { name: 'Delete Component' });
+    expect(modal).toBeVisible();
+
+    expect(await screen.findByText(
+      /by deleting this component, you will also be deleting it from in this library\./i,
+    )).toBeInTheDocument();
+    expect(screen.getByText(/2 units/i)).toBeInTheDocument();
   });
 });

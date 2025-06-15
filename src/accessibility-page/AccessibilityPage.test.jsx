@@ -1,42 +1,13 @@
-import {
-  render,
-  screen,
-} from '@testing-library/react';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import initializeStore from '../store';
+// @ts-check
+import { initializeMocks, render, screen } from '../testUtils';
 import AccessibilityPage from './index';
 
-const initialState = {
-  accessibilityPage: {
-    status: {},
-  },
-};
-let store;
-
-const renderComponent = () => {
-  render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <AccessibilityPage />
-      </AppProvider>
-    </IntlProvider>,
-  );
-};
+const renderComponent = () => render(<AccessibilityPage />);
 
 describe('<AccessibilityPolicyPage />', () => {
   describe('renders', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore(initialState);
+      initializeMocks();
     });
     it('contains the policy body', () => {
       renderComponent();

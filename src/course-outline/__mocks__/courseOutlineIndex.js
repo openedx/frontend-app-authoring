@@ -3149,6 +3149,7 @@ module.exports = {
       selectedGroupsLabel: '',
     },
   },
+  createdOn: new Date(),
   deprecatedBlocksInfo: {
     deprecatedEnabledBlockTypes: [],
     blocks: [],

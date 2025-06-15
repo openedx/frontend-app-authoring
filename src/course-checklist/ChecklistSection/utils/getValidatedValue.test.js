@@ -88,20 +88,6 @@ describe('getValidatedValue utility function', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('mobile friendly video', () => {
-    const spy = jest.fn();
-    localValidators.hasMobileFriendlyVideos = spy;
-
-    const props = {
-      data: {
-        videos: {},
-      },
-    };
-
-    getValidatedValue(props, 'mobileFriendlyVideo');
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
-
   it('diverse sequences', () => {
     const spy = jest.fn();
     localValidators.hasDiverseSequences = spy;

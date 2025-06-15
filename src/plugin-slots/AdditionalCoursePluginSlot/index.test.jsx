@@ -1,15 +1,19 @@
-import { shallow } from '@edx/react-unit-test-utils';
 import { AdditionalCoursePluginSlot } from '.';
+import { render, initializeMocks } from '../../testUtils';
 
 jest.mock('@openedx/frontend-plugin-framework', () => ({
   PluginSlot: 'PluginSlot',
 }));
 
 describe('AdditionalCoursePluginSlot', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => {
+    initializeMocks();
+  });
 
   it('renders', () => {
-    const wrapper = shallow(<AdditionalCoursePluginSlot />);
-    expect(wrapper.snapshot).toMatchSnapshot();
+    const { container } = render(<AdditionalCoursePluginSlot />);
+    const pluginSlot = container.querySelector('pluginslot');
+    expect(pluginSlot).toBeInTheDocument();
+    expect(pluginSlot).toHaveAttribute('idaliases', 'additional_course_plugin');
   });
 });

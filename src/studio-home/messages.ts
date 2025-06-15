@@ -45,6 +45,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.btn.re-run.text',
     defaultMessage: 'Re-run course',
   },
+  btnDropDownText: {
+    id: 'course-authoring.studio-home.btn.dropdown.text',
+    defaultMessage: 'Course actions',
+  },
   viewLiveBtnText: {
     id: 'course-authoring.studio-home.btn.view-live.text',
     defaultMessage: 'View live',

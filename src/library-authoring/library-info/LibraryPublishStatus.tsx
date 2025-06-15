@@ -51,6 +51,7 @@ const LibraryPublishStatus = () => {
       <StatusWidget
         {...libraryData}
         onCommit={!readOnly ? commit : undefined}
+        onCommitLabel={intl.formatMessage(messages.publishLibraryButtonLabel)}
         onRevert={!readOnly ? openConfirmModal : undefined}
       />
       <DeleteModal

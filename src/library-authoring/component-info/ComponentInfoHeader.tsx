@@ -12,9 +12,9 @@ const ComponentInfoHeader = () => {
   const intl = useIntl();
 
   const { readOnly, showOnlyPublished } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { sidebarItemInfo } = useSidebarContext();
 
-  const usageKey = sidebarComponentInfo?.id;
+  const usageKey = sidebarItemInfo?.id;
   // istanbul ignore next
   if (!usageKey) {
     throw new Error('usageKey is required');
@@ -26,16 +26,17 @@ const ComponentInfoHeader = () => {
   const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);
 
-  const handleSaveDisplayName = (newDisplayName: string) => {
-    updateMutation.mutateAsync({
-      metadata: {
-        display_name: newDisplayName,
-      },
-    }).then(() => {
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        metadata: {
+          display_name: newDisplayName,
+        },
+      });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    }).catch(() => {
+    } catch (err) {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
-    });
+    }
   };
 
   if (!xblockFields) {
@@ -48,7 +49,6 @@ const ComponentInfoHeader = () => {
       text={xblockFields?.displayName}
       readOnly={readOnly}
       textClassName="font-weight-bold m-1.5"
-      alwaysShowEditButton
     />
   );
 };

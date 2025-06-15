@@ -3,9 +3,12 @@ import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
 
+import { render, screen, fireEvent } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { formatMessage } from '../../../../../../testUtils';
 import { VideoSourceWidgetInternal as VideoSourceWidget } from '.';
 import * as hooks from './hooks';
+import messages from './messages';
 
 jest.mock('react-redux', () => {
   const dispatchFn = jest.fn();
@@ -104,6 +107,27 @@ describe('VideoSourceWidget', () => {
       expect(control.props.floatingLabel).toEqual('Video URL');
       control.props.onBlur('onBlur event');
       expect(hook.updateVideoURL).toHaveBeenCalledWith('onBlur event', '');
+    });
+  });
+
+  describe('VideoSourceWidget', () => {
+    it('calls addFallbackVideo when the add button is clicked', () => {
+      // eslint-disable-next-line global-require
+      const { fallbackHooks } = require('./hooks');
+      const { addFallbackVideo } = fallbackHooks();
+
+      render(
+        <IntlProvider locale="en" messages={messages}>
+          <VideoSourceWidget intl={{ formatMessage: ({ defaultMessage }) => defaultMessage }} />
+        </IntlProvider>,
+      );
+
+      // Find the button by its text (from messages.addButtonLabel)
+      const addButton = screen.getByRole('button');
+
+      fireEvent.click(addButton);
+
+      expect(addFallbackVideo).toHaveBeenCalled();
     });
   });
 });

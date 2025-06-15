@@ -1,28 +1,9 @@
-import React from 'react';
-import { render, waitFor } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-
+// @ts-check
+import { initializeMocks, render, waitFor } from '../../testUtils';
 import { helpUrls } from '../../help-urls/__mocks__';
 import { getHelpUrlsApiUrl } from '../../help-urls/data/api';
-import initializeStore from '../../store';
 import OutlineSidebar from './OutlineSidebar';
 import messages from './messages';
-
-let axiosMock;
-let store;
-const mockPathname = '/foo-bar';
-const courseId = '123';
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -31,26 +12,16 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <OutlineSidebar courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+let axiosMock;
+const mockPathname = '/foo-bar';
+const courseId = '123';
+
+const renderComponent = (props) => render(<OutlineSidebar courseId={courseId} {...props} />, { path: mockPathname });
 
 describe('<OutlineSidebar />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getHelpUrlsApiUrl())
       .reply(200, helpUrls);

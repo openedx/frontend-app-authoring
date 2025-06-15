@@ -10,10 +10,10 @@ import userEvent from '@testing-library/user-event';
 import initializeStore from '../../../../store';
 import { executeThunk } from '../../../../utils';
 import { clipboardUnit } from '../../../../__mocks__';
-import { getCourseUnitApiUrl } from '../../../data/api';
+import { getCourseSectionVerticalApiUrl } from '../../../data/api';
 import { getClipboardUrl } from '../../../../generic/data/api';
-import { fetchCourseUnitQuery } from '../../../data/thunk';
-import { courseUnitIndexMock } from '../../../__mocks__';
+import { fetchCourseSectionVerticalData } from '../../../data/thunk';
+import { courseSectionVerticalMock } from '../../../__mocks__';
 import messages from '../../messages';
 import ActionButtons from './ActionButtons';
 
@@ -46,8 +46,14 @@ describe('<ActionButtons />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getCourseUnitApiUrl(courseId))
-      .reply(200, { ...courseUnitIndexMock, enable_copy_paste_units: true });
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          enable_copy_paste_units: true,
+        },
+      });
     axiosMock
       .onPost(getClipboardUrl())
       .reply(200, clipboardUnit);
@@ -57,7 +63,7 @@ describe('<ActionButtons />', () => {
 
     queryClient = new QueryClient();
 
-    await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
   });
 
   it('render ActionButtons component with Copy to clipboard', () => {
@@ -74,7 +80,9 @@ describe('<ActionButtons />', () => {
 
     userEvent.click(copyXBlockBtn);
     expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({ usage_key: courseUnitIndexMock.id }));
+    expect(axiosMock.history.post[0].data).toBe(
+      JSON.stringify({ usage_key: courseSectionVerticalMock.xblock_info.id }),
+    );
     jest.resetAllMocks();
   });
 });

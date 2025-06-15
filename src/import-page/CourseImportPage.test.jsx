@@ -1,13 +1,7 @@
-import { initializeMockApp } from '@edx/frontend-platform';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor } from '@testing-library/react';
 import { Helmet } from 'react-helmet';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
 import Cookies from 'universal-cookie';
-import initializeStore from '../store';
+
+import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
 import CourseImportPage from './CourseImportPage';
@@ -35,26 +29,13 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => Cookie);
 });
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <CourseImportPage intl={injectIntl} courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>
-);
+const renderComponent = () => render(<CourseImportPage courseId={courseId} />);
 
 describe('<CourseImportPage />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
       .reply(200, { importStatus: 1, message: '' });
@@ -62,7 +43,7 @@ describe('<CourseImportPage />', () => {
     cookies.get.mockReturnValue(null);
   });
   it('should render page title correctly', async () => {
-    render(<RootWrapper />);
+    renderComponent();
     await waitFor(() => {
       const helmet = Helmet.peek();
       expect(helmet.title).toEqual(
@@ -71,7 +52,7 @@ describe('<CourseImportPage />', () => {
     });
   });
   it('should render without errors', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       const importPageElement = getByText(messages.headingTitle.defaultMessage, {
@@ -85,7 +66,7 @@ describe('<CourseImportPage />', () => {
   });
   it('should fetch status without clicking when cookies has', async () => {
     cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.test' });
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
     expect(getByText(stepperMessages.stepperUnpackingDescription.defaultMessage)).toBeInTheDocument();
   });
   it('should show error', async () => {
@@ -93,20 +74,20 @@ describe('<CourseImportPage />', () => {
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(200, { importStatus: -IMPORT_STAGES.UPDATING, message: '' });
     cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByText } = render(<RootWrapper />);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    expect(getByText(stepperMessages.defaultErrorMessage.defaultMessage)).toBeInTheDocument();
+    const { getByText } = renderComponent();
+    await waitFor(() => {
+      expect(getByText(stepperMessages.defaultErrorMessage.defaultMessage)).toBeInTheDocument();
+    }, { timeout: 4000 });
   });
   it('should show success button', async () => {
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(200, { importStatus: IMPORT_STAGES.SUCCESS, message: '' });
     cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByText } = render(<RootWrapper />);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    expect(getByText(stepperMessages.viewOutlineButton.defaultMessage)).toBeInTheDocument();
+    const { getByText } = renderComponent();
+    await waitFor(() => {
+      expect(getByText(stepperMessages.viewOutlineButton.defaultMessage)).toBeInTheDocument();
+    }, { timeout: 4000 });
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
@@ -114,10 +95,10 @@ describe('<CourseImportPage />', () => {
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(403);
     cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    const { getByRole } = render(<RootWrapper />);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    expect(getByRole('alert')).toBeInTheDocument();
+    const { getByRole } = renderComponent();
+    await waitFor(() => {
+      expect(getByRole('alert')).toBeInTheDocument();
+    }, { timeout: 4000 });
     const { loadingStatus } = store.getState().courseImport;
     expect(loadingStatus).toEqual(RequestStatus.DENIED);
   });
@@ -127,10 +108,10 @@ describe('<CourseImportPage />', () => {
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
       .reply(404);
     cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
-    render(<RootWrapper />);
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((r) => setTimeout(r, 3500));
-    const { loadingStatus } = store.getState().courseImport;
-    expect(loadingStatus).toEqual(RequestStatus.FAILED);
+    renderComponent();
+    await waitFor(() => {
+      const { loadingStatus } = store.getState().courseImport;
+      expect(loadingStatus).toEqual(RequestStatus.FAILED);
+    }, { timeout: 4000 });
   });
 });

@@ -1,15 +1,14 @@
 import userEvent from '@testing-library/user-event';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  initializeMocks, waitFor, act, render,
+  initializeMocks, waitFor, render,
 } from '../../testUtils';
 
 import { executeThunk } from '../../utils';
-import { getCourseSectionVerticalApiUrl, getCourseUnitApiUrl } from '../data/api';
+import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { getApiWaffleFlagsUrl } from '../../data/api';
-import { fetchWaffleFlags } from '../../data/thunks';
-import { fetchCourseSectionVerticalData, fetchCourseUnitQuery } from '../data/thunk';
-import { courseSectionVerticalMock, courseUnitIndexMock } from '../__mocks__';
+import { fetchCourseSectionVerticalData } from '../data/thunk';
+import { courseSectionVerticalMock } from '../__mocks__';
 import Breadcrumbs from './Breadcrumbs';
 
 let axiosMock;
@@ -43,9 +42,9 @@ describe('<Breadcrumbs />', () => {
     reduxStore = mocks.reduxStore;
 
     axiosMock
-      .onGet(getCourseUnitApiUrl(courseId))
-      .reply(200, courseUnitIndexMock);
-    await executeThunk(fetchCourseUnitQuery(courseId), reduxStore.dispatch);
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(courseId))
       .reply(200, courseSectionVerticalMock);
@@ -53,12 +52,6 @@ describe('<Breadcrumbs />', () => {
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, { useNewCourseOutlinePage: true });
-    await executeThunk(fetchWaffleFlags(courseId), reduxStore.dispatch);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    axiosMock.restore();
   });
 
   it('render Breadcrumbs component correctly', async () => {
@@ -128,16 +121,12 @@ describe('<Breadcrumbs />', () => {
     const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
     const { getByText, getByRole } = renderComponent();
 
-    await act(async () => {
-      const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
-      userEvent.click(dropdownBtn);
-    });
+    const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
+    userEvent.click(dropdownBtn);
 
-    await act(async () => {
-      const dropdownItem = getByRole('link', { name: display_name });
-      userEvent.click(dropdownItem);
-      expect(dropdownItem).toHaveAttribute('href', url);
-    });
+    const dropdownItem = getByRole('link', { name: display_name });
+    userEvent.click(dropdownItem);
+    expect(dropdownItem).toHaveAttribute('href', url);
   });
 
   it('falls back to window.location.href when the waffle flag is disabled', async () => {
@@ -146,7 +135,6 @@ describe('<Breadcrumbs />', () => {
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, { useNewCourseOutlinePage: false });
-    await executeThunk(fetchWaffleFlags(courseId), reduxStore.dispatch);
 
     const { getByText, getByRole } = renderComponent();
 
@@ -154,6 +142,9 @@ describe('<Breadcrumbs />', () => {
     userEvent.click(dropdownBtn);
 
     const dropdownItem = getByRole('link', { name: display_name });
-    expect(dropdownItem).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${url}`);
+    // We need waitFor here because the waffle flag defaults to true but asynchronously loads false from our axiosMock
+    await waitFor(() => {
+      expect(dropdownItem).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${url}`);
+    });
   });
 });

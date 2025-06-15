@@ -8,10 +8,12 @@ import {
   replaceEqualDeep,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { type MeiliSearch } from 'meilisearch';
 
-import { getLibraryId } from '../../generic/key-utils';
+import { getBlockType, getLibraryId } from '../../generic/key-utils';
 import * as api from './api';
 import { VersionSpec } from '../LibraryBlock';
+import { useContentSearchConnection, useContentSearchResults, buildSearchQueryKey } from '../../search-manager';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -60,13 +62,16 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
+  allContainers: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.contentLibraryContent(libraryId),
+    'container',
+  ],
   container: (containerId?: string) => {
     const baseKey = containerId
-      ? libraryAuthoringQueryKeys.contentLibraryContent(getLibraryId(containerId))
-      : libraryAuthoringQueryKeys.all;
+      ? libraryAuthoringQueryKeys.allContainers(getLibraryId(containerId))
+      : [...libraryAuthoringQueryKeys.all, 'container'];
     return [
       ...baseKey,
-      'container',
       containerId,
     ];
   },
@@ -459,7 +464,7 @@ export const useDeleteXBlockAsset = (usageKey: string) => {
 /**
  * Get the metadata for a collection in a library
  */
-export const useCollection = (libraryId: string, collectionId: string) => (
+export const useCollection = (libraryId: string, collectionId?: string) => (
   useQuery({
     enabled: !!libraryId && !!collectionId,
     queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
@@ -472,15 +477,28 @@ export const useCollection = (libraryId: string, collectionId: string) => (
  */
 export const useUpdateCollection = (libraryId: string, collectionId: string) => {
   const queryClient = useQueryClient();
+  const collectionQueryKey = libraryAuthoringQueryKeys.collection(libraryId, collectionId);
   return useMutation({
     mutationFn: (data: api.UpdateCollectionComponentsRequest) => (
       api.updateCollectionMetadata(libraryId, collectionId, data)
     ),
+    onMutate: (data) => {
+      const previousData = queryClient.getQueryData(collectionQueryKey) as api.CollectionMetadata;
+      queryClient.setQueryData(collectionQueryKey, {
+        ...previousData,
+        ...data,
+      });
+
+      return { previousData };
+    },
+    onError: (_err, _data, context) => {
+      queryClient.setQueryData(collectionQueryKey, context?.previousData);
+    },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // collection list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId) });
+      queryClient.invalidateQueries({ queryKey: collectionQueryKey });
     },
   });
 };
@@ -598,13 +616,28 @@ export const useContainer = (containerId?: string) => (
 export const useUpdateContainer = (containerId: string) => {
   const libraryId = getLibraryId(containerId);
   const queryClient = useQueryClient();
+  const containerQueryKey = libraryAuthoringQueryKeys.container(containerId);
   return useMutation({
     mutationFn: (data: api.UpdateContainerDataRequest) => api.updateContainerMetadata(containerId, data),
+    onMutate: (data) => {
+      const previousData = queryClient.getQueryData(containerQueryKey) as api.Container;
+      queryClient.setQueryData(containerQueryKey, {
+        ...previousData,
+        ...data,
+      });
+
+      return { previousData };
+    },
+    onError: (_err, _data, context) => {
+      queryClient.setQueryData(containerQueryKey, context?.previousData);
+    },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: containerQueryKey });
+      // NOTE: We invalidate all container query to update names in children list of containers
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.allContainers(libraryId) });
     },
   });
 };
@@ -666,19 +699,42 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 );
 
 /**
- * Use this mutation to add components to a container
+ * If you work with `useContentFromSearchIndex`, you can use this
+ * function to get the query key, usually to invalidate the query.
  */
-export const useAddComponentsToContainer = (containerId?: string) => {
+const getSearchQueryKeyFromContent = (
+  contentIds: string[],
+  client?: MeiliSearch,
+  indexName?: string,
+) => (
+  buildSearchQueryKey({
+    client,
+    indexName,
+    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    searchKeywords: '',
+    blockTypesFilter: [],
+    problemTypesFilter: [],
+    publishStatusFilter: [],
+    tagsFilter: [],
+    sort: [],
+  })
+);
+
+/**
+ * Use this mutation to add items to a container
+ */
+export const useAddItemsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
+  const { client, indexName } = useContentSearchConnection();
   return useMutation({
-    mutationFn: async (componentIds: string[]) => {
+    mutationFn: async (itemIds: string[]) => {
       // istanbul ignore if: this should never happen
       if (!containerId) {
         return undefined;
       }
-      return api.addComponentsToContainer(containerId, componentIds);
+      return api.addComponentsToContainer(containerId, itemIds);
     },
-    onSettled: () => {
+    onSettled: (_data, _error, variables) => {
       // istanbul ignore if: this should never happen
       if (!containerId) {
         return;
@@ -688,6 +744,17 @@ export const useAddComponentsToContainer = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+
+      const containerType = getBlockType(containerId);
+      if (containerType === 'section') {
+        // We invalidate the search query of the each itemId if the container is a section.
+        // This because the subsection page calls this query individually.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({
+            queryKey: getSearchQueryKeyFromContent([itemId], client, indexName),
+          });
+        });
+      }
     },
   });
 };
@@ -774,5 +841,21 @@ export const usePublishContainer = (containerId: string) => {
       // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
       queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
     },
+  });
+};
+
+/**
+ * Use this mutations to get a list of objects from the search index
+ */
+export const useContentFromSearchIndex = (contentIds: string[]) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    limit: contentIds.length,
+    enabled: !!contentIds.length,
+    skipBlockTypeFetch: true,
   });
 };

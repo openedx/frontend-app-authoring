@@ -172,9 +172,14 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
   });
   axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
-  axiosMock
-    .onGet(getApiWaffleFlagsUrl())
-    .reply(200, {});
+  // Many tests use waffle flags, so don't bother trying to load them from the (non-existent)
+  // server during test runs. This avoids a lot of noisy 'Request failed with
+  // status code 404' warnings. (Note this won't mock out course-specific requests)
+  //
+  // To override waffle flags for specific tests, just re-create this onGet mock
+  // with new values within your test/beforeAll, or use mockWaffleFlags()
+  // from src/data/apiHooks.mock.ts
+  axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
 
   // Reset `mockToastContext` for this current test
   mockToastContext = {

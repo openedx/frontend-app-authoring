@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
+import { useWaffleFlags } from '../data/apiHooks';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { useModel } from '../generic/model-store';
@@ -26,11 +27,10 @@ import TextbookForm from './textbook-form/TextbookForm';
 import { useTextbooks } from './hooks';
 import { getTextbookFormInitialValues } from './utils';
 import messages from './messages';
-import { getWaffleFlags } from '../data/selectors';
 
 const Textbooks = ({ courseId }) => {
   const intl = useIntl();
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const courseDetails = useModel('courseDetails', courseId);
 

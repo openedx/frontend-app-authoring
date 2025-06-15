@@ -1,10 +1,8 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 
 import { Button, useWindowSize } from '@openedx/paragon';
@@ -18,11 +16,10 @@ const SourceCodeModal = ({
   isOpen,
   close,
   editorRef,
-  // injected
-  intl,
 }) => {
   const { saveBtnProps, value, ref } = hooks.prepareSourceCodeModal({ editorRef, close });
   const { height } = useWindowSize();
+  const intl = useIntl();
 
   return (
     <BaseModal
@@ -41,6 +38,7 @@ const SourceCodeModal = ({
         <CodeEditor
           innerRef={ref}
           value={value}
+          lang="html" // hardcoded value to do lookup on CODEMIRROR_LANGUAGES
         />
       </div>
     </BaseModal>
@@ -55,9 +53,6 @@ SourceCodeModal.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     PropTypes.shape({ current: PropTypes.any }),
   ]).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export const SourceCodeModalInternal = SourceCodeModal; // For testing only
-export default injectIntl(SourceCodeModal);
+export default SourceCodeModal;

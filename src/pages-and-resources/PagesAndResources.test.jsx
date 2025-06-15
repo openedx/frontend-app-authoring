@@ -1,9 +1,10 @@
+// @ts-check
 import { screen, waitFor } from '@testing-library/react';
 
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
 import { PagesAndResources } from '.';
-import { render } from './utils.test';
+import { initializeMocks, render } from '../testUtils';
 
 const mockPlugin = (identifier) => ({
   plugins: [
@@ -43,10 +44,8 @@ describe('PagesAndResources', () => {
       },
     };
 
-    render(
-      <PagesAndResources courseId={courseId} />,
-      { preloadedState: initialState },
-    );
+    initializeMocks({ initialState });
+    render(<PagesAndResources courseId={courseId} />);
 
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
@@ -75,10 +74,8 @@ describe('PagesAndResources', () => {
       },
     };
 
-    render(
-      <PagesAndResources courseId={courseId} />,
-      { preloadedState: initialState },
-    );
+    initializeMocks({ initialState });
+    render(<PagesAndResources courseId={courseId} />);
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Learning Assistant')).toBeInTheDocument());
@@ -110,10 +107,8 @@ describe('PagesAndResources', () => {
       },
     };
 
-    render(
-      <PagesAndResources courseId={courseId} />,
-      { preloadedState: initialState },
-    );
+    initializeMocks({ initialState });
+    render(<PagesAndResources courseId={courseId} />);
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Xpert unit summaries')).toBeInTheDocument());

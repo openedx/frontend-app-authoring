@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import {
   Container,
@@ -36,17 +36,15 @@ const EditProblemView = ({
   returnUrl,
   analytics,
   isDirty,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const editorRef = useRef(null);
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
   const { isSaveWarningModalOpen, openSaveWarningModal, closeSaveWarningModal } = saveWarningModalToggle();
-
+  /* istanbul ignore next */
   const checkIfDirty = () => {
     if (isAdvancedProblemType && editorRef && editorRef?.current) {
-      /* istanbul ignore next */
       return editorRef.current.observer?.lastChange !== 0;
     }
     return isDirty || checkIfEditorsDirty();
@@ -145,8 +143,6 @@ EditProblemView.propTypes = {
   returnUrl: PropTypes.string.isRequired,
   isDirty: PropTypes.bool,
   isMarkdownEditorEnabled: PropTypes.bool,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -161,4 +157,4 @@ export const mapStateToProps = (state) => ({
 });
 
 export const EditProblemViewInternal = EditProblemView; // For testing only
-export default injectIntl(connect(mapStateToProps)(EditProblemView));
+export default connect(mapStateToProps)(EditProblemView);

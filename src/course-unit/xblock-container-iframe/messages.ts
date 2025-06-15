@@ -19,11 +19,6 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.xblock.video-editor.title',
     defaultMessage: 'Select video',
   },
-  blockEditorModalTitle: {
-    id: 'course-authoring.course-unit.xblock.editor.title',
-    defaultMessage: 'Edit component',
-    description: 'Block editor modal title.',
-  },
 });
 
 export default messages;

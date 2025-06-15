@@ -60,6 +60,17 @@ export async function getCourseOutlineIndex(courseId) {
 }
 
 /**
+ *
+ * @param courseId
+ * @returns {Promise<Array|Object>}
+ */
+export async function createDiscussionsTopics(courseId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`);
+  return camelCaseObject(data);
+}
+
+/**
  * Get course best practices.
  * @param {{courseId: string, excludeGraded: boolean, all: boolean}} options
  * @returns {Promise<{isSelfPaced: boolean, sections: any, subsection: any, units: any, videos: any }>}

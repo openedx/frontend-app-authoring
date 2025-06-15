@@ -27,13 +27,13 @@ const CollectionInfo = () => {
 
   const { componentPickerMode } = useComponentPickerContext();
   const { libraryId, setCollectionId } = useLibraryContext();
-  const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const { sidebarItemInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
     sidebarTab && isCollectionInfoTab(sidebarTab)
-  ) ? sidebarTab : COLLECTION_INFO_TABS.Manage;
+  ) ? sidebarTab : COLLECTION_INFO_TABS.Details;
 
-  const collectionId = sidebarComponentInfo?.id;
+  const collectionId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!collectionId) {
     throw new Error('collectionId is required');

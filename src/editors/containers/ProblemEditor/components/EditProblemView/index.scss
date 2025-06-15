@@ -53,3 +53,19 @@
     }
   }
 }
+
+.pgn__modal-body-content {
+  .editor-body{
+    overflow: visible !important;
+  }
+
+  .tox-tinymce,
+  .tox-editor-container{
+    overflow: visible;
+  }
+
+  .tox-editor-header{
+    position: sticky;
+    top: -3px;
+  }
+}

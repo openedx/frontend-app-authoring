@@ -24,17 +24,17 @@ export const switchToAdvancedEditor = () => (dispatch, getState) => {
   dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX }));
 };
 
-export const switchToMarkdownEditor = () => (dispatch, getState) => {
-  const state = getState();
+export const switchToMarkdownEditor = () => (dispatch) => {
   dispatch(actions.problem.updateField({ isMarkdownEditorEnabled: true }));
-  const { blockValue } = state.app;
-  const olx = get(blockValue, 'data.data', '');
-  const content = { settings: { markdown_edited: true }, olx };
-  // Sending a request to save the problem block with the updated markdown_edited value
-  dispatch(requests.saveBlock({ content }));
 };
 
-export const switchEditor = (editorType) => (dispatch, getState) => (editorType === 'advanced' ? switchToAdvancedEditor : switchToMarkdownEditor)()(dispatch, getState);
+export const switchEditor = (editorType) => (dispatch, getState) => {
+  if (editorType === 'advanced') {
+    switchToAdvancedEditor()(dispatch, getState);
+  } else {
+    switchToMarkdownEditor()(dispatch);
+  }
+};
 
 export const isBlankProblem = ({ rawOLX }) => {
   if (['<problem></problem>', '<problem/>'].includes(rawOLX.replace(/\s/g, ''))) {

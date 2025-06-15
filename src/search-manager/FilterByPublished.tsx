@@ -10,12 +10,18 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import SearchFilterWidget from './SearchFilterWidget';
 import { useSearchContext } from './SearchManager';
-import { PublishStatus } from './data/api';
+import { allPublishFilters, PublishStatus } from './data/api';
+
+interface FilterByPublishedProps {
+  visibleFilters?: PublishStatus[],
+}
 
 /**
  * A button with a dropdown that allows filtering the current search by publish status
  */
-const FilterByPublished: React.FC<Record<never, never>> = () => {
+const FilterByPublished = ({
+  visibleFilters = allPublishFilters,
+}: FilterByPublishedProps) => {
   const intl = useIntl();
   const {
     publishStatus,
@@ -42,6 +48,26 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
   };
   const appliedFilters = publishStatusFilter.map(mode => ({ label: modeToLabel[mode] }));
 
+  const filterLabels = {
+    [PublishStatus.Published]: intl.formatMessage(messages.publishStatusPublished),
+    [PublishStatus.Modified]: intl.formatMessage(messages.publishStatusModified),
+    [PublishStatus.NeverPublished]: intl.formatMessage(messages.publishStatusNeverPublished),
+  };
+
+  const visibleFiltersToRender = visibleFilters.map((filter) => (
+    <MenuItem
+      key={filter}
+      as={Form.Checkbox}
+      value={filter}
+      onChange={() => { toggleFilterMode(filter); }}
+    >
+      <div>
+        {filterLabels[filter]}
+        <Badge variant="light" pill>{publishStatus[filter] ?? 0}</Badge>
+      </div>
+    </MenuItem>
+  ));
+
   return (
     <SearchFilterWidget
       appliedFilters={appliedFilters}
@@ -55,36 +81,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
           value={publishStatusFilter}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
-            <MenuItem
-              as={Form.Checkbox}
-              value={PublishStatus.Published}
-              onChange={() => { toggleFilterMode(PublishStatus.Published); }}
-            >
-              <div>
-                {intl.formatMessage(messages.publishStatusPublished)}
-                <Badge variant="light" pill>{publishStatus[PublishStatus.Published] ?? 0}</Badge>
-              </div>
-            </MenuItem>
-            <MenuItem
-              as={Form.Checkbox}
-              value={PublishStatus.Modified}
-              onChange={() => { toggleFilterMode(PublishStatus.Modified); }}
-            >
-              <div>
-                {intl.formatMessage(messages.publishStatusModified)}
-                <Badge variant="light" pill>{publishStatus[PublishStatus.Modified] ?? 0}</Badge>
-              </div>
-            </MenuItem>
-            <MenuItem
-              as={Form.Checkbox}
-              value={PublishStatus.NeverPublished}
-              onChange={() => { toggleFilterMode(PublishStatus.NeverPublished); }}
-            >
-              <div>
-                {intl.formatMessage(messages.publishStatusNeverPublished)}
-                <Badge variant="light" pill>{publishStatus[PublishStatus.NeverPublished] ?? 0}</Badge>
-              </div>
-            </MenuItem>
+            {visibleFiltersToRender}
           </Menu>
         </Form.CheckboxSet>
       </Form.Group>

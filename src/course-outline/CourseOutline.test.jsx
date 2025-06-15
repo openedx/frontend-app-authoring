@@ -9,9 +9,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
-
+import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -22,12 +21,13 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
+  createDiscussionsTopics,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
-  fetchCourseOutlineIndexQuery,
+  fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
   updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import initializeStore from '../store';
@@ -47,7 +47,7 @@ import CourseOutline from './CourseOutline';
 import configureModalMessages from '../generic/configure-modal/messages';
 import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
 import messages from './messages';
-import { getClipboardUrl } from '../generic/data/api';
+import { getApiBaseUrl, getClipboardUrl } from '../generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
@@ -115,6 +115,10 @@ jest.mock('../library-authoring/component-picker', () => ({
   },
 }));
 
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
+}));
+
 const queryClient = new QueryClient();
 
 jest.mock('@dnd-kit/core', () => ({
@@ -172,7 +176,11 @@ describe('<CourseOutline />', () => {
         courseId, gradedOnly: true, validateOras: true, all: true,
       }))
       .reply(200, courseLaunchMock);
+    axiosMock
+      .onPost(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`)
+      .reply(200, {});
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
+    await executeThunk(syncDiscussionsTopics(courseId), store.dispatch);
   });
 
   afterEach(() => {
@@ -186,6 +194,16 @@ describe('<CourseOutline />', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
+    axiosMock
+      .onGet(createDiscussionsTopics(courseId))
+      .reply(500, 'some internal error');
+
+    await executeThunk(syncDiscussionsTopics(), store.dispatch);
+
+    expect(logError).toHaveBeenCalledTimes(1);
   });
 
   it('handles course outline fetch api errors', async () => {
@@ -238,8 +256,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -261,8 +279,8 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
@@ -289,13 +307,15 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new section list is saved when dragged', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const expandAllButton = await findByTestId('expand-collapse-all-button');
+    fireEvent.click(expandAllButton);
+    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[6];
+    const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .onPut(getCourseBlockApiUrl(section.id))
       .reply(200, { dummy: 'value' });
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -314,13 +334,15 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section list is restored to original order when API call fails', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const expandAllButton = await findByTestId('expand-collapse-all-button');
+    fireEvent.click(expandAllButton);
+    const [section] = store.getState().courseOutline.sectionsList;
     const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[6];
+    const draggableButton = sectionsDraggers[1];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .onPut(getCourseBlockApiUrl(section.id))
       .reply(500);
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
@@ -395,8 +417,6 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const units = await within(subsectionElement).findAllByTestId('unit-card');
     expect(units.length).toBe(1);
 
@@ -407,10 +427,10 @@ describe('<CourseOutline />', () => {
       });
     const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
     await act(async () => fireEvent.click(newUnitButton));
-    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post.length).toBe(3);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       parent_locator: subsection.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
@@ -421,8 +441,6 @@ describe('<CourseOutline />', () => {
     render(<RootWrapper />);
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const units = await within(subsectionElement).findAllByTestId('unit-card');
     expect(units.length).toBe(1);
 
@@ -441,11 +459,11 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    waitFor(() => expect(axiosMock.history.post.length).toBe(2));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       type: COMPONENT_TYPES.libraryV2,
       category: 'vertical',
       parent_locator: subsection.id,
@@ -463,7 +481,7 @@ describe('<CourseOutline />', () => {
       courseId, excludeGraded: true, all: true,
     }), store.dispatch);
 
-    expect(getByText('4/9 completed')).toBeInTheDocument();
+    expect(getByText('3/8 completed')).toBeInTheDocument();
   });
 
   it('render alerts if checklist api fails', async () => {
@@ -646,8 +664,6 @@ describe('<CourseOutline />', () => {
     await checkEditTitle(section, subsectionElement, subsection, 'New subsection name', 'subsection');
 
     // check unit
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
     await checkEditTitle(section, unitElement, unit, 'New unit name', 'unit');
@@ -660,8 +676,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -700,8 +714,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -771,8 +783,6 @@ describe('<CourseOutline />', () => {
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -886,8 +896,8 @@ describe('<CourseOutline />', () => {
     const saveButton = await findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
       publish: 'republish',
       metadata: {
         visible_to_staff_only: true,
@@ -986,8 +996,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1122,8 +1132,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1242,8 +1252,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1342,8 +1352,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1438,8 +1448,8 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(saveButton));
 
     // verify request
-    expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+    expect(axiosMock.history.post.length).toBe(3);
+    expect(axiosMock.history.post[2].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -1481,8 +1491,6 @@ describe('<CourseOutline />', () => {
 
     const [firstSection] = await findAllByTestId('section-card');
     const [firstSubsection] = await within(firstSection).findAllByTestId('subsection-card');
-    const subsectionExpandButton = await within(firstSubsection).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(subsectionExpandButton);
     const [firstUnit] = await within(firstSubsection).findAllByTestId('unit-card');
     const unitDropdownButton = await within(firstUnit).findByTestId('unit-card-header__menu-button');
 
@@ -1842,8 +1850,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [, subsection] = section.childInfo.children;
     const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [, secondUnit] = subsection.childInfo.children;
     const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1883,8 +1889,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [firstSubsection, subsection] = section.childInfo.children;
     const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1920,8 +1924,6 @@ describe('<CourseOutline />', () => {
     const [subsection] = secondSection.childInfo.children;
     const firstSectionLastSubsection = firstSection.childInfo.children[firstSection.childInfo.children.length - 1];
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -1966,8 +1968,6 @@ describe('<CourseOutline />', () => {
     const [, sectionElement] = await findAllByTestId('section-card');
     const [firstSubsection, subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const lastUnitIdx = firstSubsection.childInfo.children.length - 1;
     const unit = firstSubsection.childInfo.children[lastUnitIdx];
     const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
@@ -2005,8 +2005,6 @@ describe('<CourseOutline />', () => {
     const secondSectionLastSubsection = secondSection.childInfo.children[lastSubIndex];
     const thirdSectionFirstSubsection = thirdSection.childInfo.children[0];
     const subsectionElement = (await within(sectionElement).findAllByTestId('subsection-card'))[lastSubIndex];
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     const lastUnitIdx = secondSectionLastSubsection.childInfo.children.length - 1;
     const unit = secondSectionLastSubsection.childInfo.children[lastUnitIdx];
     const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
@@ -2051,8 +2049,6 @@ describe('<CourseOutline />', () => {
     const sections = await findAllByTestId('section-card');
     const [sectionElement] = sections;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
     // get first and only unit in the subsection
     const [firstUnit] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -2072,8 +2068,6 @@ describe('<CourseOutline />', () => {
     const lastSection = sections[sections.length - 1];
     // it has only one subsection
     const [lastSubsectionElement] = await within(lastSection).findAllByTestId('subsection-card');
-    const lastExpandBtn = await within(lastSubsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(lastExpandBtn));
     // get last and the only unit in the subsection
     const [lastUnit] = await within(lastSubsectionElement).findAllByTestId('unit-card');
 
@@ -2094,6 +2088,9 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
 
     const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
@@ -2125,6 +2122,9 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
 
     const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
@@ -2154,8 +2154,6 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const section = store.getState().courseOutline.sectionsList[2];
     const [subsection] = section.childInfo.children;
-    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2190,8 +2188,6 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const section = store.getState().courseOutline.sectionsList[2];
     const [subsection] = section.childInfo.children;
-    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -2229,8 +2225,6 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    userEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 

@@ -3,24 +3,28 @@ import {
   getStudioHomeData,
   sendRequestForCourseCreator,
   handleCourseNotification,
-  getStudioHomeCourses,
   getStudioHomeLibraries,
   getStudioHomeCoursesV2,
 } from './api';
 import {
   fetchStudioHomeDataSuccess,
-  fetchCourseDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
   fetchLibraryDataSuccess,
   fetchCourseDataSuccessV2,
 } from './slice';
 
+/**
+ * Load both the "Studio Home" data and the course list. Store it in the Redux state.
+ *
+ * TODO: this should be replaced with two separate React Query hooks - one that calls
+ * useQuery() to load the "studio home" data, and another that calls useQuery() to
+ * load the course list.
+ */
 function fetchStudioHomeData(
   search,
   hasHomeData,
   requestParams = {},
-  isPaginationEnabled = false,
   shouldFetchCourses = true,
 ) {
   return async (dispatch) => {
@@ -39,14 +43,8 @@ function fetchStudioHomeData(
     if (shouldFetchCourses) {
       dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.IN_PROGRESS }));
       try {
-        if (isPaginationEnabled) {
-          const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
-          dispatch(fetchCourseDataSuccessV2(coursesData));
-        } else {
-          const coursesData = await getStudioHomeCourses(search || '');
-          dispatch(fetchCourseDataSuccess(coursesData));
-        }
-
+        const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
+        dispatch(fetchCourseDataSuccessV2(coursesData));
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
       } catch (error) {
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));

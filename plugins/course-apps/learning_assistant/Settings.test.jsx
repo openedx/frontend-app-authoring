@@ -2,16 +2,12 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 
 import { RequestStatus } from 'CourseAuthoring/data/constants';
-import { render } from 'CourseAuthoring/pages-and-resources/utils.test';
+import { initializeMocks, render } from 'CourseAuthoring/testUtils';
 import LearningAssistantSettings from './Settings';
 
 const onClose = () => { };
 
 describe('Learning Assistant Settings', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders', async () => {
     const initialState = {
       models: {
@@ -38,14 +34,8 @@ describe('Learning Assistant Settings', () => {
       },
     };
 
-    render(
-      <LearningAssistantSettings
-        onClose={onClose}
-      />,
-      {
-        preloadedState: initialState,
-      },
-    );
+    initializeMocks({ initialState });
+    render(<LearningAssistantSettings onClose={onClose} />);
 
     const toggleDescription = 'Reinforce learning concepts by sharing text-based course content '
     + 'with OpenAI (via API) to power an in-course Learning Assistant. Learners can leave feedback about the quality '

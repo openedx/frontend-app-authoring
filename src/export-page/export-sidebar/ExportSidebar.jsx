@@ -1,8 +1,4 @@
-import React from 'react';
-import {
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { Hyperlink } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
@@ -11,7 +7,8 @@ import { HelpSidebar } from '../../generic/help-sidebar';
 import { useHelpUrls } from '../../help-urls/hooks';
 import messages from './messages';
 
-const ExportSidebar = ({ intl, courseId }) => {
+const ExportSidebar = ({ courseId }) => {
+  const intl = useIntl();
   const { exportCourse: exportLearnMoreUrl } = useHelpUrls(['exportCourse']);
   return (
     <HelpSidebar courseId={courseId}>
@@ -42,8 +39,7 @@ const ExportSidebar = ({ intl, courseId }) => {
 };
 
 ExportSidebar.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ExportSidebar);
+export default ExportSidebar;

@@ -11,3 +11,4 @@ export const getCustomRelativeDatesActiveFlag = (state) => state.courseOutline.i
 export const getProctoredExamsFlag = (state) => state.courseOutline.enableProctoredExams;
 export const getPasteFileNotices = (state) => state.courseOutline.pasteFileNotices;
 export const getErrors = (state) => state.courseOutline.errors;
+export const getCreatedOn = (state) => state.courseOutline.createdOn;

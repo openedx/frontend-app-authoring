@@ -64,7 +64,7 @@ describe('<LibraryUnitPage />', () => {
 
   const renderLibraryUnitPage = (unitId?: string, libraryId?: string) => {
     const libId = libraryId || mockContentLibrary.libraryId;
-    const uId = unitId || mockGetContainerMetadata.containerId;
+    const uId = unitId || mockGetContainerMetadata.unitId;
     render(<LibraryLayout />, {
       path,
       routerProps: {
@@ -75,14 +75,14 @@ describe('<LibraryUnitPage />', () => {
 
   it('shows the spinner before the query is complete', async () => {
     // This mock will never return data about the collection (it loads forever):
-    renderLibraryUnitPage(mockGetContainerMetadata.containerIdLoading);
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdLoading);
     const spinner = screen.getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
   });
 
   it('shows an error component if no unit returned', async () => {
     // This mock will simulate incorrect unit id
-    renderLibraryUnitPage(mockGetContainerMetadata.containerIdError);
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdError);
     const errorMessage = 'Not found';
     expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
   });
@@ -90,7 +90,7 @@ describe('<LibraryUnitPage />', () => {
   it('shows unit data', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
+    // Unit title -- on main page + sidebar
     expect((await screen.findAllByText(mockGetContainerMetadata.containerData.displayName))[0]).toBeInTheDocument();
     // unit info button
     expect(await screen.findByRole('button', { name: 'Unit Info' })).toBeInTheDocument();
@@ -99,21 +99,23 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
     expect(await screen.findByText('text block 1')).toBeInTheDocument();
     expect(await screen.findByText('text block 2')).toBeInTheDocument();
-    // 3 preview iframes
+    // 3 preview iframes on main page
     expect((await screen.findAllByTestId('block-preview')).length).toEqual(3);
+    // No Preview tab in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
   });
 
   it('can rename unit', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
-    const unitTitle = screen.getAllByRole(
-      'button',
-      { name: mockGetContainerMetadata.containerData.displayName },
-    )[0];
-    fireEvent.click(unitTitle);
 
-    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
+    const editUnitTitleButton = screen.getAllByRole(
+      'button',
+      { name: /edit/i },
+    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editUnitTitleButton);
+
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPatch(url).reply(200);
 
     await waitFor(() => {
@@ -137,14 +139,14 @@ describe('<LibraryUnitPage />', () => {
   it('show error if renaming unit fails', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
-    const unitTitle = screen.getAllByRole(
-      'button',
-      { name: mockGetContainerMetadata.containerData.displayName },
-    )[0];
-    fireEvent.click(unitTitle);
 
-    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
+    const editUnitTitleButton = screen.getAllByRole(
+      'button',
+      { name: /edit/i },
+    )[0]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editUnitTitleButton);
+
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPatch(url).reply(400);
 
     await waitFor(() => {
@@ -187,6 +189,10 @@ describe('<LibraryUnitPage />', () => {
 
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
+    expect((await screen.findAllByText('Test Unit')).length).toBeGreaterThan(1);
+    // No Preview tab shown in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
+
     const component = await screen.findByText('text block 0');
     // Card is 3 levels up the component name div
     userEvent.click(component.parentElement!.parentElement!.parentElement!);
@@ -196,6 +202,8 @@ describe('<LibraryUnitPage />', () => {
 
     // The mock data for the sidebar has a title of "text block 0"
     expect(await findByText('text block 0')).toBeInTheDocument();
+    // Preview tab still not shown in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
     const closeButton = await findByRole('button', { name: /close/i });
     userEvent.click(closeButton);
@@ -210,11 +218,11 @@ describe('<LibraryUnitPage />', () => {
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const componentTitle = screen.getAllByRole(
+    const editButton = screen.getAllByRole(
       'button',
-      { name: 'text block 0' },
-    )[0];
-    fireEvent.click(componentTitle);
+      { name: /edit/i },
+    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editButton);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();
@@ -244,11 +252,11 @@ describe('<LibraryUnitPage />', () => {
     // Wait loading of the component
     await screen.findByText('text block 0');
 
-    const componentTitle = screen.getAllByRole(
+    const editButton = screen.getAllByRole(
       'button',
-      { name: 'text block 0' },
-    )[0];
-    fireEvent.click(componentTitle);
+      { name: /edit/i },
+    )[1]; // 0 is the Unit Title, 1 is the first component on the list
+    fireEvent.click(editButton);
 
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();
@@ -274,7 +282,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -288,7 +296,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -302,7 +310,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(500);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -313,7 +321,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component & restore from component card', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
@@ -333,7 +341,7 @@ describe('<LibraryUnitPage />', () => {
     // @ts-ignore
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPost(restoreUrl).reply(200);
     // restore collection
     restoreFn();
@@ -344,7 +352,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error on remove a component', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(404);
     renderLibraryUnitPage();
 
@@ -362,7 +370,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error on restore removed component', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
@@ -382,7 +390,7 @@ describe('<LibraryUnitPage />', () => {
     // @ts-ignore
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPost(restoreUrl).reply(404);
     // restore collection
     restoreFn();
@@ -393,7 +401,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component from component sidebar', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 

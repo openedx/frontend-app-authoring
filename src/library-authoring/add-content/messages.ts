@@ -11,6 +11,16 @@ const messages = defineMessages({
     defaultMessage: 'Unit',
     description: 'Content of button to create a Unit.',
   },
+  sectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.section',
+    defaultMessage: 'Section',
+    description: 'Content of button to create a Section.',
+  },
+  subsectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.subsection',
+    defaultMessage: 'Subsection',
+    description: 'Content of button to create a Subsection.',
+  },
   libraryContentButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.library-content',
     defaultMessage: 'Existing Library Content',
@@ -25,6 +35,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-unit',
     defaultMessage: 'Add to Unit',
     description: 'Button to add library content to a unit.',
+  },
+  addToSectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-section',
+    defaultMessage: 'Add to Section',
+    description: 'Button to add library content to a section.',
+  },
+  addToSubsectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-subsection',
+    defaultMessage: 'Add to Subsection',
+    description: 'Button to add library content to a subsection.',
   },
   selectedComponents: {
     id: 'course-authoring.library-authoring.add-content.selected-components',

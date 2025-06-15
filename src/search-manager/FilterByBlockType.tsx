@@ -236,6 +236,11 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
 
   // Rebuild sorted blocktypes dictionary
   const sortedBlockTypes: Record<string, number> = {};
+  // Set filtered block types to 0 in sortedBlockTypes
+  typesFilter.blocks.forEach((blockType) => {
+    sortedBlockTypes[blockType] = 0;
+  });
+
   sortedBlockTypeKeys.forEach(key => {
     sortedBlockTypes[key] = blockTypes[key];
   });

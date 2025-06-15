@@ -1,34 +1,85 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { IconButton } from '@openedx/paragon';
-import SelectTypeWrapper from '.';
-import { handleCancel } from '../../../../EditorContainer/hooks';
-
-jest.mock('../../../../EditorContainer/hooks', () => ({
-  handleCancel: jest.fn().mockName('handleCancel'),
-}));
+import {
+  screen, fireEvent, initializeMocks,
+} from '../../../../../../testUtils';
+import editorRender from '../../../../../editorTestRender';
+import SelectTypeWrapper from './index';
+import * as hooks from '../hooks';
 
 describe('SelectTypeWrapper', () => {
-  const props = {
-    children: (<h1>test child</h1>),
-    onClose: jest.fn(),
-    selected: 'iMAsElecTedValUE',
-  };
+  const mockOnClose = jest.fn();
 
-  test('snapshot', () => {
-    expect(shallow(<SelectTypeWrapper {...props} />).snapshot).toMatchSnapshot();
+  beforeEach(() => {
+    initializeMocks();
   });
 
-  describe('behavior', () => {
-    let el;
-    beforeEach(() => {
-      el = shallow(<SelectTypeWrapper {...props} />);
-    });
-    test('close behavior is linked to modal onClose', () => {
-      const expected = handleCancel({ onClose: props.onClose });
-      expect(el.instance.findByType(IconButton)[0].props.onClick)
-        .toEqual(expected);
-    });
+  it('renders component with provided content', () => {
+    editorRender(
+      <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
+        <div>Child Content</div>
+      </SelectTypeWrapper>,
+    );
+    expect(screen.getByText('Child Content')).toBeInTheDocument();
+  });
+
+  it('calls onClose when close button is clicked', () => {
+    editorRender(
+      <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
+        <div />
+      </SelectTypeWrapper>,
+    );
+    fireEvent.click(screen.getByLabelText('Exit the editor'));
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('calls onClose when cancel button is clicked', () => {
+    editorRender(
+      <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
+        <div />
+      </SelectTypeWrapper>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('calls hooks.onSelect with correct args when select button is clicked', () => {
+    const onSelectMock = jest.fn();
+    jest.spyOn(hooks, 'onSelect').mockImplementation(onSelectMock);
+
+    editorRender(
+      <SelectTypeWrapper selected="foo" onClose={mockOnClose}>
+        <div />
+      </SelectTypeWrapper>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Select' }));
+    expect(hooks.onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        selected: 'foo',
+        updateField: expect.any(Function),
+        setBlockTitle: expect.any(Function),
+        defaultSettings: expect.any(Object),
+      }),
+    );
+    expect(onSelectMock).toHaveBeenCalled();
+  });
+
+  it('disables select button when selected is empty', () => {
+    editorRender(
+      <SelectTypeWrapper selected="" onClose={mockOnClose}>
+        <div />
+      </SelectTypeWrapper>,
+    );
+    const selectBtn = screen.getByRole('button', { name: 'Select' });
+    expect(selectBtn).toBeDisabled();
+  });
+
+  it('enables select button when selected is not empty', () => {
+    editorRender(
+      <SelectTypeWrapper selected="bar" onClose={mockOnClose}>
+        <div />
+      </SelectTypeWrapper>,
+    );
+    const selectBtn = screen.getByRole('button', { name: 'Select' });
+    expect(selectBtn).not.toBeDisabled();
   });
 });

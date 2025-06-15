@@ -71,16 +71,6 @@ const messages = defineMessages({
     defaultMessage: 'Learners engage best with short videos followed by opportunities to practice. Ensure that 80% or more of course videos are less than 10 minutes long.',
     description: 'Description for a section that prompts a user to follow best practices for video length',
   },
-  mobileFriendlyVideoShortDescription: {
-    id: 'mobileFriendlyVideoShortDescription',
-    defaultMessage: 'Create mobile-friendly video',
-    description: 'Label for a section that describes mobile friendly videos',
-  },
-  mobileFriendlyVideoLongDescription: {
-    id: 'mobileFriendlyVideoLongDescription',
-    defaultMessage: 'Mobile-friendly videos can be viewed across all supported devices. Ensure that at least 90% of course videos are mobile friendly by uploading course videos to the edX video pipeline.',
-    description: 'Description for a section that prompts a user to follow best practices for mobile friendly videos',
-  },
   diverseSequencesShortDescription: {
     id: 'diverseSequencesShortDescription',
     defaultMessage: 'Build diverse learning sequences',

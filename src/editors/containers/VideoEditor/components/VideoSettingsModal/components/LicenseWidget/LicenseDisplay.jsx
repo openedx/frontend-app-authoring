@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import {
   FormattedMessage,
-  injectIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Stack,
@@ -55,5 +54,4 @@ LicenseDisplay.propTypes = {
   licenseDescription: PropTypes.string.isRequired,
 };
 
-export const LicenseDisplayInternal = LicenseDisplay; // For testing only
-export default injectIntl(LicenseDisplay);
+export default LicenseDisplay;

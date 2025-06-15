@@ -24,6 +24,7 @@ export async function getStudioHomeCourses(search) {
 /**
  * Get's studio home courses.
  * @param {string} search - Query string parameters for filtering the courses.
+ *   TODO: this should be an object with a list of allowed keys and values; not a string.
  * @param {object} customParams - Additional custom parameters for the API request.
  * @returns {Promise<Object>} - A Promise that resolves to the response data containing the studio home courses.
  * Note: We are changing /api/contentstore/v1 to /api/contentstore/v2 due to upcoming breaking changes.

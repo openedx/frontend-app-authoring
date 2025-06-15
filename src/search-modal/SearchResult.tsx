@@ -181,7 +181,7 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
         <div className="hit-name small">
           <Highlight text={hit.formatted.displayName} />
         </div>
-        <div className="hit-description x-small text-truncate">
+        <div className="hit-description x-small">
           <Highlight text={hit.formatted.content?.htmlContent ?? ''} />
           <Highlight text={hit.formatted.content?.capaContent ?? ''} />
         </div>
@@ -190,6 +190,7 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
         </div>
       </Stack>
       <IconButton
+        className="flex-shrink-0"
         src={OpenInNew}
         iconAs={Icon}
         onClick={openContextInNewWindow}

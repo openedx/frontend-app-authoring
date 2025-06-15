@@ -9,7 +9,7 @@ import {
   ErrorOutline as ErrorOutlineIcon,
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
@@ -44,7 +44,8 @@ import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
-const ScheduleAndDetails = ({ intl, courseId }) => {
+const ScheduleAndDetails = ({ courseId }) => {
+  const intl = useIntl();
   const courseSettings = useSelector(getCourseSettings);
   const courseDetails = useSelector(getCourseDetails);
   const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
@@ -391,8 +392,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 };
 
 ScheduleAndDetails.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ScheduleAndDetails);
+export default ScheduleAndDetails;

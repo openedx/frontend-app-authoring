@@ -1,14 +1,9 @@
-import { render, waitFor } from '@testing-library/react';
+// @ts-check
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
-import initializeStore from '../store';
 import { getCertificatesApiUrl } from './data/api';
 import { fetchCertificates } from './data/thunks';
 import { certificatesDataMock } from './__mocks__';
@@ -19,26 +14,13 @@ let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = (props) => render(
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <Certificates courseId={courseId} {...props} />
-    </IntlProvider>
-  </AppProvider>,
-);
+const renderComponent = (props) => render(<Certificates courseId={courseId} {...props} />);
 
 describe('Certificates', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   it('renders WithoutModes when there are certificates but no certificate modes', async () => {

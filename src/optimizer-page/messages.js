@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.heading.title',
     defaultMessage: 'Course optimizer',
   },
+  beta: {
+    id: 'course-authoring.course-optimizer.beta',
+    defaultMessage: 'Beta',
+  },
   headingSubtitle: {
     id: 'course-authoring.course-optimizer.heading.subtitle',
     defaultMessage: 'Tools',
@@ -19,11 +23,7 @@ const messages = defineMessages({
   },
   card1Title: {
     id: 'course-authoring.course-optimizer.card1.title',
-    defaultMessage: 'Scan my course for broken links',
-  },
-  card2Title: {
-    id: 'course-authoring.course-optimizer.card2.title',
-    defaultMessage: 'Scan my course for broken links',
+    defaultMessage: 'Scan my course',
   },
   buttonTitle: {
     id: 'course-authoring.course-optimizer.button.title',

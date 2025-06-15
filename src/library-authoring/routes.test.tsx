@@ -85,22 +85,24 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          componentId: 'cmptId',
+          selectedItemId: 'lb:org:lib:cmpt',
         },
-        path: '/component/cmptId',
+        path: '/lb:org:lib:cmpt',
       },
     },
     {
       label: 'from All Content tab > selected Component, select a different Component',
       origin: {
-        path: '',
-        params: {},
+        path: '/lb:org:lib:cmpt1',
+        params: {
+          selectedItemId: 'lb:org:lib:cmpt1',
+        },
       },
       destination: {
         params: {
-          componentId: 'cmptId2',
+          selectedItemId: 'lb:org:lib:cmpt2',
         },
-        path: '/component/cmptId2',
+        path: '/lb:org:lib:cmpt2',
       },
     },
     {
@@ -111,7 +113,7 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          collectionId: 'clctnId',
+          selectedItemId: 'clctnId',
         },
         path: '/clctnId',
       },
@@ -124,9 +126,24 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          unitId: 'lct:org:lib:unit:unitId',
+          selectedItemId: 'lct:org:lib:unit:unitId',
         },
         path: '/lct:org:lib:unit:unitId',
+      },
+    },
+    {
+      label: 'from All Content tab > selected unit, navigate to unit page',
+      origin: {
+        path: '/lct:org:lib:unit:unitId',
+        params: {
+          selectedItemId: 'lct:org:lib:unit:unitId',
+        },
+      },
+      destination: {
+        params: {
+          containerId: 'lct:org:lib:unit:unitId',
+        },
+        path: '/unit/lct:org:lib:unit:unitId',
       },
     },
     {
@@ -141,24 +158,20 @@ describe('Library Authoring routes', () => {
         params: {
           collectionId: 'clctnId',
         },
-        /*
-         * Note: the MemoryRouter used by testUtils breaks this, but should be:
-         * path: '/collection/clctnId',
-         */
-        path: '/clctnId',
+        path: '/collection/clctnId',
       },
     },
     {
       label: 'from All Content > Collection, select a different Collection',
       origin: {
         params: {
-          collectionId: 'clctnId',
+          selectedItemId: 'clctnId',
         },
         path: '/clctnId',
       },
       destination: {
         params: {
-          collectionId: 'clctnId2',
+          selectedItemId: 'clctnId2',
         },
         path: '/clctnId2',
       },
@@ -178,14 +191,28 @@ describe('Library Authoring routes', () => {
       },
     },
     {
+      label: 'from All Content tab > select a Component, navigate to Component page',
+      origin: {
+        path: '/lb:org:lib:cmpt',
+        params: {
+          selectedItemId: 'lb:org:lib:cmpt',
+        },
+      },
+      destination: {
+        path: '/components/lb:org:lib:cmpt', // Should keep the selected component
+        params: {
+          contentType: ContentType.components,
+          selectedItemId: 'lb:org:lib:cmpt',
+        },
+      },
+    },
+    {
       label: 'navigate from Components tab to Collections tab',
       origin: {
-        label: 'Components tab',
         path: '/components',
         params: {},
       },
       destination: {
-        label: 'Collections tab',
         params: {
           contentType: ContentType.collections,
         },
@@ -200,9 +227,9 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          componentId: 'cmptId',
+          selectedItemId: 'lb:org:lib:cmpt',
         },
-        path: '/components/cmptId',
+        path: '/components/lb:org:lib:cmpt',
       },
     },
     // "Collections" tab
@@ -217,6 +244,22 @@ describe('Library Authoring routes', () => {
         params: {
           contentType: ContentType.home,
         },
+      },
+    },
+    {
+      label: 'navigate From All Content tab with component selected, to Collection tab',
+      origin: {
+        params: {
+          selectedItemId: 'lb:org:lib:component',
+        },
+        path: '/lb:org:lib:component',
+      },
+      destination: {
+        params: {
+          contentType: ContentType.collections,
+          selectedItemId: 'lb:org:lib:component',
+        },
+        path: '/collections', // Should ignore the selected component
       },
     },
     {
@@ -240,7 +283,7 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          collectionId: 'clctnId',
+          selectedItemId: 'clctnId',
         },
         path: '/collections/clctnId',
       },
@@ -251,17 +294,13 @@ describe('Library Authoring routes', () => {
         params: {
           selectedItemId: 'clctnId',
         },
-        path: '/collections/clctnId',
+        path: '/clctnId',
       },
       destination: {
         params: {
           collectionId: 'clctnId',
         },
-        /*
-         * Note: the MemoryRouter used by testUtils breaks this, but should be:
-         * path: '/collection/clctnId',
-         */
-        path: '/collections/clctnId',
+        path: '/collection/clctnId',
       },
     },
     {
@@ -270,13 +309,13 @@ describe('Library Authoring routes', () => {
         params: {
           collectionId: 'clctnId',
         },
-        path: '/collections/clctnId',
+        path: '/collection/clctnId',
       },
       destination: {
         params: {
           collectionId: 'clctnId2',
         },
-        path: '/collections/clctnId2',
+        path: '/collection/clctnId2',
       },
     },
     // "Units" tab
@@ -301,7 +340,7 @@ describe('Library Authoring routes', () => {
       },
       destination: {
         params: {
-          unitId: 'unitId',
+          selectedItemId: 'unitId',
         },
         path: '/units/unitId',
       },
@@ -316,6 +355,134 @@ describe('Library Authoring routes', () => {
         path: '',
         params: {
           contentType: ContentType.home,
+        },
+      },
+    },
+    {
+      label: 'navigate From All Content tab with component selected, to Units tab',
+      origin: {
+        path: '/lb:org:lib:component',
+        params: {
+          selectedItemId: 'lb:org:lib:component',
+        },
+      },
+      destination: {
+        params: {
+          contentType: ContentType.units,
+          selectedItemId: 'lb:org:lib:component',
+        },
+        path: '/units', // Should ignore the selected component
+      },
+    },
+    // "Sections" tab
+    {
+      label: 'navigate from All Content tab to Sections tab',
+      origin: {
+        path: '',
+        params: {},
+      },
+      destination: {
+        path: '/sections',
+        params: {
+          contentType: ContentType.sections,
+        },
+      },
+    },
+    {
+      label: 'from Sections tab, select a Section',
+      origin: {
+        path: '/sections',
+        params: {},
+      },
+      destination: {
+        params: {
+          selectedItemId: 'sectionId',
+        },
+        path: '/sections/sectionId',
+      },
+    },
+    {
+      label: 'navigate from Sections tab to All Content tab',
+      origin: {
+        path: '/sections',
+        params: {},
+      },
+      destination: {
+        path: '',
+        params: {
+          contentType: ContentType.home,
+        },
+      },
+    },
+    {
+      label: 'navigate From All Content tab with component selected, to Sections tab',
+      origin: {
+        path: '/lb:org:lib:component',
+        params: {
+          selectedItemId: 'lb:org:lib:component',
+        },
+      },
+      destination: {
+        params: {
+          contentType: ContentType.sections,
+          selectedItemId: 'lb:org:lib:component',
+        },
+        path: '/sections', // Should ignore the selected component
+      },
+    },
+    // "Subsections" tab
+    {
+      label: 'navigate from All Content tab to Subsections tab',
+      origin: {
+        path: '',
+        params: {},
+      },
+      destination: {
+        path: '/subsections',
+        params: {
+          contentType: ContentType.subsections,
+        },
+      },
+    },
+    {
+      label: 'from Sections tab, select a Subsection',
+      origin: {
+        path: '/subsections',
+        params: {},
+      },
+      destination: {
+        params: {
+          selectedItemId: 'subsectionId',
+        },
+        path: '/subsections/subsectionId',
+      },
+    },
+    {
+      label: 'navigate from Subsections tab to All Content tab',
+      origin: {
+        path: '/subsections',
+        params: {},
+      },
+      destination: {
+        path: '',
+        params: {
+          contentType: ContentType.home,
+        },
+      },
+    },
+    {
+      label: 'navigate From All Content tab with component selected, to Subsections tab',
+      origin: {
+        path: '/lb:org:lib:component',
+        params: {
+          selectedItemId: 'lb:org:lib:component',
+        },
+      },
+      destination: {
+        path: '/subsections', // Should ignore the selected component
+        params: {
+          contentType: ContentType.subsections,
+          selectedItemId: 'lb:org:lib:component',
         },
       },
     },
@@ -336,6 +503,7 @@ describe('Library Authoring routes', () => {
         path: `/library/:libraryId${origin.path}/*`,
         params: {
           libraryId: mockContentLibrary.libraryId,
+          containerId: '',
           collectionId: '',
           selectedItemId: '',
           ...origin.params,

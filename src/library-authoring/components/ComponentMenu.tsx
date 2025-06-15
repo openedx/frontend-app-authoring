@@ -13,7 +13,7 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
 import {
-  useAddComponentsToContainer,
+  useAddItemsToContainer,
   useRemoveContainerChildren,
   useRemoveItemsFromCollection,
 } from '../data/apiHooks';
@@ -28,23 +28,23 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    unitId,
+    containerId,
     openComponentEditor,
   } = useLibraryContext();
 
   const {
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openComponentInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
-  const { navigateTo } = useLibraryRoutes();
+  const { navigateTo, insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addComponentToContainerMutation = useAddComponentsToContainer(unitId);
+  const addItemToContainerMutation = useAddItemsToContainer(containerId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
-  const removeContainerComponentsMutation = useRemoveContainerChildren(unitId);
+  const removeContainerItemMutation = useRemoveContainerChildren(containerId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const { copyToClipboard } = useClipboard();
 
@@ -54,7 +54,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeCollectionComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -66,15 +66,15 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromContainer = () => {
     const restoreComponent = () => {
-      addComponentToContainerMutation.mutateAsync([usageKey]).then(() => {
+      addItemToContainerMutation.mutateAsync([usageKey]).then(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
       }).catch(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
       });
     };
 
-    removeContainerComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+    removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
+      if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -90,6 +90,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     });
   };
 
+  const handleEdit = useCallback(() => {
+    navigateTo({ selectedItemId: usageKey });
+    openComponentEditor(usageKey);
+  }, [usageKey, navigateTo]);
+
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
     // This needs to run after all changes to url takes place to avoid conflicts.
@@ -97,8 +102,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ componentId: usageKey });
-    openComponentInfoSidebar(usageKey);
+    navigateTo({ selectedItemId: usageKey });
     scheduleJumpToCollection();
   }, [
     scheduleJumpToCollection,
@@ -119,13 +123,13 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}>
+        <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
           <FormattedMessage {...messages.menuEdit} />
         </Dropdown.Item>
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        {unitId && (
+        {containerId && (
           <Dropdown.Item onClick={removeFromContainer}>
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>
@@ -133,7 +137,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={confirmDelete}>
           <FormattedMessage {...messages.menuDelete} />
         </Dropdown.Item>
-        {collectionId && (
+        {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>
@@ -142,7 +146,13 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
-      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
+      {isConfirmingDelete && (
+        <ComponentDeleter
+          usageKey={usageKey}
+          isConfirmingDelete={isConfirmingDelete}
+          cancelDelete={cancelDelete}
+        />
+      )}
     </Dropdown>
   );
 };

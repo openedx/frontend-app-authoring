@@ -1,7 +1,7 @@
 /**
  * Constants and utility hook for the Library Authoring routes.
  */
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   generatePath,
   matchPath,
@@ -11,28 +11,36 @@ import {
   useSearchParams,
   type PathMatch,
 } from 'react-router-dom';
-import { useLibraryContext } from './common/context/LibraryContext';
+import { ContainerType, getBlockType } from '../generic/key-utils';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
 export const ROUTES = {
   // LibraryAuthoringPage routes:
-  // * Components tab, with an optionally selected componentId in the sidebar.
-  COMPONENTS: '/components/:componentId?',
+  // * Components tab, with an optionally selected component in the sidebar.
+  COMPONENTS: '/components/:selectedItemId?',
   // * Collections tab, with an optionally selected collectionId in the sidebar.
-  COLLECTIONS: '/collections/:collectionId?',
-  // * Units tab, with an optionally selected unitId in the sidebar.
-  UNITS: '/units/:unitId?',
-  // * All Content tab, with an optionally selected componentId in the sidebar.
-  COMPONENT: '/component/:componentId',
+  COLLECTIONS: '/collections/:selectedItemId?',
+  // * Sections tab, with an optionally selected section in the sidebar.
+  SECTIONS: '/sections/:selectedItemId?',
+  // * Subsections tab, with an optionally selected subsection in the sidebar.
+  SUBSECTIONS: '/subsections/:selectedItemId?',
+  // * Units tab, with an optionally selected unit in the sidebar.
+  UNITS: '/units/:selectedItemId?',
   // * All Content tab, with an optionally selected collection or unit in the sidebar.
   HOME: '/:selectedItemId?',
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
-  COLLECTION: '/collection/:collectionId/:componentId?',
+  COLLECTION: '/collection/:collectionId/:selectedItemId?',
+  // LibrarySectionPage route:
+  // * with a selected containerId and an optionally selected subsection.
+  SECTION: '/section/:containerId/:selectedItemId?',
+  // LibrarySubsectionPage route:
+  // * with a selected containerId and an optionally selected unit.
+  SUBSECTION: '/subsection/:containerId/:selectedItemId?',
   // LibraryUnitPage route:
-  // * with a selected unitId and/or an optionally selected componentId.
-  UNIT: '/unit/:unitId/:componentId?',
+  // * with a selected containerId and/or an optionally selected componentId.
+  UNIT: '/unit/:containerId/:selectedItemId?',
 };
 
 export enum ContentType {
@@ -40,25 +48,34 @@ export enum ContentType {
   collections = 'collections',
   components = 'components',
   units = 'units',
+  sections = 'sections',
+  subsections = 'subsections',
 }
 
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
 
 export type NavigateToData = {
-  componentId?: string,
+  selectedItemId?: string,
   collectionId?: string,
+  containerId?: string,
   contentType?: ContentType,
-  unitId?: string,
 };
 
 export type LibraryRoutesData = {
   insideCollection: PathMatch<string> | null;
   insideCollections: PathMatch<string> | null;
   insideComponents: PathMatch<string> | null;
+  insideSections: PathMatch<string> | null;
+  insideSection: PathMatch<string> | null;
+  insideSubsections: PathMatch<string> | null;
+  insideSubsection: PathMatch<string> | null;
   insideUnits: PathMatch<string> | null;
   insideUnit: PathMatch<string> | null;
 
-  // Navigate using the best route from the current location for the given parameters.
+  /** Navigate using the best route from the current location for the given parameters.
+   *  This function can be mutated if there are changes in the current route, so always include
+   *  it in the dependencies array if used on a `useCallback`.
+   */
   navigateTo: (dict?: NavigateToData) => void;
 };
 
@@ -67,127 +84,188 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setComponentId, setUnitId, setCollectionId } = useLibraryContext();
 
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
   const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
+  const insideSections = matchPath(BASE_ROUTE + ROUTES.SECTIONS, pathname);
+  const insideSection = matchPath(BASE_ROUTE + ROUTES.SECTION, pathname);
+  const insideSubsections = matchPath(BASE_ROUTE + ROUTES.SUBSECTIONS, pathname);
+  const insideSubsection = matchPath(BASE_ROUTE + ROUTES.SUBSECTION, pathname);
   const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
   const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname);
 
+  // Sanity check to ensure that we are not inside more than one route at the same time.
+  // istanbul ignore if: this is a developer error, not a user error.
+  if (
+    [
+      insideCollection,
+      insideCollections,
+      insideComponents,
+      insideSections,
+      insideSection,
+      insideSubsections,
+      insideSubsection,
+      insideUnits,
+      insideUnit,
+    ].filter((match): match is PathMatch<string> => match !== null).length > 1) {
+    throw new Error('Cannot be inside more than one route at the same time.');
+  }
+
+  /** This function is used to navigate to a specific route based on the provided parameters.
+   */
   const navigateTo = useCallback(({
-    componentId,
+    selectedItemId,
     collectionId,
-    unitId,
+    containerId,
     contentType,
   }: NavigateToData = {}) => {
-    const {
-      collectionId: urlCollectionId,
-      componentId: urlComponentId,
-      unitId: urlUnitId,
-      selectedItemId: urlSelectedItemId,
-    } = params;
-
     const routeParams = {
       ...params,
-      // Overwrite the current componentId/collectionId params if provided
-      ...((componentId !== undefined) && { componentId }),
-      ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
-      ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
-      ...(contentType === ContentType.home && { selectedItemId: urlCollectionId || urlUnitId }),
-      ...(contentType === ContentType.components && { componentId: urlComponentId || urlSelectedItemId }),
-      ...(contentType === ContentType.collections && { collectionId: urlCollectionId || urlSelectedItemId }),
-      ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
+      // Overwrite the params with the provided values.
+      ...((selectedItemId !== undefined) && { selectedItemId }),
+      ...((containerId !== undefined) && { containerId }),
+      ...((collectionId !== undefined) && { collectionId }),
     };
     let route: string;
 
-    // Update componentId, unitId, collectionId in library context if is not undefined.
-    // Ids can be cleared from route by passing in empty string so we need to set it.
-    if (componentId !== undefined) {
-      setComponentId(componentId);
-    }
-    if (unitId !== undefined) {
-      setUnitId(unitId);
-    }
-    if (collectionId !== undefined) {
-      setCollectionId(collectionId);
+    if (routeParams.selectedItemId
+     && (['components', 'units', 'sections', 'subsections'].includes(routeParams.selectedItemId || ''))) {
+      // These are not valid selectedItemIds, but routes
+      routeParams.selectedItemId = undefined;
     }
 
+    // Update containerId/collectionId in library context if is not undefined.
+    // Ids can be cleared from route by passing in empty string so we need to set it.
+    if (containerId !== undefined) {
+      routeParams.selectedItemId = undefined;
+
+      // If we can have a containerId alongside a routeParams.collectionId,
+      // it means we are inside a collection trying to navigate to a unit/section/subsection,
+      // so we want to clear the collectionId to not have ambiguity.
+      if (routeParams.collectionId !== undefined) {
+        routeParams.collectionId = undefined;
+      }
+    } else if (collectionId !== undefined) {
+      routeParams.selectedItemId = undefined;
+    } else if (contentType) {
+      // We are navigating to the library home, so we need to clear the containerId and collectionId
+      routeParams.containerId = undefined;
+      routeParams.collectionId = undefined;
+    }
+
+    // The code below determines the best route to navigate to based on the
+    // current pathname and the provided parameters.
     // Providing contentType overrides the current route so we can change tabs.
     if (contentType === ContentType.components) {
+      if (!routeParams.selectedItemId?.startsWith('lb:')) {
+        // If the selectedItemId is not a component, we need to set it to undefined
+        routeParams.selectedItemId = undefined;
+      }
       route = ROUTES.COMPONENTS;
     } else if (contentType === ContentType.collections) {
+      // FIXME: We are using the Collection key, not the full OpaqueKey. So we
+      // can't directly use the selectedItemId to determine if it's a collection.
+      // We need to change this to use the full OpaqueKey in the future.
+      if (routeParams.selectedItemId?.startsWith('lct:')
+        || routeParams.selectedItemId?.startsWith('lb:')) {
+        routeParams.selectedItemId = undefined;
+      }
       route = ROUTES.COLLECTIONS;
     } else if (contentType === ContentType.units) {
+      if (!routeParams.selectedItemId?.includes(':unit:')) {
+        // Clear selectedItemId if it is not a unit.
+        routeParams.selectedItemId = undefined;
+      }
       route = ROUTES.UNITS;
+    } else if (contentType === ContentType.subsections) {
+      if (!routeParams.selectedItemId?.includes(':subsection:')) {
+        // If the selectedItemId is not a subsection, we need to set it to undefined
+        routeParams.selectedItemId = undefined;
+      }
+      route = ROUTES.SUBSECTIONS;
+    } else if (contentType === ContentType.sections) {
+      if (!routeParams.selectedItemId?.includes(':section:')) {
+        // If the selectedItemId is not a section, we need to set it to undefined
+        routeParams.selectedItemId = undefined;
+      }
+      route = ROUTES.SECTIONS;
     } else if (contentType === ContentType.home) {
       route = ROUTES.HOME;
-    } else if (insideCollections) {
-      // We're inside the Collections tab,
-      route = (
-        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
-          // now open the previously-selected collection,
-          ? ROUTES.COLLECTION
-          // or stay there to list all collections, or a selected collection.
-          : ROUTES.COLLECTIONS
-      );
-    } else if (insideCollection) {
-      // We're viewing a Collection, so stay there,
-      // and optionally select a component in that collection.
+    } else if (routeParams.containerId) {
+      const containerType = getBlockType(routeParams.containerId);
+      switch (containerType) {
+        case ContainerType.Unit:
+          route = ROUTES.UNIT;
+          break;
+        case ContainerType.Subsection:
+          route = ROUTES.SUBSECTION;
+          break;
+        case ContainerType.Section:
+          route = ROUTES.SECTION;
+          break;
+        default:
+          // Fall back to home if unrecognized container type
+          route = ROUTES.HOME;
+          routeParams.containerId = undefined;
+          break;
+      }
+    } else if (routeParams.collectionId) {
       route = ROUTES.COLLECTION;
+      // From here, we will just stay in the current route
     } else if (insideComponents) {
-      // We're inside the Components tab, so stay there,
-      // optionally selecting a component.
       route = ROUTES.COMPONENTS;
+    } else if (insideCollections) {
+      route = ROUTES.COLLECTIONS;
     } else if (insideUnits) {
-      // We're inside the units tab,
-      route = (
-        (unitId && unitId === (urlUnitId || urlSelectedItemId))
-          // now open the previously-selected unit,
-          ? ROUTES.UNIT
-          // or stay there to list all units, or a selected unit.
-          : ROUTES.UNITS
-      );
-    } else if (insideUnit) {
-      // We're viewing a Unit, so stay there,
-      // and optionally select a component in that Unit.
-      route = ROUTES.UNIT;
-    } else if (componentId) {
-      // We're inside the All Content tab, so stay there,
-      // and select a component.
-      route = ROUTES.COMPONENT;
-    } else if (collectionId && collectionId === (urlCollectionId || urlSelectedItemId)) {
-      // now open the previously-selected collection
-      route = ROUTES.COLLECTION;
-    } else if (unitId && unitId === (urlUnitId || urlSelectedItemId)) {
-      // now open the previously-selected unit
-      route = ROUTES.UNIT;
+      route = ROUTES.UNITS;
+    } else if (insideSubsections) {
+      route = ROUTES.SUBSECTIONS;
+    } else if (insideSections) {
+      route = ROUTES.SECTIONS;
     } else {
-      // or stay there to list all content, or optionally select a collection.
       route = ROUTES.HOME;
     }
 
+    // Also remove the `sa` (sidebar action) search param if it exists.
+    searchParams.delete('sa');
+
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
-    navigate({
-      pathname: newPath,
-      search: searchParams.toString(),
-    });
+    // Prevent unnecessary navigation if the path is the same.
+    if (newPath !== pathname) {
+      navigate({
+        pathname: newPath,
+        search: searchParams.toString(),
+      });
+    }
   }, [
     navigate,
     params,
     searchParams,
     pathname,
-    setComponentId,
-    setUnitId,
-    setCollectionId,
   ]);
 
-  return {
+  return useMemo(() => ({
     navigateTo,
     insideCollection,
     insideCollections,
     insideComponents,
+    insideSections,
+    insideSection,
+    insideSubsections,
+    insideSubsection,
     insideUnits,
     insideUnit,
-  };
+  }), [
+    navigateTo,
+    insideCollection,
+    insideCollections,
+    insideComponents,
+    insideSections,
+    insideSection,
+    insideSubsections,
+    insideSubsection,
+    insideUnits,
+    insideUnit,
+  ]);
 };

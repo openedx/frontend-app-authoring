@@ -2,11 +2,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, Icon } from '@openedx/paragon';
-import { useSelector } from 'react-redux';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import messages from './messages';
 
 const getUpdateLinks = (courseId, waffleFlags) => {
@@ -35,7 +34,7 @@ const ChecklistItemBody = ({
   isCompleted,
 }) => {
   const intl = useIntl();
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
   const updateLinks = getUpdateLinks(courseId, waffleFlags);
 
   return (

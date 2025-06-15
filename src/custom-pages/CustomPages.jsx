@@ -39,7 +39,7 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
-import { getWaffleFlags } from '../data/selectors';
+import { useWaffleFlags } from '../data/apiHooks';
 import getPageHeadTitle from '../generic/utils';
 import { getPagePath } from '../utils';
 
@@ -68,7 +68,7 @@ const CustomPages = ({
   const deletePageStatus = useSelector(state => state.customPages.deletingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const pages = useModels('customPages', customPagesIds);
 
