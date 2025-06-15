@@ -12,6 +12,9 @@ module.exports = createConfig('jest', {
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
     '^CourseAuthoring/(.*)$': '<rootDir>/src/$1',
+    // This alias is for any code in the src directory that wants to avoid '../../' style relative imports:
+    '^@src/(.*)$': '<rootDir>/src/$1',
+    // This alias is used for plugins in the plugins/ folder only.
   },
   modulePathIgnorePatterns: [
   ],

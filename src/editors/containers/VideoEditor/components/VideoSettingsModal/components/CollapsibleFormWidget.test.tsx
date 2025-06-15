@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   render, screen, initializeMocks,
-} from 'CourseAuthoring/testUtils';
+} from '@src/testUtils';
 import CollapsibleFormWidget from './CollapsibleFormWidget';
 
 describe('CollapsibleFormWidget', () => {

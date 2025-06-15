@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   render, screen, fireEvent, initializeMocks,
-} from 'CourseAuthoring/testUtils';
+} from '@src/testUtils';
 import { ImportTranscriptCardInternal as ImportTranscriptCard } from './ImportTranscriptCard';
 
 jest.mock('../../../../../../data/redux', () => ({
@@ -34,7 +34,8 @@ describe('ImportTranscriptCard (RTL)', () => {
       <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
     );
     const closeButton = container.querySelector('.btn-icon-primary');
-    fireEvent.click(closeButton);
+    expect(closeButton).toBeInTheDocument();
+    fireEvent.click(closeButton!);
     expect(mockSetOpen).toHaveBeenCalledWith(false);
   });
 

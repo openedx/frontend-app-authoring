@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   render, fireEvent, screen, initializeMocks,
-} from 'CourseAuthoring/testUtils';
+} from '@src/testUtils';
 import { LicenseSelectorInternal } from './LicenseSelector';
 import * as hooks from './hooks';
 
@@ -23,21 +23,21 @@ describe('LicenseSelectorInternal', () => {
   const props = {
     license: LicenseTypes.select,
     level: LicenseLevel.video,
-    courseLicenseType: LicenseTypes.cc_nc,
+    courseLicenseType: LicenseTypes.select,
     updateField,
   };
 
   beforeEach(() => {
     initializeMocks();
-    hooks.onSelectLicense.mockReturnValue(onLicenseChange);
-    hooks.determineText.mockReturnValue({ levelDescription: 'Test level description' });
+    (hooks.onSelectLicense as jest.Mock).mockReturnValue(onLicenseChange);
+    (hooks.determineText as jest.Mock).mockReturnValue({ levelDescription: 'Test level description' });
   });
 
   it('renders select with correct options and default value', () => {
     render(<LicenseSelectorInternal {...props} />);
     const select = screen.getByRole('combobox');
     expect(select).toBeInTheDocument();
-    expect(select.value).toBe(props.license);
+    expect((select as HTMLSelectElement).value).toBe(props.license);
     expect(screen.getByText(LicenseTypes.allRightsReserved)).toBeInTheDocument();
     expect(screen.getByText(LicenseTypes.creativeCommons)).toBeInTheDocument();
   });

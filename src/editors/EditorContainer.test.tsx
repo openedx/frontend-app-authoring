@@ -2,7 +2,7 @@ import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
   render, screen, initializeMocks, fireEvent, act,
-} from 'CourseAuthoring/testUtils';
+} from '@src/testUtils';
 import EditorContainer from './EditorContainer';
 import { mockWaffleFlags } from '../data/apiHooks.mock';
 import editorCmsApi from './data/services/cms/api';
