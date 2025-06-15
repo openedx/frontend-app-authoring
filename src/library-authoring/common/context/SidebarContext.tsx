@@ -8,18 +8,15 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
-import { getBlockType } from '../../../generic/key-utils';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
 
-export enum SidebarBodyComponentId {
+export enum SidebarBodyItemId {
   AddContent = 'add-content',
   Info = 'info',
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
-  UnitInfo = 'unit-info',
-  SectionInfo = 'section-info',
-  SubsectionInfo = 'subsection-info',
+  ContainerInfo = 'container-info',
 }
 
 export const COLLECTION_INFO_TABS = {
@@ -41,31 +38,37 @@ export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
   Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
 );
 
-export const UNIT_INFO_TABS = {
+export const CONTAINER_INFO_TABS = {
   Preview: 'preview',
   Manage: 'manage',
   Usage: 'usage',
   Settings: 'settings',
 } as const;
-export type UnitInfoTab = typeof UNIT_INFO_TABS[keyof typeof UNIT_INFO_TABS];
-export const isUnitInfoTab = (tab: string): tab is UnitInfoTab => (
-  Object.values<string>(UNIT_INFO_TABS).includes(tab)
+export type ContainerInfoTab = typeof CONTAINER_INFO_TABS[keyof typeof CONTAINER_INFO_TABS];
+export const isContainerInfoTab = (tab: string): tab is ContainerInfoTab => (
+  Object.values<string>(CONTAINER_INFO_TABS).includes(tab)
 );
 
-type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | UnitInfoTab;
+const DEFAULT_TAB = {
+  component: COMPONENT_INFO_TABS.Preview,
+  container: CONTAINER_INFO_TABS.Preview,
+  collection: COLLECTION_INFO_TABS.Manage,
+};
+
+type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | ContainerInfoTab;
 const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
-  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isUnitInfoTab(tab)
+  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isContainerInfoTab(tab)
     ? tab : undefined
 );
 
 export interface DefaultTabs {
   component: ComponentInfoTab;
-  unit: UnitInfoTab;
+  container: ContainerInfoTab;
   collection: CollectionInfoTab;
 }
 
-export interface SidebarComponentInfo {
-  type: SidebarBodyComponentId;
+export interface SidebarItemInfo {
+  type: SidebarBodyItemId;
   id: string;
 }
 
@@ -82,17 +85,15 @@ export type SidebarContextData = {
   openLibrarySidebar: () => void;
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
-  openUnitInfoSidebar: (usageKey: string) => void;
-  sidebarComponentInfo?: SidebarComponentInfo;
+  openContainerInfoSidebar: (usageKey: string) => void;
+  sidebarItemInfo?: SidebarItemInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
   resetSidebarAction: () => void;
   sidebarTab: SidebarInfoTab;
   setSidebarTab: (tab: SidebarInfoTab) => void;
   defaultTab: DefaultTabs;
-  setDefaultTab: (tabs: DefaultTabs) => void;
   hiddenTabs: Array<SidebarInfoTab>;
-  setHiddenTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
 /**
@@ -106,7 +107,7 @@ const SidebarContext = createContext<SidebarContextData | undefined>(undefined);
 type SidebarProviderProps = {
   children?: React.ReactNode;
   /** Only used for testing */
-  initialSidebarComponentInfo?: SidebarComponentInfo;
+  initialSidebarItemInfo?: SidebarItemInfo;
 };
 
 /**
@@ -114,17 +115,13 @@ type SidebarProviderProps = {
  */
 export const SidebarProvider = ({
   children,
-  initialSidebarComponentInfo,
+  initialSidebarItemInfo,
 }: SidebarProviderProps) => {
-  const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
-    initialSidebarComponentInfo,
+  const [sidebarItemInfo, setSidebarItemInfo] = useState<SidebarItemInfo | undefined>(
+    initialSidebarItemInfo,
   );
 
-  const [defaultTab, setDefaultTab] = useState<DefaultTabs>({
-    component: COMPONENT_INFO_TABS.Preview,
-    unit: UNIT_INFO_TABS.Preview,
-    collection: COLLECTION_INFO_TABS.Manage,
-  });
+  const [defaultTab, setDefaultTab] = useState<DefaultTabs>(DEFAULT_TAB);
   const [hiddenTabs, setHiddenTabs] = useState<Array<SidebarInfoTab>>([]);
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
@@ -145,43 +142,43 @@ export const SidebarProvider = ({
   }, [setSidebarAction]);
 
   const closeLibrarySidebar = useCallback(() => {
-    setSidebarComponentInfo(undefined);
+    setSidebarItemInfo(undefined);
   }, []);
   const openAddContentSidebar = useCallback(() => {
-    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
+    setSidebarItemInfo({ id: '', type: SidebarBodyItemId.AddContent });
   }, []);
   const openLibrarySidebar = useCallback(() => {
-    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
+    setSidebarItemInfo({ id: '', type: SidebarBodyItemId.Info });
   }, []);
 
   const openComponentInfoSidebar = useCallback((usageKey: string) => {
-    setSidebarComponentInfo({
+    setSidebarItemInfo({
       id: usageKey,
-      type: SidebarBodyComponentId.ComponentInfo,
+      type: SidebarBodyItemId.ComponentInfo,
     });
   }, []);
 
   const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
-    setSidebarComponentInfo({
+    setSidebarItemInfo({
       id: newCollectionId,
-      type: SidebarBodyComponentId.CollectionInfo,
+      type: SidebarBodyItemId.CollectionInfo,
     });
   }, []);
 
-  const openUnitInfoSidebar = useCallback((usageKey: string) => {
-    setSidebarComponentInfo({
+  const openContainerInfoSidebar = useCallback((usageKey: string) => {
+    setSidebarItemInfo({
       id: usageKey,
-      type: SidebarBodyComponentId.UnitInfo,
+      type: SidebarBodyItemId.ContainerInfo,
     });
   }, []);
 
   // Set the initial sidebar state based on the URL parameters and context.
-  const { selectedItemId } = useParams();
-  const { unitId, collectionId } = useLibraryContext();
+  const { selectedItemId, containerId: selectedContainerId } = useParams();
+  const { collectionId, containerId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   useEffect(() => {
-    if (initialSidebarComponentInfo) {
+    if (initialSidebarItemInfo) {
       // If the sidebar is already open with a selected item, we don't need to do anything.
       return;
     }
@@ -192,20 +189,8 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
-      let containerType: undefined | string;
-      try {
-        containerType = getBlockType(selectedItemId);
-      } catch {
-        // ignore
-      }
-      if (containerType === 'unit') {
-        openUnitInfoSidebar(selectedItemId);
-      } else if (containerType === 'section') {
-        // istanbul ignore next
-        // Open section info sidebar
-      } else if (containerType === 'subsection') {
-        // istanbul ignore next
-        // Open subsection info sidebar
+      if (selectedItemId.startsWith('lct:')) {
+        openContainerInfoSidebar(selectedItemId);
       } else if (selectedItemId.startsWith('lb:')) {
         openComponentInfoSidebar(selectedItemId);
       } else {
@@ -213,12 +198,25 @@ export const SidebarProvider = ({
       }
     } else if (collectionId) {
       openCollectionInfoSidebar(collectionId);
-    } else if (unitId) {
-      openUnitInfoSidebar(unitId);
+    } else if (containerId) {
+      openContainerInfoSidebar(containerId);
     } else {
       openLibrarySidebar();
     }
-  }, [selectedItemId]);
+
+    // Hide the Preview tab if we're inside a collection
+    if (selectedContainerId) {
+      setDefaultTab({
+        collection: COLLECTION_INFO_TABS.Details,
+        component: COMPONENT_INFO_TABS.Manage,
+        container: CONTAINER_INFO_TABS.Manage,
+      });
+      setHiddenTabs([
+        COMPONENT_INFO_TABS.Preview,
+        CONTAINER_INFO_TABS.Preview,
+      ]);
+    }
+  }, [selectedItemId, selectedContainerId, collectionId, containerId]);
 
   const context = useMemo<SidebarContextData>(() => {
     const contextValue = {
@@ -226,18 +224,16 @@ export const SidebarProvider = ({
       openAddContentSidebar,
       openLibrarySidebar,
       openComponentInfoSidebar,
-      sidebarComponentInfo,
+      sidebarItemInfo,
       openCollectionInfoSidebar,
-      openUnitInfoSidebar,
+      openContainerInfoSidebar,
       sidebarAction,
       setSidebarAction,
       resetSidebarAction,
       sidebarTab,
       setSidebarTab,
       defaultTab,
-      setDefaultTab,
       hiddenTabs,
-      setHiddenTabs,
     };
 
     return contextValue;
@@ -246,18 +242,16 @@ export const SidebarProvider = ({
     openAddContentSidebar,
     openLibrarySidebar,
     openComponentInfoSidebar,
-    sidebarComponentInfo,
+    sidebarItemInfo,
     openCollectionInfoSidebar,
-    openUnitInfoSidebar,
+    openContainerInfoSidebar,
     sidebarAction,
     setSidebarAction,
     resetSidebarAction,
     sidebarTab,
     setSidebarTab,
     defaultTab,
-    setDefaultTab,
     hiddenTabs,
-    setHiddenTabs,
   ]);
 
   return (
@@ -277,21 +271,15 @@ export function useSidebarContext(): SidebarContextData {
       openLibrarySidebar: () => {},
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
-      openUnitInfoSidebar: () => {},
+      openContainerInfoSidebar: () => {},
       sidebarAction: SidebarActions.None,
       setSidebarAction: () => {},
       resetSidebarAction: () => {},
       sidebarTab: COMPONENT_INFO_TABS.Preview,
       setSidebarTab: () => {},
-      sidebarComponentInfo: undefined,
-      defaultTab: {
-        component: COMPONENT_INFO_TABS.Preview,
-        unit: UNIT_INFO_TABS.Preview,
-        collection: COLLECTION_INFO_TABS.Manage,
-      },
-      setDefaultTab: () => {},
+      sidebarItemInfo: undefined,
+      defaultTab: DEFAULT_TAB,
       hiddenTabs: [],
-      setHiddenTabs: () => {},
     };
   }
   return ctx;

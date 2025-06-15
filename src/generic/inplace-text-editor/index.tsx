@@ -92,17 +92,19 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
           />
         )
         : (
-          <Truncate.Deprecated className={textClassName}>
-            {text}
-          </Truncate.Deprecated>
+          <>
+            <Truncate.Deprecated className={textClassName}>
+              {text}
+            </Truncate.Deprecated>
+            <IconButton
+              src={Edit}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.editTextButtonAlt)}
+              onClick={handleEdit}
+              size="sm"
+            />
+          </>
         )}
-      <IconButton
-        src={Edit}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.editTextButtonAlt)}
-        onClick={handleEdit}
-        size="inline"
-      />
     </Stack>
   );
 };

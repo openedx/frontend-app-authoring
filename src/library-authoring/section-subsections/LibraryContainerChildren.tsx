@@ -84,11 +84,12 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={container.tagsCount} />
-        <ContainerMenu
-          containerKey={container.originalId}
-          containerType={container.containerType}
-          displayName={container.displayName}
-        />
+        {!readOnly && (
+          <ContainerMenu
+            containerKey={container.originalId}
+            displayName={container.displayName}
+          />
+        )}
       </Stack>
     </>
   );
@@ -99,8 +100,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
-  const { navigateTo, insideSection, insideSubsection } = useLibraryRoutes();
-  const { sidebarComponentInfo } = useSidebarContext();
+  const { navigateTo, insideSection } = useLibraryRoutes();
+  const { sidebarItemInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -142,10 +143,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
       navigateTo({ selectedItemId: child.originalId });
-    } else if (insideSection) {
-      navigateTo({ subsectionId: child.originalId });
-    } else if (insideSubsection) {
-      navigateTo({ unitId: child.originalId });
+    } else {
+      navigateTo({ containerId: child.originalId });
     }
   }, [navigateTo]);
 
@@ -200,10 +199,10 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
-            isClickable
-            onClick={(e) => handleChildClick(child, e.detail)}
+            isClickable={!readOnly}
+            onClick={(e) => !readOnly && handleChildClick(child, e.detail)}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarComponentInfo?.id === child.originalId ? 'selected' : undefined}
+            cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
             actions={(
               <ContainerRow
                 containerKey={containerKey}

@@ -64,7 +64,7 @@ describe('<LibraryUnitPage />', () => {
 
   const renderLibraryUnitPage = (unitId?: string, libraryId?: string) => {
     const libId = libraryId || mockContentLibrary.libraryId;
-    const uId = unitId || mockGetContainerMetadata.containerId;
+    const uId = unitId || mockGetContainerMetadata.unitId;
     render(<LibraryLayout />, {
       path,
       routerProps: {
@@ -75,14 +75,14 @@ describe('<LibraryUnitPage />', () => {
 
   it('shows the spinner before the query is complete', async () => {
     // This mock will never return data about the collection (it loads forever):
-    renderLibraryUnitPage(mockGetContainerMetadata.containerIdLoading);
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdLoading);
     const spinner = screen.getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
   });
 
   it('shows an error component if no unit returned', async () => {
     // This mock will simulate incorrect unit id
-    renderLibraryUnitPage(mockGetContainerMetadata.containerIdError);
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdError);
     const errorMessage = 'Not found';
     expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
   });
@@ -113,7 +113,7 @@ describe('<LibraryUnitPage />', () => {
     )[0]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editUnitTitleButton);
 
-    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPatch(url).reply(200);
 
     await waitFor(() => {
@@ -144,7 +144,7 @@ describe('<LibraryUnitPage />', () => {
     )[0]; // 0 is the Unit Title, 1 is the first component on the list
     fireEvent.click(editUnitTitleButton);
 
-    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPatch(url).reply(400);
 
     await waitFor(() => {
@@ -275,7 +275,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -289,7 +289,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -303,7 +303,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
     axiosMock
-      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(500);
     verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
@@ -314,7 +314,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component & restore from component card', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
@@ -334,7 +334,7 @@ describe('<LibraryUnitPage />', () => {
     // @ts-ignore
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPost(restoreUrl).reply(200);
     // restore collection
     restoreFn();
@@ -345,7 +345,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error on remove a component', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(404);
     renderLibraryUnitPage();
 
@@ -363,7 +363,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error on restore removed component', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
@@ -383,7 +383,7 @@ describe('<LibraryUnitPage />', () => {
     // @ts-ignore
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onPost(restoreUrl).reply(404);
     // restore collection
     restoreFn();
@@ -394,7 +394,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component from component sidebar', async () => {
-    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
