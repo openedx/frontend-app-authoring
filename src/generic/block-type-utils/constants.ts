@@ -6,7 +6,6 @@ import {
   ContentPaste as ContentPasteIcon,
   Edit as EditIcon,
   EditNote as EditNoteIcon,
-  CalendarViewDay,
   HelpOutline as HelpOutlineIcon,
   LibraryAdd as LibraryIcon,
   Lock as LockIcon,
@@ -15,6 +14,9 @@ import {
   TextFields as TextFieldsIcon,
   VideoCamera as VideoCameraIcon,
   Folder,
+  ViewCarousel,
+  ViewDay,
+  WidthWide,
 } from '@openedx/paragon/icons';
 import NewsstandIcon from '../NewsstandIcon';
 
@@ -36,7 +38,9 @@ export const COMPONENT_TYPES = {
 export const UNIT_TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
-  vertical: CalendarViewDay,
+  vertical: ViewDay,
+  sequential: WidthWide,
+  chapter: ViewCarousel,
   problem: EditIcon,
   lock: LockIcon,
 };
@@ -57,8 +61,10 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
 export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: UNIT_TYPE_ICONS_MAP.vertical,
   unit: UNIT_TYPE_ICONS_MAP.vertical,
-  sequential: Folder,
-  chapter: Folder,
+  sequential: UNIT_TYPE_ICONS_MAP.sequential,
+  subsection: UNIT_TYPE_ICONS_MAP.sequential,
+  chapter: UNIT_TYPE_ICONS_MAP.chapter,
+  section: UNIT_TYPE_ICONS_MAP.chapter,
   collection: Folder,
   libraryContent: Folder,
   paste: ContentPasteIcon,
@@ -75,8 +81,10 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   [COMPONENT_TYPES.dragAndDrop]: 'component-style-default',
   vertical: 'component-style-vertical',
   unit: 'component-style-vertical',
-  sequential: 'component-style-default',
-  chapter: 'component-style-default',
+  sequential: 'component-style-sequential',
+  subsection: 'component-style-sequential',
+  chapter: 'component-style-chapter',
+  section: 'component-style-chapter',
   collection: 'component-style-collection',
   other: 'component-style-other',
 };

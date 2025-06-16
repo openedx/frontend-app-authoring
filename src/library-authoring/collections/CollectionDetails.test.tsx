@@ -11,7 +11,7 @@ import {
   within,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import * as api from '../data/api';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import CollectionDetails from './CollectionDetails';
@@ -33,9 +33,9 @@ const render = () => baseRender(<CollectionDetails />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={library.id}>
       <SidebarProvider
-        initialSidebarComponentInfo={{
+        initialSidebarItemInfo={{
           id: collectionId,
-          type: SidebarBodyComponentId.CollectionInfo,
+          type: SidebarBodyItemId.CollectionInfo,
         }}
       >
         { children }

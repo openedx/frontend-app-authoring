@@ -27,10 +27,10 @@ const ContainerOrganize = () => {
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen, , toggleCollections] = useToggle(true);
 
   const { readOnly } = useLibraryContext();
-  const { sidebarComponentInfo, sidebarAction } = useSidebarContext();
+  const { sidebarItemInfo, sidebarAction } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
 
-  const containerId = sidebarComponentInfo?.id;
+  const containerId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
   if (!containerId) {
     throw new Error('containerId is required');

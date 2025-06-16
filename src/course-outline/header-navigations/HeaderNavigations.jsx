@@ -66,6 +66,8 @@ const HeaderNavigations = ({
       {hasSections && (
         <Button
           variant="outline-primary"
+          id="expand-collapse-all-button"
+          data-testid="expand-collapse-all-button"
           iconBefore={isSectionsExpanded ? ArrowUpIcon : ArrowDownIcon}
           onClick={handleExpandAll}
         >

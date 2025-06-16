@@ -1,32 +1,16 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import initializeStore from '../../store';
+// @ts-check
+
+import { initializeMocks, render } from '../../testUtils';
 import messages from './messages';
 import { HelpSidebar } from '.';
 
 const mockPathname = '/foo-bar';
 
-let store;
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
-
-const RootWrapper = (props) => (
-  <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <HelpSidebar
-        {...props}
-      >
-        <p>Test children</p>
-      </HelpSidebar>
-    </IntlProvider>
-  </AppProvider>
+const renderHelpSidebar = (props) => render(
+  <HelpSidebar {...props}>
+    <p>Test children</p>
+  </HelpSidebar>,
+  { path: mockPathname },
 );
 
 const props = {
@@ -37,25 +21,16 @@ const props = {
 
 describe('HelpSidebar', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('renders children correctly', () => {
-    const { getByText } = render(<RootWrapper {...props} />);
+    const { getByText } = renderHelpSidebar(props);
     expect(getByText('Test children')).toBeTruthy();
   });
 
   it('should render all sidebar links with correct text', () => {
-    const { getByText, queryByText } = render(<RootWrapper {...props} />);
+    const { getByText, queryByText } = renderHelpSidebar(props);
     expect(getByText(messages.sidebarTitleOther.defaultMessage)).toBeTruthy();
     expect(getByText(messages.sidebarLinkToScheduleAndDetails.defaultMessage)).toBeTruthy();
     expect(getByText(messages.sidebarLinkToGrading.defaultMessage)).toBeTruthy();
@@ -67,7 +42,7 @@ describe('HelpSidebar', () => {
 
   it('should hide other settings url if showOtherSettings disabled', () => {
     const initialProps = { ...props, showOtherSettings: false };
-    const { queryByText } = render(<RootWrapper {...initialProps} />);
+    const { queryByText } = renderHelpSidebar(initialProps);
     expect(queryByText(messages.sidebarTitleOther.defaultMessage)).toBeFalsy();
     expect(queryByText(messages.sidebarLinkToScheduleAndDetails.defaultMessage)).toBeFalsy();
     expect(queryByText(messages.sidebarLinkToGrading.defaultMessage)).toBeFalsy();
@@ -78,7 +53,7 @@ describe('HelpSidebar', () => {
 
   it('should render proctored mfe url only if passed not empty value', () => {
     const initialProps = { ...props, showOtherSettings: true, proctoredExamSettingsUrl: 'http:/link-to' };
-    const { getByText } = render(<RootWrapper {...initialProps} />);
+    const { getByText } = renderHelpSidebar(initialProps);
     expect(getByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeTruthy();
   });
 });

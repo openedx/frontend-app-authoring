@@ -1,9 +1,8 @@
 # CourseAuthoringUnitSidebarSlot
 
-### Slot ID: `org.openedx.frontend.authoring.course_unit_sidebar.v1`
+### Slot ID: `org.openedx.frontend.authoring.course_unit_sidebar.v2`
 
-### Slot ID Aliases
-* `course_authoring_unit_sidebar_slot`
+### Previous Version: [`org.openedx.frontend.authoring.course_unit_sidebar.v1`](./README.v1.md)
 
 ### Plugin Props:
 
@@ -12,6 +11,8 @@
 * `unitTitle` - String. The name of the current unit being viewed / edited.
 * `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
 * `readOnly` - Boolean. True if the user should not be able to edit the contents of the unit.
+* `isUnitVerticalType` - Boolean. If the unit category is `vertical`.
+* `isSplitTestType` - Boolean. If the unit category is `split_test`.
 
 ## Description
 
@@ -29,7 +30,7 @@ import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 
 const config = {
   pluginSlots: {
-    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v2': {
       keepDefault: true,
       plugins: [
         {
@@ -63,11 +64,11 @@ const ProblemBlocks = ({unitTitle, xBlocks}) => (
       }
     </ul>
   </>
-); 
+);
 
 const config = {
   pluginSlots: {
-    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v2': {
       keepDefault: true,
       plugins: [
         {

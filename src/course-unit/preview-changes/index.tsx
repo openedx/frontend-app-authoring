@@ -180,12 +180,14 @@ const IframePreviewLibraryXBlockChanges = () => {
     return null;
   }
 
+  const blockPayload = { locator: blockData.downstreamBlockId };
+
   return (
     <PreviewLibraryXBlockChanges
       blockData={blockData}
       isModalOpen={isModalOpen}
       closeModal={closeModal}
-      postChange={() => sendMessageToIframe(messageTypes.refreshXBlock, null)}
+      postChange={() => sendMessageToIframe(messageTypes.completeXBlockEditing, blockPayload)}
     />
   );
 };

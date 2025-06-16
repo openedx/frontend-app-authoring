@@ -51,6 +51,16 @@ const messages = defineMessages({
     defaultMessage: 'Units',
     description: 'Tab label for the units tab',
   },
+  subsectionsTab: {
+    id: 'course-authoring.library-authoring.subsections-tab',
+    defaultMessage: 'Subsections',
+    description: 'Tab label for the subsections tab',
+  },
+  sectionsTab: {
+    id: 'course-authoring.library-authoring.sections-tab',
+    defaultMessage: 'Sections',
+    description: 'Tab label for the sections tab',
+  },
   componentsTempPlaceholder: {
     id: 'course-authoring.library-authoring.components-temp-placeholder',
     defaultMessage: 'There are {componentCount} components in this library',

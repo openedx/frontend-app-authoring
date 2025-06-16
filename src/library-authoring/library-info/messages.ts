@@ -76,6 +76,11 @@ const messages = defineMessages({
     defaultMessage: 'Discard',
     description: 'Button text for confirmation modal shown before discard library changes',
   },
+  publishLibraryButtonLabel: {
+    id: 'course-authoring.library-authoring.library.publishLibraryButtonLabel',
+    defaultMessage: 'Publish All',
+    description: 'Button text for publish library button',
+  },
 });
 
 export default messages;

@@ -1,7 +1,6 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import JSZip from 'jszip';
 import saveAs from 'file-saver';
 
 ensureConfig([
@@ -39,11 +38,13 @@ export async function getAssetDetails({ courseId, filenames, fileCount }) {
 /**
  * Fetch asset file.
  * @param {blockId} courseId Course ID for the course to operate on
-
  */
 export async function getDownload(selectedRows, courseId) {
   const downloadErrors = [];
   if (selectedRows?.length > 1) {
+    // Don't import JSZip until/unless we need it, to bundle multiple files into one download.
+    // This helps keep the main Authoring MFE bundle size smaller.
+    const JSZip = (await import('jszip')).default;
     const zip = new JSZip();
     const date = new Date().toString();
     const folder = zip.folder(`${courseId}-assets-${date}`);

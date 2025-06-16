@@ -1,8 +1,9 @@
 @import "./component-info/ComponentPreview";
-@import "./components/BaseCard";
+@import "./components";
 @import "./generic";
 @import "./LibraryAuthoringPage";
 @import "./units";
+@import "./section-subsections";
 
 .library-cards-grid {
   display: grid;

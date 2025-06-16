@@ -85,6 +85,7 @@ type StatusWidgedProps = {
   publishedBy: string | null;
   numBlocks?: number;
   onCommit?: () => void;
+  onCommitLabel?: string;
   onRevert?: () => void;
 };
 
@@ -114,6 +115,7 @@ const StatusWidget = ({
   publishedBy,
   numBlocks,
   onCommit,
+  onCommitLabel,
   onRevert,
 }: StatusWidgedProps) => {
   const intl = useIntl();
@@ -188,7 +190,7 @@ const StatusWidget = ({
           </span>
           {onCommit && (
             <Button disabled={isPublished} onClick={onCommit}>
-              {intl.formatMessage(messages.publishButtonLabel)}
+              {onCommitLabel || intl.formatMessage(messages.publishButtonLabel)}
             </Button>
           )}
           {onRevert && (

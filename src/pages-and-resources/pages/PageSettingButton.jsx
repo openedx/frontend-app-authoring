@@ -1,13 +1,12 @@
 import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, IconButton } from '@openedx/paragon';
 import { ArrowForward, Settings } from '@openedx/paragon/icons';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { getWaffleFlags } from '../../data/selectors';
+import { useWaffleFlags } from '../../data/apiHooks';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
@@ -20,7 +19,7 @@ const PageSettingButton = ({
   const { formatMessage } = useIntl();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
-  const waffleFlags = useSelector(getWaffleFlags);
+  const waffleFlags = useWaffleFlags(courseId);
 
   const determineLinkDestination = useMemo(() => {
     if (!legacyLink) { return null; }

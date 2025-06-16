@@ -85,7 +85,10 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
     userEvent.click(acceptBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.refreshXBlock, null);
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
+        messageTypes.completeXBlockEditing,
+        { locator: usageKey },
+      );
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
@@ -100,7 +103,6 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
     userEvent.click(acceptBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).not.toHaveBeenCalledWith(messageTypes.refreshXBlock, null);
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
@@ -118,7 +120,10 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const ignoreConfirmBtn = await screen.findByRole('button', { name: 'Ignore' });
     userEvent.click(ignoreConfirmBtn);
     await waitFor(() => {
-      expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.refreshXBlock, null);
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
+        messageTypes.completeXBlockEditing,
+        { locator: usageKey },
+      );
       expect(axiosMock.history.delete.length).toEqual(1);
       expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });

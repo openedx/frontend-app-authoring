@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import Header from './header';
-import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
+import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
@@ -21,7 +21,6 @@ const CourseAuthoringPage = ({ courseId, children }) => {
 
   useEffect(() => {
     dispatch(fetchCourseDetail(courseId));
-    dispatch(fetchWaffleFlags(courseId));
   }, [courseId]);
 
   useEffect(() => {

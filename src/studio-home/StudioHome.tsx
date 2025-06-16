@@ -31,7 +31,6 @@ const StudioHome = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const {
     isLoadingPage,
     isFailedLoadingPage,
@@ -153,7 +152,6 @@ const StudioHome = () => {
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={isShowProcessing && !isFiltered}
-              isPaginationCoursesEnabled={isPaginationCoursesEnabled}
               librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />
