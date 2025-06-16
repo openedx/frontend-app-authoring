@@ -34,7 +34,7 @@
   margin-top: 0rem;
 
   .sub-header-content-title {
-    font: 1.40625rem;
+    font-size: 2rem;
     color: #000000;
     font-weight: 700;
     line-height: 1.25;
@@ -417,14 +417,14 @@
   border-radius: 1rem;
   border: 1px solid #ced4da;
   height: 100%;
-  margin-left: 1rem !important;
+  // margin-left: 1rem !important;
 
   .pages_bar {
     content: "";
     display: block;
     height: 1px;
     background-color: #ced4da;
-    margin: 1.5rem -1rem 1rem -1rem;
+    margin: 24px -12px 16px -12px;
   }
 
   .card {
