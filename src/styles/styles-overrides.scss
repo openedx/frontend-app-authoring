@@ -337,11 +337,12 @@
 
 .files_and_uploads {
   background-color: white;
-  padding: 1rem;
+  // padding: 1rem;
+  padding: 1rem 1rem 0rem 1rem;
   border-radius: 1rem;
   border: 1px solid #ced4da;
   height: 100%;
-  margin: 0rem 1rem;
+  // margin: 0rem 1rem;
 }
 
 .files-table {
@@ -386,6 +387,12 @@
 
   @media (min-width: 1200px) {
     .col-xl-2 {
+      max-width: 33%;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .col-xl-2 {
       max-width: 25%;
     }
   }
@@ -399,6 +406,7 @@
 .files-card-section {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem !important;
 }
+
 
 // Pages & Resources
 
