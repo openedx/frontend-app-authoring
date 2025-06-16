@@ -198,7 +198,6 @@ describe('TinyMceEditor hooks', () => {
           initialContent,
           learningContextId,
           validateAssetUrl: false,
-
         });
         expect(actual).toEqual(expected);
       });
