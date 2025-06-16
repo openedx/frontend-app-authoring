@@ -68,7 +68,7 @@
     "@openedx-plugins/course-app-wiki": "file:plugins/course-apps/wiki",
     "@openedx-plugins/course-app-xpert_unit_summary": "file:plugins/course-apps/xpert_unit_summary",
     "@openedx/frontend-build": "^14.0.14",
-    "@openedx/frontend-plugin-framework": "^1.2.1",
+    "@openedx/frontend-plugin-framework": "^1.7.0",
     "@openedx/paragon": "^22.8.1",
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "1.9.7",
