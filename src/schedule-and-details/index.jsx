@@ -13,6 +13,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
+import { useGetCourseDetails } from './data/apiHooks';
 import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -21,13 +22,10 @@ import getPageHeadTitle from '../generic/utils';
 import { useScrollToHashElement } from '../hooks';
 import {
   fetchCourseSettingsQuery,
-  fetchCourseDetailsQuery,
   updateCourseDetailsQuery,
 } from './data/thunks';
 import {
   getCourseSettings,
-  getCourseDetails,
-  getLoadingDetailsStatus,
   getLoadingSettingsStatus,
 } from './data/selectors';
 import BasicSection from './basic-section';
@@ -46,11 +44,10 @@ import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
 const ScheduleAndDetails = ({ courseId }) => {
   const intl = useIntl();
+  const courseDetails = useGetCourseDetails(courseId);
   const courseSettings = useSelector(getCourseSettings);
-  const courseDetails = useSelector(getCourseDetails);
-  const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
+  const isLoading = courseDetails.isLoading
     || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const course = useModel('courseDetails', courseId);
@@ -82,8 +79,8 @@ const ScheduleAndDetails = ({ courseId }) => {
     showLoadFailedAlert,
   } = useLoadValuesPrompt(
     courseId,
-    fetchCourseDetailsQuery,
     fetchCourseSettingsQuery,
+    courseDetails.isError,
   );
 
   const {
@@ -150,7 +147,7 @@ const ScheduleAndDetails = ({ courseId }) => {
     return <></>;
   }
 
-  if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
+  if (courseDetails.isError || loadingSettingsStatus === RequestStatus.DENIED) {
     return (
       <div className="row justify-content-center m-6">
         <Placeholder />

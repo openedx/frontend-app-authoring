@@ -9,7 +9,6 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
-import { updateCourseDetailsOverview } from '../../../schedule-and-details/data/slice';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
@@ -296,7 +295,6 @@ export const setupCustomBehavior = ({
   setImage,
   lmsEndpointUrl,
   learningContextId,
-  dispatch,
 }) => (editor) => {
   // image upload button
   editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
@@ -384,8 +382,7 @@ export const setupCustomBehavior = ({
         initialContent,
         learningContextId,
       });
-      // Update initialValue so the change is not taken as a user action
-      if (newContent) { dispatch(updateCourseDetailsOverview(newContent)); }
+      if (newContent) { editor.setContent(newContent); }
     }
     if (e.command === 'RemoveFormat') {
       editor.formatter.remove('blockquote');
@@ -416,7 +413,6 @@ export const editorConfig = ({
   learningContextId,
   staticRootUrl,
   enableImageUpload,
-  dispatch,
 }) => {
   const lmsEndpointUrl = getConfig().LMS_BASE_URL;
   const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
@@ -463,7 +459,6 @@ export const editorConfig = ({
         content,
         images,
         learningContextId,
-        dispatch,
       }),
       quickbars_insert_toolbar: quickbarsInsertToolbar,
       quickbars_selection_toolbar: quickbarsSelectionToolbar,
