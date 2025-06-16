@@ -4,7 +4,7 @@
       "outDir": "dist",
       "baseUrl": "./src",
       "paths": {
-        "*": ["*"]
+        "@src/*": ["./*"],
       }
     },
     "include": ["*.js", ".eslintrc.js", "src/**/*", "plugins/**/*"],

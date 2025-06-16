@@ -1,98 +1,82 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
+import {
+  render, fireEvent, screen, initializeMocks,
+} from 'CourseAuthoring/testUtils';
+import { TranscriptInternal, hooks } from './Transcript';
 
-import * as module from './Transcript';
+jest.mock('./TranscriptActionMenu', () => jest.fn(() => <div>TranscriptActionMenu</div>));
+jest.mock('./LanguageSelector', () => jest.fn(() => <div>LanguageSelector</div>));
 
-import { MockUseState } from '../../../../../../testUtils';
+const defaultProps = {
+  index: 0,
+  language: '',
+  transcriptUrl: undefined,
+  deleteTranscript: jest.fn(),
+};
 
-const Transcript = module.TranscriptInternal;
-
-jest.mock('./LanguageSelector', () => 'LanguageSelector');
-jest.mock('./TranscriptActionMenu', () => 'TranscriptActionMenu');
-
-describe('Transcript Component', () => {
-  describe('state hooks', () => {
-    const state = new MockUseState(module.hooks);
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-    describe('state hooks', () => {
-      state.testGetter(state.keys.inDeleteConfirmation);
-    });
-
-    describe('setUpDeleteConfirmation hook', () => {
-      beforeEach(() => {
-        state.mock();
-      });
-      afterEach(() => {
-        state.restore();
-      });
-      test('inDeleteConfirmation: state values', () => {
-        expect(module.hooks.setUpDeleteConfirmation().inDeleteConfirmation).toEqual(false);
-      });
-      test('inDeleteConfirmation setters: launch', () => {
-        module.hooks.setUpDeleteConfirmation().launchDeleteConfirmation();
-        expect(state.setState[state.keys.inDeleteConfirmation]).toHaveBeenCalledWith(true);
-      });
-      test('inDeleteConfirmation setters: cancel', () => {
-        module.hooks.setUpDeleteConfirmation().cancelDelete();
-        expect(state.setState[state.keys.inDeleteConfirmation]).toHaveBeenCalledWith(false);
-      });
-    });
+describe('TranscriptInternal', () => {
+  const cancelDelete = jest.fn();
+  const deleteTranscript = jest.fn();
+  jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+    inDeleteConfirmation: false,
+    launchDeleteConfirmation: deleteTranscript,
+    cancelDelete,
   });
 
-  describe('component', () => {
-    describe('component', () => {
-      const props = {
-        index: 'sOmenUmBer',
-        language: 'lAnG',
-        deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
-      };
-      afterAll(() => {
-        jest.clearAllMocks();
-      });
-      test('snapshots: renders as expected with default props: dont show confirm delete', () => {
-        jest.spyOn(module.hooks, 'setUpDeleteConfirmation').mockImplementationOnce(() => ({
-          inDeleteConfirmation: false,
-          launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
-          cancelDelete: jest.fn().mockName('cancelDelete'),
-        }));
-        expect(
-          shallow(<Transcript {...props} />).snapshot,
-        ).toMatchSnapshot();
-      });
-      test('snapshots: renders as expected with default props: dont show confirm delete, language is blank so delete is shown instead of action menu', () => {
-        jest.spyOn(module.hooks, 'setUpDeleteConfirmation').mockImplementationOnce(() => ({
-          inDeleteConfirmation: false,
-          launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
-          cancelDelete: jest.fn().mockName('cancelDelete'),
-        }));
-        expect(
-          shallow(<Transcript {...props} language="" />).snapshot,
-        ).toMatchSnapshot();
-      });
-      test('snapshots: renders as expected with default props: show confirm delete', () => {
-        jest.spyOn(module.hooks, 'setUpDeleteConfirmation').mockImplementationOnce(() => ({
-          inDeleteConfirmation: true,
-          launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
-          cancelDelete: jest.fn().mockName('cancelDelete'),
-        }));
-        expect(
-          shallow(<Transcript {...props} />).snapshot,
-        ).toMatchSnapshot();
-      });
-      test('snapshots: renders as expected with transcriptUrl', () => {
-        jest.spyOn(module.hooks, 'setUpDeleteConfirmation').mockImplementationOnce(() => ({
-          inDeleteConfirmation: false,
-          launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
-          cancelDelete: jest.fn().mockName('cancelDelete'),
-        }));
-        expect(
-          shallow(<Transcript {...props} transcriptUrl="url" />).snapshot,
-        ).toMatchSnapshot();
-      });
+  beforeEach(() => {
+    initializeMocks();
+  });
+
+  it('renders ActionRow and LanguageSelector when not in delete confirmation', () => {
+    render(<TranscriptInternal {...defaultProps} />);
+    expect(screen.getByText('LanguageSelector')).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('renders TranscriptActionMenu when language is not empty', () => {
+    const props = { language: 'en', transcriptUrl: 'url' };
+    render(<TranscriptInternal {...defaultProps} {...props} />);
+    expect(screen.getByText('TranscriptActionMenu')).toBeInTheDocument();
+  });
+
+  it('calls launchDeleteConfirmation when IconButton is clicked', () => {
+    render(<TranscriptInternal {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button'));
+    expect(deleteTranscript).toHaveBeenCalled();
+  });
+
+  it('renders delete confirmation card when inDeleteConfirmation is true', () => {
+    jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+      inDeleteConfirmation: true,
+      launchDeleteConfirmation: jest.fn(),
+      cancelDelete,
     });
+    render(<TranscriptInternal {...defaultProps} />);
+    expect(screen.getByText('Delete this transcript?')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to delete this transcript?')).toBeInTheDocument();
+  });
+
+  it('calls cancelDelete when cancel button is clicked', () => {
+    jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+      inDeleteConfirmation: true,
+      launchDeleteConfirmation: jest.fn(),
+      cancelDelete,
+    });
+    render(<TranscriptInternal {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(cancelDelete).toHaveBeenCalled();
+  });
+
+  it('calls deleteTranscript and cancelDelete when confirm delete is clicked', () => {
+    jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+      inDeleteConfirmation: true,
+      launchDeleteConfirmation: jest.fn(),
+      cancelDelete,
+    });
+    const props = { language: 'es', deleteTranscript };
+    render(<TranscriptInternal {...defaultProps} {...props} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(deleteTranscript).toHaveBeenCalledWith({ language: 'es' });
+    expect(cancelDelete).toHaveBeenCalled();
   });
 });
