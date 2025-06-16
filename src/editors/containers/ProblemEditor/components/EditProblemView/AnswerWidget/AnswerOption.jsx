@@ -8,7 +8,7 @@ import {
   Form,
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import messages from './messages';
 import { selectors } from '../../../../../data/redux';
@@ -22,8 +22,6 @@ import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextAr
 const AnswerOption = ({
   answer,
   hasSingleAnswer,
-  // injected
-  intl,
   // redux
   problemType,
   images,
@@ -31,6 +29,7 @@ const AnswerOption = ({
   blockId,
   learningContextId,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
@@ -90,6 +89,7 @@ const AnswerOption = ({
           onChange={setAnswerTitle}
           placeholder={intl.formatMessage(messages.answerRangeTextboxPlaceholder)}
         />
+        Random text here
         <div className="pgn__form-switch-helper-text">
           <FormattedMessage {...messages.answerRangeHelperText} />
         </div>
@@ -151,8 +151,6 @@ const AnswerOption = ({
 AnswerOption.propTypes = {
   answer: answerOptionProps.isRequired,
   hasSingleAnswer: PropTypes.bool.isRequired,
-  // injected
-  intl: intlShape.isRequired,
   // redux
   problemType: PropTypes.string.isRequired,
   images: PropTypes.shape({}).isRequired,
@@ -171,4 +169,4 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 export const AnswerOptionInternal = AnswerOption; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(memo(AnswerOption)));
+export default connect(mapStateToProps, mapDispatchToProps)(memo(AnswerOption));
