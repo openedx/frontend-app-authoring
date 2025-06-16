@@ -9,7 +9,6 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
-import { updateCourseDetailsOverview } from '../../../schedule-and-details/data/slice';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';

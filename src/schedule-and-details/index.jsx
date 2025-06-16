@@ -9,24 +9,21 @@ import {
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import Placeholder from '@src/editors/Placeholder';
-import { RequestStatus } from '@src/data/constants';
-import AlertMessage from '@src/generic/alert-message';
-import InternetConnectionAlert from '@src/generic/internet-connection-alert';
-import { STATEFUL_BUTTON_STATES } from '@src/constants';
-import getPageHeadTitle from '@src/generic/utils';
-import { useScrollToHashElement } from '@src/hooks';
+import Placeholder from '../editors/Placeholder';
+import { RequestStatus } from '../data/constants';
+import { useGetCourseDetails } from './data/apiHooks';
+import AlertMessage from '../generic/alert-message';
+import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { STATEFUL_BUTTON_STATES } from '../constants';
+import getPageHeadTitle from '../generic/utils';
+import { useScrollToHashElement } from '../hooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-
 import {
   fetchCourseSettingsQuery,
-  fetchCourseDetailsQuery,
   updateCourseDetailsQuery,
 } from './data/thunks';
 import {
   getCourseSettings,
-  getCourseDetails,
-  getLoadingDetailsStatus,
   getLoadingSettingsStatus,
 } from './data/selectors';
 import BasicSection from './basic-section';
@@ -45,11 +42,10 @@ import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
 const ScheduleAndDetails = () => {
   const intl = useIntl();
+  const courseDetails = useGetCourseDetails(courseId);
   const courseSettings = useSelector(getCourseSettings);
-  const courseDetails = useSelector(getCourseDetails);
-  const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
-  const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
+  const isLoading = courseDetails.isLoading
     || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const { courseId, courseDetails: course } = useCourseAuthoringContext();
@@ -81,8 +77,8 @@ const ScheduleAndDetails = () => {
     showLoadFailedAlert,
   } = useLoadValuesPrompt(
     courseId,
-    fetchCourseDetailsQuery,
     fetchCourseSettingsQuery,
+    courseDetails.isError,
   );
 
   const {
@@ -149,7 +145,7 @@ const ScheduleAndDetails = () => {
     return <></>;
   }
 
-  if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
+  if (courseDetails.isError || loadingSettingsStatus === RequestStatus.DENIED) {
     return (
       <div className="row justify-content-center m-6">
         <Placeholder />
