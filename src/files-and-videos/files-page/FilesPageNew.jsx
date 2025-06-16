@@ -179,19 +179,20 @@ const FilesPageNew = ({
 
   return (
     <FilesPageProvider courseId={courseId}>
-      <Container size="xl" className="p-3 files_and_uploads">
-        <EditFileErrors
-          resetErrors={handleErrorReset}
-          errorMessages={errorMessages}
-          addFileStatus={addAssetStatus}
-          deleteFileStatus={deleteAssetStatus}
-          updateFileStatus={updateAssetStatus}
-          loadingStatus={loadingStatus}
-        />
-        <div className="h2">
-          <FormattedMessage {...messages.heading} />
-        </div>
-        {loadingStatus !== RequestStatus.FAILED && (
+      <Container size="xl" className="px-4">
+        <div className="files_and_uploads">
+          <EditFileErrors
+            resetErrors={handleErrorReset}
+            errorMessages={errorMessages}
+            addFileStatus={addAssetStatus}
+            deleteFileStatus={deleteAssetStatus}
+            updateFileStatus={updateAssetStatus}
+            loadingStatus={loadingStatus}
+          />
+          <div className="h2">
+            <FormattedMessage {...messages.heading} />
+          </div>
+          {loadingStatus !== RequestStatus.FAILED && (
           <>
             <FileTable
               {...{
@@ -213,7 +214,8 @@ const FilesPageNew = ({
             />
             <FileValidationModal {...{ handleFileOverwrite }} />
           </>
-        )}
+          )}
+        </div>
       </Container>
     </FilesPageProvider>
   );

@@ -77,7 +77,7 @@ const CourseUpdatesNew = ({ courseId }) => {
           {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
         </title>
       </Helmet>
-      <Container size="xl">
+      <Container size="xl" className="px-4">
         <div
           className="course-updates-new-wrapper"
           // style={{

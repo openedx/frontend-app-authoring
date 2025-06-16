@@ -7,7 +7,7 @@ import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Button, Hyperlink } from '@openedx/paragon';
+import { Button, Container, Hyperlink } from '@openedx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 
@@ -69,30 +69,31 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
 
   return (
     <PagesAndResourcesProvider courseId={courseId}>
-      <main className="container container-mw-md px-3 resources">
-        <div className="d-flex justify-content-between my-4 align-items-center">
-          <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
-          <Hyperlink
-            destination={learningCourseURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            showLaunchIcon={false}
-          >
-            <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
-          </Hyperlink>
-        </div>
+      <Container size="xl" className="px-4">
+        <main className="container resources">
+          <div className="d-flex justify-content-between my-4 align-items-center">
+            <h2 className="m-0">{intl.formatMessage(messages.heading)}</h2>
+            <Hyperlink
+              destination={learningCourseURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              showLaunchIcon={false}
+            >
+              <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+            </Hyperlink>
+          </div>
 
-        <span className="pages_bar" />
+          <span className="pages_bar" />
 
-        <Routes>
-          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
-        </Routes>
+          <Routes>
+            <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+            <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+            <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+            <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
+          </Routes>
 
-        <PageGrid pages={pages} pluginSlotId="additional_course_plugin" />
-        {
+          <PageGrid pages={pages} pluginSlotId="additional_course_plugin" />
+          {
           (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
             && (
               <>
@@ -103,7 +104,8 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
               </>
             )
         }
-      </main>
+        </main>
+      </Container>
     </PagesAndResourcesProvider>
   );
 };
