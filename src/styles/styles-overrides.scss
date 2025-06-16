@@ -560,8 +560,15 @@
 // Import page
 
 .import {
+
+  margin-top: 0rem !important;
+
   article {
     height: 100%;
+
+    p {
+      color: #9e9f9e;
+    }
   }
   .pgn__dropzone {
     height: auto;
