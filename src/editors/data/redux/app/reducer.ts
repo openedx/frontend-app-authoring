@@ -22,7 +22,6 @@ const initialState: EditorState['app'] = {
   courseDetails: {},
   showRawEditor: false,
   isMarkdownEditorEnabledForCourse: false,
-  waffleFlags: {},
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -62,10 +61,6 @@ const app = createSlice({
     setShowRawEditor: (state, { payload }) => ({
       ...state,
       showRawEditor: payload.data?.metadata?.editor === 'raw',
-    }),
-    setWaffleFlags: (state, { payload }) => ({
-      ...state,
-      waffleFlags: payload,
     }),
   },
 });

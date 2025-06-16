@@ -108,7 +108,6 @@ export interface EditorState {
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
     isMarkdownEditorEnabledForCourse: boolean;
-    waffleFlags: Record<string, boolean>;
   },
   requests: Record<keyof typeof RequestKeys, {
     status: keyof typeof RequestStates;
