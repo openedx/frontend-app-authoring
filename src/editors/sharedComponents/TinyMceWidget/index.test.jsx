@@ -1,27 +1,11 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import SourceCodeModal from '../SourceCodeModal';
 import ImageUploadModal from '../ImageUploadModal';
 import { imgModalToggle, sourceCodeModalToggle } from './hooks';
 import { TinyMceWidgetInternal as TinyMceWidget } from '.';
 
 const staticUrl = '/assets/sOmEaSsET';
-
-const mockStore = configureStore({
-  reducer: {
-    // Add any required reducers for your tests
-    test: (state = {}) => state,
-  },
-});
-
-// Helper function to create wrapped component
-const shallowWithStore = (component) => shallow(
-  <Provider store={mockStore}>
-    {component}
-  </Provider>,
-);
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
 // Consequently, mock the Editor out.
@@ -85,12 +69,12 @@ describe('TinyMceWidget', () => {
       expect(shallow(<TinyMceWidget {...props} />).snapshot).toMatchSnapshot();
     });
     test('SourcecodeModal is not rendered', () => {
-      const wrapper = shallowWithStore(<TinyMceWidget {...props} editorType="problem" />);
+      const wrapper = shallow(<TinyMceWidget {...props} editorType="problem" />);
       expect(wrapper.snapshot).toMatchSnapshot();
       expect(wrapper.instance.findByType(SourceCodeModal).length).toBe(0);
     });
     test('ImageUploadModal is not rendered', () => {
-      const wrapper = shallowWithStore(<TinyMceWidget {...props} enableImageUpload={false} />);
+      const wrapper = shallow(<TinyMceWidget {...props} enableImageUpload={false} />);
       expect(wrapper.snapshot).toMatchSnapshot();
       expect(wrapper.instance.findByType(ImageUploadModal).length).toBe(0);
     });
