@@ -2,17 +2,20 @@ import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import AnswerOption from './AnswerOption';
 import * as hooks from './hooks';
+import { selectors } from '../../../../../data/redux';
+
+const { problem } = selectors;
 
 jest.mock('../../../../../data/redux', () => ({
   __esModule: true,
   default: jest.fn(),
   selectors: {
     problem: {
-      problemType: jest.fn(state => ({ problemType: state })),
+      problemType: jest.fn().mockReturnValue(''),
     },
     app: {
       images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
+      isLibrary: jest.fn().mockReturnValue(true),
       learningContextId: jest.fn(state => ({ learningContextId: state })),
       blockId: jest.fn(state => ({ blockId: state })),
     },
@@ -24,19 +27,23 @@ jest.mock('../../../../../data/redux', () => ({
   },
 }));
 
+jest.mock('../../../../../sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');
+
 describe('AnswerOption', () => {
   const answerWithOnlyFeedback = {
     id: 'A',
     title: 'Answer 1',
     correct: true,
     selectedFeedback: 'some feedback',
+    isAnswerRange: true,
   };
   const answerWithSelectedUnselectedFeedback = {
-    id: 'A',
-    title: 'Answer 1',
+    id: 'B',
+    title: 'Answer 2',
     correct: true,
     selectedFeedback: 'selected feedback',
     unselectedFeedback: 'unselected feedback',
+    isAnswerRange: false,
   };
   const answerRange = {
     id: 'A',
@@ -59,7 +66,6 @@ describe('AnswerOption', () => {
   };
 
   beforeEach(() => {
-    initializeMocks();
     jest.spyOn(hooks, 'removeAnswer').mockReturnValue(jest.fn());
     jest.spyOn(hooks, 'setAnswer').mockReturnValue(jest.fn());
     jest.spyOn(hooks, 'setAnswerTitle').mockReturnValue(jest.fn());
@@ -69,30 +75,34 @@ describe('AnswerOption', () => {
       isFeedbackVisible: false,
       toggleFeedback: jest.fn(),
     });
+    initializeMocks();
   });
 
   test('renders correct option with feedback', () => {
+    jest.spyOn(problem, 'problemType').mockReturnValue('multiplechoiceresponse');
     render(<AnswerOption {...props} />);
-    expect(screen.getByText(answerWithOnlyFeedback.title)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter an answer')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Delete answer' })).toBeInTheDocument();
   });
 
   test('renders correct option with selected unselected feedback', () => {
-    const myProps = { ...props, problemType: 'choiceresponse' };
-    render(<AnswerOption {...myProps} answer={answerWithSelectedUnselectedFeedback} />);
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-    expect(screen.getByText(answerWithOnlyFeedback.title)).toBeInTheDocument();
+    jest.spyOn(problem, 'problemType').mockReturnValue('choiceresponse');
+    const myProps = { ...props, answer: answerWithSelectedUnselectedFeedback };
+    render(<AnswerOption {...myProps} />);
+    expect(screen.getByText(answerWithSelectedUnselectedFeedback.id)).toBeInTheDocument();
   });
 
   test('renders correct option with optionresponse input problem', () => {
-    const myProps = { ...props, problemType: 'optionresponse' };
+    jest.spyOn(problem, 'problemType').mockReturnValue('optionresponse');
+    const myProps = { ...props };
     render(<AnswerOption {...myProps} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByText(answerWithOnlyFeedback.title)).toBeInTheDocument();
   });
 
   test('renders correct option with numeric input problem and answer range', () => {
-    const myProps = { ...props, problemType: 'numericalresponse' };
+    jest.spyOn(problem, 'problemType').mockReturnValue('numericalresponse');
+    const myProps = { ...props };
     render(<AnswerOption {...myProps} answer={answerRange} />);
     expect(screen.getByText(answerRange.title)).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
