@@ -89,7 +89,6 @@ const AnswerOption = ({
           onChange={setAnswerTitle}
           placeholder={intl.formatMessage(messages.answerRangeTextboxPlaceholder)}
         />
-        Random text here
         <div className="pgn__form-switch-helper-text">
           <FormattedMessage {...messages.answerRangeHelperText} />
         </div>
