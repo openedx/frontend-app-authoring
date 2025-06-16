@@ -147,7 +147,7 @@ const ScheduleAndDetails = ({ courseId }) => {
     return <></>;
   }
 
-  if (courseDetails.isError || loadingSettingsStatus === RequestStatus.DENIED) {
+  if (loadingSettingsStatus === RequestStatus.DENIED) {
     return (
       <div className="row justify-content-center m-6">
         <Placeholder />
