@@ -1,30 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
-<[object Object]
-  value={
-    {
-      "store": {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(Symbol.observable): [Function],
-      },
-      "subscription": {
-        "addNestedSub": [Function],
-        "getListeners": [Function],
-        "handleChangeWrapper": [Function],
-        "isSubscribed": [Function],
-        "notifyNestedSubs": [Function],
-        "trySubscribe": [Function],
-        "tryUnsubscribe": [Function],
-      },
-    }
-  }
->
-  <TinyMceWidget
-    disabled={false}
+<Fragment>
+  <SourceCodeModal
+    close={[MockFunction modal.closeModal]}
     editorRef={
       {
         "current": {
@@ -32,51 +11,55 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
         },
       }
     }
-    editorType="text"
-    enableImageUpload={false}
-    id="sOMeiD"
-    images={
+    isOpen={false}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
       {
-        "sOmEaSsET": {
-          "staTICUrl": "/assets/sOmEaSsET",
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
         },
+        "editorType": "text",
+        "enableImageUpload": false,
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
       }
     }
-    isLibrary={false}
-    learningContextId="course+org+run"
-    lmsEndpointUrl="sOmEvaLue.cOm"
-    onChange={[Function]}
-    studioEndpointUrl="sOmEoThERvaLue.cOm"
-    updateContent={[Function]}
+    id="sOMeiD"
+    onEditorChange={[Function]}
   />
-</[object Object]>
+</Fragment>
 `;
 
 exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
-<[object Object]
-  value={
-    {
-      "store": {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(Symbol.observable): [Function],
-      },
-      "subscription": {
-        "addNestedSub": [Function],
-        "getListeners": [Function],
-        "handleChangeWrapper": [Function],
-        "isSubscribed": [Function],
-        "notifyNestedSubs": [Function],
-        "trySubscribe": [Function],
-        "tryUnsubscribe": [Function],
-      },
-    }
-  }
->
-  <TinyMceWidget
-    disabled={false}
+<Fragment>
+  <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
+    close={[MockFunction modal.closeModal]}
     editorRef={
       {
         "current": {
@@ -85,23 +68,140 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
       }
     }
     editorType="problem"
-    enableImageUpload={true}
-    id="sOMeiD"
     images={
       {
-        "sOmEaSsET": {
-          "staTICUrl": "/assets/sOmEaSsET",
+        "current": [
+          {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
+    }
+    isLibrary={true}
+    isOpen={false}
+    lmsEndpointUrl="http://localhost:18000"
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
+      {
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "editorType": "problem",
+        "enableImageUpload": true,
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
+      }
+    }
+    id="sOMeiD"
+    onEditorChange={[Function]}
+  />
+</Fragment>
+`;
+
+exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `
+<Fragment>
+  <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
         },
       }
     }
-    isLibrary={false}
-    learningContextId="course+org+run"
-    lmsEndpointUrl="sOmEvaLue.cOm"
-    onChange={[Function]}
-    studioEndpointUrl="sOmEoThERvaLue.cOm"
-    updateContent={[Function]}
+    editorType="text"
+    images={
+      {
+        "current": [
+          {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
+    }
+    isLibrary={true}
+    isOpen={false}
+    lmsEndpointUrl="http://localhost:18000"
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
-</[object Object]>
+  <SourceCodeModal
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
+        },
+      }
+    }
+    isOpen={false}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
+      {
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "editorType": "text",
+        "enableImageUpload": true,
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
+      }
+    }
+    id="sOMeiD"
+    onEditorChange={[Function]}
+  />
+</Fragment>
 `;
-
-exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `undefined`;
