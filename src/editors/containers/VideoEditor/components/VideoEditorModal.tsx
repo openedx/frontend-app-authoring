@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useWaffleFlags } from '@src/data/apiHooks';
 import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
 import { RequestKeys } from '../../../data/constants/requests';
-import { getWaffleFlags } from '../../../data/redux/app/selectors';
 
 interface Props {
   onReturn?: (() => void);
@@ -42,7 +42,7 @@ const VideoEditorModal: React.FC<Props> = ({
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
   );
-  const waffleFlags = useSelector(getWaffleFlags);
+  const { useNewVideoUploadsPage } = useWaffleFlags();
 
   useEffect(() => {
     hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
@@ -53,7 +53,7 @@ const VideoEditorModal: React.FC<Props> = ({
       onReturn: onSettingsReturn,
       isLibrary,
       onClose,
-      useNewVideoUploadsPage: waffleFlags?.useNewVideoUploadsPage || false,
+      useNewVideoUploadsPage,
     }}
     />
   );
