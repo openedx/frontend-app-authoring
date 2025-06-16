@@ -1364,14 +1364,14 @@
   }
 
   article {
-    background-color: white;
+    background-color: var(--text-white);
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
   }
 
   .help-sidebar {
-    background-color: white;
+    background-color: var(--text-white);
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
@@ -1435,6 +1435,45 @@
 
   .pt-4 .mx-0 {
     background-color: #f2f5ff !important;
+  }
+}
+.custom-schedule-details{
+  margin-top: -1.5rem;
+  .section-sub-header{
+    display: block;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+  }
+  .lead{
+    margin-bottom: 0rem;
+    font-size: 1rem;
+  }
+  .section-sub-header span{
+    font-size: 0.9rem;
+  }
+  .course-form .row .col-cs{
+    border-radius: 16px;
+    border: solid 1px var(--border-color);
+    background-color: var(--text-white);
+    padding: 1rem;
+  }
+  .title-class{
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+  }
+  .section-container ul li h4{
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .section-container .card{
+    background-color: var(--bg-body);
+  }
+  .pacing-section .pgn__form-group .pgn__form-control-set{
+    padding-left: 0rem;
+    padding-top: 0rem;
   }
 }
 
