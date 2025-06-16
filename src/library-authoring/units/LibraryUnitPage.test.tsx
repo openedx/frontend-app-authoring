@@ -430,4 +430,14 @@ describe('<LibraryUnitPage />', () => {
     userEvent.click(component.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
     expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
   });
+
+  it('"Add New Content" button should open "Add Content" sidebar', async () => {
+    renderLibraryUnitPage();
+    const addContent = await screen.findByRole('button', { name: /add new content/i });
+    userEvent.click(addContent);
+
+    expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /text/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /problem/i })).toBeInTheDocument();
+  });
 });
