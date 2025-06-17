@@ -407,6 +407,10 @@
 
 .files-table {
 
+  .pgn__data-table__selectable-card{
+    justify-content: space-evenly;
+  }
+
   .pgn__data-table th {
     background-color: #e7ebfa !important;
 
