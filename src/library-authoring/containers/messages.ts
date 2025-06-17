@@ -1,6 +1,11 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  draftChipText: {
+    id: 'course-authoring.library-authoring.container-component.draft-chip.text',
+    defaultMessage: 'Draft',
+    description: 'Chip in children in section and subsection page that is shown when children has unpublished changes',
+  },
   openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
