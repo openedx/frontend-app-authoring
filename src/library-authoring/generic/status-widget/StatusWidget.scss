@@ -1,12 +1,26 @@
+%draft-status {
+  background-color: #FDF3E9;
+  border-color: #F4B57B !important;
+  color: #00262B;
+}
+
+%published-status {
+  background-color: $info-100;
+  border-color: $info-400 !important;
+  color: $primary-500;
+}
+
 .status-widget {
+  border-top: 4px solid;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+
   &.draft-status {
-    background-color: #FDF3E9;
-    border-top: 4px solid #F4B57B;
+    @extend %draft-status;
   }
 
   &.published-status {
-    background-color: $info-100;
-    border-top: 4px solid $info-400;
+    @extend %published-status;
   }
 }
-
