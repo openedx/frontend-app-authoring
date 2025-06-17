@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Draft',
     description: 'Chip in children in section and subsection page that is shown when children has unpublished changes',
   },
+  publishedChipText: {
+    id: 'course-authoring.library-authoring.container-component.published-chip.text',
+    defaultMessage: 'Published',
+    description: 'Text shown when a unit/section/subsection is published.',
+  },
   openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
@@ -33,8 +38,23 @@ const messages = defineMessages({
   },
   publishContainerButton: {
     id: 'course-authoring.library-authoring.container-sidebar.publish-button',
+    defaultMessage: 'Publish Changes {publishStatus}',
+    description: 'Button text to initiate publish the unit/subsection/section, showing current publish status',
+  },
+  publishContainerConfirmHeading: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-confirm-heading',
+    defaultMessage: 'Confirm Publish',
+    description: 'Header text shown while confirming publish of a unit/subsection/section',
+  },
+  publishContainerConfirm: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-confirm-button',
     defaultMessage: 'Publish',
-    description: 'Button text to publish the unit/subsection/section',
+    description: 'Button text shown to confirm publish of a unit/subsection/section',
+  },
+  publishContainerCancel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-cancel',
+    defaultMessage: 'Cancel',
+    description: 'Button text shown to cancel publish of a unit/subsection/section',
   },
   publishContainerSuccess: {
     id: 'course-authoring.library-authoring.container-sidebar.publish-success',

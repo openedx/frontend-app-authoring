@@ -28,9 +28,9 @@ import { LibraryContainerChildren } from '../section-subsections/LibraryContaine
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
-import { useContainer, usePublishContainer } from '../data/apiHooks';
+import ContainerPublishStatus from './ContainerPublishStatus';
+import { useContainer } from '../data/apiHooks';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { ToastContext } from '../../generic/toast-context';
 
 type ContainerMenuProps = {
   containerId: string,
@@ -85,9 +85,8 @@ const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
 const ContainerInfo = () => {
   const intl = useIntl();
 
-  const { libraryId, readOnly } = useLibraryContext();
+  const { libraryId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
-  const { showToast } = React.useContext(ToastContext);
   const {
     defaultTab,
     hiddenTabs,
@@ -101,7 +100,6 @@ const ContainerInfo = () => {
   const containerId = sidebarItemInfo?.id;
   const containerType = containerId ? getBlockType(containerId) : undefined;
   const { data: container } = useContainer(containerId);
-  const publishContainer = usePublishContainer(containerId!);
 
   const defaultContainerTab = defaultTab.container;
   const tab: ContainerInfoTab = (
@@ -130,15 +128,6 @@ const ContainerInfo = () => {
     );
   }, [hiddenTabs, defaultContainerTab, containerId]);
 
-  const handlePublish = useCallback(async () => {
-    try {
-      await publishContainer.mutateAsync();
-      showToast(intl.formatMessage(messages.publishContainerSuccess));
-    } catch (error) {
-      showToast(intl.formatMessage(messages.publishContainerFailed));
-    }
-  }, [publishContainer]);
-
   if (!container || !containerId || !containerType) {
     return null;
   }
@@ -156,15 +145,10 @@ const ContainerInfo = () => {
             {intl.formatMessage(messages.openButton)}
           </Button>
         )}
-        {!componentPickerMode && !readOnly && (
-          <Button
-            variant="outline-primary"
-            className="m-1 text-nowrap flex-grow-1"
-            disabled={!container.hasUnpublishedChanges || publishContainer.isLoading}
-            onClick={handlePublish}
-          >
-            {intl.formatMessage(messages.publishContainerButton)}
-          </Button>
+        {!showOpenButton && !componentPickerMode && (
+          <ContainerPublishStatus
+            containerId={containerId}
+          />
         )}
         {showOpenButton && (
           <ContainerMenu
