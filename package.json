@@ -10,7 +10,6 @@
     "extends @edx/browserslist-config"
   ],
   "scripts": {
-    "prebuild": "mkdir -p dist && cp env.config.jsx dist/",
     "build": "fedx-scripts webpack",
     "i18n_extract": "fedx-scripts formatjs extract",
     "stylelint": "stylelint \"plugins/**/*.scss\" \"src/**/*.scss\" \"scss/**/*.scss\" --config .stylelintrc.json",
