@@ -2,7 +2,7 @@ import React from 'react';
 import isNil from 'lodash/isNil';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 import { selectors } from '../../../../../../data/redux';
 import SettingsOption from '../SettingsOption';
@@ -13,13 +13,12 @@ const ScoringCard = ({
   scoring,
   defaultValue,
   updateSettings,
-  // inject
-  intl,
   // redux
   studioEndpointUrl,
   learningContextId,
   isLibrary,
 }) => {
+  const intl = useIntl();
   const {
     handleUnlimitedChange,
     handleMaxAttemptChange,
@@ -93,7 +92,6 @@ const ScoringCard = ({
 };
 
 ScoringCard.propTypes = {
-  intl: intlShape.isRequired,
   // eslint-disable-next-line
   scoring: PropTypes.any.isRequired,
   updateSettings: PropTypes.func.isRequired,
@@ -117,5 +115,4 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
-export const ScoringCardInternal = ScoringCard; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ScoringCard));
+export default connect(mapStateToProps, mapDispatchToProps)(ScoringCard);

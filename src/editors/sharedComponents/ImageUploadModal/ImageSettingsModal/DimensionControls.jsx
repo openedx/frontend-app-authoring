@@ -9,7 +9,7 @@ import {
   Locked,
   Unlocked,
 } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import * as hooks from './hooks';
 import messages from './messages';
@@ -32,42 +32,44 @@ const DimensionControls = ({
   unlock,
   updateDimensions,
   value,
-  // inject
-  intl,
-}) => ((value !== null) && (
-  <Form.Group>
-    <Form.Label as="h4">
-      <FormattedMessage {...messages.imageDimensionsLabel} />
-    </Form.Label>
-    <div className="mt-4.5">
-      <Form.Control
-        className="dimension-input"
-        value={value.width}
-        onChange={hooks.onInputChange(setWidth)}
-        onBlur={updateDimensions}
-        floatingLabel={intl.formatMessage(messages.widthFloatingLabel)}
-      />
-      <Form.Control
-        className="dimension-input"
-        value={value.height}
-        onChange={hooks.onInputChange(setHeight)}
-        onBlur={updateDimensions}
-        floatingLabel={intl.formatMessage(messages.heightFloatingLabel)}
-      />
-      <IconButton
-        className="d-inline-block"
-        alt={
+}) => {
+  const intl = useIntl();
+  if (!value) { return null; }
+  return (
+    <Form.Group>
+      <Form.Label as="h4">
+        <FormattedMessage {...messages.imageDimensionsLabel} />
+      </Form.Label>
+      <div className="mt-4.5">
+        <Form.Control
+          className="dimension-input"
+          value={value.width}
+          onChange={hooks.onInputChange(setWidth)}
+          onBlur={updateDimensions}
+          floatingLabel={intl.formatMessage(messages.widthFloatingLabel)}
+        />
+        <Form.Control
+          className="dimension-input"
+          value={value.height}
+          onChange={hooks.onInputChange(setHeight)}
+          onBlur={updateDimensions}
+          floatingLabel={intl.formatMessage(messages.heightFloatingLabel)}
+        />
+        <IconButton
+          className="d-inline-block"
+          alt={
           isLocked
             ? intl.formatMessage(messages.unlockDimensionsLabel)
             : intl.formatMessage(messages.lockDimensionsLabel)
         }
-        iconAs={Icon}
-        src={isLocked ? Locked : Unlocked}
-        onClick={isLocked ? unlock : lock}
-      />
-    </div>
-  </Form.Group>
-));
+          iconAs={Icon}
+          src={isLocked ? Locked : Unlocked}
+          onClick={isLocked ? unlock : lock}
+        />
+      </div>
+    </Form.Group>
+  );
+};
 DimensionControls.defaultProps = {
   value: {
     height: '100',
@@ -85,9 +87,6 @@ DimensionControls.propTypes = ({
   lock: PropTypes.func.isRequired,
   unlock: PropTypes.func.isRequired,
   updateDimensions: PropTypes.func.isRequired,
-  // inject
-  intl: intlShape.isRequired,
 });
 
-export const DimensionControlsInternal = DimensionControls; // For testing only
-export default injectIntl(DimensionControls);
+export default DimensionControls;

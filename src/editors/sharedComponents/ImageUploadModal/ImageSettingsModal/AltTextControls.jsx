@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Form } from '@openedx/paragon';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import * as hooks from './hooks';
 import messages from './messages';
@@ -22,39 +22,40 @@ const AltTextControls = ({
   setValue,
   validation,
   value,
-  // inject
-  intl,
-}) => (
-  <Form.Group className="mt-4.5">
-    <Form.Label as="h4">
-      <FormattedMessage {...messages.accessibilityLabel} />
-    </Form.Label>
-    <Form.Control
-      className="mt-4.5"
-      disabled={isDecorative}
-      floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
-      isInvalid={validation.show}
-      onChange={hooks.onInputChange(setValue)}
-      type="input"
-      value={value}
-    />
-    {validation.show
+}) => {
+  const intl = useIntl();
+  return (
+    <Form.Group className="mt-4.5">
+      <Form.Label as="h4">
+        <FormattedMessage {...messages.accessibilityLabel} />
+      </Form.Label>
+      <Form.Control
+        className="mt-4.5"
+        disabled={isDecorative}
+        floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
+        isInvalid={validation.show}
+        onChange={hooks.onInputChange(setValue)}
+        type="input"
+        value={value}
+      />
+      {validation.show
       && (
         <Form.Control.Feedback type="invalid">
           <FormattedMessage {...messages.altTextLocalFeedback} />
         </Form.Control.Feedback>
       )}
-    <Form.Checkbox
-      checked={isDecorative}
-      className="mt-4.5 decorative-control-label"
-      onChange={hooks.onCheckboxChange(setIsDecorative)}
-    >
-      <Form.Label>
-        <FormattedMessage {...messages.decorativeAltTextCheckboxLabel} />
-      </Form.Label>
-    </Form.Checkbox>
-  </Form.Group>
-);
+      <Form.Checkbox
+        checked={isDecorative}
+        className="mt-4.5 decorative-control-label"
+        onChange={hooks.onCheckboxChange(setIsDecorative)}
+      >
+        <Form.Label>
+          <FormattedMessage {...messages.decorativeAltTextCheckboxLabel} />
+        </Form.Label>
+      </Form.Checkbox>
+    </Form.Group>
+  );
+};
 AltTextControls.propTypes = {
   error: PropTypes.shape({
     show: PropTypes.bool,
@@ -66,9 +67,7 @@ AltTextControls.propTypes = {
     show: PropTypes.bool,
   }).isRequired,
   value: PropTypes.string.isRequired,
-  // inject
-  intl: intlShape.isRequired,
 };
 
 export const AltTextControlsInternal = AltTextControls; // For testing only
-export default injectIntl(AltTextControls);
+export default AltTextControls;

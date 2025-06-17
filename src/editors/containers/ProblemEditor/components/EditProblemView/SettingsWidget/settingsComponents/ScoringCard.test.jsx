@@ -1,13 +1,11 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../testUtils';
-import { scoringCardHooks } from '../hooks';
-import { ScoringCardInternal as ScoringCard } from './ScoringCard';
+import {
+  render, screen, initializeMocks, fireEvent,
+} from '@src/testUtils';
+import ScoringCard from './ScoringCard';
+import { selectors } from '../../../../../../data/redux';
 
-jest.mock('../hooks', () => ({
-  scoringCardHooks: jest.fn(),
-}));
+const { app } = selectors;
 
 describe('ScoringCard', () => {
   const scoring = {
@@ -17,55 +15,69 @@ describe('ScoringCard', () => {
       number: 5,
     },
     updateSettings: jest.fn().mockName('args.updateSettings'),
-    intl: { formatMessage },
   };
 
   const props = {
     scoring,
-    intl: { formatMessage },
     defaultValue: 1,
+    updateSettings: jest.fn(),
   };
 
-  const scoringCardHooksProps = {
-    handleMaxAttemptChange: jest.fn().mockName('scoringCardHooks.handleMaxAttemptChange'),
-    handleWeightChange: jest.fn().mockName('scoringCardHooks.handleWeightChange'),
-    handleOnChange: jest.fn().mockName('scoringCardHooks.handleOnChange'),
-    local: 5,
-  };
-
-  scoringCardHooks.mockReturnValue(scoringCardHooksProps);
-
-  describe('behavior', () => {
-    it(' calls scoringCardHooks when initialized', () => {
-      shallow(<ScoringCard {...props} />);
-      expect(scoringCardHooks).toHaveBeenCalledWith(scoring, props.updateSettings, props.defaultValue);
-    });
+  beforeEach(() => {
+    jest.spyOn(app, 'studioEndpointUrl').mockReturnValue('studioEndpointUrl');
+    jest.spyOn(app, 'learningContextId').mockReturnValue('learningContextId');
+    jest.spyOn(app, 'isLibrary').mockReturnValue(false);
+    initializeMocks();
   });
 
-  describe('snapshot', () => {
-    test('snapshot: scoring setting card', () => {
-      expect(shallow(<ScoringCard {...props} />).snapshot).toMatchSnapshot();
-    });
-    test('snapshot: scoring setting card zero zero weight', () => {
-      expect(shallow(<ScoringCard
-        {...props}
-        scoring={{
-          ...scoring,
-          weight: 0,
-        }}
-      />).snapshot).toMatchSnapshot();
-    });
-    test('snapshot: scoring setting card max attempts', () => {
-      expect(shallow(<ScoringCard
-        {...props}
-        scoring={{
-          ...scoring,
-          attempts: {
-            unlimited: true,
-            number: 0,
-          },
-        }}
-      />).snapshot).toMatchSnapshot();
-    });
+  test('render the component', () => {
+    render(<ScoringCard {...props} />);
+    expect(screen.getByText('Scoring')).toBeInTheDocument();
+  });
+
+  test('should not render advance settings link when isLibrary is true', () => {
+    jest.spyOn(app, 'isLibrary').mockReturnValue(true);
+    render(<ScoringCard {...props} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    expect(screen.queryByText('Set a default value in advanced settings')).not.toBeInTheDocument();
+  });
+
+  test('should render advance settings link when isLibrary is false', () => {
+    jest.spyOn(app, 'isLibrary').mockReturnValue(false);
+    render(<ScoringCard {...props} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    expect(screen.getByText('Set a default value in advanced settings')).toBeInTheDocument();
+  });
+
+  test('should call updateSettings when clicking points button', () => {
+    render(<ScoringCard {...props} scoring={{ ...scoring, weight: 0 }} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    const pointsButton = screen.getByRole('spinbutton', { name: 'Points' });
+    expect(pointsButton).toBeInTheDocument();
+    expect(pointsButton.value).toBe('0');
+    fireEvent.change(pointsButton, { target: { value: '0.1' } });
+    expect(props.updateSettings).toHaveBeenCalled();
+  });
+
+  test('should call updateSettings when clicking attempts button', () => {
+    const scoringUnlimited = { ...scoring, attempts: { unlimited: true, number: 0 } };
+    render(<ScoringCard {...props} scoring={scoringUnlimited} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    fireEvent.click(screen.getByText('Attempts'));
+    const attemptsButton = screen.getByRole('spinbutton', { name: 'Points' });
+    expect(attemptsButton).toBeInTheDocument();
+    expect(attemptsButton.value).toBe('1.5');
+    fireEvent.change(attemptsButton, { target: { value: '2' } });
+    expect(props.updateSettings).toHaveBeenCalled();
+  });
+
+  test('should display checked checkbox when unlimited is true', () => {
+    const scoringUnlimited = { ...scoring, attempts: { unlimited: true, number: 0 } };
+    render(<ScoringCard {...props} scoring={scoringUnlimited} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    const checkbox = screen.getByRole('checkbox', { name: 'Unlimited attempts' });
+    expect(checkbox).toBeChecked();
+    fireEvent.click(checkbox);
+    expect(props.updateSettings).toHaveBeenCalled();
   });
 });
