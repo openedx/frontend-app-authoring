@@ -6,8 +6,11 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import CreateContainerModal from './CreateContainerModal';
 import AddContent from '../add-content/AddContent';
 import { mockContentLibrary, mockBlockTypesMetadata } from '../data/api.mocks';
+import { getLibraryContainerApiUrl, getLibraryContainersApiUrl } from '../data/api';
 
 const { libraryId } = mockContentLibrary;
+
+const newSectionId = 'lct:org:lib:section:new-section';
 
 describe('CreateContainerModal container linking', () => {
   let axiosMock;
@@ -20,8 +23,8 @@ describe('CreateContainerModal container linking', () => {
     jest.clearAllMocks();
     mockContentLibrary.applyMock();
     mockBlockTypesMetadata.applyMock();
-    axiosMock.onPost(`/api/libraries/v2/${libraryId}/containers/`).reply(200, {
-      id: 'lct:org:lib:section:new-section',
+    axiosMock.onPost(getLibraryContainersApiUrl(libraryId)).reply(200, {
+      id: newSectionId,
       containerType: 'section',
       displayName: 'Test Container',
       publishedDisplayName: 'Test Container',
@@ -35,6 +38,13 @@ describe('CreateContainerModal container linking', () => {
       hasUnpublishedChanges: true,
       collections: [],
       tagsCount: 0,
+    });
+    axiosMock.onPost(getLibraryContainerApiUrl(newSectionId)).reply(200, {
+      id: newSectionId,
+      containerType: 'section',
+      displayName: 'Test Container',
+      publishedDisplayName: 'Test Container',
+      created: '2024-09-19T10:00:00Z',
     });
   });
 
@@ -92,7 +102,7 @@ describe('CreateContainerModal container linking', () => {
         <AddContent />
         <CreateContainerModal />
       </>,
-      { containerId: 'lct:org:lib:section:parent-section', routeType: 'section' },
+      { containerId: newSectionId, routeType: 'section' },
     );
     // Disambiguate: select the "Subsection" button by exact match
     const subsectionButton = await screen.findByRole('button', { name: /^Subsection$/ });
