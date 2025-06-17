@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, IconButtonWithTooltip } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { DeleteOutline, EditOutline, Error as ErrorIcon } from '@openedx/paragon/icons';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 import { isDateForUpdateValid } from './utils';
 import messages from './messages';
@@ -17,6 +18,16 @@ const CourseUpdate = ({
   const intl = useIntl();
 
   return (
+    <PluginSlot
+      id="course_update_card_plugin_slot"
+      pluginProps={{
+        dateForUpdate,
+        contentForUpdate,
+        onEdit,
+        onDelete,
+        isDisabledButtons,
+      }}
+    >
     <div className="course-update" data-testid="course-update">
       <div className="course-update-header">
         <span className="course-update-header__date small font-weight-bold">{dateForUpdate}</span>
@@ -54,6 +65,7 @@ const CourseUpdate = ({
         />
       )}
     </div>
+    </PluginSlot>
   );
 };
 
