@@ -36,3 +36,11 @@
     padding: 0;
   }
 }
+
+.subsection-breadcrumb {
+  max-width: 700px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
