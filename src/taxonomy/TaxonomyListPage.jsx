@@ -22,6 +22,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
@@ -178,68 +179,85 @@ const TaxonomyListPage = () => {
   );
 
   return (
-    <>
-      <Helmet>
-        <title>{getPageHeadTitle('', intl.formatMessage(messages.headerTitle))}</title>
-      </Helmet>
-      <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
-        <Container size="xl">
-          <SubHeader
-            title={intl.formatMessage(messages.headerTitle)}
-            titleActions={getOrgSelect()}
-            headerActions={<TaxonomyListHeaderButtons canAddTaxonomy={canAddTaxonomy} />}
-            hideBorder
-          />
-        </Container>
-      </div>
-      <div className="bg-light-400 mt-1">
-        <Container size="xl">
-          {isLoaded && taxonomyListData && (
-            <DataTable
-              disableElevation
-              data={taxonomyListData.results}
-              itemCount={taxonomyListData.results.length}
-              columns={[
-                {
-                  Header: 'id',
-                  accessor: 'id',
-                },
-                {
-                  Header: 'name',
-                  accessor: 'name',
-                },
-                {
-                  Header: 'description',
-                  accessor: 'description',
-                },
-                {
-                  Header: 'systemDefined',
-                  accessor: 'systemDefined',
-                },
-                {
-                  Header: '',
-                  accessor: 'tagsCount',
-                },
-              ]}
-            >
-              <CardView
-                className="bg-light-400 p-5"
-                CardComponent={(row) => TaxonomyCard(row)}
-              />
-            </DataTable>
-          )}
-          {!isLoaded && (
-            <Container className="d-flex justify-content-center mt-6">
-              <Spinner
-                animation="border"
-                size="xl"
-                screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
-              />
-            </Container>
-          )}
-        </Container>
-      </div>
-    </>
+    <PluginSlot
+      id="taxonomy_list_page_plugin_slot"
+      pluginProps={{
+        canAddTaxonomy,
+        isOrganizationListLoaded,
+        organizationListData,
+        selectedOrgFilter,
+        setSelectedOrgFilter,
+        intl,
+        taxonomyListHeaderButtons: <TaxonomyListHeaderButtons canAddTaxonomy={canAddTaxonomy} />,
+        getOrgSelect,
+        taxonomyListData,
+        isLoaded,
+      }}
+    >
+      <>
+        <Helmet>
+          <title>{getPageHeadTitle('', intl.formatMessage(messages.headerTitle))}</title>
+        </Helmet>
+        <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
+          <Container size="xl">
+            <SubHeader
+              title={intl.formatMessage(messages.headerTitle)}
+              titleActions={getOrgSelect()}
+              headerActions={<TaxonomyListHeaderButtons canAddTaxonomy={canAddTaxonomy} />}
+              hideBorder
+            />
+          </Container>
+        </div>
+        <div className="bg-light-400 mt-1">
+          <Container size="xl">
+            {isLoaded && taxonomyListData && (
+              <DataTable
+                disableElevation
+                data={taxonomyListData.results}
+                itemCount={taxonomyListData.results.length}
+                columns={[
+                  {
+                    Header: 'id',
+                    accessor: 'id',
+                  },
+                  {
+                    Header: 'name',
+                    accessor: 'name',
+                  },
+                  {
+                    Header: 'description',
+                    accessor: 'description',
+                  },
+                  {
+                    Header: 'systemDefined',
+                    accessor: 'systemDefined',
+                  },
+                  {
+                    Header: '',
+                    accessor: 'tagsCount',
+                  },
+                ]}
+              >
+                <CardView
+                  className="bg-light-400 p-5"
+                  CardComponent={(row) => TaxonomyCard(row)}
+                />
+              </DataTable>
+            )}
+            {!isLoaded && (
+              <Container className="d-flex justify-content-center mt-6">
+                <Spinner
+                  animation="border"
+                  size="xl"
+                  screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
+                />
+              </Container>
+            )}
+          </Container>
+        </div>
+      </>
+    </PluginSlot>
+
   );
 };
 

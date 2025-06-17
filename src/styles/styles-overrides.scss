@@ -1363,6 +1363,103 @@
   }
 }
 
+.custom-taxonomy-list-page-container {
+  padding: 1.5rem;
+  padding-top: 1rem;
+
+  .custom-taxonomy-list-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .custom-taxonomy-list-page-header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+  }
+
+  .custom-taxonomy-list-page-content {
+    background-color: var(--bg-body);
+
+    .custom-taxonomy-list-page-content-container {
+      padding: 0 !important;
+    }
+
+    .pgn__data-table-wrapper {
+      background-color: var(--bg-body) !important;
+    }
+
+    .taxonomy-card {
+      height: 10rem !important;
+      // width: 100% !important;
+      padding: 1rem !important;
+      border-radius: 8px !important;
+      // border: solid 1px var(--border-color) !important;
+      background-color: var(--bg-surface) !important;
+      // box-shadow: 0 2px 4px -2px rgba(10, 13, 18, 0.06), 0 4px 8px -2px rgba(10, 13, 18, 0.1) !important;
+
+      
+
+      .pgn__card-header {
+        padding: 0 !important;
+        margin-bottom: 1rem !important;
+
+        .pgn__card-header-title-md {
+          font-size: 18px !important;
+        }
+
+        .pgn__card-header-subtitle-md {
+          font-size: 14px !important;
+        }
+        
+        .system-defined-badge {
+          border-radius: 12px !important;
+        }
+
+        .pgn__card-header-content {
+          margin-top: 0 !important;
+        }
+        
+        .pgn__card-header-actions {
+          margin-top: 0 !important;
+
+          .btn-icon-primary {
+            height: 2rem !important;
+            width: 2rem !important;
+          }
+        }
+      }
+
+      .pgn__card-section {
+        padding: 0 !important;
+      }
+
+      .taxonomy-card-body {
+        font-size: 14px !important;
+        line-height: 1.2 !important;
+        letter-spacing: normal !important;
+        color: var(--text-secondary) !important;
+        -webkit-line-clamp: 3 !important;
+        line-clamp: 3 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+    }
+
+    .taxonomy-card:hover {
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .pgn__card.clickable:focus::before {
+      border: none !important;
+    }
+  }
+
+}
+
 // S Styles End
 
 // N Styles Start

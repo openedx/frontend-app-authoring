@@ -19,6 +19,7 @@ import { logError } from '@edx/frontend-platform/logging';
 // import { loadThemeStyles } from 'utils/themeService';
 import MyCourses from 'my-courses/MyCourses';
 import CreateWidgets from 'widgets-create/CreateWidgets';
+import LibrariesV2Tab from 'studio-home/tabs-section/libraries-v2-tab';
 import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
@@ -44,7 +45,6 @@ import Layout from './Layout';
 import './styles/global-overrides.scss';
 import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
-import LibrariesV2Tab from 'studio-home/tabs-section/libraries-v2-tab';
 
 const queryClient = new QueryClient();
 
