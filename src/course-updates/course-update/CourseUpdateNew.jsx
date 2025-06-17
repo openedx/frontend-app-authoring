@@ -22,11 +22,10 @@ const CourseUpdateNew = ({
 
   return (
     <div
-      className="course-update"
+      className="course-update card-style"
       data-testid="course-update"
-      style={{ display: 'flex', justifyContent: 'space-between' }}
     >
-      <div className="course-update-header" style={{ display: 'block' }}>
+      <div className="course-update-header">
         <span className="course-update-header__date small font-weight-bold">
           {dateForUpdate}
         </span>
@@ -52,7 +51,6 @@ const CourseUpdateNew = ({
       </div>
       <div
         className="course-update-header__action"
-        style={{ display: 'flex', flexDirection: 'column' }}
       >
         <IconButtonWithTooltip
           tooltipContent={intl.formatMessage(messages.editButton)}

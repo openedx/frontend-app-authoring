@@ -265,8 +265,22 @@
   font-weight: 400;
 }
 
-.course-update .course-update-header {
-  margin-bottom: 0rem;
+.card-style{
+  display: flex;
+  justify-content: space-between;
+}
+
+.course-update {
+
+  .course-update-header {
+    margin-bottom: 0rem;
+    display: block;
+  }
+
+  .course-update-header__action {
+    display: flex; 
+    flex-direction: column;
+  }
 }
 
 // Course export styles
