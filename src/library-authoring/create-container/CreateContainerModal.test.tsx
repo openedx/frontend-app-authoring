@@ -38,10 +38,20 @@ describe('CreateContainerModal container linking', () => {
     });
   });
 
-  function renderWithProvider(content) {
+  function renderWithProvider(content, options) {
+    const { containerId, routeType = 'library' } = options || {};
+    const paths = {
+      library: '/library/:libraryId',
+      section: '/library/:libraryId/section/:containerId',
+      subsection: '/library/:libraryId/subsection/:containerId',
+      collection: '/library/:libraryId/collection/:collectionId',
+    };
+
+    const params = { libraryId, ...containerId && { containerId } };
+
     return render(content, {
-      path: '/library/:libraryId',
-      params: { libraryId },
+      path: paths[routeType],
+      params,
       extraWrapper: ({ children: wrappedChildren }) => (
         <LibraryProvider libraryId={libraryId}>
           {wrappedChildren}
@@ -56,6 +66,7 @@ describe('CreateContainerModal container linking', () => {
         <AddContent />
         <CreateContainerModal />
       </>,
+      {},
     );
     // Disambiguate: select the "Section" button by exact match
     const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
@@ -81,6 +92,7 @@ describe('CreateContainerModal container linking', () => {
         <AddContent />
         <CreateContainerModal />
       </>,
+      { containerId: 'lct:org:lib:section:parent-section', routeType: 'section' },
     );
     // Disambiguate: select the "Subsection" button by exact match
     const subsectionButton = await screen.findByRole('button', { name: /^Subsection$/ });
@@ -93,7 +105,7 @@ describe('CreateContainerModal container linking', () => {
       expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
     });
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
-      can_stand_alone: true,
+      can_stand_alone: false,
       container_type: 'subsection',
       display_name: 'Test Subsection',
     });
@@ -106,6 +118,7 @@ describe('CreateContainerModal container linking', () => {
         <AddContent />
         <CreateContainerModal />
       </>,
+      {},
     );
     // Disambiguate: select the "Section" button by exact match
     const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
