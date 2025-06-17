@@ -39,6 +39,7 @@ import CustomLibrariesV2 from './src/studio-home/tabs-section/libraries-v2-tab/C
 import CustomLibraryAuthoringPage from './src/library-authoring/CustomLibraryAuthoringPage';
 import CustomLibraryCollectionPage from './src/library-authoring/collections/CustomLibraryCollectionPage';
 import CustomTaxonomyListPage from './src/taxonomy/CustomTaxonomyListPage';
+import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage';
 // Load environment variables from .env file
 const config = {
     ...process.env,
@@ -539,6 +540,22 @@ const config = {
                         priority: 1,
                         RenderWidget: (props) => (
                             <CustomTaxonomyListPage {...props} />
+                        ),
+                    },
+                }
+            ],
+        },
+
+        taxonomy_detail_page_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "taxonomy-detail-page-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <CustomTaxonomyDetailPage {...props} />
                         ),
                     },
                 }
