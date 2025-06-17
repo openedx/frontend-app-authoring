@@ -133,7 +133,7 @@
     background-color: white;
     padding: 1rem;
     border-radius: 1rem;
-    border: 1px solid #ced4da;
+    border: solid 1px #e5e6e6 !important;
   }
 }
 
@@ -190,10 +190,18 @@
   border-color: transparent !important;
 }
 
+.updates-handouts-container{
+  padding: 16px;
+  border-radius: 12px;
+  border: solid 1px #e5e6e6;
+  background-color: #f2f5ff;
+}
+
 .updates-container {
   grid-template-columns: none;
   border-radius: 12px !important;
   border: solid 1px #e5e6e6 !important;
+  box-shadow: none;
 
   .p-4\.5 {
     padding: 1rem !important;
@@ -202,15 +210,53 @@
   .update-card,
   .update-form {
     background-color: #f2f5ff !important;
+    // border: none !important;
   }
 }
 
 .updates-section {
   .update-form {
+    padding: 1rem;
+    border-radius: 12px;
     background-color: #f2f5ff !important;
-    padding: 1rem !important;
+    // padding: 1rem !important;
+    box-shadow: none !important;
+    // border: solid 1px #e5e6e6 !important;
+
+    .tox {
+      border: solid 1px #e5e6e6 !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  .datepicker-field {
+    font-size: 1rem;
+    // font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .datepicker-float-labels {
+      position: initial !important;
+      background: none;
+      display: none;
+    }
   }
 }
+
+.updates-handouts-container {
+    .update-form {
+      box-shadow: none !important;
+      border: none !important;
+      background-color: #f2f5ff !important;
+      padding: 1rem !important;
+    }
+
+    .tox {
+      border: solid 1px #e5e6e6 !important;
+      border-radius: 8px !important;
+    }
+  }
 
 .recent-updates,
 .course-handouts .course-handouts-header .course-handouts-header__title {
@@ -219,8 +265,22 @@
   font-weight: 400;
 }
 
-.course-update .course-update-header {
-  margin-bottom: 0rem;
+.card-style{
+  display: flex;
+  justify-content: space-between;
+}
+
+.course-update {
+
+  .course-update-header {
+    margin-bottom: 0rem;
+    display: block;
+  }
+
+  .course-update-header__action {
+    display: flex; 
+    flex-direction: column;
+  }
 }
 
 // Course export styles
@@ -346,6 +406,10 @@
 }
 
 .files-table {
+
+  .pgn__data-table__selectable-card{
+    justify-content: space-evenly;
+  }
 
   .pgn__data-table th {
     background-color: #e7ebfa !important;

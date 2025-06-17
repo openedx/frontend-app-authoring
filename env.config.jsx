@@ -32,6 +32,7 @@ import TextbooksNew from './src/textbooks/TextbooksNew';
 import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
 import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
+import CourseUpdateNew from './src/course-updates/course-update/CourseUpdateNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
 import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
@@ -750,6 +751,20 @@ const config = {
                     priority: 1,
                     RenderWidget: (props) =>
                         <ImportSidebarNew />
+                    },
+                },
+            ],
+        },
+        course_update_card_plugin_slot: {
+            plugins: [
+                {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "course_update_card",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) =>
+                        <CourseUpdateNew  {...props}/>
                     },
                 },
             ],

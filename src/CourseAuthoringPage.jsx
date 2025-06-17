@@ -68,9 +68,9 @@ const CourseAuthoringPage = ({ courseId, children }) => {
           )}
       </PluginSlot>
       {children}
-      {/* <PluginSlot id="footer_plugin_slot">
+      <PluginSlot id="footer_plugin_slot">
         {!inProgress && !isEditor && <StudioFooter />}
-      </PluginSlot> */}
+      </PluginSlot>
     </div>
   );
 };
