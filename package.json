@@ -110,7 +110,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "^4.17.17",
     "axios-mock-adapter": "1.22.0",
     "eslint-import-resolver-webpack": "^0.13.8",
     "fetch-mock-jest": "^1.5.1",

@@ -105,6 +105,12 @@ describe('<LibraryUnitPage />', () => {
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
   });
 
+  it('shows empty unit', async () => {
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdEmpty);
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('This unit is empty')).toBeInTheDocument();
+  });
+
   it('can rename unit', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();

@@ -273,6 +273,11 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
 
   return (
     <div className="library-unit-page">
+      {orderedBlocks?.length === 0 && (
+        <h4 className="ml-2">
+          <FormattedMessage {...messages.noChildrenText} />
+        </h4>
+      )}
       <DraggableList
         itemList={orderedBlocks}
         setState={setOrderedBlocks}

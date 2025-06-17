@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DurationWidget render snapshots: renders as expected with default props 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   subtitle="Custom: 00:00:00"
   title="Duration"
@@ -60,5 +60,5 @@ exports[`DurationWidget render snapshots: renders as expected with default props
       Total: 00:00:00
     </span>
   </div>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
