@@ -1,9 +1,9 @@
 // This file contains configuration for plugins and environment variables.
 
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
-import CourseNavigationSidebar from './src/shared-components/CourseNavigationSidebar';
-import CustomScheduleAndDetails from './src/CustomScheduleAndDetails';
-import messages from './src/schedule-and-details/messages';
+import CourseNavigationSidebar from './shared-components/CourseNavigationSidebar';
+import CustomScheduleAndDetails from './CustomScheduleAndDetails';
+import messages from './schedule-and-details/messages';
 import { Settings, DragHandle, SettingsApplications } from '@openedx/paragon/icons';
 import {
     Icon,
@@ -12,32 +12,32 @@ import {
     Button,
     ProgressBar
 } from '@openedx/paragon';
-import FormSwitchGroup from './src/generic/FormSwitchGroup';
-import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
-import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
-import SubHeader from './src/generic/sub-header/SubHeader';
-import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
-import CourseExportPageNew from './src/export-page/CourseExportPageNew'
+import FormSwitchGroup from './generic/FormSwitchGroup';
+import StatusBarContent from './course-outline/status-bar/StatusBarContent'
+import CustomStatusBar from './course-outline/status-bar/CustomStatusBar';
+import SubHeader from './generic/sub-header/SubHeader';
+import CourseUpdatesNew from './course-updates/CourseUpdatesNew';
+import CourseExportPageNew from './export-page/CourseExportPageNew'
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import WarningMessage from './src/generic/warning-message/WarningMessage';
-import SettingCard from './src/advanced-settings/setting-card/SettingCard';
-import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
-import CourseChecklistCustom from './src/plugins-components/CourseChecklistCustom';
-import ChecklistItemBody from './src/course-checklist/ChecklistSection/ChecklistItemBody';
-import ChecklistItemComment from './src/course-checklist/ChecklistSection/ChecklistItemComment';
-import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
-import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
-import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
-import TextbooksNew from './src/textbooks/TextbooksNew';
-import CustomPagesNew from './src/custom-pages/CustomPagesNew';
-import EditorPage from './src/editors/EditorPage';
-import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
+import WarningMessage from './generic/warning-message/WarningMessage';
+import SettingCard from './advanced-settings/setting-card/SettingCard';
+import ExportSidebarNew from '/export-page/export-sidebar/ExportSidebarNew';
+import CourseChecklistCustom from './plugins-components/CourseChecklistCustom';
+import ChecklistItemBody from './course-checklist/ChecklistSection/ChecklistItemBody';
+import ChecklistItemComment from './course-checklist/ChecklistSection/ChecklistItemComment';
+import FilesPageNew from './files-and-videos/files-page/FilesPageNew';
+import GalleryCardNew from './files-and-videos/generic/table-components/GalleryCardNew';
+import PagesAndResourcesNew from './pages-and-resources/PagesAndResourcesNew';
+import TextbooksNew from './textbooks/TextbooksNew';
+import CustomPagesNew from './custom-pages/CustomPagesNew';
+import EditorPage from './editors/EditorPage';
+import ImportSidebarNew from '/import-page/import-sidebar/ImportSidebarNew';
 
 // Example custom component for the schedule_and_details_plugin_slot
-import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
-import CustomLibrariesV2 from './src/studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2';
-import CustomLibraryAuthoringPage from './src/library-authoring/CustomLibraryAuthoringPage';
-import CustomLibraryCollectionPage from './src/library-authoring/collections/CustomLibraryCollectionPage';
+import CustomCreateLibrary from './library-authoring/create-library/CustomCreateLibrary';
+import CustomLibrariesV2 from './studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2';
+import CustomLibraryAuthoringPage from './library-authoring/CustomLibraryAuthoringPage';
+import CustomLibraryCollectionPage from './library-authoring/collections/CustomLibraryCollectionPage';
 // Load environment variables from .env file
 const config = {
     ...process.env,
