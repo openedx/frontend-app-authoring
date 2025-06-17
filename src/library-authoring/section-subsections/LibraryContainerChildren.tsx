@@ -9,6 +9,7 @@ import { Description } from '@openedx/paragon/icons';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
+import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
@@ -86,11 +87,12 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
-  const { navigateTo, insideSection } = useLibraryRoutes();
+  const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
+  const containerType = getBlockType(containerKey);
   const handleReorder = useCallback(() => async (newOrder?: LibraryContainerMetadataWithUniqueId[]) => {
     if (!newOrder) {
       return;
@@ -158,7 +160,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     <div className="ml-2 library-container-children">
       {children?.length === 0 && (
         <h4 className="ml-2">
-          {insideSection ? (
+          {containerType === ContainerType.Section ? (
             <FormattedMessage {...sectionMessages.noChildrenText} />
           ) : (
             <FormattedMessage {...subsectionMessages.noChildrenText} />

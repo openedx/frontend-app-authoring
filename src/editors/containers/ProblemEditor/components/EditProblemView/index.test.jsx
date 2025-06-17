@@ -1,12 +1,8 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import {
-  render as baseRender, screen, fireEvent, initializeMocks,
-} from '../../../../../testUtils';
+import { screen, fireEvent, initializeMocks } from '../../../../../testUtils';
+import editorRender from '../../../../editorTestRender';
 import { EditProblemViewInternal, mapStateToProps } from './index';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
-import { EditorContextProvider } from '../../../../EditorContext';
-import editorStore from '../../../../data/store';
 import { selectors } from '../../../../data/redux';
 
 const { saveBlock } = require('../../../../hooks');
@@ -44,16 +40,6 @@ jest.mock('./hooks', () => ({
   getContent: jest.fn(() => 'content'),
 }));
 
-const render = (ui) => baseRender(ui, {
-  extraWrapper: ({ children }) => (
-    <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
-      <Provider store={editorStore}>
-        {children}
-      </Provider>
-    </EditorContextProvider>
-  ),
-});
-
 describe('EditProblemView', () => {
   const baseProps = {
     problemType: 'standard',
@@ -71,7 +57,7 @@ describe('EditProblemView', () => {
   });
 
   it('renders standard problem widgets', () => {
-    render(<EditProblemViewInternal {...baseProps} />);
+    editorRender(<EditProblemViewInternal {...baseProps} />);
     expect(screen.getByText('QuestionWidget')).toBeInTheDocument();
     expect(screen.getByText('ExplanationWidget')).toBeInTheDocument();
     expect(screen.getByText('AnswerWidget')).toBeInTheDocument();
@@ -81,23 +67,23 @@ describe('EditProblemView', () => {
   });
 
   it('renders advanced problem with RawEditor', () => {
-    render(<EditProblemViewInternal {...baseProps} problemType={ProblemTypeKeys.ADVANCED} />);
+    editorRender(<EditProblemViewInternal {...baseProps} problemType={ProblemTypeKeys.ADVANCED} />);
     expect(screen.getByText('xml:<problem></problem>')).toBeInTheDocument();
     expect(screen.getByText('SettingsWidget')).toBeInTheDocument();
   });
 
   it('renders markdown editor with RawEditor', () => {
-    render(<EditProblemViewInternal {...baseProps} isMarkdownEditorEnabled />);
+    editorRender(<EditProblemViewInternal {...baseProps} isMarkdownEditorEnabled />);
     expect(screen.getByText('markdown:## Problem')).toBeInTheDocument();
   });
 
   it('shows AlertModal with correct title/body for standard', () => {
-    render(<EditProblemViewInternal {...baseProps} />);
+    editorRender(<EditProblemViewInternal {...baseProps} />);
     expect(screen.getAllByText('No correct answer has been specified.').length).toBeGreaterThan(0);
   });
 
   it('calls saveBlock when save button is clicked', () => {
-    render(<EditProblemViewInternal {...baseProps} />);
+    editorRender(<EditProblemViewInternal {...baseProps} />);
     const saveBtn = screen.getByRole('button', { name: 'Ok' });
     fireEvent.click(saveBtn);
     expect(saveBlock).toHaveBeenCalled();
@@ -110,7 +96,7 @@ describe('EditProblemView', () => {
       openSaveWarningModal: jest.fn(),
       closeSaveWarningModal,
     });
-    render(<EditProblemViewInternal {...baseProps} />);
+    editorRender(<EditProblemViewInternal {...baseProps} />);
     const cancelBtn = screen.getByRole('button', { name: 'Cancel' });
     fireEvent.click(cancelBtn);
     expect(closeSaveWarningModal).toHaveBeenCalled();

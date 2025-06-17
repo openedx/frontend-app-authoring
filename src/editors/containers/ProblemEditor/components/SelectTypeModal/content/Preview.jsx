@@ -3,17 +3,15 @@ import PropTypes from 'prop-types';
 import { Hyperlink, Image, Container } from '@openedx/paragon';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { ProblemTypes } from '../../../../../data/constants/problem';
 
 const Preview = ({
   problemType,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   if (problemType === null) {
     return null;
   }
@@ -48,9 +46,6 @@ Preview.defaultProps = {
 
 Preview.propTypes = {
   problemType: PropTypes.string,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export const PreviewInternal = Preview; // For testing only
-export default injectIntl(Preview);
+export default Preview;

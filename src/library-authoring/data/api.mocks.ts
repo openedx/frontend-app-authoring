@@ -508,6 +508,7 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
   }
 }
 mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
+mockGetContainerMetadata.unitIdEmpty = 'lct:org:lib:unit:test-unit-empty';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
 mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
