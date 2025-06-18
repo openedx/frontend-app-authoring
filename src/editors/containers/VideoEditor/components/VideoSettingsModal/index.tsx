@@ -18,7 +18,7 @@ import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
 
 interface Props {
-  onReturn: (() => void) | null;
+  onReturn: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
   useNewVideoUploadsPage?: boolean;
