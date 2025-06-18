@@ -39,13 +39,6 @@ describe('CreateContainerModal container linking', () => {
       collections: [],
       tagsCount: 0,
     });
-    axiosMock.onPost(getLibraryContainerApiUrl(newSectionId)).reply(200, {
-      id: newSectionId,
-      containerType: 'section',
-      displayName: 'Test Container',
-      publishedDisplayName: 'Test Container',
-      created: '2024-09-19T10:00:00Z',
-    });
   });
 
   function renderWithProvider(content, options) {
@@ -97,6 +90,13 @@ describe('CreateContainerModal container linking', () => {
   });
 
   it('links container to section when inside a section', async () => {
+    axiosMock.onPost(getLibraryContainerApiUrl(newSectionId)).reply(200, {
+      id: newSectionId,
+      containerType: 'section',
+      displayName: 'Test Container',
+      publishedDisplayName: 'Test Container',
+      created: '2024-09-19T10:00:00Z',
+    });
     renderWithProvider(
       <>
         <AddContent />
@@ -104,7 +104,7 @@ describe('CreateContainerModal container linking', () => {
       </>,
       { containerId: newSectionId, routeType: 'section' },
     );
-    // Disambiguate: select the "Subsection" button by exact match
+    
     const subsectionButton = await screen.findByRole('button', { name: /^Subsection$/ });
     userEvent.click(subsectionButton);
     const nameInput = await screen.findByLabelText(/name your subsection/i);
@@ -122,7 +122,7 @@ describe('CreateContainerModal container linking', () => {
   });
 
   it('handles linking error gracefully', async () => {
-    axiosMock.onPost(`/api/libraries/v2/${libraryId}/containers/`).reply(500);
+    axiosMock.onPost(getLibraryContainersApiUrl(libraryId)).reply(500);
     renderWithProvider(
       <>
         <AddContent />
