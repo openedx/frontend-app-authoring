@@ -380,8 +380,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     it(`should open ${childType} page on double click`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
       const child = await screen.findByText(`${childType} block 0`);
-      // trigger double click
-      userEvent.click(child.parentElement!, undefined, { clickCount: 2 });
+      // Trigger double click. Find the chidl card as the parent element
+      userEvent.click(child.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
       expect((await screen.findAllByText(new RegExp(`${childType} block 0`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });
