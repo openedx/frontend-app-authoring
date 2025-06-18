@@ -120,10 +120,10 @@ describe('<ContainerInfo />', () => {
       expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
     });
 
-    testIf(containerType === 'Unit')(`show only published ${containerType} content`, async () => {
+    it(`show only published ${containerType} content`, async () => {
       render(containerId, true);
       expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
-      expect(screen.getByText(/text block published 1/i)).toBeInTheDocument();
+      expect(screen.getByText(/block published 1/i)).toBeInTheDocument();
     });
 
     it(`shows the ${containerType} Preview tab by default and the children are readonly`, async () => {
