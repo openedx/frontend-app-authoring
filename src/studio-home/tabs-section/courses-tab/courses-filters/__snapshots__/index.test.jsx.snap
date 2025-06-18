@@ -26,15 +26,19 @@ exports[`CoursesFilters snapshot 1`] = `
               search
             </span>
           </label>
-          <input
-            class="form-control"
-            id="pgn-searchfield-input-1"
-            name="searchfield-input"
-            placeholder="Search"
-            role="searchbox"
-            type="text"
-            value=""
-          />
+          <div
+            class="pgn__form-control-decorator-group"
+          >
+            <input
+              class="form-control"
+              id="pgn-searchfield-input-1"
+              name="searchfield-input"
+              placeholder="Search"
+              role="searchbox"
+              type="text"
+              value=""
+            />
+          </div>
           <button
             aria-label="submit search"
             class="btn-icon btn-icon-primary btn-icon-sm pgn__searchfield__iconbutton-submit"

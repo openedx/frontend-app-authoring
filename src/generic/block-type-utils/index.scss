@@ -17,7 +17,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#005C9E, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -42,7 +42,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#9747FF, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -67,7 +67,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#FFCD29, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -92,7 +92,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#358F0A, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -117,7 +117,58 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#0B8E77, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
+      margin: -1px;
+    }
+  }
+}
+
+.component-style-sequential {
+  background-color: #EA3E3E;
+
+  .pgn__icon:not(.btn-icon-before) {
+    color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#EA3E3E, 15%);
+    }
+  }
+
+  .btn {
+    background-color: lighten(#EA3E3E, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#EA3E3E, 20%);
+      border: 1px solid var(--pgn-color-primary-base);
+      margin: -1px;
+    }
+  }
+}
+
+.component-style-chapter {
+  background-color: #45009E;
+
+  .pgn__icon:not(.btn-icon-before) {
+    color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#45009E, 15%);
+    }
+  }
+
+  .btn {
+    background-color: lighten(#45009E, 10%);
+    border: 0;
+    color: white;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#45009E, 20%);
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -142,7 +193,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#646464, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }

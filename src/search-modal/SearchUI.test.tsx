@@ -480,7 +480,7 @@ describe('<SearchUI />', () => {
       const expandButtonLabel = /Expand to show child tags of "ESDC Skills and Competencies"/i;
       await waitFor(() => { expect(getByLabelText(expandButtonLabel)).toBeInTheDocument(); });
 
-      const input = getByLabelText('Search tags');
+      const input = getByRole('searchbox');
       fireEvent.change(input, { target: { value: 'Lightcast' } });
 
       await waitFor(() => { expect(queryByLabelText(/^ESDC Skills and Competencies/i)).toBeNull(); });

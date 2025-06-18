@@ -3,5 +3,5 @@
 @import "./textbook-form/TextbookForm";
 
 .alert-toast {
-  z-index: $zindex-tooltip !important;
+  z-index: var(--pgn-elevation-tooltip-zindex) !important;
 }
