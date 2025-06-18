@@ -2,7 +2,7 @@
 
 .certificates {
   .section-title {
-    color: $black;
+    color: var(--pgn-color-black);
   }
 
   .sub-header-actions {
@@ -11,7 +11,7 @@
 
   .certificate-details {
     .certificate-details__info {
-      color: $black;
+      color: var(--pgn-color-black);
       justify-content: space-between;
       align-items: baseline;
     }
@@ -22,7 +22,7 @@
 
     .certificate-details__info-paragraph-course-number {
       flex: 1;
-      color: $gray-700;
+      color: var(--pgn-color-gray-700);
       text-align: right;
     }
   }
@@ -74,7 +74,7 @@
     }
   }
 
-  @media (max-width: map-get($grid-breakpoints, "xl")) {
+  @media (--pgn-size-breakpoint-max-width-xl) {
     .signatory {
       display: flex;
       flex-direction: column;

@@ -19,7 +19,6 @@ import {
   getLibraryPasteClipboardUrl,
   getXBlockFieldsApiUrl,
 } from '../data/api';
-import { getBlockType } from '../../generic/key-utils';
 import { mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import AddContent from './AddContent';
@@ -49,9 +48,8 @@ const render = (collectionId?: string) => {
     ),
   });
 };
-const renderWithContainer = (containerId: string) => {
+const renderWithContainer = (containerId: string, containerType: 'unit' | 'section' | 'subsection' = 'unit') => {
   const params: { libraryId: string, containerId?: string } = { libraryId, containerId };
-  const containerType = containerId ? getBlockType(containerId) : 'unit';
   return baseRender(<AddContent />, {
     path: `/library/:libraryId/${containerType}/:containerId?`,
     params,
@@ -65,6 +63,7 @@ const renderWithContainer = (containerId: string) => {
     ),
   });
 };
+
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
@@ -397,31 +396,31 @@ describe('<AddContent />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this container.');
   });
 
-  it('should show unit buttons when add content in subsection', async () => {
-    const subsectionId = 'lct:org1:lib1:subsection:test-1';
-    renderWithContainer(subsectionId);
-
-    expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'Unit' })).toBeInTheDocument();
-
-    // other container, collection, and component buttons are not shown
-    expect(screen.queryByRole('button', { name: 'Subsection' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Text' })).not.toBeInTheDocument();
-  });
-
-  it('should show subsection buttons when add content in section', async () => {
-    const sectionId = 'lct:org1:lib1:section:test-1';
-    renderWithContainer(sectionId);
+  it('should only show subsection button when inside a section', async () => {
+    mockClipboardEmpty.applyMock();
+    const sectionId = 'lct:orf1:lib1:section:test-1';
+    renderWithContainer(sectionId, 'section');
 
     expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Subsection' })).toBeInTheDocument();
 
-    // other container, collection, and component buttons are not shown
+    expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Unit' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Text' })).not.toBeInTheDocument();
+  });
+
+  it('should only show unit button when inside a subsection', async () => {
+    mockClipboardEmpty.applyMock();
+    const subsectionId = 'lct:orf1:lib1:subsection:test-1';
+    renderWithContainer(subsectionId, 'subsection');
+
+    expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Unit' })).toBeInTheDocument();
+
     expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subsection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Section' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Text' })).not.toBeInTheDocument();
   });
 });

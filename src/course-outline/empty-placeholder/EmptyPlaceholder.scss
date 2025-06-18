@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: 1.25rem;
-  border: .0625rem solid $gray-200;
+  border: .0625rem solid var(--pgn-color-gray-200);
   border-radius: .375rem;
-  box-shadow: inset inset 0 1px .125rem 1px $gray-200;
+  box-shadow: inset inset 0 1px .125rem 1px var(--pgn-color-gray-200);
   padding: 2.5rem;
 }

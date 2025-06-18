@@ -10,11 +10,7 @@ import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
-import {
-  useAddItemsToCollection,
-  useAddItemsToContainer,
-  useCreateLibraryContainer,
-} from '../data/apiHooks';
+import { useAddItemsToContainer, useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import { ContainerType } from '../../generic/key-utils';
@@ -25,8 +21,8 @@ const CreateContainerModal = () => {
   const intl = useIntl();
   const {
     collectionId,
-    containerId,
     libraryId,
+    containerId,
     createContainerModalType,
     setCreateContainerModalType,
   } = useLibraryContext();
@@ -37,8 +33,8 @@ const CreateContainerModal = () => {
     insideSubsection,
   } = useLibraryRoutes();
   const create = useCreateLibraryContainer(libraryId);
-  const addItemsToCollection = useAddItemsToCollection(libraryId, collectionId);
-  const addItemsToContainer = useAddItemsToContainer(containerId);
+  const updateCollectionItemsMutation = useAddItemsToCollection(libraryId, collectionId);
+  const updateContainerItemsMutation = useAddItemsToContainer(containerId);
   const { showToast } = React.useContext(ToastContext);
 
   /** labels based on the type of modal open, i.e., section, subsection or unit */
@@ -78,10 +74,13 @@ const CreateContainerModal = () => {
 
   const handleCreate = React.useCallback(async (values) => {
     try {
+      const canStandAlone = !(insideCollection || insideSection || insideSubsection);
       const container = await create.mutateAsync({
+        canStandAlone,
         containerType: createContainerModalType,
         ...values,
       });
+
       // Navigate to the new container
       navigateTo({ containerId: container.id });
 
@@ -89,10 +88,9 @@ const CreateContainerModal = () => {
       // error if this linking fails, but at least the user can see that
       // the container was created.
       if (collectionId && insideCollection) {
-        await addItemsToCollection.mutateAsync([container.id]);
-      }
-      if (containerId && (insideSection || insideSubsection)) {
-        await addItemsToContainer.mutateAsync([container.id]);
+        await updateCollectionItemsMutation.mutateAsync([container.id]);
+      } else if (containerId && (insideSection || insideSubsection)) {
+        await updateContainerItemsMutation.mutateAsync([container.id]);
       }
 
       showToast(labels.successMsg);
@@ -102,12 +100,12 @@ const CreateContainerModal = () => {
       handleClose();
     }
   }, [
-    addItemsToCollection,
-    addItemsToContainer,
     createContainerModalType,
     handleClose,
     labels,
     navigateTo,
+    updateCollectionItemsMutation,
+    updateContainerItemsMutation,
   ]);
 
   return (

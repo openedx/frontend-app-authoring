@@ -423,6 +423,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         expect(axiosMock.history.post.length).toEqual(2);
       });
       expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
+        can_stand_alone: false,
         container_type: childType,
         display_name: `New ${childType} Title`,
       }));
@@ -458,6 +459,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         expect(axiosMock.history.post.length).toEqual(2);
       });
       expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({
+        can_stand_alone: false,
         container_type: childType,
         display_name: `New ${childType} Title`,
       }));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../SettingsOption';
@@ -9,9 +9,8 @@ import { timerCardHooks } from '../hooks';
 const TimerCard = ({
   timeBetween,
   updateSettings,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const { handleChange } = timerCardHooks(updateSettings);
 
   return (
@@ -40,8 +39,6 @@ const TimerCard = ({
 TimerCard.propTypes = {
   timeBetween: PropTypes.number.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export const TimerCardInternal = TimerCard; // For testing only
-export default injectIntl(TimerCard);
+export default TimerCard;

@@ -183,7 +183,6 @@ const AddContentView = ({
         ...componentButtons,
       ];
     }
-    // istanbul ignore if
     if (insideSection) {
       // Only allow adding subsections
       return [
@@ -191,7 +190,6 @@ const AddContentView = ({
         subsectionButton,
       ];
     }
-    // istanbul ignore if
     if (insideSubsection) {
       // Only allow adding units
       return [
