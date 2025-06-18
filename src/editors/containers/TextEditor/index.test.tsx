@@ -1,48 +1,13 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-
+import { render, screen, initializeMocks } from '@src/testUtils';
 import { formatMessage } from '../../testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { TextEditorInternal as TextEditor, mapStateToProps, mapDispatchToProps } from '.';
 
-// Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
-// Consequently, mock the Editor out.
-jest.mock('@tinymce/tinymce-react', () => {
-  const originalModule = jest.requireActual('@tinymce/tinymce-react');
-  return {
-    __esModule: true,
-    ...originalModule,
-    Editor: () => 'TiNYmCE EDitOR',
-  };
-});
+jest.mock('../../sharedComponents/TinyMceWidget', () => 'TinyMceWidget');
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
-
-jest.mock('./hooks', () => ({
-  getContent: jest.fn(args => ({ getContent: args })),
-  isDirty: jest.fn(args => ({ isDirty: args })),
-  nullMethod: jest.fn().mockName('hooks.nullMethod'),
-}));
-
-jest.mock('../../sharedComponents/TinyMceWidget/hooks', () => ({
-  ...jest.requireActual('../../sharedComponents/TinyMceWidget/hooks'),
-  prepareEditorRef: jest.fn(() => ({
-    editorRef: { current: { value: 'something' } },
-    refReady: true,
-    setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
-  })),
-}));
-
-jest.mock('react', () => {
-  const updateState = jest.fn();
-  return {
-    ...jest.requireActual('react'),
-    updateState,
-    useState: jest.fn(val => ([{ state: val }, jest.fn().mockName('setState')])),
-  };
-});
 
 jest.mock('../../data/redux', () => ({
   __esModule: true,
@@ -87,33 +52,52 @@ describe('TextEditor', () => {
     blockFinished: true,
     learningContextId: 'course+org+run',
     images: {},
+    isLibrary: false,
     // inject
     intl: { formatMessage },
   };
-  describe('snapshots', () => {
-    test('renders as expected with default behavior', () => {
-      expect(shallow(<TextEditor {...props} />).snapshot).toMatchSnapshot();
+
+  afterAll(() => jest.restoreAllMocks());
+  describe('renders', () => {
+    beforeEach(() => {
+      initializeMocks();
     });
+
+    test('renders as expected with default behavior', () => {
+      const { container } = render(<TextEditor {...props} />);
+      const element = container.querySelector('tinymcewidget');
+      expect(element).toBeInTheDocument();
+      expect(element?.getAttribute('editorcontenthtml')).toBe('eDiTablE Text');
+    });
+
     test('renders static images with relative paths', () => {
       const updatedProps = {
         ...props,
         blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
       };
-      expect(shallow(<TextEditor {...updatedProps} />).snapshot).toMatchSnapshot();
+      const { container } = render(<TextEditor {...updatedProps} />);
+      const element = container.querySelector('tinymcewidget');
+      expect(element).toBeInTheDocument();
+      expect(element?.getAttribute('editorcontenthtml')).toBe('eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />');
     });
     test('not yet loaded, Spinner appears', () => {
-      expect(shallow(<TextEditor {...props} blockFinished={false} />).snapshot).toMatchSnapshot();
+      const { container } = render(<TextEditor {...props} blockFinished={false} />);
+      expect(container.querySelector('.pgn__spinner')).toBeInTheDocument();
     });
     test('loaded, raw editor', () => {
-      expect(shallow(<TextEditor {...props} showRawEditor />).snapshot).toMatchSnapshot();
+      render(<TextEditor {...props} showRawEditor />);
+      expect(screen.getByText('You are using the raw html editor.')).toBeInTheDocument();
     });
     test('block failed to load, Toast is shown', () => {
-      expect(shallow(<TextEditor {...props} blockFailed />).snapshot).toMatchSnapshot();
+      render(<TextEditor {...props} blockFailed isLibrary />);
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText('Error: Could Not Load Text Content')).toBeInTheDocument();
     });
   });
 
   describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    // type set to any to prevent warning on not matchig expected type on the selectors
+    const testState: any = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('blockValue from app.blockValue', () => {
       expect(
         mapStateToProps(testState).blockValue,
