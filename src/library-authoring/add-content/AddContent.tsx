@@ -65,6 +65,7 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
   const {
     name,
     disabled = false,
+    icon,
     blockType,
   } = contentType;
   return (
@@ -72,7 +73,7 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
       variant="outline-primary"
       disabled={disabled}
       className="m-2"
-      iconBefore={getItemIcon(blockType)}
+      iconBefore={icon || getItemIcon(blockType)}
       onClick={() => onCreateContent(blockType)}
     >
       {name}
