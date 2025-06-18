@@ -112,7 +112,7 @@ const CustomPagesNew = ({
 
   return (
     <CustomPagesProvider courseId={courseId}>
-      <Container size="xl" className="p-4 pt-5 custom-pages">
+      <Container size="xl" className="px-4 pt-5 custom-pages">
         <section className="setting-items mb-4">
           <Layout
             lg={[
@@ -158,6 +158,18 @@ const CustomPagesNew = ({
                     <FormattedMessage {...messages.heading} />
                   </div>
                   <ActionRow.Spacer />
+                  <Hyperlink
+                    destination={learningCourseURL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    showLaunchIcon={false}
+                    data-testid="header-view-live-button"
+                    className="view_live_button"
+                  >
+                    <Button variant="outline-primary" className="p-2">
+                      <FormattedMessage {...messages.viewLiveLabel} />
+                    </Button>
+                  </Hyperlink>
                   <Button
                     iconBefore={Add}
                     onClick={handleAddPage}
@@ -165,17 +177,6 @@ const CustomPagesNew = ({
                   >
                     <FormattedMessage {...messages.addPageHeaderLabel} />
                   </Button>
-                  <Hyperlink
-                    destination={learningCourseURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    showLaunchIcon={false}
-                    data-testid="header-view-live-button"
-                  >
-                    <Button>
-                      <FormattedMessage {...messages.viewLiveLabel} />
-                    </Button>
-                  </Hyperlink>
                 </ActionRow>
                 <hr />
                 <ErrorAlert
@@ -219,7 +220,7 @@ const CustomPagesNew = ({
                         borderRadius: '6px',
                         padding: '24px',
                         marginBottom: '16px',
-                        boxShadow: '0px 1px 5px #ADADAD',
+                        border: 'solid 1px #e0e0e0',
                       }}
                     >
                       <CustomPageCard

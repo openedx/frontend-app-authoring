@@ -70,7 +70,7 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <Container size="xl" className="px-4">
-        <main className="container resources">
+        <main className="container resources mb-4">
           <div className="d-flex justify-content-between my-4 align-items-center">
             <h2 className="m-0">{intl.formatMessage(messages.heading)}</h2>
             <Hyperlink
@@ -78,8 +78,9 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
               target="_blank"
               rel="noopener noreferrer"
               showLaunchIcon={false}
+              className="view_live_button"
             >
-              <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+              <Button className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
             </Hyperlink>
           </div>
 

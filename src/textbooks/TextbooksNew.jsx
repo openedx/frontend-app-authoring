@@ -29,7 +29,7 @@ const TextbooksNew = ({ courseId,
   const intl = useIntl();
 
   return (
-    <Container size="xl" className="px-3 textbook-card">
+    <Container size="xl" className="px-4 textbook-card">
       <section className="setting-items mb-4">
 
         <Layout

@@ -180,7 +180,7 @@ const FilesPageNew = ({
   return (
     <FilesPageProvider courseId={courseId}>
       <Container size="xl" className="px-4">
-        <div className="files_and_uploads">
+        <div className="files_and_uploads mb-4">
           <EditFileErrors
             resetErrors={handleErrorReset}
             errorMessages={errorMessages}
