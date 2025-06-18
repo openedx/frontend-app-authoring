@@ -6,6 +6,7 @@ import 'titaned-lib/dist/index.css';
 import './index.scss';
 import {
   Analytics,
+  Assignment,
   Assistant,
   Calendar,
   FolderShared,
@@ -69,6 +70,7 @@ const Layout = () => {
     { label: 'Insights & Reports', path: '/reports', icon: <Lightbulb /> },
     { label: 'TitanAI Assistant', path: '/ai-assistant', icon: <Assistant /> },
     { label: 'Shared Resources', path: '/shared-resources', icon: <FolderShared /> },
+    { label: 'Taxonomies', path: '/taxonomies', icon: <Assignment /> },
   ];
 
   // const contactInfo = {

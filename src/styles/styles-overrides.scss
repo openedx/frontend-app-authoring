@@ -1168,7 +1168,7 @@
 
 .custom-libraries-container {
   padding: 1.5rem;
-  padding-right: 0.5rem !important;
+  // padding-right: 0.5rem !important;
   padding-top: 1rem !important;
 
   .sub-header-title {
@@ -1306,7 +1306,7 @@
 }
 
 .library-authoring-page-container {
-  margin-right: -20px !important;
+  // margin-right: -20px !important;
   
   .library-authoring-page-content {
     padding: 1rem;
@@ -1331,9 +1331,9 @@
     }
   }
 
-  .library-authoring-sidebar {
-    right: -20px !important;
-  }
+  // .library-authoring-sidebar {
+  //   right: -20px !important;
+  // }
 
   .library-breadcrumb-title {
     font-size: 1.5rem !important;
@@ -1433,6 +1433,238 @@
         border-radius: 8px !important;
       }
     }
+  }
+}
+
+.custom-taxonomy-list-page-container {
+  padding: 1.5rem;
+  padding-top: 1rem;
+
+  .custom-taxonomy-list-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .custom-taxonomy-list-page-header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+  }
+
+  .custom-taxonomy-list-page-content {
+    background-color: var(--bg-body);
+
+    .custom-taxonomy-list-page-content-container {
+      padding: 0 !important;
+    }
+
+    .pgn__data-table-wrapper {
+      background-color: var(--bg-body) !important;
+    }
+
+    .taxonomy-card {
+      height: 10rem !important;
+      // width: 100% !important;
+      padding: 1rem !important;
+      border-radius: 8px !important;
+      // border: solid 1px var(--border-color) !important;
+      background-color: var(--bg-surface) !important;
+      // box-shadow: 0 2px 4px -2px rgba(10, 13, 18, 0.06), 0 4px 8px -2px rgba(10, 13, 18, 0.1) !important;
+
+      
+
+      .pgn__card-header {
+        padding: 0 !important;
+        margin-bottom: 1rem !important;
+
+        .pgn__card-header-title-md {
+          font-size: 18px !important;
+        }
+
+        .pgn__card-header-subtitle-md {
+          font-size: 14px !important;
+        }
+        
+        .system-defined-badge {
+          border-radius: 12px !important;
+        }
+
+        .pgn__card-header-content {
+          margin-top: 0 !important;
+        }
+        
+        .pgn__card-header-actions {
+          margin-top: 0 !important;
+
+          .btn-icon-primary {
+            height: 2rem !important;
+            width: 2rem !important;
+          }
+        }
+      }
+
+      .pgn__card-section {
+        padding: 0 !important;
+      }
+
+      .taxonomy-card-body {
+        font-size: 14px !important;
+        line-height: 1.2 !important;
+        letter-spacing: normal !important;
+        color: var(--text-secondary) !important;
+        -webkit-line-clamp: 3 !important;
+        line-clamp: 3 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+    }
+
+    .taxonomy-card:hover {
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .pgn__card.clickable:focus::before {
+      border: none !important;
+    }
+  }
+
+}
+
+.custom-taxonomy-detail-page-container {
+  padding: 1rem;
+
+  .custom-taxonomy-detail-page-header {
+    padding-right: 0 !important;
+    
+    .ca-breadcrumb-bg {
+      margin-left: -1rem !important;
+      // margin-right: -3rem !important;
+      margin-bottom: 1.5rem !important;
+    }
+
+    .ca-breadcrumb-container {
+      padding-right: 0 !important;
+    }
+
+    .collection-breadcrumb-icon:hover {
+      cursor: pointer;
+      color: var(--primary) !important;
+    }
+
+    .custom-icon {
+      margin-top: -4px;
+    }
+
+    .ca-breadcrumb-current {
+      cursor: default;
+    }
+
+    .library-breadcrumb-title {
+      // background-color: #2cc84d;
+      font-size: 1.5rem !important;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    // .custom-taxonomy-detail-page-header-title-actions {
+    //   margin-right: -1rem;
+    // }
+  }
+
+  .custom-taxonomy-detail-page-content {
+    .tag-list-table {
+
+      .pgn__data-table {
+        border-radius: 16px !important;
+      }
+
+      .pgn__data-table th {
+        background-color: var(--bg-surface) !important;
+        color: var(--text-primary) !important;
+        margin-left: -1rem !important;
+        margin-right: -1rem !important;
+      }
+
+      .btn-link:focus {
+        color: var(--primary) !important;
+      }
+
+      .btn-link {
+        color: var(--primary) !important;
+      }
+
+      .btn-link:hover {
+        color: var(--primary) !important;
+      }
+
+    
+      .is-striped {
+        tbody {
+          tr {
+            background-color: var(--bg-body) !important;
+            border: solid 1px var(--border-color) !important;
+            border-radius: 8px !important;
+
+            td {
+              font-size: 16px !important;
+            }
+          }
+
+          .pgn__data-table-row {
+            background-color: var(--bg-surface) !important;
+          }
+        }
+      }
+
+      .pgn__data-table-wrapper {
+        border-radius: 12px !important;
+
+        .pgn__data-table-container {
+          border-radius: 12px !important;
+          padding: 1rem !important;
+
+          .pgn__data-table-cell-wrap {
+            padding: 1.5rem !important;
+            // border: solid 1px #e0e0e0 !important;
+          }
+        }
+      }
+    }
+
+    .custom-taxonomy-detail-page-side-card {
+      .pgn__card {
+        border-radius: 12px !important;
+        box-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.06), 0 1px 3px 0 rgba(10, 13, 18, 0.1) !important;
+  
+        .pgn__card-header {
+          padding: 0 1rem !important;
+  
+          .pgn__card-header-content {
+            margin-top: 1rem !important;
+  
+            .pgn__card-header-title-md {
+              @include section-title-style1;
+            }
+          }
+        }
+  
+        .pgn__card-section {
+          .pgn__card-section-title {
+            color: var(--text-secondary) !important;
+            font-size: 14px !important;
+            font-weight: 200 !important;
+            line-height: 1.2 !important;
+            letter-spacing: normal !important;
+            margin-bottom: 0 !important;
+          }
+  
+        }
+      }
+    }
+
   }
 }
 

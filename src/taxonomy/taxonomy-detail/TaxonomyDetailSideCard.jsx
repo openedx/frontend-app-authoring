@@ -18,6 +18,7 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
       <Card.Section title={intl.formatMessage(messages.taxonomyDetailsDescription)}>
         {taxonomy.description}
       </Card.Section>
+      <Card.Divider className="ml-3 mr-3" />
       <Card.Section title={intl.formatMessage(messages.taxonomyDetailsExportID)}>
         {taxonomy.exportId}
       </Card.Section>
