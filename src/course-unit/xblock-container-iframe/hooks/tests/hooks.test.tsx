@@ -11,10 +11,6 @@ import { useMessageHandlers } from '..';
 
 jest.useFakeTimers();
 
-jest.mock('@edx/react-unit-test-utils', () => ({
-  useKeyedState: jest.fn(),
-}));
-
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));

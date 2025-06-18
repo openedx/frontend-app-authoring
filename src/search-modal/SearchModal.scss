@@ -57,7 +57,7 @@
 
   .search-result {
     &:hover {
-      background-color: $gray-100;
+      background-color: var(--pgn-color-gray-100);
       cursor: pointer;
     }
 

@@ -8,10 +8,10 @@
   justify-content: space-between;
   position: relative;
   padding: 1.563rem 1.875rem 1.25rem;
-  background-color: $white;
-  border: .0625rem solid $gray-200;
+  background-color: var(--pgn-color-white);
+  border: .0625rem solid var(--pgn-color-gray-200);
   border-radius: .375rem;
-  box-shadow: 0 1px 1px $gray-200;
+  box-shadow: 0 1px 1px var(--pgn-color-gray-200);
 
   &:not(:last-child) {
     margin-bottom: 1.25rem;
@@ -41,12 +41,12 @@
   .member-hint {
     width: 45%;
     margin-right: 3.875rem;
-    color: $gray-300;
-    font-size: $font-size-sm;
+    color: var(--pgn-color-gray-300);
+    font-size: var(--pgn-typography-font-size-sm);
   }
 
   .member-actions {
     display: flex;
-    gap: $spacer;
+    gap: var(--pgn-spacing-spacer-base);
   }
 }
