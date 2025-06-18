@@ -495,6 +495,7 @@ mockGetContainerMetadata.containerData = {
   id: 'lct:org:lib:unit:test-unit-9a2072',
   containerType: 'unit',
   displayName: 'Test Unit',
+  publishedDisplayName: 'Published Test Unit',
   created: '2024-09-19T10:00:00Z',
   createdBy: 'test_author',
   lastPublished: '2024-09-20T10:00:00Z',

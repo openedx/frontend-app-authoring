@@ -14,6 +14,7 @@ import {
   mockGetCollectionMetadata,
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
+  mockGetContainerMetadata,
 } from '../data/api.mocks';
 
 import { ComponentPicker } from './ComponentPicker';
@@ -40,6 +41,7 @@ mockContentSearchConfig.applyMock();
 mockGetCollectionMetadata.applyMock();
 mockGetContentLibraryV2List.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockGetContainerMetadata.applyMock();
 
 let postMessageSpy: jest.SpyInstance;
 
@@ -97,6 +99,24 @@ describe('<ComponentPicker />', () => {
       type: 'pickerComponentSelected',
       category: 'html',
     }, '*');
+  });
+
+  it('should open the unit sidebar', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the unit card to open the sidebar
+    fireEvent.click((await screen.findByText('Published Test Unit')));
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+    expect(sidebar).toBeInTheDocument();
+    await waitFor(() => expect(within(sidebar).getByText('Published Test Unit')).toBeInTheDocument());
   });
 
   it('should pick component inside a collection using the card', async () => {
