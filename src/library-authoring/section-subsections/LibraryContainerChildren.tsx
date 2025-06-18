@@ -43,14 +43,19 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
 
   return (
     <>
-      <ContainerEditableTitle
-        containerId={container.originalId}
-        readOnly={readOnly || showOnlyPublished}
-        textClassName="font-weight-bold small"
-        placeHolderText={
-          showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName
-        }
-      />
+      <div
+        // Prevent parent card from being clicked.
+        onClick={(e) => e.stopPropagation()}
+      >
+        <ContainerEditableTitle
+          containerId={container.originalId}
+          readOnly={readOnly || showOnlyPublished}
+          textClassName="font-weight-bold small"
+          placeHolderText={
+            showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName
+          }
+        />
+      </div>
       <ActionRow.Spacer />
       <Stack
         direction="horizontal"
