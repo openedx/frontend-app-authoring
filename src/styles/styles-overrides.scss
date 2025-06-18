@@ -1,5 +1,25 @@
 @import "./global-overrides";
 
+// Mobile screen responsiveness
+@media (max-width: 576px) {
+  .ca-sidebar {
+    display: none;
+  }
+
+  .help-sidebar {
+    display: none !important;
+  }
+
+  .ca-main-content {
+    
+    .col-9  {
+      flex: none !important;
+      max-width: none !important;
+      word-wrap: break-word;
+    }
+  }
+}
+
 // Help Sidebar styles
 .help-sidebar {
   @include card-style1;
@@ -25,6 +45,10 @@
   hr {
     display: none;
   }
+  
+  // @media (max-width: 576px) {
+  //   display: none;
+  // }
 }
 
 // K styles start
