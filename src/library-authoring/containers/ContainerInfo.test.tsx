@@ -74,16 +74,19 @@ describe('<ContainerInfo />', () => {
     {
       containerType: 'Unit',
       containerId: unitId,
+      childType: 'component',
     },
     {
       containerType: 'Subsection',
       containerId: subsectionId,
+      childType: 'unit',
     },
     {
       containerType: 'Section',
       containerId: sectionId,
+      childType: 'subsection',
     },
-  ].forEach(({ containerId, containerType }) => {
+  ].forEach(({ containerId, containerType, childType }) => {
     testIf(containerType === 'Unit')(`should delete the ${containerType} using the menu`, async () => {
       axiosMock.onDelete(getLibraryContainerApiUrl(containerId)).reply(200);
       render(containerId);
@@ -117,6 +120,7 @@ describe('<ContainerInfo />', () => {
               {
                 type: 'library_container',
                 usageKey: containerId,
+                blockType: containerType.toLowerCase(),
                 publishStatus: PublishStatus.Published,
               },
             ],
@@ -139,6 +143,7 @@ describe('<ContainerInfo />', () => {
               {
                 type: 'library_container',
                 usageKey: containerId,
+                blockType: containerType.toLowerCase(),
                 publishStatus: PublishStatus.Modified,
               },
             ],
@@ -147,11 +152,16 @@ describe('<ContainerInfo />', () => {
       });
       render(containerId, containerType);
 
-      // Click on Publish button to reveal the confirmation box
+      // Click on Publish button
       let publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
       userEvent.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
+
+      // Reveals the confirmation box with warning text
+      expect(await screen.findByText(
+        `Are you sure you want to publish this ${containerType.toLowerCase()}?`,
+      )).toBeInTheDocument();
 
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });
@@ -185,6 +195,7 @@ describe('<ContainerInfo />', () => {
               {
                 type: 'library_container',
                 usageKey: containerId,
+                blockType: containerType.toLowerCase(),
                 publishStatus: PublishStatus.Modified,
               },
             ],
@@ -208,6 +219,76 @@ describe('<ContainerInfo />', () => {
         expect(axiosMock.history.post.length).toBe(1);
       });
       expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
+    });
+
+    it(`shows single child before publishing the ${containerType}`, async () => {
+      axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
+      mockSearchResult({
+        results: [ // @ts-ignore
+          {
+            hits: [
+              {
+                type: 'library_container',
+                usageKey: containerId,
+                blockType: containerType.toLowerCase(),
+                publishStatus: PublishStatus.Modified,
+                content: {
+                  childDisplayNames: [
+                    'one',
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+      render(containerId, containerType);
+
+      // Click on Publish button
+      const publishButton = await screen.findByRole('button', { name: /publish changes/i });
+      expect(publishButton).toBeInTheDocument();
+      userEvent.click(publishButton);
+      expect(publishButton).not.toBeInTheDocument();
+
+      // Check warning text in the confirmation box
+      expect(await screen.findByText(
+        `This ${containerType.toLowerCase()} and its 1 ${childType} will all be published.`,
+      )).toBeInTheDocument();
+    });
+
+    it(`shows child count before publishing the ${containerType}`, async () => {
+      axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
+      mockSearchResult({
+        results: [ // @ts-ignore
+          {
+            hits: [
+              {
+                type: 'library_container',
+                usageKey: containerId,
+                blockType: containerType.toLowerCase(),
+                publishStatus: PublishStatus.Modified,
+                content: {
+                  childDisplayNames: [
+                    'one', 'two',
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+      render(containerId, containerType);
+
+      // Click on Publish button
+      const publishButton = await screen.findByRole('button', { name: /publish changes/i });
+      expect(publishButton).toBeInTheDocument();
+      userEvent.click(publishButton);
+      expect(publishButton).not.toBeInTheDocument();
+
+      // Check warning text in the confirmation box
+      expect(await screen.findByText(
+        `This ${containerType.toLowerCase()} and its 2 ${childType}s will all be published.`,
+      )).toBeInTheDocument();
     });
 
     testIf(containerType === 'Unit')(`show only published ${containerType} content`, async () => {

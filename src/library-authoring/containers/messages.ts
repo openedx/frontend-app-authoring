@@ -66,6 +66,36 @@ const messages = defineMessages({
     defaultMessage: 'Failed to publish changes',
     description: 'Popup text seen if publishing a unit/subsection/section fails',
   },
+  publishSectionWarning: {
+    id: 'course-authoring.library-authoring.section-sidebar.publish-empty-warning',
+    defaultMessage: 'Are you sure you want to publish this section?',
+    description: 'Content details shown before publishing a empty section',
+  },
+  publishSectionWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.section-sidebar.publish-warning',
+    defaultMessage: 'This section and its {childCount, plural, one {{childCount} subsection} other {{childCount} subsections}} will all be published.',
+    description: 'Content details shown before publishing a section',
+  },
+  publishSubsectionWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.publish-empty-warning',
+    defaultMessage: 'Are you sure you want to publish this subsection?',
+    description: 'Content details shown before publishing an empty subsection',
+  },
+  publishSubsectionWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.publish-warning',
+    defaultMessage: 'This subsection and its {childCount, plural, one {{childCount} unit} other {{childCount} units}} will all be published.',
+    description: 'Content details shown before publishing a subsection',
+  },
+  publishUnitWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.publish-empty-warning',
+    defaultMessage: 'Are you sure you want to publish this unit?',
+    description: 'Content details shown before publishing an empty unit',
+  },
+  publishUnitWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.publish-warning',
+    defaultMessage: 'This unit and its {childCount, plural, one {{childCount} component} other {{childCount} components}} will all be published.',
+    description: 'Content details shown before publishing a unit',
+  },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',
     defaultMessage: 'Settings',

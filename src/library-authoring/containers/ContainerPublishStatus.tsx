@@ -2,8 +2,9 @@
  * Shows the Container's publish status,
  * and enables publishing any unpublished changes.
  */
-import { useContext, useCallback } from 'react';
+import { useContext, useCallback, useMemo } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import type { MessageDescriptor } from 'react-intl';
 import {
   ActionRow,
   Button,
@@ -13,6 +14,7 @@ import {
 import Loading from '../../generic/Loading';
 import LoadingButton from '../../generic/loading-button';
 import { ToastContext } from '../../generic/toast-context';
+import { ContainerType } from '../../generic/key-utils';
 import { ContainerHit, PublishStatus } from '../../search-manager';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useContentFromSearchIndex, usePublishContainer } from '../data/apiHooks';
@@ -41,17 +43,36 @@ const ContainerPublisher = ({
     close();
   }, [publishContainer, showToast]);
 
+  const warningMessage = useMemo(() => {
+    const childCount = container.content?.childDisplayNames?.length || 0;
+    let childMessage: MessageDescriptor;
+    let noChildMessage: MessageDescriptor;
+
+    switch (container.blockType) {
+      case ContainerType.Section:
+        childMessage = messages.publishSectionWithChildrenWarning;
+        noChildMessage = messages.publishSectionWarning;
+        break;
+      case ContainerType.Subsection:
+        childMessage = messages.publishSubsectionWithChildrenWarning;
+        noChildMessage = messages.publishSubsectionWarning;
+        break;
+      default: // ContainerType.Unit
+        childMessage = messages.publishUnitWithChildrenWarning;
+        noChildMessage = messages.publishUnitWarning;
+    }
+    return intl.formatMessage(
+      childCount ? childMessage : noChildMessage,
+      { childCount },
+    );
+  }, [container]);
+
   return (
     <Container
       className="p-3 status-box draft-status"
     >
       <h4>{intl.formatMessage(messages.publishContainerConfirmHeading)}</h4>
-      <p>
-        {
-          // TODO show specific message for this container and children
-          'Are you sure you want to publish this container?'
-        }
-      </p>
+      <p>{warningMessage}</p>
       <ActionRow>
         <Button
           variant="outline-primary rounded-0"
@@ -95,7 +116,7 @@ const ContainerPublishStatus = ({
 
   // istanbul ignore if: this should never happen
   if (isError || !hits) {
-    return undefined;
+    return null;
   }
 
   // TODO -- why isn't this auto-updating when the container gets modified or published?
