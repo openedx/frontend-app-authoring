@@ -90,9 +90,9 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
 
   // Determine the parent container type for the remove message
   const getParentContainerType = () => {
-    if (insideCollection) return 'collection';
-    if (insideSubsection) return 'subsection';
-    if (insideSection) return 'section';
+    if (insideCollection) { return 'collection'; }
+    if (insideSubsection) { return 'subsection'; }
+    if (insideSection) { return 'section'; }
     return containerType;
   };
 
