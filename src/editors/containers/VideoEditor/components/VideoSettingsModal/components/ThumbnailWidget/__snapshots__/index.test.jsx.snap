@@ -3,7 +3,7 @@
 exports[`ThumbnailWidget snapshots snapshots: renders as expected where thumbnail uploads are allowed 1`] = `null`;
 
 exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId is valid 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   isError={true}
   subtitle="Yes"
@@ -38,11 +38,11 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId 
       tooltipPlacement="top"
     />
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId is valid and no thumbnail 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   isError={true}
   subtitle="None"
@@ -106,11 +106,11 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId 
       />
     </Button>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`ThumbnailWidget snapshots snapshots: renders as expected with a thumbnail provided 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   isError={true}
   subtitle="Yes"
@@ -148,7 +148,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected with a thumbna
       thumbnail={true}
     />
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`ThumbnailWidget snapshots snapshots: renders as expected with default props 1`] = `null`;

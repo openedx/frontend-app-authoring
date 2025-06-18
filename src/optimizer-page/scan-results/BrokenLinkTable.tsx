@@ -1,5 +1,5 @@
 import {
-  Card, Icon, Table,
+  Card, Icon, DataTable,
 } from '@openedx/paragon';
 import {
   ArrowForwardIos,
@@ -89,79 +89,82 @@ type TableData = {
 const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
   filters,
-}) => (
-  <Card className="unit-card rounded-sm mb-4">
-    <p className="unit-header">{unit.displayName}</p>
-    <Table
-      data={unit.blocks.reduce(
-        (
-          acc: TableData,
-          block,
-        ) => {
-          if (
-            filters.brokenLinks
+}) => {
+  const brokenLinkList = unit.blocks.reduce(
+    (
+      acc: TableData,
+      block,
+    ) => {
+      if (
+        filters.brokenLinks
             || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-          ) {
-            const blockBrokenLinks = block.brokenLinks.map((link) => ({
-              Links: (
-                <LinksCol
-                  block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
-                  href={link}
-                  linkType="broken"
-                />
-              ),
-            }));
-            acc.push(...blockBrokenLinks);
-          }
+      ) {
+        const blockBrokenLinks = block.brokenLinks.map((link) => ({
+          Links: (
+            <LinksCol
+              block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
+              href={link}
+              linkType="broken"
+            />
+          ),
+        }));
+        acc.push(...blockBrokenLinks);
+      }
 
-          if (
-            filters.lockedLinks
+      if (
+        filters.lockedLinks
             || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-          ) {
-            const blockLockedLinks = block.lockedLinks.map((link) => ({
-              Links: (
-                <LinksCol
-                  block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
-                  href={link}
-                  linkType="locked"
-                />
-              ),
-            }));
+      ) {
+        const blockLockedLinks = block.lockedLinks.map((link) => ({
+          Links: (
+            <LinksCol
+              block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
+              href={link}
+              linkType="locked"
+            />
+          ),
+        }));
 
-            acc.push(...blockLockedLinks);
-          }
+        acc.push(...blockLockedLinks);
+      }
 
-          if (
-            filters.externalForbiddenLinks
+      if (
+        filters.externalForbiddenLinks
             || (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-          ) {
-            const externalForbiddenLinks = block.externalForbiddenLinks.map((link) => ({
-              Links: (
-                <LinksCol
-                  block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
-                  href={link}
-                  linkType="manual"
-                />
-              ),
-            }));
+      ) {
+        const externalForbiddenLinks = block.externalForbiddenLinks.map((link) => ({
+          Links: (
+            <LinksCol
+              block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
+              href={link}
+              linkType="manual"
+            />
+          ),
+        }));
 
-            acc.push(...externalForbiddenLinks);
-          }
+        acc.push(...externalForbiddenLinks);
+      }
 
-          return acc;
-        },
-        [],
-      )}
-      columns={[
-        {
-          key: 'Links',
-          columnSortable: false,
-          width: 'col-12',
-          hideHeader: true,
-        },
-      ]}
-    />
-  </Card>
-);
+      return acc;
+    },
+    [],
+  );
+
+  return (
+    <Card className="unit-card rounded-sm pt-2 pb-3 pl-3 pr-4 mb-2.5">
+      <p className="unit-header">{unit.displayName}</p>
+      <DataTable
+        data={brokenLinkList}
+        itemCount={brokenLinkList.length}
+        columns={[
+          {
+            accessor: 'Links',
+            width: 'col-12',
+          },
+        ]}
+      />
+    </Card>
+  );
+};
 
 export default BrokenLinkTable;

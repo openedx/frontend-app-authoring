@@ -51,6 +51,11 @@ const messages = defineMessages({
     defaultMessage: 'Failed to update components order',
     description: 'Toast message displayed when components are successfully reordered in a unit',
   },
+  noChildrenText: {
+    id: 'course-authoring.library-authoring.unit.no-children.text',
+    defaultMessage: 'This unit is empty',
+    description: 'Message to display when unit has not children',
+  },
 });
 
 export default messages;

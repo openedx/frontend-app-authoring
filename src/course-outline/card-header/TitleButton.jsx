@@ -39,7 +39,7 @@ const TitleButton = ({
         className="item-card-header__title-btn"
         onClick={onTitleClick}
       >
-        <Truncate lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate>
+        <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
       </Button>
     </OverlayTrigger>
   );

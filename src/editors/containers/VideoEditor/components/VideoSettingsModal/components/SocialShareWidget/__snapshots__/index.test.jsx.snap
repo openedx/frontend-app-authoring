@@ -7,7 +7,7 @@ exports[`SocialShareWidget rendered with videoSharingEnabled false with videoSha
 exports[`SocialShareWidget rendered with videoSharingEnabled false with videoSharingEnabledForCourse and isLibrary false and videoSharingEnabledForAll true should return null 1`] = `null`;
 
 exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideoSharing value equals false should have subtitle with text that reads Enabled 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   subtitle="Disabled"
   title="Social Sharing"
@@ -42,11 +42,11 @@ exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideo
       Learn more about social sharing
     </Hyperlink>
   </div>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
 exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideoSharing value equals true should have subtitle with text that reads Enabled 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<CollapsibleFormWidget
   fontSize="x-small"
   subtitle="Enabled"
   title="Social Sharing"
@@ -81,5 +81,5 @@ exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideo
       Learn more about social sharing
     </Hyperlink>
   </div>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;

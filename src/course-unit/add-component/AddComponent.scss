@@ -4,8 +4,7 @@
   }
 
   .add-component-button {
-    @include pgn-box-shadow(1, "down");
-
+    box-shadow: var(--pgn-elevation-box-shadow-down-1);
     width: 11.63rem;
     height: 6.875rem;
   }
