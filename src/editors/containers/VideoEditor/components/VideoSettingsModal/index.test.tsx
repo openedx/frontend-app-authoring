@@ -1,9 +1,8 @@
 import { createStore } from '@src/editors/data/store';
-import VideoSettingsModal from '.';
-
 import {
   render, screen, fireEvent, initializeMocks,
-} from '../../../../../testUtils';
+} from '@src/testUtils';
+import VideoSettingsModal from '.';
 
 const defaultProps = {
   onReturn: jest.fn(),
