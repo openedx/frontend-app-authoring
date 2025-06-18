@@ -5,6 +5,7 @@ import {
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { camelCase } from 'lodash';
+import { convertObjectToSnakeCase } from '../../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseAdvancedSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
@@ -41,7 +42,7 @@ export async function getCourseAdvancedSettings(courseId) {
  */
 export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, settings);
+    .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
   const keepValues = {};
   Object.keys(data).forEach((key) => {
     keepValues[camelCase(key)] = { value: data[key].value };
