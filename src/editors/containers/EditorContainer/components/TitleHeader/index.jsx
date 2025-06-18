@@ -49,9 +49,9 @@ const TitleHeader = ({
   }
   return (
     <div className="d-flex flex-row align-items-center mt-1">
-      <Truncate>
+      <Truncate.Deprecated>
         {title}
-      </Truncate>
+      </Truncate.Deprecated>
       <IconButton
         alt={intl.formatMessage(messages.editTitleLabel)}
         iconAs={Icon}

@@ -2,7 +2,7 @@
   .schedule-date-list {
     display: flex;
     flex-direction: column;
-    padding-top: $spacer;
+    padding-top: var(--pgn-spacing-spacer-base);
     margin: 0;
     padding-inline-start: 0;
     list-style-type: none;
@@ -32,7 +32,7 @@
   .schedule-date-item-error {
     margin: 0;
     padding: 0;
-    color: $form-feedback-invalid-color;
-    font: normal $font-weight-normal .75rem/1.25rem $font-family-base;
+    color: var(--pgn-color-form-feedback-invalid);
+    font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
   }
 }

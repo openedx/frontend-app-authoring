@@ -5,10 +5,10 @@
   // src/course-outline/card-header/TitleButton.jsx as
   // `${namePrefix}-card-title`
   .unit-card-title {
-    font-size: $h5-font-size;
-    font-family: $headings-font-family;
-    font-weight: $headings-font-weight;
-    line-height: $headings-line-height;
-    color: $headings-color;
+    font-size: var(--pgn-typography-font-size-h5-base);
+    font-family: var(--pgn-typography-headings-font-family);
+    font-weight: var(--pgn-typography-headings-font-weight);
+    line-height: var(--pgn-typography-headings-line-height);
+    color: var(--pgn-color-headings-base);
   }
 }

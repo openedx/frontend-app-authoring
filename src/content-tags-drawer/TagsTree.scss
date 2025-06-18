@@ -9,13 +9,13 @@
 
     &:hover {
       svg {
-        color: $gray-900;
+        color: var(--pgn-color-gray-900);
       }
     }
 
     &:focus-visible {
       border: 2px solid;
-      border-color: $gray-900;
+      border-color: var(--pgn-color-gray-900);
     }
   }
 }
