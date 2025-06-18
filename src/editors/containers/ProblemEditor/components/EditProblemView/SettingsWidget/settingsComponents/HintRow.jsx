@@ -1,5 +1,5 @@
 import React from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Container,
@@ -19,34 +19,35 @@ const HintRow = ({
   images,
   isLibrary,
   learningContextId,
-  // injected
-  intl,
-}) => (
-  <ActionRow className="mb-4">
-    <Container fluid className="p-0">
-      <ExpandableTextArea
-        value={value}
-        setContent={handleChange}
-        placeholder={intl.formatMessage(messages.hintInputLabel)}
-        id={`hint-${id}`}
-        {...{
-          images,
-          isLibrary,
-          learningContextId,
-        }}
-      />
-    </Container>
-    <div className="d-flex flex-row flex-nowrap">
-      <IconButton
-        src={DeleteOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
-        onClick={handleDelete}
-        variant="primary"
-      />
-    </div>
-  </ActionRow>
-);
+}) => {
+  const intl = useIntl();
+  return (
+    <ActionRow className="mb-4">
+      <Container fluid className="p-0">
+        <ExpandableTextArea
+          value={value}
+          setContent={handleChange}
+          placeholder={intl.formatMessage(messages.hintInputLabel)}
+          id={`hint-${id}`}
+          {...{
+            images,
+            isLibrary,
+            learningContextId,
+          }}
+        />
+      </Container>
+      <div className="d-flex flex-row flex-nowrap">
+        <IconButton
+          src={DeleteOutline}
+          iconAs={Icon}
+          alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
+          onClick={handleDelete}
+          variant="primary"
+        />
+      </div>
+    </ActionRow>
+  );
+};
 
 HintRow.propTypes = {
   value: PropTypes.string.isRequired,
@@ -56,9 +57,6 @@ HintRow.propTypes = {
   images: PropTypes.shape({}).isRequired,
   learningContextId: PropTypes.string.isRequired,
   isLibrary: PropTypes.bool.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export const HintRowInternal = HintRow; // For testing only
-export default injectIntl(HintRow);
+export default HintRow;

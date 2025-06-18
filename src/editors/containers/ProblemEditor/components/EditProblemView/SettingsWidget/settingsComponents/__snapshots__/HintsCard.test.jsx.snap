@@ -9,14 +9,14 @@ exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 
   summary=" {count, plural, =0 {} other {(+# more)}}"
   title="Hints"
 >
-  <injectIntl(ShimmedIntlComponent)
+  <HintRow
     handleChange={[MockFunction hintsRowHooks.handleChange]}
     handleDelete={[MockFunction hintsRowHooks.handleDelete]}
     id={1}
     key="1"
     value="hint1"
   />
-  <injectIntl(ShimmedIntlComponent)
+  <HintRow
     handleChange={[MockFunction hintsRowHooks.handleChange]}
     handleDelete={[MockFunction hintsRowHooks.handleDelete]}
     id={2}
@@ -73,7 +73,7 @@ exports[`HintsCard snapshot snapshot: renders hints setting card one hint 1`] = 
   summary="hint1 {count, plural, =0 {} other {(+# more)}}"
   title="Hints"
 >
-  <injectIntl(ShimmedIntlComponent)
+  <HintRow
     handleChange={[MockFunction hintsRowHooks.handleChange]}
     handleDelete={[MockFunction hintsRowHooks.handleDelete]}
     id={1}
