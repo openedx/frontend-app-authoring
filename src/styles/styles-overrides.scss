@@ -16,6 +16,12 @@
       max-width: none !important;
       word-wrap: break-word;
     }
+
+    .course-updates-new-wrapper{
+      .align-items-center {
+        flex-direction: column;
+      }
+    }
   }
 }
 
@@ -313,6 +319,12 @@
     display: flex;
     flex-direction: column;
   }
+
+  // @media (max-width: 414px) {
+  //   .course-updates-new-wrapper {
+  //         
+  //       }
+  // }
 }
 
 // Course export styles
@@ -556,25 +568,30 @@
 
       .pgn__data-table-actions {
         flex-direction: column;
-        
-        .pgn__data-table-actions-left{
+
+        .pgn__data-table-actions-left {
           margin-top: -2.5rem;
         }
 
-        .pgn__data-table-actions-right{
+        .pgn__data-table-actions-right {
           .mx-2 {
             margin-left: 0 !important;
           }
 
-          .pgn__bulk-actions, .pgn__table-actions{
+          .pgn__bulk-actions,
+          .pgn__table-actions {
             display: block;
           }
         }
       }
     }
 
-    .pgn__table-actions{
+    .pgn__table-actions {
       flex-direction: column;
+
+      div {
+        margin: 0.5rem 0 ;
+      }
     }
 
     .pgn__data-table-card-view {
@@ -611,6 +628,12 @@
 
 .files-card-section {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem !important;
+
+  @media (max-width: 414px) {
+    .justify-content-center {
+      justify-content: flex-start !important;
+    }
+  }
 }
 
 
@@ -649,6 +672,16 @@
 
   .pgn__card .pgn__card-header .pgn__card-header-actions {
     margin-top: 11px;
+  }
+
+  @media (max-width: 414px) {
+    .pgn__card .pgn__card-header {
+      padding: 0 0.3rem;
+    }
+
+    .pgn__card .pgn__card-section {
+      padding: 0 0.3rem;
+    }
   }
 }
 
@@ -708,6 +741,22 @@
     .cancel-button {
       border: 1px solid var(--primary);
       border-radius: 8px;
+    }
+  }
+
+  @media (max-width: 414px) {
+    .sub-header {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+
+    .textbooks-empty-placeholder {
+      flex-direction: column;
+    }
+
+    .textbook-form {
+      padding: 0.5rem;
     }
   }
 }
@@ -776,6 +825,30 @@
       transform: 'translate(-50%, -114%)';
       box-shadow: '0 0 10px rgba(0,0,0,0.3)';
       border-radius: '8px';
+    }
+  }
+
+  @media (max-width: 414px) {
+    .pgn__action-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    div {
+      .row {
+        padding: 1rem !important;
+
+        .pgn__action-row {
+          button {
+            align-items: center;
+          }
+        }
+      }
+    }
+
+    .pgn__hyperlink {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
     }
   }
 }
