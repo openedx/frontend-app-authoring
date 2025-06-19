@@ -1,6 +1,7 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
+import {
+  render, screen, initializeMocks,
+} from '@src/testUtils';
 
 import * as mod from './ErrorSummary';
 
@@ -11,22 +12,29 @@ describe('ErrorSummary', () => {
     widgetWithError: [{ err1: 'mSg', err2: 'msG2' }, jest.fn()],
     widgetWithNoError: [{}, jest.fn()],
   };
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
-  describe('render', () => {
-    beforeEach(() => {
-      jest.spyOn(React, 'useContext').mockReturnValueOnce({});
-    });
-    test('snapshots: renders as expected when there are no errors', () => {
+
+  describe('renders', () => {
+    jest.spyOn(React, 'useContext').mockReturnValueOnce({});
+    test('renders as expected when there are no errors', () => {
       jest.spyOn(mod, 'showAlert').mockReturnValue(false);
-      expect(shallow(<ErrorSummary />).snapshot).toMatchSnapshot();
+      render(<ErrorSummary />);
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
+
     test('snapshots: renders as expected when there are errors', () => {
       jest.spyOn(mod, 'showAlert').mockReturnValue(true);
-      expect(shallow(<ErrorSummary />).snapshot).toMatchSnapshot();
+      render(<ErrorSummary />);
+      expect(screen.getByRole('alert')).toBeInTheDocument();
     });
   });
+
   describe('hasNoError', () => {
     it('returns true', () => {
       expect(mod.hasNoError(errors.widgetWithError)).toEqual(false);
@@ -35,6 +43,7 @@ describe('ErrorSummary', () => {
       expect(mod.hasNoError(errors.widgetWithNoError)).toEqual(true);
     });
   });
+
   describe('showAlert', () => {
     it('returns true', () => {
       jest.spyOn(mod, 'hasNoError').mockReturnValue(false);

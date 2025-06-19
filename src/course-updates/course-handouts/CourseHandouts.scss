@@ -2,11 +2,11 @@
   .course-handouts-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: $spacer;
+    margin-bottom: var(--pgn-spacing-spacer-base);
 
     .course-handouts-header__title {
       font-weight: 300;
-      color: $gray-800;
+      color: var(--pgn-color-gray-800);
     }
 
     .course-handouts-header__btn {

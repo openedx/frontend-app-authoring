@@ -77,6 +77,7 @@ const SettingsWidget = ({
               updateSettings={updateSettings}
               answers={answers}
               tolerance={settings.tolerance}
+              correctAnswerCount={correctAnswerCount}
             />
           </div>
           )}

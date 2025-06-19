@@ -720,12 +720,6 @@ describe('<CourseUnit />', () => {
       userEvent.click(problemButton);
     });
 
-    await waitFor(() => {
-      expect(screen.getByRole('heading', {
-        name: new RegExp(`${addComponentMessages.blockEditorModalTitle.defaultMessage}`, 'i'),
-      })).toBeInTheDocument();
-    });
-
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);

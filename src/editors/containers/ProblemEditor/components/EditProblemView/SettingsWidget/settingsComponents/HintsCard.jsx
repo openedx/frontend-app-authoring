@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import SettingsOption from '../SettingsOption';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 import messages from '../messages';
@@ -15,9 +15,8 @@ const HintsCard = ({
   images,
   isLibrary,
   learningContextId,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const { summary, handleAdd } = hintsCardHooks(hints, updateSettings);
 
   if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
@@ -55,7 +54,6 @@ const HintsCard = ({
 };
 
 HintsCard.propTypes = {
-  intl: intlShape.isRequired,
   hints: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
@@ -67,5 +65,4 @@ HintsCard.propTypes = {
   isLibrary: PropTypes.bool.isRequired,
 };
 
-export const HintsCardInternal = HintsCard; // For testing only
-export default injectIntl(HintsCard);
+export default HintsCard;

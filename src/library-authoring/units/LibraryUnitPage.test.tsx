@@ -90,7 +90,7 @@ describe('<LibraryUnitPage />', () => {
   it('shows unit data', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    // Unit title
+    // Unit title -- on main page + sidebar
     expect((await screen.findAllByText(mockGetContainerMetadata.containerData.displayName))[0]).toBeInTheDocument();
     // unit info button
     expect(await screen.findByRole('button', { name: 'Unit Info' })).toBeInTheDocument();
@@ -99,8 +99,16 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
     expect(await screen.findByText('text block 1')).toBeInTheDocument();
     expect(await screen.findByText('text block 2')).toBeInTheDocument();
-    // 3 preview iframes
+    // 3 preview iframes on main page
     expect((await screen.findAllByTestId('block-preview')).length).toEqual(3);
+    // No Preview tab in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
+  });
+
+  it('shows empty unit', async () => {
+    renderLibraryUnitPage(mockGetContainerMetadata.unitIdEmpty);
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('This unit is empty')).toBeInTheDocument();
   });
 
   it('can rename unit', async () => {
@@ -188,6 +196,9 @@ describe('<LibraryUnitPage />', () => {
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
     expect((await screen.findAllByText('Test Unit')).length).toBeGreaterThan(1);
+    // No Preview tab shown in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
+
     const component = await screen.findByText('text block 0');
     // Card is 3 levels up the component name div
     userEvent.click(component.parentElement!.parentElement!.parentElement!);
@@ -197,6 +208,8 @@ describe('<LibraryUnitPage />', () => {
 
     // The mock data for the sidebar has a title of "text block 0"
     expect(await findByText('text block 0')).toBeInTheDocument();
+    // Preview tab still not shown in sidebar
+    expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
     const closeButton = await findByRole('button', { name: /close/i });
     userEvent.click(closeButton);

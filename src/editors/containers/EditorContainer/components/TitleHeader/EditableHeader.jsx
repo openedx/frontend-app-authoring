@@ -47,5 +47,4 @@ EditableHeader.propTypes = {
   cancelEdit: PropTypes.func.isRequired,
 };
 
-export const EditableHeaderInternal = EditableHeader; // For testing only
 export default EditableHeader;

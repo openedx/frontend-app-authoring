@@ -15,6 +15,7 @@ import {
   mockGetCollectionMetadata,
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
+  mockGetContainerMetadata,
 } from '../data/api.mocks';
 
 import { ComponentPicker } from './ComponentPicker';
@@ -41,6 +42,7 @@ mockContentSearchConfig.applyMock();
 mockGetCollectionMetadata.applyMock();
 mockGetContentLibraryV2List.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockGetContainerMetadata.applyMock();
 
 let postMessageSpy: jest.SpyInstance;
 
@@ -66,7 +68,6 @@ describe('<ComponentPicker />', () => {
     });
 
     // Navigate to the components tab
-    screen.logTestingPlaygroundURL();
     const componentsTab = screen.getByRole('tab', { name: 'Components' });
     fireEvent.click(componentsTab);
     expect(componentsTab).toHaveAttribute('aria-selected', 'true');
@@ -156,10 +157,11 @@ describe('<ComponentPicker />', () => {
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the unit card to open the sidebar
-    fireEvent.click((await screen.findByText('Test Unit')));
+    fireEvent.click((await screen.findByText('Published Test Unit')));
 
     const sidebar = await screen.findByTestId('library-sidebar');
     expect(sidebar).toBeInTheDocument();
+    await waitFor(() => expect(within(sidebar).getByText('Published Test Unit')).toBeInTheDocument());
   });
 
   it('double clicking a collection should open it', async () => {

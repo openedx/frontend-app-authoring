@@ -8,11 +8,12 @@ import {
   replaceEqualDeep,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { type MeiliSearch } from 'meilisearch';
 
-import { getLibraryId } from '../../generic/key-utils';
+import { getBlockType, getLibraryId } from '../../generic/key-utils';
 import * as api from './api';
 import { VersionSpec } from '../LibraryBlock';
-import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
+import { useContentSearchConnection, useContentSearchResults, buildSearchQueryKey } from '../../search-manager';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -701,10 +702,33 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 );
 
 /**
+ * If you work with `useContentFromSearchIndex`, you can use this
+ * function to get the query key, usually to invalidate the query.
+ */
+const getSearchQueryKeyFromContent = (
+  contentIds: string[],
+  client?: MeiliSearch,
+  indexName?: string,
+) => (
+  buildSearchQueryKey({
+    client,
+    indexName,
+    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    searchKeywords: '',
+    blockTypesFilter: [],
+    problemTypesFilter: [],
+    publishStatusFilter: [],
+    tagsFilter: [],
+    sort: [],
+  })
+);
+
+/**
  * Use this mutation to add items to a container
  */
 export const useAddItemsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
+  const { client, indexName } = useContentSearchConnection();
   return useMutation({
     mutationFn: async (itemIds: string[]) => {
       // istanbul ignore if: this should never happen
@@ -713,7 +737,7 @@ export const useAddItemsToContainer = (containerId?: string) => {
       }
       return api.addComponentsToContainer(containerId, itemIds);
     },
-    onSettled: () => {
+    onSettled: (_data, _error, variables) => {
       // istanbul ignore if: this should never happen
       if (!containerId) {
         return;
@@ -723,6 +747,17 @@ export const useAddItemsToContainer = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+
+      const containerType = getBlockType(containerId);
+      if (containerType === 'section') {
+        // We invalidate the search query of the each itemId if the container is a section.
+        // This because the subsection page calls this query individually.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({
+            queryKey: getSearchQueryKeyFromContent([itemId], client, indexName),
+          });
+        });
+      }
     },
   });
 };
