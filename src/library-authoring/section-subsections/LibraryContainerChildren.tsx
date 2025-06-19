@@ -17,8 +17,8 @@ import {
   useUpdateContainer,
   useUpdateContainerChildren,
 } from '../data/apiHooks';
-import containerMessages from '../containers/messages';
 import { messages, subsectionMessages, sectionMessages } from './messages';
+import containerMessages from '../containers/messages';
 import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
