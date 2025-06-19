@@ -13,6 +13,7 @@ import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
@@ -30,7 +31,6 @@ import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
 import ContainerPublishStatus from './ContainerPublishStatus';
 import { useContainer } from '../data/apiHooks';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
 
 type ContainerMenuProps = {
   containerId: string,

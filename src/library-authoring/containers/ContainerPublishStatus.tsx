@@ -11,11 +11,11 @@ import {
   Container,
   useToggle,
 } from '@openedx/paragon';
-import Loading from '../../generic/Loading';
-import LoadingButton from '../../generic/loading-button';
-import { ToastContext } from '../../generic/toast-context';
-import { ContainerType } from '../../generic/key-utils';
-import { ContainerHit, PublishStatus } from '../../search-manager';
+import Loading from '@src/generic/Loading';
+import LoadingButton from '@src/generic/loading-button';
+import { ToastContext } from '@src/generic/toast-context';
+import { ContainerType } from '@src/generic/key-utils';
+import { ContainerHit, PublishStatus } from '@src/search-manager';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useContentFromSearchIndex, usePublishContainer } from '../data/apiHooks';
 import messages from './messages';

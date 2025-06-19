@@ -4,14 +4,14 @@ import type MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
-} from '../../testUtils';
+} from '@src/testUtils';
+import { PublishStatus } from '@src/search-manager';
+import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
 import { mockContentLibrary, mockGetContainerChildren, mockGetContainerMetadata } from '../data/api.mocks';
-import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
-import { PublishStatus } from '../../search-manager';
 
 mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
