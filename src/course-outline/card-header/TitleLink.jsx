@@ -14,7 +14,7 @@ const TitleLink = ({
     className="item-card-header__title-btn"
     to={titleLink}
   >
-    <Truncate lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate>
+    <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
   </Button>
 );
 

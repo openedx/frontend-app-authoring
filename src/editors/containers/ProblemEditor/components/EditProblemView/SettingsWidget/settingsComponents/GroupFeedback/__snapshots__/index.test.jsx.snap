@@ -18,7 +18,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
       id="authoring.problemeditor.settings.GroupFeedbackInputLabel"
     />
   </div>
-  <injectIntl(ShimmedIntlComponent)
+  <GroupFeedbackRow
     answers={
       [
         "A",
@@ -41,7 +41,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
       }
     }
   />
-  <injectIntl(ShimmedIntlComponent)
+  <GroupFeedbackRow
     answers={
       [
         "A",
@@ -131,7 +131,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one gr
       id="authoring.problemeditor.settings.GroupFeedbackInputLabel"
     />
   </div>
-  <injectIntl(ShimmedIntlComponent)
+  <GroupFeedbackRow
     answers={
       [
         "A",

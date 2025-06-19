@@ -67,9 +67,9 @@ const GalleryCard = ({
           />
         </div>
         <div style={{ wordBreak: 'break-word' }}>
-          <Truncate lines={1} className="font-weight-bold mt-2 picture-title">
+          <Truncate.Deprecated lines={1} className="font-weight-bold mt-2 picture-title">
             {original.displayName}
-          </Truncate>
+          </Truncate.Deprecated>
         </div>
       </Card.Section>
       <Card.Footer className="p-3 pt-4 row m-0 flex-row-reverse justify-content-between align-items-center">

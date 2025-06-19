@@ -1,8 +1,8 @@
 .course-grading-assignment-wrapper {
-  background-color: $white;
-  padding: map-get($spacers, 4);
+  background-color: var(--pgn-color-white);
+  padding: var(--pgn-spacing-spacer-4);
   text-align: right;
-  border: 1px solid $light-700;
+  border: 1px solid var(--pgn-color-light-700);
 
   .course-grading-assignment-items {
     list-style: none;
@@ -33,8 +33,8 @@
 
   .course-grading-assignment-item-alert-warning {
     .alert-heading {
-      font-size: $alert-font-size;
-      line-height: $alert-line-height;
+      font-size: var(--pgn-typography-alert-font-size);
+      line-height: var(--pgn-typography-alert-line-height);
     }
 
     .course-grading-assignment-item-alert-warning-list-label {
@@ -51,8 +51,8 @@
   }
 
   .course-grading-assignment-item-alert-success .alert-heading {
-    font-size: $alert-font-size;
-    line-height: $alert-line-height;
+    font-size: var(--pgn-typography-alert-font-size);
+    line-height: var(--pgn-typography-alert-line-height);
     margin-bottom: 0;
   }
 }
