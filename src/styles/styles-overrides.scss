@@ -1695,6 +1695,61 @@
 // S Styles End
 
 // N Styles Start
+.group-configurations{
+  .row > div:first-child{
+    background-color: var(--text-white);
+    padding: 1rem;
+    border-radius: 1rem;
+    border: solid 1px var(--border-color);
+  }
+  .group-configurations-empty-placeholder{
+    border-radius: 8px;
+    background-color: var(--bg-body) !important;
+    box-shadow: none !important;
+    justify-content: space-between;
+  }
+  .configuration-card .configuration-card-header .configuration-card-header__badge{
+    border-radius: 12px;
+    background-color: #e5fbff !important;
+  }
+  .configuration-card .configuration-card-header .configuration-card-header__badge span:last-child{
+    color: #0c83f2;
+  }
+  .configuration-card{
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(24, 29, 38, 0.08), 0 0 1px 0 rgba(24, 29, 38, 0.24);
+    background-color: var(--bg-body);
+  }
+  .configuration-card-header__title div{
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .configuration-section-name{
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .certificates-custom-sub-header-title .sub-header-title{
+    color: #222121;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .configuration-card .pgn__action-row{
+    justify-content: flex-start;
+  }
+  .configuration-card .configuration-card-header .pgn__action-row{
+    justify-content: flex-end;
+  }
+  .configuration-card-header h3{
+    font-size: 14px;
+    font-weight: normal;
+    color: #222121;
+  }
+  .configuration-card .pgn__action-row .btn-tertiary{
+    border-radius: 6px;
+    border: solid 1px #616061 !important;
+    color: #222121 !important;
+  }
+}
 .course-outline-container {
 
   //  header{

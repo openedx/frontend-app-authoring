@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Stack, Row,
 } from '@openedx/paragon';
-
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { LoadingSpinner } from '../generic/Loading';
 import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -57,11 +57,15 @@ const GroupConfigurations = ({ courseId }) => {
   return (
     <>
       <Container size="xl" className="group-configurations px-4">
+                <PluginSlot
+                  id="group_configurations_hide_plugin_slot"
+                >
         <div className="mt-5" />
         <SubHeader
           title={formatMessage(messages.headingTitle)}
           subtitle={formatMessage(messages.headingSubtitle)}
         />
+                </PluginSlot>
         <Layout
           lg={[{ span: 9 }, { span: 3 }]}
           md={[{ span: 9 }, { span: 3 }]}
@@ -70,6 +74,13 @@ const GroupConfigurations = ({ courseId }) => {
           xl={[{ span: 9 }, { span: 3 }]}
         >
           <Layout.Element>
+          <PluginSlot
+                  id="group_config_header_plugin_slot"
+                  pluginProps={{
+                    title:formatMessage(messages.headingTitle),
+                    subtitle:formatMessage(messages.headingSubtitle)
+                  }}
+                />
             <Stack
               gap={3}
               data-testid="group-configurations-main-content-wrapper"

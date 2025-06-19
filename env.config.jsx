@@ -766,7 +766,40 @@ const config = {
                     RenderWidget: (props) =>
                         <CourseUpdateNew  {...props}/>
                     },
-                },
+                },]},
+        group_configurations_hide_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                }
+            ],
+        },
+        group_config_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "certificates-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <div className="certificates-custom-header">
+                                <div className="certificates-custom-sub-header">
+                                    <div className="certificates-custom-sub-header-title">
+                                        <SubHeader
+                                            title={props.title}
+                                            subtitle={props.subtitle}
+                                            // headerActions={props.headerActions}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+
+                            </div>
+                        ),
+                    },
+                }
             ],
         },
         // edit_modal_plugin_slot: {
