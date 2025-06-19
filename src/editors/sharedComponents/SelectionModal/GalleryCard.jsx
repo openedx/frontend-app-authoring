@@ -66,7 +66,7 @@ const GalleryCard = ({
         </div>
         <div className="card-text px-3 py-2" style={{ marginTop: '10px' }}>
           <h3 className="text-primary-500">
-            <Truncate>{asset.displayName}</Truncate>
+            <Truncate.Deprecated>{asset.displayName}</Truncate.Deprecated>
           </h3>
           { asset.transcripts && (
             <div style={{ margin: '0 0 5px 0' }}>

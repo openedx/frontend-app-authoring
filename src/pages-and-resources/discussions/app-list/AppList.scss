@@ -6,7 +6,7 @@
   .pgn__data-table-container {
     tr {
       th {
-        background-color: $white;
+        background-color: var(--pgn-color-white);
         text-align: center;
 
         .d-flex,
@@ -16,7 +16,7 @@
       }
 
       td {
-        background-color: $white;
+        background-color: var(--pgn-color-white);
 
         .pgn__data-table-cell-wrap {
           max-width: unset;
@@ -55,7 +55,7 @@
     padding-top: 24px;
 
     h2 {
-      color: $primary-500;
+      color: var(--pgn-color-primary-500);
       line-height: 28px;
       font-size: 22px;
     }

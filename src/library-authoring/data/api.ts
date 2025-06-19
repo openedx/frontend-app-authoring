@@ -582,6 +582,7 @@ export async function updateComponentCollections(usageKey: string, collectionKey
 export interface CreateLibraryContainerDataRequest {
   title: string;
   containerType: ContainerType;
+  canStandAlone: boolean;
 }
 
 /**

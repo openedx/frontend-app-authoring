@@ -5,8 +5,8 @@
   }
 
   &.published-status {
-    background-color: $info-100;
-    border-top: 4px solid $info-400;
+    background-color: var(--pgn-color-info-100);
+    border-top: 4px solid var(--pgn-color-info-400);
   }
 }
 

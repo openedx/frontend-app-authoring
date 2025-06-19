@@ -48,8 +48,8 @@ export enum ContentType {
   collections = 'collections',
   components = 'components',
   units = 'units',
-  sections = 'sections',
   subsections = 'subsections',
+  sections = 'sections',
 }
 
 export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
