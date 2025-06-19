@@ -48,6 +48,7 @@ export const GroupTypes = /** @type {const} */ ({
 export const DivisionSchemes = /** @type {const} */ ({
   NONE: 'none',
   COHORT: 'cohort',
+  USER_GROUP: 'user_group',
 });
 
 export const VisibilityTypes = /** @type {const} */ ({

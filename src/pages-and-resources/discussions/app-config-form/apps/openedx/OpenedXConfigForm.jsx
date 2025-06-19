@@ -15,6 +15,7 @@ import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 import DiscussionRestriction from '../shared/DiscussionRestriction';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
+import DivisionByUserGroupFields from '../shared/DivisionByUserGroupFields';
 import ReportedContentEmailNotifications from '../shared/ReportedContentEmailNotifications';
 import InContextDiscussionFields from '../shared/InContextDiscussionFields';
 import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
@@ -42,7 +43,10 @@ const OpenedXConfigForm = ({
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,
     divideCourseTopicsByCohorts: appConfigObj?.divideCourseTopicsByCohorts || false,
+    divideByUserGroups: appConfigObj?.divideByUserGroups || false,
     groupAtSubsection: appConfigObj?.groupAtSubsection || false,
+    cohortsEnabled: appConfigObj?.cohortsEnabled || false,
+    userGroupsEnabled: appConfigObj?.userGroupsEnabled || false,
   };
 
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(discussionTopicsModel);
@@ -138,6 +142,8 @@ const OpenedXConfigForm = ({
                 <DiscussionTopics />
                 <AppConfigFormDivider thick />
                 <DivisionByGroupFields />
+                <AppConfigFormDivider thick />
+                <DivisionByUserGroupFields />
                 <AppConfigFormDivider thick />
                 <ReportedContentEmailNotifications />
                 <DiscussionRestriction />

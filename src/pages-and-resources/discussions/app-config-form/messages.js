@@ -154,10 +154,29 @@ const messages = defineMessages({
     defaultMessage: 'To adjust these settings, enable cohorts on the ',
     description: 'Label text informing the user to enable cohort',
   },
+  userGroupsEnabled: {
+    id: 'authoring.discussions.builtIn.userGroupsEnabled.label',
+    defaultMessage: 'To adjust this setting, enable user groups in the course settings.',
+    description: 'Label text informing the user to enable user groups',
+  },
   instructorDashboard: {
     id: 'authoring.discussions.builtIn.instructorDashboard.label',
     defaultMessage: 'instructor dashboard',
     description: 'Label text for instructor dashboard',
+  },
+  divisionByUserGroup: {
+    id: 'authoring.discussions.builtIn.divisionByUserGroup',
+    defaultMessage: 'User Groups',
+  },
+  divideByUserGroupsLabel: {
+    id: 'authoring.discussions.builtIn.divideByUserGroups.label',
+    defaultMessage: 'Divide discussions by user groups',
+    description: 'Label for a switch that enables dividing discussions by user groups.',
+  },
+  divideByUserGroupsHelp: {
+    id: 'authoring.discussions.builtIn.divideByUserGroups.help',
+    defaultMessage: 'Learners will only be able to view and respond to discussions posted by members of their user group.',
+    description: 'Help text for a switch that enables dividing discussions by user groups.',
   },
   // In-context discussion fields
   visibilityInContext: {

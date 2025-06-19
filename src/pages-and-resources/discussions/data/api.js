@@ -58,6 +58,7 @@ function normalizePluginConfig(data) {
   }
 
   const enableDivideByCohorts = data.always_divide_inline_discussions && data.division_scheme === 'cohort';
+  const enableDivideByUserGroups = data.always_divide_inline_discussions && data.division_scheme === 'user_group';
   const enableDivideCourseTopicsByCohorts = enableDivideByCohorts && data.divided_course_wide_discussions.length > 0;
   return {
     allowAnonymousPosts: data.allow_anonymous,
@@ -68,8 +69,10 @@ function normalizePluginConfig(data) {
     restrictedDates: normalizeRestrictedDates(data.discussion_blackouts),
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,
+    divideByUserGroups: enableDivideByUserGroups,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
     cohortsEnabled: data.available_division_schemes?.includes('cohort') || false,
+    userGroupsEnabled: data.available_division_schemes?.includes('user_group') || false,
     groupAtSubsection: data.group_at_subsection,
   };
 }
@@ -183,6 +186,24 @@ function denormalizeData(courseId, appId, data) {
   if ('divideByCohorts' in data) {
     pluginConfiguration.division_scheme = data.divideByCohorts ? DivisionSchemes.COHORT : DivisionSchemes.NONE;
     pluginConfiguration.always_divide_inline_discussions = data.divideByCohorts;
+  }
+  if ('divideByUserGroups' in data) {
+    pluginConfiguration.division_scheme = data.divideByUserGroups ? DivisionSchemes.USER_GROUP : DivisionSchemes.NONE;
+    pluginConfiguration.always_divide_inline_discussions = data.divideByUserGroups;
+  }
+  // Handle division scheme priority - user groups take precedence over cohorts
+  // This is only used for the POC
+  if ('divideByUserGroups' in data && 'divideByCohorts' in data) {
+    if (data.divideByUserGroups) {
+      pluginConfiguration.division_scheme = DivisionSchemes.USER_GROUP;
+      pluginConfiguration.always_divide_inline_discussions = true;
+    } else if (data.divideByCohorts) {
+      pluginConfiguration.division_scheme = DivisionSchemes.COHORT;
+      pluginConfiguration.always_divide_inline_discussions = true;
+    } else {
+      pluginConfiguration.division_scheme = DivisionSchemes.NONE;
+      pluginConfiguration.always_divide_inline_discussions = false;
+    }
   }
   if ('groupAtSubsection' in data) {
     pluginConfiguration.group_at_subsection = data.groupAtSubsection;
