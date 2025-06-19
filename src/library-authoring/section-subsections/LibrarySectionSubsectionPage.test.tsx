@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
+import { QueryClient } from '@tanstack/react-query';
 
 import { act } from 'react';
 import {
@@ -31,6 +32,7 @@ const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
 let axiosMock: MockAdapter;
+let queryClient: QueryClient;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 mockClipboardEmpty.applyMock();
@@ -67,7 +69,7 @@ jest.mock('../../generic/DraggableList/verticalSortableList', () => ({
 
 describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
   beforeEach(() => {
-    ({ axiosMock, mockShowToast } = initializeMocks());
+    ({ axiosMock, mockShowToast, queryClient } = initializeMocks());
   });
 
   afterEach(() => {
@@ -257,6 +259,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should rename child by clicking edit icon besides name in ${cType} page`, async () => {
+      const mockSetQueryData = jest.spyOn(queryClient, 'setQueryData');
       const url = getLibraryContainerApiUrl(`${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-0`);
       axiosMock.onPatch(url).reply(200);
       renderLibrarySectionPage(undefined, undefined, cType);
@@ -286,6 +289,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       }));
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith('Container updated successfully.');
+      expect(mockSetQueryData).toHaveBeenCalledTimes(2);
     });
 
     it(`should show error while updating child name in ${cType} page`, async () => {
@@ -380,7 +384,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     it(`should open ${childType} page on double click`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
       const child = await screen.findByText(`${childType} block 0`);
-      // Trigger double click. Find the chidl card as the parent element
+      // Trigger double click. Find the child card as the parent element
       userEvent.click(child.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
       expect((await screen.findAllByText(new RegExp(`${childType} block 0`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();

@@ -613,7 +613,7 @@ export const useContainer = (containerId?: string) => (
 /**
  * Use this mutation to update the fields of a container in a library
  */
-export const useUpdateContainer = (containerId: string) => {
+export const useUpdateContainer = (containerId: string, affectedParentContainerId?: string) => {
   const libraryId = getLibraryId(containerId);
   const queryClient = useQueryClient();
   const containerQueryKey = libraryAuthoringQueryKeys.container(containerId);
@@ -626,10 +626,24 @@ export const useUpdateContainer = (containerId: string) => {
         ...data,
       });
 
-      return { previousData };
+      let childrenPreviousData;
+      if (affectedParentContainerId) {
+        const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
+        childrenPreviousData = queryClient.getQueryData(childrenQueryKey) as api.Container[];
+        queryClient.setQueryData(childrenQueryKey, childrenPreviousData.map(item => (
+          item.id === containerId ? { ...item, ...data } : item
+        )));
+      }
+
+      return { previousData, childrenPreviousData };
     },
     onError: (_err, _data, context) => {
       queryClient.setQueryData(containerQueryKey, context?.previousData);
+
+      if (affectedParentContainerId) {
+        const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
+        queryClient.setQueryData(childrenQueryKey, context?.childrenPreviousData);
+      }
     },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's

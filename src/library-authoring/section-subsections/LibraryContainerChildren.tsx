@@ -6,6 +6,7 @@ import {
   ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
+import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -13,10 +14,11 @@ import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
+  useUpdateContainer,
   useUpdateContainerChildren,
 } from '../data/apiHooks';
+import containerMessages from '../containers/messages';
 import { messages, subsectionMessages, sectionMessages } from './messages';
-import { ContainerEditableTitle } from '../containers/ContainerEditableTitle';
 import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
@@ -38,8 +40,22 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
 }
 
-const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
   const { showOnlyPublished } = useLibraryContext();
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
+  const updateMutation = useUpdateContainer(container.originalId, containerKey);
+
+  const handleSaveDisplayName = async (newDisplayName: string) => {
+    try {
+      await updateMutation.mutateAsync({
+        displayName: newDisplayName,
+      });
+      showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
+    } catch (err) {
+      showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
+    }
+  };
 
   return (
     <>
@@ -48,13 +64,11 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
         // Prevent parent card from being clicked.
         onClick={(e) => e.stopPropagation()}
       >
-        <ContainerEditableTitle
-          containerId={container.originalId}
-          readOnly={readOnly || showOnlyPublished}
+        <InplaceTextEditor
+          onSave={handleSaveDisplayName}
+          text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
           textClassName="font-weight-bold small"
-          placeHolderText={
-            showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName
-          }
+          readOnly={readOnly || showOnlyPublished}
         />
       </div>
       <ActionRow.Spacer />
