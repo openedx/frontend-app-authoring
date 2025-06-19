@@ -26,10 +26,5 @@ config.plugins.push(
   }),
 );
 
-config.resolve.alias = {
-  ...config.resolve.alias,
-  '@src': path.resolve(__dirname, 'src'),
-};
-
 module.exports = config;
 
