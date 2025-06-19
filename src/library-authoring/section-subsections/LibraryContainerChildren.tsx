@@ -103,7 +103,6 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
           size="sm"
           count={container.tagsCount}
           onClick={readOnly ? undefined : jumpToManageTags}
-          dataTestId={`tag-count-${container.id}`}
         />
         {!readOnly && (
           <ContainerMenu

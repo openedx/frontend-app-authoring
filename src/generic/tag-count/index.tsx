@@ -6,16 +6,10 @@ type TagCountProps = {
   count: number;
   onClick?: () => void;
   size?: Parameters<typeof Icon>[0]['size'];
-  dataTestId?: string;
 };
 
 // eslint-disable-next-line react/prop-types
-const TagCount: React.FC<TagCountProps> = ({
-  count,
-  onClick,
-  size,
-  dataTestId,
-}: TagCountProps) => {
+const TagCount: React.FC<TagCountProps> = ({ count, onClick, size }: TagCountProps) => {
   const renderContent = () => (
     <Stack direction="horizontal" gap={1}>
       <Icon size={size} src={Tag} />
@@ -29,7 +23,7 @@ const TagCount: React.FC<TagCountProps> = ({
     }
     >
       { onClick ? (
-        <Button variant="tertiary" onClick={onClick} data-testid={dataTestId}>
+        <Button variant="tertiary" onClick={onClick}>
           {renderContent()}
         </Button>
       )

@@ -388,10 +388,11 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect((await screen.findAllByText(`${childType} block 1`))[0]).toBeInTheDocument();
       expect((await screen.findAllByText(`${childType} block 2`))[0]).toBeInTheDocument();
 
-      const tagCountButton = screen.getByTestId(`tag-count-lb:org1:Demo_course:${childType}:${childType}-0----0`);
+      const tagCountButton = screen.getAllByRole('button', { name: '0' })[0];
       fireEvent.click(tagCountButton);
 
       expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: /manage/i })).toHaveClass('active');
     });
   });
 });
