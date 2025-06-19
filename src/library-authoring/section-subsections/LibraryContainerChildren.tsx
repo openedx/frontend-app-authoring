@@ -41,10 +41,10 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
 }
 
 const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
-  const { showOnlyPublished } = useLibraryContext();
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
+  const { showOnlyPublished } = useLibraryContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
