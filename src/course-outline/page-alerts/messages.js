@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   configurationErrorText: {
     id: 'course-authoring.course-outline.page-alerts.configurationErrorText',
-    defaultMessage: 'No course content is currently visible, and no learners are enrolled. Be sure to review and reset all dates, including the Course Start Date; set up the course team; review course updates and other assets for dated material; and seed the discussions and wiki.',
+    defaultMessage: 'Be sure to review and reset all dates, including the Course Start Date; set up the course team; review course updates and other assets for dated material; and seed the discussions and wiki.',
     description: 'Configuration error alert body in course outline.',
   },
   discussionNotificationText: {
