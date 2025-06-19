@@ -11,69 +11,10 @@
   }
 
   .ca-main-content {
-    
-    .col-9  {
+    .col-9 {
       flex: none !important;
       max-width: none !important;
       word-wrap: break-word;
-    }
-
-    // Grading - Assignment Types Styles
-    .course-grading-assignment-wrapper {
-      padding: 2px;
-
-      .course-grading-assignment-items {
-        display: block;
-      }
-    }
-
-    // Export
-    .pgn__card .pgn__card-header .pgn__card-header-content {
-      overflow: inherit;
-    }
-
-    // .export .export-card .course-stepper { 
-    //   // display: grid;
-      
-    //   .course-stepper__step-icon {
-    //     margin-left: 0;
-    //   }
-    // }
-
-    .course-stepper {
-      display: grid !important;
-      justify-content: space-between;
-      // margin: 0rem -7rem 0rem -1rem;
-
-      .course-stepper__step {
-        flex-direction: row !important;
-
-        .course-stepper__step-info {
-          margin-top: 1rem;
-        }
-
-        &:not(:last-child) {
-          border-bottom: transparent !important;
-        }
-      }
-
-      .course-stepper__step-icon {
-        margin-left: 0 !important;
-
-        .course-stepper__icon-line {
-          display: block;
-          height: 0 !important;
-          width: 0 !important;
-          background: #2cc84d;
-          margin-left: 0 !important;
-          margin-right: 8px;
-          border-radius: 2px;
-        }
-
-        & svg {
-          color: #2cc84d;
-        }
-      }
     }
   }
 }
@@ -103,7 +44,7 @@
   hr {
     display: none;
   }
-  
+
   // @media (max-width: 576px) {
   //   display: none;
   // }
@@ -160,6 +101,7 @@
   .grading-scale-segments-and-ticks {
     border: none;
     border-radius: 1rem !important;
+
     // overflow: hidden;
     .grading-scale-tick {
       margin-top: 3rem !important;
@@ -176,6 +118,14 @@
   background-color: #f4f7ff;
   border: none;
   border-radius: 10px;
+
+  @media (max-width: 414px) {
+    padding: 2px;
+
+    .course-grading-assignment-items {
+      display: block;
+    }
+  }
 }
 
 .grading {
@@ -272,7 +222,7 @@
   border-color: transparent !important;
 }
 
-.updates-handouts-container{
+.updates-handouts-container {
   padding: 16px;
   border-radius: 12px;
   border: solid 1px #e5e6e6;
@@ -327,18 +277,18 @@
 }
 
 .updates-handouts-container {
-    .update-form {
-      box-shadow: none !important;
-      border: none !important;
-      background-color: #f2f5ff !important;
-      padding: 1rem !important;
-    }
-
-    .tox {
-      border: solid 1px #e5e6e6 !important;
-      border-radius: 8px !important;
-    }
+  .update-form {
+    box-shadow: none !important;
+    border: none !important;
+    background-color: #f2f5ff !important;
+    padding: 1rem !important;
   }
+
+  .tox {
+    border: solid 1px #e5e6e6 !important;
+    border-radius: 8px !important;
+  }
+}
 
 .recent-updates,
 .course-handouts .course-handouts-header .course-handouts-header__title {
@@ -347,7 +297,7 @@
   font-weight: 400;
 }
 
-.card-style{
+.card-style {
   display: flex;
   justify-content: space-between;
 }
@@ -360,7 +310,7 @@
   }
 
   .course-update-header__action {
-    display: flex; 
+    display: flex;
     flex-direction: column;
   }
 }
@@ -472,8 +422,59 @@
     margin: 0rem;
     padding: 1rem;
     border-radius: 1rem;
+
+    @media (max-width: 414px) {
+      .row {
+        flex-direction: column !important;
+
+        .col-5 {
+          max-width: none;
+        }
+
+        div {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 414px) {
+    .pgn__card .pgn__card-header .pgn__card-header-content {
+      overflow: inherit;
+    }
+
+    .course-stepper {
+      display: grid !important;
+      margin-bottom: 1.5rem;
+
+      .course-stepper__step {
+        flex-direction: row !important;
+        padding: 2px !important;
+
+        .course-stepper__step-info {
+          margin-top: 1rem;
+        }
+      }
+
+      .course-stepper__step-icon {
+        margin-left: 0 !important;
+
+        .course-stepper__icon-line {
+          height: 2rem !important;
+          width: 2px !important;
+          margin-left: 0 !important;
+          margin-right: 8px;
+          position: relative;
+          top: 1rem;
+          left: 2rem;
+        }
+      }
+    }
   }
 }
+
+
+
 
 // Files & Uploads styles
 
@@ -489,7 +490,7 @@
 
 .files-table {
 
-  .pgn__data-table__selectable-card{
+  .pgn__data-table__selectable-card {
     justify-content: space-evenly;
   }
 
@@ -529,6 +530,46 @@
 
   .bg-light-200 {
     background-color: white !important;
+  }
+
+  @media (max-width: 414px) {
+    .pgn__data-table-status-bar {
+      padding: 0;
+    }
+
+    .pgn__data-table-wrapper {
+
+      .pgn__data-table-card-view .pgn__card-grid__card-item {
+        padding: 6px !important;
+      }
+
+      .pgn__data-table-actions {
+        flex-direction: column;
+        
+        .pgn__data-table-actions-left{
+          margin-top: -3.5rem;
+        }
+
+        .pgn__data-table-actions-right{
+          .mx-2 {
+            margin-left: 0 !important;
+          }
+        }
+      }
+    }
+
+    .pgn__table-actions{
+      flex-direction: column;
+    }
+
+    .pgn__data-table-card-view {
+      padding: 0;
+    }
+
+    .pgn__data-table__selectable-card.selection-left {
+      flex-direction: column-reverse;
+    }
+
   }
 
   @media (min-width: 1200px) {
@@ -595,7 +636,7 @@
 // Textbooks
 .textbook-card {
 
-  .sub-header{
+  .sub-header {
     .sub-header-actions {
       margin-bottom: 1rem;
     }
@@ -654,8 +695,8 @@
 
 // Custom pages
 .view_live_button:hover {
-      text-decoration: none;
-    }
+  text-decoration: none;
+}
 
 .custom-pages {
   padding: 0 1rem !important;
@@ -733,6 +774,7 @@
       color: #9e9f9e;
     }
   }
+
   .pgn__dropzone {
     height: auto;
     border-radius: 8px;
@@ -1228,7 +1270,7 @@
     @include sub-header-title-style1;
   }
 
-  .sub-header{
+  .sub-header {
     margin-bottom: -0.5rem !important;
   }
 
@@ -1257,7 +1299,7 @@
     @include sub-header-title-style1;
   }
 
-  .sub-header{
+  .sub-header {
     margin-bottom: -0.5rem !important;
   }
 
@@ -1268,7 +1310,7 @@
       font-weight: 500 !important;
       font-size: 14px !important;
       margin-right: 1rem !important;
-      
+
 
       button {
         color: var(--primary) !important;
@@ -1295,7 +1337,8 @@
       }
     }
 
-    .pgn__searchfield:hover, .pgn__searchfield:active {
+    .pgn__searchfield:hover,
+    .pgn__searchfield:active {
       border-radius: 8px !important;
       border: 1px solid var(--primary) !important;
     }
@@ -1310,23 +1353,23 @@
     margin: 0 auto;
 
     @media (min-width: 768px) {
-        grid-template-columns: repeat(2, minmax(280px, 1fr));
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
     }
 
     @media (min-width: 992px) {
-        grid-template-columns: repeat(3, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
     }
 
     @media (min-width: 1200px) {
-        grid-template-columns: repeat(4, minmax(280px, 1fr));
+      grid-template-columns: repeat(4, minmax(280px, 1fr));
     }
 
     @media (min-width: 1600px) {
-        grid-template-columns: repeat(5, minmax(260px, 1fr));
-        gap: 1.5rem;
+      grid-template-columns: repeat(5, minmax(260px, 1fr));
+      gap: 1.5rem;
     }
   }
-  
+
   .library-card-container {
     background: var(--bg-surface);
     border-radius: 12px;
@@ -1389,7 +1432,7 @@
 
 .library-authoring-page-container {
   // margin-right: -20px !important;
-  
+
   .library-authoring-page-content {
     padding: 1rem;
 
@@ -1461,16 +1504,16 @@
             .pgn__icon {
               color: var(--text-primary) !important;
             }
-  
+
             .pgn__icon:hover {
               // background-color: var(--primary-hover) !important;
               color: var(--primary) !important;
             }
-  
+
             .btn-icon:active {
               color: var(--bg-surface) !important;
             }
-  
+
             .pgn__icon:active {
               color: var(--bg-surface) !important;
             }
@@ -1480,7 +1523,7 @@
             background-color: transparent;
           }
 
-          
+
         }
       }
 
@@ -1495,23 +1538,25 @@
         border-radius: 8px !important;
         border: 1px solid var(--border-color) !important;
       }
-  
+
       .pgn__searchfield-form {
         border: 1px solid var(--border-color) !important;
         border-radius: 8px !important;
-  
+
         .form-control {
           border: none !important;
           border-radius: 8px !important;
         }
       }
-  
-      .pgn__searchfield:hover, .pgn__searchfield:active {
+
+      .pgn__searchfield:hover,
+      .pgn__searchfield:active {
         border-radius: 8px !important;
         border: 1px solid var(--primary) !important;
       }
 
-      .btn-outline-primary, .btn-primary {
+      .btn-outline-primary,
+      .btn-primary {
         border-radius: 8px !important;
       }
     }
@@ -1555,7 +1600,7 @@
       background-color: var(--bg-surface) !important;
       // box-shadow: 0 2px 4px -2px rgba(10, 13, 18, 0.06), 0 4px 8px -2px rgba(10, 13, 18, 0.1) !important;
 
-      
+
 
       .pgn__card-header {
         padding: 0 !important;
@@ -1568,7 +1613,7 @@
         .pgn__card-header-subtitle-md {
           font-size: 14px !important;
         }
-        
+
         .system-defined-badge {
           border-radius: 12px !important;
         }
@@ -1576,7 +1621,7 @@
         .pgn__card-header-content {
           margin-top: 0 !important;
         }
-        
+
         .pgn__card-header-actions {
           margin-top: 0 !important;
 
@@ -1620,7 +1665,7 @@
 
   .custom-taxonomy-detail-page-header {
     padding-right: 0 !important;
-    
+
     .ca-breadcrumb-bg {
       margin-left: -1rem !important;
       // margin-right: -3rem !important;
@@ -1682,7 +1727,7 @@
         color: var(--primary) !important;
       }
 
-    
+
       .is-striped {
         tbody {
           tr {
@@ -1720,19 +1765,19 @@
       .pgn__card {
         border-radius: 12px !important;
         box-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.06), 0 1px 3px 0 rgba(10, 13, 18, 0.1) !important;
-  
+
         .pgn__card-header {
           padding: 0 1rem !important;
-  
+
           .pgn__card-header-content {
             margin-top: 1rem !important;
-  
+
             .pgn__card-header-title-md {
               @include section-title-style1;
             }
           }
         }
-  
+
         .pgn__card-section {
           .pgn__card-section-title {
             color: var(--text-secondary) !important;
@@ -1742,7 +1787,7 @@
             letter-spacing: normal !important;
             margin-bottom: 0 !important;
           }
-  
+
         }
       }
     }
@@ -1753,61 +1798,73 @@
 // S Styles End
 
 // N Styles Start
-.group-configurations{
-  .row > div:first-child{
+.group-configurations {
+  .row>div:first-child {
     background-color: var(--text-white);
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
   }
-  .group-configurations-empty-placeholder{
+
+  .group-configurations-empty-placeholder {
     border-radius: 8px;
     background-color: var(--bg-body) !important;
     box-shadow: none !important;
     justify-content: space-between;
   }
-  .configuration-card .configuration-card-header .configuration-card-header__badge{
+
+  .configuration-card .configuration-card-header .configuration-card-header__badge {
     border-radius: 12px;
     background-color: #e5fbff !important;
   }
-  .configuration-card .configuration-card-header .configuration-card-header__badge span:last-child{
+
+  .configuration-card .configuration-card-header .configuration-card-header__badge span:last-child {
     color: #0c83f2;
   }
-  .configuration-card{
+
+  .configuration-card {
     border-radius: 8px;
     box-shadow: 0 2px 4px 0 rgba(24, 29, 38, 0.08), 0 0 1px 0 rgba(24, 29, 38, 0.24);
     background-color: var(--bg-body);
   }
-  .configuration-card-header__title div{
+
+  .configuration-card-header__title div {
     font-size: 16px;
     font-weight: bold;
   }
-  .configuration-section-name{
+
+  .configuration-section-name {
     font-size: 16px;
     font-weight: 500;
   }
-  .certificates-custom-sub-header-title .sub-header-title{
+
+  .certificates-custom-sub-header-title .sub-header-title {
     color: #222121;
     font-size: 18px;
     font-weight: 600;
   }
-  .configuration-card .pgn__action-row{
+
+  .configuration-card .pgn__action-row {
     justify-content: flex-start;
   }
-  .configuration-card .configuration-card-header .pgn__action-row{
+
+  .configuration-card .configuration-card-header .pgn__action-row {
     justify-content: flex-end;
   }
-  .configuration-card-header h3{
+
+  .configuration-card-header h3 {
     font-size: 14px;
     font-weight: normal;
     color: #222121;
   }
-  .configuration-card .pgn__action-row .btn-tertiary{
+
+  .configuration-card .pgn__action-row .btn-tertiary {
     border-radius: 6px;
     border: solid 1px #616061 !important;
     color: #222121 !important;
   }
 }
+
 .course-outline-container {
 
   //  header{
@@ -1894,41 +1951,50 @@
     background-color: #f2f5ff !important;
   }
 }
-.custom-schedule-details{
+
+.custom-schedule-details {
   margin-top: -1.5rem;
-  .section-sub-header{
+
+  .section-sub-header {
     display: block;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
   }
-  .lead{
+
+  .lead {
     margin-bottom: 0rem;
     font-size: 1rem;
   }
-  .section-sub-header span{
+
+  .section-sub-header span {
     font-size: 0.9rem;
   }
-  .course-form .row .col-cs{
+
+  .course-form .row .col-cs {
     border-radius: 16px;
     border: solid 1px var(--border-color);
     background-color: var(--text-white);
     padding: 1rem;
   }
-  .title-class{
+
+  .title-class {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--border-color);
     font-weight: 600;
   }
-  .section-container ul li h4{
+
+  .section-container ul li h4 {
     color: var(--text-secondary);
     font-size: 14px;
     text-transform: uppercase;
     font-weight: 500;
   }
-  .section-container .card{
+
+  .section-container .card {
     background-color: var(--bg-body);
   }
-  .pacing-section .pgn__form-group .pgn__form-control-set{
+
+  .pacing-section .pgn__form-group .pgn__form-control-set {
     padding-left: 0rem;
     padding-top: 0rem;
   }
