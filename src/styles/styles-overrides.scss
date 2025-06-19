@@ -2043,7 +2043,15 @@
     background-color: #f2f5ff !important;
   }
 }
+@media (max-width: 576px) {
+  .course-outline-container .outline-status-bar{
+    flex-direction: column;
+  }
+  .course-outline-container .sub-header .sub-header-actions .ml-auto{
+    display: grid
 
+  }
+}
 .custom-schedule-details {
   margin-top: -1.5rem;
 
