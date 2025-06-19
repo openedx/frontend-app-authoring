@@ -289,7 +289,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       }));
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith('Container updated successfully.');
-      expect(mockSetQueryData).toHaveBeenCalledTimes(2);
+      expect(mockSetQueryData).toHaveBeenCalledTimes(1);
     });
 
     it(`should show error while updating child name in ${cType} page`, async () => {
