@@ -1,7 +1,7 @@
 @import "./global-overrides";
 
 // Mobile screen responsiveness
-@media (max-width: 576px) {
+@media (max-width: 414px) {
   .ca-sidebar {
     display: none;
   }
@@ -16,6 +16,64 @@
       flex: none !important;
       max-width: none !important;
       word-wrap: break-word;
+    }
+
+    // Grading - Assignment Types Styles
+    .course-grading-assignment-wrapper {
+      padding: 2px;
+
+      .course-grading-assignment-items {
+        display: block;
+      }
+    }
+
+    // Export
+    .pgn__card .pgn__card-header .pgn__card-header-content {
+      overflow: inherit;
+    }
+
+    // .export .export-card .course-stepper { 
+    //   // display: grid;
+      
+    //   .course-stepper__step-icon {
+    //     margin-left: 0;
+    //   }
+    // }
+
+    .course-stepper {
+      display: grid !important;
+      justify-content: space-between;
+      // margin: 0rem -7rem 0rem -1rem;
+
+      .course-stepper__step {
+        flex-direction: row !important;
+
+        .course-stepper__step-info {
+          margin-top: 1rem;
+        }
+
+        &:not(:last-child) {
+          border-bottom: transparent !important;
+        }
+      }
+
+      .course-stepper__step-icon {
+        margin-left: 0 !important;
+
+        .course-stepper__icon-line {
+          display: block;
+          height: 0 !important;
+          width: 0 !important;
+          background: #2cc84d;
+          margin-left: 0 !important;
+          margin-right: 8px;
+          border-radius: 2px;
+        }
+
+        & svg {
+          color: #2cc84d;
+        }
+      }
     }
   }
 }
