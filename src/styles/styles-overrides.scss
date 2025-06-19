@@ -533,6 +533,13 @@
   }
 
   @media (max-width: 414px) {
+
+    hr {
+      .mb-5 {
+        margin-bottom: 0;
+      }
+    }
+
     .pgn__data-table-status-bar {
       padding: 0;
     }
@@ -541,18 +548,26 @@
 
       .pgn__data-table-card-view .pgn__card-grid__card-item {
         padding: 6px !important;
+
+        .pgn__data-table__controlled-select {
+          padding: 1rem 0rem;
+        }
       }
 
       .pgn__data-table-actions {
         flex-direction: column;
         
         .pgn__data-table-actions-left{
-          margin-top: -3.5rem;
+          margin-top: -2.5rem;
         }
 
         .pgn__data-table-actions-right{
           .mx-2 {
             margin-left: 0 !important;
+          }
+
+          .pgn__bulk-actions, .pgn__table-actions{
+            display: block;
           }
         }
       }
@@ -564,6 +579,10 @@
 
     .pgn__data-table-card-view {
       padding: 0;
+
+      .row {
+        margin-left: 0;
+      }
     }
 
     .pgn__data-table__selectable-card.selection-left {
