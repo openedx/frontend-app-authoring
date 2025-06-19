@@ -217,7 +217,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should rename component while clicking on name', async () => {
-    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(200);
     renderLibraryUnitPage();
 
@@ -251,7 +251,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error while updating component name', async () => {
-    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(400);
     renderLibraryUnitPage();
 
@@ -290,7 +290,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -304,7 +306,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -318,7 +322,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(500);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });

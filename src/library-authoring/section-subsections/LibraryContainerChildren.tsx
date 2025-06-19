@@ -6,6 +6,7 @@ import {
   ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
+import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -19,7 +20,6 @@ import {
 import { messages, subsectionMessages, sectionMessages } from './messages';
 import containerMessages from '../containers/messages';
 import { Container } from '../data/api';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { ContainerMenu } from '../components/ContainerCard';
@@ -40,10 +40,10 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
 }
 
-const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const updateMutation = useUpdateContainer(container.originalId);
+  const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = useLibraryContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -59,12 +59,18 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
 
   return (
     <>
-      <InplaceTextEditor
-        onSave={handleSaveDisplayName}
-        text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
-        textClassName="font-weight-bold small"
-        readOnly={readOnly || showOnlyPublished}
-      />
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div
+        // Prevent parent card from being clicked.
+        onClick={(e) => e.stopPropagation()}
+      >
+        <InplaceTextEditor
+          onSave={handleSaveDisplayName}
+          text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
+          textClassName="font-weight-bold small"
+          readOnly={readOnly || showOnlyPublished}
+        />
+      </div>
       <ActionRow.Spacer />
       <Stack
         direction="horizontal"
