@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
+import { QueryClient } from '@tanstack/react-query';
 
 import { act } from 'react';
 import {
@@ -31,6 +32,7 @@ const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
 let axiosMock: MockAdapter;
+let queryClient: QueryClient;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 mockClipboardEmpty.applyMock();
@@ -67,7 +69,7 @@ jest.mock('../../generic/DraggableList/verticalSortableList', () => ({
 
 describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
   beforeEach(() => {
-    ({ axiosMock, mockShowToast } = initializeMocks());
+    ({ axiosMock, mockShowToast, queryClient } = initializeMocks());
   });
 
   afterEach(() => {
@@ -104,6 +106,10 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     const childType = cType === ContainerType.Section
       ? ContainerType.Subsection
       : ContainerType.Unit;
+    let typeNamespace = 'lct';
+    if (cType === ContainerType.Unit) {
+      typeNamespace = 'lb';
+    }
     it(`shows the spinner before the query is complete in ${cType} page`, async () => {
       // This mock will never return data about the collection (it loads forever):
       const cId = cType === ContainerType.Section
@@ -253,7 +259,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should rename child by clicking edit icon besides name in ${cType} page`, async () => {
-      const url = getLibraryContainerApiUrl(`lb:org1:Demo_course:${childType}:${childType}-0`);
+      const mockSetQueryData = jest.spyOn(queryClient, 'setQueryData');
+      const url = getLibraryContainerApiUrl(`${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-0`);
       axiosMock.onPatch(url).reply(200);
       renderLibrarySectionPage(undefined, undefined, cType);
 
@@ -282,10 +289,11 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       }));
       expect(textBox).not.toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledWith('Container updated successfully.');
+      expect(mockSetQueryData).toHaveBeenCalledTimes(1);
     });
 
     it(`should show error while updating child name in ${cType} page`, async () => {
-      const url = getLibraryContainerApiUrl(`lb:org1:Demo_course:${childType}:${childType}-0`);
+      const url = getLibraryContainerApiUrl(`${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-0`);
       axiosMock.onPatch(url).reply(400);
       renderLibrarySectionPage(undefined, undefined, cType);
 
@@ -326,7 +334,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
         .onPatch(getLibraryContainerChildrenApiUrl(cId))
         .reply(200);
       verticalSortableListCollisionDetection.mockReturnValue([{
-        id: `lb:org1:Demo_course:${childType}:${childType}-1----1`,
+        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
       }]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
@@ -344,7 +352,9 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       axiosMock
         .onPatch(getLibraryContainerChildrenApiUrl(cId))
         .reply(200);
-      verticalSortableListCollisionDetection.mockReturnValue([{ id: `lb:org1:Demo_course:${childType}:${childType}-1----1` }]);
+      verticalSortableListCollisionDetection.mockReturnValue([{
+        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
+      }]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
       });
@@ -361,7 +371,9 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       axiosMock
         .onPatch(getLibraryContainerChildrenApiUrl(cId))
         .reply(500);
-      verticalSortableListCollisionDetection.mockReturnValue([{ id: `lb:org1:Demo_course:${childType}:${childType}-1----1` }]);
+      verticalSortableListCollisionDetection.mockReturnValue([{
+        id: `${typeNamespace}:org1:Demo_course_generated:${childType}:${childType}-1----1`,
+      }]);
       await act(async () => {
         fireEvent.keyDown(firstDragHandle, { code: 'Space' });
       });
@@ -372,9 +384,9 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     it(`should open ${childType} page on double click`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
       const child = await screen.findByText(`${childType} block 0`);
-      // trigger double click
-      userEvent.click(child.parentElement!, undefined, { clickCount: 2 });
-      expect((await screen.findAllByText(new RegExp(`Test ${childType}`, 'i')))[0]).toBeInTheDocument();
+      // Trigger double click. Find the child card as the parent element
+      userEvent.click(child.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
+      expect((await screen.findAllByText(new RegExp(`${childType} block 0`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });
 
