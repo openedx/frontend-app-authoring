@@ -2,7 +2,7 @@
   &:not(:first-child) {
     padding-top: 1.875rem;
     margin-top: 1.875rem;
-    border-top: 1px solid $light-400;
+    border-top: 1px solid var(--pgn-color-light-400);
   }
 
   .course-update-header {
@@ -22,7 +22,7 @@
       gap: .25rem;
 
       svg {
-        color: $warning-300;
+        color: var(--pgn-color-warning-300);
       }
     }
 

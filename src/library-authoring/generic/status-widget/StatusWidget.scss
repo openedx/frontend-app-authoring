@@ -5,9 +5,9 @@
 }
 
 %published-status {
-  background-color: $info-100;
-  border-color: $info-400 !important;
-  color: $primary-500;
+  background-color: var(--pgn-color-info-100);
+  border-color: var(--pgn-color-info-400) !important;
+  color: var(--pgn-color-primary-500);
 }
 
 .status-widget {
