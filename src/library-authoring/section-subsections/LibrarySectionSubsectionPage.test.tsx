@@ -404,7 +404,10 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       fireEvent.click(tagCountButton);
 
       expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
-      expect(await screen.findByRole('tab', { name: /manage/i })).toHaveClass('active');
+      await waitFor(
+        () => expect(screen.getByRole('tab', { name: /manage/i })).toHaveClass('active'),
+        { timeout: 300 },
+      );
     });
   });
 });
