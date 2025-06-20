@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import VideoEditorModal from './VideoEditorModal';
 import { thunkActions } from '../../../data/redux';
 
@@ -17,6 +18,14 @@ jest.mock('../../../data/redux', () => ({
     },
   },
 }));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 describe('VideoUploader', () => {
   let store;
@@ -69,13 +78,15 @@ describe('VideoUploader', () => {
   const renderComponent = async () => render(
     <AppProvider store={store} wrapWithRouter={false}>
       <IntlProvider locale="en">
-        <MemoryRouter
-          initialEntries={[
-            '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
-          ]}
-        >
-          <VideoEditorModal isLibrary={false} />
-        </MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter
+            initialEntries={[
+              '/some/path?selectedVideoId=id_1&selectedVideoUrl=https://video.com',
+            ]}
+          >
+            <VideoEditorModal isLibrary={false} />
+          </MemoryRouter>
+        </QueryClientProvider>
       </IntlProvider>
     </AppProvider>,
   );
