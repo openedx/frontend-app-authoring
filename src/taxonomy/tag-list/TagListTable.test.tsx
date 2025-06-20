@@ -12,11 +12,11 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../../store';
 import TagListTable from './TagListTable';
 
-let store;
-let axiosMock;
+let store: any;
+let axiosMock: MockAdapter;
 const queryClient = new QueryClient();
 
-const RootWrapper = () => (
+const RootWrapper: React.FC = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -84,6 +84,7 @@ const subTagsResponse = {
       depth: 1,
       value: 'the child tag',
       child_count: 0,
+      descendant_count: 0,
       _id: 1111,
       sub_tags_url: null,
     },
@@ -110,8 +111,8 @@ describe('<TagListTable />', () => {
 
   it('shows the spinner before the query is complete', async () => {
     // Simulate an actual slow response from the API:
-    let resolveResponse;
-    const promise = new Promise(resolve => { resolveResponse = resolve; });
+    let resolveResponse!: (value: [number, any]) => void;
+    const promise = new Promise<[number, any]>(resolve => { resolveResponse = resolve; });
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
     render(<RootWrapper />);
     const spinner = screen.getByRole('status');

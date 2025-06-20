@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useCallback, useState } from 'react';
 import {
   ActionRow,
@@ -8,12 +7,19 @@ import {
   ModalDialog,
   Icon,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Warning } from '@openedx/paragon/icons';
 import messages from './messages';
 
-const DeleteDialog = ({
+interface DeleteDialogProps {
+  taxonomyName: string;
+  tagsCount: number;
+  isOpen: boolean;
+  onClose: () => void;
+  onDelete: () => void;
+}
+
+const DeleteDialog: React.FC<DeleteDialogProps> = ({
   taxonomyName,
   tagsCount,
   isOpen,
@@ -24,13 +30,13 @@ const DeleteDialog = ({
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(true);
   const deleteLabel = intl.formatMessage(messages.deleteDialogConfirmDeleteLabel);
 
-  const handleInputChange = useCallback((event) => {
+  const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === deleteLabel) {
       setDeleteButtonDisabled(false);
     } else {
       setDeleteButtonDisabled(true);
     }
-  }, []);
+  }, [deleteLabel]);
 
   const onClickDelete = React.useCallback(() => {
     onClose();
@@ -88,14 +94,6 @@ const DeleteDialog = ({
       </ModalDialog>
     </Container>
   );
-};
-
-DeleteDialog.propTypes = {
-  taxonomyName: PropTypes.string.isRequired,
-  tagsCount: PropTypes.number.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default DeleteDialog;

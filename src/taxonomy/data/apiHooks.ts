@@ -157,7 +157,7 @@ export const useImportTags = () => {
  * @param taxonomyId The ID of the taxonomy whose tags we're updating.
  * @param file The file that we want to import
  */
-export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery({
+export const useImportPlan = (taxonomyId: number | undefined, file: File | null) => useQuery({
   queryKey: taxonomyQueryKeys.importPlan(taxonomyId, file ? `${file.name}${file.lastModified}${file.size}` : ''),
   queryFn: async (): Promise<string | null> => {
     if (!taxonomyId || file === null) {
