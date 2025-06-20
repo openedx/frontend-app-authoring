@@ -45,6 +45,26 @@ import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxon
 const config = {
     ...process.env,
     pluginSlots: {
+        'org.openedx.frontend.layout.studio_footer.v1': {
+          plugins: [
+            {
+              // Hide the default footer
+              op: PLUGIN_OPERATIONS.Hide,
+              widgetId: 'default_contents',
+            },
+            {
+              // Insert a custom footer
+              op: PLUGIN_OPERATIONS.Insert,
+              widget: {
+                id: 'custom_footer',
+                type: DIRECT_PLUGIN,
+                RenderWidget: () => (
+                  <h1 style={{textAlign: 'center'}}>🦶</h1>
+                ),
+              },
+            },
+          ]
+        },
         header_plugin_slot: {
             plugins: [
                 {
