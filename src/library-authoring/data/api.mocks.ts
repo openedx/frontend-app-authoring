@@ -257,6 +257,28 @@ mockRestoreLibraryBlock.applyMock = () => (
 );
 
 /**
+ * Mock for `deleteContainer()`
+ */
+export async function mockDeleteContainer(): ReturnType<typeof api.deleteContainer> {
+  // no-op
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockDeleteContainer.applyMock = () => (
+  jest.spyOn(api, 'deleteContainer').mockImplementation(mockDeleteContainer)
+);
+
+/**
+ * Mock for `restoreContainer()`
+ */
+export async function mockRestoreContainer(): ReturnType<typeof api.restoreContainer> {
+  // no-op
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockRestoreContainer.applyMock = () => (
+  jest.spyOn(api, 'restoreContainer').mockImplementation(mockRestoreContainer)
+);
+
+/**
  * Mock for `getXBlockFields()`
  *
  * This mock returns different data/responses depending on the ID of the block
@@ -751,13 +773,13 @@ export async function mockGetEntityLinks(
 ): ReturnType<typeof courseLibApi.getEntityLinks> {
   const thisMock = mockGetEntityLinks;
   switch (upstreamUsageKey) {
-    case thisMock.upstreamUsageKey: return thisMock.response;
+    case thisMock.upstreamContainerKey: return thisMock.response;
     case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
     case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
     default: return [];
   }
 }
-mockGetEntityLinks.upstreamUsageKey = mockLibraryBlockMetadata.usageKeyPublished;
+mockGetEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
 mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
   id: 875,
   upstreamContextTitle: 'CS problems 3',
@@ -779,3 +801,115 @@ mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
   'getEntityLinks',
 ).mockImplementation(mockGetEntityLinks);
+
+export async function mockGetContainerEntityLinks(
+  _downstreamContextKey?: string,
+  _readyToSync?: boolean,
+  upstreamContainerKey?: string,
+): ReturnType<typeof courseLibApi.getContainerEntityLinks> {
+  const thisMock = mockGetContainerEntityLinks;
+  switch (upstreamContainerKey) {
+    case thisMock.unitKey: return thisMock.unitResponse;
+    case thisMock.subsectionKey: return thisMock.subsectionResponse;
+    case thisMock.sectionKey: return thisMock.sectionResponse;
+    default: return [];
+  }
+}
+mockGetContainerEntityLinks.unitKey = mockGetContainerMetadata.unitId;
+mockGetContainerEntityLinks.unitResponse = [
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-key',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-key-1',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+];
+mockGetContainerEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
+mockGetContainerEntityLinks.subsectionResponse = [
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-subsection-key',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-subsection-key-1',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+];
+mockGetContainerEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
+mockGetContainerEntityLinks.sectionResponse = [
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-section-key',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+  {
+    id: 1,
+    upstreamContextTitle: 'CS problems 3',
+    upstreamVersion: 1,
+    readyToSync: false,
+    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamContextKey: 'lib:Axim:TEST2',
+    downstreamUsageKey: 'some-section-key-1',
+    downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+    versionSynced: 1,
+    versionDeclined: null,
+    created: '2025-02-08T14:07:05.588484Z',
+    updated: '2025-02-08T14:07:05.588484Z',
+  },
+];
+
+mockGetContainerEntityLinks.applyMock = () => jest.spyOn(
+  courseLibApi,
+  'getContainerEntityLinks',
+).mockImplementation(mockGetContainerEntityLinks);
