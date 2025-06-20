@@ -5,7 +5,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
   fontSize=""
   subtitle={
     <div>
-      <injectIntl(ShimmedIntlComponent)
+      <LicenseBlurb
         details={{}}
         license="all-rights-reserved"
       />
@@ -73,7 +73,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
   fontSize=""
   subtitle={
     <div>
-      <injectIntl(ShimmedIntlComponent)
+      <LicenseBlurb
         details={{}}
         license="all-rights-reserved"
       />
@@ -124,7 +124,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
   fontSize=""
   subtitle={
     <div>
-      <injectIntl(ShimmedIntlComponent)
+      <LicenseBlurb
         details={{}}
         license="all-rights-reserved"
       />

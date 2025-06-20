@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import SettingsOption from '../../SettingsOption';
 import messages from './messages';
 import { groupFeedbackCardHooks, groupFeedbackRowHooks } from './hooks';
@@ -11,9 +11,8 @@ const GroupFeedbackCard = ({
   groupFeedbacks,
   updateSettings,
   answers,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const { summary, handleAdd } = groupFeedbackCardHooks(groupFeedbacks, updateSettings, answers);
   return (
     <SettingsOption
@@ -47,7 +46,6 @@ const GroupFeedbackCard = ({
 };
 
 GroupFeedbackCard.propTypes = {
-  intl: intlShape.isRequired,
   groupFeedbacks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     feedback: PropTypes.string.isRequired,
@@ -63,5 +61,4 @@ GroupFeedbackCard.propTypes = {
   updateSettings: PropTypes.func.isRequired,
 };
 
-export const GroupFeedbackCardInternal = GroupFeedbackCard; // For testing only
-export default injectIntl(GroupFeedbackCard);
+export default GroupFeedbackCard;
