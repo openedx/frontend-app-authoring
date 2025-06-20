@@ -379,12 +379,12 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });
 
-    it(`${cType} sidebar should render "new ${childType}" and "existing library content" buttons`, async () => {
+    it(`${cType} sidebar should render "new ${childType}" and "existing ${childType}" buttons`, async () => {
       renderLibrarySectionPage(undefined, undefined, cType);
       const addChild = await screen.findByRole('button', { name: new RegExp(`add ${childType}`, 'i') });
       userEvent.click(addChild);
-      const addNew = await screen.findByRole('button', { name: new RegExp(`^${childType}$`, 'i') });
-      const addExisting = await screen.findByRole('button', { name: /existing library content/i });
+      const addNew = await screen.findByRole('button', { name: new RegExp(`^new ${childType}$`, 'i') });
+      const addExisting = await screen.findByRole('button', { name: new RegExp(`^existing ${childType}$`, 'i') });
 
       // Clicking "add new" shows create container modal (tested below)
       userEvent.click(addNew);

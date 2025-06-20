@@ -31,7 +31,7 @@ import { blockTypes } from '../../editors/data/constants/app';
 
 import { useLibraryRoutes } from '../routes';
 import genericMessages from '../generic/messages';
-import messages from './messages';
+import { messages, getContentMessages } from './messages';
 import type { BlockTypeMetadata } from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
@@ -96,11 +96,15 @@ const AddContentView = ({
     insideSubsection,
   } = useLibraryRoutes();
 
+  const contentMessages = useMemo(() => (
+    getContentMessages(insideSection, insideSubsection, insideUnit)
+  ), [insideSection, insideSubsection, insideUnit]);
+
   const collectionButton = (
     <AddContentButton
       key="collection"
       contentType={{
-        name: intl.formatMessage(messages.collectionButton),
+        name: intl.formatMessage(contentMessages.collectionButton),
         blockType: 'collection',
       }}
       onCreateContent={onCreateContent}
@@ -111,7 +115,7 @@ const AddContentView = ({
     <AddContentButton
       key="unit"
       contentType={{
-        name: intl.formatMessage(messages.unitButton),
+        name: intl.formatMessage(contentMessages.unitButton),
         blockType: 'unit',
       }}
       onCreateContent={onCreateContent}
@@ -122,7 +126,7 @@ const AddContentView = ({
     <AddContentButton
       key="section"
       contentType={{
-        name: intl.formatMessage(messages.sectionButton),
+        name: intl.formatMessage(contentMessages.sectionButton),
         blockType: 'section',
       }}
       onCreateContent={onCreateContent}
@@ -133,7 +137,7 @@ const AddContentView = ({
     <AddContentButton
       key="subsection"
       contentType={{
-        name: intl.formatMessage(messages.subsectionButton),
+        name: intl.formatMessage(contentMessages.subsectionButton),
         blockType: 'subsection',
       }}
       onCreateContent={onCreateContent}
@@ -144,7 +148,7 @@ const AddContentView = ({
     <AddContentButton
       key="libraryContent"
       contentType={{
-        name: intl.formatMessage(messages.libraryContentButton),
+        name: intl.formatMessage(contentMessages.libraryContentButton),
         blockType: 'libraryContent',
       }}
       onCreateContent={onCreateContent}
