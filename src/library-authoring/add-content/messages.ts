@@ -1,6 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
-const messages = defineMessages({
+export const messages = defineMessages({
   collectionButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.collection',
     defaultMessage: 'Collection',
@@ -24,29 +24,19 @@ const messages = defineMessages({
   libraryContentButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.library-content',
     defaultMessage: 'Existing Library Content',
-    description: 'Content of button to add existing library content to a collection.',
+    description: 'Content of button to add existing library content to a collection or container.',
   },
-  addToCollectionButton: {
+  addToButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-collection',
     defaultMessage: 'Add to Collection',
     description: 'Button to add library content to a collection.',
   },
-  addToUnitButton: {
-    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-unit',
-    defaultMessage: 'Add to Unit',
-    description: 'Button to add library content to a unit.',
+  selectContentTitle: {
+    id: 'course-authoring.library-authoring.add-content.select-components',
+    defaultMessage: 'Select components',
+    description: 'Title for the content picker when selecting components in library.',
   },
-  addToSectionButton: {
-    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-section',
-    defaultMessage: 'Add to Section',
-    description: 'Button to add library content to a section.',
-  },
-  addToSubsectionButton: {
-    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-subsection',
-    defaultMessage: 'Add to Subsection',
-    description: 'Button to add library content to a subsection.',
-  },
-  selectedComponents: {
+  selectedContent: {
     id: 'course-authoring.library-authoring.add-content.selected-components',
     defaultMessage: '{count, plural, one {# Selected Component} other {# Selected Components}}',
     description: 'Title for selected components in library.',
@@ -153,5 +143,98 @@ const messages = defineMessages({
     description: 'Messag of button in advanced creation view to return to the main creation view.',
   },
 });
+
+export const unitMessages = defineMessages({
+  addToButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-unit',
+    defaultMessage: 'Add to Unit',
+    description: 'Button to add library content to a unit.',
+  },
+});
+
+export const subsectionMessages = defineMessages({
+  unitButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.new-unit',
+    defaultMessage: 'New Unit',
+    description: 'Content of button to create a new Unit in a Subsection.',
+  },
+  libraryContentButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-unit',
+    defaultMessage: 'Existing Unit',
+    description: 'Content of button to add an existing Unit to a Subsection.',
+  },
+  addToButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-subsection',
+    defaultMessage: 'Add to Subsection',
+    description: 'Button to add Units to a Subsection.',
+  },
+  selectContentTitle: {
+    id: 'course-authoring.library-authoring.add-content.select-units',
+    defaultMessage: 'Select units',
+    description: 'Title for the content picker when selecting units in library.',
+  },
+  selectedContent: {
+    id: 'course-authoring.library-authoring.add-content.selected-units',
+    defaultMessage: '{count, plural, one {# Selected Unit} other {# Selected Units}}',
+    description: 'Title for selected units in library.',
+  },
+});
+
+export const sectionMessages = defineMessages({
+  subsectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.new-subsection',
+    defaultMessage: 'New Subsection',
+    description: 'Content of button to create a new Subsection in a Section.',
+  },
+  libraryContentButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-subsection',
+    defaultMessage: 'Existing Subsection',
+    description: 'Content of button to add an existing Subsection to a Section.',
+  },
+  addToButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-section',
+    defaultMessage: 'Add to Section',
+    description: 'Button to add library content to a section.',
+  },
+  selectContentTitle: {
+    id: 'course-authoring.library-authoring.add-content.select-subsections',
+    defaultMessage: 'Select subsections',
+    description: 'Title for the content picker when selecting subsections in library.',
+  },
+  selectedContent: {
+    id: 'course-authoring.library-authoring.add-content.selected-subsections',
+    defaultMessage: '{count, plural, one {# Selected Subsections} other {# Selected Subsections}}',
+    description: 'Title for selected subsections in library.',
+  },
+});
+
+/*
+ * Returns the appropriate message set for the given route conditions.
+ */
+export const getContentMessages = (
+  insideSection: boolean,
+  insideSubsection: boolean,
+  insideUnit: boolean,
+) => {
+  if (insideSection) {
+    return {
+      ...messages,
+      ...sectionMessages,
+    };
+  }
+  if (insideSubsection) {
+    return {
+      ...messages,
+      ...subsectionMessages,
+    };
+  }
+  if (insideUnit) {
+    return {
+      ...messages,
+      ...unitMessages,
+    };
+  }
+  return messages;
+};
 
 export default messages;

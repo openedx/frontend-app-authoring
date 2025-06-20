@@ -9,7 +9,6 @@ import {
   useLocation,
   useNavigate,
   useSearchParams,
-  type PathMatch,
 } from 'react-router-dom';
 import { ContainerType, getBlockType } from '../generic/key-utils';
 
@@ -62,15 +61,15 @@ export type NavigateToData = {
 };
 
 export type LibraryRoutesData = {
-  insideCollection: PathMatch<string> | null;
-  insideCollections: PathMatch<string> | null;
-  insideComponents: PathMatch<string> | null;
-  insideSections: PathMatch<string> | null;
-  insideSection: PathMatch<string> | null;
-  insideSubsections: PathMatch<string> | null;
-  insideSubsection: PathMatch<string> | null;
-  insideUnits: PathMatch<string> | null;
-  insideUnit: PathMatch<string> | null;
+  insideCollection: boolean;
+  insideCollections: boolean;
+  insideComponents: boolean;
+  insideSections: boolean;
+  insideSection: boolean;
+  insideSubsections: boolean;
+  insideSubsection: boolean;
+  insideUnits: boolean;
+  insideUnit: boolean;
 
   /** Navigate using the best route from the current location for the given parameters.
    *  This function can be mutated if there are changes in the current route, so always include
@@ -85,15 +84,17 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
-  const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
-  const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
-  const insideSections = matchPath(BASE_ROUTE + ROUTES.SECTIONS, pathname);
-  const insideSection = matchPath(BASE_ROUTE + ROUTES.SECTION, pathname);
-  const insideSubsections = matchPath(BASE_ROUTE + ROUTES.SUBSECTIONS, pathname);
-  const insideSubsection = matchPath(BASE_ROUTE + ROUTES.SUBSECTION, pathname);
-  const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
-  const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname);
+  // Convert the returned PathMatch<string> | null values to PathMatch<string> | false
+  // to make it easier to return them as booleans below.
+  const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname) || false;
+  const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname) || false;
+  const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname) || false;
+  const insideSections = matchPath(BASE_ROUTE + ROUTES.SECTIONS, pathname) || false;
+  const insideSection = matchPath(BASE_ROUTE + ROUTES.SECTION, pathname) || false;
+  const insideSubsections = matchPath(BASE_ROUTE + ROUTES.SUBSECTIONS, pathname) || false;
+  const insideSubsection = matchPath(BASE_ROUTE + ROUTES.SUBSECTION, pathname) || false;
+  const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname) || false;
+  const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname) || false;
 
   // Sanity check to ensure that we are not inside more than one route at the same time.
   // istanbul ignore if: this is a developer error, not a user error.
@@ -108,7 +109,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       insideSubsection,
       insideUnits,
       insideUnit,
-    ].filter((match): match is PathMatch<string> => match !== null).length > 1) {
+    ].filter((match) => match).length > 1) {
     throw new Error('Cannot be inside more than one route at the same time.');
   }
 
@@ -247,15 +248,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
 
   return useMemo(() => ({
     navigateTo,
-    insideCollection,
-    insideCollections,
-    insideComponents,
-    insideSections,
-    insideSection,
-    insideSubsections,
-    insideSubsection,
-    insideUnits,
-    insideUnit,
+    insideCollection: !!insideCollection,
+    insideCollections: !!insideCollections,
+    insideComponents: !!insideComponents,
+    insideSections: !!insideSections,
+    insideSection: !!insideSection,
+    insideSubsections: !!insideSubsections,
+    insideSubsection: !!insideSubsection,
+    insideUnits: !!insideUnits,
+    insideUnit: !!insideUnit,
   }), [
     navigateTo,
     insideCollection,

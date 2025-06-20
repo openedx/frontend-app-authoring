@@ -298,14 +298,16 @@ const LibraryAuthoringPage = ({
               headerActions={<HeaderActions />}
               hideBorder
             />
-            <Tabs
-              variant="tabs"
-              activeKey={activeKey}
-              onSelect={handleTabChange}
-              className="my-3"
-            >
-              {visibleTabsToRender}
-            </Tabs>
+            {visibleTabs.length > 1 && (
+              <Tabs
+                variant="tabs"
+                activeKey={activeKey}
+                onSelect={handleTabChange}
+                className="my-3"
+              >
+                {visibleTabsToRender}
+              </Tabs>
+            )}
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />

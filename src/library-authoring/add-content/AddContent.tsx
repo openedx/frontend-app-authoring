@@ -31,13 +31,13 @@ import { blockTypes } from '../../editors/data/constants/app';
 
 import { useLibraryRoutes } from '../routes';
 import genericMessages from '../generic/messages';
-import messages from './messages';
+import { messages, getContentMessages } from './messages';
 import type { BlockTypeMetadata } from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
-  disabled: boolean,
+  disabled?: boolean,
   icon?: React.ComponentType,
   blockType: string,
 };
@@ -64,7 +64,7 @@ type AddAdvancedContentViewProps = {
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
   const {
     name,
-    disabled,
+    disabled = false,
     icon,
     blockType,
   } = contentType;
@@ -96,96 +96,131 @@ const AddContentView = ({
     insideSubsection,
   } = useLibraryRoutes();
 
-  const collectionButtonData = {
-    name: intl.formatMessage(messages.collectionButton),
-    disabled: false,
-    blockType: 'collection',
-  };
+  const contentMessages = useMemo(() => (
+    getContentMessages(insideSection, insideSubsection, insideUnit)
+  ), [insideSection, insideSubsection, insideUnit]);
 
-  const unitButtonData = {
-    name: intl.formatMessage(messages.unitButton),
-    disabled: false,
-    blockType: 'vertical',
-  };
+  const collectionButton = (
+    <AddContentButton
+      key="collection"
+      contentType={{
+        name: intl.formatMessage(contentMessages.collectionButton),
+        blockType: 'collection',
+      }}
+      onCreateContent={onCreateContent}
+    />
+  );
 
-  const sectionButtonData = {
-    name: intl.formatMessage(messages.sectionButton),
-    disabled: false,
-    blockType: 'chapter',
-  };
+  const unitButton = (
+    <AddContentButton
+      key="unit"
+      contentType={{
+        name: intl.formatMessage(contentMessages.unitButton),
+        blockType: 'unit',
+      }}
+      onCreateContent={onCreateContent}
+    />
+  );
 
-  const subsectionButtonData = {
-    name: intl.formatMessage(messages.subsectionButton),
-    disabled: false,
-    blockType: 'sequential',
-  };
+  const sectionButton = (
+    <AddContentButton
+      key="section"
+      contentType={{
+        name: intl.formatMessage(contentMessages.sectionButton),
+        blockType: 'section',
+      }}
+      onCreateContent={onCreateContent}
+    />
+  );
 
-  const libraryContentButtonData = {
-    name: intl.formatMessage(messages.libraryContentButton),
-    disabled: false,
-    blockType: 'libraryContent',
-  };
+  const subsectionButton = (
+    <AddContentButton
+      key="subsection"
+      contentType={{
+        name: intl.formatMessage(contentMessages.subsectionButton),
+        blockType: 'subsection',
+      }}
+      onCreateContent={onCreateContent}
+    />
+  );
 
-  /** List container content types that should be displayed based on current path */
-  const visibleContentTypes = useMemo(() => {
+  const existingContentButton = (
+    <AddContentButton
+      key="libraryContent"
+      contentType={{
+        name: intl.formatMessage(contentMessages.libraryContentButton),
+        blockType: 'libraryContent',
+      }}
+      onCreateContent={onCreateContent}
+    />
+  );
+
+  /* Note: for MVP we are hiding the unsupported types, not just disabling them. */
+  const componentButtons = contentTypes.filter(ct => !ct.disabled).map((contentType) => (
+    <AddContentButton
+      key={`add-content-${contentType.blockType}`}
+      contentType={contentType}
+      onCreateContent={onCreateContent}
+    />
+  ));
+  const separator = (
+    <hr className="w-100 bg-gray-500" />
+  );
+
+  /** List buttons that should be displayed based on current path */
+  const visibleButtons = useMemo(() => {
     if (insideCollection) {
-      // except for add collection button, show everthing.
+      // except for add collection button, show everything.
       return [
-        libraryContentButtonData,
-        sectionButtonData,
-        subsectionButtonData,
-        unitButtonData,
+        existingContentButton,
+        sectionButton,
+        subsectionButton,
+        unitButton,
+        separator,
+        ...componentButtons,
       ];
     }
     if (insideUnit) {
-      // Only show libraryContentButton
-      return [libraryContentButtonData];
+      // Only show existing content button + component buttons
+      return [
+        existingContentButton,
+        separator,
+        ...componentButtons,
+      ];
     }
     if (insideSection) {
-      // Should only allow adding subsections
-      return [subsectionButtonData];
+      // Only allow adding subsections
+      return [
+        existingContentButton,
+        subsectionButton,
+      ];
     }
     if (insideSubsection) {
-      // Should only allow adding units
-      return [unitButtonData];
+      // Only allow adding units
+      return [
+        existingContentButton,
+        unitButton,
+      ];
     }
-    // except for libraryContentButton, show everthing.
+    // except for existing content, show everything.
     return [
-      collectionButtonData,
-      sectionButtonData,
-      subsectionButtonData,
-      unitButtonData,
+      collectionButton,
+      sectionButton,
+      subsectionButton,
+      unitButton,
+      separator,
+      ...componentButtons,
     ];
-  }, [insideCollection, insideUnit, insideSection, insideSubsection]);
+  }, [componentButtons, insideCollection, insideUnit, insideSection, insideSubsection]);
 
   return (
     <>
-      {visibleContentTypes.map((contentType) => (
-        <AddContentButton
-          key={contentType.blockType}
-          contentType={contentType}
-          onCreateContent={onCreateContent}
-        />
-      ))}
-      {componentPicker && visibleContentTypes.includes(libraryContentButtonData) && (
-        /// Show the "Add Library Content" button for units and collections
+      {visibleButtons}
+      {componentPicker && visibleButtons.includes(existingContentButton) && (
         <PickLibraryContentModal
           isOpen={isAddLibraryContentModalOpen}
           onClose={closeAddLibraryContentModal}
         />
-      )}
-      {(!insideSection && !insideSubsection) && (
-        <>
-          <hr className="w-100 bg-gray-500" />
-          {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
-          {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
-            <AddContentButton
-              key={`add-content-${contentType.blockType}`}
-              contentType={contentType}
-              onCreateContent={onCreateContent}
-            />
-          ))}
-        </>
       )}
     </>
   );
@@ -423,9 +458,9 @@ const AddContent = () => {
     } else if (blockType === 'advancedXBlock') {
       showAdvancedList();
     } else if ([
-      ContainerType.Vertical,
-      ContainerType.Chapter,
-      ContainerType.Sequential,
+      ContainerType.Unit,
+      ContainerType.Subsection,
+      ContainerType.Section,
     ].includes(blockType as ContainerType)) {
       setCreateContainerModalType(blockType as ContainerType);
     } else {
