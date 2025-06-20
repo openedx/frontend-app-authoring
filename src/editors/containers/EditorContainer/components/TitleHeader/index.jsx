@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Icon, IconButton, Truncate } from '@openedx/paragon';
 import { EditOutline } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../../../data/redux';
 import { localTitleHooks } from './hooks';
@@ -13,10 +13,9 @@ import EditableHeader from './EditableHeader';
 
 const TitleHeader = ({
   isInitialized,
-  // injected
-  intl,
 }) => {
-  if (!isInitialized) { return intl.formatMessage(messages.loading); }
+  const intl = useIntl();
+  if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -66,9 +65,6 @@ const TitleHeader = ({
 TitleHeader.defaultProps = {};
 TitleHeader.propTypes = {
   isInitialized: PropTypes.bool.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export const TitleHeaderInternal = TitleHeader; // For testing only
-export default injectIntl(TitleHeader);
+export default TitleHeader;
