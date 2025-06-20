@@ -2,6 +2,9 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
+import { render, waitFor } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import userEvent from '@testing-library/user-event';
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -18,6 +21,9 @@ jest.mock('react-redux', () => {
     useDispatch: jest.fn(() => dispatchFn),
   };
 });
+
+const deleteFallbackVideoMock = jest.fn();
+const updateVideoURLMock = jest.fn();
 
 jest.mock('../hooks', () => ({
   selectorKeys: ['soMEkEy'],
@@ -38,18 +44,18 @@ jest.mock('../hooks', () => ({
 jest.mock('./hooks', () => ({
   videoIdChangeAlert: jest.fn().mockReturnValue({
     videoIdChangeAlert: {
-      set: (args) => ({ set: args }),
+      set: jest.fn(),
       show: false,
-      dismiss: (args) => ({ dismiss: args }),
+      dismiss: jest.fn(),
     },
   }),
   sourceHooks: jest.fn().mockReturnValue({
-    updateVideoId: (args) => ({ updateVideoId: args }),
-    updateVideoURL: jest.fn().mockName('updateVideoURL'),
+    updateVideoId: jest.fn(),
+    updateVideoURL: updateVideoURLMock,
   }),
   fallbackHooks: jest.fn().mockReturnValue({
-    addFallbackVideo: jest.fn().mockName('addFallbackVideo'),
-    deleteFallbackVideo: jest.fn().mockName('deleteFallbackVideo'),
+    addFallbackVideo: jest.fn(),
+    deleteFallbackVideo: deleteFallbackVideoMock,
   }),
 }));
 
@@ -107,6 +113,24 @@ describe('VideoSourceWidget', () => {
       expect(control.props.floatingLabel).toEqual('Video URL');
       control.props.onBlur('onBlur event');
       expect(hook.updateVideoURL).toHaveBeenCalledWith('onBlur event', '');
+    });
+
+    test('deleteFallbackVideo is called on button click', async () => {
+      const { getByTestId } = render(
+        <IntlProvider locale="en">
+          <VideoSourceWidget
+            {...props}
+            fallbackHooks={{ deleteFallbackVideo: deleteFallbackVideoMock }}
+          />
+        </IntlProvider>,
+      );
+
+      const deleteButton = getByTestId('delete-fallback-video');
+      await userEvent.click(deleteButton);
+
+      await waitFor(() => {
+        expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
+      });
     });
   });
 
