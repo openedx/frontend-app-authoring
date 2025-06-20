@@ -24,7 +24,8 @@ import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { ContainerMenu } from '../components/ContainerCard';
 import { useLibraryRoutes } from '../routes';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { useRunOnNextRender } from '../../utils';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -45,6 +46,8 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = useLibraryContext();
+  const { navigateTo } = useLibraryRoutes();
+  const { setSidebarAction } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -55,6 +58,18 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
     } catch (err) {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
     }
+  };
+
+  /* istanbul ignore next */
+  const scheduleJumpToTags = useRunOnNextRender(() => {
+    // TODO: Ugly hack to make sure sidebar shows manage tags section
+    // This needs to run after all changes to url takes place to avoid conflicts.
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
+  });
+
+  const jumpToManageTags = () => {
+    navigateTo({ selectedItemId: container.originalId });
+    scheduleJumpToTags();
   };
 
   return (
@@ -90,7 +105,11 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
             </Stack>
           </Badge>
         )}
-        <TagCount size="sm" count={container.tagsCount} />
+        <TagCount
+          size="sm"
+          count={container.tagsCount}
+          onClick={readOnly ? undefined : jumpToManageTags}
+        />
         {!readOnly && (
           <ContainerMenu
             containerKey={container.originalId}
