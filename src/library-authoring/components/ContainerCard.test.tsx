@@ -432,7 +432,6 @@ describe('<ContainerCard />', () => {
       { type: parentType, id: parentId },
     );
 
-
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
     userEvent.click(screen.getByTestId('container-card-menu-toggle'));
