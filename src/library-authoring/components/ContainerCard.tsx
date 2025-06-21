@@ -23,6 +23,7 @@ import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
+import ContainerRemover from './ContainerRemover';
 import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
@@ -32,28 +33,43 @@ type ContainerMenuProps = {
 
 export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { libraryId, collectionId } = useLibraryContext();
+  const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const [isConfirmingRemove, confirmRemove, cancelRemove] = useToggle(false);
+  const {
+    navigateTo,
+    insideCollection,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
-  const removeFromCollection = () => {
+  const handleRemoveFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
       if (sidebarItemInfo?.id === containerKey) {
-        // Close sidebar if current component is open
+      // Close sidebar if current component is open
         closeLibrarySidebar();
       }
       showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
     });
+  };
+
+  const handleRemove = () => {
+    if (insideCollection) {
+      handleRemoveFromCollection();
+    } else if (insideSection || insideSubsection) {
+      confirmRemove();
+    }
   };
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
@@ -70,6 +86,8 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   const openContainer = useCallback(() => {
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
+
+  const parentContainerType = containerId ? getBlockType(containerId) : 'collection';
 
   return (
     <>
@@ -90,9 +108,15 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
-          {insideCollection && (
-            <Dropdown.Item onClick={removeFromCollection}>
-              <FormattedMessage {...messages.menuRemoveFromCollection} />
+          {(insideCollection || insideSection || insideSubsection) && (
+            <Dropdown.Item onClick={handleRemove}>
+              <FormattedMessage
+                id={messages.menuRemoveFromContainer.id}
+                defaultMessage={messages.menuRemoveFromContainer.defaultMessage}
+                values={{
+                  containerType: parentContainerType,
+                }}
+              />
             </Dropdown.Item>
           )}
           <Dropdown.Item onClick={showManageCollections}>
@@ -104,6 +128,12 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
         isOpen={isConfirmingDelete}
         close={cancelDelete}
         containerId={containerKey}
+        displayName={displayName}
+      />
+      <ContainerRemover
+        isOpen={isConfirmingRemove}
+        close={cancelRemove}
+        containerKey={containerKey}
         displayName={displayName}
       />
     </>

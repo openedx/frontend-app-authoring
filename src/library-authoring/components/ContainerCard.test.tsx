@@ -6,10 +6,10 @@ import {
   fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { mockContentLibrary } from '../data/api.mocks';
+import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
-import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl, getLibraryContainerChildrenApiUrl } from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
 let axiosMock: MockAdapter;
@@ -50,18 +50,31 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
-  path: '/library/:libraryId',
-  params: { libraryId },
-  extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      showOnlyPublished={showOnlyPublished}
-    >
-      {children}
-    </LibraryProvider>
-  ),
-});
+const render = (
+  ui: React.ReactElement,
+  showOnlyPublished: boolean = false,
+  containerContext?: { type: ContainerType, id: string },
+) => {
+  const path = containerContext
+    ? `/library/:libraryId/${containerContext.type}/:containerId`
+    : '/library/:libraryId';
+  const params: Record<string, string> = containerContext
+    ? { libraryId, containerId: containerContext.id }
+    : { libraryId };
+
+  return baseRender(ui, {
+    path,
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+        showOnlyPublished={showOnlyPublished}
+      >
+        {children}
+      </LibraryProvider>
+    ),
+  });
+};
 
 describe('<ContainerCard />', () => {
   beforeEach(() => {
@@ -386,5 +399,56 @@ describe('<ContainerCard />', () => {
 
     expect(screen.getByText(displayName)).toBeInTheDocument();
     expect(screen.queryByText(/contains/i)).not.toBeInTheDocument();
+  });
+
+  test.each([
+    {
+      label: 'should be able to remove unit from subsection menu item',
+      containerType: ContainerType.Unit,
+      parentType: ContainerType.Subsection,
+      parentId: mockGetContainerMetadata.subsectionId,
+      expectedRemoveText: 'Remove from subsection',
+    },
+    {
+      label: 'should be able to remove subsection from section menu item',
+      containerType: ContainerType.Subsection,
+      parentType: ContainerType.Section,
+      parentId: mockGetContainerMetadata.sectionId,
+      expectedRemoveText: 'Remove from section',
+    },
+  ])('$label', async ({
+    containerType, parentType, parentId, expectedRemoveText,
+  }) => {
+    const containerHit = getContainerHitSample(containerType);
+    axiosMock.onDelete(getLibraryContainerChildrenApiUrl(parentId)).reply(200);
+    axiosMock.onGet(getLibraryContainerApiUrl(parentId)).reply(200, {
+      containerType: parentType,
+      displayName: 'Parent Container Display Name',
+    });
+
+    render(
+      <ContainerCard hit={containerHit} />,
+      false,
+      { type: parentType, id: parentId },
+    );
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Remove Item
+    const removeMenuItem = await screen.findByRole('button', { name: expectedRemoveText });
+    expect(removeMenuItem).toBeInTheDocument();
+    fireEvent.click(removeMenuItem);
+
+    // Confirm remove Modal is open
+    expect(await screen.findByText(/will not delete it from the library/i)).toBeInTheDocument();
+    const removeButton = screen.getByRole('button', { name: /remove/i });
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalled();
   });
 });
