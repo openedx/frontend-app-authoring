@@ -407,14 +407,14 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Unit,
       parentType: ContainerType.Subsection,
       parentId: mockGetContainerMetadata.subsectionId,
-      expectedRemoveText: 'Remove from Subsection',
+      expectedRemoveText: 'Remove from subsection',
     },
     {
       label: 'should be able to remove subsection from section menu item',
       containerType: ContainerType.Subsection,
       parentType: ContainerType.Section,
       parentId: mockGetContainerMetadata.sectionId,
-      expectedRemoveText: 'Remove from Section',
+      expectedRemoveText: 'Remove from section',
     },
   ])('$label', async ({
     containerType, parentType, parentId, expectedRemoveText,

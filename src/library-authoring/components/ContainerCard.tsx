@@ -10,7 +10,6 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
-import { capitalize } from 'lodash';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
@@ -88,6 +87,8 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
+  const parentContainerType = containerId ? getBlockType(containerId) : 'collection';
+
   return (
     <>
       <Dropdown id="container-card-dropdown">
@@ -113,7 +114,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
                 id={messages.menuRemoveFromContainer.id}
                 defaultMessage={messages.menuRemoveFromContainer.defaultMessage}
                 values={{
-                  containerType: capitalize(getBlockType(containerId ?? '')),
+                  containerType: parentContainerType,
                 }}
               />
             </Dropdown.Item>
