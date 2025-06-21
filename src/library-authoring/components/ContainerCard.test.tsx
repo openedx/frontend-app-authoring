@@ -432,11 +432,6 @@ describe('<ContainerCard />', () => {
       { type: parentType, id: parentId },
     );
 
-    // Open sidebar
-    // Click on container card to open sidebar
-    const containerCard = screen.getByText(/display formated name/i);
-    fireEvent.click(containerCard);
-
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
     userEvent.click(screen.getByTestId('container-card-menu-toggle'));
