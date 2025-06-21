@@ -10,6 +10,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { capitalize } from 'lodash';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
@@ -17,12 +18,13 @@ import { type ContainerHit, Highlight, PublishStatus } from '../../search-manage
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveContainerChildren, useRemoveItemsFromCollection } from '../data/apiHooks';
+import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
+import ContainerRemover from './ContainerRemover';
 import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
@@ -41,6 +43,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
 
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+  const [isConfirmingRemove, confirmRemove, cancelRemove] = useToggle(false);
   const {
     navigateTo,
     insideCollection,
@@ -49,25 +52,24 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
-  const removeContainerMutation = useRemoveContainerChildren(containerId);
+
+  const handleRemoveFromCollection = () => {
+    removeComponentsMutation.mutateAsync([containerKey]).then(() => {
+      if (sidebarItemInfo?.id === containerKey) {
+      // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
+    });
+  };
 
   const handleRemove = () => {
     if (insideCollection) {
-      removeComponentsMutation.mutateAsync([containerKey]).then(() => {
-        if (sidebarItemInfo?.id === containerKey) {
-        // Close sidebar if current component is open
-          closeLibrarySidebar();
-        }
-        showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
-      });
+      handleRemoveFromCollection();
     } else if (insideSection || insideSubsection) {
-      removeContainerMutation.mutateAsync([containerKey]).then(() => {
-        showToast(intl.formatMessage(messages.removeComponentFromContainerSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
-      });
+      confirmRemove();
     }
   };
 
@@ -85,16 +87,6 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
   const openContainer = useCallback(() => {
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
-
-  const containerType = getBlockType(containerKey);
-
-  // Determine the parent container type for the remove message
-  const getParentContainerType = () => {
-    if (insideCollection) { return 'collection'; }
-    if (insideSubsection) { return 'subsection'; }
-    if (insideSection) { return 'section'; }
-    return containerType;
-  };
 
   return (
     <>
@@ -121,7 +113,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
                 id={messages.menuRemoveFromContainer.id}
                 defaultMessage={messages.menuRemoveFromContainer.defaultMessage}
                 values={{
-                  containerType: getParentContainerType(),
+                  containerType: capitalize(getBlockType(containerId ?? '')),
                 }}
               />
             </Dropdown.Item>
@@ -135,6 +127,12 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
         isOpen={isConfirmingDelete}
         close={cancelDelete}
         containerId={containerKey}
+        displayName={displayName}
+      />
+      <ContainerRemover
+        isOpen={isConfirmingRemove}
+        close={cancelRemove}
+        containerKey={containerKey}
         displayName={displayName}
       />
     </>

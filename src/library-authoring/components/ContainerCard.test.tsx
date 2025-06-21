@@ -9,7 +9,7 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
-import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl, getLibraryContainerChildrenApiUrl } from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
 let axiosMock: MockAdapter;
@@ -407,26 +407,31 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Unit,
       parentType: ContainerType.Subsection,
       parentId: mockGetContainerMetadata.subsectionId,
-      expectedRemoveText: 'Remove from subsection',
+      expectedRemoveText: 'Remove from Subsection',
     },
     {
       label: 'should be able to remove subsection from section menu item',
       containerType: ContainerType.Subsection,
       parentType: ContainerType.Section,
       parentId: mockGetContainerMetadata.sectionId,
-      expectedRemoveText: 'Remove from section',
+      expectedRemoveText: 'Remove from Section',
     },
   ])('$label', async ({
     containerType, parentType, parentId, expectedRemoveText,
   }) => {
     const containerHit = getContainerHitSample(containerType);
-    axiosMock.onDelete(getLibraryContainerApiUrl(containerHit.usageKey)).reply(200);
+    axiosMock.onDelete(getLibraryContainerChildrenApiUrl(parentId)).reply(200);
+    axiosMock.onGet(getLibraryContainerApiUrl(parentId)).reply(200, {
+      containerType: parentType,
+      displayName: 'Parent Container Display Name',
+    });
 
     render(
       <ContainerCard hit={containerHit} />,
       false,
       { type: parentType, id: parentId },
     );
+
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
@@ -438,7 +443,7 @@ describe('<ContainerCard />', () => {
     fireEvent.click(removeMenuItem);
 
     // Confirm remove Modal is open
-    expect(await screen.findByText(`Remove ${containerType}`)).toBeInTheDocument();
+    expect(await screen.findByText(/will not delete it from the library/i)).toBeInTheDocument();
     const removeButton = screen.getByRole('button', { name: /remove/i });
     fireEvent.click(removeButton);
 

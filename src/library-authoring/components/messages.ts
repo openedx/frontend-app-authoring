@@ -41,6 +41,11 @@ const messages = defineMessages({
     defaultMessage: 'Add to collection',
     description: 'Menu item for add a component to collection.',
   },
+  menuRemoveFromCollection: {
+    id: 'course-authoring.library-authoring.component.menu.remove-from-collection',
+    defaultMessage: 'Remove from collection',
+    description: 'Menu item for remove a component from collection.',
+  },
   menuRemoveFromContainer: {
     id: 'course-authoring.library-authoring.component.menu.remove',
     defaultMessage: 'Remove from {containerType}',
@@ -280,6 +285,21 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container.preview.text',
     defaultMessage: 'Contains {children}.',
     description: 'Preview message for section/subsections with the names of children separated by commas',
+  },
+  removeContainerWarningTitle: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-title',
+    defaultMessage: 'Remove {containerType}',
+    description: 'Title text for the warning displayed before removing a container from its parent',
+  },
+  removeContainerConfirm: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-text',
+    defaultMessage: 'Remove {containerName} from {parentContainerType} {parentContainerName}? Removing this {containerType} will not delete it from the library.',
+    description: 'Confirmation text to display before removing a container from its parent',
+  },
+  removeContainerButton: {
+    id: 'course-authoring.library-authoring.container.confirm-remove-button',
+    defaultMessage: 'Remove {containerName}',
+    description: 'Button to confirm removal of a container from its parent',
   },
 });
 export default messages;
