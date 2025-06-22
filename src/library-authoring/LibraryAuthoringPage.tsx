@@ -158,7 +158,9 @@ const LibraryAuthoringPage = ({
     insideCollections,
     insideComponents,
     insideUnits,
+    insideSection,
     insideSections,
+    insideSubsection,
     insideSubsections,
     navigateTo,
   } = useLibraryRoutes();
@@ -251,8 +253,12 @@ const LibraryAuthoringPage = ({
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
-  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab.
-  const onlyOneType = (insideCollections || insideUnits || insideSections || insideSubsections);
+  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab,
+  // or when inside a specific Section or Subsection.
+  const onlyOneType = (
+    insideCollections || insideUnits || insideSections || insideSubsections
+    || insideSection || insideSubsection
+  );
   const overrideTypesFilter = onlyOneType
     ? new TypesFilterData()
     : undefined;

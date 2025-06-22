@@ -395,6 +395,8 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       userEvent.click(addExisting);
       expect(await screen.findByRole('dialog')).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`add to ${cType}`, 'i') })).toBeInTheDocument();
+      // No "Types" filter shown
+      expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
     });
 
     it(`"add new" button should add ${childType} to the ${cType}`, async () => {
