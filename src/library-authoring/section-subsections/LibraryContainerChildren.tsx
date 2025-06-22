@@ -210,7 +210,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
             isClickable={!readOnly}
             onClick={(e) => !readOnly && handleChildClick(child, e.detail)}
             onKeyDown={(e) => {
-              if (!readOnly && e.key === 'Enter') {
+              if (e.key === 'Enter') {
                 handleChildClick(child, 1);
               }
             }}
