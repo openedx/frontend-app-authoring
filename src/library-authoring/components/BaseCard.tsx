@@ -65,12 +65,33 @@ const BaseCard = ({
           title={
             <Icon src={itemIcon} className="library-item-header-icon" />
           }
-          actions={
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
-            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-            jsx-a11y/no-static-element-interactions */
-            <div onClick={(e) => e.stopPropagation()}>{actions}</div>
-          }
+          actions={(
+            <div
+              onClick={(e) => {
+                // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
+                const target = e.target as HTMLElement;
+                const isDropdownToggle = target.closest('[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"]');
+
+                // But allow dropdown coordination events to bubble up for proper dropdown behavior.
+                if (!isDropdownToggle) {
+                  e.stopPropagation();
+                }
+              }}
+              onKeyDown={(e) => {
+                if (['Enter', ' '].includes(e.key)) {
+                  const target = e.target as HTMLElement;
+                  const isDropdownToggle = target.closest('[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"]');
+
+                  if (!isDropdownToggle) {
+                    e.stopPropagation();
+                  }
+                }
+              }}
+              role="presentation"
+            >
+              {actions}
+            </div>
+          )}
         />
         <Card.Body className="w-100">
           <Card.Section>
