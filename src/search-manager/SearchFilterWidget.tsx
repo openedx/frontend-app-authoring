@@ -1,10 +1,8 @@
 import React from 'react';
-import { ArrowDropDown } from '@openedx/paragon/icons';
 import {
   Badge,
   Button,
-  ModalPopup,
-  useToggle,
+  Dropdown,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -27,60 +25,46 @@ const SearchFilterWidget: React.FC<{
   children: React.ReactNode;
   clearFilter: () => void,
   icon: React.ComponentType;
-}> = ({ appliedFilters, ...props }) => {
+}> = ({
+  appliedFilters, children, clearFilter, ...props
+}) => {
   const intl = useIntl();
-  const [isOpen, open, close] = useToggle(false);
-  const [target, setTarget] = React.useState<HTMLButtonElement | null>(null);
 
   const clearAndClose = React.useCallback(() => {
-    props.clearFilter();
-    close();
-  }, [props.clearFilter]);
+    clearFilter();
+  }, [clearFilter]);
 
   return (
-    <>
-      <div className="d-flex mr-3">
-        <Button
-          ref={setTarget}
+    <div className="d-flex mr-3">
+      <Dropdown id={`search-filter-dropdown-${String(props.label).toLowerCase().replace(/\s+/g, '-')}`}>
+        <Dropdown.Toggle
           variant={appliedFilters.length ? 'light' : 'outline-primary'}
           size="sm"
-          onClick={open}
           iconBefore={props.icon}
-          iconAfter={ArrowDropDown}
         >
           {props.label}
           {appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
           {appliedFilters.length > 1 ? <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></> : null}
-        </Button>
-      </div>
-      <ModalPopup
-        positionRef={target}
-        isOpen={isOpen}
-        onClose={close}
-      >
-        <div
+        </Dropdown.Toggle>
+        <Dropdown.Menu
           className="bg-white rounded shadow"
           style={{ textAlign: 'start' }}
         >
-          {props.children}
+          {children}
 
-          {
-            !!appliedFilters.length
-            && (
-              <div className="d-flex justify-content-end">
-                <Button
-                  onClick={clearAndClose}
-                  variant="link"
-                  className="text-info-500 text-decoration-none clear-filter-button"
-                >
-                  { intl.formatMessage(messages.clearFilter) }
-                </Button>
-              </div>
-            )
-          }
-        </div>
-      </ModalPopup>
-    </>
+          {!!appliedFilters.length && (
+          <Button
+            onClick={clearAndClose}
+            variant="link"
+            className="text-info-500 text-decoration-none clear-filter-button"
+            size="sm"
+          >
+            {intl.formatMessage(messages.clearFilter)}
+          </Button>
+          )}
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
   );
 };
 
