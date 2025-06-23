@@ -1,12 +1,12 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-
+import {
+  render, screen, initializeMocks, fireEvent,
+} from '@src/testUtils';
 import { thunkActions, selectors } from '../../../../../../data/redux';
 
-import * as module from './TranscriptActionMenu';
+import * as componentModule from './TranscriptActionMenu';
 
-const TranscriptActionMenu = module.TranscriptActionMenuInternal;
+const TranscriptActionMenu = componentModule.TranscriptActionMenuInternal;
 
 jest.mock('react-redux', () => {
   const dispatchFn = jest.fn().mockName('mockUseDispatch');
@@ -49,7 +49,7 @@ describe('TranscriptActionMenu', () => {
       const result = { newFile: { mockFile, name: mockFileName }, newFilename: mockFileName, language: lang1Code };
 
       test('it dispatches the correct thunk', () => {
-        const cb = module.hooks.replaceFileCallback({
+        const cb = componentModule.hooks.replaceFileCallback({
           dispatch: mockDispatch, language: lang1Code,
         });
         cb(mockEvent);
@@ -59,42 +59,51 @@ describe('TranscriptActionMenu', () => {
     });
   });
 
-  describe('Snapshots', () => {
+  describe('renders', () => {
     const props = {
-      index: 'sOmenUmBer',
+      index: 1,
       language: 'lAnG',
       launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
       // redux
       getTranscriptDownloadUrl: jest.fn().mockName('selectors.video.getTranscriptDownloadUrl'),
-      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl'),
+      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl').mockImplementation((url) => url.transcriptUrl),
     };
+    beforeEach(() => {
+      initializeMocks();
+    });
+
     afterAll(() => {
       jest.clearAllMocks();
     });
-    test('snapshots: renders as expected with default props: dont show confirm delete', () => {
-      jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
-      expect(
-        shallow(<TranscriptActionMenu {...props} />).snapshot,
-      ).toMatchSnapshot();
+
+    test('renders as expected with default props', () => {
+      render(<TranscriptActionMenu {...props} />);
+      expect(screen.getByRole('button', { name: 'Actions dropdown' })).toBeInTheDocument();
     });
-    test('snapshots: renders as expected with transcriptUrl props: dont show confirm delete', () => {
-      jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
-      expect(
-        shallow(<TranscriptActionMenu {...props} transcriptUrl="url" />).snapshot,
-      ).toMatchSnapshot();
+
+    test('snapshots: renders as expected with transcriptUrl props', () => {
+      render(<TranscriptActionMenu {...props} transcriptUrl="url" />);
+      const actionsDropdown = screen.getByRole('button', { name: 'Actions dropdown' });
+      expect(actionsDropdown).toBeInTheDocument();
+      fireEvent.click(actionsDropdown);
+      const downloadOption = screen.getByRole('link', { name: 'Download' });
+      expect(downloadOption).toBeInTheDocument();
+      expect(downloadOption).toHaveAttribute('href', 'url');
     });
   });
+
   describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    // type set to any to prevent warning on not matchig expected type on the selectors
+    const testState: any = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('getTranscriptDownloadUrl from video.getTranscriptDownloadUrl', () => {
       expect(
-        module.mapStateToProps(testState).getTranscriptDownloadUrl,
+        componentModule.mapStateToProps(testState).getTranscriptDownloadUrl,
       ).toEqual(selectors.video.getTranscriptDownloadUrl(testState));
     });
   });
   describe('mapDispatchToProps', () => {
     test('deleteTranscript from thunkActions.video.deleteTranscript', () => {
-      expect(module.mapDispatchToProps.downloadTranscript).toEqual(thunkActions.video.downloadTranscript);
+      expect(componentModule.mapDispatchToProps.downloadTranscript).toEqual(thunkActions.video.downloadTranscript);
     });
   });
 });

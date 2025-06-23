@@ -1,14 +1,11 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../testUtils';
+import {
+  render, screen, initializeMocks,
+} from '@src/testUtils';
+import { formatMessage } from '@src/editors/testUtils';
 import { selectors } from '../../../../../../data/redux';
 import { ShowAnswerCardInternal as ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
-import { useAnswerSettings } from '../hooks';
-
-jest.mock('../hooks', () => ({
-  useAnswerSettings: jest.fn(),
-}));
+import * as hooks from '../hooks';
 
 jest.mock('../../../../../../data/redux', () => ({
   selectors: {
@@ -30,33 +27,34 @@ describe('ShowAnswerCard', () => {
     updateSettings: jest.fn().mockName('args.updateSettings'),
     intl: { formatMessage },
   };
+
   const props = {
     showAnswer,
     defaultValue: 'finished',
+    updateSettings: jest.fn(),
     // injected
     intl: { formatMessage },
     // redux
     studioEndpointUrl: 'SoMEeNDpOinT',
     learningContextId: 'sOMEcouRseId',
+    isLibrary: false,
   };
 
-  const useAnswerSettingsProps = {
-    handleShowAnswerChange: jest.fn().mockName('useAnswerSettings.handleShowAnswerChange'),
-    handleAttemptsChange: jest.fn().mockName('useAnswerSettings.handleAttemptsChange'),
-  };
-
-  useAnswerSettings.mockReturnValue(useAnswerSettingsProps);
-
-  describe('behavior', () => {
-    it(' calls useAnswerSettings when initialized', () => {
-      shallow(<ShowAnswerCard {...props} />);
-      expect(useAnswerSettings).toHaveBeenCalledWith(showAnswer, props.updateSettings);
+  describe('renders', () => {
+    beforeEach(() => {
+      initializeMocks();
     });
-  });
 
-  describe('snapshot', () => {
-    test('snapshot: show answer setting card', () => {
-      expect(shallow(<ShowAnswerCard {...props} />).snapshot).toMatchSnapshot();
+    test('show answer setting card', () => {
+      render(<ShowAnswerCard {...props} />);
+      expect(screen.getByText('Show answer')).toBeInTheDocument();
+    });
+
+    test('calls useAnswerSettings when initialized', () => {
+      jest.spyOn(hooks, 'useAnswerSettings');
+      render(<ShowAnswerCard {...props} />);
+      expect(screen.getByText('Show answer')).toBeInTheDocument();
+      expect(hooks.useAnswerSettings).toHaveBeenCalledWith(showAnswer, props.updateSettings);
     });
   });
   describe('mapStateToProps', () => {
@@ -64,11 +62,13 @@ describe('ShowAnswerCard', () => {
     test('studioEndpointUrl from app.studioEndpointUrl', () => {
       expect(
         mapStateToProps(testState).studioEndpointUrl,
+        // @ts-ignore
       ).toEqual(selectors.app.studioEndpointUrl(testState));
     });
     test('learningContextId from app.learningContextId', () => {
       expect(
         mapStateToProps(testState).learningContextId,
+        // @ts-ignore
       ).toEqual(selectors.app.learningContextId(testState));
     });
   });

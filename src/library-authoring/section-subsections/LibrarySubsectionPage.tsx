@@ -29,7 +29,7 @@ interface OverflowLinksProps {
 const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
   if (typeof to === 'string') {
     return (
-      <Link className="link-muted" to={to}>
+      <Link className="subsection-breadcrumb link-muted" to={to}>
         {children}
       </Link>
     );

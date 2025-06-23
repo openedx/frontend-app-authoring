@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import SettingsOption from '../SettingsOption';
 import { ProblemTypeKeys, ProblemTypes } from '../../../../../../data/constants/problem';
 import messages from '../messages';
@@ -14,9 +14,8 @@ const TypeCard = ({
   setBlockTitle,
   updateField,
   updateAnswer,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const problemTypeKeysArray = Object.values(ProblemTypeKeys).filter(key => key !== ProblemTypeKeys.ADVANCED);
 
   if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
@@ -60,9 +59,6 @@ TypeCard.propTypes = {
   setBlockTitle: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export const TypeCardInternal = TypeCard; // For testing only
-export default injectIntl(TypeCard);
+export default TypeCard;
