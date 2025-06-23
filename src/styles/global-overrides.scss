@@ -1040,3 +1040,51 @@ body {
   flex: 1;
   padding-top: 1rem;
 }
+
+/* Responsive styles for Course Navigation */
+.ca-mobile-nav {
+  display: none;
+  /* Hidden by default */
+  width: 100%;
+  padding: 16px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.ca-mobile-nav-select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+
+  /* Remove default arrow and add a custom one with spacing */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 30px;
+  /* Space for the arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 10px;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .ca-sidebar {
+    display: none;
+    /* Hide the desktop sidebar */
+  }
+
+  .ca-mobile-nav {
+    display: block;
+    /* Show the mobile dropdown */
+  }
+
+  .ca-main-layout {
+    flex-direction: column;
+  }
+}

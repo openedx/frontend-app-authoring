@@ -28,8 +28,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
+import messages from './messages';
 
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
@@ -124,6 +126,8 @@ const Dashboard = () => {
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
 
+  const intl = useIntl();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -135,7 +139,7 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         // Use the https://design.titaned.com/dashboard endpoint for deployment and http://localhost:3001/dashboard for local development
-        const response = await fetch('https://design.titaned.com/dashboard');
+        const response = await fetch('http://localhost:3001/dashboard');
         const data = await response.json();
         // Sort widgets by order before setting state
         const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
@@ -348,7 +352,7 @@ const Dashboard = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-main-content">
         {/* Top Metric Cards */}
-        <div className="dashboard-header">Dashboard</div>
+        <div className="dashboard-header">{intl.formatMessage(messages.dashboardPageTitle)}</div>
         <div className="metrics-container">
           <MetricCard
             icon={MenuBook}

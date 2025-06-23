@@ -20,6 +20,9 @@ import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import MainHeader from 'library/Header/MainHeader';
 // import { SidebarProvider } from 'library/providers/SidebarProvider';
 // import { FooterProps } './studio-home/interfaces/components';
+import { getConfig } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 
 const Layout = () => {
   // const [templateData, setTemplateData] = useState<TemplateData | undefined>(undefined)
@@ -34,6 +37,8 @@ const Layout = () => {
     logoutUrl: LOGOUT_URL,
     isAdmin: userIsAdmin,
   });
+
+  const intl = useIntl();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,16 +66,16 @@ const Layout = () => {
   // }, []);
 
   const sidebarItems = [
-    { label: 'Dashboard', path: '/home', icon: <Home /> },
-    { label: 'Create New Course', path: '/new-course', icon: <LibraryAdd /> },
-    { label: 'My Courses', path: '/my-courses', icon: <LmsBook /> },
-    { label: 'Content Libraries', path: '/libraries', icon: <LibraryBooks /> },
-    { label: 'Calendar', path: '/calendar', icon: <Calendar /> },
-    { label: 'Class Planner', path: '/class-planner', icon: <Analytics /> },
-    { label: 'Insights & Reports', path: '/reports', icon: <Lightbulb /> },
-    { label: 'TitanAI Assistant', path: '/ai-assistant', icon: <Assistant /> },
-    { label: 'Shared Resources', path: '/shared-resources', icon: <FolderShared /> },
-    { label: 'Taxonomies', path: '/taxonomies', icon: <Assignment /> },
+    { label: intl.formatMessage(messages.sidebarDashboardTitle), path: '/home', icon: <Home /> },
+    { label: intl.formatMessage(messages.sidebarCreateNewCourseTitle), path: '/new-course', icon: <LibraryAdd /> },
+    { label: intl.formatMessage(messages.sidebarMyCoursesTitle), path: '/my-courses', icon: <LmsBook /> },
+    { label: intl.formatMessage(messages.sidebarContentLibrariesTitle), path: '/libraries', icon: <LibraryBooks /> },
+    { label: intl.formatMessage(messages.sidebarCalendarTitle), path: '/calendar', icon: <Calendar /> },
+    { label: intl.formatMessage(messages.sidebarClassPlannerTitle), path: '/class-planner', icon: <Analytics /> },
+    { label: intl.formatMessage(messages.sidebarInsightsReportsTitle), path: '/reports', icon: <Lightbulb /> },
+    { label: intl.formatMessage(messages.sidebarTitanAITitle), path: '/ai-assistant', icon: <Assistant /> },
+    { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources', icon: <FolderShared /> },
+    { label: intl.formatMessage(messages.sidebarTaxonomiesTitle), path: '/taxonomies', icon: <Assignment /> },
   ];
 
   // const contactInfo = {
@@ -145,6 +150,12 @@ const Layout = () => {
   //   ],
   // };
 
+  const handleLanguageChange = () => {
+    const { pathname } = location;
+    const cleanPath = pathname.replace('/authoring', '');
+    window.location.href = `/authoring${cleanPath}`;
+  };
+
   return (
     <div className="app-container">
       {/* <p>This is header</p> */}
@@ -157,6 +168,8 @@ const Layout = () => {
             // loginSignupButtons={headerData.menu.loginSignupButtons}
             authenticatedUser={authenticatedUser}
             userMenuItems={userMenuItems}
+            onLanguageChange={handleLanguageChange}
+            getBaseUrl={() => getConfig().STUDIO_BASE_URL}
           />
         </div>
         {/* Sidebar and Main Content */}
