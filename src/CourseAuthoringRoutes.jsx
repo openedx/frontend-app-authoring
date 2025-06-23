@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Navigate, Routes, Route, useParams,
+  Navigate, Routes, Route, useParams, useLocation, useNavigate,
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
@@ -28,33 +28,56 @@ import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
-import { LmsBook } from '@openedx/paragon/icons'; 
+import { LmsBook } from '@openedx/paragon/icons';
 /**
- * As of this writing, these routes are mounted at a path prefixed with the following:
- *
- * /course/:courseId
- *
- * Meaning that their absolute paths look like:
- *
- * /course/:courseId/course-pages
- * /course/:courseId/proctored-exam-settings
- * /course/:courseId/editor/:blockType/:blockId
- *
- * This component and CourseAuthoringPage should maybe be combined once we no longer need to have
- * CourseAuthoringPage split out for use in LegacyProctoringRoute.  Once that route is removed, we
- * can move the Header/Footer rendering to this component and likely pull the course detail loading
- * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
+ * Mobile-specific navigation dropdown.
+ * This will be shown instead of the sidebar on smaller screens.
  */
-const CoursePageLayout = ({ children, courseId, courseName }) => (
+const MobileCourseNavigation = ({ items, courseId }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (event) => {
+    navigate(event.target.value);
+  };
+
+  return (
+    <div className="ca-mobile-nav">
+      <select
+        className="ca-mobile-nav-select"
+        value={location.pathname}
+        onChange={handleNavigation}
+      >
+        {items.map(item => (
+          <option key={item.path} value={item.path}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+MobileCourseNavigation.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
+  })).isRequired,
+  courseId: PropTypes.string.isRequired,
+};
+
+const CoursePageLayout = ({
+  children, courseId, courseName, sidebarItems,
+}) => (
   <>
     {/* Breadcrumb and Title */}
     <div className="ca-breadcrumb-bg">
       <div className="ca-breadcrumb-container">
         <div className="ca-breadcrumb">
-        <span className="ca-breadcrumb-icon">
-         <LmsBook className="custom-icon" />
-          My Courses
-        </span>
+          <span className="ca-breadcrumb-icon">
+            <LmsBook className="custom-icon" />
+            My Courses
+          </span>
           <span className="ca-breadcrumb-divider">/</span>
           <span className="ca-breadcrumb-current">{courseName || 'Loading...'}</span>
         </div>
@@ -65,12 +88,12 @@ const CoursePageLayout = ({ children, courseId, courseName }) => (
     </div>
     {/* Main layout */}
     <div className="ca-main-layout">
-      <div>
-        {/* This div is now redundant, but kept for context. You may remove it if not needed. */}
-      </div>
+      {/* Mobile navigation dropdown */}
+      <MobileCourseNavigation items={sidebarItems} courseId={courseId} />
+
       {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
       <div className="ca-sidebar">
-        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
+        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId, sidebarItems }} />
       </div>
       <main className="ca-main-content">
         <Suspense>
@@ -85,12 +108,29 @@ CoursePageLayout.propTypes = {
   children: PropTypes.node.isRequired,
   courseId: PropTypes.string.isRequired,
   courseName: PropTypes.string,
+  sidebarItems: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 const CourseAuthoringRoutes = () => {
   const { courseId } = useParams();
   const { courseName: storeCourseName } = useCourseOutline({ courseId });
   const [courseName, setCourseName] = useState('');
+
+  // Define sidebar items here to pass to both layouts
+  const sidebarItems = [
+    { label: 'Course Outline', path: `/course/${courseId}/` },
+    { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
+    { label: 'Grading', path: `/course/${courseId}/settings/grading` },
+    { label: 'Course Team', path: `/course/${courseId}/course_team` },
+    { label: 'Certificates', path: `/course/${courseId}/certificates` },
+    { label: 'Updates', path: `/course/${courseId}/course_info` },
+    { label: 'Group Configurations', path: `/course/${courseId}/group_configurations` },
+    { label: 'Advance Settings', path: `/course/${courseId}/settings/advanced` },
+    { label: 'Import', path: `/course/${courseId}/import` },
+    { label: 'Export', path: `/course/${courseId}/export` },
+    { label: 'Files', path: `/course/${courseId}/assets` },
+    { label: 'Pages & Resources', path: `/course/${courseId}/pages-and-resources` },
+  ];
 
   useEffect(() => {
     // Reset course name immediately on courseId change
@@ -116,7 +156,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="/"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseOutline courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -131,7 +171,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="course_info"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseUpdates courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -139,7 +179,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="assets"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <FilesPage courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -147,7 +187,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="videos"
           element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? (
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <VideosPage courseId={courseId} />
             </CoursePageLayout>
           ) : null}
@@ -155,7 +195,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="pages-and-resources/*"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <PagesAndResources courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -167,7 +207,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="custom-pages/*"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CustomPages courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -177,7 +217,7 @@ const CourseAuthoringRoutes = () => {
             key={unitPath}
             path={unitPath}
             element={(
-              <CoursePageLayout courseId={courseId} courseName={courseName}>
+              <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
                 <CourseUnit courseId={courseId} />
               </CoursePageLayout>
             )}
@@ -194,7 +234,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="settings/details"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <ScheduleAndDetails courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -202,7 +242,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="settings/grading"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <GradingSettings courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -210,7 +250,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="course_team"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseTeam courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -218,7 +258,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="group_configurations"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <GroupConfigurations courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -226,7 +266,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="settings/advanced"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <AdvancedSettings courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -234,7 +274,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="import"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseImportPage courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -242,7 +282,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="export"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseExportPage courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -250,7 +290,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="checklists"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <CourseChecklist courseId={courseId} />
             </CoursePageLayout>
           )}
@@ -258,7 +298,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="certificates"
           element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? (
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <Certificates courseId={courseId} />
             </CoursePageLayout>
           ) : null}
@@ -266,7 +306,7 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="textbooks"
           element={(
-            <CoursePageLayout courseId={courseId} courseName={courseName}>
+            <CoursePageLayout courseId={courseId} courseName={courseName} sidebarItems={sidebarItems}>
               <Textbooks courseId={courseId} />
             </CoursePageLayout>
           )}

@@ -44,41 +44,17 @@ Sidebar.propTypes = {
 };
 // --- END Placeholder ---
 
-const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
+const CourseNavigationSidebar = ({ sidebarItems }) => {
   const params = useParams();
-  const courseId = propCourseId || params.courseId;
   const navigate = useNavigate();
   const location = useLocation();
   const presentPath = location.pathname;
-
-  // --- ADAPT sidebarItems ---
-  // Map the authoring sections to the sidebar structure.
-  // Use the actual routes from CourseAuthoringRoutes.jsx.
-  const sidebarItems = [
-    { label: 'Course Outline', path: `/course/${courseId}` },
-    { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
-    { label: 'Grading', path: `/course/${courseId}/settings/grading` }, // Note: path adjusted from previous nav bar
-    { label: 'Course Team', path: `/course/${courseId}/course_team` },
-    { label: 'Certificates', path: `/course/${courseId}/certificates` },
-    // { label: 'Enrollments', path: `/course/${courseId}/enrollments`, icon: <HowToReg /> }, // Uncomment if needed
-    { label: 'Updates', path: `/course/${courseId}/course_info` }, // Map to course_info route
-    // { label: 'Attendance', path: `/course/${courseId}/attendance`, icon: <EventBusy /> }, // Uncomment if needed
-    // { label: 'Fee Statistics', path: `/course/${courseId}/statistics`, icon: <QueryStats /> }, // Uncomment if needed
-    { label: 'Group Configurations', path: `/course/${courseId}/group_configurations` },
-    { label: 'Advance Settings', path: `/course/${courseId}/settings/advanced` },
-    { label: 'Import', path: `/course/${courseId}/import` },
-    { label: 'Export', path: `/course/${courseId}/export` },
-    { label: 'Files', path: `/course/${courseId}/assets` },
-    { label: 'Pages & Resources', path: `/course/${courseId}/pages-and-resources` },
-    // Add other relevant course authoring pages here
-  ];
-    // --- END ADAPT ---
 
   const handleNavigate = (path) => {
     navigate(path);
   };
 
-  if (!courseId) {
+  if (!params.courseId) {
     return null;
   }
 
@@ -92,11 +68,10 @@ const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
 };
 
 CourseNavigationSidebar.propTypes = {
-  courseId: PropTypes.string,
-};
-
-CourseNavigationSidebar.defaultProps = {
-  courseId: undefined,
+  sidebarItems: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    path: PropTypes.string,
+  })).isRequired,
 };
 
 export default CourseNavigationSidebar;

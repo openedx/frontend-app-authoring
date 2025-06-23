@@ -100,7 +100,7 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         // Accept and forward all props for dynamic support
-                        RenderWidget: (props) => <CourseNavigationSidebar />,
+                        RenderWidget: (props) => <CourseNavigationSidebar {...props} />,
                     },
                 },
             ],
