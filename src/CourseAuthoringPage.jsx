@@ -16,6 +16,7 @@ import { fetchStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
+import HeaderSlot from './plugin-slots/HeaderSlot';
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
@@ -55,7 +56,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      <PluginSlot id="header_plugin_slot">
+      <HeaderSlot>
         {inProgress ? !isEditor && <Loading />
           : (!isEditor && (
             <Header
@@ -66,7 +67,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
             />
           )
           )}
-      </PluginSlot>
+      </HeaderSlot>
       {children}
       <PluginSlot id="footer_plugin_slot">
         {!inProgress && !isEditor && <StudioFooter />}
