@@ -1,7 +1,7 @@
-import { shallow } from '@edx/react-unit-test-utils';
+import { render, initializeMocks } from '@src/testUtils';
 import renderer from 'react-test-renderer';
 
-import { COURSE_BLOCK_NAMES } from 'CourseAuthoring/constants';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
 import CourseUnitHeaderActionsSlot from '.';
 
 jest.mock('CourseAuthoring/course-unit/header-navigations/HeaderNavigations', () => 'HeaderNavigations');
@@ -19,15 +19,18 @@ const headerNavProps = {
   },
   category: 'vertical',
   unitTitle: 'Mock Unit',
+  isUnitVerticalType: false,
   verticalBlocks: [],
 };
 
 describe('CourseUnitHeaderActionsSlot', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => initializeMocks());
 
   test('pluginProps are set correctly', () => {
-    const wrapper = shallow(<CourseUnitHeaderActionsSlot unitTitle="Mock Title" verticalBlocks={[]} {...headerNavProps} />);
-    expect(wrapper.snapshot).toMatchSnapshot();
+    const { container } = render(<CourseUnitHeaderActionsSlot {...headerNavProps} />);
+    expect(container.querySelector('pluginslot')).toBeInTheDocument();
+    expect(container.querySelector('headernavigations')).toBeInTheDocument();
+    expect(container.querySelector('headernavigations')?.getAttribute('category')).toBe('vertical');
   });
 
   test('isUnitVerticalType is set correctly', () => {
