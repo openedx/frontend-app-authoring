@@ -494,5 +494,25 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       expect(await screen.findByRole('dialog')).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`add to ${cType}`, 'i') })).toBeInTheDocument();
     });
+
+    it(`should open manage tags on click tag count in ${cType} page`, async () => {
+      const cId = cType === ContainerType.Section
+        ? mockGetContainerMetadata.sectionId
+        : mockGetContainerMetadata.subsectionId;
+      renderLibrarySectionPage(cId, undefined, cType);
+      // check all children components are rendered.
+      expect((await screen.findAllByText(`${childType} block 0`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 1`))[0]).toBeInTheDocument();
+      expect((await screen.findAllByText(`${childType} block 2`))[0]).toBeInTheDocument();
+
+      const tagCountButton = screen.getAllByRole('button', { name: '0' })[0];
+      fireEvent.click(tagCountButton);
+
+      expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
+      await waitFor(
+        () => expect(screen.getByRole('tab', { name: /manage/i })).toHaveClass('active'),
+        { timeout: 300 },
+      );
+    });
   });
 });
