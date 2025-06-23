@@ -55,7 +55,7 @@ const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
   // Map the authoring sections to the sidebar structure.
   // Use the actual routes from CourseAuthoringRoutes.jsx.
   const sidebarItems = [
-    { label: 'Course Outline', path: `/course/${courseId}` },
+    { label: 'Course Outline 123', path: `/course/${courseId}` },
     { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
     { label: 'Grading', path: `/course/${courseId}/settings/grading` }, // Note: path adjusted from previous nav bar
     { label: 'Course Team', path: `/course/${courseId}/course_team` },
