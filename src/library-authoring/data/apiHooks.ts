@@ -703,7 +703,10 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
     queryFn: () => api.getLibraryContainerChildren(containerId!, published),
-    structuralSharing: (oldData: api.LibraryBlockMetadata[], newData: api.LibraryBlockMetadata[]) => {
+    structuralSharing: (
+      oldData: api.LibraryBlockMetadata[] | api.Container[],
+      newData: api.LibraryBlockMetadata[] | api.Container[],
+    ) => {
       // This just sets `isNew` flag to new children components
       if (oldData) {
         const oldDataIds = oldData.map((obj) => obj.id);

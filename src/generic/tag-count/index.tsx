@@ -9,7 +9,7 @@ type TagCountProps = {
 };
 
 // eslint-disable-next-line react/prop-types
-const TagCount: React.FC<TagCountProps> = ({ count, onClick, size }) => {
+const TagCount: React.FC<TagCountProps> = ({ count, onClick, size }: TagCountProps) => {
   const renderContent = () => (
     <Stack direction="horizontal" gap={1}>
       <Icon size={size} src={Tag} />
