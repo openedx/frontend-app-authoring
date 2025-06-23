@@ -28,8 +28,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
+import messages from './messages';
 
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
@@ -123,6 +125,8 @@ const Dashboard = () => {
   const [tempSelectedWidgets, setTempSelectedWidgets] = useState([]);
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
+
+  const intl = useIntl();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -348,7 +352,7 @@ const Dashboard = () => {
     <div className="dashboard-wrapper">
       <div className="dashboard-main-content">
         {/* Top Metric Cards */}
-        <div className="dashboard-header">Dashboard</div>
+        <div className="dashboard-header">{intl.formatMessage(messages.dashboardPageTitle)}</div>
         <div className="metrics-container">
           <MetricCard
             icon={MenuBook}
