@@ -20,6 +20,7 @@ import { logError } from '@edx/frontend-platform/logging';
 import MyCourses from 'my-courses/MyCourses';
 import CreateWidgets from 'widgets-create/CreateWidgets';
 import LibrariesV2Tab from 'studio-home/tabs-section/libraries-v2-tab';
+import { configure, getMessages, IntlProvider } from '@edx/frontend-platform/i18n';
 import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
@@ -125,10 +126,18 @@ const App = () => {
   );
 };
 
+configure({
+  messages,
+  config: getConfig(),
+  // loggingService: { logError, logInfo: console.info },
+});
+
 subscribe(APP_READY, async () => {
   // const themeData = await loadThemeStyles();
   ReactDOM.render(
-    (<App />),
+    <IntlProvider locale={getConfig().language || 'en'} messages={getMessages()}>
+      <App />
+    </IntlProvider>,
     document.getElementById('root'),
   );
 });

@@ -20,6 +20,7 @@ import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import MainHeader from 'library/Header/MainHeader';
 // import { SidebarProvider } from 'library/providers/SidebarProvider';
 // import { FooterProps } './studio-home/interfaces/components';
+import { getConfig } from '@edx/frontend-platform';
 
 const Layout = () => {
   // const [templateData, setTemplateData] = useState<TemplateData | undefined>(undefined)
@@ -145,6 +146,12 @@ const Layout = () => {
   //   ],
   // };
 
+  const handleLanguageChange = () => {
+    const { pathname } = location;
+    const cleanPath = pathname.replace('/authoring', '');
+    window.location.href = `/authoring${cleanPath}`;
+  };
+
   return (
     <div className="app-container">
       {/* <p>This is header</p> */}
@@ -157,6 +164,8 @@ const Layout = () => {
             // loginSignupButtons={headerData.menu.loginSignupButtons}
             authenticatedUser={authenticatedUser}
             userMenuItems={userMenuItems}
+            onLanguageChange={handleLanguageChange}
+            getBaseUrl={() => getConfig().STUDIO_BASE_URL}
           />
         </div>
         {/* Sidebar and Main Content */}
