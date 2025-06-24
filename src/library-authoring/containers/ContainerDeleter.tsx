@@ -51,6 +51,9 @@ const ContainerDeleter = ({
           parentMessage: '',
           courseCount: downstreamCount,
           courseMessage: messages.deleteSectionCourseMessaage,
+          deleteSuccess: intl.formatMessage(messages.deleteSectionSuccess),
+          deleteError: intl.formatMessage(messages.deleteSectionFailed),
+          undoDeleteError: messages.undoDeleteSectionToastFailed,
         };
       case ContainerType.Subsection:
         parentCount = containerData?.sections?.displayName?.length || 0;
@@ -69,6 +72,9 @@ const ContainerDeleter = ({
           parentMessage,
           courseCount: downstreamCount,
           courseMessage: messages.deleteSubsectionCourseMessaage,
+          deleteSuccess: intl.formatMessage(messages.deleteSubsectionSuccess),
+          deleteError: intl.formatMessage(messages.deleteSubsectionFailed),
+          undoDeleteError: messages.undoDeleteSubsectionToastFailed,
         };
       default:
         parentCount = containerData?.subsections?.displayName?.length || 0;
@@ -87,6 +93,9 @@ const ContainerDeleter = ({
           parentMessage,
           courseCount: downstreamCount,
           courseMessage: messages.deleteUnitCourseMessage,
+          deleteSuccess: intl.formatMessage(messages.deleteUnitSuccess),
+          deleteError: intl.formatMessage(messages.deleteUnitFailed),
+          undoDeleteError: messages.undoDeleteUnitToastFailed,
         };
     }
   }, [containerData, downstreamCount, messages, intl]);
@@ -116,18 +125,14 @@ const ContainerDeleter = ({
     ),
   });
 
-  const deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
-  const deleteError = intl.formatMessage(messages.deleteUnitFailed);
-  const undoDeleteError = messages.undoDeleteUnitToastFailed;
-
   const restoreComponent = useCallback(async () => {
     try {
       await restoreContainerMutation.mutateAsync();
       showToast(intl.formatMessage(messages.undoDeleteContainerToastMessage));
     } catch (e) {
-      showToast(intl.formatMessage(undoDeleteError));
+      showToast(intl.formatMessage(messageMap.undoDeleteError));
     }
-  }, []);
+  }, [messageMap]);
 
   const onDelete = useCallback(async () => {
     await deleteContainerMutation.mutateAsync().then(() => {
@@ -135,18 +140,18 @@ const ContainerDeleter = ({
         closeLibrarySidebar();
       }
       showToast(
-        deleteSuccess,
+        messageMap.deleteSuccess,
         {
           label: intl.formatMessage(messages.undoDeleteContainerToastAction),
           onClick: restoreComponent,
         },
       );
     }).catch(() => {
-      showToast(deleteError);
+      showToast(messageMap.deleteError);
     }).finally(() => {
       close();
     });
-  }, [sidebarItemInfo, showToast, deleteContainerMutation]);
+  }, [sidebarItemInfo, showToast, deleteContainerMutation, messageMap]);
 
   return (
     <DeleteModal

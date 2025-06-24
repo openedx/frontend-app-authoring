@@ -171,6 +171,36 @@ const messages = defineMessages({
     defaultMessage: 'Failed to undo delete Unit operation',
     description: 'Message to display on failure to undo delete unit',
   },
+  deleteSectionSuccess: {
+    id: 'course-authoring.library-authoring.section.delete.success',
+    defaultMessage: 'Section deleted',
+    description: 'Message to display on delete section success',
+  },
+  deleteSectionFailed: {
+    id: 'course-authoring.library-authoring.section.delete-failed-error',
+    defaultMessage: 'Failed to delete section',
+    description: 'Message to display on failure to delete a section',
+  },
+  undoDeleteSectionToastFailed: {
+    id: 'course-authoring.library-authoring.section.undo-delete-section-failed',
+    defaultMessage: 'Failed to undo delete Section operation',
+    description: 'Message to display on failure to undo delete section',
+  },
+  deleteSubsectionSuccess: {
+    id: 'course-authoring.library-authoring.subsection.delete.success',
+    defaultMessage: 'Subsection deleted',
+    description: 'Message to display on delete subsection success',
+  },
+  deleteSubsectionFailed: {
+    id: 'course-authoring.library-authoring.subsection.delete-failed-error',
+    defaultMessage: 'Failed to delete subsection',
+    description: 'Message to display on failure to delete a subsection',
+  },
+  undoDeleteSubsectionToastFailed: {
+    id: 'course-authoring.library-authoring.subsection.undo-delete-subsection-failed',
+    defaultMessage: 'Failed to undo delete Subsection operation',
+    description: 'Message to display on failure to undo delete subsection',
+  },
   undoDeleteContainerToastMessage: {
     id: 'course-authoring.library-authoring.container.undo-delete-container-toast-text',
     defaultMessage: 'Undo successful',
