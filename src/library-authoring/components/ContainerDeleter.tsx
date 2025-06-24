@@ -11,6 +11,7 @@ import messages from './messages';
 import { ContainerType } from '../../generic/key-utils';
 import { ContainerHit } from '../../search-manager';
 import { useContainerEntityLinks } from '../../course-libraries/data/apiHooks';
+import { LoadingSpinner } from '../../generic/Loading';
 
 type ContainerDeleterProps = {
   isOpen: boolean,
@@ -33,10 +34,11 @@ const ContainerDeleter = ({
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);
-  const { hits } = useContentFromSearchIndex([containerId]);
+  const { hits, isLoading } = useContentFromSearchIndex([containerId]);
   const containerData = (hits as ContainerHit[])?.[0];
   const {
     data: dataDownstreamLinks,
+    isLoading: linksIsLoading,
   } = useContainerEntityLinks({ upstreamContainerKey: containerId });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
@@ -151,10 +153,6 @@ const ContainerDeleter = ({
     });
   }, [sidebarItemInfo, showToast, deleteContainerMutation]);
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
     <DeleteModal
       isOpen={isOpen}
@@ -162,7 +160,7 @@ const ContainerDeleter = ({
       variant="warning"
       title={messageMap?.title}
       icon={Warning}
-      description={deleteText}
+      description={isLoading || linksIsLoading ? <LoadingSpinner size="sm" /> : deleteText}
       onDeleteSubmit={onDelete}
     />
   );
