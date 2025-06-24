@@ -1,7 +1,7 @@
-import { createStore } from '@src/editors/data/store';
 import {
-  render, screen, fireEvent, initializeMocks,
+  screen, fireEvent, initializeMocks,
 } from '@src/testUtils';
+import editorRender from '@src/editors/editorTestRender';
 import VideoSettingsModal from '.';
 
 const defaultProps = {
@@ -21,11 +21,12 @@ const renderComponent = (overrideProps = {}) => {
     },
   };
 
-  initializeMocks({ initialState: customInitialState, customReduxStoreCreator: createStore });
+  initializeMocks();
 
   return {
-    ...render(
+    ...editorRender(
       <VideoSettingsModal {...defaultProps} {...overrideProps} />,
+      { initialState: customInitialState },
     ),
   };
 };
