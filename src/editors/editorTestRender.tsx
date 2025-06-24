@@ -31,7 +31,7 @@ let editorStore: Store<EditorState>;
  * @param options - Options
  * @returns {RenderResult} The result of the render, as returned by RTL render.
  */
-export const editorRender = (ui, {
+const editorRender = (ui, {
   learningContextId = 'course-v1:Org+COURSE+RUN',
   initialState = undefined,
   ...routerOptions
