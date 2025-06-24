@@ -31,12 +31,11 @@ import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import ContainerDeleter from './ContainerDeleter';
 
-type ContainerMenuProps = {
+type ContainerPreviewProps = {
   containerId: string,
-  displayName: string,
 };
 
-const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
+const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   const intl = useIntl();
 
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
@@ -63,14 +62,9 @@ const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
         isOpen={isConfirmingDelete}
         close={cancelDelete}
         containerId={containerId}
-        displayName={displayName}
       />
     </>
   );
-};
-
-type ContainerPreviewProps = {
-  containerId: string,
 };
 
 const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
@@ -166,10 +160,7 @@ const ContainerInfo = () => {
           </Button>
         )}
         {showOpenButton && (
-          <ContainerMenu
-            containerId={containerId}
-            displayName={container.displayName}
-          />
+          <ContainerMenu containerId={containerId} />
         )}
       </div>
       <Tabs

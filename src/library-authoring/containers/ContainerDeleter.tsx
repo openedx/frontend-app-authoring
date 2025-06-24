@@ -17,14 +17,12 @@ type ContainerDeleterProps = {
   isOpen: boolean,
   close: () => void,
   containerId: string,
-  displayName: string,
 };
 
 const ContainerDeleter = ({
   isOpen,
   close,
   containerId,
-  displayName,
 }: ContainerDeleterProps) => {
   const intl = useIntl();
   const {
@@ -94,7 +92,7 @@ const ContainerDeleter = ({
   }, [containerData, downstreamCount, messages, intl]);
 
   const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
-    unitName: <b>{displayName}</b>,
+    unitName: <b>{containerData?.displayName}</b>,
     message: (
       <div className="text-danger-900">
         {messageMap.parentMessage && (

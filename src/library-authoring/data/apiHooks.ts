@@ -876,11 +876,17 @@ export const usePublishContainer = (containerId: string) => {
  */
 export const useContentFromSearchIndex = (contentIds: string[]) => {
   const { client, indexName } = useContentSearchConnection();
+  let libraryId: string | undefined;
+  // NOTE: assuming that all contentIds are part of a single libraryId as we don't have a usecase
+  // of passing multiple contentIds from different libraries.
+  if (contentIds.length > 0) {
+    libraryId = getLibraryId(contentIds?.[0]);
+  }
   return useContentSearchResults({
     client,
     indexName,
     searchKeywords: '',
-    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`, `context_key = "${libraryId}"`],
     limit: contentIds.length,
     enabled: !!contentIds.length,
     skipBlockTypeFetch: true,

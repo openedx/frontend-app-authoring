@@ -105,7 +105,6 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           isOpen={isConfirmingDelete}
           close={cancelDelete}
           containerId={containerKey}
-          displayName={displayName}
         />
       )}
     </>

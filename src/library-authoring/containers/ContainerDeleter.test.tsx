@@ -64,7 +64,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       mockSearchResult({
         results: [ // @ts-ignore
           {
-            hits: [{ blockType: context }],
+            hits: [{
+              blockType: context,
+              displayName: `Test ${context}`,
+            }],
           },
         ],
       });
@@ -76,7 +79,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       render(<ContainerDeleter
         containerId={containerId}
         isOpen={false}
-        displayName={`Test ${context}`}
         close={mockClose}
       />, renderArgs);
 
@@ -88,7 +90,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
       render(<ContainerDeleter
-        displayName={`Test ${context}`}
         containerId={containerId}
         isOpen
         close={mockCancel}
@@ -109,7 +110,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     it(`<${context}> deletes the block when confirmed, shows a toast with undo option and restores block on undo`, async () => {
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter containerId={containerId} isOpen close={mockCancel} displayName="Test unit" />, renderArgs);
+      render(<ContainerDeleter containerId={containerId} isOpen close={mockCancel}  />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
@@ -152,7 +153,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       render(
         <ContainerDeleter
           containerId={containerId}
-          displayName={`Test ${context}`}
           isOpen
           close={mockCancel}
         />,
@@ -188,7 +188,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       render(
         <ContainerDeleter
           containerId={containerId}
-          displayName={`Test ${context}`}
           isOpen
           close={mockCancel}
         />,
