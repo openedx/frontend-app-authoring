@@ -1,14 +1,18 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { Store } from 'redux';
 import { render as baseRender, WrapperOptions } from '../testUtils';
 import { EditorContextProvider } from './EditorContext';
-import { type EditorState, initializeStore } from './data/redux'; // adjust path if needed
+import { createStore } from './data/store';
+import { type EditorState } from './data/redux'; // adjust path if needed
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
 export type PartialEditorState = RecursivePartial<EditorState>;
+
+let editorStore: Store<EditorState>;
 
 /**
  * Custom render function for testing React components with the editor context and Redux store.
@@ -27,16 +31,20 @@ export const editorRender = (
 ) => {
   // We might need a way for the test cases to access this store directly. In that case we could allow either an
   // initialState parameter OR an editorStore parameter.
-  const store = initializeStore(initialState as any);
+  editorStore = createStore(initialState);
 
   return baseRender(ui, {
     ...options,
     extraWrapper: ({ children }) => (
       <EditorContextProvider learningContextId={learningContextId}>
-        <Provider store={store}>
+        <Provider store={editorStore}>
           {children}
         </Provider>
       </EditorContextProvider>
     ),
   });
 };
+
+export function getEditorStore() {
+  return editorStore;
+}
