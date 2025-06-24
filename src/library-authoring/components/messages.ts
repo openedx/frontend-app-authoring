@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Collection actions menu',
     description: 'Alt/title text for the collection card menu button.',
   },
+  menuOpen: {
+    id: 'course-authoring.library-authoring.menu.open',
+    defaultMessage: 'Open',
+    description: 'Menu item for open a collection/container.',
+  },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',
     defaultMessage: 'Edit',
