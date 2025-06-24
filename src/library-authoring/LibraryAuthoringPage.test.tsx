@@ -1025,7 +1025,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('button', { name: /type/i }));
     fireEvent.click(screen.getByRole('checkbox', { name: /text/i }));
     // Escape to close the Types filter drop-down and re-enable the tabs
-    fireEvent.keyDown(screen.getByRole('button', { name: /type/i }), { key: 'Escape' });
+    fireEvent.keyDown(screen.getByRole('button', { name: /type:/i }), { key: 'Escape' });
 
     // Navigate to the collections tab
     fireEvent.click(await screen.findByRole('tab', { name: 'Collections' }));
