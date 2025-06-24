@@ -77,17 +77,6 @@ const BaseCard = ({
                   e.stopPropagation();
                 }
               }}
-              onKeyDown={(e) => {
-                if (['Enter', ' '].includes(e.key)) {
-                  const target = e.target as HTMLElement;
-                  const isDropdownToggle = target.closest('[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"]');
-
-                  if (!isDropdownToggle) {
-                    e.stopPropagation();
-                  }
-                }
-              }}
-              role="presentation"
             >
               {actions}
             </div>
