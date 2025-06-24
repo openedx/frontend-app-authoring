@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -7,6 +7,7 @@ import {
   AlertModal,
   Button,
   Collapsible,
+  DataTableContext,
   Hyperlink,
   Truncate,
 } from '@openedx/paragon';
@@ -22,6 +23,13 @@ const DeleteConfirmationModal = ({
   // injected
   intl,
 }) => {
+  const { clearSelection } = useContext(DataTableContext);
+
+  const handleConfirmDeletion = () => {
+    handleBulkDelete();
+    clearSelection();
+  };
+
   const firstSelectedRow = selectedRows[0]?.original;
   let activeContentRows = [];
   if (Array.isArray(selectedRows)) {
@@ -73,7 +81,7 @@ const DeleteConfirmationModal = ({
           <Button variant="tertiary" onClick={closeDeleteConfirmation}>
             {intl.formatMessage(messages.cancelButtonLabel)}
           </Button>
-          <Button onClick={handleBulkDelete}>
+          <Button onClick={handleConfirmDeletion}>
             {intl.formatMessage(messages.deleteFileButtonLabel)}
           </Button>
         </ActionRow>
