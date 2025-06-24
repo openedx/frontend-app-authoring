@@ -66,6 +66,7 @@ const BaseCard = ({
             <Icon src={itemIcon} className="library-item-header-icon" />
           }
           actions={(
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
             <div
               onClick={(e) => {
                 // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
