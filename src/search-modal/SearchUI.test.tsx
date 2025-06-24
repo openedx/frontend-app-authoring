@@ -11,8 +11,6 @@ import {
   waitFor,
   within,
   type RenderResult,
-  screen,
-  getByPlaceholderText,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
 import type { Store } from 'redux';
@@ -475,7 +473,9 @@ describe('<SearchUI />', () => {
     });
 
     it('can do a keyword search of the tag options', async () => {
-      const { getByRole, getByLabelText, queryByLabelText, getByPlaceholderText } = rendered;
+      const {
+        getByRole, getByLabelText, queryByLabelText, getByPlaceholderText,
+      } = rendered;
       // Now open the filters menu:
       fireEvent.click(getByRole('button', { name: 'Tags' }), {});
       // The dropdown menu in this case doesn't have a role; let's just assume it's displayed.
@@ -483,7 +483,7 @@ describe('<SearchUI />', () => {
       await waitFor(() => { expect(getByLabelText(expandButtonLabel)).toBeInTheDocument(); });
 
       // can't use getByRole because there are multiple searchboxes
-      const input = getByPlaceholderText(/search tags/i); 
+      const input = getByPlaceholderText(/search tags/i);
       fireEvent.change(input, { target: { value: 'Lightcast' } });
 
       await waitFor(() => { expect(queryByLabelText(/^ESDC Skills and Competencies/i)).toBeNull(); });
