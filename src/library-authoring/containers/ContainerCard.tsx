@@ -27,10 +27,9 @@ import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
-  displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
@@ -263,10 +262,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu
-              containerKey={containerKey}
-              displayName={hit.displayName}
-            />
+            <ContainerMenu containerKey={containerKey} />
           )}
         </ActionRow>
       )}

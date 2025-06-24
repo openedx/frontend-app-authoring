@@ -111,10 +111,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
           onClick={readOnly ? undefined : jumpToManageTags}
         />
         {!readOnly && (
-          <ContainerMenu
-            containerKey={container.originalId}
-            displayName={container.displayName}
-          />
+          <ContainerMenu containerKey={container.originalId} />
         )}
       </Stack>
     </>

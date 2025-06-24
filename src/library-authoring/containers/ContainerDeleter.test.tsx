@@ -110,7 +110,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     it(`<${context}> deletes the block when confirmed, shows a toast with undo option and restores block on undo`, async () => {
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter containerId={containerId} isOpen close={mockCancel}  />, renderArgs);
+      render(<ContainerDeleter containerId={containerId} isOpen close={mockCancel} />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
