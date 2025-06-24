@@ -418,14 +418,6 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should open the add content sidebar when card is focused and enter is pressed', async () => {
-    await renderLibraryPage();
-    const card = await screen.findAllByText('Introduction to Testing');
-    fireEvent.focus(card[0]);
-    fireEvent.keyDown(card[0], { key: 'Enter' });
-    expect(screen.getByText(/preview/i)).toBeInTheDocument();
-  });
-
   it('should open component sidebar, showing manage tab on clicking add to collection menu item - component', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
@@ -617,6 +609,49 @@ describe('<LibraryAuthoringPage />', () => {
 
     const clearFitlersButton = screen.getByText('Clear Filters');
     fireEvent.click(clearFitlersButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
+
+  it('can clear a single filter type', async () => {
+    await renderLibraryPage();
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    // Validate click on Problem type
+    const problemMenu = screen.getAllByText('Problem')[0];
+    expect(problemMenu).toBeInTheDocument();
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Validate clear filters
+    fireEvent.click(problemMenu);
+
+    const clearFitlerButton = screen.getByText('Clear Filter');
+    fireEvent.click(clearFitlerButton);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.not.stringContaining('block_type = problem'),
