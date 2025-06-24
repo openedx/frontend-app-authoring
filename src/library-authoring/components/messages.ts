@@ -243,12 +243,12 @@ const messages = defineMessages({
   },
   deleteSubsectionCourseMessaage: {
     id: 'course-authoring.library-authoring.subsection.delete-parent-message',
-    defaultMessage: 'This subsection is used {courseCount, plural, one {1 time} other {{courseCount} times}} in courses, and will stop receiving updates there.',
+    defaultMessage: 'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a subsection',
   },
   deleteSectionCourseMessaage: {
     id: 'course-authoring.library-authoring.section.delete-parent-message',
-    defaultMessage: 'This section is used {courseCount, plural, one {1 time} other {{courseCount} times}} in courses, and will stop receiving updates there.',
+    defaultMessage: 'This section is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a section',
   },
   deleteUnitSuccess: {
