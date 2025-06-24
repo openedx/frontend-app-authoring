@@ -22,10 +22,10 @@ import containerMessages from '../containers/messages';
 import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
-import { ContainerMenu } from '../components/ContainerCard';
 import { useLibraryRoutes } from '../routes';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRunOnNextRender } from '../../utils';
+import { ContainerMenu } from '../containers/ContainerCard';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -111,10 +111,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
           onClick={readOnly ? undefined : jumpToManageTags}
         />
         {!readOnly && (
-          <ContainerMenu
-            containerKey={container.originalId}
-            displayName={container.displayName}
-          />
+          <ContainerMenu containerKey={container.originalId} />
         )}
       </Stack>
     </>

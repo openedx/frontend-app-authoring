@@ -20,6 +20,7 @@ import {
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import messages from './messages';
+import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
 
@@ -58,9 +59,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
+      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionSuccess));
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
+      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionFailure));
     });
   };
 
@@ -139,11 +140,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         </Dropdown.Item>
         {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
-            <FormattedMessage {...messages.menuRemoveFromCollection} />
+            <FormattedMessage {...containerMessages.menuRemoveFromCollection} />
           </Dropdown.Item>
         )}
         <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...messages.menuAddToCollection} />
+          <FormattedMessage {...containerMessages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
       {isConfirmingDelete && (

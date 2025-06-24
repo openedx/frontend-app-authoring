@@ -876,11 +876,22 @@ export const usePublishContainer = (containerId: string) => {
  */
 export const useContentFromSearchIndex = (contentIds: string[]) => {
   const { client, indexName } = useContentSearchConnection();
+  const extraFilter = [`usage_key IN ["${contentIds.join('","')}"]`];
+  // NOTE: assuming that all contentIds are part of a single libraryId as we don't have a usecase
+  // of passing multiple contentIds from different libraries.
+  if (contentIds.length > 0) {
+    try {
+      const libraryId = getLibraryId(contentIds?.[0]);
+      extraFilter.push(`context_key = "${libraryId}"`);
+    } catch {
+      // Ignore as the contentIds could be part of course instead of a library.
+    }
+  }
   return useContentSearchResults({
     client,
     indexName,
     searchKeywords: '',
-    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    extraFilter,
     limit: contentIds.length,
     enabled: !!contentIds.length,
     skipBlockTypeFetch: true,

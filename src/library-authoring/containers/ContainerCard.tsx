@@ -19,18 +19,17 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
-import AddComponentWidget from './AddComponentWidget';
-import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import { useRunOnNextRender } from '../../utils';
+import BaseCard from '../components/BaseCard';
+import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
-  displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId } = useLibraryContext();
   const {
@@ -100,12 +99,13 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <ContainerDeleter
-        isOpen={isConfirmingDelete}
-        close={cancelDelete}
-        containerId={containerKey}
-        displayName={displayName}
-      />
+      {isConfirmingDelete && (
+        <ContainerDeleter
+          isOpen={isConfirmingDelete}
+          close={cancelDelete}
+          containerId={containerKey}
+        />
+      )}
     </>
   );
 };
@@ -262,10 +262,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu
-              containerKey={containerKey}
-              displayName={hit.displayName}
-            />
+            <ContainerMenu containerKey={containerKey} />
           )}
         </ActionRow>
       )}
