@@ -118,7 +118,7 @@ const messages = defineMessages({
   },
   deleteSubsectionMultipleParentMessage: {
     id: 'course-authoring.library-authoring.subsection.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentCount, plural, one {1 Section} other {{parentCount} Sections}} in this library.',
+    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentCount} Sections in this library.',
     description: 'Parent usage details shown before deleting a subsection part of multiple sections',
   },
   deleteSubsectionWarningTitle: {
@@ -138,7 +138,7 @@ const messages = defineMessages({
   },
   deleteUnitMultipleParentMessage: {
     id: 'course-authoring.library-authoring.unit.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentCount, plural, one {1 Subsection} other {{parentCount} Subsections}} in this library.',
+    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentCount} Subsections in this library.',
     description: 'Parent usage details shown before deleting a unit part of multiple subsections',
   },
   deleteUnitWarningTitle: {

@@ -131,7 +131,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       });
     });
 
-    it(`<${context}> should show subsection message if parent data is set with one parent`, async () => {
+    it(`<${context}> should show parents message if parent data is set with one parent`, async () => {
       const mockCancel = jest.fn();
       const { containerId, parent } = getContainerDetails(context);
       if (!parent) {
