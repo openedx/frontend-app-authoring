@@ -26,11 +26,10 @@ import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
 import messages from './messages';
-import componentMessages from '../components/messages';
-import ContainerDeleter from '../components/ContainerDeleter';
 import { useContainer, usePublishContainer } from '../data/apiHooks';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
+import ContainerDeleter from './ContainerDeleter';
 
 type ContainerMenuProps = {
   containerId: string,
@@ -51,12 +50,12 @@ const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
-          alt={intl.formatMessage(componentMessages.containerCardMenuAlt)}
+          alt={intl.formatMessage(messages.containerCardMenuAlt)}
           data-testid="container-info-menu-toggle"
         />
         <Dropdown.Menu>
           <Dropdown.Item onClick={confirmDelete}>
-            <FormattedMessage {...componentMessages.menuDeleteContainer} />
+            <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>

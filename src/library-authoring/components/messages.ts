@@ -11,16 +11,6 @@ const messages = defineMessages({
     defaultMessage: 'Collection actions menu',
     description: 'Alt/title text for the collection card menu button.',
   },
-  containerCardMenuAlt: {
-    id: 'course-authoring.library-authoring.container.menu',
-    defaultMessage: 'Container actions menu',
-    description: 'Alt/title text for the container card menu button.',
-  },
-  menuOpen: {
-    id: 'course-authoring.library-authoring.menu.open',
-    defaultMessage: 'Open',
-    description: 'Menu item for open a collection/container.',
-  },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',
     defaultMessage: 'Edit',
@@ -35,26 +25,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.menu.delete',
     defaultMessage: 'Delete',
     description: 'Menu item for deleting a component.',
-  },
-  menuAddToCollection: {
-    id: 'course-authoring.library-authoring.component.menu.add',
-    defaultMessage: 'Add to collection',
-    description: 'Menu item for add a component to collection.',
-  },
-  menuRemoveFromCollection: {
-    id: 'course-authoring.library-authoring.component.menu.remove',
-    defaultMessage: 'Remove from collection',
-    description: 'Menu item for remove an item from collection.',
-  },
-  removeComponentFromCollectionSuccess: {
-    id: 'course-authoring.library-authoring.component.remove-from-collection-success',
-    defaultMessage: 'Item successfully removed',
-    description: 'Message for successful removal of an item from collection.',
-  },
-  removeComponentFromCollectionFailure: {
-    id: 'course-authoring.library-authoring.component.remove-from-collection-failure',
-    defaultMessage: 'Failed to remove item',
-    description: 'Message for failure of removal of an item from collection.',
   },
   deleteComponentWarningTitle: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-title',
@@ -191,96 +161,6 @@ const messages = defineMessages({
     defaultMessage: 'This component can be synced in courses after publish.',
     description: 'Alert text of the modal to confirm publish a component in a library.',
   },
-  menuDeleteContainer: {
-    id: 'course-authoring.library-authoring.container.delete-menu-text',
-    defaultMessage: 'Delete',
-    description: 'Menu item to delete a container.',
-  },
-  deleteUnitWarningTitle: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-title',
-    defaultMessage: 'Delete Unit',
-    description: 'Title text for the warning displayed before deleting a Unit',
-  },
-  deleteSubsectionWarningTitle: {
-    id: 'course-authoring.library-authoring.subsection.delete-confirmation-title',
-    defaultMessage: 'Delete Subsection',
-    description: 'Title text for the warning displayed before deleting a Subsection',
-  },
-  deleteSectionWarningTitle: {
-    id: 'course-authoring.library-authoring.section.delete-confirmation-title',
-    defaultMessage: 'Delete Section',
-    description: 'Title text for the warning displayed before deleting a Section',
-  },
-  deleteUnitConfirm: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
-    defaultMessage: 'Delete {unitName}? {message}',
-    description: 'Confirmation text to display before deleting a unit',
-  },
-  deleteUnitParentMessage: {
-    id: 'course-authoring.library-authoring.unit.delete-parent-message',
-    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentName} in this library.',
-    description: 'Parent usage details shown before deleting a unit',
-  },
-  deleteSubsectionParentMessage: {
-    id: 'course-authoring.library-authoring.subsection.delete-parent-message',
-    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentName} in this library.',
-    description: 'Parent usage details shown before deleting a subsection',
-  },
-  deleteUnitMultipleParentMessage: {
-    id: 'course-authoring.library-authoring.unit.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this unit, you will also be deleting it from {parentCount, plural, one {1 Subsection} other {{parentCount} Subsections}} in this library.',
-    description: 'Parent usage details shown before deleting a unit part of multiple subsections',
-  },
-  deleteSubsectionMultipleParentMessage: {
-    id: 'course-authoring.library-authoring.subsection.delete-multiple-parent-message',
-    defaultMessage: 'By deleting this subsection, you will also be deleting it from {parentCount, plural, one {1 Section} other {{parentCount} Sections}} in this library.',
-    description: 'Parent usage details shown before deleting a subsection part of multiple sections',
-  },
-  deleteUnitCourseMessage: {
-    id: 'course-authoring.library-authoring.unit.delete-course-usage-message',
-    defaultMessage: 'This unit is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
-    description: 'Course usage details shown before deleting a unit',
-  },
-  deleteSubsectionCourseMessaage: {
-    id: 'course-authoring.library-authoring.subsection.delete-parent-message',
-    defaultMessage: 'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
-    description: 'Course usage details shown before deleting a subsection',
-  },
-  deleteSectionCourseMessaage: {
-    id: 'course-authoring.library-authoring.section.delete-parent-message',
-    defaultMessage: 'This section is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
-    description: 'Course usage details shown before deleting a section',
-  },
-  deleteUnitSuccess: {
-    id: 'course-authoring.library-authoring.unit.delete.success',
-    defaultMessage: 'Unit deleted',
-    description: 'Message to display on delete unit success',
-  },
-  deleteUnitFailed: {
-    id: 'course-authoring.library-authoring.unit.delete-failed-error',
-    defaultMessage: 'Failed to delete unit',
-    description: 'Message to display on failure to delete a unit',
-  },
-  undoDeleteContainerToastAction: {
-    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-button',
-    defaultMessage: 'Undo',
-    description: 'Toast message to undo deletion of container',
-  },
-  undoDeleteContainerToastMessage: {
-    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-text',
-    defaultMessage: 'Undo successful',
-    description: 'Message to display on undo delete container success',
-  },
-  undoDeleteUnitToastFailed: {
-    id: 'course-authoring.library-authoring.unit.undo-delete-unit-failed',
-    defaultMessage: 'Failed to undo delete Unit operation',
-    description: 'Message to display on failure to undo delete unit',
-  },
-  containerPreviewMoreBlocks: {
-    id: 'course-authoring.library-authoring.component.container-card-preview.more-blocks',
-    defaultMessage: '+{count}',
-    description: 'Count shown when a container has more blocks than will fit on the card preview.',
-  },
   removeComponentFromUnitMenu: {
     id: 'course-authoring.library-authoring.unit.component.remove.button',
     defaultMessage: 'Remove from unit',
@@ -310,11 +190,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.undo-remove-component-from-container-failed',
     defaultMessage: 'Failed to undo remove component operation',
     description: 'Message to display on failure to undo delete component',
-  },
-  containerPreviewText: {
-    id: 'course-authoring.library-authoring.container.preview.text',
-    defaultMessage: 'Contains {children}.',
-    description: 'Preview message for section/subsections with the names of children separated by commas',
   },
 });
 export default messages;

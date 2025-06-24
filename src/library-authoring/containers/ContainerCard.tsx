@@ -19,11 +19,11 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
-import AddComponentWidget from './AddComponentWidget';
-import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import { useRunOnNextRender } from '../../utils';
+import BaseCard from '../components/BaseCard';
+import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
