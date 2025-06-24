@@ -51,7 +51,6 @@ const ContainerDeleter = ({
         return {
           title: intl.formatMessage(messages.deleteSectionWarningTitle),
           parentMessage: '',
-          // Update below fields when sections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSectionCourseMessaage,
         };
@@ -70,7 +69,6 @@ const ContainerDeleter = ({
         return {
           title: intl.formatMessage(messages.deleteSubsectionWarningTitle),
           parentMessage,
-          // Update below fields when subsections are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteSubsectionCourseMessaage,
         };
@@ -89,7 +87,6 @@ const ContainerDeleter = ({
         return {
           title: intl.formatMessage(messages.deleteUnitWarningTitle),
           parentMessage,
-          // Update below fields when unit are linked to courses
           courseCount: downstreamCount,
           courseMessage: messages.deleteUnitCourseMessage,
         };
