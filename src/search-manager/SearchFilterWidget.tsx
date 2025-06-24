@@ -53,15 +53,16 @@ const SearchFilterWidget: React.FC<{
           {children}
 
           {!!appliedFilters.length && (
-          <Button
-            onClick={clearAndClose}
-            variant="link"
-            className="text-info-500 text-decoration-none clear-filter-button"
-            size="sm"
-          >
-            {intl.formatMessage(messages.clearFilter)}
-          </Button>
-          )}
+             <div className="d-flex justify-content-end">
+               <Button
+                 onClick={clearAndClose}
+                 variant="link"
+                 className="text-info-500 text-decoration-none clear-filter-button"
+               >
+                 { intl.formatMessage(messages.clearFilter) }
+               </Button>
+             </div>
+           )}
         </Dropdown.Menu>
       </Dropdown>
     </div>
