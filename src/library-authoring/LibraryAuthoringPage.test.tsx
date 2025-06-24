@@ -418,6 +418,14 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
+  it('should open the add content sidebar when card is focused and enter is pressed', async () => {
+    await renderLibraryPage();
+    const card = await screen.findAllByText('Introduction to Testing');
+    fireEvent.focus(card[0]);
+    fireEvent.keyDown(card[0], { key: 'Enter' });
+    expect(screen.getByText(/preview/i)).toBeInTheDocument();
+  });
+
   it('should open component sidebar, showing manage tab on clicking add to collection menu item - component', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
