@@ -1,0 +1,13 @@
+.breadcrumb-menu {
+  button {
+    padding: 0;
+  }
+}
+
+.parents-breadcrumb {
+  max-width: 700px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

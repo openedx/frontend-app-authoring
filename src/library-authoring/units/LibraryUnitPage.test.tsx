@@ -1,7 +1,10 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
-
 import { act } from 'react';
+
+import { ToastActionData } from '@src/generic/toast-context';
+import { mockClipboardEmpty } from '@src/generic/data/api.mock';
+import { mockContentSearchConfig, mockGetBlockTypes, mockSearchResult } from '@src/search-manager/data/api.mock';
 import {
   initializeMocks,
   fireEvent,
@@ -9,7 +12,8 @@ import {
   screen,
   waitFor,
   within,
-} from '../../testUtils';
+} from '@src/testUtils';
+
 import {
   getLibraryContainerApiUrl,
   getLibraryContainerChildrenApiUrl,
@@ -22,10 +26,8 @@ import {
   mockGetContainerChildren,
   mockLibraryBlockMetadata,
 } from '../data/api.mocks';
-import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import LibraryLayout from '../LibraryLayout';
-import { ToastActionData } from '../../generic/toast-context';
+import mockResult from '../__mocks__/unit-single.json';
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
@@ -41,6 +43,19 @@ mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockLibraryBlockMetadata.applyMock();
+const searchFilterfn = (requestData: any) => {
+  const queryFilter = requestData?.queries[0]?.filter?.[1];
+  const subsectionId = queryFilter?.split('usage_key IN ["')[1].split('"]')[0];
+  switch (subsectionId) {
+    case mockGetContainerMetadata.unitIdLoading:
+      return new Promise<any>(() => {});
+    case mockGetContainerMetadata.unitIdError:
+      return Promise.reject(new Error('Not found'));
+    default:
+      return mockResult;
+  }
+};
+mockSearchResult(mockResult, searchFilterfn);
 
 const verticalSortableListCollisionDetection = jest.fn();
 jest.mock('../../generic/DraggableList/verticalSortableList', () => ({
@@ -107,13 +122,13 @@ describe('<LibraryUnitPage />', () => {
 
   it('shows empty unit', async () => {
     renderLibraryUnitPage(mockGetContainerMetadata.unitIdEmpty);
-    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
     expect(await screen.findByText('This unit is empty')).toBeInTheDocument();
   });
 
   it('can rename unit', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
 
     const editUnitTitleButton = screen.getAllByRole(
       'button',
@@ -144,7 +159,7 @@ describe('<LibraryUnitPage />', () => {
 
   it('show error if renaming unit fails', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
 
     const editUnitTitleButton = screen.getAllByRole(
       'button',
@@ -161,6 +176,8 @@ describe('<LibraryUnitPage />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
     expect(textBox).toBeInTheDocument();
+    expect(textBox).toHaveValue('Test Unit');
+    screen.logTestingPlaygroundURL();
     fireEvent.change(textBox, { target: { value: 'New Unit Title' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
 
@@ -195,7 +212,7 @@ describe('<LibraryUnitPage />', () => {
 
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
-    expect((await screen.findAllByText('Test Unit')).length).toBeGreaterThan(1);
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
     // No Preview tab shown in sidebar
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
@@ -220,6 +237,7 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(200);
     renderLibraryUnitPage();
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');
@@ -254,6 +272,7 @@ describe('<LibraryUnitPage />', () => {
     const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(400);
     renderLibraryUnitPage();
+    expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
 
     // Wait loading of the component
     await screen.findByText('text block 0');
