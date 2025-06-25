@@ -223,6 +223,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
+            isClickable
             onClick={(e) => handleChildClick(child, e.detail)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
