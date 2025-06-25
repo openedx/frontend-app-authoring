@@ -121,7 +121,7 @@ const ScanResults: FC<Props> = ({ data }) => {
             onClick={open}
             disabled={false}
             iconAfter={ArrowDropDown}
-            className="rounded-sm justify-content-between cadence-button"
+            className="justify-content-between"
           >
             {intl.formatMessage(messages.filterButtonLabel)}
           </Button>

@@ -81,12 +81,24 @@ describe('<PickLibraryContentModal />', () => {
   });
 
   [
-    'collection' as const,
-    'unit' as const,
-    'section' as const,
-    'subsection' as const,
-  ].forEach((context) => {
-    it(`can pick components from the modal (${context})`, async () => {
+    {
+      context: 'collection' as const,
+      addType: 'component',
+    },
+    {
+      context: 'unit' as const,
+      addType: 'component',
+    },
+    {
+      context: 'subsection' as const,
+      addType: 'unit',
+    },
+    {
+      context: 'section' as const,
+      addType: 'subsection',
+    },
+  ].forEach(({ context, addType }) => {
+    it(`can pick content from the modal (${context})`, async () => {
       render(context);
 
       // Wait for the content library to load
@@ -95,11 +107,16 @@ describe('<PickLibraryContentModal />', () => {
         expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
       });
 
-      // Select the first component
-      fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-      expect(await screen.findByText('1 Selected Component')).toBeInTheDocument();
+      expect(screen.getByText(`Select ${addType}s`)).toBeInTheDocument();
 
-      fireEvent.click(screen.getByRole('button', { name: /add to .*/i }));
+      // Select and add the first item
+      fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
+      expect(await screen.findByText(
+        new RegExp(`1 selected ${addType}`, 'i'),
+      )).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', {
+        name: new RegExp(`add to ${context}`, 'i'),
+      }));
 
       await waitFor(() => {
         switch (context) {
@@ -143,11 +160,15 @@ describe('<PickLibraryContentModal />', () => {
         expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
       });
 
-      // Select the first component
+      // Select and add the first item
       fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-      expect(await screen.findByText('1 Selected Component')).toBeInTheDocument();
+      expect(await screen.findByText(
+        new RegExp(`1 selected ${addType}`, 'i'),
+      )).toBeInTheDocument();
 
-      fireEvent.click(screen.getByRole('button', { name: /add to .*/i }));
+      fireEvent.click(screen.getByRole('button', {
+        name: new RegExp(`add to ${context}`, 'i'),
+      }));
 
       await waitFor(() => {
         switch (context) {

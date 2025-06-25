@@ -34,6 +34,7 @@ const {
   languageWithoutTagsId,
   largeTagsId,
   emptyTagsId,
+  containerTagsId,
 } = mockContentTaxonomyTagsData;
 
 jest.mock('react-router-dom', () => ({
@@ -46,14 +47,15 @@ jest.mock('../library-authoring/common/context/SidebarContext', () => ({
   useSidebarContext: () => ({ sidebarAction: mockSidebarAction() }),
 }));
 
-const renderDrawer = (contentId, drawerParams = {}) => (
-  render(
+const renderDrawer = (contentId, drawerParams = {}, renderPath = path, containerId = '') => {
+  const params = { contentId, containerId };
+  return render(
     <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
       <ContentTagsDrawer {...drawerParams} />
     </ContentTagsDrawerSheetContext.Provider>,
-    { path, params: { contentId } },
-  )
-);
+    { path: renderPath, params },
+  );
+};
 
 describe('<ContentTagsDrawer />', () => {
   beforeEach(async () => {
@@ -690,6 +692,42 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
+  });
+
+  [
+    'lct:org:lib:unit:1',
+    'lib-collection:org:lib:1',
+    'lb:org:lib:html:1',
+  ].forEach((containerId) => {
+    it(`should invalidate children query when update child tag when containerId is ${containerId}`, async () => {
+      const newPath = '/container/:containerId/';
+      const { axiosMock, queryClient } = initializeMocks();
+      const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+      const url = getContentTaxonomyTagsApiUrl(containerTagsId);
+      axiosMock.onPut(url).reply(200);
+      renderDrawer(containerTagsId, { id: containerTagsId }, newPath, containerId);
+      expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+      const editTagsButton = screen.getByRole('button', {
+        name: /edit tags/i,
+      });
+      fireEvent.click(editTagsButton);
+
+      const saveButton = screen.getByRole('button', {
+        name: /save/i,
+      });
+      fireEvent.click(saveButton);
+
+      await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
+      expect(mockInvalidateQueries).toHaveBeenCalledTimes(5);
+      expect(mockInvalidateQueries).toHaveBeenNthCalledWith(5, [
+        'contentLibrary',
+        'lib:org:lib',
+        'content',
+        'container',
+        containerId,
+        'children',
+      ]);
+    });
   });
 
   it('should taxonomies must be ordered', async () => {
