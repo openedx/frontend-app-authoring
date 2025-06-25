@@ -30,10 +30,6 @@ const SearchFilterWidget: React.FC<{
 }) => {
   const intl = useIntl();
 
-  const clearAndClose = React.useCallback(() => {
-    clearFilter();
-  }, [clearFilter]);
-
   return (
     <div className="d-flex mr-3">
       <Dropdown id={`search-filter-dropdown-${String(props.label).toLowerCase().replace(/\s+/g, '-')}`}>
@@ -55,7 +51,7 @@ const SearchFilterWidget: React.FC<{
           {!!appliedFilters.length && (
           <div className="d-flex justify-content-end">
             <Button
-              onClick={clearAndClose}
+              onClick={clearFilter}
               variant="link"
               className="text-info-500 text-decoration-none clear-filter-button"
             >
