@@ -61,8 +61,16 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
     <>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
+          const target = e.target as HTMLElement;
+          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+
+          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
+          if (!isDropdownToggle) {
+            e.stopPropagation();
+          }
+        }}
       >
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
@@ -72,12 +80,21 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         />
       </div>
       <ActionRow.Spacer />
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <Stack
         direction="horizontal"
         gap={3}
-        // Prevent parent card from being clicked.
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
+          const target = e.target as HTMLElement;
+          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+
+          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
+          if (!isDropdownToggle) {
+            e.stopPropagation();
+          }
+        }}
       >
         {!showOnlyPublished && container.hasUnpublishedChanges && (
           <Badge
