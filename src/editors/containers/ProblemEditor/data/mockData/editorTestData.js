@@ -130,3 +130,51 @@ export const numberParseTest = {
   hints: [],
   question: '<p>What is the content of the register x2 after executing the following three lines of instructions?</p>',
 };
+
+export const numericInputWithEmptyUpperBound = {
+  answers: [
+    {
+      id: 'a1',
+      title: '[1.5,]',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
+
+export const numericInputWithSwappedBounds = {
+  answers: [
+    {
+      id: 'a1',
+      title: '[5,2]',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
+
+export const numericInputWithFractionBounds = {
+  answers: [
+    {
+      id: 'a1',
+      title: '(3/2,1/2)',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
+
+export const numericInputWithMissingUpperBound = {
+  answers: [
+    {
+      id: 'a1',
+      title: '[,2.5]',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
