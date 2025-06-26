@@ -18,6 +18,10 @@ import {
   numericInputWithAnswerRange,
   textInputWithFeedbackAndHintsWithMultipleAnswers,
   numberParseTest,
+  numericInputWithFractionBounds,
+  numericInputWithEmptyUpperBound,
+  numericInputWithSwappedBounds,
+  numericInputWithMissingUpperBound,
 } from './mockData/editorTestData';
 import ReactStateOLXParser from './ReactStateOLXParser';
 
@@ -145,6 +149,43 @@ describe('Check React State OLXParser problem', () => {
       expect(buildOLX).toEqual(
         '<problem><optionresponse>\n<pre>  1  a<br/>  2  b<br/></pre><optioninput></optioninput></optionresponse>\n</problem>',
       );
+    });
+  });
+  describe('ReactStateOLXParser numerical response range parsing', () => {
+    test('handles empty upper bound as same as lower', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithEmptyUpperBound,
+        editorObject: numericInputWithEmptyUpperBound,
+      });
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('[0,1.5]');
+    });
+
+    test('handles swapped bounds and corrects order', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithSwappedBounds,
+        editorObject: numericInputWithSwappedBounds,
+      });
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('[2,5]');
+    });
+
+    test('fixes swapped fraction bounds and preserves brackets', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithFractionBounds,
+        editorObject: numericInputWithFractionBounds,
+      });
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('(1/2,3/2)');
+    });
+
+    test('sets upper bound = lower bound if upper bound missing', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithMissingUpperBound,
+        editorObject: numericInputWithMissingUpperBound,
+      });
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('[,2.5]');
     });
   });
 });
