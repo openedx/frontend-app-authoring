@@ -2,12 +2,12 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 
-import Loading from '@src/generic/Loading';
-import NotFoundAlert from '@src/generic/NotFoundAlert';
-import SubHeader from '@src/generic/sub-header/SubHeader';
 import ErrorAlert from '@src/generic/alert-error';
-import Header from '@src/header';
 import type { ContainerHit } from '@src/search-manager';
+import Loading from '../../generic/Loading';
+import NotFoundAlert from '../../generic/NotFoundAlert';
+import SubHeader from '../../generic/sub-header/SubHeader';
+import Header from '../../header';
 
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
