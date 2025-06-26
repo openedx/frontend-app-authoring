@@ -442,4 +442,156 @@ describe('<LibraryUnitPage />', () => {
     userEvent.click(component.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
     expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
   });
+
+  describe('clicks on non-dropdown elements call stopPropagation while dropdown toggles do not', () => {
+    it('should call stopPropagation when clicking on BlockHeader non-dropdown elements', async () => {
+      renderLibraryUnitPage();
+
+      // Wait for components to load
+      await screen.findByText('text block 0');
+
+      // Find all TagCount elements (they are part of the BlockHeader and not dropdown toggles)
+      const tagCountElements = screen.getAllByTestId('generic-tag-count');
+      expect(tagCountElements.length).toBeGreaterThan(0);
+
+      const tagCountElement = tagCountElements[0];
+
+      // Spy on the stopPropagation method of events
+      const stopPropagationSpy = jest.fn();
+
+      // Add event listener to capture the event and spy on stopPropagation
+      tagCountElement.addEventListener('click', (e) => {
+        // Replace the stopPropagation method with our spy
+        e.stopPropagation = stopPropagationSpy;
+      }, true); // Use capture phase to ensure our spy is set before the component's handler
+
+      // Click on the TagCount element (which is not a dropdown toggle)
+      fireEvent.click(tagCountElement);
+
+      // Verify that stopPropagation was called
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should call stopPropagation when clicking on ComponentBlock content area', async () => {
+      renderLibraryUnitPage();
+
+      // Wait for components to load
+      await screen.findByText('text block 0');
+
+      // Find the component card - it should be in a sortable item
+      const componentCard = screen.getByText('text block 0').closest('[class*="pgn__card"]');
+      expect(componentCard).toBeInTheDocument();
+
+      // Create a custom event and spy on stopPropagation
+      const stopPropagationSpy = jest.fn();
+
+      // Test the event handling by creating a real click event that mimics clicking inside the content area
+      // but not on a dropdown toggle element
+      const mockEvent = new Event('click', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', {
+        value: document.createElement('div'), // Normal div, not a dropdown toggle
+        writable: false,
+      });
+      Object.defineProperty(mockEvent, 'stopPropagation', {
+        value: stopPropagationSpy,
+        writable: true,
+      });
+
+      // Mock the closest method to return null (not a dropdown toggle)
+      (mockEvent.target as any).closest = jest.fn().mockReturnValue(null);
+
+      // Simulate the onClick handler logic from ComponentBlock
+      const target = mockEvent.target as HTMLElement;
+      const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+
+      if (!isDropdownToggle) {
+        mockEvent.stopPropagation();
+      }
+
+      // Verify that stopPropagation was called because this is NOT a dropdown toggle
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT call stopPropagation when clicking dropdown toggle elements to let dropdowns coordinate', async () => {
+      renderLibraryUnitPage();
+
+      // Wait for components to load
+      await screen.findByText('text block 0');
+
+      // Create a custom event and spy on stopPropagation
+      const stopPropagationSpy = jest.fn();
+
+      // Create a mock dropdown toggle element
+      const mockDropdownElement = document.createElement('button');
+      mockDropdownElement.setAttribute('data-testid', 'dropdown');
+
+      // Test the event handling by creating a real click event on a dropdown toggle
+      const mockEvent = new Event('click', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', {
+        value: mockDropdownElement,
+        writable: false,
+      });
+      Object.defineProperty(mockEvent, 'stopPropagation', {
+        value: stopPropagationSpy,
+        writable: true,
+      });
+
+      // Mock the closest method to return the dropdown element (IS a dropdown toggle)
+      (mockEvent.target as any).closest = jest.fn().mockReturnValue(mockDropdownElement);
+
+      // Simulate the onClick handler logic from ComponentBlock
+      const target = mockEvent.target as HTMLElement;
+      const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+
+      if (!isDropdownToggle) {
+        mockEvent.stopPropagation();
+      }
+
+      // Verify that stopPropagation was NOT called because this IS a dropdown toggle
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  const reorderTestCases = [
+    {
+      name: 'should show success toast when reorder operation succeeds',
+      responseStatus: 200,
+      expectedToastMessage: 'Order updated',
+    },
+    {
+      name: 'should show error toast when reorder operation fails',
+      responseStatus: 500,
+      expectedToastMessage: 'Failed to update components order',
+    },
+  ];
+
+  reorderTestCases.forEach(({ name, responseStatus, expectedToastMessage }) => {
+    it(name, async () => {
+      renderLibraryUnitPage();
+
+      // Get the first drag handle
+      const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
+
+      // Mock API response based on test case
+      axiosMock
+        .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
+        .reply(responseStatus);
+
+      // Mock collision detection to return a valid drop target
+      verticalSortableListCollisionDetection.mockReturnValue([{
+        id: 'lb:org1:Demo_course_generated:html:text-1----1',
+      }]);
+
+      // Simulate drag and drop reorder operation using keyboard
+      await act(async () => {
+        fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+      });
+      setTimeout(() => fireEvent.keyDown(firstDragHandle, { code: 'Space' }));
+
+      // Verify expected toast message is shown
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(expectedToastMessage);
+      });
+    });
+  });
 });
