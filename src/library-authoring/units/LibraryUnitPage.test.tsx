@@ -503,7 +503,7 @@ describe('<LibraryUnitPage />', () => {
 
       // Simulate the onClick handler logic from ComponentBlock
       const target = mockEvent.target as HTMLElement;
-      const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+      const isDropdownToggle = target.closest('.pgn__dropdown-toggle-iconbutton');
 
       if (!isDropdownToggle) {
         mockEvent.stopPropagation();
@@ -542,7 +542,7 @@ describe('<LibraryUnitPage />', () => {
 
       // Simulate the onClick handler logic from ComponentBlock
       const target = mockEvent.target as HTMLElement;
-      const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
+      const isDropdownToggle = target.closest('.pgn__dropdown-toggle-iconbutton');
 
       if (!isDropdownToggle) {
         mockEvent.stopPropagation();

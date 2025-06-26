@@ -41,6 +41,17 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
 }
 
+const handleActionClick = (e: React.MouseEvent) => {
+  // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
+  const target = e.target as HTMLElement;
+  const isDropdownToggle = target.closest('.pgn__dropdown-toggle-iconbutton');
+
+  // But allow dropdown coordination events to bubble up for proper dropdown behavior.
+  if (!isDropdownToggle) {
+    e.stopPropagation();
+  }
+};
+
 const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -75,18 +86,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   return (
     <>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div
-        onClick={(e) => {
-          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
-          const target = e.target as HTMLElement;
-          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
-
-          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
-          if (!isDropdownToggle) {
-            e.stopPropagation();
-          }
-        }}
-      >
+      <div onClick={handleActionClick}>
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
           text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
@@ -99,17 +99,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
       <Stack
         direction="horizontal"
         gap={3}
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
-        onClick={(e) => {
-          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
-          const target = e.target as HTMLElement;
-          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
-
-          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
-          if (!isDropdownToggle) {
-            e.stopPropagation();
-          }
-        }}
+        onClick={handleActionClick}
       >
         {!showOnlyPublished && container.hasUnpublishedChanges && (
           <Badge

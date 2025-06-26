@@ -52,6 +52,17 @@ interface ComponentBlockProps {
   isDragging?: boolean;
 }
 
+const handleActionClick = (e: React.MouseEvent) => {
+  // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
+  const target = e.target as HTMLElement;
+  const isDropdownToggle = target.closest('.pgn__dropdown-toggle-iconbutton');
+
+  // But allow dropdown coordination events to bubble up for proper dropdown behavior.
+  if (!isDropdownToggle) {
+    e.stopPropagation();
+  }
+};
+
 /** Component header */
 const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
@@ -95,16 +106,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         direction="horizontal"
         gap={2}
         className="font-weight-bold"
-        onClick={(e) => {
-          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
-          const target = e.target as HTMLElement;
-          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
-
-          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
-          if (!isDropdownToggle) {
-            e.stopPropagation();
-          }
-        }}
+        onClick={handleActionClick}
       >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
@@ -118,16 +120,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       <Stack
         direction="horizontal"
         gap={3}
-        onClick={(e) => {
-          // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
-          const target = e.target as HTMLElement;
-          const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
-
-          // But allow dropdown coordination events to bubble up for proper dropdown behavior.
-          if (!isDropdownToggle) {
-            e.stopPropagation();
-          }
-        }}
+        onClick={handleActionClick}
       >
         {!showOnlyPublished && block.hasUnpublishedChanges && (
           <Badge
@@ -211,16 +204,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           className={classNames('p-3', {
             'container-mw-md': block.blockType === blockTypes.video,
           })}
-          onClick={(e) => {
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked.
-            const target = e.target as HTMLElement;
-            const isDropdownToggle = target.closest('[data-testid="dropdown"], [data-testid="container-card-menu-toggle"], .pgn__dropdown-toggle-iconbutton');
-
-            // But allow dropdown coordination events to bubble up for proper dropdown behavior.
-            if (!isDropdownToggle) {
-              e.stopPropagation();
-            }
-          }}
+          onClick={handleActionClick}
         >
           <LibraryBlock
             usageKey={block.originalId}
