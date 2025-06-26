@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useClipboard } from '../../generic/clipboard';
@@ -23,7 +24,6 @@ import messages from './messages';
 import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
-import { getBlockType } from '@src/generic/key-utils';
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
