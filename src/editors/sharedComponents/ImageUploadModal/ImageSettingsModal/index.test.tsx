@@ -1,9 +1,6 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-
-import { formatMessage } from '../../../testUtils';
-import { ImageSettingsModalInternal as ImageSettingsModal } from '.';
+import { render, screen, initializeMocks } from '@src/testUtils';
+import ImageSettingsModal from '.';
 
 jest.mock('./AltTextControls', () => 'AltTextControls');
 jest.mock('./DimensionControls', () => 'DimensionControls');
@@ -28,23 +25,21 @@ jest.mock('./hooks', () => ({
 
 describe('ImageSettingsModal', () => {
   const props = {
-    isOpen: false,
+    isOpen: true,
     selection: {
       altText: 'AlTTExt',
       externalUrl: 'ExtERNALurL',
       url: 'UrL',
     },
-    // inject
-    intl: { formatMessage },
+    close: jest.fn().mockName('props.close'),
+    returnToSelection: jest.fn().mockName('props.returnToSelector'),
+    saveToEditor: jest.fn().mockName('props.saveToEditor'),
   };
   beforeEach(() => {
-    props.close = jest.fn().mockName('props.close');
-    props.saveToEditor = jest.fn().mockName('props.saveToEditor');
-    props.returnToSelection = jest.fn().mockName('props.returnToSelector');
+    initializeMocks();
   });
-  describe('render', () => {
-    test('snapshot', () => {
-      expect(shallow(<ImageSettingsModal {...props} />).snapshot).toMatchSnapshot();
-    });
+  test('renders component', () => {
+    render(<ImageSettingsModal {...props} />);
+    expect(screen.getByText('Image Settings')).toBeInTheDocument();
   });
 });

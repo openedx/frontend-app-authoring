@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 import ExpandableTextArea from '.';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
@@ -31,13 +31,27 @@ describe('ExpandableTextArea', () => {
     error: false,
     errorMessage: null,
   };
-  describe('snapshots', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+  describe('renders', () => {
     test('renders as expected with default behavior', () => {
-      expect(shallow(<ExpandableTextArea {...props} />).snapshot).toMatchSnapshot();
+      const { container } = render(<ExpandableTextArea {...props} />);
+      expect(container.querySelector('TinyMceWidget')).toBeInTheDocument();
     });
     test('renders error message', () => {
-      const wrapper = shallow(<ExpandableTextArea {...props} error errorMessage="eRRormeSsaGE" />);
-      expect(wrapper.snapshot).toMatchSnapshot();
+      render(<ExpandableTextArea {...props} error errorMessage="eRRormeSsaGE" />);
+      expect(screen.getByText('eRRormeSsaGE')).toBeInTheDocument();
+    });
+    test('renders nothing when refReady is null', () => {
+      // eslint-disable-next-line global-require
+      jest.spyOn(require('../TinyMceWidget/hooks'), 'prepareEditorRef').mockReturnValue({
+        editorRef: { current: { value: 'something' } },
+        refReady: false,
+        setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
+      });
+      const { container } = render(<ExpandableTextArea {...props} />);
+      expect(container.firstChild?.textContent).toBe('');
     });
   });
 });

@@ -29,14 +29,16 @@ const CodeEditor = ({
     <div>
       <div id="CodeMirror" ref={DOMref} />
       {showBtnEscapeHTML && lang !== 'markdown' && (
-        <Button
-          variant="tertiary"
-          aria-label={intl.formatMessage(messages.escapeHTMLButtonLabel)}
-          ref={btnRef}
-          onClick={() => hooks.escapeHTMLSpecialChars({ ref: innerRef, hideBtn })}
-        >
-          <FormattedMessage {...messages.escapeHTMLButtonLabel} />
-        </Button>
+
+      <Button
+        variant="tertiary"
+        aria-label={intl.formatMessage(messages.escapeHTMLButtonLabel)}
+        ref={btnRef}
+        onClick={() => hooks.escapeHTMLSpecialChars({ ref: innerRef, hideBtn })}
+      >
+        <FormattedMessage {...messages.escapeHTMLButtonLabel} />
+      </Button>
+
       )}
     </div>
   );
