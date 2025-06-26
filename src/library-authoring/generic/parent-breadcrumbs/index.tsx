@@ -25,6 +25,7 @@ const OverflowLinks = ({ children, to, containerType }: OverflowLinksProps) => {
     );
   }
 
+  // istanbul ignore if: this should never happen
   if (!Array.isArray(to) || !Array.isArray(children) || to.length !== children.length) {
     throw new Error('Both "to" and "children" should have the same length.');
   }
@@ -51,13 +52,15 @@ const OverflowLinks = ({ children, to, containerType }: OverflowLinksProps) => {
   );
 };
 
-interface ContainerParents {
+export interface ContainerParents {
   displayName?: string[];
   key?: string[];
 }
 
+type ContentLibraryPartial = Pick<ContentLibrary, 'id' | 'title'> & Partial<ContentLibrary>;
+
 interface ParentBreadcrumbsProps {
-  libraryData: ContentLibrary;
+  libraryData: ContentLibraryPartial;
   parents?: ContainerParents;
   containerType: ContainerType;
 }
@@ -66,10 +69,11 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
   const intl = useIntl();
   const { id: libraryId, title: libraryTitle } = libraryData;
 
-  const links: Array<{ label: string | string[], to: string | string[] }> = [
+  const links: Array<{ label: string | string[], to: string | string[], containerType: ContainerType }> = [
     {
-      label: libraryTitle || '',
+      label: libraryTitle,
       to: `/library/${libraryId}`,
+      containerType,
     },
   ];
 
@@ -88,11 +92,13 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
     links.push({
       label: '',
       to: '',
+      containerType,
     });
   } else if (parentLength === 1) {
     links.push({
       label: parents.displayName?.[0] || '',
       to: `/library/${libraryId}/${parentType}/${parents.key?.[0]}`,
+      containerType,
     });
   } else {
     // Add all parents as a single object containing list of links
@@ -100,6 +106,7 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
     links.push({
       label: parents.displayName || [],
       to: parents.key?.map((parentKey) => `/library/${libraryId}/${parentType}/${parentKey}`) || [],
+      containerType,
     });
   }
 

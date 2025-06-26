@@ -3,6 +3,7 @@ import { Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 
 import ErrorAlert from '@src/generic/alert-error';
+import { ContainerType } from '@src/generic/key-utils';
 import type { ContainerHit } from '@src/search-manager';
 import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
@@ -89,7 +90,7 @@ export const LibraryUnitPage = () => {
                 <ParentBreadcrumbs
                   libraryData={libraryData}
                   parents={unitData.subsections}
-                  containerType={unitData.blockType}
+                  containerType={ContainerType.Unit}
                 />
               )}
               hideBorder
