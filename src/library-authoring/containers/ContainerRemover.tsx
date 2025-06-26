@@ -2,13 +2,13 @@ import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { capitalize } from 'lodash';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { ToastContext } from '../../generic/toast-context';
+import { ToastContext } from '@src/generic/toast-context';
 import { useContainer, useRemoveContainerChildren } from '../data/apiHooks';
-import messages from './messages';
-import { getBlockType } from '../../generic/key-utils';
+import messages from '../components/messages';
+import { getBlockType } from '@src/generic/key-utils';
 
 type ContainerRemoverProps = {
   isOpen: boolean,

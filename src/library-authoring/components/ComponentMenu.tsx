@@ -23,6 +23,7 @@ import messages from './messages';
 import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
+import { getBlockType } from '@src/generic/key-utils';
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
@@ -112,6 +113,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     navigateTo,
   ]);
 
+  const containerType = containerId ? getBlockType(containerId) : 'collection';
+
   return (
     <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
@@ -140,7 +143,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         </Dropdown.Item>
         {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
-            <FormattedMessage {...containerMessages.menuRemoveFromCollection} />
+            <FormattedMessage
+              {...containerMessages.menuRemoveFromContainer}
+              values={{
+                containerType,
+              }}
+            />
           </Dropdown.Item>
         )}
         <Dropdown.Item onClick={showManageCollections}>

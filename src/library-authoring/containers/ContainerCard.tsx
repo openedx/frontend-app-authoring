@@ -10,9 +10,9 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { getBlockType } from '../../generic/key-utils';
-import { ToastContext } from '../../generic/toast-context';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { getBlockType } from '@src/generic/key-utils';
+import { ToastContext } from '@src/generic/toast-context';
 import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -28,9 +28,10 @@ import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
+  displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
@@ -86,7 +87,7 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
-  const parentContainerType = containerId ? getBlockType(containerId) : 'collection';
+  const containerType = containerId ? getBlockType(containerId) : 'collection';
 
   return (
     <>
@@ -110,8 +111,10 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
           {(insideCollection || insideSection || insideSubsection) && (
             <Dropdown.Item onClick={handleRemove}>
               <FormattedMessage
-                id={messages.menuRemoveFromCollection.id}
-                defaultMessage={messages.menuRemoveFromCollection.defaultMessage}
+                {...messages.menuRemoveFromContainer}
+                values={{
+                  containerType,
+                }}
               />
             </Dropdown.Item>
           )}
@@ -132,6 +135,7 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
           isOpen={isConfirmingRemove}
           close={cancelRemove}
           containerKey={containerKey}
+          displayName={displayName}
         />
       )}
     </>
@@ -290,7 +294,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu containerKey={containerKey} />
+            <ContainerMenu containerKey={containerKey} displayName={displayName} />
           )}
         </ActionRow>
       )}
