@@ -443,7 +443,6 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
   });
 
-<<<<<<< dvz/single-overflow-visitble
   describe('clicks on non-dropdown elements call stopPropagation while dropdown toggles do not', () => {
     it('should call stopPropagation when clicking on BlockHeader non-dropdown elements', async () => {
       renderLibraryUnitPage();
@@ -594,7 +593,8 @@ describe('<LibraryUnitPage />', () => {
         expect(mockShowToast).toHaveBeenCalledWith(expectedToastMessage);
       });
     });
-=======
+  });
+
   it('"Add New Content" button should open "Add Content" sidebar', async () => {
     renderLibraryUnitPage();
     const addContent = await screen.findByRole('button', { name: /add new content/i });
@@ -603,6 +603,5 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /text/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /problem/i })).toBeInTheDocument();
->>>>>>> master
   });
 });
