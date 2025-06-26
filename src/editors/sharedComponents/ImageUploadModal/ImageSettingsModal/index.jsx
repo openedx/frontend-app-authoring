@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Button, Image } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import './index.scss';
 import * as hooks from './hooks';
@@ -29,9 +29,8 @@ const ImageSettingsModal = ({
   returnToSelection,
   saveToEditor,
   selection,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const altText = hooks.altTextHooks(selection.altText);
   const dimensions = hooks.dimensionHooks(altText);
   const onSaveClick = hooks.onSaveClick({
@@ -99,8 +98,5 @@ ImageSettingsModal.propTypes = {
     externalUrl: PropTypes.string,
     url: PropTypes.string,
   }).isRequired,
-  // inject
-  intl: intlShape.isRequired,
 };
-export const ImageSettingsModalInternal = ImageSettingsModal; // For testing only
-export default injectIntl(ImageSettingsModal);
+export default ImageSettingsModal;
