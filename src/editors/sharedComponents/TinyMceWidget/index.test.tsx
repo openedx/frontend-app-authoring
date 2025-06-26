@@ -1,9 +1,10 @@
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-import SourceCodeModal from '../SourceCodeModal';
-import ImageUploadModal from '../ImageUploadModal';
-import { imgModalToggle, sourceCodeModalToggle } from './hooks';
-import { TinyMceWidgetInternal as TinyMceWidget } from '.';
+import {
+  screen, initializeMocks,
+} from '@src/testUtils';
+import editorRender from '@src/editors/editorTestRender';
+import * as hooks from './hooks';
+import TinyMceWidget from '.';
 
 const staticUrl = '/assets/sOmEaSsET';
 
@@ -42,6 +43,8 @@ jest.mock('./hooks', () => ({
 }));
 
 describe('TinyMceWidget', () => {
+  beforeEach(() => initializeMocks());
+
   const props = {
     editorType: 'text',
     editorRef: { current: { value: 'something' } },
@@ -53,30 +56,41 @@ describe('TinyMceWidget', () => {
     id: 'sOMeiD',
     updateContent: () => ({}),
     learningContextId: 'course+org+run',
+    editorContentHtml: undefined,
+    enableImageUpload: undefined,
+    onChange: undefined,
+    staticRootUrl: undefined,
   };
-  describe('snapshots', () => {
-    imgModalToggle.mockReturnValue({
+
+  describe('render', () => {
+    jest.spyOn(hooks, 'imgModalToggle').mockReturnValue({
       isImgOpen: false,
       openImgModal: jest.fn().mockName('modal.openModal'),
       closeImgModal: jest.fn().mockName('modal.closeModal'),
     });
-    sourceCodeModalToggle.mockReturnValue({
+    jest.spyOn(hooks, 'sourceCodeModalToggle').mockReturnValue({
       isSourceCodeOpen: false,
       openSourceCodeModal: jest.fn().mockName('modal.openModal'),
       closeSourceCodeModal: jest.fn().mockName('modal.closeModal'),
     });
+
     test('renders as expected with default behavior', () => {
-      expect(shallow(<TinyMceWidget {...props} />).snapshot).toMatchSnapshot();
+      const { container } = editorRender(<TinyMceWidget {...props} />);
+      expect(screen.getByText('TiNYmCE EDitOR')).toBeInTheDocument();
+      expect(container.querySelector('sourcecodemodal')).toBeInTheDocument();
+      expect(container.querySelector('imageuploadmodal')).toBeInTheDocument();
     });
+
     test('SourcecodeModal is not rendered', () => {
-      const wrapper = shallow(<TinyMceWidget {...props} editorType="problem" />);
-      expect(wrapper.snapshot).toMatchSnapshot();
-      expect(wrapper.instance.findByType(SourceCodeModal).length).toBe(0);
+      const { container } = editorRender(<TinyMceWidget {...props} editorType="problem" />);
+      expect(container.querySelector('imageuploadmodal')).toBeInTheDocument();
+      expect(container.querySelector('sourcecodemodal')).not.toBeInTheDocument();
     });
+
     test('ImageUploadModal is not rendered', () => {
-      const wrapper = shallow(<TinyMceWidget {...props} enableImageUpload={false} />);
-      expect(wrapper.snapshot).toMatchSnapshot();
-      expect(wrapper.instance.findByType(ImageUploadModal).length).toBe(0);
+      const { container } = editorRender(<TinyMceWidget {...props} enableImageUpload={false} />);
+      expect(container.querySelector('imageuploadmodal')).not.toBeInTheDocument();
+      expect(container.querySelector('sourcecodemodal')).toBeInTheDocument();
     });
   });
 });

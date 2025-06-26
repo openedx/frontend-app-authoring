@@ -6,10 +6,10 @@ import { useLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
-import ContainerCard from './components/ContainerCard';
 import { ContentType } from './routes';
 import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
+import ContainerCard from './containers/ContainerCard';
 
 /**
  * Library Content to show content grid

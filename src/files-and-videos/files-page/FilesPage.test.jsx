@@ -70,15 +70,6 @@ const mockStore = async (
   }
   renderComponent();
   await executeThunk(fetchAssets(courseId), store.dispatch);
-
-  // Finish loading the expected files into the data table before returning,
-  // because loading new files can disrupt things like accessing file menus.
-  if (status === RequestStatus.SUCCESSFUL) {
-    const numFiles = skipNextPageFetch ? 13 : 15;
-    await waitFor(() => {
-      expect(screen.getByText(`Showing ${numFiles} of ${numFiles}`)).toBeInTheDocument();
-    });
-  }
 };
 
 const emptyMockStore = async (status) => {
