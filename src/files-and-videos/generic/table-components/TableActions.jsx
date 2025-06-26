@@ -26,12 +26,17 @@ const TableActions = ({
   intl,
 }) => {
   const [isSortOpen, openSort, closeSort] = useToggle(false);
-  const { state } = useContext(DataTableContext);
+  const { state, clearSelection } = useContext(DataTableContext);
 
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
   useEffect(() => {
     setInitialState(state);
   }, [state]);
+
+  const handleOpenFileSelector = () => {
+    fileInputControl.click();
+    clearSelection();
+  };
 
   return (
     <>
@@ -71,7 +76,7 @@ const TableActions = ({
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <Button iconBefore={Add} onClick={fileInputControl.click}>
+      <Button iconBefore={Add} onClick={handleOpenFileSelector}>
         {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
       </Button>
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />

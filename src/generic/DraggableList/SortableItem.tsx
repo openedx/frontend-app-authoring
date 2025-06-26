@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React, { KeyboardEventHandler, MouseEventHandler } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -16,6 +16,7 @@ interface SortableItemProps {
   componentStyle?: {},
   isClickable?: boolean,
   onClick?: MouseEventHandler,
+  onKeyDown?: KeyboardEventHandler,
   disabled?: boolean,
   cardClassName?: string,
 }
@@ -28,6 +29,7 @@ const SortableItem = ({
   children,
   isClickable,
   onClick,
+  onKeyDown,
   disabled,
   cardClassName = '',
 }: SortableItemProps) => {
@@ -60,6 +62,7 @@ const SortableItem = ({
     <div
       ref={setNodeRef}
       onClick={onClick}
+      onKeyDown={onKeyDown}
     >
       <Card
         style={style}

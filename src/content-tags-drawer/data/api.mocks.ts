@@ -205,7 +205,7 @@ mockContentTaxonomyTagsData.emptyTagsId = 'block-v1:EmptyTagsOrg+STC1+2023_1+typ
 mockContentTaxonomyTagsData.emptyTags = {
   taxonomies: [],
 };
-mockContentTaxonomyTagsData.containerTagsId = 'lct:org:lib:unit:container_tags';
+mockContentTaxonomyTagsData.containerTagsId = 'lct:StagedTagsOrg:lib:unit:container_tags';
 mockContentTaxonomyTagsData.applyMock = () => jest.spyOn(api, 'getContentTaxonomyTagsData').mockImplementation(mockContentTaxonomyTagsData);
 
 /**

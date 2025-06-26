@@ -68,7 +68,7 @@ const DeleteModal = ({
         </ActionRow>
       )}
     >
-      <p>{modalDescription}</p>
+      <div>{modalDescription}</div>
     </AlertModal>
   );
 };

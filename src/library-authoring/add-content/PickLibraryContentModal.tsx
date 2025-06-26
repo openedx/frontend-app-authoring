@@ -1,4 +1,9 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 
@@ -8,27 +13,7 @@ import type { SelectedComponent } from '../common/context/ComponentPickerContext
 import { useAddItemsToCollection, useAddItemsToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from '../routes';
-import messages from './messages';
-
-interface PickLibraryContentModalFooterProps {
-  onSubmit: () => void;
-  selectedComponents: SelectedComponent[];
-  buttonText: React.ReactNode;
-}
-
-const PickLibraryContentModalFooter: React.FC<PickLibraryContentModalFooterProps> = ({
-  onSubmit,
-  selectedComponents,
-  buttonText,
-}) => (
-  <ActionRow>
-    <FormattedMessage {...messages.selectedComponents} values={{ count: selectedComponents.length }} />
-    <ActionRow.Spacer />
-    <Button variant="primary" onClick={onSubmit}>
-      {buttonText}
-    </Button>
-  </ActionRow>
-);
+import { messages, getContentMessages } from './messages';
 
 interface PickLibraryContentModalProps {
   isOpen: boolean;
@@ -57,10 +42,14 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
 
   const { showToast } = useContext(ToastContext);
 
-  const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
+  const contentMessages = useMemo(() => (
+    getContentMessages(insideSection, insideSubsection, insideUnit)
+  ), [insideSection, insideSubsection, insideUnit]);
+
+  const [selectedContent, setSelectedComponents] = useState<SelectedComponent[]>([]);
 
   const onSubmit = useCallback(() => {
-    const usageKeys = selectedComponents.map(({ usageKey }) => usageKey);
+    const usageKeys = selectedContent.map(({ usageKey }) => usageKey);
     onClose();
     if (insideCollection && collectionId) {
       updateCollectionItemsMutation.mutateAsync(usageKeys)
@@ -80,7 +69,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         });
     }
   }, [
-    selectedComponents,
+    selectedContent,
     insideSection,
     insideSubsection,
     insideUnit,
@@ -91,16 +80,13 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   // determine filter an visibleTabs based on current location
   let extraFilter = ['NOT type = "collection"'];
   let visibleTabs = allLibraryPageTabs.filter((tab) => tab !== ContentType.collections);
-  let addBtnText = messages.addToCollectionButton;
   if (insideSection) {
     // show only subsections
     extraFilter = ['block_type = "subsection"'];
-    addBtnText = messages.addToSectionButton;
     visibleTabs = [ContentType.subsections];
   } else if (insideSubsection) {
     // show only units
     extraFilter = ['block_type = "unit"'];
-    addBtnText = messages.addToSubsectionButton;
     visibleTabs = [ContentType.units];
   } else if (insideUnit) {
     // show only components
@@ -109,7 +95,6 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
       'NOT block_type = "subsection"',
       'NOT block_type = "section"',
     ];
-    addBtnText = messages.addToUnitButton;
     visibleTabs = [ContentType.components];
   }
 
@@ -120,17 +105,22 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
 
   return (
     <StandardModal
-      title="Select components"
+      title={intl.formatMessage(contentMessages.selectContentTitle)}
       isOverflowVisible={false}
       size="xl"
       isOpen={isOpen}
       onClose={onClose}
       footerNode={(
-        <PickLibraryContentModalFooter
-          onSubmit={onSubmit}
-          selectedComponents={selectedComponents}
-          buttonText={intl.formatMessage(addBtnText)}
-        />
+        <ActionRow>
+          <FormattedMessage
+            {...contentMessages.selectedContent}
+            values={{ count: selectedContent.length }}
+          />
+          <ActionRow.Spacer />
+          <Button variant="primary" onClick={onSubmit}>
+            {intl.formatMessage(contentMessages.addToButton)}
+          </Button>
+        </ActionRow>
       )}
     >
       <ComponentPicker

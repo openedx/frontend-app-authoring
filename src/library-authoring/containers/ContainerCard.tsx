@@ -19,19 +19,18 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
-import AddComponentWidget from './AddComponentWidget';
-import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
 import { useRunOnNextRender } from '../../utils';
+import BaseCard from '../components/BaseCard';
+import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
-  displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
@@ -111,11 +110,8 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           {(insideCollection || insideSection || insideSubsection) && (
             <Dropdown.Item onClick={handleRemove}>
               <FormattedMessage
-                id={messages.menuRemoveFromContainer.id}
-                defaultMessage={messages.menuRemoveFromContainer.defaultMessage}
-                values={{
-                  containerType: parentContainerType,
-                }}
+                id={messages.menuRemoveFromCollection.id}
+                defaultMessage={messages.menuRemoveFromCollection.defaultMessage}
               />
             </Dropdown.Item>
           )}
@@ -124,18 +120,20 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <ContainerDeleter
-        isOpen={isConfirmingDelete}
-        close={cancelDelete}
-        containerId={containerKey}
-        displayName={displayName}
-      />
-      <ContainerRemover
-        isOpen={isConfirmingRemove}
-        close={cancelRemove}
-        containerKey={containerKey}
-        displayName={displayName}
-      />
+      {isConfirmingDelete && (
+        <ContainerDeleter
+          isOpen={isConfirmingDelete}
+          close={cancelDelete}
+          containerId={containerKey}
+        />
+      )}
+      {isConfirmingRemove && (
+        <ContainerRemover
+          isOpen={isConfirmingRemove}
+          close={cancelRemove}
+          containerKey={containerKey}
+        />
+      )}
     </>
   );
 };
@@ -292,10 +290,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu
-              containerKey={containerKey}
-              displayName={hit.displayName}
-            />
+            <ContainerMenu containerKey={containerKey} />
           )}
         </ActionRow>
       )}

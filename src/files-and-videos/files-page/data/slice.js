@@ -28,7 +28,7 @@ const slice = createSlice({
       if (isEmpty(state.assetIds)) {
         state.assetIds = payload.assetIds;
       } else {
-        state.assetIds = [...state.assetIds, ...payload.assetIds];
+        state.assetIds = [...new Set([...state.assetIds, ...payload.assetIds])];
       }
     },
     setSortedAssetIds: (state, { payload }) => {
