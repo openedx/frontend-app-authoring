@@ -84,7 +84,6 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
     throw new Error('Parents key and displayName arrays must have the same length.');
   }
 
-
   const parentType = containerType === ContainerType.Unit
     ? 'subsection'
     : 'section';
