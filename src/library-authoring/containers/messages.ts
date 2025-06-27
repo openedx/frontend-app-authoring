@@ -81,10 +81,10 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
     description: 'Menu item to delete a container.',
   },
-  menuRemoveFromCollection: {
+  menuRemoveFromContainer: {
     id: 'course-authoring.library-authoring.component.menu.remove',
-    defaultMessage: 'Remove from collection',
-    description: 'Menu item for remove an item from collection.',
+    defaultMessage: 'Remove from {containerType}',
+    description: 'Menu item for remove an item from container.',
   },
   menuAddToCollection: {
     id: 'course-authoring.library-authoring.component.menu.add',

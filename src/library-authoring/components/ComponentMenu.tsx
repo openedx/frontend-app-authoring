@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useClipboard } from '../../generic/clipboard';
@@ -112,6 +113,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     navigateTo,
   ]);
 
+  const containerType = containerId ? getBlockType(containerId) : 'collection';
+
   return (
     <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
@@ -140,7 +143,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         </Dropdown.Item>
         {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
-            <FormattedMessage {...containerMessages.menuRemoveFromCollection} />
+            <FormattedMessage
+              {...containerMessages.menuRemoveFromContainer}
+              values={{
+                containerType,
+              }}
+            />
           </Dropdown.Item>
         )}
         <Dropdown.Item onClick={showManageCollections}>

@@ -31,6 +31,31 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
     description: 'Menu item for deleting a component.',
   },
+  menuAddToCollection: {
+    id: 'course-authoring.library-authoring.component.menu.add',
+    defaultMessage: 'Add to collection',
+    description: 'Menu item for add a component to collection.',
+  },
+  menuRemoveFromCollection: {
+    id: 'course-authoring.library-authoring.component.menu.remove-from-collection',
+    defaultMessage: 'Remove from collection',
+    description: 'Menu item for remove a component from collection.',
+  },
+  menuRemoveFromContainer: {
+    id: 'course-authoring.library-authoring.component.menu.remove',
+    defaultMessage: 'Remove from {containerType}',
+    description: 'Menu item for remove an item from {containerType}.',
+  },
+  removeComponentFromCollectionSuccess: {
+    id: 'course-authoring.library-authoring.component.remove-from-collection-success',
+    defaultMessage: 'Item successfully removed',
+    description: 'Message for successful removal of an item from collection.',
+  },
+  removeComponentFromCollectionFailure: {
+    id: 'course-authoring.library-authoring.component.remove-from-collection-failure',
+    defaultMessage: 'Failed to remove item',
+    description: 'Message for failure of removal of an item from collection.',
+  },
   deleteComponentWarningTitle: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-title',
     defaultMessage: 'Delete Component',
@@ -195,6 +220,26 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.undo-remove-component-from-container-failed',
     defaultMessage: 'Failed to undo remove component operation',
     description: 'Message to display on failure to undo delete component',
+  },
+  containerPreviewText: {
+    id: 'course-authoring.library-authoring.container.preview.text',
+    defaultMessage: 'Contains {children}.',
+    description: 'Preview message for section/subsections with the names of children separated by commas',
+  },
+  removeContainerWarningTitle: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-title',
+    defaultMessage: 'Remove {containerType}',
+    description: 'Title text for the warning displayed before removing a container from its parent',
+  },
+  removeContainerConfirm: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-text',
+    defaultMessage: 'Remove {containerName} from {parentContainerType} {parentContainerName}? Removing this {containerType} will not delete it from the library.',
+    description: 'Confirmation text to display before removing a container from its parent',
+  },
+  removeContainerButton: {
+    id: 'course-authoring.library-authoring.container.confirm-remove-button',
+    defaultMessage: 'Remove {containerName}',
+    description: 'Button to confirm removal of a container from its parent',
   },
 });
 export default messages;

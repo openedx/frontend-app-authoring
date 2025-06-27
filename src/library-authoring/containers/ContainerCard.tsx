@@ -10,9 +10,9 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { getBlockType } from '../../generic/key-utils';
-import { ToastContext } from '../../generic/toast-context';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { getBlockType } from '@src/generic/key-utils';
+import { ToastContext } from '@src/generic/toast-context';
 import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -21,38 +21,55 @@ import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
+import ContainerRemover from './ContainerRemover';
 import { useRunOnNextRender } from '../../utils';
 import BaseCard from '../components/BaseCard';
 import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
+  displayName: string;
 };
 
-export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { libraryId, collectionId } = useLibraryContext();
+  const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const [isConfirmingRemove, confirmRemove, cancelRemove] = useToggle(false);
+  const {
+    navigateTo,
+    insideCollection,
+    insideSection,
+    insideSubsection,
+  } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
-  const removeFromCollection = () => {
+  const handleRemoveFromCollection = () => {
     removeComponentsMutation.mutateAsync([containerKey]).then(() => {
       if (sidebarItemInfo?.id === containerKey) {
-        // Close sidebar if current component is open
+      // Close sidebar if current component is open
         closeLibrarySidebar();
       }
       showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
     });
+  };
+
+  const handleRemove = () => {
+    if (insideCollection) {
+      handleRemoveFromCollection();
+    } else if (insideSection || insideSubsection) {
+      confirmRemove();
+    }
   };
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
@@ -69,6 +86,8 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
   const openContainer = useCallback(() => {
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
+
+  const containerType = containerId ? getBlockType(containerId) : 'collection';
 
   return (
     <>
@@ -89,9 +108,14 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
-          {insideCollection && (
-            <Dropdown.Item onClick={removeFromCollection}>
-              <FormattedMessage {...messages.menuRemoveFromCollection} />
+          {(insideCollection || insideSection || insideSubsection) && (
+            <Dropdown.Item onClick={handleRemove}>
+              <FormattedMessage
+                {...messages.menuRemoveFromContainer}
+                values={{
+                  containerType,
+                }}
+              />
             </Dropdown.Item>
           )}
           <Dropdown.Item onClick={showManageCollections}>
@@ -104,6 +128,14 @@ export const ContainerMenu = ({ containerKey } : ContainerMenuProps) => {
           isOpen={isConfirmingDelete}
           close={cancelDelete}
           containerId={containerKey}
+        />
+      )}
+      {isConfirmingRemove && (
+        <ContainerRemover
+          isOpen={isConfirmingRemove}
+          close={cancelRemove}
+          containerKey={containerKey}
+          displayName={displayName}
         />
       )}
     </>
@@ -262,7 +294,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
           {componentPickerMode ? (
             <AddComponentWidget usageKey={containerKey} blockType={itemType} />
           ) : (
-            <ContainerMenu containerKey={containerKey} />
+            <ContainerMenu containerKey={containerKey} displayName={displayName} />
           )}
         </ActionRow>
       )}
