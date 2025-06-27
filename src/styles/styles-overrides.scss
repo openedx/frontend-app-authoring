@@ -1891,11 +1891,23 @@
 
 // N Styles Start
 .group-configurations {
+  .row:first-child {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .configuration-card .configuration-card-header .configuration-card-header__button:hover{
+    padding: 10px; 
+  }
   .row>div:first-child {
     background-color: var(--text-white);
     padding: 1rem;
     border-radius: 1rem;
     border: solid 1px var(--border-color);
+  }
+
+  .row>div:first-child>hr {
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
   .group-configurations-empty-placeholder {
@@ -1932,8 +1944,6 @@
 
   .certificates-custom-sub-header-title .sub-header-title {
     color: #222121;
-    font-size: 18px;
-    font-weight: 600;
   }
 
   .configuration-card .pgn__action-row {
@@ -1984,7 +1994,7 @@
     margin-top: 0px !important;
 
     .outline-sidebar-section {
-      border: 1px solid var(--border-color);
+      // border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 8px;
       margin-bottom: 12px;
@@ -2007,12 +2017,14 @@
 
   .sub-header .sub-header-actions .ml-auto {
     margin-right: auto !important;
-    margin-left: 0px !important;
+    margin-left: 1rem !important;
     margin-top: 1rem;
   }
 
   .sub-header .sub-header-actions {
     border-top: 1px solid var(--border-color);
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
   }
 
   .section-card .section-card__subsections .btn-outline-primary {
@@ -2054,20 +2066,26 @@
 }
 .custom-schedule-details {
   margin-top: -1.5rem;
-
+  .pgn__card .pgn__card-header .pgn__card-header-content{
+    margin-top: 1rem !important;
+  }
   .section-sub-header {
     display: block;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
   .lead {
     margin-bottom: 0rem;
     font-size: 1rem;
+    margin-left: 1rem;
   }
 
   .section-sub-header span {
     font-size: 0.9rem;
+    margin-left: 1rem;
   }
 
   .course-form .row .col-cs {
@@ -2079,8 +2097,8 @@
 
   .title-class {
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
+    // border-bottom: 1px solid var(--border-color);
+    // font-weight: 600;
   }
 
   .section-container ul li h4 {
@@ -2098,6 +2116,27 @@
     padding-left: 0rem;
     padding-top: 0rem;
   }
+}
+.customHr{
+  border: 'none';
+  border-top : '1px solid #e5e6e6',;
+  margin: '0 0 0 0'
+}
+.courseOutlineh2{
+  color: 'var(--text-primary)';
+  margin-bottom: '1rem'
+}
+.viewLiveSlot{
+  height: '6%';
+  width: '11%';
+  font-size: '0.75rem';
+  margin-top: '10px';
+}
+.viewLiveDiv{
+  font-size: 1rem;
+}
+.viewLiveCustom{
+  font-size: 0.75rem;
 }
 
 // N Styles End

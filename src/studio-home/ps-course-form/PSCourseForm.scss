@@ -430,11 +430,12 @@
     .datepicker-control .form-label,
     .time-field .pgn__form-label {
         // Or maybe this one
-        font: inherit !important; 
+        font: inherit !important;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important; // Re-apply desired stack
-        font-size: 14px !important; 
-        font-weight: 600 !important;  
-        line-height: 1.5 !important;         margin-bottom: 0rem !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        line-height: 1.5 !important;
+        margin-bottom: 0rem !important;
         color: var(--text-primary)
     }
 

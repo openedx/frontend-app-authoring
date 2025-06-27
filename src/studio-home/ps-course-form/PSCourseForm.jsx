@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector, useDispatch } from 'react-redux';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -15,7 +15,6 @@ import {
     RadioButton,
     Dropdown,
     Nav,
-    Alert,
 } from '@openedx/paragon';
 import {
     Calendar, Money, More, Add, Close, InfoOutline, Warning, CheckCircle
@@ -233,16 +232,6 @@ const PSCourseForm = ({
     };
     
 
-    const handleImageUpload = async (field, event) => {
-        const file = event.target.files[0];
-        if (file) {
-            if (field === 'courseImageAssetPath') {
-                onImageUpload(field, event);
-            } else if (field === 'bannerImageAssetPath') {
-                onBannerImageUpload(field, event);
-            }
-        }
-    };
 
     const handleVideoChange = (value, field) => {
         handleInputChange(field, value);
@@ -254,14 +243,6 @@ const PSCourseForm = ({
         });
     };
 
-    const handleDeleteVideo = (field) => {
-        handleInputChange(field, null);
-        setErrors((prev) => {
-            const newErrors = { ...prev };
-            delete newErrors[field];
-            return newErrors;
-        });
-    };
 
     const languageOptions = useMemo(
         () => Object.entries(videoTranscriptLanguages)
@@ -1049,22 +1030,6 @@ const PSCourseForm = ({
                                         <Button  variant="outline-primary" onClick={handleCancel}>Cancel</Button>
                                     </div>
                                     <div className="footer-create">
-                                        {/* <Button
-                                            variant="primary"
-                                            type="submit"
-                                            disabled={
-                                                isSubmitting
-                                                || !editedValues.shortDescription?.trim()
-                                                || !editedValues.organization
-                                                || !editedValues.courseNumber?.trim()
-                                                || !editedValues.courseRun?.trim()
-                                                || !editedValues.startDate
-                                                || !!imageErrors.cardImage
-                                                || !!imageErrors.bannerImage
-                                            }
-                                        >
-                                            {isSubmitting ? 'Creating...' : 'Create'}
-                                        </Button> */}
                                             <Button
         variant="primary"
         type="submit"
