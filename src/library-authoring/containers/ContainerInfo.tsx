@@ -23,6 +23,7 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
+import ContainerUsage from './ContainerUsage';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
@@ -163,6 +164,11 @@ const ContainerInfo = () => {
           CONTAINER_INFO_TABS.Manage,
           intl.formatMessage(messages.manageTabTitle),
           <ContainerOrganize />,
+        )}
+        {renderTab(
+          CONTAINER_INFO_TABS.Usage,
+          intl.formatMessage(messages.usageTabTitle),
+          <ContainerUsage />,
         )}
         {renderTab(
           CONTAINER_INFO_TABS.Settings,

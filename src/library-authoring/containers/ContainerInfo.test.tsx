@@ -7,7 +7,12 @@ import {
 } from '@src/testUtils';
 import { PublishStatus } from '@src/search-manager';
 import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
-import { mockContentLibrary, mockGetContainerChildren, mockGetContainerMetadata } from '../data/api.mocks';
+import {
+  mockContentLibrary,
+  mockGetContainerChildren,
+  mockGetContainerMetadata,
+  mockGetContainerHierarchy,
+} from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
@@ -20,6 +25,7 @@ mockContentLibrary.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetContainerMetadata.applyMock();
 mockGetContainerChildren.applyMock();
+mockGetContainerHierarchy.applyMock();
 
 const { libraryId } = mockContentLibrary;
 const { unitId, subsectionId, sectionId } = mockGetContainerMetadata;
@@ -312,6 +318,30 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
 
       // Check that there are no menu buttons for components
       expect(screen.queryAllByRole('button', { name: /component actions menu/i }).length).toBe(0);
+    });
+
+    it(`shows the ${containerType} hierarchy in the Usage tab`, async () => {
+      render(containerId, containerType);
+      const usageTab = await screen.findByText('Usage');
+      userEvent.click(usageTab);
+      expect(usageTab).toHaveAttribute('aria-selected', 'true');
+
+      // Content hierarchy selects the current containerType and shows its display name
+      expect(await screen.findByText('Content Hierarchy')).toBeInTheDocument();
+      const container = await screen.findByText(`${containerType} block 0`);
+      expect(container.parentElement!.parentElement).toHaveClass('selected');
+
+      // Other container types should show counts
+      if (containerType !== 'section') {
+        expect(await screen.findByText('2 Sections')).toBeInTheDocument();
+      }
+      if (containerType !== 'subsection') {
+        expect(await screen.findByText('3 Subsections')).toBeInTheDocument();
+      }
+      if (containerType !== 'unit') {
+        expect(await screen.findByText('4 Units')).toBeInTheDocument();
+      }
+      expect(await screen.findByText('5 Components')).toBeInTheDocument();
     });
   });
 });

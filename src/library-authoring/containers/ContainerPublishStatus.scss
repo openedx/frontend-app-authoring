@@ -25,3 +25,43 @@
     @extend %published-status;
   }
 }
+
+.hierarchy-row {
+  border: 1px solid var(--pgn-color-light-500);
+  border-radius: 4px;
+
+  &.selected {
+    border: 3px solid var(--pgn-color-primary-500);
+    border-radius: 4px;
+  }
+
+  .icon {
+    background-color: var(--pgn-color-light-300);
+    border-top: 2px solid var(--pgn-color-light-300);
+    border-bottom: 2px solid var(--pgn-color-light-300);
+    border-right: 1px solid var(--pgn-color-light-500);
+    border-radius: 1px 0 0 1px;
+  }
+
+  &.selected .icon {
+    background-color: var(--pgn-color-primary-500);
+    border-color: var(--pgn-color-primary-500);
+    color: var(--pgn-color-white);
+  }
+
+  .text {
+    background-color: var(--pgn-color-white);
+  }
+}
+
+.hierarchy-arrow {
+  color: var(--pgn-color-light-500);
+  padding: 0 0 0 8px;
+  position: relative;
+  top: -4px;
+  height: 20px;
+
+  &.selected {
+    color: var(--pgn-color-primary-500);
+  }
+}
