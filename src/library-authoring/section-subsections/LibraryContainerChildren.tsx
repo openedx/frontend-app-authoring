@@ -23,7 +23,7 @@ import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { useLibraryRoutes } from '../routes';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useRunOnNextRender } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
 
@@ -46,8 +46,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = useLibraryContext();
-  const { navigateTo } = useLibraryRoutes();
-  const { setSidebarAction } = useSidebarContext();
+  const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -67,10 +66,10 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
     setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
   });
 
-  const jumpToManageTags = () => {
-    navigateTo({ selectedItemId: container.originalId });
+  const jumpToManageTags = useCallback(() => {
+    openItemSidebar(container.originalId, SidebarBodyItemId.ContainerInfo);
     scheduleJumpToTags();
-  };
+  }, [openItemSidebar, scheduleJumpToTags, container.originalId]);
 
   return (
     <>
