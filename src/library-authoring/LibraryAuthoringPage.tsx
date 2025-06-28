@@ -158,7 +158,9 @@ const LibraryAuthoringPage = ({
     insideCollections,
     insideComponents,
     insideUnits,
+    insideSection,
     insideSections,
+    insideSubsection,
     insideSubsections,
     navigateTo,
   } = useLibraryRoutes();
@@ -251,8 +253,12 @@ const LibraryAuthoringPage = ({
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
-  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab.
-  const onlyOneType = (insideCollections || insideUnits || insideSections || insideSubsections);
+  // Disable filtering by block/problem type when viewing the Collections/Units/Sections/Subsections tab,
+  // or when inside a specific Section or Subsection.
+  const onlyOneType = (
+    insideCollections || insideUnits || insideSections || insideSubsections
+    || insideSection || insideSubsection
+  );
   const overrideTypesFilter = onlyOneType
     ? new TypesFilterData()
     : undefined;
@@ -298,14 +304,16 @@ const LibraryAuthoringPage = ({
               headerActions={<HeaderActions />}
               hideBorder
             />
-            <Tabs
-              variant="tabs"
-              activeKey={activeKey}
-              onSelect={handleTabChange}
-              className="my-3"
-            >
-              {visibleTabsToRender}
-            </Tabs>
+            {visibleTabs.length > 1 && (
+              <Tabs
+                variant="tabs"
+                activeKey={activeKey}
+                onSelect={handleTabChange}
+                className="my-3"
+              >
+                {visibleTabsToRender}
+              </Tabs>
+            )}
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />

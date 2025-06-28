@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
 } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import {
@@ -48,5 +47,4 @@ LicenseBlurb.propTypes = {
   }).isRequired,
 };
 
-export const LicenseBlurbInternal = LicenseBlurb; // For testing only
-export default injectIntl(LicenseBlurb);
+export default LicenseBlurb;

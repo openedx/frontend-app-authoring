@@ -112,7 +112,7 @@ export const useContentTaxonomyTagsData = (contentId) => (
 
 /**
  * Builds the query to get meta data about the content object
- * @param {string} contentId The id of the content object (unit/component)
+ * @param {string} contentId The id of the content object
  * @param {boolean} enabled Flag to enable/disable the query
  */
 export const useContentData = (contentId, enabled) => (
@@ -130,7 +130,7 @@ export const useContentData = (contentId, enabled) => (
 export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
   const unitIframe = window.frames['xblock-iframe'];
-  const { unitId } = useParams();
+  const { containerId } = useParams();
 
   return useMutation({
     /**
@@ -143,7 +143,7 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
      * >}
      */
     mutationFn: ({ tagsData }) => updateContentTaxonomyTags(contentId, tagsData),
-    onSettled: /* istanbul ignore next */ () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
       /// Invalidate query with pattern on course outline
       let contentPattern;
@@ -160,9 +160,10 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         queryClient.invalidateQueries(xblockQueryKeys.componentMetadata(contentId));
         // Invalidate content search to update tags count
         queryClient.invalidateQueries(['content_search'], { predicate: (query) => libraryQueryPredicate(query, libraryId) });
-        // If the tags for a compoent were edited from Unit page, invalidate children query to fetch count again.
-        if (unitId) {
-          queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
+        // If the tags for an item were edited from a container page (Unit, Subsection, Section),
+        // invalidate children query to fetch count again.
+        if (containerId) {
+          queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(containerId));
         }
       }
     },

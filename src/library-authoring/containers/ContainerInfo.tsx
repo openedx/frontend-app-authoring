@@ -27,17 +27,15 @@ import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
 import messages from './messages';
-import componentMessages from '../components/messages';
-import ContainerDeleter from '../components/ContainerDeleter';
-import ContainerPublishStatus from './ContainerPublishStatus';
 import { useContainer } from '../data/apiHooks';
+import ContainerDeleter from './ContainerDeleter';
+import ContainerPublishStatus from './ContainerPublishStatus';
 
-type ContainerMenuProps = {
+type ContainerPreviewProps = {
   containerId: string,
-  displayName: string,
 };
 
-const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
+const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   const intl = useIntl();
 
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
@@ -51,12 +49,12 @@ const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
-          alt={intl.formatMessage(componentMessages.containerCardMenuAlt)}
+          alt={intl.formatMessage(messages.containerCardMenuAlt)}
           data-testid="container-info-menu-toggle"
         />
         <Dropdown.Menu>
           <Dropdown.Item onClick={confirmDelete}>
-            <FormattedMessage {...componentMessages.menuDeleteContainer} />
+            <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
@@ -64,14 +62,9 @@ const ContainerMenu = ({ containerId, displayName }: ContainerMenuProps) => {
         isOpen={isConfirmingDelete}
         close={cancelDelete}
         containerId={containerId}
-        displayName={displayName}
       />
     </>
   );
-};
-
-type ContainerPreviewProps = {
-  containerId: string,
 };
 
 const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
@@ -151,10 +144,7 @@ const ContainerInfo = () => {
           />
         )}
         {showOpenButton && (
-          <ContainerMenu
-            containerId={containerId}
-            displayName={container.displayName}
-          />
+          <ContainerMenu containerId={containerId} />
         )}
       </div>
       <Tabs

@@ -11,11 +11,6 @@ const messages = defineMessages({
     defaultMessage: 'Collection actions menu',
     description: 'Alt/title text for the collection card menu button.',
   },
-  containerCardMenuAlt: {
-    id: 'course-authoring.library-authoring.container.menu',
-    defaultMessage: 'Container actions menu',
-    description: 'Alt/title text for the container card menu button.',
-  },
   menuOpen: {
     id: 'course-authoring.library-authoring.menu.open',
     defaultMessage: 'Open',
@@ -42,9 +37,14 @@ const messages = defineMessages({
     description: 'Menu item for add a component to collection.',
   },
   menuRemoveFromCollection: {
-    id: 'course-authoring.library-authoring.component.menu.remove',
+    id: 'course-authoring.library-authoring.component.menu.remove-from-collection',
     defaultMessage: 'Remove from collection',
-    description: 'Menu item for remove an item from collection.',
+    description: 'Menu item for remove a component from collection.',
+  },
+  menuRemoveFromContainer: {
+    id: 'course-authoring.library-authoring.component.menu.remove',
+    defaultMessage: 'Remove from {containerType}',
+    description: 'Menu item for remove an item from {containerType}.',
   },
   removeComponentFromCollectionSuccess: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-success',
@@ -191,61 +191,6 @@ const messages = defineMessages({
     defaultMessage: 'This component can be synced in courses after publish.',
     description: 'Alert text of the modal to confirm publish a component in a library.',
   },
-  menuDeleteContainer: {
-    id: 'course-authoring.library-authoring.container.delete-menu-text',
-    defaultMessage: 'Delete',
-    description: 'Menu item to delete a container.',
-  },
-  deleteUnitWarningTitle: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-title',
-    defaultMessage: 'Delete Unit',
-    description: 'Title text for the warning displayed before deleting a Unit',
-  },
-  deleteUnitConfirm: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
-    defaultMessage: 'Delete {unitName}? {message}',
-    description: 'Confirmation text to display before deleting a unit',
-  },
-  deleteUnitConfirmMsg1: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-1',
-    defaultMessage: 'Any course instances will stop receiving updates.',
-    description: 'First part of confirmation message to display before deleting a unit',
-  },
-  deleteUnitConfirmMsg2: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-2',
-    defaultMessage: 'Any components will remain in the library.',
-    description: 'Second part of confirmation message to display before deleting a unit',
-  },
-  deleteUnitSuccess: {
-    id: 'course-authoring.library-authoring.unit.delete.success',
-    defaultMessage: 'Unit deleted',
-    description: 'Message to display on delete unit success',
-  },
-  deleteUnitFailed: {
-    id: 'course-authoring.library-authoring.unit.delete-failed-error',
-    defaultMessage: 'Failed to delete unit',
-    description: 'Message to display on failure to delete a unit',
-  },
-  undoDeleteContainerToastAction: {
-    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-button',
-    defaultMessage: 'Undo',
-    description: 'Toast message to undo deletion of container',
-  },
-  undoDeleteContainerToastMessage: {
-    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-text',
-    defaultMessage: 'Undo successful',
-    description: 'Message to display on undo delete container success',
-  },
-  undoDeleteUnitToastFailed: {
-    id: 'course-authoring.library-authoring.unit.undo-delete-unit-failed',
-    defaultMessage: 'Failed to undo delete Unit operation',
-    description: 'Message to display on failure to undo delete unit',
-  },
-  containerPreviewMoreBlocks: {
-    id: 'course-authoring.library-authoring.component.container-card-preview.more-blocks',
-    defaultMessage: '+{count}',
-    description: 'Count shown when a container has more blocks than will fit on the card preview.',
-  },
   removeComponentFromUnitMenu: {
     id: 'course-authoring.library-authoring.unit.component.remove.button',
     defaultMessage: 'Remove from unit',
@@ -280,6 +225,21 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container.preview.text',
     defaultMessage: 'Contains {children}.',
     description: 'Preview message for section/subsections with the names of children separated by commas',
+  },
+  removeContainerWarningTitle: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-title',
+    defaultMessage: 'Remove {containerType}',
+    description: 'Title text for the warning displayed before removing a container from its parent',
+  },
+  removeContainerConfirm: {
+    id: 'course-authoring.library-authoring.container.remove-confirmation-text',
+    defaultMessage: 'Remove {containerName} from {parentContainerType} {parentContainerName}? Removing this {containerType} will not delete it from the library.',
+    description: 'Confirmation text to display before removing a container from its parent',
+  },
+  removeContainerButton: {
+    id: 'course-authoring.library-authoring.container.confirm-remove-button',
+    defaultMessage: 'Remove {containerName}',
+    description: 'Button to confirm removal of a container from its parent',
   },
 });
 export default messages;

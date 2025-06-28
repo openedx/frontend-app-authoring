@@ -611,9 +611,12 @@ export const useContainer = (containerId?: string) => (
 );
 
 /**
- * Use this mutation to update the fields of a container in a library
+ * Use this mutation to update the fields of a container in a library.
+ *
+ * Use `affectedParentContainerId` to enable the optimistic update when the container
+ * is updated from a children list of a container
  */
-export const useUpdateContainer = (containerId: string) => {
+export const useUpdateContainer = (containerId: string, affectedParentContainerId?: string) => {
   const libraryId = getLibraryId(containerId);
   const queryClient = useQueryClient();
   const containerQueryKey = libraryAuthoringQueryKeys.container(containerId);
@@ -621,15 +624,36 @@ export const useUpdateContainer = (containerId: string) => {
     mutationFn: (data: api.UpdateContainerDataRequest) => api.updateContainerMetadata(containerId, data),
     onMutate: (data) => {
       const previousData = queryClient.getQueryData(containerQueryKey) as api.Container;
-      queryClient.setQueryData(containerQueryKey, {
-        ...previousData,
-        ...data,
-      });
 
-      return { previousData };
+      if (previousData) {
+        queryClient.setQueryData(containerQueryKey, {
+          ...previousData,
+          ...data,
+        });
+      }
+
+      let childrenPreviousData;
+      if (affectedParentContainerId) {
+        const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
+        childrenPreviousData = queryClient.getQueryData(childrenQueryKey) as api.Container[];
+        if (childrenPreviousData) {
+          queryClient.setQueryData(childrenQueryKey, childrenPreviousData.map(item => (
+            item.id === containerId ? { ...item, ...data } : item
+          )));
+        }
+      }
+
+      return { previousData, childrenPreviousData };
     },
     onError: (_err, _data, context) => {
-      queryClient.setQueryData(containerQueryKey, context?.previousData);
+      if (context?.previousData) {
+        queryClient.setQueryData(containerQueryKey, context?.previousData);
+      }
+
+      if (affectedParentContainerId && context?.childrenPreviousData) {
+        const childrenQueryKey = libraryAuthoringQueryKeys.containerChildren(affectedParentContainerId);
+        queryClient.setQueryData(childrenQueryKey, context?.childrenPreviousData);
+      }
     },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
@@ -679,7 +703,10 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
     queryFn: () => api.getLibraryContainerChildren(containerId!, published),
-    structuralSharing: (oldData: api.LibraryBlockMetadata[], newData: api.LibraryBlockMetadata[]) => {
+    structuralSharing: (
+      oldData: api.LibraryBlockMetadata[] | api.Container[],
+      newData: api.LibraryBlockMetadata[] | api.Container[],
+    ) => {
       // This just sets `isNew` flag to new children components
       if (oldData) {
         const oldDataIds = oldData.map((obj) => obj.id);
@@ -849,11 +876,22 @@ export const usePublishContainer = (containerId: string) => {
  */
 export const useContentFromSearchIndex = (contentIds: string[]) => {
   const { client, indexName } = useContentSearchConnection();
+  const extraFilter = [`usage_key IN ["${contentIds.join('","')}"]`];
+  // NOTE: assuming that all contentIds are part of a single libraryId as we don't have a usecase
+  // of passing multiple contentIds from different libraries.
+  if (contentIds.length > 0) {
+    try {
+      const libraryId = getLibraryId(contentIds?.[0]);
+      extraFilter.push(`context_key = "${libraryId}"`);
+    } catch {
+      // Ignore as the contentIds could be part of course instead of a library.
+    }
+  }
   return useContentSearchResults({
     client,
     indexName,
     searchKeywords: '',
-    extraFilter: [`usage_key IN ["${contentIds.join('","')}"]`],
+    extraFilter,
     limit: contentIds.length,
     enabled: !!contentIds.length,
     skipBlockTypeFetch: true,

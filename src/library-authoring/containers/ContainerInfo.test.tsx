@@ -12,15 +12,14 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
+import { ContainerType } from '../../generic/key-utils';
+import type { ToastActionData } from '../../generic/toast-context';
 
 mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
+mockContentSearchConfig.applyMock();
 mockGetContainerMetadata.applyMock();
 mockGetContainerChildren.applyMock();
-mockContentSearchConfig.applyMock();
-
-// TODO Remove this to un-skip section/subsection tests, when implemented
-const testIf = (condition) => (condition ? it : it.skip);
 
 const { libraryId } = mockContentLibrary;
 const { unitId, subsectionId, sectionId } = mockGetContainerMetadata;
@@ -32,7 +31,7 @@ const render = (
 ) => {
   const params: { libraryId: string, selectedItemId?: string } = { libraryId, selectedItemId: containerId };
   const path = containerType
-    ? `/library/:libraryId/${containerType.toLowerCase()}/:selectedItemId?`
+    ? `/library/:libraryId/${containerType}/:selectedItemId?`
     : '/library/:libraryId/:selectedItemId?';
 
   return baseRender(<ContainerInfo />, {
@@ -56,38 +55,41 @@ const render = (
   });
 };
 let axiosMock: MockAdapter;
-let mockShowToast;
+let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
 
-describe('<ContainerInfo />', () => {
-  beforeEach(() => {
-    ({ axiosMock, mockShowToast } = initializeMocks());
-    mockSearchResult({
-      results: [ // @ts-ignore
-        {
-          hits: [],
-        },
-      ],
+[
+  {
+    containerType: ContainerType.Unit,
+    containerId: unitId,
+    childType: 'component',
+  },
+  {
+    containerType: ContainerType.Subsection,
+    containerId: subsectionId,
+    childType: 'unit',
+  },
+  {
+    containerType: ContainerType.Section,
+    containerId: sectionId,
+    childType: 'subsection',
+  },
+].forEach(({ containerId, containerType, childType }) => {
+  describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
+    beforeEach(() => {
+      ({ axiosMock, mockShowToast } = initializeMocks());
+      mockSearchResult({
+        results: [ // @ts-ignore
+          {
+            hits: [{
+              blockType: containerType,
+              displayName: `Test ${containerType}`,
+            }],
+          },
+        ],
+      });
     });
-  });
 
-  [
-    {
-      containerType: 'Unit',
-      containerId: unitId,
-      childType: 'component',
-    },
-    {
-      containerType: 'Subsection',
-      containerId: subsectionId,
-      childType: 'unit',
-    },
-    {
-      containerType: 'Section',
-      containerId: sectionId,
-      childType: 'subsection',
-    },
-  ].forEach(({ containerId, containerType, childType }) => {
-    testIf(containerType === 'Unit')(`should delete the ${containerType} using the menu`, async () => {
+    it(`should delete the ${containerType} using the menu`, async () => {
       axiosMock.onDelete(getLibraryContainerApiUrl(containerId)).reply(200);
       render(containerId);
 
@@ -96,12 +98,12 @@ describe('<ContainerInfo />', () => {
       userEvent.click(screen.getByTestId('container-info-menu-toggle'));
 
       // Click on Delete Item
-      const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
+      const deleteMenuItem = await screen.findByRole('button', { name: 'Delete' });
       expect(deleteMenuItem).toBeInTheDocument();
       fireEvent.click(deleteMenuItem);
 
       // Confirm delete Modal is open
-      expect(screen.getByText(`Delete ${containerType}`));
+      expect(screen.getByText(`Delete ${containerType[0].toUpperCase()}${containerType.slice(1)}`));
       const deleteButton = screen.getByRole('button', { name: /delete/i });
       fireEvent.click(deleteButton);
 
@@ -291,10 +293,9 @@ describe('<ContainerInfo />', () => {
       )).toBeInTheDocument();
     });
 
-    testIf(containerType === 'Unit')(`show only published ${containerType} content`, async () => {
-      render(containerId, '', true);
-      expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
-      expect(screen.getByText(/text block published 1/i)).toBeInTheDocument();
+    it(`show only published ${containerType} content`, async () => {
+      render(containerId, containerType, true);
+      expect(await screen.findByText(/block published 1/i)).toBeInTheDocument();
     });
 
     it(`shows the ${containerType} Preview tab by default and the children are readonly`, async () => {

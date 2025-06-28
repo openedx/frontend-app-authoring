@@ -45,7 +45,7 @@ const SectionCollapsible: FC<Props> = ({
     <div className={className}>
       <div className="section-collapsible-header-item">
         <Icon src={isOpen ? ArrowDropDown : ArrowRight} />
-        <strong>{title}</strong>
+        <p className="section-title">{title}</p>
       </div>
       <div className="section-collapsible-header-actions">
         <div className="section-collapsible-header-action-item">

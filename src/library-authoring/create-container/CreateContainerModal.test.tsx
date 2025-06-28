@@ -105,7 +105,7 @@ describe('CreateContainerModal container linking', () => {
       { containerId: newSectionId, routeType: 'section' },
     );
 
-    const subsectionButton = await screen.findByRole('button', { name: /^Subsection$/ });
+    const subsectionButton = await screen.findByRole('button', { name: /New subsection/i });
     userEvent.click(subsectionButton);
     const nameInput = await screen.findByLabelText(/name your subsection/i);
     userEvent.type(nameInput, 'Test Subsection');

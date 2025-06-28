@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useClipboard } from '../../generic/clipboard';
@@ -20,6 +21,7 @@ import {
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import messages from './messages';
+import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
 
@@ -58,9 +60,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
+      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionSuccess));
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
+      showToast(intl.formatMessage(containerMessages.removeComponentFromCollectionFailure));
     });
   };
 
@@ -111,6 +113,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     navigateTo,
   ]);
 
+  const containerType = containerId ? getBlockType(containerId) : 'collection';
+
   return (
     <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
@@ -139,11 +143,16 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         </Dropdown.Item>
         {insideCollection && (
           <Dropdown.Item onClick={removeFromCollection}>
-            <FormattedMessage {...messages.menuRemoveFromCollection} />
+            <FormattedMessage
+              {...containerMessages.menuRemoveFromContainer}
+              values={{
+                containerType,
+              }}
+            />
           </Dropdown.Item>
         )}
         <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...messages.menuAddToCollection} />
+          <FormattedMessage {...containerMessages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
       {isConfirmingDelete && (

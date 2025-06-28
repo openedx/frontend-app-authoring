@@ -150,7 +150,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     (
                       <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                         {intl.formatMessage(messages.headingTitle)}
-                        <Badge variant="primary" className="ml-2">{intl.formatMessage(messages.beta)}</Badge>
+                        <Badge variant="primary" className="ml-2" style={{ fontSize: 'large' }}>{intl.formatMessage(messages.beta)}</Badge>
                       </span>
                     )
                   }

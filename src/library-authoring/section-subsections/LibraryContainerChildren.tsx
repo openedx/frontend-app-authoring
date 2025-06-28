@@ -6,6 +6,7 @@ import {
   ActionRow, Badge, Icon, Stack,
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
+import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -19,12 +20,12 @@ import {
 import { messages, subsectionMessages, sectionMessages } from './messages';
 import containerMessages from '../containers/messages';
 import { Container } from '../data/api';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
-import { ContainerMenu } from '../components/ContainerCard';
 import { useLibraryRoutes } from '../routes';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { useRunOnNextRender } from '../../utils';
+import { ContainerMenu } from '../containers/ContainerCard';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -40,11 +41,13 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
 }
 
-const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const updateMutation = useUpdateContainer(container.originalId);
+  const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = useLibraryContext();
+  const { navigateTo } = useLibraryRoutes();
+  const { setSidebarAction } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -57,14 +60,32 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
     }
   };
 
+  /* istanbul ignore next */
+  const scheduleJumpToTags = useRunOnNextRender(() => {
+    // TODO: Ugly hack to make sure sidebar shows manage tags section
+    // This needs to run after all changes to url takes place to avoid conflicts.
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
+  });
+
+  const jumpToManageTags = () => {
+    navigateTo({ selectedItemId: container.originalId });
+    scheduleJumpToTags();
+  };
+
   return (
     <>
-      <InplaceTextEditor
-        onSave={handleSaveDisplayName}
-        text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
-        textClassName="font-weight-bold small"
-        readOnly={readOnly || showOnlyPublished}
-      />
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div
+        // Prevent parent card from being clicked.
+        onClick={(e) => e.stopPropagation()}
+      >
+        <InplaceTextEditor
+          onSave={handleSaveDisplayName}
+          text={showOnlyPublished ? (container.publishedDisplayName ?? container.displayName) : container.displayName}
+          textClassName="font-weight-bold small"
+          readOnly={readOnly || showOnlyPublished}
+        />
+      </div>
       <ActionRow.Spacer />
       <Stack
         direction="horizontal"
@@ -84,7 +105,11 @@ const ContainerRow = ({ container, readOnly }: ContainerRowProps) => {
             </Stack>
           </Badge>
         )}
-        <TagCount size="sm" count={container.tagsCount} />
+        <TagCount
+          size="sm"
+          count={container.tagsCount}
+          onClick={readOnly ? undefined : jumpToManageTags}
+        />
         {!readOnly && (
           <ContainerMenu
             containerKey={container.originalId}
@@ -201,8 +226,13 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
-            isClickable={!readOnly}
-            onClick={(e) => !readOnly && handleChildClick(child, e.detail)}
+            isClickable
+            onClick={(e) => handleChildClick(child, e.detail)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleChildClick(child, 1);
+              }
+            }}
             disabled={readOnly || libReadOnly}
             cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
             actions={(

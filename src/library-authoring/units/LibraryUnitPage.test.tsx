@@ -217,7 +217,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should rename component while clicking on name', async () => {
-    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(200);
     renderLibraryUnitPage();
 
@@ -251,7 +251,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error while updating component name', async () => {
-    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course_generated:html:text-0');
     axiosMock.onPost(url).reply(400);
     renderLibraryUnitPage();
 
@@ -290,7 +290,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -304,7 +306,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -318,7 +322,9 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId))
       .reply(500);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{
+      id: 'lb:org1:Demo_course_generated:html:text-1----1',
+    }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -435,5 +441,15 @@ describe('<LibraryUnitPage />', () => {
     // trigger double click
     userEvent.click(component.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
     expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
+  });
+
+  it('"Add New Content" button should open "Add Content" sidebar', async () => {
+    renderLibraryUnitPage();
+    const addContent = await screen.findByRole('button', { name: /add new content/i });
+    userEvent.click(addContent);
+
+    expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /text/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /problem/i })).toBeInTheDocument();
   });
 });
