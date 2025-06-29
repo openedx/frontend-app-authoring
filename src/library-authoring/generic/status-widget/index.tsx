@@ -1,12 +1,19 @@
+import { useCallback, useState } from 'react';
 import {
   FormattedDate,
   FormattedMessage,
   FormattedTime,
   useIntl,
 } from '@edx/frontend-platform/i18n';
-import { Button, Container, Stack } from '@openedx/paragon';
+import {
+  Button,
+  Container,
+  Icon,
+  Stack,
+  StatefulButton,
+} from '@openedx/paragon';
+import { SpinnerSimple } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-
 import messages from './messages';
 
 const CustomFormattedDate = ({ date }: { date: string }) => (
@@ -84,7 +91,7 @@ type StatusWidgedProps = {
   created: string | null;
   publishedBy: string | null;
   numBlocks?: number;
-  onCommit?: () => void;
+  onCommit?: () => Promise<void>;
   onCommitLabel?: string;
   onRevert?: () => void;
 };
@@ -125,6 +132,7 @@ const StatusWidget = ({
   let statusMessage: string;
   let extraStatusMessage: string | undefined;
   let bodyMessage: React.ReactNode | undefined;
+  const [publishButtonState, setPublishButtonState] = useState('default');
 
   if (!lastPublished) {
     // Entity is never published (new)
@@ -167,6 +175,25 @@ const StatusWidget = ({
     }
   }
 
+  if (publishButtonState !== 'pending') {
+    if (isPublished && publishButtonState !== 'complete') {
+      setPublishButtonState('complete');
+    } else if (!isPublished && publishButtonState !== 'default') {
+      setPublishButtonState('default');
+    }
+  }
+
+  const handleOnClickPublish = useCallback(() => {
+    if (onCommit) {
+      setPublishButtonState('pending');
+      onCommit().finally(() => {
+        // Set to default to let new 'isPublished' value to decide
+        // the new state of the button.
+        setPublishButtonState('deafult');
+      });
+    }
+  }, [setPublishButtonState, onCommit]);
+
   return (
     <Stack>
       <Container className={classNames('status-widget', {
@@ -189,9 +216,21 @@ const StatusWidget = ({
             {bodyMessage}
           </span>
           {onCommit && (
-            <Button disabled={isPublished} onClick={onCommit}>
-              {onCommitLabel || intl.formatMessage(messages.publishButtonLabel)}
-            </Button>
+            <StatefulButton
+              variant="primary"
+              state={publishButtonState}
+              labels={{
+                default: onCommitLabel || intl.formatMessage(messages.publishButtonLabel),
+                complete: intl.formatMessage(messages.publishedStatusLabel),
+                pending: intl.formatMessage(messages.publishingButtonLabelState),
+              }}
+              icons={{
+                complete: null,
+                pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+              }}
+              disabledStates={['pending', 'complete']}
+              onClick={handleOnClickPublish}
+            />
           )}
           {onRevert && (
             <div className="d-flex justify-content-end">

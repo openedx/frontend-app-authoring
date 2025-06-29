@@ -18,14 +18,14 @@ const LibraryPublishStatus = () => {
   const revertLibraryChanges = useRevertLibraryChanges();
   const { showToast } = useContext(ToastContext);
 
-  const commit = useCallback(() => {
+  const commit = useCallback(async () => {
     if (libraryData) {
-      commitLibraryChanges.mutateAsync(libraryData.id)
-        .then(() => {
-          showToast(intl.formatMessage(messages.publishSuccessMsg));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.publishErrorMsg));
-        });
+      try {
+        await commitLibraryChanges.mutateAsync(libraryData.id);
+        showToast(intl.formatMessage(messages.publishSuccessMsg));
+      } catch (e) {
+        showToast(intl.formatMessage(messages.publishErrorMsg));
+      }
     }
   }, [libraryData]);
 
