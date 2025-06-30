@@ -138,9 +138,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        console.log(process.env.NODE_ENV);
         let url = "http://localhost:3001/dashboard";
-        if (process.env.NODE_ENV === 'prod') {
+        if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
           url = "https://design.titaned.com/dashboard";
         }
         // Use the https://design.titaned.com/dashboard endpoint for deployment and http://localhost:3001/dashboard for local development
