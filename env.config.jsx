@@ -253,15 +253,6 @@ const config = {
                                 statusBarData={props.statusBarData}
                                 openEnableHighlightsModal={props.openEnableHighlightsModal}
                                 handleVideoSharingOptionChange={props.handleVideoSharingOptionChange}
-                                renderViewLiveButton={() => (
-                                    <Button
-                                        variant="outline-primary"
-                                        onClick={() => window.open('http://apps.local.openedx.io:2000/learning/course/course-v1:TE+cs100+tyu', '_blank')}
-                                        className="viewLiveSlot"
-                                    >
-                                        View live
-                                    </Button>
-                                )}
                             />
                         </div>
                     ),
