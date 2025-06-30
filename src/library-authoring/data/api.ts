@@ -123,6 +123,10 @@ export const getLibraryContainerChildrenApiUrl = (containerId: string, published
 /**
  * Get the URL for library container collections.
  */
+/**
+ * Get the URL for a single container hierarchy api.
+ */
+export const getLibraryContainerHierarchyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}hierarchy/`;
 export const getLibraryContainerCollectionsUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}collections/`;
 /**
  * Get the URL for the API endpoint to publish a single container (+ children).
@@ -713,6 +717,26 @@ export async function removeLibraryContainerChildren(
     {
       data: { usage_keys: children },
     },
+  );
+  return camelCaseObject(data);
+}
+
+export interface ContainerHierarchy {
+  objectKey: string;
+  sections: Array<Container>;
+  subsections: Array<Container>;
+  units: Array<Container>;
+  components: Array<LibraryBlockMetadata>;
+}
+
+/**
+ * Fetch a library container's hierarchy metadata.
+ */
+export async function getLibraryContainerHierarchy(
+  containerId: string,
+): Promise<ContainerHierarchy> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryContainerHierarchyApiUrl(containerId),
   );
   return camelCaseObject(data);
 }

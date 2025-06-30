@@ -653,6 +653,63 @@ mockGetContainerChildren.applyMock = () => {
 };
 
 /**
+ * Mock for `getLibraryContainerHierarchy()`
+ *
+ * This mock returns a fixed response for the given container ID.
+ */
+export async function mockGetContainerHierarchy(containerId: string): Promise<api.ContainerHierarchy> {
+  const getChildren = (childId: string, numChildren: number) => {
+    let blockType = 'html';
+    let name = 'text';
+    let typeNamespace = 'lb';
+    if (childId.includes('unit')) {
+      blockType = 'unit';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('subsection')) {
+      blockType = 'subsection';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('section')) {
+      blockType = 'section';
+      name = blockType;
+      typeNamespace = 'lct';
+    }
+    return Array(
+      childId === containerId ? 1 : numChildren,
+    ).fill(mockGetContainerChildren.childTemplate).map(
+      (child, idx) => (
+        {
+          ...child,
+          id: (
+            childId === containerId
+              ? childId
+              // Generate a unique ID when multiple child blocks
+              : `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`
+          ),
+          displayName: `${name} block ${idx}`,
+          publishedDisplayName: `${name} block published ${idx}`,
+        }
+      ),
+    );
+  };
+
+  return Promise.resolve(
+    {
+      objectKey: containerId,
+      sections: getChildren(mockGetContainerMetadata.sectionId, 2),
+      subsections: getChildren(mockGetContainerMetadata.subsectionId, 3),
+      units: getChildren(mockGetContainerMetadata.unitId, 4),
+      components: getChildren('lb:org1:Demo_course_generated:text:text-0', 5),
+    },
+  );
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerHierarchy.applyMock = () => {
+  jest.spyOn(api, 'getLibraryContainerHierarchy').mockImplementation(mockGetContainerHierarchy);
+};
+
+/**
  * Mock for `getXBlockOLX()`
  *
  * This mock returns different data/responses depending on the ID of the block
