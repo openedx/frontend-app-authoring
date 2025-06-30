@@ -141,6 +141,7 @@ describe('CoursesFilters', () => {
     fireEvent.change(searchInput, { target: { value: '   ' } });
     await waitFor(() => expect(dispatchMock).not.toHaveBeenCalled(), { timeout: 500 });
     expect(dispatchMock).not.toHaveBeenCalled();
+    // just a coment to trigger a build
   });
 
   it('should display the loading spinner when isLoading is true', () => {
