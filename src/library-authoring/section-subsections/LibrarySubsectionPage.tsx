@@ -1,10 +1,8 @@
-import { ReactNode, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
-import {
-  Breadcrumb, Container, MenuItem, SelectMenu,
-} from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Container } from '@openedx/paragon';
+
+import type { ContainerHit } from '@src/search-manager';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useContentFromSearchIndex, useContentLibrary } from '../data/apiHooks';
@@ -15,41 +13,11 @@ import { ContainerType } from '../../generic/key-utils';
 import Header from '../../header';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
-import { messages, subsectionMessages } from './messages';
+import { subsectionMessages } from './messages';
 import { LibrarySidebar } from '../library-sidebar';
+import { ParentBreadcrumbs } from '../generic/parent-breadcrumbs';
 import { LibraryContainerChildren } from './LibraryContainerChildren';
 import { ContainerEditableTitle, FooterActions, HeaderActions } from '../containers';
-import { ContainerHit } from '../../search-manager';
-
-interface OverflowLinksProps {
-  to: string | string[];
-  children: ReactNode | ReactNode[];
-}
-
-const OverflowLinks = ({ children, to }: OverflowLinksProps) => {
-  if (typeof to === 'string') {
-    return (
-      <Link className="subsection-breadcrumb link-muted" to={to}>
-        {children}
-      </Link>
-    );
-  }
-  // to is string[] that should be converted to overflow menu
-  const items = to?.map((link, index) => (
-    <MenuItem key={link} to={link} as={Link}>
-      {children?.[index]}
-    </MenuItem>
-  ));
-  return (
-    <SelectMenu
-      className="breadcrumb-menu"
-      variant="link"
-      defaultMessage={`${items.length} Sections`}
-    >
-      {items}
-    </SelectMenu>
-  );
-};
 
 /** Full library subsection page */
 export const LibrarySubsectionPage = () => {
@@ -63,42 +31,6 @@ export const LibrarySubsectionPage = () => {
     hits, isLoading, isError, error,
   } = useContentFromSearchIndex(containerId ? [containerId] : []);
   const subsectionData = (hits as ContainerHit[])?.[0];
-
-  const breadcrumbs = useMemo(() => {
-    const links: Array<{ label: string | string[], to: string | string[] }> = [
-      {
-        label: libraryData?.title || '',
-        to: `/library/${libraryId}`,
-      },
-    ];
-    const sectionLength = subsectionData?.sections?.displayName?.length || 0;
-    if (sectionLength === 1) {
-      links.push({
-        label: subsectionData.sections?.displayName?.[0] || '',
-        to: `/library/${libraryId}/section/${subsectionData?.sections?.key?.[0]}`,
-      });
-    } else if (sectionLength > 1) {
-      // Add all sections as a single object containing list of links
-      // This is converted to overflow menu by OverflowLinks component
-      links.push({
-        label: subsectionData?.sections?.displayName || '',
-        to: subsectionData?.sections?.key?.map((link) => `/library/${libraryId}/section/${link}`) || '',
-      });
-    } else {
-      // Adding empty breadcrumb to add the last `>` spacer.
-      links.push({
-        label: '',
-        to: '',
-      });
-    }
-    return (
-      <Breadcrumb
-        ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-        links={links}
-        linkAs={OverflowLinks}
-      />
-    );
-  }, [libraryData, subsectionData, libraryId]);
 
   if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -141,7 +73,13 @@ export const LibrarySubsectionPage = () => {
           <div className="px-4 bg-light-200 border-bottom mb-2">
             <SubHeader
               title={<SubHeaderTitle title={<ContainerEditableTitle containerId={containerId} />} />}
-              breadcrumbs={breadcrumbs}
+              breadcrumbs={(
+                <ParentBreadcrumbs
+                  libraryData={libraryData}
+                  parents={subsectionData.sections}
+                  containerType={subsectionData.blockType}
+                />
+              )}
               headerActions={(
                 <HeaderActions
                   containerKey={containerId}

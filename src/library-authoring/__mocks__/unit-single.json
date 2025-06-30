@@ -1,0 +1,60 @@
+{
+  "comment": "This mock is captured from a real search result and roughly edited to match the mocks in src/library-authoring/data/api.mocks.ts",
+  "note": "The _formatted fields have been removed from this result and should be re-added programatically when mocking.",
+  "results": [
+    {
+      "indexUid": "studio_content",
+      "hits": [
+        {
+          "display_name": "Test Unit",
+          "block_id": "test-unit-9284e2",
+          "id": "lctAximTESTunittest-unit-9284e2-a9a4386e",
+          "type": "library_container",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1742221203.895054,
+          "modified": 1742221203.895054,
+          "usage_key": "lct:org:lib:unit:test-unit-9a207",
+          "block_type": "unit",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "num_children": 0,
+          "_formatted": {
+            "display_name": "Test Unit",
+            "block_id": "test-unit-9284e2",
+            "id": "lctAximTESTunittest-unit-9284e2-a9a4386e",
+            "type": "library_container",
+            "breadcrumbs": [
+              {
+                "display_name": "Test Library"
+              }
+            ],
+            "created": "1742221203.895054",
+            "modified": "1742221203.895054",
+            "usage_key": "lct:org:lib:unit:test-unit-9a207",
+            "block_type": "unit",
+            "context_key": "lib:Axim:TEST",
+            "org": "Axim",
+            "access_id": "15",
+            "num_children": "0",
+            "published": {
+              "display_name": "Published Test Unit"
+            }
+          },
+          "published": {
+            "display_name": "Published Test Unit"
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 1,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 10
+    }
+  ]
+}
