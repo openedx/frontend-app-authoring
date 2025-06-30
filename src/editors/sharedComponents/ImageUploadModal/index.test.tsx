@@ -1,21 +1,19 @@
 /* eslint-disable no-import-assign */
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-
+import { render, initializeMocks } from '@src/testUtils';
 import { keyStore } from '../../utils';
 import * as tinyMCEKeys from '../../data/constants/tinyMCE';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
-import * as module from '.';
+import { ImageUploadModalInternal as ImageUploadModal, hooks, propsString } from '.';
 import * as tinyMceHooks from '../TinyMceWidget/hooks';
 
 jest.mock('./ImageSettingsModal', () => 'ImageSettingsModal');
 jest.mock('./SelectImageModal', () => 'SelectImageModal');
 
-const { ImageUploadModalInternal: ImageUploadModal } = module;
-const hookKeys = keyStore(module.hooks);
+const hookKeys = keyStore(hooks);
 
 const settings = {
   altText: 'aLt tExt',
@@ -59,12 +57,14 @@ describe('ImageUploadModal', () => {
         height: settings.dimensions.height,
       };
       const testImgTag = (args) => {
-        const output = module.hooks.imgTag({
+        const output = hooks.imgTag({
           settings: args.settings,
           selection,
           lmsEndpointUrl: 'sOmE',
+          editorType: 'tinyMCE',
+          isLibrary: true,
         });
-        expect(output).toEqual(`<img ${module.propsString(args.expected)} />`);
+        expect(output).toEqual(`<img ${propsString(args.expected)} />`);
       };
       test('It returns a html string which matches an image tag', () => {
         testImgTag({ settings, expected });
@@ -94,7 +94,7 @@ describe('ImageUploadModal', () => {
       };
 
       beforeEach(() => {
-        output = module.hooks.createSaveCallback({
+        output = hooks.createSaveCallback({
           close, settings, images, editorRef, setSelection, selection, lmsEndpointUrl,
         });
       });
@@ -105,8 +105,13 @@ describe('ImageUploadModal', () => {
         `It creates a callback, that when called, inserts to the editor, sets the selection to the current element,
         adds new image to the images ref, and calls close`,
         () => {
-          jest.spyOn(module.hooks, hookKeys.imgTag)
-            .mockImplementationOnce((props) => ({ selection, settings: props.settings, lmsEndpointUrl }));
+          const imgTagResult = '<img src="sOmEuRl.cOm" alt="aLt tExt" />';
+          jest.spyOn(hooks, hookKeys.imgTag)
+            .mockImplementationOnce((props) => {
+              if (!props) { return ''; }
+              // Return a string as the real imgTag would
+              return `<img src="${props.selection?.externalUrl ?? ''}" alt="${props.settings?.altText ?? ''}" />`;
+            });
 
           expect(execCommandMock).not.toBeCalled();
           expect(setSelection).not.toBeCalled();
@@ -118,7 +123,7 @@ describe('ImageUploadModal', () => {
           expect(execCommandMock).toBeCalledWith(
             tinyMCEKeys.commands.insertContent,
             false,
-            { selection, settings, lmsEndpointUrl },
+            imgTagResult,
           );
           expect(setSelection).toBeCalledWith(newImage);
           expect(updateImageDimensionsSpy.mock.calls.length).toBe(1);
@@ -139,7 +144,7 @@ describe('ImageUploadModal', () => {
       it('takes and calls clearSelection and close callbacks', () => {
         const clearSelection = jest.fn();
         const close = jest.fn();
-        module.hooks.onClose({ clearSelection, close })();
+        hooks.onClose({ clearSelection, close })();
         expect(clearSelection).toHaveBeenCalled();
         expect(close).toHaveBeenCalled();
       });
@@ -147,38 +152,36 @@ describe('ImageUploadModal', () => {
   });
 
   describe('component', () => {
-    let props;
-    let hooks;
-    beforeAll(() => {
-      hooks = module.hooks;
-      props = {
-        editorRef: { current: null },
-        isOpen: false,
-        close: jest.fn().mockName('props.close'),
-        clearSelection: jest.fn().mockName('props.clearSelection'),
-        selection: { some: 'images', externalUrl: 'sOmEuRl.cOm' },
-        setSelection: jest.fn().mockName('props.setSelection'),
-        lmsEndpointUrl: 'sOmE',
-        images: {
-          current: [mockImage],
-        },
-      };
-      module.hooks = {
-        createSaveCallback: jest.fn().mockName('hooks.createSaveCallback'),
-        onClose: jest.fn().mockName('hooks.onClose'),
-      };
+    const props = {
+      editorRef: { current: null },
+      isOpen: false,
+      close: jest.fn().mockName('props.close'),
+      clearSelection: jest.fn().mockName('props.clearSelection'),
+      selection: { some: 'images', externalUrl: 'sOmEuRl.cOm' },
+      setSelection: jest.fn().mockName('props.setSelection'),
+      lmsEndpointUrl: 'sOmE',
+      images: {
+        current: [mockImage],
+      },
+    };
+    beforeEach(() => {
+      initializeMocks();
     });
-    afterAll(() => {
-      module.hooks = hooks;
+    beforeAll(() => {
+      jest.spyOn(hooks, 'createSaveCallback').mockImplementation(jest.fn().mockName('hooks.createSaveCallback'));
+      jest.spyOn(hooks, 'onClose').mockImplementation(jest.fn().mockName('hooks.onClose'));
     });
     test('snapshot: with selection content (ImageSettingsUpload)', () => {
-      expect(shallow(<ImageUploadModal {...props} />).snapshot).toMatchSnapshot();
+      const { container } = render(<ImageUploadModal {...props} selection={{ externalUrl: 'url.url' }} />);
+      expect(container.querySelector('ImageSettingsModal')).toBeInTheDocument();
     });
     test('snapshot: selection has no externalUrl (Select Image Modal)', () => {
-      expect(shallow(<ImageUploadModal {...props} selection={null} />).snapshot).toMatchSnapshot();
+      const { container } = render(<ImageUploadModal {...props} selection={{ }} />);
+      expect(container.querySelector('SelectImageModal')).toBeInTheDocument();
     });
     test('snapshot: no selection (Select Image Modal)', () => {
-      expect(shallow(<ImageUploadModal {...props} selection={null} />).snapshot).toMatchSnapshot();
+      const { container } = render(<ImageUploadModal {...props} selection={null} />);
+      expect(container.querySelector('SelectImageModal')).toBeInTheDocument();
     });
   });
 });
