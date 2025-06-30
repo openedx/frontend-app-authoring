@@ -169,7 +169,7 @@ const Layout = () => {
             authenticatedUser={authenticatedUser}
             userMenuItems={userMenuItems}
             onLanguageChange={handleLanguageChange}
-            getBaseUrl={() => getConfig().STUDIO_BASE_URL}
+            getBaseUrl={() => '/authoring'}
           />
         </div>
         {/* Sidebar and Main Content */}

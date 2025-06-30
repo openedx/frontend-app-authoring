@@ -279,7 +279,7 @@ const config = {
                 {
                     op: PLUGIN_OPERATIONS.Insert,
                     widget: {
-                        id: "advanced-settings-content",
+                        id: "my-custom-advanced-settings-content",
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => (
@@ -341,6 +341,14 @@ const config = {
                   ),
                 },
               },
+            ],
+        },
+
+        advanced_settings_header_removal_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                }
             ],
         },
 

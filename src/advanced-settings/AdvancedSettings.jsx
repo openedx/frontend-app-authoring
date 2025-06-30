@@ -167,19 +167,15 @@ const AdvancedSettings = ({ intl, courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              {/* <PluginSlot
-                id="advanced_settings_header_plugin_slot"
-                pluginProps={{
-                  contentTitle: intl.formatMessage(messages.policy),
-                  title: intl.formatMessage(messages.headingTitle),
-                }}
-              > */}
-              <SubHeader
-                subtitle={intl.formatMessage(messages.headingSubtitle)}
-                title={intl.formatMessage(messages.headingTitle)}
-                contentTitle={intl.formatMessage(messages.policy)}
-              />
-              {/* </PluginSlot> */}
+              <PluginSlot
+                id="advanced_settings_header_removal_plugin_slot"
+              >
+                <SubHeader
+                  subtitle={intl.formatMessage(messages.headingSubtitle)}
+                  title={intl.formatMessage(messages.headingTitle)}
+                  contentTitle={intl.formatMessage(messages.policy)}
+                />
+              </PluginSlot>
               <article>
                 <div>
                   <section className="setting-items-policies">
