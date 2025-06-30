@@ -1,17 +1,10 @@
-import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { shallow } from '@edx/react-unit-test-utils';
-
-import { formatMessage } from '../../../../../../testUtils';
-import { actions, selectors } from '../../../../../../data/redux';
+import { render, screen, initializeMocks } from '@src/testUtils';
+import { formatMessage } from '@src/editors/testUtils';
+import { actions, selectors } from '@src/editors/data/redux';
 import { HandoutWidgetInternal as HandoutWidget, mapStateToProps, mapDispatchToProps } from '.';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useContext: jest.fn(() => ({ handout: ['error.handout', jest.fn().mockName('error.setHandout')] })),
-}));
-
-jest.mock('../../../../../../data/redux', () => ({
+jest.mock('@src/editors/data/redux', () => ({
   actions: {
     video: {
       updateField: jest.fn().mockName('actions.video.updateField'),
@@ -33,30 +26,36 @@ jest.mock('../../../../../../data/redux', () => ({
 
 describe('HandoutWidget', () => {
   const props = {
-    subtitle: 'SuBTItle',
-    title: 'tiTLE',
     intl: { formatMessage },
     isLibrary: false,
     handout: '',
+    isUploadError: false,
     getHandoutDownloadUrl: jest.fn().mockName('args.getHandoutDownloadUrl'),
     updateField: jest.fn().mockName('args.updateField'),
   };
 
-  describe('snapshots', () => {
-    test('snapshots: renders as expected with default props', () => {
-      expect(
-        shallow(<HandoutWidget {...props} />).snapshot,
-      ).toMatchSnapshot();
+  describe('renders', () => {
+    beforeEach(() => {
+      initializeMocks();
     });
-    test('snapshots: renders as expected with isLibrary true', () => {
-      expect(
-        shallow(<HandoutWidget {...props} isLibrary />).snapshot,
-      ).toMatchSnapshot();
+    test('renders as expected with default props', () => {
+      render(<HandoutWidget {...props} />);
+      expect(screen.getByText('Handout')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Upload Handout' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Handout' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Collapse' })).toBeInTheDocument();
     });
-    test('snapshots: renders as expected with handout', () => {
-      expect(
-        shallow(<HandoutWidget {...props} handout="sOMeUrl " />).snapshot,
-      ).toMatchSnapshot();
+    test('renders as expected with isLibrary true', () => {
+      const { container } = render(<HandoutWidget {...props} isLibrary />);
+      const reduxWrapper = container.firstChild;
+      expect(reduxWrapper?.textContent).toBe('');
+      expect(screen.queryByText('Handout')).not.toBeInTheDocument();
+    });
+    test('renders as expected with handout', () => {
+      const handoutUrl = 'sOMeUrl ';
+      render(<HandoutWidget {...props} handout={handoutUrl} />);
+      expect(screen.getByText('Handout')).toBeInTheDocument();
+      expect(screen.getByText(handoutUrl.trim())).toBeInTheDocument();
     });
   });
   describe('mapStateToProps', () => {
@@ -64,17 +63,20 @@ describe('HandoutWidget', () => {
     test('isLibrary from app.isLibrary', () => {
       expect(
         mapStateToProps(testState).isLibrary,
+        // @ts-ignore
       ).toEqual(selectors.app.isLibrary(testState));
     });
     test('getHandoutDownloadUrl from video.getHandoutDownloadUrl', () => {
       expect(
         mapStateToProps(testState).getHandoutDownloadUrl,
+        // @ts-ignore
       ).toEqual(selectors.video.getHandoutDownloadUrl(testState));
     });
   });
   describe('mapDispatchToProps', () => {
     const dispatch = jest.fn();
     test('updateField from actions.video.updateField', () => {
+      // @ts-ignore
       expect(mapDispatchToProps.updateField).toEqual(dispatch(actions.video.updateField));
     });
   });
