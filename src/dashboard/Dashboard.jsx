@@ -138,6 +138,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        console.log(process.env.NODE_ENV);
         let url = "http://localhost:3001/dashboard";
         if (process.env.NODE_ENV === 'prod') {
           url = "https://design.titaned.com/dashboard";
