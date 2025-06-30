@@ -318,8 +318,10 @@
   position: relative;
 
   .card-content {
+    margin-right: 1rem;
+
     @media (min-width: 1600px ) {
-      margin-right: 1rem;
+      margin-right: 1.5rem;
     }
   }
 
@@ -330,6 +332,10 @@
     left: calc(95% - 0.5px);
     width: 1px;
     background-color: #e5e6e6;
+
+    @media (max-width: 414px ) {
+      display: none;
+    }
   }
 
   .pages_bar {
@@ -338,6 +344,10 @@
     height: 1px;
     background-color: #e5e6e6;
     margin: 1rem -1rem 1rem -6px;
+
+    @media (max-width: 414px ) {
+      display: none;
+    }
 
     @media (min-width: 1600px ) {
       margin: 1rem -1rem 1rem -22px;
