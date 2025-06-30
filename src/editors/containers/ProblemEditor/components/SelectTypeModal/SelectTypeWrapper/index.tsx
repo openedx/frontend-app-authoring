@@ -36,7 +36,7 @@ const SelectTypeWrapper: React.FC<Props> = ({
   const setBlockTitle = React.useCallback((title) => dispatch(actions.app.setBlockTitle(title)), [dispatch]);
 
   return (
-    <EditorModalWrapper onClose={handleCancel}>
+    <EditorModalWrapper onClose={handleCancel} size='fullscreen'>
       <ModalDialog.Header className="shadow-sm zindex-10">
         <ModalDialog.Title>
           <FormattedMessage {...messages.selectTypeTitle} />
@@ -50,7 +50,7 @@ const SelectTypeWrapper: React.FC<Props> = ({
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <EditorModalBody>
+      <EditorModalBody className="d-flex justify-content-center align-items-center" style={{ minHeight: '100%' }}>
         {children}
       </EditorModalBody>
       <FooterWrapper>

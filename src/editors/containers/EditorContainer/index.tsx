@@ -28,16 +28,20 @@ interface WrapperProps {
   children: React.ReactNode;
 }
 
-export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }> = ({ children, onClose }) => {
+export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void; size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen'; }> = ({ children, onClose, size = 'fullscreen' }) => {
   const intl = useIntl();
 
   const title = intl.formatMessage(messages.modalTitle);
   return (
-    <ModalDialog isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
+    <ModalDialog isOpen size={size} isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
   );
 };
 
-export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{ children }</ModalDialog.Body>;
+export const EditorModalBody: React.FC<WrapperProps & { className?: string; style?: React.CSSProperties }> = ({ children, className = '', style = {} }) => (
+   <ModalDialog.Body className={`pb-0 ${className}`} style={style}>
+    {children}
+    </ModalDialog.Body>
+  );
 
 // eslint-disable-next-line react/jsx-no-useless-fragment
 export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{ children }</>;
