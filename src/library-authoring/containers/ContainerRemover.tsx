@@ -79,6 +79,8 @@ const ContainerRemover = ({
       title={removeWarningTitle}
       description={removeText}
       onDeleteSubmit={onRemove}
+      buttonVariant="primary"
+      cancelButtonVariant="tertiary"
       btnLabel={intl.formatMessage(messages.removeContainerButton, {
         containerName: itemType.charAt(0).toUpperCase() + itemType.slice(1),
       })}

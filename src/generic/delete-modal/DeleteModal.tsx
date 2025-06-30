@@ -18,6 +18,8 @@ interface DeleteModalProps {
   variant?: string;
   btnLabel?: string;
   icon?: React.ElementType;
+  buttonVariant?: 'tertiary' | 'brand' | 'primary' | 'danger';
+  cancelButtonVariant?: 'tertiary' | 'brand' | 'primary' | 'default';
 }
 
 const DeleteModal = ({
@@ -28,6 +30,8 @@ const DeleteModal = ({
   title,
   description,
   variant = 'default',
+  buttonVariant = 'danger',
+  cancelButtonVariant = 'default',
   btnLabel,
   icon,
 }: DeleteModalProps) => {
@@ -47,7 +51,7 @@ const DeleteModal = ({
       footerNode={(
         <ActionRow>
           <Button
-            variant="tertiary"
+            variant={cancelButtonVariant}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -62,7 +66,7 @@ const DeleteModal = ({
               e.stopPropagation();
               await onDeleteSubmit();
             }}
-            variant="brand"
+            variant={buttonVariant}
             label={defaultBtnLabel}
           />
         </ActionRow>
