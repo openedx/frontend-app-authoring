@@ -144,12 +144,21 @@ const AddContentView = ({
     />
   );
 
+  let existingContentIcon = getItemIcon('libraryContent');
+
+  if (insideSection) {
+    existingContentIcon = getItemIcon('subsection');
+  } else if (insideSubsection) {
+    existingContentIcon = getItemIcon('unit');
+  }
+
   const existingContentButton = (
     <AddContentButton
       key="libraryContent"
       contentType={{
         name: intl.formatMessage(contentMessages.libraryContentButton),
         blockType: 'libraryContent',
+        icon: existingContentIcon,
       }}
       onCreateContent={onCreateContent}
     />
