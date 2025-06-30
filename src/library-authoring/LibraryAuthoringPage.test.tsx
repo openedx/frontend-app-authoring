@@ -618,6 +618,49 @@ describe('<LibraryAuthoringPage />', () => {
     });
   });
 
+  it('can clear a single filter type', async () => {
+    await renderLibraryPage();
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    // Validate click on Problem type
+    const problemMenu = screen.getAllByText('Problem')[0];
+    expect(problemMenu).toBeInTheDocument();
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Validate clear filters
+    fireEvent.click(problemMenu);
+
+    const clearFitlerButton = screen.getByText('Clear Filter');
+    fireEvent.click(clearFitlerButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
+
   it('has an empty type filter when there are no results', async () => {
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
     await renderLibraryPage();
@@ -1025,7 +1068,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('button', { name: /type/i }));
     fireEvent.click(screen.getByRole('checkbox', { name: /text/i }));
     // Escape to close the Types filter drop-down and re-enable the tabs
-    fireEvent.keyDown(screen.getByRole('button', { name: /type/i }), { key: 'Escape' });
+    fireEvent.keyDown(screen.getByRole('button', { name: /type:/i }), { key: 'Escape' });
 
     // Navigate to the collections tab
     fireEvent.click(await screen.findByRole('tab', { name: 'Collections' }));
