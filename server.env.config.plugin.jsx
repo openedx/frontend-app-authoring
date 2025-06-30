@@ -1,50 +1,50 @@
 // This file contains configuration for plugins and environment variables.
-
-import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
-import CourseNavigationSidebar from './src/shared-components/CourseNavigationSidebar';
-import CustomScheduleAndDetails from './src/CustomScheduleAndDetails';
-import messages from './src/schedule-and-details/messages';
-import { Settings, DragHandle, SettingsApplications } from '@openedx/paragon/icons';
-import {
+const {
+    Settings, DragHandle, SettingsApplications
+} = await import('@openedx/paragon/icons');
+const {
     Icon,
     IconButton,
     Dropdown,
     Button,
     ProgressBar
-} from '@openedx/paragon';
-import FormSwitchGroup from './src/generic/FormSwitchGroup';
-import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
-import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
-import SubHeader from './src/generic/sub-header/SubHeader';
-import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
-import CourseExportPageNew from './src/export-page/CourseExportPageNew'
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import WarningMessage from './src/generic/warning-message/WarningMessage';
-import SettingCard from './src/advanced-settings/setting-card/SettingCard';
-import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
-import CourseChecklistCustom from './src/plugins-components/CourseChecklistCustom';
-import ChecklistItemBody from './src/course-checklist/ChecklistSection/ChecklistItemBody';
-import ChecklistItemComment from './src/course-checklist/ChecklistSection/ChecklistItemComment';
-import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
-import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
-import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
-import TextbooksNew from './src/textbooks/TextbooksNew';
-import CustomPagesNew from './src/custom-pages/CustomPagesNew';
-import EditorPage from './src/editors/EditorPage';
-import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
-import CourseUpdateNew from './src/course-updates/course-update/CourseUpdateNew';
+} = await import('@openedx/paragon');
+const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
+const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
+const { default: messages } = await import('./src/schedule-and-details/messages');
+const { default: FormSwitchGroup } = await import('./src/generic/FormSwitchGroup');
+const { default: StatusBarContent } = await import('./src/course-outline/status-bar/StatusBarContent');
+const { default: CustomStatusBar } = await import('./src/course-outline/status-bar/CustomStatusBar');
+const { default: SubHeader } = await import('./src/generic/sub-header/SubHeader');
+const { default: CourseExportPageNew } = await import('./src/export-page/CourseExportPageNew');
+const { default: FormattedMessage } = await import('@edx/frontend-platform/i18n');
+const { default: WarningMessage } = await import('./src/generic/warning-message/WarningMessage');
+const { default: SettingCard } = await import('./src/advanced-settings/setting-card/SettingCard');
+const { default: ExportSidebarNew } = await import('./src/export-page/export-sidebar/ExportSidebarNew');
+const { default: CourseChecklistCustom } = await import('./src/plugins-components/CourseChecklistCustom');
+const { default: ChecklistItemBody } = await import('./src/course-checklist/ChecklistSection/ChecklistItemBody');
+const { default: ChecklistItemComment } = await import('./src/course-checklist/ChecklistSection/ChecklistItemComment');
+const { default: FilesPageNew } = await import('./src/files-and-videos/files-page/FilesPageNew');
+const { default: GalleryCardNew } = await import('./src/files-and-videos/generic/table-components/GalleryCardNew');
 
-// Example custom component for the schedule_and_details_plugin_slot
-import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
-import CustomLibrariesV2 from './src/studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2';
-import CustomLibraryAuthoringPage from './src/library-authoring/CustomLibraryAuthoringPage';
-import CustomLibraryCollectionPage from './src/library-authoring/collections/CustomLibraryCollectionPage';
-import CustomTaxonomyListPage from './src/taxonomy/CustomTaxonomyListPage';
-import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage';
-// Load environment variables from .env file
-const config = {
-    ...process.env,
-    pluginSlots: {
+const { default: PagesAndResourcesNew } = await import('./src/pages-and-resources/PagesAndResourcesNew');
+const { default: TextbooksNew } = await import('./src/textbooks/TextbooksNew');
+const { default: CustomPagesNew } = await import('./src/custom-pages/CustomPagesNew');
+const { default: EditorPage } = await import('./src/editors/EditorPage');
+const { default: ImportSidebarNew } = await import('./src/import-page/import-sidebar/ImportSidebarNew');
+const { default: CourseUpdateNew } = await import('./src/course-updates/course-update/CourseUpdateNew');
+
+const { default: CustomCreateLibrary } = await import('./src/library-authoring/create-library/CustomCreateLibrary');
+const { default: CustomLibrariesV2 } = await import('./src/studio-home/tabs-section/libraries-v2-tab/CustomLibrariesV2');
+const { default: CustomLibraryAuthoringPage } = await import('./src/library-authoring/CustomLibraryAuthoringPage');
+const { default: CustomLibraryCollectionPage } = await import('./src/library-authoring/collections/CustomLibraryCollectionPage');
+const { default: CustomTaxonomyListPage } = await import('./src/taxonomy/CustomTaxonomyListPage');
+const { default: CustomTaxonomyDetailPage } = await import('./src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage');
+const { default: CourseUpdatesNew } = await import('./src/course-updates/CourseUpdatesNew');
+
+
+{% raw %}
+config.pluginSlots = {
         header_plugin_slot: {
             plugins: [
                 {
@@ -225,14 +225,23 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => (
-                        <div className="viewLiveDiv">
+                        <div style={{ fontSize: '1rem' }}>
                             <CustomStatusBar
-                                className="viewLiveCustom"
+                                style={{ fontSize: '0.75rem' }}
                                 courseId={props.courseId}
                                 isLoading={props.isLoading}
                                 statusBarData={props.statusBarData}
                                 openEnableHighlightsModal={props.openEnableHighlightsModal}
                                 handleVideoSharingOptionChange={props.handleVideoSharingOptionChange}
+                                renderViewLiveButton={() => (
+                                    <Button
+                                        variant="outline-primary"
+                                        onClick={() => window.open('/learning/course/course-v1:TE+cs100+tyu', '_blank')}
+                                        style={{ height: '6%', width: '11%', fontSize: '0.75rem', marginTop: '10px' }}
+                                    >
+                                        View live
+                                    </Button>
+                                )}
                             />
                         </div>
                     ),
@@ -266,7 +275,7 @@ const config = {
                                         )}
                                     />
                                 </div>
-                                <hr className='customHr' />
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
                             </div>
                         ),
                     },
@@ -311,7 +320,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr className="customHr" />
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
 
                                 <div className="warning-message-container">
                                     <WarningMessage message="Do not modify these policies unless you are familiar with their purpose." />
@@ -363,7 +372,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr className='customHr' />
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
 
                             </div>
                         ),
@@ -612,9 +621,9 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => (
-                            <h2 className='courseOutlineh2'>
+                            <div style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '1rem' }}>
                                 Course Outline
-                            </h2>
+                            </div>
                         ),
                     },
                 },
@@ -785,7 +794,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr className='customHr' />
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
 
                             </div>
                         ),
@@ -816,7 +825,5 @@ const config = {
         //         },
         //     ],
         // },
-    }
-};
-
-export default config;
+}
+{% endraw %}
