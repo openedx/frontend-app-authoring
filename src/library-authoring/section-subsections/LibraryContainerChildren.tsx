@@ -126,7 +126,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
-  const { sidebarItemInfo } = useSidebarContext();
+  const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -168,11 +168,11 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
-      navigateTo({ selectedItemId: child.originalId });
+      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo);
     } else {
       navigateTo({ containerId: child.originalId });
     }
-  }, [navigateTo]);
+  }, [openItemSidebar, navigateTo]);
 
   const getComponentStyle = useCallback((childId: string) => {
     const style: { marginBottom: string, borderRadius: string, outline?: string } = {

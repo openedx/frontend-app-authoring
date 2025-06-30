@@ -26,7 +26,6 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
@@ -131,7 +130,6 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
 /** ComponentBlock to render preview of given component under Unit */
 const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { navigateTo } = useLibraryRoutes();
 
   const { openComponentEditor } = useLibraryContext();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
