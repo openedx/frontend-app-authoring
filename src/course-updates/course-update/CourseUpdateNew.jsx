@@ -42,13 +42,14 @@ const CourseUpdateNew = ({
         )}
         {Boolean(contentForUpdate) && (
           <div
-            className="small text-gray-800"
+            className="small text-gray-800 card-content"
             data-testid="course-update-content"
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: contentForUpdate }}
           />
         )}
       </div>
+      <span className="vert-bar" />
       <div
         className="course-update-header__action"
       >
@@ -60,6 +61,7 @@ const CourseUpdateNew = ({
           data-testid="course-update-edit-button"
           onClick={onEdit}
         />
+        <span className="pages_bar" />
         <IconButtonWithTooltip
           tooltipContent={intl.formatMessage(messages.deleteButton)}
           src={DeleteOutline}

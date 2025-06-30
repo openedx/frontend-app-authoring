@@ -314,12 +314,35 @@
 .card-style {
   display: flex;
   justify-content: space-between;
+  align-items: stretch;
+  position: relative;
+
+  .card-content {
+    @media (min-width: 1600px ) {
+      margin-right: 1rem;
+    }
+  }
 
   .vert-bar {
-    display: inline-block;
-    content: "";
+    position: absolute;
+    top: -1rem;
+    bottom: -1rem;
+    left: calc(95% - 0.5px);
     width: 1px;
-    background-color: black;
+    background-color: #e5e6e6;
+  }
+
+  .pages_bar {
+    content: "";
+    display: block;
+    height: 1px;
+    background-color: #e5e6e6;
+    margin: 1rem -1rem 1rem -6px;
+
+    @media (min-width: 1600px ) {
+      margin: 1rem -1rem 1rem -22px;
+    }
+
   }
 }
 
