@@ -28,7 +28,7 @@ const renderComponent = (containerType: ContainerType, parents: ContainerParents
 );
 
 describe('<ParentBreadcrumbs />', () => {
-  it('show breadcrubs without parent', async () => {
+  it('show breadcrumb without parent', async () => {
     renderComponent(ContainerType.Unit, { displayName: [], key: [] });
     const links = screen.queryAllByRole('link');
     expect(links).toHaveLength(2); // Library link + Empty link
@@ -40,7 +40,7 @@ describe('<ParentBreadcrumbs />', () => {
     expect(links[1]).toHaveProperty('href', 'http://localhost/');
   });
 
-  it('show breadcrubs to a unit without one parent', async () => {
+  it('show breadcrumb to a unit without one parent', async () => {
     renderComponent(ContainerType.Unit, { displayName: ['Parent Subsection'], key: ['subsection-key'] });
     const links = screen.queryAllByRole('link');
     expect(links).toHaveLength(2); // Library link + Parent Subsection link
@@ -52,7 +52,7 @@ describe('<ParentBreadcrumbs />', () => {
     expect(links[1]).toHaveProperty('href', 'http://localhost/library/library-id/subsection/subsection-key');
   });
 
-  it('show breadcrubs to a subsection without one parent', async () => {
+  it('show breadcrumb to a subsection without one parent', async () => {
     renderComponent(ContainerType.Subsection, { displayName: ['Parent Section'], key: ['section-key'] });
     const links = screen.queryAllByRole('link');
     expect(links).toHaveLength(2); // Library link + Parent Subsection link
@@ -71,7 +71,7 @@ describe('<ParentBreadcrumbs />', () => {
     })).toThrow('Parents key and displayName arrays must have the same length.');
   });
 
-  it('show breadcrubs with multiple parents', async () => {
+  it('show breadcrumb with multiple parents', async () => {
     renderComponent(ContainerType.Unit, {
       displayName: ['Parent Subsection 1', 'Parent Subsection 2'],
       key: ['subsection-key-1', 'subsection-key-2'],
