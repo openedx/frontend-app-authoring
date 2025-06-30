@@ -54,13 +54,13 @@ const GalleryCardNew = ({
         )}
       /> */}
       <Card.Section className="pt-1 files-card-section">
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ wordBreak: 'break-word', marginRight: '1.25rem' }}>
+        <div className="files-card-header">
+          <div className="header-truncate">
             <Truncate lines={1} className="font-weight-bold picture-title">
               {original.displayName}
             </Truncate>
           </div>
-          <div style={{ marginRight: '-1rem' }}>
+          <div className="files-action">
             <ActionRow>
               <FileMenu
                 externalUrl={original.externalUrl}

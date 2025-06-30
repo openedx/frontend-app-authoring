@@ -493,7 +493,7 @@
 .files_and_uploads {
   background-color: white;
   // padding: 1rem;
-  padding: 1rem 1rem 0rem 1rem;
+  padding: 1rem 1rem 1rem 1rem;
   border-radius: 1rem;
   border: 1px solid #ced4da;
   height: 100%;
@@ -532,6 +532,22 @@
       // display: inline-flex;
       // justify-content: center;
       // border: none;
+    }
+
+    .files-card-header {
+      display: flex; 
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-truncate {
+      word-break: break-word;
+      margin-left: 8px;
+    }
+
+    .files-action {
+      margin-right: -8px
     }
   }
 
