@@ -206,14 +206,7 @@ const CourseUpdatesNew = ({ courseId }) => {
                                 {courseUpdates.map((courseUpdate, index) => (
                                   <div
                                     key={courseUpdate.id}
-                                    className="update-card"
-                                    style={{
-                                      background: '#f5f5f5',
-                                      borderRadius: '1rem',
-                                      padding: '1rem',
-                                      marginBottom: '1rem',
-                                      border: 'solid 1px #e5e6e6',
-                                    }}
+                                    className="update-card custom-card-style"
                                   >
                                     {isInnerFormOpen(courseUpdate.id) ? (
                                       <UpdateForm
