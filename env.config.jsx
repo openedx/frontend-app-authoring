@@ -233,15 +233,6 @@ const config = {
                                 statusBarData={props.statusBarData}
                                 openEnableHighlightsModal={props.openEnableHighlightsModal}
                                 handleVideoSharingOptionChange={props.handleVideoSharingOptionChange}
-                                renderViewLiveButton={() => (
-                                    <Button
-                                        variant="outline-primary"
-                                        onClick={() => window.open('/learning/course/course-v1:TE+cs100+tyu', '_blank')}
-                                        className="viewLiveSlot"
-                                    >
-                                        View live
-                                    </Button>
-                                )}
                             />
                         </div>
                     ),
