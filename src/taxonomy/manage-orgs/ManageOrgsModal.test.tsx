@@ -8,31 +8,25 @@ import {
   render,
   waitFor,
 } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { TaxonomyContext } from '../common/context';
 import ManageOrgsModal from './ManageOrgsModal';
 
-let store;
-
-const taxonomy = {
-  id: 1,
-  name: 'Test Taxonomy',
-  allOrgs: false,
-  orgs: ['org1', 'org2'],
-};
-
-const orgs = ['org1', 'org2', 'org3', 'org4', 'org5'];
-
+// Use hardcoded mock implementations to avoid variable hoisting issues
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
-  getTaxonomy: jest.fn().mockResolvedValue(taxonomy),
+  getTaxonomy: jest.fn().mockResolvedValue({
+    id: 1,
+    name: 'Test Taxonomy',
+    allOrgs: false,
+    orgs: ['org1', 'org2'],
+  }),
 }));
 
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
-  getOrganizations: jest.fn().mockResolvedValue(orgs),
+  getOrganizations: jest.fn().mockResolvedValue(['org1', 'org2', 'org3', 'org4', 'org5']),
 }));
 
 const mockUseManageOrgsMutate = jest.fn();
@@ -45,32 +39,42 @@ jest.mock('./data/api', () => ({
   })),
 }));
 
+let store: any;
+
+// Define mockTaxonomy after the jest.mock calls for use in the component and test assertions
+const mockTaxonomy = {
+  id: 1,
+  name: 'Test Taxonomy',
+  allOrgs: false,
+  orgs: ['org1', 'org2'],
+};
+
 const mockSetToastMessage = jest.fn();
 const mockSetAlertProps = jest.fn();
 const context = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertProps: null,
-  setAlertProps: mockSetAlertProps,
+  alertError: null,
+  setAlertError: mockSetAlertProps,
 };
 
 const queryClient = new QueryClient();
 
-const RootWrapper = ({ onClose }) => (
+interface RootWrapperProps {
+  onClose: () => void;
+}
+
+const RootWrapper: React.FC<RootWrapperProps> = ({ onClose }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ManageOrgsModal taxonomyId={taxonomy.id} isOpen onClose={onClose} />
+          <ManageOrgsModal taxonomyId={mockTaxonomy.id} isOpen onClose={onClose} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );
-
-RootWrapper.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
 
 describe('<ManageOrgsModal />', () => {
   beforeEach(() => {
@@ -90,7 +94,7 @@ describe('<ManageOrgsModal />', () => {
     queryClient.clear();
   });
 
-  const checkDialogRender = async (getByText) => {
+  const checkDialogRender = async (getByText: Function) => {
     await waitFor(() => {
       // Dialog title
       expect(getByText('Assign to organizations')).toBeInTheDocument();
@@ -151,7 +155,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         orgs: ['org1', 'org3'],
         allOrgs: false,
       });
@@ -174,7 +178,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         allOrgs: true,
       });
     });
@@ -190,9 +194,9 @@ describe('<ManageOrgsModal />', () => {
     await checkDialogRender(getByText);
 
     // Remove org1
-    fireEvent.click(getByText('org1').nextSibling);
+    fireEvent.click(getByText('org1').nextSibling as HTMLElement);
     // Remove org2
-    fireEvent.click(getByText('org2').nextSibling);
+    fireEvent.click(getByText('org2').nextSibling as HTMLElement);
 
     fireEvent.click(getByRole('button', { name: 'Save' }));
 
@@ -205,7 +209,7 @@ describe('<ManageOrgsModal />', () => {
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
-        taxonomyId: taxonomy.id,
+        taxonomyId: mockTaxonomy.id,
         allOrgs: false,
         orgs: [],
       });
