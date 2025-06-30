@@ -84,8 +84,8 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       />
       <IconButtonWithTooltip
         alt="Delete"
+        data-testid="delete-fallback-video"
         iconAs="Icon"
-        key="top-delete-somEUrL"
         onClick={[Function]}
         tooltipContent="Delete"
         tooltipPlacement="top"
@@ -242,8 +242,8 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
       />
       <IconButtonWithTooltip
         alt="Delete"
+        data-testid="delete-fallback-video"
         iconAs="Icon"
-        key="top-delete-somEUrL"
         onClick={[Function]}
         tooltipContent="Delete"
         tooltipPlacement="top"
