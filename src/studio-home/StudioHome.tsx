@@ -192,9 +192,6 @@ const StudioHome = () => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
-      {/* <PluginSlot id="footer_plugin_slot">
-        <StudioFooter />
-      </PluginSlot> */}
     </>
   );
 };

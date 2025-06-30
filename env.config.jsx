@@ -225,9 +225,9 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => (
-                        <div style={{ fontSize: '1rem' }}>
+                        <div className="viewLiveDiv">
                             <CustomStatusBar
-                                style={{ fontSize: '0.75rem' }}
+                                className="viewLiveCustom"
                                 courseId={props.courseId}
                                 isLoading={props.isLoading}
                                 statusBarData={props.statusBarData}
@@ -236,8 +236,8 @@ const config = {
                                 renderViewLiveButton={() => (
                                     <Button
                                         variant="outline-primary"
-                                        onClick={() => window.open('/learning/course/course-v1:TE+cs100+tyu', '_blank')}
-                                        style={{ height: '6%', width: '11%', fontSize: '0.75rem', marginTop: '10px' }}
+                                        onClick={() => window.open('http://apps.local.openedx.io:2000/learning/course/course-v1:TE+cs100+tyu', '_blank')}
+                                        className="viewLiveSlot"
                                     >
                                         View live
                                     </Button>
@@ -275,7 +275,7 @@ const config = {
                                         )}
                                     />
                                 </div>
-                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+                                <hr className='customHr' />
                             </div>
                         ),
                     },
@@ -320,7 +320,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+                                <hr className="customHr" />
 
                                 <div className="warning-message-container">
                                     <WarningMessage message="Do not modify these policies unless you are familiar with their purpose." />
@@ -372,7 +372,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+                                <hr className='customHr' />
 
                             </div>
                         ),
@@ -621,9 +621,9 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => (
-                            <div style={{ fontSize: '18px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '1rem' }}>
+                            <h2 className='courseOutlineh2'>
                                 Course Outline
-                            </div>
+                            </h2>
                         ),
                     },
                 },
@@ -794,7 +794,7 @@ const config = {
                                     </div>
                                 </div>
                                 
-                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0 0 0 0' }} />
+                                <hr className='customHr' />
 
                             </div>
                         ),

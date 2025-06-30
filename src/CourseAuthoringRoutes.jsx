@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Navigate, Routes, Route, useParams, useLocation, useNavigate,
@@ -29,10 +29,7 @@ import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import { LmsBook } from '@openedx/paragon/icons';
-/**
- * Mobile-specific navigation dropdown.
- * This will be shown instead of the sidebar on smaller screens.
- */
+
 const MobileCourseNavigation = ({ items, courseId }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,7 +67,6 @@ const CoursePageLayout = ({
   children, courseId, courseName, sidebarItems,
 }) => (
   <>
-    {/* Breadcrumb and Title */}
     <div className="ca-breadcrumb-bg">
       <div className="ca-breadcrumb-container">
         <div className="ca-breadcrumb">
@@ -86,12 +82,8 @@ const CoursePageLayout = ({
         </div>
       </div>
     </div>
-    {/* Main layout */}
     <div className="ca-main-layout">
-      {/* Mobile navigation dropdown */}
       <MobileCourseNavigation items={sidebarItems} courseId={courseId} />
-
-      {/* Sidebar plugin slot, defaults to CourseNavigationSidebar */}
       <div className="ca-sidebar">
         <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId, sidebarItems }} />
       </div>
@@ -116,7 +108,6 @@ const CourseAuthoringRoutes = () => {
   const { courseName: storeCourseName } = useCourseOutline({ courseId });
   const [courseName, setCourseName] = useState('');
 
-  // Define sidebar items here to pass to both layouts
   const sidebarItems = [
     { label: 'Course Outline', path: `/course/${courseId}/` },
     { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
@@ -133,18 +124,15 @@ const CourseAuthoringRoutes = () => {
   ];
 
   useEffect(() => {
-    // Reset course name immediately on courseId change
     setCourseName('');
   }, [courseId]);
 
   useEffect(() => {
-    // Update when new course name is available
     if (storeCourseName) {
       setCourseName(storeCourseName);
     }
   }, [storeCourseName]);
 
-  // Check if courseId is defined before rendering routes that depend on it
   if (!courseId) {
     return <div>Loading course information...</div>;
   }
@@ -152,7 +140,6 @@ const CourseAuthoringRoutes = () => {
   return (
     <CourseAuthoringPage courseId={courseId}>
       <Routes>
-        {/* Base route for Course Outline */}
         <Route
           path="/"
           element={(
@@ -161,13 +148,11 @@ const CourseAuthoringRoutes = () => {
             </CoursePageLayout>
           )}
         />
-        {/* Redirect explicit /outline to the base path for consistency */}
         <Route
           path="outline"
           element={<Navigate replace to={`/course/${courseId}/`} />}
         />
 
-        {/* Other course-specific routes wrapped in CoursePageLayout */}
         <Route
           path="course_info"
           element={(
@@ -311,8 +296,6 @@ const CourseAuthoringRoutes = () => {
             </CoursePageLayout>
           )}
         />
-
-        {/* Route outside the CourseAuthoringPage layout */}
         <Route
           path="/new-course"
           element={(

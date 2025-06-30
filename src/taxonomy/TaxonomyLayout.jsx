@@ -13,9 +13,9 @@ import messages from './messages';
 const TaxonomyLayout = () => {
   const intl = useIntl();
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */(null));
+  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
   // Use `setToastMessage` to show the alert.
-  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */(null));
+  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */ (null));
 
   const context = useMemo(() => ({
     toastMessage, setToastMessage, alertProps, setAlertProps,
@@ -27,7 +27,7 @@ const TaxonomyLayout = () => {
         <PluginSlot id="header_plugin_slot">
           <Header isHiddenMainMenu />
         </PluginSlot>
-        {alertProps && (
+        { alertProps && (
           <AlertMessage
             data-testid="taxonomy-alert"
             className="mb-0"

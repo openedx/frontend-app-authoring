@@ -1,4 +1,4 @@
-import React, {
+import {
     useState,
     useEffect,
     useRef,
@@ -15,11 +15,8 @@ import {
     StatefulButton,
 } from '@openedx/paragon';
 import {
-    InfoOutline,
     CheckCircle as CheckCircleIcon,
-    Warning as WarningIcon,
-    Calendar,
-    More
+    Warning as WarningIcon
 } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import AlertMessage from './generic/alert-message';
@@ -41,10 +38,6 @@ import PacingSection from './schedule-and-details/pacing-section';
 import BasicSection from './schedule-and-details/basic-section';
 import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
 import { validateImageFile } from './utils/imageValidation';
-
-const languageOptionsList = Object.entries(videoTranscriptLanguages)
-    .filter(([code]) => code !== "placeholder")
-    .map(([code, name]) => ({ value: code, label: name }));
 
 const getImageUrl = (imageObj) => {
     if (!imageObj) return '';
@@ -115,11 +108,7 @@ const CustomScheduleAndDetails = (props) => {
     const courseSettings = useSelector(getCourseSettings);
     const courseDetails = useSelector(getCourseDetails);
     const savingStatus = useSelector(getSavingStatus);
-
-    // Add touched state
     const [touched, setTouched] = useState({});
-
-    // Memoize the initial values to prevent unnecessary re-renders
     const initialValues = useMemo(() => ({
         ...courseDetails,
         courseImageAssetPath: courseDetails?.courseImageAssetPath || '',
@@ -144,7 +133,6 @@ const CustomScheduleAndDetails = (props) => {
         initialValues,
     );
 
-    // State management
     const [cardImageFile, setCardImageFile] = useState(null);
     const [bannerImageFile, setBannerImageFile] = useState(null);
     const [cardImagePreview, setCardImagePreview] = useState('');
@@ -157,13 +145,10 @@ const CustomScheduleAndDetails = (props) => {
     const [errors, setErrors] = useState({});
     const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
 
-    // Refs for tracking previous values
     const prevCardImageUrl = useRef(editedValues?.courseImageAssetPath);
     const prevBannerImageUrl = useRef(editedValues?.bannerImageAssetPath);
 
-    // Memoized validation function
     const validateField = useCallback((value, field) => {
-        // Only validate if the field has been touched
         if (!touched[field]) {
             return null;
         }
@@ -176,12 +161,9 @@ const CustomScheduleAndDetails = (props) => {
         return fieldErrors[field];
     }, [editedValues, courseSettings, intl, touched]);
 
-    // Memoized field change handler
-    const handleFieldChange = useCallback((value, field) => {
-        // Mark field as touched
-        setTouched(prev => ({ ...prev, [field]: true }));
 
-        // Handle YouTube video ID/URL for introVideo field
+    const handleFieldChange = useCallback((value, field) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
         let processedValue = value;
         if (field === 'introVideo' && value) {
             const youtubeId = parseYoutubeId(value);
@@ -190,21 +172,17 @@ const CustomScheduleAndDetails = (props) => {
             }
         }
 
-        // First check if the value is actually different from initial
         const hasChanged = processedValue !== initialValues[field];
 
-        // Only proceed with changes if there's an actual difference
         if (hasChanged) {
             handleValuesChange(processedValue, field);
             setHasUnsavedChanges(true);
             setShowSaveChangesPrompt(true);
         } else {
-            // If value is same as initial, reset the change tracking
             setHasUnsavedChanges(false);
             setShowSaveChangesPrompt(false);
         }
 
-        // Validate the field
         const fieldError = validateField(processedValue, field);
         if (fieldError) {
             setErrors(prev => ({
@@ -220,7 +198,6 @@ const CustomScheduleAndDetails = (props) => {
         }
     }, [handleValuesChange, validateField, initialValues]);
 
-    // Memoized image upload handler
     const handleImageUpload = useCallback(async (field, event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -283,7 +260,6 @@ const CustomScheduleAndDetails = (props) => {
         }
     }, [courseId, handleValuesChange]);
 
-    // Memoized image removal handler
     const handleRemoveImage = useCallback((field) => {
         const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
         setImageErrors(prev => {
@@ -305,7 +281,6 @@ const CustomScheduleAndDetails = (props) => {
         }
     }, [handleValuesChange]);
 
-    // Effect for initializing image previews
     useEffect(() => {
         if (editedValues?.courseImageAssetPath) {
             const cardImageUrl = getImageUrl(editedValues.courseImageAssetPath);
@@ -317,7 +292,6 @@ const CustomScheduleAndDetails = (props) => {
         }
     }, [editedValues?.courseImageAssetPath, editedValues?.bannerImageAssetPath]);
 
-    // Effect for handling image URL changes
     useEffect(() => {
         if (
             cardImageFile &&
@@ -340,7 +314,6 @@ const CustomScheduleAndDetails = (props) => {
         prevBannerImageUrl.current = editedValues?.bannerImageAssetPath;
     }, [editedValues?.bannerImageAssetPath, bannerImageFile]);
 
-    // Memoized query processing handler
     const handleQueryProcessing = useCallback(() => {
         const payload = {
             ...editedValues,
@@ -351,7 +324,6 @@ const CustomScheduleAndDetails = (props) => {
         dispatch(updateCourseDetailsQuery(courseId, payload));
     }, [courseId, dispatch, editedValues]);
 
-    // Check if all required fields are present and no image errors exist
     const requiredFieldsPresent = Boolean(
         editedValues?.shortDescription &&
         editedValues?.description &&
@@ -382,18 +354,13 @@ const CustomScheduleAndDetails = (props) => {
         handleUpdateValues();
     }, [handleUpdateValues]);
 
-    // Scroll to top when save is successful and alert is shown
     useEffect(() => {
         if (showSuccessfulAlert && !isQueryPending && hasAttemptedSave) {
-            // Immediate scroll attempt
             window.scrollTo(0, 0);
-            // Use a longer timeout to ensure DOM is fully updated
             setTimeout(() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                // Fallback to instant scroll if smooth doesn't work
                 setTimeout(() => {
                     window.scrollTo(0, 0);
-                    // Additional fallback using scrollIntoView
                     const alertElement = document.querySelector('.alert-container');
                     if (alertElement) {
                         alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -405,7 +372,7 @@ const CustomScheduleAndDetails = (props) => {
 
     return (
         <div className="custom-schedule-details">
-            <Container size="xl" className="schedule-and-details px-2">
+            <Container size="xl" className="schedule-and-details px-4">
                 <div className="alert-container mb-4">
                     <AlertMessage
                         show={showSuccessfulAlert && !isQueryPending && hasAttemptedSave}
@@ -419,7 +386,7 @@ const CustomScheduleAndDetails = (props) => {
                         aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
                     />
                 </div>
-                <Row>
+                <Row className="mb-4">
                     <Col xs={12}>
                         <Form className="schedule-detail-form">
                             <PSCourseForm
@@ -448,7 +415,8 @@ const CustomScheduleAndDetails = (props) => {
                                 onFieldBlur={(field) => setTouched(prev => ({ ...prev, [field]: true }))}
                                 allowedImageTypes={props.allowedImageTypes || ['image/jpeg', 'image/png']}
                             >
-                                <h3 className="title-class">Schedule & Details</h3>
+                                <h2 className="title-class">Schedule & Details</h2>
+                                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0rem -1rem 1rem -1rem' }} />
                                 <BasicSection
                                     org={editedValues?.org}
                                     courseNumber={editedValues?.courseId}

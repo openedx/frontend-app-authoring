@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './CourseNavigationSidebar.scss';
 
-// --- ASSUMPTION: Sidebar component import ---
-// Import the Sidebar component. Adjust the path based on your project structure.
-// import Sidebar from '../path/to/your/Sidebar';
-// Using a placeholder if Sidebar component is not defined
 const Sidebar = ({ buttons, onNavigate, presentPath }) => (
   <nav className="course-sidebar-nav">
     <ul className="course-sidebar-list">
@@ -55,7 +51,7 @@ const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
   // Map the authoring sections to the sidebar structure.
   // Use the actual routes from CourseAuthoringRoutes.jsx.
   const sidebarItems = [
-    { label: 'Course Outline 123', path: `/course/${courseId}` },
+    { label: 'Course Outline', path: `/course/${courseId}` },
     { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
     { label: 'Grading', path: `/course/${courseId}/settings/grading` }, // Note: path adjusted from previous nav bar
     { label: 'Course Team', path: `/course/${courseId}/course_team` },
