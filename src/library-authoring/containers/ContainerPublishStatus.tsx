@@ -1,8 +1,8 @@
 /**
- * Shows the Container's publish status,
+ * Shows the LibraryContainer's publish status,
  * and enables publishing any unpublished changes.
  */
-import { useContext, useCallback, useMemo } from 'react';
+import { type ReactNode, useContext, useCallback } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
 import {
@@ -14,23 +14,31 @@ import {
 import Loading from '@src/generic/Loading';
 import LoadingButton from '@src/generic/loading-button';
 import { ToastContext } from '@src/generic/toast-context';
-import { ContainerType } from '@src/generic/key-utils';
-import { ContainerHit, PublishStatus } from '@src/search-manager';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useContentFromSearchIndex, usePublishContainer } from '../data/apiHooks';
+import { useContainer, useContainerHierarchy, usePublishContainer } from '../data/apiHooks';
+import ContainerHierarchy from './ContainerHierarchy';
 import messages from './messages';
 
 type ContainerPublisherProps = {
   close: () => void;
-  container: ContainerHit;
+  containerId: string;
 };
 
 const ContainerPublisher = ({
   close,
-  container,
+  containerId,
 }: ContainerPublisherProps) => {
   const intl = useIntl();
-  const publishContainer = usePublishContainer(container.usageKey);
+  const containerType = getBlockType(containerId);
+  const publishContainer = usePublishContainer(containerId);
+
+  const {
+    data: hierarchy,
+    isLoading,
+    isError,
+  } = useContainerHierarchy(containerId);
+
   const { showToast } = useContext(ToastContext);
 
   const handlePublish = useCallback(async () => {
@@ -43,36 +51,72 @@ const ContainerPublisher = ({
     close();
   }, [publishContainer, showToast]);
 
-  const warningMessage = useMemo(() => {
-    const childCount = container.content?.childDisplayNames?.length || 0;
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // istanbul ignore if: this should never happen
+  if (isError) {
+    return null;
+  }
+
+  const highlight = (...chunks: ReactNode[]) => <strong>{chunks}</strong>;
+  const childWarningMessage = () => {
+    let childCount: number;
     let childMessage: MessageDescriptor;
     let noChildMessage: MessageDescriptor;
 
-    switch (container.blockType) {
+    switch (containerType) {
       case ContainerType.Section:
+        childCount = hierarchy.subsections.length;
         childMessage = messages.publishSectionWithChildrenWarning;
         noChildMessage = messages.publishSectionWarning;
         break;
       case ContainerType.Subsection:
+        childCount = hierarchy.units.length;
         childMessage = messages.publishSubsectionWithChildrenWarning;
         noChildMessage = messages.publishSubsectionWarning;
         break;
       default: // ContainerType.Unit
+        childCount = hierarchy.components.length;
         childMessage = messages.publishUnitWithChildrenWarning;
         noChildMessage = messages.publishUnitWarning;
     }
     return intl.formatMessage(
       childCount ? childMessage : noChildMessage,
-      { childCount },
+      {
+        childCount,
+        highlight,
+      },
     );
-  }, [container]);
+  };
+
+  const parentWarningMessage = () => {
+    let parentCount: number;
+    let parentMessage: MessageDescriptor;
+
+    switch (containerType) {
+      case ContainerType.Subsection:
+        parentMessage = messages.publishSubsectionWithParentWarning;
+        parentCount = hierarchy.sections.length;
+        break;
+      case ContainerType.Unit:
+        parentMessage = messages.publishUnitWithParentWarning;
+        parentCount = hierarchy.subsections.length;
+        break;
+      default: // ContainerType.Section has no parents
+        return undefined;
+    }
+    return intl.formatMessage(parentMessage, { parentCount, highlight });
+  };
 
   return (
     <Container
       className="p-3 status-box draft-status"
     >
       <h4>{intl.formatMessage(messages.publishContainerConfirmHeading)}</h4>
-      <p>{warningMessage}</p>
+      <p>{childWarningMessage()} {parentWarningMessage()}</p>
+      <ContainerHierarchy showPublishStatus />
       <ActionRow>
         <Button
           variant="outline-primary rounded-0"
@@ -108,20 +152,22 @@ const ContainerPublishStatus = ({
   const intl = useIntl();
   const { readOnly } = useLibraryContext();
   const [isConfirmingPublish, confirmPublish, cancelPublish] = useToggle(false);
-  const { hits, isLoading, isError } = useContentFromSearchIndex([containerId]);
+  const {
+    data: container,
+    isLoading,
+    isError,
+  } = useContainer(containerId);
 
   if (isLoading) {
     return <Loading />;
   }
 
   // istanbul ignore if: this should never happen
-  if (isError || !hits) {
+  if (isError) {
     return null;
   }
 
-  // TODO -- why isn't this auto-updating when the container gets modified or published?
-  const container = (hits as ContainerHit[])[0];
-  if (container.publishStatus === PublishStatus.Published) {
+  if (!container.hasUnpublishedChanges) {
     return (
       <Container
         className="p-2 text-nowrap flex-grow-1 status-button published-status font-weight-bold"
@@ -136,7 +182,7 @@ const ContainerPublishStatus = ({
       ? (
         <ContainerPublisher
           close={cancelPublish}
-          container={container}
+          containerId={containerId}
         />
       ) : (
         <Button

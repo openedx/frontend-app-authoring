@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Published',
     description: 'Text shown when a unit/section/subsection is published.',
   },
+  willPublishChipText: {
+    id: 'course-authoring.library-authoring.container-component.will-publish-chip.text',
+    defaultMessage: 'Will Publish',
+    description: 'Text shown when a component/unit/section/subsection will be published when confirmed.',
+  },
   openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
@@ -110,33 +115,58 @@ const messages = defineMessages({
   },
   publishSectionWarning: {
     id: 'course-authoring.library-authoring.section-sidebar.publish-empty-warning',
-    defaultMessage: 'Are you sure you want to publish this section?',
-    description: 'Content details shown before publishing a empty section',
+    defaultMessage: 'This section will be <highlight>published</highlight>.',
+    description: 'Content details shown before publishing an empty section',
   },
   publishSectionWithChildrenWarning: {
     id: 'course-authoring.library-authoring.section-sidebar.publish-warning',
-    defaultMessage: 'This section and its {childCount, plural, one {{childCount} subsection} other {{childCount} subsections}} will all be published.',
-    description: 'Content details shown before publishing a section',
+    defaultMessage: (
+      'This section and the {childCount, plural, one {subsection} other {subsections}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a section that contains subsections',
   },
   publishSubsectionWarning: {
     id: 'course-authoring.library-authoring.subsection-sidebar.publish-empty-warning',
-    defaultMessage: 'Are you sure you want to publish this subsection?',
+    defaultMessage: 'This subsection will be <highlight>published</highlight>.',
     description: 'Content details shown before publishing an empty subsection',
   },
   publishSubsectionWithChildrenWarning: {
     id: 'course-authoring.library-authoring.subsection-sidebar.publish-warning',
-    defaultMessage: 'This subsection and its {childCount, plural, one {{childCount} unit} other {{childCount} units}} will all be published.',
-    description: 'Content details shown before publishing a subsection',
+    defaultMessage: (
+      'This subsection and the {childCount, plural, one {unit} other {units}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a subsection that contains units',
+  },
+  publishSubsectionWithParentWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.publish-parent-warning',
+    defaultMessage: (
+      'Its {parentCount, plural, one {parent section} other {parent sections}}'
+      + ' will be <highlight>draft</highlight>.'
+    ),
+    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   publishUnitWarning: {
     id: 'course-authoring.library-authoring.unit-sidebar.publish-empty-warning',
-    defaultMessage: 'Are you sure you want to publish this unit?',
+    defaultMessage: 'This unit will be <highlight>published</highlight>.',
     description: 'Content details shown before publishing an empty unit',
   },
   publishUnitWithChildrenWarning: {
     id: 'course-authoring.library-authoring.unit-sidebar.publish-warning',
-    defaultMessage: 'This unit and its {childCount, plural, one {{childCount} component} other {{childCount} components}} will all be published.',
-    description: 'Content details shown before publishing a unit',
+    defaultMessage: (
+      'This unit and the {childCount, plural, one {component} other {components}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a unit that contains components',
+  },
+  publishUnitWithParentWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.publish-parent-warning',
+    defaultMessage: (
+      'Its {parentCount, plural, one {parent subsection} other {parent subsections}}'
+      + ' will be <highlight>draft</highlight>.'
+    ),
+    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',

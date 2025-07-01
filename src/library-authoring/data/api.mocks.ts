@@ -514,6 +514,13 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.subsectionId:
     case mockGetContainerMetadata.subsectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.subsectionData);
+    case mockGetContainerMetadata.unitIdPublished:
+    case mockGetContainerMetadata.sectionIdPublished:
+    case mockGetContainerMetadata.subsectionIdPublished:
+      return Promise.resolve({
+        ...mockGetContainerMetadata.containerData,
+        hasUnpublishedChanges: false,
+      });
     default:
       if (containerId.startsWith('lct:org1:Demo_course_generated:')) {
         const lastPart = containerId.split(':').pop();
@@ -531,8 +538,11 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
 }
 mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.unitIdEmpty = 'lct:org:lib:unit:test-unit-empty';
+mockGetContainerMetadata.unitIdPublished = 'lct:org:lib:unit:test-unit-published';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
+mockGetContainerMetadata.sectionIdPublished = 'lct:org:lib:section:test-section-published';
 mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.subsectionIdPublished = 'lb:org1:Demo_course:subsection:subsection-published';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
 mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
 mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
@@ -657,8 +667,8 @@ mockGetContainerChildren.applyMock = () => {
  *
  * This mock returns a fixed response for the given container ID.
  */
-export async function mockGetContainerHierarchy(containerId: string): Promise<api.ContainerHierarchy> {
-  const getChildren = (childId: string, numChildren: number) => {
+export async function mockGetContainerHierarchy(containerId: string): Promise<api.ContainerHierarchyData> {
+  const getChildren = (childId: string, childCount: number) => {
     let blockType = 'html';
     let name = 'text';
     let typeNamespace = 'lb';
@@ -675,9 +685,26 @@ export async function mockGetContainerHierarchy(containerId: string): Promise<ap
       name = blockType;
       typeNamespace = 'lct';
     }
-    return Array(
-      childId === containerId ? 1 : numChildren,
-    ).fill(mockGetContainerChildren.childTemplate).map(
+
+    let numChildren = childCount;
+    if (
+      // The selected container only shows itself, no other items.
+      childId === containerId
+      || [
+        mockGetContainerHierarchy.unitIdOneChild,
+        mockGetContainerHierarchy.subsectionIdOneChild,
+        mockGetContainerHierarchy.sectionIdOneChild,
+      ].includes(containerId)
+    ) {
+      numChildren = 1;
+    } else if ([
+      mockGetContainerMetadata.unitIdEmpty,
+      mockGetContainerMetadata.sectionIdEmpty,
+      mockGetContainerMetadata.subsectionIdEmpty,
+    ].includes(containerId)) {
+      numChildren = 0;
+    }
+    return Array(numChildren).fill(mockGetContainerChildren.childTemplate).map(
       (child, idx) => (
         {
           ...child,
@@ -689,6 +716,7 @@ export async function mockGetContainerHierarchy(containerId: string): Promise<ap
           ),
           displayName: `${name} block ${idx}`,
           publishedDisplayName: `${name} block published ${idx}`,
+          hasUnpublishedChanges: true,
         }
       ),
     );
@@ -704,6 +732,11 @@ export async function mockGetContainerHierarchy(containerId: string): Promise<ap
     },
   );
 }
+
+mockGetContainerHierarchy.unitIdOneChild = 'lct:org:lib:unit:test-unit-one';
+mockGetContainerHierarchy.sectionIdOneChild = 'lct:org:lib:section:test-section-one';
+mockGetContainerHierarchy.subsectionIdOneChild = 'lb:org1:Demo_course:subsection:subsection-one';
+
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerHierarchy.applyMock = () => {
   jest.spyOn(api, 'getLibraryContainerHierarchy').mockImplementation(mockGetContainerHierarchy);

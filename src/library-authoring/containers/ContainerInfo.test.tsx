@@ -5,7 +5,6 @@ import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
 } from '@src/testUtils';
-import { PublishStatus } from '@src/search-manager';
 import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
 import {
   mockContentLibrary,
@@ -28,7 +27,65 @@ mockGetContainerChildren.applyMock();
 mockGetContainerHierarchy.applyMock();
 
 const { libraryId } = mockContentLibrary;
-const { unitId, subsectionId, sectionId } = mockGetContainerMetadata;
+const {
+  unitId,
+  subsectionId,
+  sectionId,
+  unitIdEmpty,
+  subsectionIdEmpty,
+  sectionIdEmpty,
+  unitIdPublished,
+  subsectionIdPublished,
+  sectionIdPublished,
+} = mockGetContainerMetadata;
+
+const {
+  unitIdOneChild,
+  subsectionIdOneChild,
+  sectionIdOneChild,
+} = mockGetContainerHierarchy;
+
+// Convert a given containerId to its "empty" equivalent
+const emptyId = (id: string) => {
+  switch (id) {
+    case unitId:
+      return unitIdEmpty;
+    case subsectionId:
+      return subsectionIdEmpty;
+    case sectionId:
+      return sectionIdEmpty;
+    default:
+      return undefined;
+  }
+};
+
+// Convert a given containerId to its "published" equivalent
+const publishedId = (id: string) => {
+  switch (id) {
+    case unitId:
+      return unitIdPublished;
+    case subsectionId:
+      return subsectionIdPublished;
+    case sectionId:
+      return sectionIdPublished;
+    default:
+      return undefined;
+  }
+};
+
+// Convert a given containerId to its "one child" equivalent
+const singleChild = (id: string) => {
+  switch (id) {
+    case unitId:
+      return unitIdOneChild;
+    case subsectionId:
+      return subsectionIdOneChild;
+    case sectionId:
+      return sectionIdOneChild;
+    default:
+      return undefined;
+  }
+};
 
 const render = (
   containerId,
@@ -68,18 +125,34 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     containerType: ContainerType.Unit,
     containerId: unitId,
     childType: 'component',
+    willPublishCount: 2,
+    parentType: 'subsection',
+    parentCount: 3,
   },
   {
     containerType: ContainerType.Subsection,
     containerId: subsectionId,
     childType: 'unit',
+    willPublishCount: 3,
+    parentType: 'section',
+    parentCount: 2,
   },
   {
     containerType: ContainerType.Section,
     containerId: sectionId,
     childType: 'subsection',
+    willPublishCount: 4,
+    parentType: '',
+    parentCount: 0,
   },
-].forEach(({ containerId, containerType, childType }) => {
+].forEach(({
+  containerId,
+  containerType,
+  childType,
+  willPublishCount,
+  parentType,
+  parentCount,
+}) => {
   describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
     beforeEach(() => {
       ({ axiosMock, mockShowToast } = initializeMocks());
@@ -120,44 +193,14 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`shows Published if the ${containerType} has no draft changes`, async () => {
-      axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [
-              {
-                type: 'library_container',
-                usageKey: containerId,
-                blockType: containerType.toLowerCase(),
-                publishStatus: PublishStatus.Published,
-              },
-            ],
-          },
-        ],
-      });
-      render(containerId, containerType);
+      render(publishedId(containerId), containerType);
 
       // "Published" status should be displayed
-      const publishedStatus = await screen.findByText('Published');
-      expect(publishedStatus).toBeInTheDocument();
+      expect(await screen.findByText('Published')).toBeInTheDocument();
     });
 
     it(`can publish the ${containerType} from the container page`, async () => {
       axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [
-              {
-                type: 'library_container',
-                usageKey: containerId,
-                blockType: containerType.toLowerCase(),
-                publishStatus: PublishStatus.Modified,
-              },
-            ],
-          },
-        ],
-      });
       render(containerId, containerType);
 
       // Click on Publish button
@@ -166,10 +209,20 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       userEvent.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
-      // Reveals the confirmation box with warning text
-      expect(await screen.findByText(
-        `Are you sure you want to publish this ${containerType.toLowerCase()}?`,
-      )).toBeInTheDocument();
+      // Reveals the confirmation box with warning text and publish hierarchy
+      expect(await screen.findByText('Confirm Publish')).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(
+        `This ${containerType} and the ${childType}s it contains will all be`, // <strong>published</strong>
+        'i',
+      ))).toBeInTheDocument();
+      if (parentCount > 0) {
+        expect(screen.getByText(new RegExp(
+          `Its parent ${parentType}s will be`, // <srong>draft</strong>
+          'i',
+        ))).toBeInTheDocument();
+      }
+      expect(await screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
+      expect(await screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
 
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });
@@ -196,20 +249,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
 
     it(`shows an error if publishing the ${containerType} fails`, async () => {
       axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(500);
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [
-              {
-                type: 'library_container',
-                usageKey: containerId,
-                blockType: containerType.toLowerCase(),
-                publishStatus: PublishStatus.Modified,
-              },
-            ],
-          },
-        ],
-      });
       render(containerId, containerType);
 
       // Click on Publish button to reveal the confirmation box
@@ -229,28 +268,8 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
     });
 
-    it(`shows single child before publishing the ${containerType}`, async () => {
-      axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [
-              {
-                type: 'library_container',
-                usageKey: containerId,
-                blockType: containerType.toLowerCase(),
-                publishStatus: PublishStatus.Modified,
-                content: {
-                  childDisplayNames: [
-                    'one',
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      });
-      render(containerId, containerType);
+    it(`shows single child / parent message before publishing the ${containerType}`, async () => {
+      render(singleChild(containerId), containerType);
 
       // Click on Publish button
       const publishButton = await screen.findByRole('button', { name: /publish changes/i });
@@ -259,33 +278,20 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       expect(publishButton).not.toBeInTheDocument();
 
       // Check warning text in the confirmation box
-      expect(await screen.findByText(
-        `This ${containerType.toLowerCase()} and its 1 ${childType} will all be published.`,
-      )).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(
+        `This ${containerType} and the ${childType} it contains will all be`, // <strong>published</strong>
+        'i',
+      ))).toBeInTheDocument();
+      if (parentCount) {
+        expect(screen.getByText(new RegExp(
+          `Its parent ${parentType} will be`, // <strong>draft</strong>
+          'i',
+        ))).toBeInTheDocument();
+      }
     });
 
-    it(`shows child count before publishing the ${containerType}`, async () => {
-      axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [
-              {
-                type: 'library_container',
-                usageKey: containerId,
-                blockType: containerType.toLowerCase(),
-                publishStatus: PublishStatus.Modified,
-                content: {
-                  childDisplayNames: [
-                    'one', 'two',
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      });
-      render(containerId, containerType);
+    it(`omits child count before publishing an empty ${containerType}`, async () => {
+      render(emptyId(containerId), containerType);
 
       // Click on Publish button
       const publishButton = await screen.findByRole('button', { name: /publish changes/i });
@@ -294,9 +300,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       expect(publishButton).not.toBeInTheDocument();
 
       // Check warning text in the confirmation box
-      expect(await screen.findByText(
-        `This ${containerType.toLowerCase()} and its 2 ${childType}s will all be published.`,
-      )).toBeInTheDocument();
+      expect(await screen.findByText(new RegExp(
+        `This ${containerType} will be`, // <strong>published</strong>
+        'i',
+      ))).toBeInTheDocument();
     });
 
     it(`show only published ${containerType} content`, async () => {

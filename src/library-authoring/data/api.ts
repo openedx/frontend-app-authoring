@@ -721,20 +721,21 @@ export async function removeLibraryContainerChildren(
   return camelCaseObject(data);
 }
 
-export interface ContainerHierarchy {
+export interface ContainerHierarchyData {
   objectKey: string;
-  sections: Array<Container>;
-  subsections: Array<Container>;
-  units: Array<Container>;
-  components: Array<LibraryBlockMetadata>;
+  sections: Container[];
+  subsections: Container[];
+  units: Container[];
+  components: LibraryBlockMetadata[];
 }
+export type ContainerHierarchyMember = Container | LibraryBlockMetadata;
 
 /**
  * Fetch a library container's hierarchy metadata.
  */
 export async function getLibraryContainerHierarchy(
   containerId: string,
-): Promise<ContainerHierarchy> {
+): Promise<ContainerHierarchyData> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerHierarchyApiUrl(containerId),
   );

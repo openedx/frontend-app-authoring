@@ -1,11 +1,12 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import type { MessageDescriptor } from 'react-intl';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Container, Icon, Stack } from '@openedx/paragon';
-import { ArrowDownward } from '@openedx/paragon/icons';
+import { ArrowDownward, Check, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import Loading from '@src/generic/Loading';
-import NotFoundAlert from '@src/generic/NotFoundAlert';
 import { ContainerType } from '@src/generic/key-utils';
+import type { ContainerHierarchyMember } from '../data/api';
 import { useContainerHierarchy } from '../data/apiHooks';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
@@ -14,44 +15,65 @@ const ContainerHierarchyRow = ({
   containerType,
   text,
   selected,
+  showArrow,
+  willPublish = false,
+  publishMessage = undefined,
 }: {
   containerType: ContainerType,
   text: string,
   selected: boolean,
+  showArrow: boolean,
+  willPublish?: boolean,
+  publishMessage?: MessageDescriptor,
 }) => (
   <Stack>
     <Container
-      className={classNames('p-0 m-0 hierarchy-row', { selected })}
+      className={classNames('hierarchy-row', { selected })}
     >
       <Stack
         direction="horizontal"
         gap={2}
-        className="m-0 p-0"
       >
-        <div className="p-2 icon">
+        <div className="icon">
           <Icon
             src={getItemIcon(containerType)}
             screenReaderText={containerType}
             title={containerType}
           />
         </div>
-        <div className="p-2 text text-truncate">
+        <div className="text text-truncate">
           {text}
         </div>
+        {publishMessage && (
+          <Stack
+            direction="horizontal"
+            gap={2}
+            className="publish-status"
+          >
+            <Icon src={willPublish ? Check : Description} />
+            <FormattedMessage {...(willPublish ? messages.willPublishChipText : publishMessage)} />
+          </Stack>
+        )}
       </Stack>
     </Container>
-    <div
-      className={classNames('hierarchy-arrow', { selected })}
-    >
-      <Icon
-        src={ArrowDownward}
-        screenReaderText={' '}
-      />
-    </div>
+    {showArrow && (
+      <div
+        className={classNames('hierarchy-arrow', { selected })}
+      >
+        <Icon
+          src={ArrowDownward}
+          screenReaderText={' '}
+        />
+      </div>
+    )}
   </Stack>
 );
 
-const ContainerHierarchy = () => {
+const ContainerHierarchy = ({
+  showPublishStatus = false,
+}: {
+  showPublishStatus?: boolean,
+}) => {
   const intl = useIntl();
   const { sidebarItemInfo } = useSidebarContext();
   const containerId = sidebarItemInfo?.id;
@@ -71,8 +93,9 @@ const ContainerHierarchy = () => {
     return <Loading />;
   }
 
+  // istanbul ignore if: this should never happen
   if (isError) {
-    return <NotFoundAlert />;
+    return null;
   }
 
   const {
@@ -82,9 +105,42 @@ const ContainerHierarchy = () => {
     components,
   } = data;
 
+  // Returns a message describing the publish status of the given hierarchy row.
+  const publishMessage = (contents: ContainerHierarchyMember[]) => {
+    // If we're not showing publish status, then we don't need a publish message
+    if (!showPublishStatus) {
+      return undefined;
+    }
+
+    // If any item has unpublished changes, mark this row as Draft.
+    if (contents.some((item) => item.hasUnpublishedChanges)) {
+      return messages.draftChipText;
+    }
+
+    // Otherwise, it's Published
+    return messages.publishedChipText;
+  };
+
+  // Returns True if any of the items in the list match the currently selected container.
+  const selected = (contents: ContainerHierarchyMember[]): boolean => (
+    contents.some((item) => item.id === containerId)
+  );
+
+  // Use the "selected" status to determine the selected row.
+  // If showPublishStatus, that row and its children will be marked "willPublish".
+  const selectedSections = selected(sections);
+  const selectedSubsections = selected(subsections);
+  const selectedUnits = selected(units);
+  const selectedComponents = selected(components);
+
+  const showSections = sections && sections.length > 0;
+  const showSubsections = subsections && subsections.length > 0;
+  const showUnits = units && units.length > 0;
+  const showComponents = components && components.length > 0;
+
   return (
-    <Stack>
-      {sections && sections.length > 0 && (
+    <Stack className="content-hierarchy">
+      {showSections && (
         <ContainerHierarchyRow
           containerType={ContainerType.Section}
           text={intl.formatMessage(
@@ -94,12 +150,13 @@ const ContainerHierarchy = () => {
               count: sections.length,
             },
           )}
-          selected={
-            sections[0].id === containerId
-          }
+          showArrow={showSubsections}
+          selected={selectedSections}
+          willPublish={selectedSections}
+          publishMessage={publishMessage(sections)}
         />
       )}
-      {subsections && subsections.length > 0 && (
+      {showSubsections && (
         <ContainerHierarchyRow
           containerType={ContainerType.Subsection}
           text={intl.formatMessage(
@@ -109,12 +166,13 @@ const ContainerHierarchy = () => {
               count: subsections.length,
             },
           )}
-          selected={
-            subsections[0].id === containerId
-          }
+          showArrow={showUnits}
+          selected={selectedSubsections}
+          willPublish={selectedSubsections || selectedSections}
+          publishMessage={publishMessage(subsections)}
         />
       )}
-      {units && units.length > 0 && (
+      {showUnits && (
         <ContainerHierarchyRow
           containerType={ContainerType.Unit}
           text={intl.formatMessage(
@@ -124,12 +182,13 @@ const ContainerHierarchy = () => {
               count: units.length,
             },
           )}
-          selected={
-            units[0].id === containerId
-          }
+          showArrow={showComponents}
+          selected={selectedUnits}
+          willPublish={selectedUnits || selectedSubsections || selectedSections}
+          publishMessage={publishMessage(units)}
         />
       )}
-      {components && components.length > 0 && (
+      {showComponents && (
         <ContainerHierarchyRow
           containerType={ContainerType.Components}
           text={intl.formatMessage(
@@ -139,9 +198,10 @@ const ContainerHierarchy = () => {
               count: components.length,
             },
           )}
-          selected={
-            components[0].id === containerId
-          }
+          showArrow={false}
+          selected={selectedComponents}
+          willPublish={selectedComponents || selectedUnits || selectedSubsections || selectedSections}
+          publishMessage={publishMessage(components)}
         />
       )}
     </Stack>

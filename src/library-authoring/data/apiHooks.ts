@@ -880,6 +880,7 @@ export const usePublishContainer = (containerId: string) => {
       // The child components/xblocks could and even the container itself could appear in many different collections
       // or other containers, so it's best to just invalidate everything.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibraryContent(libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
       queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
