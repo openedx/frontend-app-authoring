@@ -2062,7 +2062,7 @@
     .outline-sidebar-section {
       // border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 8px;
+      // padding: 8px;
       margin-bottom: 12px;
 
       hr {
@@ -2216,7 +2216,14 @@
 
 .customFooterTextAlign {
   text-align: center;
-  ;
+}
+.create-new-course-form .row:first-child {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+.scrollable-sidebar-content {
+  overflow-y: auto;
+  height: 100%;
 }
 
 // N Styles End

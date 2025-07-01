@@ -95,23 +95,23 @@ body {
 
 @mixin section-title-style1 {
   font-size: 18px !important;
-  font-weight: 500 !important; 
+  font-weight: 500 !important;
   line-height: 1.2 !important;
-  letter-spacing: normal !important;  
+  letter-spacing: normal !important;
 }
 
 @mixin section-title-style2 {
   font-size: 16px !important;
-  font-weight: 500 !important; 
+  font-weight: 500 !important;
   line-height: 1.2 !important;
-  letter-spacing: normal !important;  
+  letter-spacing: normal !important;
 }
 
 @mixin section-title-style3 {
   font-size: 16px !important;
-  font-weight: 400 !important; 
+  font-weight: 400 !important;
   line-height: 1.2 !important;
-  letter-spacing: normal !important;  
+  letter-spacing: normal !important;
 }
 
 /* Button Styles */
@@ -442,7 +442,9 @@ body {
 
 .nav-tabs {
 
-  .nav-link.active:focus::before, .nav-link:focus::before, .nav-link:focus-visible::before {
+  .nav-link.active:focus::before,
+  .nav-link:focus::before,
+  .nav-link:focus-visible::before {
     border: none !important;
   }
 
@@ -970,6 +972,7 @@ body {
 
 /* Breadcrumb and Title styles */
 .ca-breadcrumb-bg {
+  position: fixed;
   width: 100%;
   padding: 0.5rem 0 0 0;
 }
@@ -1018,27 +1021,28 @@ body {
 
 /* Sidebar styles */
 .ca-sidebar {
+  position: sticky;
+  top: 17%;
   min-width: 220px;
   max-width: 260px;
+  width: 240px;
+  // height: 100vh !important;
+  // max-height: 100vh !important;
+  // overflow-y: scroll !important;
+  // overflow-x: hidden;
   background: transparent;
   border-right: 1px solid #eee;
-  margin-left: 16px;
-  margin-top: 16px;
-  border-radius: 16px;
-  position: sticky;
-  top: 32px;
-  align-self: flex-start;
   z-index: 2;
-  height: calc(100vh - 32px);
-  max-height: calc(100vh - 32px);
-  overflow-y: auto;
-  overflow-x: hidden;
+  margin: 0;
+  border-radius: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
 }
 
 /* Main content styles */
 .ca-main-content {
   flex: 1;
-  padding-top: 1rem;
+  padding-top: 6rem;
 }
 
 /* Responsive styles for Course Navigation */
@@ -1087,4 +1091,25 @@ body {
   .ca-main-layout {
     flex-direction: column;
   }
+  .ca-breadcrumb-bg {
+    position: unset;
+  }
+  .ca-main-content{
+    padding-top: 1rem;
+  }
+}
+@media (max-height: 690px) {
+  .ca-main-content {
+    flex: 1;
+    padding-top: 5rem;
+  }
+}
+.course-sidebar-nav {
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: sticky;
+  right: 15%;
+  top: 10%;
+  max-height: 64vh !important;
+  margin-left: 24px;
 }
