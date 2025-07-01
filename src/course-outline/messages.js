@@ -70,6 +70,11 @@ const messages = defineMessages({
     defaultMessage: 'Use subsection from library',
     description: 'Message of the button to add a new subsection from a library in a subsection.',
   },
+  sectionPickerModalTitle: {
+    id: 'course-authoring.course-outline.button.section-modal.title',
+    defaultMessage: 'Select section',
+    description: 'Section modal picker title text in outline'
+  },
 });
 
 export default messages;
