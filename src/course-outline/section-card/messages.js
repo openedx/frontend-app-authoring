@@ -8,7 +8,7 @@ const messages = defineMessages({
   subsectionPickerModalTitle: {
     id: 'course-authoring.course-outline.section.subsection-modal.title',
     defaultMessage: 'Select subsection',
-    description: 'Subsection modal picker title text in outline'
+    description: 'Subsection modal picker title text in outline',
   },
 });
 

@@ -73,7 +73,7 @@ const messages = defineMessages({
   sectionPickerModalTitle: {
     id: 'course-authoring.course-outline.button.section-modal.title',
     defaultMessage: 'Select section',
-    description: 'Section modal picker title text in outline'
+    description: 'Section modal picker title text in outline',
   },
 });
 

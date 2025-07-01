@@ -34,13 +34,13 @@ const OutlineAddChildButtons = ({
       messageMap = {
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
-      }
+      };
       break;
     case ContainerType.Subsection:
       messageMap = {
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
-      }
+      };
       break;
     default:
       break;
@@ -71,7 +71,7 @@ const OutlineAddChildButtons = ({
         </Button>
       )}
     </Stack>
-  )
-}
+  );
+};
 
-export default OutlineAddChildButtons
+export default OutlineAddChildButtons;

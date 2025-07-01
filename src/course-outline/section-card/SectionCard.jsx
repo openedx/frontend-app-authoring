@@ -5,7 +5,9 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Bubble, Button, StandardModal, useToggle } from '@openedx/paragon';
+import {
+  Bubble, Button, StandardModal, useToggle,
+} from '@openedx/paragon';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
