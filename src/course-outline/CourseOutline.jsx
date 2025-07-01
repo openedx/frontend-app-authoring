@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button,
   Container,
   Layout,
   Row,
@@ -11,10 +10,7 @@ import {
   Toast,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import {
-  Add as IconAdd,
-  CheckCircle as CheckCircleIcon,
-} from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -55,6 +51,8 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
+import NewChildButtons from './NewChildButtons';
+import { ContainerType } from '../generic/key-utils';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -431,16 +429,11 @@ const CourseOutline = ({ courseId }) => {
                               </SortableContext>
                             </DraggableList>
                             {courseActions.childAddable && (
-                              <Button
-                                data-testid="new-section-button"
-                                className="mt-4"
-                                variant="outline-primary"
-                                onClick={handleNewSectionSubmit}
-                                iconBefore={IconAdd}
-                                block
-                              >
-                                {intl.formatMessage(messages.newSectionButton)}
-                              </Button>
+                              <NewChildButtons
+                                handleNewButtonClick={handleNewSectionSubmit}
+                                handleUseFromLibraryClick={() => {}}
+                                childType={ContainerType.Section}
+                              />
                             )}
                           </>
                         ) : (

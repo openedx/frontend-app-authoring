@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Bubble, Button, useToggle } from '@openedx/paragon';
-import { Add as IconAdd } from '@openedx/paragon/icons';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -19,6 +18,8 @@ import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
+import NewChildButtons from '../NewChildButtons';
+import { ContainerType } from '../../generic/key-utils';
 
 const SectionCard = ({
   section,
@@ -247,16 +248,11 @@ const SectionCard = ({
             >
               {children}
               {actions.childAddable && (
-                <Button
-                  data-testid="new-subsection-button"
-                  className="mt-4"
-                  variant="outline-primary"
-                  iconBefore={IconAdd}
-                  block
-                  onClick={handleNewSubsectionSubmit}
-                >
-                  {intl.formatMessage(messages.newSubsectionButton)}
-                </Button>
+                <NewChildButtons
+                  handleNewButtonClick={handleNewSubsectionSubmit}
+                  handleUseFromLibraryClick={() => {}}
+                  childType={ContainerType.Subsection}
+                />
               )}
             </div>
           )}
