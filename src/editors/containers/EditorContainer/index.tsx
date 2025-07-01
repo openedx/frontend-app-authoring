@@ -38,10 +38,10 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void; 
 };
 
 export const EditorModalBody: React.FC<WrapperProps & { className?: string; style?: React.CSSProperties }> = ({ children, className = '', style = {} }) => (
-   <ModalDialog.Body className={`pb-0 ${className}`} style={style}>
+  <ModalDialog.Body className={`pb-0 ${className}`} style={style}>
     {children}
-    </ModalDialog.Body>
-  );
+  </ModalDialog.Body>
+);
 
 // eslint-disable-next-line react/jsx-no-useless-fragment
 export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{ children }</>;

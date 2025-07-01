@@ -36,7 +36,7 @@ const SelectTypeWrapper: React.FC<Props> = ({
   const setBlockTitle = React.useCallback((title) => dispatch(actions.app.setBlockTitle(title)), [dispatch]);
 
   return (
-    <EditorModalWrapper onClose={handleCancel} size='fullscreen'>
+    <EditorModalWrapper onClose={handleCancel} size="fullscreen">
       <ModalDialog.Header className="shadow-sm zindex-10">
         <ModalDialog.Title>
           <FormattedMessage {...messages.selectTypeTitle} />
