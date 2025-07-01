@@ -8,6 +8,7 @@ import {
   Row,
   TransitionReplace,
   Toast,
+  StandardModal,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
@@ -53,6 +54,8 @@ import { getTagsExportFile } from './data/api';
 import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { ContainerType } from '../generic/key-utils';
+import { ComponentPicker } from '../library-authoring';
+import { ContentType } from '../library-authoring/routes';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -87,6 +90,9 @@ const CourseOutline = ({ courseId }) => {
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
+    isAddLibrarySectionModalOpen,
+    openAddLibrarySectionModal,
+    closeAddLibrarySectionModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
@@ -431,7 +437,7 @@ const CourseOutline = ({ courseId }) => {
                             {courseActions.childAddable && (
                               <OutlineAddChildButtons
                                 handleNewButtonClick={handleNewSectionSubmit}
-                                handleUseFromLibraryClick={() => {}}
+                                handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
                               />
                             )}
@@ -486,6 +492,21 @@ const CourseOutline = ({ courseId }) => {
           close={closeDeleteModal}
           onDeleteSubmit={handleDeleteItemSubmit}
         />
+        <StandardModal
+          title={intl.formatMessage(messages.sectionPickerModalTitle)}
+          isOpen={isAddLibrarySectionModalOpen}
+          onClose={closeAddLibrarySectionModal}
+          isOverflowVisible={false}
+          size="xl"
+        >
+          <ComponentPicker
+            showOnlyPublished
+            extraFilter={['block_type = "section"']}
+            componentPickerMode="single"
+            onComponentSelected={() => {}}
+            visibleTabs={[ContentType.sections]}
+          />
+        </StandardModal>
       </Container>
       <div className="alert-toast">
         <ProcessingNotification

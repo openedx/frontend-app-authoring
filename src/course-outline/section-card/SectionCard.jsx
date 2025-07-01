@@ -5,7 +5,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Bubble, Button, useToggle } from '@openedx/paragon';
+import { Bubble, Button, StandardModal, useToggle } from '@openedx/paragon';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -20,6 +20,8 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 import OutlineAddChildButtons from '../OutlineAddChildButtons';
 import { ContainerType } from '../../generic/key-utils';
+import { ComponentPicker } from '../../library-authoring';
+import { ContentType } from '../../library-authoring/routes';
 
 const SectionCard = ({
   section,
@@ -46,6 +48,11 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
+  const [
+    isAddLibrarySubsectionModalOpen,
+    openAddLibrarySubsectionModal,
+    closeAddLibrarySubsectionModal,
+  ] = useToggle(false);
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -182,83 +189,100 @@ const SectionCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <SortableItem
-      id={id}
-      category={category}
-      isDraggable={isDraggable}
-      isDroppable={actions.childAddable}
-      componentStyle={{
-        padding: '1.75rem',
-        ...borderStyle,
-      }}
-    >
-      <div
-        className={`section-card ${isScrolledToElement ? 'highlight' : ''}`}
-        data-testid="section-card"
-        ref={currentRef}
+    <>
+      <SortableItem
+        id={id}
+        category={category}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
+        componentStyle={{
+          padding: '1.75rem',
+          ...borderStyle,
+        }}
       >
-        <div>
-          {isHeaderVisible && (
-            <CardHeader
-              cardId={id}
-              title={displayName}
-              status={sectionStatus}
-              hasChanges={hasChanges}
-              onClickMenuButton={handleClickMenuButton}
-              onClickPublish={onOpenPublishModal}
-              onClickConfigure={onOpenConfigureModal}
-              onClickEdit={openForm}
-              onClickDelete={onOpenDeleteModal}
-              onClickMoveUp={handleSectionMoveUp}
-              onClickMoveDown={handleSectionMoveDown}
-              isFormOpen={isFormOpen}
-              closeForm={closeForm}
-              onEditSubmit={handleEditSubmit}
-              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-              onClickDuplicate={onDuplicateSubmit}
-              titleComponent={titleComponent}
-              namePrefix={namePrefix}
-              actions={actions}
-            />
-          )}
-          <div className="section-card__content" data-testid="section-card__content">
-            <div className="outline-section__status mb-1">
-              <Button
-                className="p-0 bg-transparent"
-                data-destid="section-card-highlights-button"
-                variant="tertiary"
-                onClick={handleOpenHighlightsModal}
+        <div
+          className={`section-card ${isScrolledToElement ? 'highlight' : ''}`}
+          data-testid="section-card"
+          ref={currentRef}
+        >
+          <div>
+            {isHeaderVisible && (
+              <CardHeader
+                cardId={id}
+                title={displayName}
+                status={sectionStatus}
+                hasChanges={hasChanges}
+                onClickMenuButton={handleClickMenuButton}
+                onClickPublish={onOpenPublishModal}
+                onClickConfigure={onOpenConfigureModal}
+                onClickEdit={openForm}
+                onClickDelete={onOpenDeleteModal}
+                onClickMoveUp={handleSectionMoveUp}
+                onClickMoveDown={handleSectionMoveDown}
+                isFormOpen={isFormOpen}
+                closeForm={closeForm}
+                onEditSubmit={handleEditSubmit}
+                isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+                onClickDuplicate={onDuplicateSubmit}
+                titleComponent={titleComponent}
+                namePrefix={namePrefix}
+                actions={actions}
+              />
+            )}
+            <div className="section-card__content" data-testid="section-card__content">
+              <div className="outline-section__status mb-1">
+                <Button
+                  className="p-0 bg-transparent"
+                  data-destid="section-card-highlights-button"
+                  variant="tertiary"
+                  onClick={handleOpenHighlightsModal}
+                >
+                  <Bubble className="mr-1">
+                    {highlights.length}
+                  </Bubble>
+                  <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
+                </Button>
+              </div>
+              <XBlockStatus
+                isSelfPaced={isSelfPaced}
+                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                blockData={section}
+              />
+            </div>
+            {isExpanded && (
+              <div
+                data-testid="section-card__subsections"
+                className={classNames('section-card__subsections', { 'item-children': isDraggable })}
               >
-                <Bubble className="mr-1">
-                  {highlights.length}
-                </Bubble>
-                <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
-              </Button>
-            </div>
-            <XBlockStatus
-              isSelfPaced={isSelfPaced}
-              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-              blockData={section}
-            />
+                {children}
+                {actions.childAddable && (
+                  <OutlineAddChildButtons
+                    handleNewButtonClick={handleNewSubsectionSubmit}
+                    handleUseFromLibraryClick={openAddLibrarySubsectionModal}
+                    childType={ContainerType.Subsection}
+                  />
+                )}
+              </div>
+            )}
           </div>
-          {isExpanded && (
-            <div
-              data-testid="section-card__subsections"
-              className={classNames('section-card__subsections', { 'item-children': isDraggable })}
-            >
-              {children}
-              {actions.childAddable && (
-                <OutlineAddChildButtons
-                  handleNewButtonClick={handleNewSubsectionSubmit}
-                  handleUseFromLibraryClick={() => {}}
-                  childType={ContainerType.Subsection}
-                />
-              )}
-            </div>
-          )}
         </div>
-      </div>
-    </SortableItem>
+      </SortableItem>
+      <StandardModal
+        title={intl.formatMessage(messages.subsectionPickerModalTitle)}
+        isOpen={isAddLibrarySubsectionModalOpen}
+        onClose={closeAddLibrarySubsectionModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <ComponentPicker
+          showOnlyPublished
+          extraFilter={['block_type = "subsection"']}
+          componentPickerMode="single"
+          onComponentSelected={() => {}}
+          visibleTabs={[ContentType.subsections]}
+        />
+      </StandardModal>
+    </>
   );
 };
 
