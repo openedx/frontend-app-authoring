@@ -12,7 +12,7 @@ interface NewChildButtonsProps {
   childType: ContainerType;
 }
 
-const NewChildButtons = ({
+const OutlineAddChildButtons = ({
   handleNewButtonClick,
   handleUseFromLibraryClick,
   childType,
@@ -74,4 +74,4 @@ const NewChildButtons = ({
   )
 }
 
-export default NewChildButtons
+export default OutlineAddChildButtons

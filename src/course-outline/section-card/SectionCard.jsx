@@ -18,7 +18,7 @@ import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
-import NewChildButtons from '../NewChildButtons';
+import OutlineAddChildButtons from '../OutlineAddChildButtons';
 import { ContainerType } from '../../generic/key-utils';
 
 const SectionCard = ({
@@ -248,7 +248,7 @@ const SectionCard = ({
             >
               {children}
               {actions.childAddable && (
-                <NewChildButtons
+                <OutlineAddChildButtons
                   handleNewButtonClick={handleNewSubsectionSubmit}
                   handleUseFromLibraryClick={() => {}}
                   childType={ContainerType.Subsection}

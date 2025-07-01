@@ -25,7 +25,7 @@ import { ComponentPicker } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { ContentType } from '../../library-authoring/routes';
-import NewChildButtons from '../NewChildButtons';
+import OutlineAddChildButtons from '../OutlineAddChildButtons';
 
 const SubsectionCard = ({
   section,
@@ -258,7 +258,7 @@ const SubsectionCard = ({
               {children}
               {actions.childAddable && (
                 <>
-                  <NewChildButtons
+                  <OutlineAddChildButtons
                     handleNewButtonClick={handleNewButtonClick}
                     handleUseFromLibraryClick={openAddLibraryUnitModal}
                     childType={ContainerType.Unit}
