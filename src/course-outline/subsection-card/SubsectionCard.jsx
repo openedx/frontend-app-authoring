@@ -3,11 +3,10 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, StandardModal, useToggle } from '@openedx/paragon';
-import { Add as IconAdd } from '@openedx/paragon/icons';
+import { StandardModal, useToggle } from '@openedx/paragon';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -26,7 +25,7 @@ import { ComponentPicker } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { ContentType } from '../../library-authoring/routes';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
+import NewChildButtons from '../NewChildButtons';
 
 const SubsectionCard = ({
   section,
@@ -58,12 +57,6 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
-  // as it has a useEffect that fetches course waffle flags whenever
-  // location.search is updated. Course search updates location.search when
-  // user types, which will then trigger the useEffect and reload the page.
-  // See https://github.com/openedx/frontend-app-authoring/pull/1938.
-  const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const [
     isAddLibraryUnitModalOpen,
     openAddLibraryUnitModal,
@@ -265,35 +258,18 @@ const SubsectionCard = ({
               {children}
               {actions.childAddable && (
                 <>
-                  <Button
-                    data-testid="new-unit-button"
-                    className="mt-4"
-                    variant="outline-primary"
-                    iconBefore={IconAdd}
-                    block
-                    onClick={handleNewButtonClick}
-                  >
-                    {intl.formatMessage(messages.newUnitButton)}
-                  </Button>
+                  <NewChildButtons
+                    handleNewButtonClick={handleNewButtonClick}
+                    handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    childType={ContainerType.Unit}
+                  />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent
-                      className="mt-4"
+                      className="mt-4 border-gray-500 rounded-0"
                       text={intl.formatMessage(messages.pasteButton)}
                       clipboardData={sharedClipboardData}
                       onClick={handlePasteButtonClick}
                     />
-                  )}
-                  {librariesV2Enabled && (
-                    <Button
-                      data-testid="use-unit-from-library"
-                      className="mt-4"
-                      variant="outline-primary"
-                      iconBefore={IconAdd}
-                      block
-                      onClick={openAddLibraryUnitModal}
-                    >
-                      {intl.formatMessage(messages.useUnitFromLibraryButton)}
-                    </Button>
                   )}
                 </>
               )}
