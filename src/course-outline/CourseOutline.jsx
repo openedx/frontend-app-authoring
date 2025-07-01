@@ -51,7 +51,7 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
-import NewChildButtons from './NewChildButtons';
+import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { ContainerType } from '../generic/key-utils';
 
 const CourseOutline = ({ courseId }) => {
@@ -429,7 +429,7 @@ const CourseOutline = ({ courseId }) => {
                               </SortableContext>
                             </DraggableList>
                             {courseActions.childAddable && (
-                              <NewChildButtons
+                              <OutlineAddChildButtons
                                 handleNewButtonClick={handleNewSectionSubmit}
                                 handleUseFromLibraryClick={() => {}}
                                 childType={ContainerType.Section}
