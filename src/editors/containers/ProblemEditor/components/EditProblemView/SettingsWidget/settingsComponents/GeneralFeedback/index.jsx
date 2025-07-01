@@ -1,5 +1,5 @@
 import React from 'react';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../../SettingsOption';
@@ -9,9 +9,8 @@ import { generalFeedbackHooks } from './hooks';
 export const GeneralFeedbackCard = ({
   generalFeedback,
   updateSettings,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const { summary, handleChange } = generalFeedbackHooks(generalFeedback, updateSettings);
   return (
     <SettingsOption
@@ -38,7 +37,6 @@ export const GeneralFeedbackCard = ({
 GeneralFeedbackCard.propTypes = {
   generalFeedback: PropTypes.string.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(GeneralFeedbackCard);
+export default GeneralFeedbackCard;
