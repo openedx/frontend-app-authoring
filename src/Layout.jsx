@@ -10,12 +10,14 @@ import {
   Assistant,
   Calendar,
   FolderShared,
-  Home, LibraryAdd, LibraryBooks, Lightbulb, LmsBook,
+  Home,
+  LibraryAdd,
+  LibraryBooks,
+  Lightbulb,
+  LmsBook,
 } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
-import {
-  MainHeader, Sidebar, SidebarProvider,
-} from 'titaned-lib';
+import { MainHeader, Sidebar, SidebarProvider } from 'titaned-lib';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import MainHeader from 'library/Header/MainHeader';
 // import { SidebarProvider } from 'library/providers/SidebarProvider';
@@ -40,7 +42,9 @@ const iconMap = {
 // API to fetch sidebar items
 const fetchSidebarItems = async () => {
   const response = await fetch('http://localhost:3002/sidemenu');
-  if (!response.ok) { throw new Error('Failed to fetch sidebar menu'); }
+  if (!response.ok) {
+    throw new Error('Failed to fetch sidebar menu');
+  }
   const data = await response.json();
   return data;
 };
@@ -68,24 +72,56 @@ const Layout = () => {
 
   // Sidebar items state
   const [sidebarItems, setSidebarItems] = useState([
-    { label: intl.formatMessage(messages.sidebarDashboardTitle), path: '/home', icon: <Home /> },
+    {
+      label: intl.formatMessage(messages.sidebarDashboardTitle),
+      path: '/home',
+      icon: <Home />,
+    },
   ]);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
 
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   fetchSidebarItems().then((apiItems) => {
+  //     if (isMounted) {
+  //       const formattedApiItems = apiItems.map(item => ({
+  //         label: item.label,
+  //         path: item.path,
+  //         icon: iconMap[item.iconName] || null,
+  //       }));
+  //       setSidebarItems(prev => [prev[0], ...formattedApiItems]);
+  //       setLoadingSidebar(false);
+  //     }
+  //   });
+  //   return () => { isMounted = false; };
+  // }, [intl]);
+
   useEffect(() => {
     let isMounted = true;
-    fetchSidebarItems().then((apiItems) => {
-      if (isMounted) {
-        const formattedApiItems = apiItems.map(item => ({
-          label: item.label,
-          path: item.path,
-          icon: iconMap[item.iconName] || null,
-        }));
-        setSidebarItems(prev => [prev[0], ...formattedApiItems]);
+    const fetchMenu = async () => {
+      try {
+        const apiItems = await fetchSidebarItems();
+        if (isMounted && Array.isArray(apiItems)) {
+          const formattedApiItems = apiItems.map((item) => ({
+            label: item.label,
+            path: item.path,
+            icon: iconMap[item.iconName] || null,
+          }));
+          setSidebarItems((prev) => [prev[0], ...formattedApiItems]);
+        }
+      } catch (error) {
+        // Optionally log error
+        // console.error('Failed to fetch sidebar items:', error);
+        // Only Home will be shown
+        setSidebarItems((prev) => [prev[0]]);
+      } finally {
         setLoadingSidebar(false);
       }
-    });
-    return () => { isMounted = false; };
+    };
+    fetchMenu();
+    return () => {
+      isMounted = false;
+    };
   }, [intl]);
 
   const handleNavigate = (path) => {
