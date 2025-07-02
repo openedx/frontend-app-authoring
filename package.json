@@ -24,7 +24,8 @@
     "types": "tsc --noEmit",
     "js": "json-server --watch db.json --port=3001",
     "jsc": "json-server --watch createForm.json --port=3000",
-    "start-ted": "concurrently \"npm start\" \"npm run js\" \"npm run jsc\" "
+    "sideMenu": "json-server --watch sideMenu.json --port=3002",
+    "start-ted": "concurrently \"npm start\" \"npm run js\" \"npm run jsc\" \"npm run sideMenu\" "
   },
   "husky": {
     "hooks": {

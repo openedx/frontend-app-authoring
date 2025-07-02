@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import 'titaned-lib/dist/index.css';
@@ -24,6 +24,27 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
+// Icon mapping for API icon names
+const iconMap = {
+  Analytics: <Analytics />,
+  Assignment: <Assignment />,
+  Assistant: <Assistant />,
+  Calendar: <Calendar />,
+  FolderShared: <FolderShared />,
+  LibraryAdd: <LibraryAdd />,
+  LibraryBooks: <LibraryBooks />,
+  Lightbulb: <Lightbulb />,
+  LmsBook: <LmsBook />,
+};
+
+// API to fetch sidebar items
+const fetchSidebarItems = async () => {
+  const response = await fetch('http://localhost:3002/sidemenu');
+  if (!response.ok) { throw new Error('Failed to fetch sidebar menu'); }
+  const data = await response.json();
+  return data;
+};
+
 const Layout = () => {
   // const [templateData, setTemplateData] = useState<TemplateData | undefined>(undefined)
   // const [headerData, setHeaderData] = useState(undefined);
@@ -45,6 +66,28 @@ const Layout = () => {
 
   const presentPath = location.pathname;
 
+  // Sidebar items state
+  const [sidebarItems, setSidebarItems] = useState([
+    { label: intl.formatMessage(messages.sidebarDashboardTitle), path: '/home', icon: <Home /> },
+  ]);
+  const [loadingSidebar, setLoadingSidebar] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchSidebarItems().then((apiItems) => {
+      if (isMounted) {
+        const formattedApiItems = apiItems.map(item => ({
+          label: item.label,
+          path: item.path,
+          icon: iconMap[item.iconName] || null,
+        }));
+        setSidebarItems(prev => [prev[0], ...formattedApiItems]);
+        setLoadingSidebar(false);
+      }
+    });
+    return () => { isMounted = false; };
+  }, [intl]);
+
   const handleNavigate = (path) => {
     navigate(path);
   };
@@ -65,23 +108,24 @@ const Layout = () => {
   //   getTemplateData();
   // }, []);
 
-  const sidebarItems = [
-    { label: intl.formatMessage(messages.sidebarDashboardTitle), path: '/home', icon: <Home /> },
-    { label: intl.formatMessage(messages.sidebarCreateNewCourseTitle), path: '/new-course', icon: <LibraryAdd /> },
-    { label: intl.formatMessage(messages.sidebarMyCoursesTitle), path: '/my-courses', icon: <LmsBook /> },
-    { label: intl.formatMessage(messages.sidebarContentLibrariesTitle), path: '/libraries', icon: <LibraryBooks /> },
-    { label: intl.formatMessage(messages.sidebarCalendarTitle), path: '/calendar', icon: <Calendar /> },
-    { label: intl.formatMessage(messages.sidebarClassPlannerTitle), path: '/class-planner', icon: <Analytics /> },
-    { label: intl.formatMessage(messages.sidebarInsightsReportsTitle), path: '/reports', icon: <Lightbulb /> },
-    { label: intl.formatMessage(messages.sidebarTitanAITitle), path: '/ai-assistant', icon: <Assistant /> },
-    { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources', icon: <FolderShared /> },
-    { label: intl.formatMessage(messages.sidebarTaxonomiesTitle), path: '/taxonomies', icon: <Assignment /> },
-  ];
+  // const sidebarItems = [
+  //   { label: intl.formatMessage(messages.sidebarDashboardTitle), path: '/home', icon: <Home /> },
+  //   { label: intl.formatMessage(messages.sidebarCreateNewCourseTitle), path: '/new-course', icon: <LibraryAdd /> },
+  //   { label: intl.formatMessage(messages.sidebarMyCoursesTitle), path: '/my-courses', icon: <LmsBook /> },
+  //   { label: intl.formatMessage(messages.sidebarContentLibrariesTitle), path: '/libraries', icon: <LibraryBooks /> },
+  //   { label: intl.formatMessage(messages.sidebarCalendarTitle), path: '/calendar', icon: <Calendar /> },
+  //   { label: intl.formatMessage(messages.sidebarClassPlannerTitle), path: '/class-planner', icon: <Analytics /> },
+  //   { label: intl.formatMessage(messages.sidebarInsightsReportsTitle), path: '/reports', icon: <Lightbulb /> },
+  //   { label: intl.formatMessage(messages.sidebarTitanAITitle), path: '/ai-assistant', icon: <Assistant /> },
+  //   { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources',
+  //      icon: <FolderShared /> },
+  //   { label: intl.formatMessage(messages.sidebarTaxonomiesTitle), path: '/taxonomies', icon: <Assignment /> },
+  // ];
 
   // const contactInfo = {
   //   align: 'left',
   //   content: {
-  //     shortdesc: 'We are passionate education dedicated to 
+  //     shortdesc: 'We are passionate education dedicated to
   // providing high-quality resources learners all backgrounds.',
   //     address1: 'Yarra Park, Melbourne, Australia',
   //     address2: '',
@@ -175,11 +219,15 @@ const Layout = () => {
         {/* Sidebar and Main Content */}
         <div className="content-wrapper">
           <div className="sidebar-container">
-            <Sidebar
-              buttons={sidebarItems}
-              onNavigate={handleNavigate}
-              presentPath={presentPath}
-            />
+            {loadingSidebar ? (
+              <div>Loading menu...</div>
+            ) : (
+              <Sidebar
+                buttons={sidebarItems}
+                onNavigate={handleNavigate}
+                presentPath={presentPath}
+              />
+            )}
           </div>
           <div className="main-content">
             <div className="page-content">
