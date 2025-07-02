@@ -1,12 +1,17 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { logError } from '@edx/frontend-platform/logging';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useKeyedState } from '@edx/react-unit-test-utils';
-
+import StrictDict from '@src/editors/utils/StrictDict';
 import { useLoadBearingHook } from './useLoadBearingHook';
-import { iframeStateKeys, iframeMessageTypes } from '../../constants';
+import { iframeMessageTypes } from '../../constants';
 import { UseIFrameBehaviorReturnTypes, UseIFrameBehaviorTypes } from '../types';
 import { useEventListener } from './useEventListener';
+
+export const ifameBehaviorState = StrictDict({
+    iframeHeight: (val) => useState<number>(val), // eslint-disable-line
+    hasLoaded: (val) => useState<boolean>(val), // eslint-disable-line
+    showError: (val) => useState<boolean>(val), // eslint-disable-line
+    windowTopOffset: (val) => useState<number | null>(val), // eslint-disable-line
+});
 
 /**
  * Custom hook to manage iframe behavior.
@@ -31,10 +36,10 @@ export const useIframeBehavior = ({
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
 
-  const [iframeHeight, setIframeHeight] = useKeyedState<number>(iframeStateKeys.iframeHeight, 0);
-  const [hasLoaded, setHasLoaded] = useKeyedState<boolean>(iframeStateKeys.hasLoaded, false);
-  const [showError, setShowError] = useKeyedState<boolean>(iframeStateKeys.showError, false);
-  const [windowTopOffset, setWindowTopOffset] = useKeyedState<number | null>(iframeStateKeys.windowTopOffset, null);
+  const [iframeHeight, setIframeHeight] = ifameBehaviorState.iframeHeight(0);
+  const [hasLoaded, setHasLoaded] = ifameBehaviorState.hasLoaded(false);
+  const [showError, setShowError] = ifameBehaviorState.showError(false);
+  const [windowTopOffset, setWindowTopOffset] = ifameBehaviorState.windowTopOffset(null);
 
   const receiveMessage = useCallback((event: MessageEvent) => {
     if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {

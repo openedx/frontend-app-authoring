@@ -1,17 +1,12 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { act, renderHook } from '@testing-library/react';
-import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
-import { iframeMessageTypes, iframeStateKeys } from '../../../constants';
-import { useIframeBehavior } from '../useIframeBehavior';
+import { iframeMessageTypes } from '../../../constants';
+import { useIframeBehavior, ifameBehaviorState } from '../useIframeBehavior';
 import { useLoadBearingHook } from '../useLoadBearingHook';
 
 jest.useFakeTimers();
-
-jest.mock('@edx/react-unit-test-utils', () => ({
-  useKeyedState: jest.fn(),
-}));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
@@ -27,20 +22,10 @@ describe('useIframeBehavior', () => {
   const iframeRef = { current: { contentWindow: null } as HTMLIFrameElement };
 
   beforeEach(() => {
-    (useKeyedState as jest.Mock).mockImplementation((key, initialValue) => {
-      switch (key) {
-        case iframeStateKeys.iframeHeight:
-          return [0, setIframeHeight];
-        case iframeStateKeys.hasLoaded:
-          return [false, setHasLoaded];
-        case iframeStateKeys.showError:
-          return [false, setShowError];
-        case iframeStateKeys.windowTopOffset:
-          return [null, setWindowTopOffset];
-        default:
-          return [initialValue, jest.fn()];
-      }
-    });
+    jest.spyOn(ifameBehaviorState, 'iframeHeight').mockImplementation(() => [0, setIframeHeight]);
+    jest.spyOn(ifameBehaviorState, 'hasLoaded').mockImplementation(() => [false, setHasLoaded]);
+    jest.spyOn(ifameBehaviorState, 'showError').mockImplementation(() => [false, setShowError]);
+    jest.spyOn(ifameBehaviorState, 'windowTopOffset').mockImplementation(() => [null, setWindowTopOffset]);
 
     window.scrollTo = jest.fn((x: number | ScrollToOptions, y?: number): void => {
       const scrollY = typeof x === 'number' ? y : (x as ScrollToOptions).top || 0;
@@ -58,14 +43,7 @@ describe('useIframeBehavior', () => {
 
   it('scrolls to previous position on video fullscreen exit', () => {
     const mockWindowTopOffset = 100;
-
-    (useKeyedState as jest.Mock).mockImplementation((key) => {
-      if (key === iframeStateKeys.windowTopOffset) {
-        return [mockWindowTopOffset, setWindowTopOffset];
-      }
-      return [null, jest.fn()];
-    });
-
+    jest.spyOn(ifameBehaviorState, 'windowTopOffset').mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
