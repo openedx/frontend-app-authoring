@@ -225,24 +225,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   }, [isMoveModalOpen]);
 
-  useEffect(() => {
-    const handlePageRefreshUsingStorage = (event) => {
-      // ignoring tests for if block, because it triggers when someone
-      // edits the component using editor which has a separate store
-      /* istanbul ignore next */
-      if (event.key === 'courseRefreshTriggerOnComponentEditSave') {
-        dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-        dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
-        localStorage.removeItem(event.key);
-      }
-    };
-
-    window.addEventListener('storage', handlePageRefreshUsingStorage);
-    return () => {
-      window.removeEventListener('storage', handlePageRefreshUsingStorage);
-    };
-  }, [blockId, sequenceId, isSplitTestType]);
-
   return {
     sequenceId,
     courseUnit,
