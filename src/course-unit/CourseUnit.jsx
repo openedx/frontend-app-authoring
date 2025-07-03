@@ -41,6 +41,7 @@ const CourseUnit = ({ courseId }) => {
     courseUnit,
     isLoading,
     sequenceId,
+    courseUnitLoadingStatus,
     unitTitle,
     unitCategory,
     errorMessage,
@@ -210,6 +211,7 @@ const CourseUnit = ({ courseId }) => {
                 courseId={courseId}
                 blockId={blockId}
                 isUnitVerticalType={isUnitVerticalType}
+                courseUnitLoadingStatus={courseUnitLoadingStatus}
                 unitXBlockActions={unitXBlockActions}
                 courseVerticalChildren={courseVerticalChildren.children}
                 handleConfigureSubmit={handleConfigureSubmit}
