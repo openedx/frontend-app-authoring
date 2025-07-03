@@ -35,7 +35,7 @@ const SequenceNavigation = ({
 
   const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
   const renderUnitButtons = () => {
-    if (sequence.unitIds?.length === 0 || unitId === null) {
+    if (sequence?.unitIds?.length === 0 || unitId === null) {
       return (
         <div style={{ flexBasis: '100%', minWidth: 0, borderBottom: 'solid 1px #EAEAEA' }} />
       );
@@ -43,7 +43,7 @@ const SequenceNavigation = ({
 
     return (
       <SequenceNavigationTabs
-        unitIds={sequence.unitIds || []}
+        unitIds={sequence?.unitIds || []}
         unitId={unitId}
         handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
         showPasteUnit={showPasteUnit}

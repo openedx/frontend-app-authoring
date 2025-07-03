@@ -99,4 +99,4 @@ export const getIconVariant = (visibilityState, published, hasChanges) => {
  * @param {string} id - The course unit ID.
  * @returns {string} The clear course unit ID extracted from the provided data.
  */
-export const extractCourseUnitId = (id) => id.match(/block@(.+)$/)[1];
+export const extractCourseUnitId = (id) => id?.match(/block@(.+)$/)[1];
