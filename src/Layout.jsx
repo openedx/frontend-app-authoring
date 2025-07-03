@@ -150,6 +150,14 @@ const Layout = () => {
   //   ],
   // };
 
+  const headerButtons = {
+    reSync: true,
+    contextSwitcher: true,
+    help: true,
+    translation: true,
+    notification: true,
+  };
+
   const handleLanguageChange = () => {
     const { pathname } = location;
     const cleanPath = pathname.replace('/authoring', '');
@@ -170,6 +178,7 @@ const Layout = () => {
             userMenuItems={userMenuItems}
             onLanguageChange={handleLanguageChange}
             getBaseUrl={() => '/authoring'}
+            headerButtons={headerButtons}
           />
         </div>
         {/* Sidebar and Main Content */}
