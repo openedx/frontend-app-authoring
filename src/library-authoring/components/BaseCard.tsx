@@ -50,8 +50,8 @@ const BaseCard = ({
 
   const handleCardClick = (e: React.MouseEvent) => {
     const cameFromActionArea = !!(e.target as HTMLElement).closest(
-        '[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"], .library-card-actions',
-      );
+      '[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"], .library-card-actions',
+    );
     if (cameFromActionArea) {
       // Ignore clicks that originated on a dropdown or any control in the action area
       return;
