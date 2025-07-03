@@ -40,7 +40,13 @@ import EditorPage from '../../editors/EditorPage';
 import { RequestStatus } from '../../data/constants';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
-  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType, courseUnitLoadingStatus,
+  courseId,
+  blockId,
+  unitXBlockActions,
+  courseVerticalChildren,
+  handleConfigureSubmit,
+  isUnitVerticalType,
+  courseUnitLoadingStatus,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -72,21 +78,21 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   }, [setIframeRef]);
 
   useEffect(() => {
-  const iframe = iframeRef?.current;
-  if (!iframe) return;
+    const iframe = iframeRef?.current;
+    if (!iframe) { return undefined; }
 
-  const handleIframeLoad = () => {
-    if (courseUnitLoadingStatus.fetchUnitLoadingStatus === RequestStatus.FAILED) {
+    const handleIframeLoad = () => {
+      if (courseUnitLoadingStatus.fetchUnitLoadingStatus === RequestStatus.FAILED) {
         window.location.reload();
       }
-  };
+    };
 
-  iframe.addEventListener('load', handleIframeLoad);
+    iframe.addEventListener('load', handleIframeLoad);
 
-  return () => {
-    iframe.removeEventListener('load', handleIframeLoad);
-  };
-}, [iframeRef]);
+    return () => {
+      iframe.removeEventListener('load', handleIframeLoad);
+    };
+  }, [iframeRef]);
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();

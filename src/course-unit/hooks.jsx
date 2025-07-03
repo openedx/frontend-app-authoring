@@ -35,7 +35,7 @@ import {
   getSavingStatus,
   getSequenceStatus,
   getStaticFileNotices,
-  getLoadingStatuses
+  getLoadingStatuses,
 } from './data/selectors';
 import {
   changeEditTitleFormOpen,
