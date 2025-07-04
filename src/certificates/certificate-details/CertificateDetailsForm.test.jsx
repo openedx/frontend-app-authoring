@@ -58,11 +58,12 @@ describe('CertificateDetails', () => {
   });
 
   it('handles input change in create mode', async () => {
+    const user = userEvent.setup();
     const { getByPlaceholderText } = renderComponent(defaultProps);
     const input = getByPlaceholderText(messages.detailsCourseTitleOverride.defaultMessage);
     const newInputValue = 'New Title';
 
-    userEvent.type(input, newInputValue);
+    await user.type(input, newInputValue);
 
     waitFor(() => {
       expect(input.value).toBe(newInputValue);

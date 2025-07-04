@@ -86,23 +86,25 @@ describe('CertificateDetails', () => {
     expect(getByText(defaultProps.detailsCourseTitle)).toBeInTheDocument();
   });
 
-  it('opens confirm modal on delete button click', () => {
+  it('opens confirm modal on delete button click', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent(defaultProps);
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(getByText(messages.deleteCertificateConfirmationTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('dispatches delete action on confirm modal action', async () => {
+    const user = userEvent.setup();
     const props = { ...defaultProps, courseId, certificateId };
     const { getByRole } = renderComponent(props);
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const confirmActionButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-      userEvent.click(confirmActionButton);
+      await user.click(confirmActionButton);
     });
 
     expect(mockDispatch).toHaveBeenCalledWith(deleteCourseCertificate(courseId, certificateId));

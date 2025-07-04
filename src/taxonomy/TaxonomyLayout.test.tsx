@@ -63,15 +63,16 @@ describe('<TaxonomyLayout />', () => {
   });
 
   it('should show alert', async () => {
+    const user = userEvent.setup();
     render(<TaxonomyLayout />);
 
     const button = await screen.findByTestId('taxonomy-show-alert');
-    await userEvent.click(button);
+    await user.click(button);
     expect(screen.getByText(alertErrorTitle)).toBeInTheDocument();
     expect(screen.getByText(alertErrorDescription)).toBeInTheDocument();
 
     const closeAlertButton = await screen.findByRole('button', { name: 'Dismiss' });
-    await userEvent.click(closeAlertButton);
+    await user.click(closeAlertButton);
     expect(screen.queryByText(alertErrorTitle)).not.toBeInTheDocument();
     expect(screen.queryByText(alertErrorDescription)).not.toBeInTheDocument();
   });

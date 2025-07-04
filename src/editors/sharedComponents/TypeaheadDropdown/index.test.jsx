@@ -84,39 +84,42 @@ describe('common/OrganizationDropdown.jsx', () => {
     expect(within(screen.getByTestId('dropdown-container'))
       .queryAllByRole('button').length).toEqual(0);
   });
-  it('shows options list depends on field value', () => {
+  it('shows options list depends on field value', async () => {
+    const user = userEvent.setup();
     const newProps = { ...defaultProps, options: ['opt1', 'opt2'] };
     renderComponent(newProps);
     const formInput = screen.getByTestId('formControl');
     fireEvent.focus(formInput);
-    userEvent.type(formInput, 'opt1');
+    await user.type(formInput, 'opt1');
     expect(within(screen.getByTestId('dropdown-container'))
       .queryAllByRole('button').length).toEqual(1);
   });
   it('closes options list on click outside', async () => {
+    const user = userEvent.setup();
     const newProps = { ...defaultProps, options: ['opt1', 'opt2'] };
     renderComponent(newProps);
     const formInput = screen.getByTestId('formControl');
     fireEvent.click(formInput);
     expect(within(screen.getByTestId('dropdown-container'))
       .queryAllByRole('button').length).toEqual(2);
-    userEvent.click(document.body);
+    await user.click(document.body);
     expect(within(screen.getByTestId('dropdown-container'))
       .queryAllByRole('button').length).toEqual(0);
   });
   describe('empty options list', () => {
-    it('shows empty options list depends on field value', () => {
+    it('shows empty options list depends on field value', async () => {
+      const user = userEvent.setup();
       const newProps = { ...defaultProps, options: ['opt1', 'opt2'] };
       renderComponent(newProps);
       const formInput = screen.getByTestId('formControl');
       fireEvent.focus(formInput);
-      userEvent.type(formInput, '3');
+      await user.type(formInput, '3');
       const noOptionsList = within(screen.getByTestId('dropdown-container')).getByText('No options');
       const addButton = within(screen.getByTestId('dropdown-container')).queryByTestId('add-option-button');
       expect(noOptionsList).toBeVisible();
       expect(addButton).toBeNull();
     });
-    it('shows empty options list with add option button', () => {
+    it('shows empty options list with add option button', async () => {
       const newProps = {
         ...defaultProps,
         options: ['opt1', 'opt2'],
@@ -124,10 +127,11 @@ describe('common/OrganizationDropdown.jsx', () => {
         newOptionButtonLabel: 'Add new option',
         addNewOption: jest.fn(),
       };
+      const user = userEvent.setup();
       renderComponent(newProps);
       const formInput = screen.getByTestId('formControl');
       fireEvent.focus(formInput);
-      userEvent.type(formInput, '3');
+      await user.type(formInput, '3');
       const noOptionsList = within(screen.getByTestId('dropdown-container')).getByText('No options');
       expect(noOptionsList).toBeVisible();
       const addButton = within(screen.getByTestId('dropdown-container')).getByTestId('add-option-button');

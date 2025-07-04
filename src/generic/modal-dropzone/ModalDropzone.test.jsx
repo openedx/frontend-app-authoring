@@ -68,15 +68,17 @@ describe('<ModalDropzone />', () => {
   });
 
   it('calls onClose when close button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = render(<RootWrapper {...props} />);
-    userEvent.click(getByText(messages.cancelModal.defaultMessage));
+    await user.click(getByText(messages.cancelModal.defaultMessage));
 
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('calls onCancel when cancel button is clicked', () => {
+  it('calls onCancel when cancel button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = render(<RootWrapper {...props} />);
-    userEvent.click(getByText(messages.cancelModal.defaultMessage));
+    await user.click(getByText(messages.cancelModal.defaultMessage));
 
     expect(mockOnCancel).toHaveBeenCalled();
   });
@@ -89,12 +91,13 @@ describe('<ModalDropzone />', () => {
   });
 
   it('enables the upload button after a file is selected', async () => {
+    const user = userEvent.setup();
     const { getByRole } = render(<RootWrapper {...props} />);
     const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
 
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
     expect(uploadButton).toBeDisabled();
-    userEvent.upload(dropzoneInput, file);
+    await user.upload(dropzoneInput, file);
 
     await waitFor(() => {
       expect(dropzoneInput.files[0]).toStrictEqual(file);
@@ -104,6 +107,7 @@ describe('<ModalDropzone />', () => {
   });
 
   it('should successfully upload an asset and return the URL', async () => {
+    const user = userEvent.setup();
     const mockUrl = `${baseUrl}/assets/course-123/test-file.png`;
     axiosMock.onPost(getUploadAssetsUrl(courseId).href).reply(200, {
       asset: { url: mockUrl },
@@ -116,13 +120,13 @@ describe('<ModalDropzone />', () => {
     const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
 
-    userEvent.upload(dropzoneInput, file);
+    await user.upload(dropzoneInput, file);
 
     await waitFor(() => {
       expect(uploadButton).not.toBeDisabled();
     });
 
-    userEvent.click(uploadButton);
+    user.click(uploadButton);
 
     await waitFor(() => {
       expect(getByAltText(messages.uploadImageDropzoneAlt.defaultMessage)).toBeInTheDocument();
@@ -136,6 +140,7 @@ describe('<ModalDropzone />', () => {
   });
 
   it('displays a custom error message when the file size exceeds the limit', async () => {
+    const user = userEvent.setup();
     const maxSizeInBytes = 20 * 1000 * 1000;
     const expectedErrorMessage = 'Custom error message';
 
@@ -150,7 +155,7 @@ describe('<ModalDropzone />', () => {
       { type: 'image/png' },
     );
 
-    userEvent.upload(dropzoneInput.firstChild, fileToUpload);
+    await user.upload(dropzoneInput.firstChild, fileToUpload);
 
     await waitFor(() => {
       expect(getByText(expectedErrorMessage)).toBeInTheDocument();

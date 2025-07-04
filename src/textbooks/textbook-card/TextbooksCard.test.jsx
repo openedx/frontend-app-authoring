@@ -40,7 +40,9 @@ const renderComponent = () => render(
 );
 
 describe('<TextbookCard />', () => {
+  let user;
   beforeEach(async () => {
+    user = userEvent.setup();
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -54,7 +56,7 @@ describe('<TextbookCard />', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
-  it('render TextbookCard component correctly', () => {
+  it('render TextbookCard component correctly', async () => {
     const { getByText, getByTestId } = renderComponent();
 
     expect(getByText(textbook.tabTitle)).toBeInTheDocument();
@@ -64,7 +66,7 @@ describe('<TextbookCard />', () => {
     expect(getByText('1 PDF chapters')).toBeInTheDocument();
 
     const collapseButton = document.querySelector('.collapsible-trigger');
-    userEvent.click(collapseButton);
+    await user.click(collapseButton);
 
     textbook.chapters.forEach(({ title, url }) => {
       expect(getByText(title)).toBeInTheDocument();
@@ -72,27 +74,27 @@ describe('<TextbookCard />', () => {
     });
   });
 
-  it('renders edit TextbookForm after clicking on edit button', () => {
+  it('renders edit TextbookForm after clicking on edit button', async () => {
     const { getByTestId, queryByTestId } = renderComponent();
 
     const editButton = getByTestId('textbook-edit-button');
-    userEvent.click(editButton);
+    await user.click(editButton);
 
     expect(getByTestId('textbook-form')).toBeInTheDocument();
     expect(queryByTestId('textbook-card')).not.toBeInTheDocument();
   });
 
-  it('closes edit TextbookForm after clicking on cancel button', () => {
+  it('closes edit TextbookForm after clicking on cancel button', async () => {
     const { getByTestId, queryByTestId } = renderComponent();
 
     const editButton = getByTestId('textbook-edit-button');
-    userEvent.click(editButton);
+    await user.click(editButton);
 
     expect(getByTestId('textbook-form')).toBeInTheDocument();
     expect(queryByTestId('textbook-card')).not.toBeInTheDocument();
 
     const cancelButton = getByTestId('cancel-button');
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(queryByTestId('textbook-form')).not.toBeInTheDocument();
     expect(getByTestId('textbook-card')).toBeInTheDocument();
@@ -102,7 +104,7 @@ describe('<TextbookCard />', () => {
     const { getByPlaceholderText, getByRole, getByTestId } = renderComponent();
 
     const editButton = getByTestId('textbook-edit-button');
-    userEvent.click(editButton);
+    await user.click(editButton);
 
     const tabTitleInput = getByPlaceholderText(messages.tabTitlePlaceholder.defaultMessage);
     const chapterInput = getByPlaceholderText(
@@ -121,14 +123,14 @@ describe('<TextbookCard />', () => {
       id: textbooksMock.textbooks[1].id,
     };
 
-    userEvent.clear(tabTitleInput);
-    userEvent.type(tabTitleInput, newFormValues.tab_title);
-    userEvent.clear(chapterInput);
-    userEvent.type(chapterInput, newFormValues.chapters[0].title);
-    userEvent.clear(urlInput);
-    userEvent.type(urlInput, newFormValues.chapters[0].url);
+    await user.clear(tabTitleInput);
+    await user.type(tabTitleInput, newFormValues.tab_title);
+    await user.clear(chapterInput);
+    await user.type(chapterInput, newFormValues.chapters[0].title);
+    await user.clear(urlInput);
+    await user.type(urlInput, newFormValues.chapters[0].url);
 
-    userEvent.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
 
     await waitFor(() => {
       expect(onEditSubmitMock).toHaveBeenCalledTimes(1);
@@ -149,7 +151,7 @@ describe('<TextbookCard />', () => {
     const { getByTestId, getByRole } = renderComponent();
 
     const deleteButton = getByTestId('textbook-delete-button');
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     await waitFor(() => {
       const deleteModal = getByRole('dialog');
@@ -169,15 +171,15 @@ describe('<TextbookCard />', () => {
     const { getByTestId, getByRole } = renderComponent();
 
     const deleteButton = getByTestId('textbook-delete-button');
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const deleteModal = getByRole('dialog');
 
       const modalSubmitButton = within(deleteModal)
         .getByRole('button', { name: 'Delete' });
 
-      userEvent.click(modalSubmitButton);
+      await user.click(modalSubmitButton);
 
       const textbookId = textbooksMock.textbooks[1].id;
 

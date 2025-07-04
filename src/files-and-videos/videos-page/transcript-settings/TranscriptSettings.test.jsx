@@ -46,8 +46,10 @@ const renderComponent = () => {
 };
 
 describe('TranscriptSettings', () => {
+  let user;
   describe('default behaviors', () => {
     beforeEach(async () => {
+      user = userEvent.setup();
       initializeMockApp({
         authenticatedUser: {
           userId: 3,
@@ -70,7 +72,7 @@ describe('TranscriptSettings', () => {
     it('should change view to order form', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
       const selectableButtons = screen.getAllByLabelText('none radio')[0];
 
       expect(selectableButtons).toBeVisible();
@@ -79,13 +81,13 @@ describe('TranscriptSettings', () => {
     it('should return to order transcript collapsible', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
       const selectableButtons = screen.getAllByLabelText('none radio')[0];
 
       expect(selectableButtons).toBeVisible();
 
       const backButton = screen.getByLabelText('back button to main transcript settings view');
-      userEvent.click(backButton);
+      await user.click(backButton);
       await waitFor(() => {
         expect(screen.queryByLabelText('back button to main transcript settings view')).toBeNull();
       });
@@ -94,9 +96,9 @@ describe('TranscriptSettings', () => {
     it('discard changes should call closeTranscriptSettings', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
       const discardButton = screen.getByText(messages.discardSettingsLabel.defaultMessage);
-      userEvent.click(discardButton);
+      await user.click(discardButton);
 
       expect(defaultProps.closeTranscriptSettings).toHaveBeenCalled();
     });
@@ -136,7 +138,7 @@ describe('TranscriptSettings', () => {
 
     it('should load page with Cielo24 selected', async () => {
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
       const cielo24Button = screen.getByText(messages.cieloLabel.defaultMessage);
 
       expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
@@ -174,10 +176,10 @@ describe('TranscriptSettings', () => {
 
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
       const noneButton = screen.getAllByLabelText('none radio')[0];
 
-      userEvent.click(noneButton);
+      await user.click(noneButton);
     });
 
     it('api should succeed', async () => {
@@ -220,18 +222,18 @@ describe('TranscriptSettings', () => {
 
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
     });
 
     it('should ask for Cielo24 or 3Play Media credentials', async () => {
       const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      userEvent.click(cielo24Button);
+      await user.click(cielo24Button);
       const cieloCredentialMessage = screen.getByTestId('cieloCredentialMessage');
 
       expect(cieloCredentialMessage).toBeVisible();
 
       const threePlayMediaButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-      userEvent.click(threePlayMediaButton);
+      await user.click(threePlayMediaButton);
       const threePlayMediaCredentialMessage = screen.getByTestId('threePlayMediaCredentialMessage');
 
       expect(threePlayMediaCredentialMessage).toBeVisible();
@@ -240,15 +242,15 @@ describe('TranscriptSettings', () => {
     describe('api succeeds', () => {
       it('should update cielo24 credentials ', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        userEvent.click(cielo24Button);
+        await user.click(cielo24Button);
 
         const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.type(firstInput, 'apiKey');
-          userEvent.type(secondInput, 'username');
+        await waitFor(async () => {
+          await user.type(firstInput, 'apiKey');
+          await user.type(secondInput, 'username');
 
           expect(updateButton).not.toHaveAttribute('disabled');
         });
@@ -267,15 +269,15 @@ describe('TranscriptSettings', () => {
 
       it('should update 3Play Media credentials', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
 
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.threePlayMediaApiSecretLabel.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.type(firstInput, 'apiKey');
-          userEvent.type(secondInput, 'secretKey');
+        await waitFor(async () => {
+          await user.type(firstInput, 'apiKey');
+          await user.type(secondInput, 'secretKey');
 
           expect(updateButton).not.toHaveAttribute('disabled');
         });
@@ -297,15 +299,15 @@ describe('TranscriptSettings', () => {
     describe('api fails', () => {
       it('should show error alert on Cielo24 credentials update', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        userEvent.click(cielo24Button);
+        await user.click(cielo24Button);
 
         const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.type(firstInput, 'apiKey');
-          userEvent.type(secondInput, 'username');
+        await waitFor(async () => {
+          await user.type(firstInput, 'apiKey');
+          await user.type(secondInput, 'username');
 
           expect(updateButton).not.toHaveAttribute('disabled');
         });
@@ -323,15 +325,15 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert on 3PlayMedia credentials update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
 
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.threePlayMediaApiSecretLabel.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.type(firstInput, 'apiKey');
-          userEvent.type(secondInput, 'secretKey');
+        await waitFor(async () => {
+          await user.type(firstInput, 'apiKey');
+          await user.type(secondInput, 'secretKey');
 
           expect(updateButton).not.toHaveAttribute('disabled');
         });
@@ -375,18 +377,18 @@ describe('TranscriptSettings', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      userEvent.click(orderButton);
+      await user.click(orderButton);
     });
 
     it('should not show credentials request for Cielo24 and 3Play Media', async () => {
       const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      userEvent.click(cielo24Button);
+      await user.click(cielo24Button);
       const cieloCredentialMessage = screen.queryByTestId('cieloCredentialMessage');
 
       expect(cieloCredentialMessage).toBeNull();
 
       const threePlayMediaButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-      userEvent.click(threePlayMediaButton);
+      await user.click(threePlayMediaButton);
       const threePlayMediaCredentialMessage = screen.queryByTestId('threePlayMediaCredentialMessage');
 
       expect(threePlayMediaCredentialMessage).toBeNull();
@@ -404,25 +406,25 @@ describe('TranscriptSettings', () => {
         };
 
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        userEvent.click(cielo24Button);
+        await user.click(cielo24Button);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.cieloTurnaroundPlaceholder.defaultMessage);
         const fidelity = screen.getByText(messages.cieloFidelityPlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('Priority (24 hours)'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('Priority (24 hours)'));
 
-          userEvent.click(fidelity);
-          userEvent.click(screen.getByText('Premium (95% accuracy)'));
+          await user.click(fidelity);
+          await user.click(screen.getByText('Premium (95% accuracy)'));
 
           const source = screen.getAllByText(messages.cieloSourceLanguagePlaceholder.defaultMessage)[0];
-          userEvent.click(source);
-          userEvent.click(screen.getByText('English'));
+          await user.click(source);
+          await user.click(screen.getByText('English'));
 
           const language = screen.getByText(messages.cieloTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getAllByText('English')[2]);
+          await user.click(language);
+          await user.click(screen.getAllByText('English')[2]);
         });
 
         expect(updateButton).not.toHaveAttribute('disabled');
@@ -448,23 +450,23 @@ describe('TranscriptSettings', () => {
           global: false,
         };
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('2 hours'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('2 hours'));
 
-          userEvent.click(source);
-          userEvent.click(screen.getByText('English'));
+          await user.click(source);
+          await user.click(screen.getByText('English'));
 
           const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getByText('Arabic'));
-          userEvent.click(screen.getByText('French'));
-          userEvent.click(screen.getAllByText('Arabic')[0]);
+          await user.click(language);
+          await user.click(screen.getByText('Arabic'));
+          await user.click(screen.getByText('French'));
+          await user.click(screen.getAllByText('Arabic')[0]);
 
           expect(updateButton).not.toHaveAttribute('disabled');
         });
@@ -487,21 +489,21 @@ describe('TranscriptSettings', () => {
           global: false,
         };
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('2 hours'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('2 hours'));
 
-          userEvent.click(source);
-          userEvent.click(screen.getByText('Spanish'));
+          await user.click(source);
+          await user.click(screen.getByText('Spanish'));
 
           const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getAllByText('English')[1]);
+          await user.click(language);
+          await user.click(screen.getAllByText('English')[1]);
         });
         expect(updateButton).not.toHaveAttribute('disabled');
 
@@ -518,25 +520,25 @@ describe('TranscriptSettings', () => {
     describe('api fails', () => {
       it('should show error alert on Cielo24 preferences update', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        userEvent.click(cielo24Button);
+        await user.click(cielo24Button);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.cieloTurnaroundPlaceholder.defaultMessage);
         const fidelity = screen.getByText(messages.cieloFidelityPlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('Priority (24 hours)'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('Priority (24 hours)'));
 
-          userEvent.click(fidelity);
-          userEvent.click(screen.getByText('Premium (95% accuracy)'));
+          await user.click(fidelity);
+          await user.click(screen.getByText('Premium (95% accuracy)'));
 
           const source = screen.getAllByText(messages.cieloSourceLanguagePlaceholder.defaultMessage)[0];
-          userEvent.click(source);
-          userEvent.click(screen.getByText('English'));
+          await user.click(source);
+          await user.click(screen.getByText('English'));
 
           const language = screen.getByText(messages.cieloTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getAllByText('English')[2]);
+          await user.click(language);
+          await user.click(screen.getAllByText('English')[2]);
         });
 
         expect(updateButton).not.toHaveAttribute('disabled');
@@ -554,21 +556,21 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('2 hours'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('2 hours'));
 
-          userEvent.click(source);
-          userEvent.click(screen.getByText('Spanish'));
+          await user.click(source);
+          await user.click(screen.getByText('Spanish'));
 
           const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getAllByText('English')[1]);
+          await user.click(language);
+          await user.click(screen.getAllByText('English')[1]);
         });
         expect(updateButton).not.toHaveAttribute('disabled');
 
@@ -585,21 +587,21 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        userEvent.click(threePlayButton);
+        await user.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
 
-        await waitFor(() => {
-          userEvent.click(turnaround);
-          userEvent.click(screen.getByText('2 hours'));
+        await waitFor(async () => {
+          await user.click(turnaround);
+          await user.click(screen.getByText('2 hours'));
 
-          userEvent.click(source);
-          userEvent.click(screen.getByText('Spanish'));
+          await user.click(source);
+          await user.click(screen.getByText('Spanish'));
 
           const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
-          userEvent.click(language);
-          userEvent.click(screen.getAllByText('English')[1]);
+          await user.click(language);
+          await user.click(screen.getAllByText('English')[1]);
         });
         expect(updateButton).not.toHaveAttribute('disabled');
 

@@ -62,6 +62,7 @@ describe('CertificatesList Component', () => {
   });
 
   it('update certificate', async () => {
+    const user = userEvent.setup();
     const {
       getByText, queryByText, getByPlaceholderText, getByRole, getAllByLabelText,
     } = renderComponent();
@@ -80,13 +81,13 @@ describe('CertificatesList Component', () => {
 
     const editButtons = getAllByLabelText(messages.editTooltip.defaultMessage);
 
-    userEvent.click(editButtons[1]);
+    await user.click(editButtons[1]);
 
     const nameInput = getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage);
-    userEvent.clear(nameInput);
-    userEvent.type(nameInput, signatoryNameValue);
+    await user.clear(nameInput);
+    await user.type(nameInput, signatoryNameValue);
 
-    userEvent.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
     axiosMock
       .onPost(getUpdateCertificateApiUrl(courseId, certificatesMock.id))
@@ -100,6 +101,7 @@ describe('CertificatesList Component', () => {
   });
 
   it('toggle edit signatory', async () => {
+    const user = userEvent.setup();
     const {
       getAllByLabelText, queryByPlaceholderText, getByTestId, getByPlaceholderText,
     } = renderComponent();
@@ -107,13 +109,13 @@ describe('CertificatesList Component', () => {
 
     expect(editButtons.length).toBe(3);
 
-    userEvent.click(editButtons[1]);
+    await user.click(editButtons[1]);
 
     await waitFor(() => {
       expect(getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).toBeInTheDocument();
     });
 
-    userEvent.click(within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }));
+    await user.click(within(getByTestId('signatory-form')).getByRole('button', { name: messages.cardCancel.defaultMessage }));
 
     await waitFor(() => {
       expect(queryByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage)).not.toBeInTheDocument();
@@ -121,10 +123,11 @@ describe('CertificatesList Component', () => {
   });
 
   it('toggle certificate edit all', async () => {
+    const user = userEvent.setup();
     const { getByTestId } = renderComponent();
     const detailsSection = getByTestId('certificate-details');
     const editButton = within(detailsSection).getByLabelText(messages.editTooltip.defaultMessage);
-    userEvent.click(editButton);
+    await user.click(editButton);
 
     await waitFor(() => {
       expect(store.getState().certificates.componentMode).toBe(MODE_STATES.editAll);

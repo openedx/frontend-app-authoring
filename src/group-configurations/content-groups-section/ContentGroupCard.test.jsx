@@ -48,18 +48,19 @@ describe('<ContentGroupCard />', () => {
     expect(getByTestId('content-group-card-header-delete')).toBeInTheDocument();
   });
 
-  it('expands/collapses the container group content on title click', () => {
+  it('expands/collapses the container group content on title click', async () => {
+    const user = userEvent.setup();
     const {
       getByText, queryByTestId, getByTestId, queryByText,
     } = renderComponent();
     const cardTitle = getByTestId('configuration-card-header-button');
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(queryByTestId('content-group-card-content')).toBeInTheDocument();
     expect(
       queryByText(rootMessages.notInUse.defaultMessage),
     ).not.toBeInTheDocument();
 
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(queryByTestId('content-group-card-content')).not.toBeInTheDocument();
     expect(getByText(rootMessages.notInUse.defaultMessage)).toBeInTheDocument();
   });
@@ -80,14 +81,15 @@ describe('<ContentGroupCard />', () => {
     expect(usageBlock).toBeInTheDocument();
   });
 
-  it('renders group controls without access to units', () => {
+  it('renders group controls without access to units', async () => {
+    const user = userEvent.setup();
     const { queryByText, getByTestId } = renderComponent();
     expect(
       queryByText(commonMessages.accessTo.defaultMessage),
     ).not.toBeInTheDocument();
 
     const cardTitle = getByTestId('configuration-card-header-button');
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(getByTestId('configuration-card-usage-empty')).toBeInTheDocument();
   });
 });

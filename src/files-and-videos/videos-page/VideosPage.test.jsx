@@ -6,7 +6,6 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
@@ -246,7 +245,7 @@ describe('Videos page', () => {
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
-            userEvent.upload(addFilesButton, file);
+            fireEvent.change(addFilesButton, { target: { files: [file] } });
           });
           const addStatus = store.getState().videos.addingStatus;
           expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -265,7 +264,7 @@ describe('Videos page', () => {
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
-            userEvent.upload(addFilesButton, file);
+            fireEvent.change(addFilesButton, { target: { files: [file] } });
           });
           await waitFor(() => {
             const addStatus = store.getState().videos.addingStatus;
@@ -296,7 +295,7 @@ describe('Videos page', () => {
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
-            userEvent.upload(addFilesButton, file);
+            fireEvent.change(addFilesButton, { target: { files: [file] } });
           });
 
           await waitFor(() => {
@@ -612,7 +611,7 @@ describe('Videos page', () => {
 
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
         await act(async () => {
-          userEvent.upload(addFilesButton, file);
+          fireEvent.change(addFilesButton, { target: { files: [file] } });
         });
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;
@@ -629,7 +628,7 @@ describe('Videos page', () => {
 
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
         await act(async () => {
-          userEvent.upload(addFilesButton, file);
+          fireEvent.change(addFilesButton, { target: { files: [file] } });
         });
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;
@@ -659,9 +658,9 @@ describe('Videos page', () => {
         axiosUnauthenticateMock.onPut('http://testing.org').reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
-        });
+
+        fireEvent.change(addFilesButton, { target: { files: [file] } });
+
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;
           expect(addStatus).toEqual(RequestStatus.FAILED);

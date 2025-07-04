@@ -73,6 +73,7 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('calls onCreate when the "Create" button is clicked with a valid form', async () => {
+    const user = userEvent.setup();
     const {
       getByRole, getByPlaceholderText, queryByText,
     } = renderComponent();
@@ -80,12 +81,12 @@ describe('<ContentGroupForm />', () => {
     const newGroupInput = getByPlaceholderText(
       messages.newGroupInputPlaceholder.defaultMessage,
     );
-    userEvent.type(newGroupInput, newGroupNameText);
+    await user.type(newGroupInput, newGroupNameText);
     const createButton = getByRole('button', {
       name: messages.createButton.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(onCreateClickMock).toHaveBeenCalledTimes(1);
@@ -96,17 +97,18 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('shows error when the "Create" button is clicked with an invalid form', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, getByText } = renderComponent();
-    const newGroupNameText = '';
     const newGroupInput = getByPlaceholderText(
       messages.newGroupInputPlaceholder.defaultMessage,
     );
-    userEvent.type(newGroupInput, newGroupNameText);
+    expect(newGroupInput).toBeInTheDocument();
+    await user.clear(newGroupInput);
     const createButton = getByRole('button', {
       name: messages.createButton.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(
@@ -116,6 +118,7 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('calls onEdit when the "Save" button is clicked with a valid form', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, queryByText } = renderComponent({
       isEditMode: true,
       overrideValue: 'overrideValue',
@@ -124,12 +127,12 @@ describe('<ContentGroupForm />', () => {
     const newGroupInput = getByPlaceholderText(
       messages.newGroupInputPlaceholder.defaultMessage,
     );
-    userEvent.type(newGroupInput, newGroupNameText);
+    await user.type(newGroupInput, newGroupNameText);
     const saveButton = getByRole('button', {
       name: messages.saveButton.defaultMessage,
     });
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(
@@ -140,6 +143,7 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('shows error when the "Save" button is clicked with an invalid duplicate form', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, getByText } = renderComponent({
       isEditMode: true,
       overrideValue: contentGroupsMock.groups[0].name,
@@ -148,13 +152,13 @@ describe('<ContentGroupForm />', () => {
     const newGroupInput = getByPlaceholderText(
       messages.newGroupInputPlaceholder.defaultMessage,
     );
-    userEvent.clear(newGroupInput);
-    userEvent.type(newGroupInput, newGroupNameText);
+    await user.clear(newGroupInput);
+    await user.type(newGroupInput, newGroupNameText);
     const saveButton = getByRole('button', {
       name: messages.saveButton.defaultMessage,
     });
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(
@@ -164,12 +168,13 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('calls onCancel when the "Cancel" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const cancelButton = getByRole('button', {
       name: messages.cancelButton.defaultMessage,
     });
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(onCancelClickMock).toHaveBeenCalledTimes(1);
   });

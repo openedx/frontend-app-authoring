@@ -143,10 +143,11 @@ describe('AppList', () => {
     });
 
     test('selectApp is called when an app is clicked', async () => {
+      const user = userEvent.setup();
       renderComponent();
 
-      await waitFor(() => {
-        userEvent.click(screen.getByLabelText('Select Piazza'));
+      await waitFor(async () => {
+        await user.click(screen.getByLabelText('Select Piazza'));
         const clickedCard = screen.getByRole('radio', { checked: true });
         expect(within(clickedCard).queryByLabelText('Select Piazza')).toBeInTheDocument();
       });
