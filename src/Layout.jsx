@@ -49,6 +49,15 @@ const fetchSidebarItems = async () => {
   return data;
 };
 
+const fetchHeaderButtons = async () => {
+  const response = await fetch('http://localhost:3003/headerButtons');
+  if (!response.ok) {
+    throw new Error('Failed to fetch header buttons');
+  }
+  const data = await response.json();
+  return data;
+};
+
 const Layout = () => {
   // const [templateData, setTemplateData] = useState<TemplateData | undefined>(undefined)
   // const [headerData, setHeaderData] = useState(undefined);
@@ -79,6 +88,7 @@ const Layout = () => {
     },
   ]);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
+  const [headerButtons, setHeaderButtons] = useState({});
 
   // useEffect(() => {
   //   let isMounted = true;
@@ -108,6 +118,11 @@ const Layout = () => {
             icon: iconMap[item.iconName] || null,
           }));
           setSidebarItems((prev) => [prev[0], ...formattedApiItems]);
+        }
+
+        const headerButtonsData = await fetchHeaderButtons();
+        if (isMounted && headerButtonsData) {
+          setHeaderButtons(headerButtonsData);
         }
       } catch (error) {
         // Optionally log error
@@ -230,13 +245,13 @@ const Layout = () => {
   //   ],
   // };
 
-  const headerButtons = {
-    reSync: true,
-    contextSwitcher: true,
-    help: true,
-    translation: true,
-    notification: true,
-  };
+  // const headerButtons = {
+  //   reSync: true,
+  //   contextSwitcher: true,
+  //   help: true,
+  //   translation: true,
+  //   notification: true,
+  // };
 
   const handleLanguageChange = () => {
     const { pathname } = location;

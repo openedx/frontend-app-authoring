@@ -1,0 +1,9 @@
+{
+    "headerButtons" : {
+        "reSync": true,
+        "contextSwitcher": true,
+        "help": true,
+        "translation": true,
+        "notification": true
+    }
+}
