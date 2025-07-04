@@ -37,6 +37,7 @@ import {
 } from './data/selectors';
 import {
   changeEditTitleFormOpen,
+  setXBlockPublishState,
   updateMovedXBlockParams,
   updateQueryPendingStatus,
 } from './data/slice';
@@ -163,6 +164,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(updateMovedXBlockParams({ isSuccess: false }));
   };
 
+  const resetXBlockPublishState = () => {
+    dispatch(setXBlockPublishState(false));
+  };
+
   const handleNavigateToTargetUnit = () => {
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
@@ -248,6 +253,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
     setAddComponentTemplateData,
+    resetXBlockPublishState,
   };
 };
 
