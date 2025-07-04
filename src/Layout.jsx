@@ -1,21 +1,22 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import 'titaned-lib/dist/index.css';
 // import { fetchTemplateData } from 'utils/themeService';
 import './index.scss';
-import {
-  Analytics,
-  Assignment,
-  Assistant,
-  Calendar,
-  FolderShared,
-  Home,
-  LibraryAdd,
-  LibraryBooks,
-  Lightbulb,
-  LmsBook,
-} from '@openedx/paragon/icons';
+import * as ParagonIcons from '@openedx/paragon/icons';
+// import {
+//   Analytics,
+//   Assignment,
+//   Assistant,
+//   Calendar,
+//   FolderShared,
+//   Home,
+//   LibraryAdd,
+//   LibraryBooks,
+//   Lightbulb,
+//   LmsBook,
+// } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
 import { MainHeader, Sidebar, SidebarProvider } from 'titaned-lib';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
@@ -27,17 +28,17 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 // Icon mapping for API icon names
-const iconMap = {
-  Analytics: <Analytics />,
-  Assignment: <Assignment />,
-  Assistant: <Assistant />,
-  Calendar: <Calendar />,
-  FolderShared: <FolderShared />,
-  LibraryAdd: <LibraryAdd />,
-  LibraryBooks: <LibraryBooks />,
-  Lightbulb: <Lightbulb />,
-  LmsBook: <LmsBook />,
-};
+// const iconMap = {
+//   Analytics: <Analytics />,
+//   Assignment: <Assignment />,
+//   Assistant: <Assistant />,
+//   Calendar: <Calendar />,
+//   FolderShared: <FolderShared />,
+//   LibraryAdd: <LibraryAdd />,
+//   LibraryBooks: <LibraryBooks />,
+//   Lightbulb: <Lightbulb />,
+//   LmsBook: <LmsBook />,
+// };
 
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
@@ -75,11 +76,13 @@ const Layout = () => {
     {
       label: intl.formatMessage(messages.sidebarDashboardTitle),
       path: '/home',
-      icon: <Home />,
+      icon: <ParagonIcons.Home />,
     },
   ]);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
   const [headerButtons, setHeaderButtons] = useState({});
+
+  const DefaultIcon = ParagonIcons.Home;
 
   // useEffect(() => {
   //   let isMounted = true;
@@ -106,7 +109,9 @@ const Layout = () => {
           const formattedApiItems = apiItems.sidemenu.map((item) => ({
             label: item.label,
             path: item.path,
-            icon: iconMap[item.iconName] || null,
+            icon: ParagonIcons[item.iconName]
+              ? React.createElement(ParagonIcons[item.iconName])
+              : <DefaultIcon />,
           }));
           setSidebarItems((prev) => [prev[0], ...formattedApiItems]);
         }
