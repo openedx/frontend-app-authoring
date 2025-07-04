@@ -79,8 +79,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
-    sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+    sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: newBlockId });
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, newBlockId]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);
