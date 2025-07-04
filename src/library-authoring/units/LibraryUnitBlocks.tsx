@@ -182,6 +182,12 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
         }}
         isClickable={!readOnly}
         onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            console.log('Enter key pressed', e.detail);
+            handleComponentSelection(e.detail);
+          }
+        }}
         disabled={readOnly}
         cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
       >
