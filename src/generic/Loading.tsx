@@ -1,9 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Spinner } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-export const LoadingSpinner = ({ size }) => (
+interface LoadingSpinnerProps {
+  size?: string;
+}
+
+export const LoadingSpinner = ({ size }: LoadingSpinnerProps) => (
   <Spinner
     animation="border"
     role="status"
@@ -18,14 +20,6 @@ export const LoadingSpinner = ({ size }) => (
     )}
   />
 );
-
-LoadingSpinner.defaultProps = {
-  size: undefined,
-};
-
-LoadingSpinner.propTypes = {
-  size: PropTypes.string,
-};
 
 const Loading = () => (
   <div className="d-flex justify-content-center align-items-center flex-column vh-100">
