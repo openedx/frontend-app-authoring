@@ -39,6 +39,13 @@ import {
   AccessManagedXBlockDataTypes,
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
+import messages from './messages';
+import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
+import { useIframeContent } from '../../generic/hooks/useIframeContent';
+import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
+import EditorPage from '../../editors/EditorPage';
+import { setXBlockPublishState } from '../data/slice';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
@@ -80,6 +87,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     closeXBlockEditorModal();
     closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: newBlockId });
+    // This ensures the publish button is able
+    dispatch(setXBlockPublishState(false));
   }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, newBlockId]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
