@@ -13,8 +13,7 @@ import {
 import { DeleteOutline, InfoOutline, Add } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 
 import * as widgetHooks from '../hooks';
@@ -27,10 +26,8 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 /**
  * Collapsible Form widget controlling video source as well as fallback sources
  */
-const VideoSourceWidget = ({
-  // injected
-  intl,
-}) => {
+const VideoSourceWidget = () => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const {
     videoId,
@@ -160,10 +157,5 @@ const VideoSourceWidget = ({
     </CollapsibleFormWidget>
   );
 };
-VideoSourceWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
-};
 
-export const VideoSourceWidgetInternal = VideoSourceWidget; // For testing only
-export default injectIntl(VideoSourceWidget);
+export default VideoSourceWidget;
