@@ -1,49 +1,60 @@
 {
-  "sidemenu": [
-    {
-      "label": "Create New Course",
-      "path": "/new-course",
-      "iconName": "LibraryAdd"
-    },
-    {
-      "label": "My Courses",
-      "path": "/my-courses",
-      "iconName": "LmsBook"
-    },
-    {
-      "label": "Content Libraries",
-      "path": "/libraries",
-      "iconName": "LibraryBooks"
-    },
-    {
-      "label": "Calendar",
-      "path": "/calendar",
-      "iconName": "Calendar"
-    },
-    {
-      "label": "Class Planner",
-      "path": "/class-planner",
-      "iconName": "Analytics"
-    },
-    {
-      "label": "Insights & Reports",
-      "path": "/reports",
-      "iconName": "Lightbulb"
-    },
-    {
-      "label": "Titan AI",
-      "path": "/ai-assistant",
-      "iconName": "Assistant"
-    },
-    {
-      "label": "Shared Resources",
-      "path": "/shared-resources",
-      "iconName": "FolderShared"
-    },
-    {
-      "label": "Taxonomies",
-      "path": "/taxonomies",
-      "iconName": "Assignment"
+  "navigation": {
+    "sidemenu": [
+      {
+        "label": "Create New Course",
+        "path": "/new-course",
+        "iconName": "LibraryAdd"
+      },
+      {
+        "label": "My Courses",
+        "path": "/my-courses",
+        "iconName": "LmsBook"
+      },
+      {
+        "label": "Content Libraries",
+        "path": "/libraries",
+        "iconName": "LibraryBooks"
+      },
+      {
+        "label": "Calendar",
+        "path": "/calendar",
+        "iconName": "Calendar"
+      },
+      {
+        "label": "Class Planner",
+        "path": "/class-planner",
+        "iconName": "Analytics"
+      },
+      {
+        "label": "Insights & Reports",
+        "path": "/reports",
+        "iconName": "Lightbulb"
+      },
+      {
+        "label": "Titan AI",
+        "path": "/ai-assistant",
+        "iconName": "Assistant"
+      },
+      {
+        "label": "Shared Resources",
+        "path": "/shared-resources",
+        "iconName": "FolderShared"
+      },
+      {
+        "label": "Taxonomies",
+        "path": "/taxonomies",
+        "iconName": "Assignment"
+      }
+    ],
+    "header": {
+      "headerButtons": {
+        "reSync": true,
+        "contextSwitcher": true,
+        "help": true,
+        "translation": true,
+        "notification": true
+      }
     }
-  ]
+  }
 }

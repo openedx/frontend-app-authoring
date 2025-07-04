@@ -40,19 +40,10 @@ const iconMap = {
 };
 
 // API to fetch sidebar items
-const fetchSidebarItems = async () => {
-  const response = await fetch('http://localhost:3002/sidemenu');
+const fetchNavigationItems = async () => {
+  const response = await fetch('http://localhost:3002/navigation');
   if (!response.ok) {
-    throw new Error('Failed to fetch sidebar menu');
-  }
-  const data = await response.json();
-  return data;
-};
-
-const fetchHeaderButtons = async () => {
-  const response = await fetch('http://localhost:3003/headerButtons');
-  if (!response.ok) {
-    throw new Error('Failed to fetch header buttons');
+    throw new Error('Failed to fetch Navigation Items');
   }
   const data = await response.json();
   return data;
@@ -110,9 +101,9 @@ const Layout = () => {
     let isMounted = true;
     const fetchMenu = async () => {
       try {
-        const apiItems = await fetchSidebarItems();
-        if (isMounted && Array.isArray(apiItems)) {
-          const formattedApiItems = apiItems.map((item) => ({
+        const apiItems = await fetchNavigationItems();
+        if (isMounted && apiItems.sidemenu) {
+          const formattedApiItems = apiItems.sidemenu.map((item) => ({
             label: item.label,
             path: item.path,
             icon: iconMap[item.iconName] || null,
@@ -120,9 +111,8 @@ const Layout = () => {
           setSidebarItems((prev) => [prev[0], ...formattedApiItems]);
         }
 
-        const headerButtonsData = await fetchHeaderButtons();
-        if (isMounted && headerButtonsData) {
-          setHeaderButtons(headerButtonsData);
+        if (isMounted && apiItems.header.headerButtons) {
+          setHeaderButtons(apiItems.header.headerButtons);
         }
       } catch (error) {
         // Optionally log error
