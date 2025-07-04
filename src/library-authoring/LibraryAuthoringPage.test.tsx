@@ -398,7 +398,7 @@ describe('<LibraryAuthoringPage />', () => {
     });
   }, 10000);
 
-  it('should open and close the component sidebar', async () => {
+  it('should open, close and re-open the component sidebar', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
@@ -416,6 +416,10 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(closeButton);
 
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
   });
 
   it('should open component sidebar, showing manage tab on clicking add to collection menu item - component', async () => {

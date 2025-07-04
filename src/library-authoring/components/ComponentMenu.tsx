@@ -10,7 +10,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 
 import { getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
 import {
@@ -36,11 +36,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const {
     sidebarItemInfo,
-    openComponentInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
+    openItemSidebar,
   } = useSidebarContext();
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const { insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -93,9 +93,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   const handleEdit = useCallback(() => {
-    navigateTo({ selectedItemId: usageKey });
+    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     openComponentEditor(usageKey);
-  }, [usageKey, navigateTo]);
+  }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
@@ -104,13 +104,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: usageKey });
+    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     scheduleJumpToCollection();
   }, [
     scheduleJumpToCollection,
-    openComponentInfoSidebar,
     usageKey,
-    navigateTo,
+    openItemSidebar,
   ]);
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
