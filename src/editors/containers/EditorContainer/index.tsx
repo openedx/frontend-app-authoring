@@ -78,8 +78,10 @@ const EditorContainer: React.FC<Props> = ({
   });
 
   const onSave = () => {
-    setSaved(true);
-    handleSave();
+    if (isDirty()) {
+      setSaved(true);
+      handleSave();
+    }
   };
   // Stops user from navigating away if they have unsaved changes.
   usePromptIfDirty(() => {
