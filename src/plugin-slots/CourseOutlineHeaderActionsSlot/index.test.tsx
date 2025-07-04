@@ -1,5 +1,4 @@
-import { shallow } from '@edx/react-unit-test-utils';
-
+import { render, initializeMocks } from '@src/testUtils';
 import CourseOutlineHeaderActionsSlot from '.';
 
 jest.mock('CourseAuthoring/course-outline/header-navigations/HeaderNavigations', () => 'HeaderNavigations');
@@ -29,14 +28,17 @@ const headerNavProps = {
 };
 
 describe('CourseOutlineHeaderActionsSlot', () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => initializeMocks());
 
   test('pluginProps are set correctly', () => {
-    const wrapper = shallow(<CourseOutlineHeaderActionsSlot
+    const { container } = render(<CourseOutlineHeaderActionsSlot
       sections={[]}
       hasSections={false}
       {...headerNavProps}
     />);
-    expect(wrapper.snapshot).toMatchSnapshot();
+    expect(container.querySelector('pluginslot')).toBeInTheDocument();
+    expect(container.querySelector('pluginslot')?.getAttribute('idaliases')).toBe('course_outline_header_actions_slot');
+    expect(container.querySelector('pluginslot')?.getAttribute('id')).toBe('org.openedx.frontend.authoring.course_outline_header_actions.v1');
+    expect(container.querySelector('HeaderNavigations')).toBeInTheDocument();
   });
 });
