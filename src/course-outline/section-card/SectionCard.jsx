@@ -175,6 +175,11 @@ const SectionCard = ({
     onOrderChange(index, index + 1);
   };
 
+  /**
+  * Callback to handle the selection of a library subsection to be imported to course.
+  * @param {Object} selectedSubection - The selected subsection details.
+  * @returns {void}
+  */
   const handleSelectLibrarySubsection = useCallback((selectedSubection) => {
     onAddSubsectionFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
