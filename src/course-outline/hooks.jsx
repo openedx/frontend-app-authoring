@@ -55,8 +55,9 @@ import {
   setUnitOrderListQuery,
   pasteClipboardContent,
   dismissNotificationQuery,
-  addUnitFromLibrary, syncDiscussionsTopics,
+  syncDiscussionsTopics,
 } from './data/thunk';
+import { useCreateCourseBlock } from './data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -136,9 +137,15 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(addNewUnitQuery(subsectionId, openUnitPage));
   };
 
-  const handleAddUnitFromLibrary = (body) => {
-    dispatch(addUnitFromLibrary(body, openUnitPage));
-  };
+  /**
+  * import a unit block from library and redirect user to this unit page.
+  */
+  const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
+
+  // TODO: reload course outline data to show imported subsection
+  const handleAddSubsectionFromLibrary = useCreateCourseBlock();
+  // TODO: reload course outline data to show imported section
+  const handleAddSectionFromLibrary = useCreateCourseBlock();
 
   const headerNavigationsActions = {
     handleNewSection: handleNewSectionSubmit,
@@ -358,6 +365,8 @@ const useCourseOutline = ({ courseId }) => {
     openUnitPage,
     handleNewUnitSubmit,
     handleAddUnitFromLibrary,
+    handleAddSubsectionFromLibrary,
+    handleAddSectionFromLibrary,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,

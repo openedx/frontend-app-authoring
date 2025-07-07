@@ -181,6 +181,7 @@ export async function restartIndexingOnCourse(reindexLink) {
  * @property {boolean} hasPartitionGroupComponents
  * @property {object} userPartitionInfo
  * @property {boolean} enableCopyPasteUnits
+ * @property {boolean} shouldScroll
  */
 
 /**
