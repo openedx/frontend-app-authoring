@@ -34,3 +34,5 @@ check if your PR meets these recommendations before asking for a review:
 - [ ] Tests should use the helpers in `src/testUtils.tsx` (specifically `initializeMocks`)
 - [ ] Do not add new fields to the Redux state/store. Use React Context to share state among multiple components.
 - [ ] Use React Query to load data from REST APIs. See any `apiHooks.ts` in this repo for examples.
+- [ ] All new i18n messages in `messages.ts` files have a `description` for translators to use.
+- [ ] Imports avoid using `../`. To import from parent folders, use `@src`, e.g. `import { initializeMocks } from '@src/testUtils';` instead of `from '../../../../testUtils'`
