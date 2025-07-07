@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -57,6 +57,7 @@ import { ContainerType } from '../generic/key-utils';
 import { ComponentPicker } from '../library-authoring';
 import { ContentType } from '../library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '../constants';
+import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -226,6 +227,16 @@ const CourseOutline = ({ courseId }) => {
       );
     }
   };
+
+  const handleSelectLibrarySection = useCallback((/** @type {{ usageKey: any; }} */ selectedSection) => {
+    handleAddSectionFromLibrary.mutateAsync({
+      type: COMPONENT_TYPES.libraryV2,
+      category: ContainerType.Chapter,
+      parentLocator: courseId,
+      libraryContentKey: selectedSection.usageKey,
+    });
+    closeAddLibrarySectionModal();
+  }, []);
 
   useEffect(() => {
     setSections(sectionsList);
@@ -507,7 +518,7 @@ const CourseOutline = ({ courseId }) => {
             showOnlyPublished
             extraFilter={['block_type = "section"']}
             componentPickerMode="single"
-            onComponentSelected={() => {}}
+            onComponentSelected={handleSelectLibrarySection}
             visibleTabs={[ContentType.sections]}
           />
         </StandardModal>
