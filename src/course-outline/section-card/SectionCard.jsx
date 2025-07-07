@@ -1,6 +1,6 @@
 // @ts-check
 import React, {
-  useContext, useEffect, useState, useRef,
+  useContext, useEffect, useState, useRef, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -24,6 +24,7 @@ import OutlineAddChildButtons from '../OutlineAddChildButtons';
 import { ContainerType } from '../../generic/key-utils';
 import { ComponentPicker } from '../../library-authoring';
 import { ContentType } from '../../library-authoring/routes';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 
 const SectionCard = ({
   section,
@@ -41,6 +42,7 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onNewSubsectionSubmit,
+  onAddSubsectionFromLibrary,
   onOrderChange,
 }) => {
   const currentRef = useRef(null);
@@ -173,6 +175,16 @@ const SectionCard = ({
     onOrderChange(index, index + 1);
   };
 
+  const handleSelectLibrarySubsection = useCallback((selectedSubection) => {
+    onAddSubsectionFromLibrary({
+      type: COMPONENT_TYPES.libraryV2,
+      category: ContainerType.Sequential,
+      parentLocator: id,
+      libraryContentKey: selectedSubection.usageKey,
+    });
+    closeAddLibrarySubsectionModal();
+  }, []);
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
@@ -280,7 +292,7 @@ const SectionCard = ({
           showOnlyPublished
           extraFilter={['block_type = "subsection"']}
           componentPickerMode="single"
-          onComponentSelected={() => {}}
+          onComponentSelected={handleSelectLibrarySubsection}
           visibleTabs={[ContentType.subsections]}
         />
       </StandardModal>
