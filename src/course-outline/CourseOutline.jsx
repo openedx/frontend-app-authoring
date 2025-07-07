@@ -56,6 +56,7 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { ContainerType } from '../generic/key-utils';
 import { ComponentPicker } from '../library-authoring';
 import { ContentType } from '../library-authoring/routes';
+import { NOTIFICATION_MESSAGES } from '../constants';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -108,6 +109,8 @@ const CourseOutline = ({ courseId }) => {
     handleNewSubsectionSubmit,
     handleNewUnitSubmit,
     handleAddUnitFromLibrary,
+    handleAddSubsectionFromLibrary,
+    handleAddSectionFromLibrary,
     getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
@@ -361,6 +364,7 @@ const CourseOutline = ({ courseId }) => {
                                     isSectionsExpanded={isSectionsExpanded}
                                     onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
+                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -389,7 +393,7 @@ const CourseOutline = ({ courseId }) => {
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
                                           onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary}
+                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
                                         >
@@ -510,8 +514,10 @@ const CourseOutline = ({ courseId }) => {
       </Container>
       <div className="alert-toast">
         <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
+          // Show processing taost if any mutation is running
+          isShow={isShowProcessingNotification || handleAddUnitFromLibrary.isPending || handleAddSubsectionFromLibrary.isPending}
+          // HACK: Use saving as default title till we have a need for better messages
+          title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
         />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
