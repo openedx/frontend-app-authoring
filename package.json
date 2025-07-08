@@ -104,7 +104,6 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@edx/react-unit-test-utils": "^4.0.0",
     "@edx/stylelint-config-edx": "2.3.3",
     "@edx/typescript-config": "^1.0.1",
     "@testing-library/jest-dom": "^6.6.3",
