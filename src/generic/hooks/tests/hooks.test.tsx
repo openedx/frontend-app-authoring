@@ -3,7 +3,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { act, renderHook } from '@testing-library/react';
 import { logError } from '@edx/frontend-platform/logging';
 import { iframeMessageTypes } from '../../../constants';
-import { useIframeBehavior, ifameBehaviorState } from '../useIframeBehavior';
+import { useIframeBehavior, iframeBehaviorState } from '../useIframeBehavior';
 import { useLoadBearingHook } from '../useLoadBearingHook';
 
 jest.useFakeTimers();
@@ -22,10 +22,10 @@ describe('useIframeBehavior', () => {
   const iframeRef = { current: { contentWindow: null } as HTMLIFrameElement };
 
   beforeEach(() => {
-    jest.spyOn(ifameBehaviorState, 'iframeHeight').mockImplementation(() => [0, setIframeHeight]);
-    jest.spyOn(ifameBehaviorState, 'hasLoaded').mockImplementation(() => [false, setHasLoaded]);
-    jest.spyOn(ifameBehaviorState, 'showError').mockImplementation(() => [false, setShowError]);
-    jest.spyOn(ifameBehaviorState, 'windowTopOffset').mockImplementation(() => [null, setWindowTopOffset]);
+    jest.spyOn(iframeBehaviorState, 'iframeHeight').mockImplementation(() => [0, setIframeHeight]);
+    jest.spyOn(iframeBehaviorState, 'hasLoaded').mockImplementation(() => [false, setHasLoaded]);
+    jest.spyOn(iframeBehaviorState, 'showError').mockImplementation(() => [false, setShowError]);
+    jest.spyOn(iframeBehaviorState, 'windowTopOffset').mockImplementation(() => [null, setWindowTopOffset]);
 
     window.scrollTo = jest.fn((x: number | ScrollToOptions, y?: number): void => {
       const scrollY = typeof x === 'number' ? y : (x as ScrollToOptions).top || 0;
@@ -43,7 +43,7 @@ describe('useIframeBehavior', () => {
 
   it('scrolls to previous position on video fullscreen exit', () => {
     const mockWindowTopOffset = 100;
-    jest.spyOn(ifameBehaviorState, 'windowTopOffset').mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
+    jest.spyOn(iframeBehaviorState, 'windowTopOffset').mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {

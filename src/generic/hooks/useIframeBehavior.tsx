@@ -6,11 +6,17 @@ import { iframeMessageTypes } from '../../constants';
 import { UseIFrameBehaviorReturnTypes, UseIFrameBehaviorTypes } from '../types';
 import { useEventListener } from './useEventListener';
 
-export const ifameBehaviorState = StrictDict({
-    iframeHeight: (val) => useState<number>(val), // eslint-disable-line
-    hasLoaded: (val) => useState<boolean>(val), // eslint-disable-line
-    showError: (val) => useState<boolean>(val), // eslint-disable-line
-    windowTopOffset: (val) => useState<number | null>(val), // eslint-disable-line
+/**
+ * Internal state hooks for useIFrameBehavior.
+ * Defined and exported here so they can be mocked/manipulated in tests.
+ */
+export const iframeBehaviorState = StrictDict({
+  /* eslint-disable react-hooks/rules-of-hooks */
+  iframeHeight: (val) => useState<number>(val),
+  hasLoaded: (val) => useState<boolean>(val),
+  showError: (val) => useState<boolean>(val),
+  windowTopOffset: (val) => useState<number | null>(val),
+  /* eslint-enable react-hooks/rules-of-hooks */
 });
 
 /**
@@ -36,10 +42,10 @@ export const useIframeBehavior = ({
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
 
-  const [iframeHeight, setIframeHeight] = ifameBehaviorState.iframeHeight(0);
-  const [hasLoaded, setHasLoaded] = ifameBehaviorState.hasLoaded(false);
-  const [showError, setShowError] = ifameBehaviorState.showError(false);
-  const [windowTopOffset, setWindowTopOffset] = ifameBehaviorState.windowTopOffset(null);
+  const [iframeHeight, setIframeHeight] = iframeBehaviorState.iframeHeight(0);
+  const [hasLoaded, setHasLoaded] = iframeBehaviorState.hasLoaded(false);
+  const [showError, setShowError] = iframeBehaviorState.showError(false);
+  const [windowTopOffset, setWindowTopOffset] = iframeBehaviorState.windowTopOffset(null);
 
   const receiveMessage = useCallback((event: MessageEvent) => {
     if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
