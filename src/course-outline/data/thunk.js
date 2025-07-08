@@ -56,9 +56,18 @@ import {
 } from './slice';
 import { createCourseXblock } from '../../course-unit/data/api';
 
-export function fetchCourseOutlineIndexQuery(courseId) {
+/**
+ * Action to fetch course outline.
+ *
+ * @param {*} courseId - ID of the course
+ * @param {*} silent - Whether to load the index without showing loading component
+ * @returns {Object} - Object containing fetch course outline index query success or failure status
+ */
+export function fetchCourseOutlineIndexQuery(courseId, silent=false) {
   return async (dispatch) => {
-    dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    if (!silent) {
+      dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    }
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
