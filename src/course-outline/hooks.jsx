@@ -142,10 +142,15 @@ const useCourseOutline = ({ courseId }) => {
   */
   const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
 
-  // TODO: reload course outline data to show imported subsection
-  const handleAddSubsectionFromLibrary = useCreateCourseBlock();
+  const handleAddSubsectionFromLibrary = useCreateCourseBlock(() => {
+    // TODO: Update subsection data
+    dispatch(fetchCourseOutlineIndexQuery(courseId, true));
+  });
   // TODO: reload course outline data to show imported section
-  const handleAddSectionFromLibrary = useCreateCourseBlock();
+  const handleAddSectionFromLibrary = useCreateCourseBlock(() => {
+    // TODO: Update subsection data
+    dispatch(fetchCourseOutlineIndexQuery(courseId, true));
+  });
 
   const headerNavigationsActions = {
     handleNewSection: handleNewSectionSubmit,
