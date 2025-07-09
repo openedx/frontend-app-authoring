@@ -16,7 +16,7 @@ export const getCourseVerticalChildren = (state) => state.courseUnit.courseVerti
 export const getCourseOutlineInfo = (state) => state.courseUnit.courseOutlineInfo;
 export const getCourseOutlineInfoLoadingStatus = (state) => state.courseUnit.courseOutlineInfoLoadingStatus;
 export const getMovedXBlockParams = (state) => state.courseUnit.movedXBlockParams;
-const getLoadingStatuses = (state) => state.courseUnit.loadingStatus;
+export const getLoadingStatuses = (state) => state.courseUnit.loadingStatus;
 export const getIsLoading = createSelector(
   [getLoadingStatuses],
   loadingStatus => Object.values(loadingStatus)

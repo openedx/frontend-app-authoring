@@ -42,6 +42,11 @@ export interface XBlockContainerIframeProps {
   courseId: string;
   blockId: string;
   isUnitVerticalType: boolean,
+  courseUnitLoadingStatus: {
+    fetchUnitLoadingStatus: string;
+    fetchVerticalChildrenLoadingStatus: string;
+    fetchXBlockDataLoadingStatus: string;
+  };
   unitXBlockActions: {
     handleDelete: (XBlockId: string | null) => void;
     handleDuplicate: (XBlockId: string | null) => void;

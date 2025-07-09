@@ -37,9 +37,16 @@ import { useIframeContent } from '../../generic/hooks/useIframeContent';
 import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
 import VideoSelectorPage from '../../editors/VideoSelectorPage';
 import EditorPage from '../../editors/EditorPage';
+import { RequestStatus } from '../../data/constants';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
-  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
+  courseId,
+  blockId,
+  unitXBlockActions,
+  courseVerticalChildren,
+  handleConfigureSubmit,
+  isUnitVerticalType,
+  courseUnitLoadingStatus,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -69,6 +76,23 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   useEffect(() => {
     setIframeRef(iframeRef);
   }, [setIframeRef]);
+
+  useEffect(() => {
+    const iframe = iframeRef?.current;
+    if (!iframe) { return undefined; }
+
+    const handleIframeLoad = () => {
+      if (courseUnitLoadingStatus.fetchUnitLoadingStatus === RequestStatus.FAILED) {
+        window.location.reload();
+      }
+    };
+
+    iframe.addEventListener('load', handleIframeLoad);
+
+    return () => {
+      iframe.removeEventListener('load', handleIframeLoad);
+    };
+  }, [iframeRef]);
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
