@@ -14,12 +14,12 @@ export const courseOutlineQueryKeys = {
  * Can also be used to import block from library by passing `libraryContentKey` in request body
  */
 export const useCreateCourseBlock = (
-  callback?: ((locator: string) => void)
+  callback?: ((locator?: string, parentLocator?: string) => void)
 ) => {
   return useMutation({
     mutationFn: createCourseXblock,
     onSettled: async (data) => {
-      callback?.(data.locator);
+      callback?.(data.locator, data.parent_locator);
     },
   });
 }

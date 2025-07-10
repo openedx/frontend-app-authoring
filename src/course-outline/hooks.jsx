@@ -10,6 +10,8 @@ import { useWaffleFlags } from '../data/apiHooks';
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
+  addSection,
+  addSubsection,
   setCurrentItem,
   setCurrentSection,
   updateSavingStatus,
@@ -58,6 +60,7 @@ import {
   syncDiscussionsTopics,
 } from './data/thunk';
 import { useCreateCourseBlock } from './data/apiHooks';
+import { getCourseItem } from './data/api';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -142,14 +145,18 @@ const useCourseOutline = ({ courseId }) => {
   */
   const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
 
-  const handleAddSubsectionFromLibrary = useCreateCourseBlock(() => {
-    // TODO: Update subsection data
-    dispatch(fetchCourseOutlineIndexQuery(courseId, true));
+  const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
+    const data = await getCourseItem(locator);
+    // Page should scroll to newly added subsection.
+    data.shouldScroll = true;
+    dispatch(addSubsection({ parentLocator, data }));
   });
-  // TODO: reload course outline data to show imported section
-  const handleAddSectionFromLibrary = useCreateCourseBlock(() => {
-    // TODO: Update subsection data
-    dispatch(fetchCourseOutlineIndexQuery(courseId, true));
+
+  const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
+    const data = await getCourseItem(locator);
+    // Page should scroll to newly added section.
+    data.shouldScroll = true;
+    dispatch(addSection(data));
   });
 
   const headerNavigationsActions = {
