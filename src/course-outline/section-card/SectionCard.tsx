@@ -1,8 +1,7 @@
 // @ts-check
 import React, {
-  useContext, useEffect, useState, useRef, useCallback,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode,
 } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -22,9 +21,31 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 import OutlineAddChildButtons from '../OutlineAddChildButtons';
 import { ContainerType } from '../../generic/key-utils';
-import { ComponentPicker } from '../../library-authoring';
+import { ComponentPicker, SelectedComponent } from '../../library-authoring';
 import { ContentType } from '../../library-authoring/routes';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
+import { Xblock } from '../data/types';
+
+interface SectionCardProps {
+  section: Xblock,
+  isSelfPaced: boolean,
+  isCustomRelativeDatesActive: boolean,
+  children: ReactNode,
+  onOpenHighlightsModal: (section: Xblock) => {},
+  onOpenPublishModal: () => {},
+  onOpenConfigureModal: () => {},
+  onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => {},
+  savingStatus: string,
+  onOpenDeleteModal: () => {},
+  onDuplicateSubmit: () => {},
+  isSectionsExpanded: boolean,
+  onNewSubsectionSubmit: (id: string) => {},
+  onAddSubsectionFromLibrary: (props: object) => {},
+  index: number,
+  canMoveItem: (oldIndex: number, newIndex: number) => boolean,
+  onOrderChange: (oldIndex: number, newIndex: number) => {},
+  resetScrollState: () => {},
+};
 
 const SectionCard = ({
   section,
@@ -45,7 +66,7 @@ const SectionCard = ({
   onAddSubsectionFromLibrary,
   onOrderChange,
   resetScrollState,
-}) => {
+}: SectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -151,7 +172,7 @@ const SectionCard = ({
     dispatch(setCurrentSection(section));
   };
 
-  const handleEditSubmit = (titleValue) => {
+  const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
       // both itemId and sectionId are same
       onEditSectionSubmit(id, id, titleValue);
@@ -182,7 +203,7 @@ const SectionCard = ({
   * @param {Object} selectedSubection - The selected subsection details.
   * @returns {void}
   */
-  const handleSelectLibrarySubsection = useCallback((selectedSubection) => {
+  const handleSelectLibrarySubsection = useCallback((selectedSubection: SelectedComponent) => {
     onAddSubsectionFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Sequential,
@@ -305,61 +326,6 @@ const SectionCard = ({
       </StandardModal>
     </>
   );
-};
-
-SectionCard.defaultProps = {
-  children: null,
-};
-
-SectionCard.propTypes = {
-  section: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
-    shouldScroll: PropTypes.bool,
-    actions: PropTypes.shape({
-      deletable: PropTypes.bool.isRequired,
-      draggable: PropTypes.bool.isRequired,
-      childAddable: PropTypes.bool.isRequired,
-      duplicable: PropTypes.bool.isRequired,
-    }).isRequired,
-    isHeaderVisible: PropTypes.bool,
-    childInfo: PropTypes.shape({
-      children: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          childInfo: PropTypes.shape({
-            children: PropTypes.arrayOf(
-              PropTypes.shape({
-                id: PropTypes.string.isRequired,
-              }),
-            ).isRequired,
-          }).isRequired,
-        }),
-      ).isRequired,
-    }).isRequired,
-  }).isRequired,
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
-  children: PropTypes.node,
-  onOpenHighlightsModal: PropTypes.func.isRequired,
-  onOpenPublishModal: PropTypes.func.isRequired,
-  onOpenConfigureModal: PropTypes.func.isRequired,
-  onEditSectionSubmit: PropTypes.func.isRequired,
-  savingStatus: PropTypes.string.isRequired,
-  onOpenDeleteModal: PropTypes.func.isRequired,
-  onDuplicateSubmit: PropTypes.func.isRequired,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  onNewSubsectionSubmit: PropTypes.func.isRequired,
-  onAddSubsectionFromLibrary: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
-  onOrderChange: PropTypes.func.isRequired,
-  resetScrollState: PropTypes.func.isRequired,
 };
 
 export default SectionCard;
