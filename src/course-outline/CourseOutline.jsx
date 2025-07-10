@@ -237,7 +237,7 @@ const CourseOutline = ({ courseId }) => {
       libraryContentKey: selectedSection.usageKey,
     });
     closeAddLibrarySectionModal();
-  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId])
+  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId]);
 
   useEffect(() => {
     setSections(sectionsList);
@@ -529,7 +529,12 @@ const CourseOutline = ({ courseId }) => {
       <div className="alert-toast">
         <ProcessingNotification
           // Show processing taost if any mutation is running
-          isShow={isShowProcessingNotification || handleAddUnitFromLibrary.isPending || handleAddSubsectionFromLibrary.isPending || handleAddSectionFromLibrary.isPending}
+          isShow={
+            isShowProcessingNotification
+            || handleAddUnitFromLibrary.isPending
+            || handleAddSubsectionFromLibrary.isPending
+            || handleAddSectionFromLibrary.isPending
+          }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
         />

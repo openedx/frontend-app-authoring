@@ -7,19 +7,18 @@ export const courseOutlineQueryKeys = {
    * Base key for data specific to a course in outline
    */
   contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
-}
+};
 
 /**
- * Hook to create an XBLOCK in a course . The `locator` is the ID of the parent block where this new XBLOCK should be created.
+ * Hook to create an XBLOCK in a course .
+ * The `locator` is the ID of the parent block where this new XBLOCK should be created.
  * Can also be used to import block from library by passing `libraryContentKey` in request body
  */
 export const useCreateCourseBlock = (
-  callback?: ((locator?: string, parentLocator?: string) => void)
-) => {
-  return useMutation({
-    mutationFn: createCourseXblock,
-    onSettled: async (data) => {
-      callback?.(data.locator, data.parent_locator);
-    },
-  });
-}
+  callback?: ((locator?: string, parentLocator?: string) => void),
+) => useMutation({
+  mutationFn: createCourseXblock,
+  onSettled: async (data) => {
+    callback?.(data.locator, data.parent_locator);
+  },
+});
