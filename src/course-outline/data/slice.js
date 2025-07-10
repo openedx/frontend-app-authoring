@@ -136,6 +136,16 @@ const slice = createSlice({
         payload,
       ];
     },
+    resetScrollField: (state) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        section.shouldScroll = false;
+        section.childInfo.children.map((subsection) => {
+          subsection.shouldScroll = false;
+          return subsection;
+        });
+        return section;
+      });
+    },
     addSubsection: (state, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id === payload.parentLocator) {
@@ -226,6 +236,7 @@ export const {
   setPasteFileNotices,
   removePasteFileNotices,
   dismissError,
+  resetScrollField,
 } = slice.actions;
 
 export const {

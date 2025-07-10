@@ -156,7 +156,7 @@ const UnitCard = ({
     if (currentRef.current && (section.shouldScroll || unit.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
-      scrollToElement(currentRef.current, alignWithTop);
+      scrollToElement(currentRef.current, alignWithTop, true);
     }
   }, [isScrolledToElement]);
 

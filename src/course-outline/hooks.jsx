@@ -14,6 +14,7 @@ import {
   addSubsection,
   setCurrentItem,
   setCurrentSection,
+  resetScrollField,
   updateSavingStatus,
 } from './data/slice';
 import {
@@ -151,6 +152,10 @@ const useCourseOutline = ({ courseId }) => {
     data.shouldScroll = true;
     dispatch(addSubsection({ parentLocator, data }));
   });
+
+  const resetScrollState = () => {
+    dispatch(resetScrollField());
+  };
 
   const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
     const data = await getCourseItem(locator);
@@ -394,6 +399,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
+    resetScrollState,
   };
 };
 
