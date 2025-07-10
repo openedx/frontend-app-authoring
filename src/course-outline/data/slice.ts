@@ -3,36 +3,35 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { RequestStatus } from '../../data/constants';
+import { CourseOutlineState } from './types';
 
-const slice = createSlice({
-  name: 'courseOutline',
-  initialState: {
+const initialState = {
     loadingStatus: {
-      outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
-      reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
-      fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
-      courseLaunchQueryStatus: RequestStatus.IN_PROGRESS,
+        outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+        reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+        fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
+        courseLaunchQueryStatus: RequestStatus.IN_PROGRESS,
     },
     errors: {
-      outlineIndexApi: null,
-      reindexApi: null,
-      sectionLoadingApi: null,
-      courseLaunchApi: null,
+        outlineIndexApi: null,
+        reindexApi: null,
+        sectionLoadingApi: null,
+        courseLaunchApi: null,
     },
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
-      courseReleaseDate: '',
-      highlightsEnabledForMessaging: false,
-      isSelfPaced: false,
-      checklist: {
-        totalCourseLaunchChecks: 0,
-        completedCourseLaunchChecks: 0,
-        totalCourseBestPracticesChecks: 0,
-        completedCourseBestPracticesChecks: 0,
-      },
-      videoSharingEnabled: false,
-      videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
+        courseReleaseDate: '',
+        highlightsEnabledForMessaging: false,
+        isSelfPaced: false,
+        checklist: {
+            totalCourseLaunchChecks: 0,
+            completedCourseLaunchChecks: 0,
+            totalCourseBestPracticesChecks: 0,
+            completedCourseBestPracticesChecks: 0,
+        },
+        videoSharingEnabled: false,
+        videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
     },
     sectionsList: [],
     isCustomRelativeDatesActive: false,
@@ -40,97 +39,101 @@ const slice = createSlice({
     currentSubsection: {},
     currentItem: {},
     actions: {
-      deletable: true,
-      draggable: true,
-      childAddable: true,
-      duplicable: true,
+        deletable: true,
+        draggable: true,
+        childAddable: true,
+        duplicable: true,
     },
     enableProctoredExams: false,
     pasteFileNotices: {},
     createdOn: null,
-  },
+} satisfies CourseOutlineState as unknown as CourseOutlineState
+
+const slice = createSlice({
+  name: 'courseOutline',
+  initialState,
   reducers: {
-    fetchOutlineIndexSuccess: (state, { payload }) => {
+    fetchOutlineIndexSuccess: (state: CourseOutlineState, { payload }) => {
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
       state.enableProctoredExams = payload.courseStructure?.enableProctoredExams;
       state.createdOn = payload.createdOn;
     },
-    updateOutlineIndexLoadingStatus: (state, { payload }) => {
+    updateOutlineIndexLoadingStatus: (state: CourseOutlineState, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         outlineIndexLoadingStatus: payload.status,
       };
       state.errors.outlineIndexApi = payload.errors || null;
     },
-    updateReindexLoadingStatus: (state, { payload }) => {
+    updateReindexLoadingStatus: (state: CourseOutlineState, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
       };
       state.errors.reindexApi = payload.errors || null;
     },
-    updateFetchSectionLoadingStatus: (state, { payload }) => {
+    updateFetchSectionLoadingStatus: (state: CourseOutlineState, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         fetchSectionLoadingStatus: payload.status,
       };
       state.errors.sectionLoadingApi = payload.errors || null;
     },
-    updateCourseLaunchQueryStatus: (state, { payload }) => {
+    updateCourseLaunchQueryStatus: (state: CourseOutlineState, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         courseLaunchQueryStatus: payload.status,
       };
       state.errors.courseLaunchApi = payload.errors || null;
     },
-    dismissError: (state, { payload }) => {
+    dismissError: (state: CourseOutlineState, { payload }) => {
       state.errors[payload] = null;
     },
-    updateStatusBar: (state, { payload }) => {
+    updateStatusBar: (state: CourseOutlineState, { payload }) => {
       state.statusBarData = {
         ...state.statusBarData,
         ...payload,
       };
     },
-    updateCourseActions: (state, { payload }) => {
+    updateCourseActions: (state: CourseOutlineState, { payload }) => {
       state.actions = {
         ...state.actions,
         ...payload,
       };
     },
-    fetchStatusBarChecklistSuccess: (state, { payload }) => {
+    fetchStatusBarChecklistSuccess: (state: CourseOutlineState, { payload }) => {
       state.statusBarData.checklist = {
         ...state.statusBarData.checklist,
         ...payload,
       };
     },
-    fetchStatusBarSelfPacedSuccess: (state, { payload }) => {
+    fetchStatusBarSelfPacedSuccess: (state: CourseOutlineState, { payload }) => {
       state.statusBarData.isSelfPaced = payload.isSelfPaced;
     },
-    updateSavingStatus: (state, { payload }) => {
+    updateSavingStatus: (state: CourseOutlineState, { payload }) => {
       state.savingStatus = payload.status;
     },
-    updateSectionList: (state, { payload }) => {
+    updateSectionList: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => (section.id in payload ? payload[section.id] : section));
     },
-    setCurrentItem: (state, { payload }) => {
+    setCurrentItem: (state: CourseOutlineState, { payload }) => {
       state.currentItem = payload;
     },
-    reorderSectionList: (state, { payload }) => {
+    reorderSectionList: (state: CourseOutlineState, { payload }) => {
       const sectionsList = [...state.sectionsList];
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
     },
-    setCurrentSection: (state, { payload }) => {
+    setCurrentSection: (state: CourseOutlineState, { payload }) => {
       state.currentSection = payload;
     },
-    setCurrentSubsection: (state, { payload }) => {
+    setCurrentSubsection: (state: CourseOutlineState, { payload }) => {
       state.currentSubsection = payload;
     },
-    addSection: (state, { payload }) => {
+    addSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = [
         ...state.sectionsList,
         payload,
@@ -146,7 +149,7 @@ const slice = createSlice({
         return section;
       });
     },
-    addSubsection: (state, { payload }) => {
+    addSubsection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id === payload.parentLocator) {
           section.childInfo.children = [
@@ -157,12 +160,12 @@ const slice = createSlice({
         return section;
       });
     },
-    deleteSection: (state, { payload }) => {
+    deleteSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.filter(
         ({ id }) => id !== payload.itemId,
       );
     },
-    deleteSubsection: (state, { payload }) => {
+    deleteSubsection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id !== payload.sectionId) {
           return section;
@@ -173,7 +176,7 @@ const slice = createSlice({
         return section;
       });
     },
-    deleteUnit: (state, { payload }) => {
+    deleteUnit: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id !== payload.sectionId) {
           return section;
@@ -190,7 +193,7 @@ const slice = createSlice({
         return section;
       });
     },
-    duplicateSection: (state, { payload }) => {
+    duplicateSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
         if (currentValue.id === payload.id) {
           return [...result, currentValue, payload.duplicatedItem];
@@ -198,12 +201,12 @@ const slice = createSlice({
         return [...result, currentValue];
       }, []);
     },
-    setPasteFileNotices: (state, { payload }) => {
+    setPasteFileNotices: (state: CourseOutlineState, { payload }) => {
       state.pasteFileNotices = payload;
     },
-    removePasteFileNotices: (state, { payload }) => {
+    removePasteFileNotices: (state: CourseOutlineState, { payload }) => {
       const pasteFileNotices = { ...state.pasteFileNotices };
-      payload.forEach((key) => delete pasteFileNotices[key]);
+      payload.forEach((key: string | number) => delete pasteFileNotices[key]);
       state.pasteFileNotices = pasteFileNotices;
     },
   },
@@ -231,8 +234,6 @@ export const {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
-  reorderSubsectionList,
-  reorderUnitList,
   setPasteFileNotices,
   removePasteFileNotices,
   dismissError,

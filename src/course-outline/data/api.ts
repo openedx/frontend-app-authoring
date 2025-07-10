@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { CourseOutline, Xblock } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -40,29 +41,12 @@ export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 
-// TODO: Create interface for all `Object` fields in courseOutline
-interface courseOutline {
-  courseReleaseDate: string;
-  courseStructure: Object;
-  deprecatedBlocksInfo: Object;
-  discussionsIncontextLearnmoreUrl: string;
-  initialState: Object;
-  initialUserClipboard: Object;
-  languageCode: string;
-  lmsLink: string;
-  mfeProctoredExamSettingsUrl: string;
-  notificationDismissUrl: string;
-  proctoringErrors: string[];
-  reindexLink: string;
-  rerunNotificationId: null;
-}
-
 /**
  * Get course outline index.
  * @param {string} courseId
  * @returns {Promise<courseOutline>}
  */
-export async function getCourseOutlineIndex(courseId: string): Promise<courseOutline> {
+export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseOutlineIndexApiUrl(courseId));
 
@@ -166,50 +150,12 @@ export async function restartIndexingOnCourse(reindexLink: string): Promise<obje
   return camelCaseObject(data);
 }
 
-interface section {
-  id: string,
-  displayName: string,
-  category: string,
-  hasChildren: boolean,
-  editedOn: string,
-  published: boolean,
-  publishedOn: string,
-  studioUrl: string,
-  releasedToStudents: boolean,
-  releaseDate: string,
-  visibilityState: string,
-  hasExplicitStaffLock: boolean,
-  start: string,
-  graded: boolean,
-  dueDate: string,
-  due: null,
-  relativeWeeksDue: null,
-  format: null,
-  courseGraders: string[],
-  hasChanges: boolean,
-  actions: object,
-  explanatoryMessage: null,
-  userPartitions: object[],
-  showCorrectness: string,
-  highlights: string[],
-  highlightsEnabled: boolean,
-  highlightsPreviewOnly: boolean,
-  highlightsDocUrl: string,
-  childInfo: object,
-  ancestorHasStaffLock: boolean,
-  staffOnlyMessage: boolean,
-  hasPartitionGroupComponents: boolean,
-  userPartitionInfo: object,
-  enableCopyPasteUnits: boolean,
-  shouldScroll: boolean,
-}
-
 /**
- * Get course section
+ * Get course Xblock
  * @param {string} itemId
- * @returns {Promise<section>}
+ * @returns {Promise<Xblock>}
  */
-export async function getCourseItem(itemId: string): Promise<section> {
+export async function getCourseItem(itemId: string): Promise<Xblock> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
@@ -405,9 +351,9 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
  * Duplicate course section
  * @param {string} itemId
  * @param {string} parentId
- * @returns {Promise<Object>}
+ * @returns {Promise<Xblock>}
  */
-export async function duplicateCourseItem(itemId: string, parentId: string): Promise<object> {
+export async function duplicateCourseItem(itemId: string, parentId: string): Promise<Xblock> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: itemId,
