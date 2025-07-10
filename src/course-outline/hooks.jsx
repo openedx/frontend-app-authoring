@@ -170,7 +170,7 @@ const useCourseOutline = ({ courseId }) => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
 
-      dispatch(fetchCourseReindexQuery(courseId, reindexLink)).then(() => {
+      dispatch(fetchCourseReindexQuery(reindexLink)).then(() => {
         setDisableReindexButton(false);
       });
     },
