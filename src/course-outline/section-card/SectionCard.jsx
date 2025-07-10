@@ -355,6 +355,7 @@ SectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
   onNewSubsectionSubmit: PropTypes.func.isRequired,
+  onAddSubsectionFromLibrary: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
