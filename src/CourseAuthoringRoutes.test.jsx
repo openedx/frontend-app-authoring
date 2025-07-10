@@ -6,7 +6,6 @@ import {
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesMockText = 'Pages And Resources';
-const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
 const customPagesMockText = 'Custom Pages';
 const mockComponentFn = jest.fn();
@@ -32,10 +31,6 @@ jest.mock('./editors/sharedComponents/TinyMceWidget', () => ({
 jest.mock('./pages-and-resources/PagesAndResources', () => (props) => {
   mockComponentFn(props);
   return pagesAndResourcesMockText;
-});
-jest.mock('./editors/EditorContainer', () => (props) => {
-  mockComponentFn(props);
-  return editorContainerMockText;
 });
 jest.mock('./selectors/VideoSelectorContainer', () => (props) => {
   mockComponentFn(props);
@@ -64,22 +59,6 @@ describe('<CourseAuthoringRoutes>', () => {
       expect(mockComponentFn).toHaveBeenCalledWith(
         expect.objectContaining({
           courseId,
-        }),
-      );
-    });
-  });
-
-  it('renders the EditorContainer component when the course editor route is active', async () => {
-    render(
-      <CourseAuthoringRoutes />,
-      { routerProps: { initialEntries: ['/editor/video/block-id'] } },
-    );
-    await waitFor(() => {
-      expect(screen.queryByText(editorContainerMockText)).toBeInTheDocument();
-      expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
-      expect(mockComponentFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          learningContextId: courseId,
         }),
       );
     });

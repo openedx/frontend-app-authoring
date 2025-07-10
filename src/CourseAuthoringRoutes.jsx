@@ -7,7 +7,6 @@ import { PageWrap } from '@edx/frontend-platform/react';
 import { Textbooks } from './textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
-import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
 import { FilesPage, VideosPage } from './files-and-videos';
@@ -37,7 +36,7 @@ import { IframeProvider } from './generic/hooks/context/iFrameContext';
  *
  * /course/:courseId/course-pages
  * /course/:courseId/proctored-exam-settings
- * /course/:courseId/editor/:blockType/:blockId
+ * /course/:courseId/course-videos/:blockId
  *
  * This component and CourseAuthoringPage should maybe be combined once we no longer need to have
  * CourseAuthoringPage split out for use in LegacyProctoringRoute.  Once that route is removed, we
@@ -92,10 +91,6 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="editor/course-videos/:blockId"
           element={<PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="editor/:blockType/:blockId?"
-          element={<PageWrap><EditorContainer learningContextId={courseId} /></PageWrap>}
         />
         <Route
           path="settings/details"
