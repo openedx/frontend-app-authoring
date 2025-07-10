@@ -461,10 +461,17 @@ const CourseOutline = ({ courseId }) => {
                             )}
                           </>
                         ) : (
-                          <EmptyPlaceholder
-                            onCreateNewSection={handleNewSectionSubmit}
-                            childAddable={courseActions.childAddable}
-                          />
+                          <EmptyPlaceholder>
+                            {courseActions.childAddable && (
+                              <OutlineAddChildButtons
+                                handleNewButtonClick={handleNewSectionSubmit}
+                                handleUseFromLibraryClick={openAddLibrarySectionModal}
+                                childType={ContainerType.Section}
+                                btnVariant='primary'
+                                btnClasses='mt-1'
+                              />
+                            )}
+                          </EmptyPlaceholder>
                         )}
                       </div>
                     )}
