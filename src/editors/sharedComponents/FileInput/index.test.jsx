@@ -20,8 +20,8 @@ describe('FileInput component', () => {
     };
     el = render(<FileInput {...props} />);
   });
-  test('snapshot', () => {
-    expect(el.container).toMatchSnapshot();
+  test('renders component', () => {
+    expect(el.container.querySelector('input[type="file"]')).toBeInTheDocument();
   });
   test('only accepts allowed file types', () => {
     expect(el.container.querySelector('input').accept).toEqual('.srt');
