@@ -46,6 +46,7 @@ const SubsectionCard = ({
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
+  resetScrollState,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -165,7 +166,8 @@ const SubsectionCard = ({
     if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
-      scrollToElement(currentRef.current, alignWithTop);
+      scrollToElement(currentRef.current, alignWithTop, true);
+      resetScrollState();
     }
   }, [isScrolledToElement]);
 
@@ -195,7 +197,7 @@ const SubsectionCard = ({
       libraryContentKey: selectedUnit.usageKey,
     });
     closeAddLibraryUnitModal();
-  }, []);
+  }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
   return (
     <>
@@ -350,6 +352,7 @@ SubsectionCard.propTypes = {
   onOrderChange: PropTypes.func.isRequired,
   onOpenConfigureModal: PropTypes.func.isRequired,
   onPasteClick: PropTypes.func.isRequired,
+  resetScrollState: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;

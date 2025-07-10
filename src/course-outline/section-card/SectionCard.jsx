@@ -44,6 +44,7 @@ const SectionCard = ({
   onNewSubsectionSubmit,
   onAddSubsectionFromLibrary,
   onOrderChange,
+  resetScrollState,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -115,7 +116,8 @@ const SectionCard = ({
     if (currentRef.current && (section.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
-      scrollToElement(currentRef.current, alignWithTop);
+      scrollToElement(currentRef.current, alignWithTop, true);
+      resetScrollState();
     }
   }, [isScrolledToElement]);
 
@@ -188,7 +190,7 @@ const SectionCard = ({
       libraryContentKey: selectedSubection.usageKey,
     });
     closeAddLibrarySubsectionModal();
-  }, []);
+  }, [id, onAddSubsectionFromLibrary, closeAddLibrarySubsectionModal]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -356,6 +358,7 @@ SectionCard.propTypes = {
   index: PropTypes.number.isRequired,
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
+  resetScrollState: PropTypes.func.isRequired,
 };
 
 export default SectionCard;
