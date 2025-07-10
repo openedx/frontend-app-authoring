@@ -10,12 +10,18 @@ interface NewChildButtonsProps {
   handleNewButtonClick: () => void;
   handleUseFromLibraryClick: () => void;
   childType: ContainerType;
+  btnVariant?: string;
+  btnClasses?: string;
+  btnSize?: 'sm' | 'md' | 'lg' | 'inline';
 }
 
 const OutlineAddChildButtons = ({
   handleNewButtonClick,
   handleUseFromLibraryClick,
   childType,
+  btnVariant = 'outline-primary',
+  btnClasses = 'mt-4 border-gray-500 rounded-0',
+  btnSize,
 }: NewChildButtonsProps) => {
   // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
   // as it has a useEffect that fetches course waffle flags whenever
@@ -50,9 +56,10 @@ const OutlineAddChildButtons = ({
     <Stack direction="horizontal" gap={3}>
       <Button
         data-testid="new-unit-button"
-        className="mt-4 border-gray-500 rounded-0"
-        variant="outline-primary"
+        className={btnClasses}
+        variant={btnVariant}
         iconBefore={IconAdd}
+        size={btnSize}
         block
         onClick={handleNewButtonClick}
       >
@@ -61,10 +68,11 @@ const OutlineAddChildButtons = ({
       {librariesV2Enabled && (
         <Button
           data-testid="use-unit-from-library"
-          className="mt-4 border-gray-500 rounded-0"
-          variant="outline-primary"
+          className={btnClasses}
+          variant={btnVariant}
           iconBefore={Newsstand}
           block
+          size={btnSize}
           onClick={handleUseFromLibraryClick}
         >
           {intl.formatMessage(messageMap.importButton)}
