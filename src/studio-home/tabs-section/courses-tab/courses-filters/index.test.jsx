@@ -45,9 +45,9 @@ describe('CoursesFilters', () => {
     });
   });
 
-  it('snapshot', () => {
-    const { container } = renderComponent();
-    expect(container).toMatchSnapshot();
+  it('renders component', () => {
+    renderComponent();
+    expect(screen.getByText('search')).toBeInTheDocument();
   });
 
   it('should render without crashing', () => {

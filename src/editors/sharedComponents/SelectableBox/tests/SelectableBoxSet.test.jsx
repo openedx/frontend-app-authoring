@@ -41,8 +41,9 @@ const SelectableRadioSet = (props) => (
 describe('<SelectableBox.Set />', () => {
   describe('correct rendering', () => {
     it('renders without props', () => {
-      const { container } = render(<SelectableRadioSet name="testName" />);
-      expect(container).toMatchSnapshot();
+      render(<SelectableRadioSet name="testName" />);
+      expect(screen.getAllByRole('button')).toHaveLength(3);
+      [1, 2, 3].forEach((item) => expect(screen.getByText(`SelectableRadio${item}`)).toBeInTheDocument());
     });
     it('forwards props', () => {
       render((<SelectableRadioSet name="testName" data-testid="test-radio-set-name" />));
