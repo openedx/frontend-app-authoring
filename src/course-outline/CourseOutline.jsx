@@ -127,6 +127,7 @@ const CourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
+    resetScrollState,
   } = useCourseOutline({ courseId });
 
   // Use `setToastMessage` to show the toast.
@@ -236,7 +237,7 @@ const CourseOutline = ({ courseId }) => {
       libraryContentKey: selectedSection.usageKey,
     });
     closeAddLibrarySectionModal();
-  }, []);
+  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId])
 
   useEffect(() => {
     setSections(sectionsList);
@@ -376,6 +377,7 @@ const CourseOutline = ({ courseId }) => {
                                     onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
                                     onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
+                                    resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -407,6 +409,7 @@ const CourseOutline = ({ courseId }) => {
                                           onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
+                                          resetScrollState={resetScrollState}
                                         >
                                           <SortableContext
                                             id={subsection.id}
