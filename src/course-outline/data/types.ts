@@ -1,16 +1,17 @@
-import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { RequestStatus } from '../../data/constants';
+export interface XBlockActions {
+  deletable: boolean;
+  draggable: boolean;
+  childAddable: boolean;
+  duplicable: boolean;
+  allowMoveDown: boolean;
+  allowMoveUp: boolean;
+}
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
   videoSharingEnabled: boolean,
   videoSharingOptions: string,
-  actions: {
-    deletable: boolean;
-    draggable: boolean;
-    childAddable: boolean;
-    duplicable: boolean;
-  },
+  actions: XBlockActions,
 }
 
 // TODO: Create interface for all `Object` fields in courseOutline
@@ -38,6 +39,7 @@ export interface XblockChildInfo {
 export interface Xblock {
   id: string;
   locator: string;
+  usageKey: string;
   displayName: string;
   category: string;
   hasChildren: boolean;
@@ -57,7 +59,7 @@ export interface Xblock {
   format: null;
   courseGraders: string[];
   hasChanges: boolean;
-  actions: object;
+  actions: XBlockActions;
   explanatoryMessage: null;
   userPartitions: object[];
   showCorrectness: string;
@@ -72,6 +74,7 @@ export interface Xblock {
   userPartitionInfo: object;
   enableCopyPasteUnits: boolean;
   shouldScroll: boolean;
+  isHeaderVisible: boolean;
 }
 
 export interface CourseOutlineState {
@@ -107,12 +110,7 @@ export interface CourseOutlineState {
   currentSection: Xblock | {};
   currentSubsection: Xblock | {};
   currentItem: Xblock | {};
-  actions: {
-    deletable: boolean;
-    draggable: boolean;
-    childAddable: boolean;
-    duplicable: boolean;
-  };
+  actions: XBlockActions;
   enableProctoredExams: boolean;
   pasteFileNotices: object;
   createdOn: null | Date;
