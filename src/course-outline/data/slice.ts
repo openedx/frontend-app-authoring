@@ -49,7 +49,7 @@ const initialState = {
   enableProctoredExams: false,
   pasteFileNotices: {},
   createdOn: null,
-} satisfies CourseOutlineState as unknown as CourseOutlineState
+} satisfies CourseOutlineState as unknown as CourseOutlineState;
 
 const slice = createSlice({
   name: 'courseOutline',

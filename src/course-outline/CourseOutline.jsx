@@ -468,8 +468,8 @@ const CourseOutline = ({ courseId }) => {
                                 handleNewButtonClick={handleNewSectionSubmit}
                                 handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
-                                btnVariant='primary'
-                                btnClasses='mt-1'
+                                btnVariant="primary"
+                                btnClasses="mt-1"
                               />
                             )}
                           </EmptyPlaceholder>
