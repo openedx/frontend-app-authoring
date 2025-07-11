@@ -75,6 +75,7 @@ export interface Xblock {
   enableCopyPasteUnits: boolean;
   shouldScroll: boolean;
   isHeaderVisible: boolean;
+  proctoringExamConfigurationLink?: string;
 }
 
 export interface CourseOutlineState {
