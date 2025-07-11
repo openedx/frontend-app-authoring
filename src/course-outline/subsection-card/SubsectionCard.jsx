@@ -161,9 +161,7 @@ const SubsectionCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    // we need to check section.shouldScroll as whole section is fetched when a
-    // subsection is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (subsection.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);

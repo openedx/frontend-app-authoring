@@ -80,6 +80,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
   } = useSelector(getOutlineIndexData);
+  /** Course usage key is different than courseKey and useful in using as parentLocator for imported sections */
   const createdOn = useSelector(getCreatedOn);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
@@ -334,6 +335,7 @@ const useCourseOutline = ({ courseId }) => {
   }, [reIndexLoadingStatus]);
 
   return {
+    courseUsageKey: courseStructure?.id,
     courseActions,
     savingStatus,
     sectionsList,

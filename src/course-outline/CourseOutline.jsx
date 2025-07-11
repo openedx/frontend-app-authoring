@@ -64,6 +64,7 @@ const CourseOutline = ({ courseId }) => {
   const location = useLocation();
 
   const {
+    courseUsageKey,
     courseName,
     savingStatus,
     statusBarData,
@@ -233,7 +234,7 @@ const CourseOutline = ({ courseId }) => {
     handleAddSectionFromLibrary.mutateAsync({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Chapter,
-      parentLocator: courseId,
+      parentLocator: courseUsageKey,
       libraryContentKey: selectedSection.usageKey,
     });
     closeAddLibrarySectionModal();
