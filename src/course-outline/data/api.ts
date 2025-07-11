@@ -5,7 +5,7 @@ import { CourseOutline, Xblock } from './types';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getCourseOutlineIndexApiUrl = (
-  courseId: string
+  courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
 
 export const getCourseBestPracticesApiUrl = ({
@@ -78,19 +78,19 @@ export async function getCourseBestPractices({
   excludeGraded: boolean;
   all: boolean;
 }): Promise<{
-  isSelfPaced: boolean;
-  sections: any;
-  subsection: any;
-  units: any;
-  videos: any;
-}> {
+    isSelfPaced: boolean;
+    sections: any;
+    subsection: any;
+    units: any;
+    videos: any;
+  }> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }));
 
   return camelCaseObject(data);
 }
 
-interface courseLaunchData {
+interface CourseLaunchData {
   isSelfPaced: boolean;
   dates: object;
   assignments: object;
@@ -105,14 +105,14 @@ interface courseLaunchData {
 /**
  * Get course launch.
  * @param {{courseId: string, gradedOnly: boolean, validateOras: boolean, all: boolean}} options
- * @returns {Promise<courseLaunchData>}
+ * @returns {Promise<CourseLaunchData>}
  */
 export async function getCourseLaunch({
   courseId,
   gradedOnly,
   validateOras,
   all,
-}: { courseId: string; gradedOnly: boolean; validateOras: boolean; all: boolean; }): Promise<courseLaunchData> {
+}: { courseId: string; gradedOnly: boolean; validateOras: boolean; all: boolean; }): Promise<CourseLaunchData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseLaunchApiUrl({
       courseId, gradedOnly, validateOras, all,
@@ -169,7 +169,7 @@ export async function getCourseItem(itemId: string): Promise<Xblock> {
  */
 export async function updateCourseSectionHighlights(
   sectionId: string,
-  highlights: Array<string>
+  highlights: Array<string>,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(sectionId), {
@@ -206,7 +206,7 @@ export async function publishCourseSection(sectionId: string): Promise<object> {
 export async function configureCourseSection(
   sectionId: string,
   isVisibleToStaffOnly: boolean,
-  startDatetime: string
+  startDatetime: string,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(sectionId), {
@@ -299,7 +299,7 @@ export async function configureCourseUnit(
   unitId: string,
   isVisibleToStaffOnly: boolean,
   groupAccess: object,
-  discussionEnabled: boolean
+  discussionEnabled: boolean,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(unitId), {
@@ -323,7 +323,7 @@ export async function configureCourseUnit(
  */
 export async function editItemDisplayName(
   itemId: string,
-  displayName: string
+  displayName: string,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
@@ -419,7 +419,7 @@ export async function setCourseItemOrderList(itemId: string, children: Array<str
 */
 export async function setVideoSharingOption(
   courseId: string,
-  videoSharingOption: string
+  videoSharingOption: string,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseBlockApiUrl(courseId), {

@@ -7,7 +7,7 @@ interface Props {
   children: React.ReactElement;
 }
 
-const EmptyPlaceholder = ({children}: Props) => {
+const EmptyPlaceholder = ({ children }: Props) => {
   const intl = useIntl();
 
   return (
