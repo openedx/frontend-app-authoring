@@ -129,8 +129,8 @@ const UnitCard = ({
     copyToClipboard(id);
   };
 
-  const handleOnPostChangeSync = useCallback(async () => {
-    await dispatch(fetchCourseSectionQuery([section.id]));
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
   }, [dispatch, section]);
 
   const titleComponent = (
@@ -151,9 +151,7 @@ const UnitCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    // we need to check section.shouldScroll as whole section is fetched when a
-    // unit is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || unit.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop, true);

@@ -205,17 +205,42 @@ export function fetchCourseReindexQuery(reindexLink: string) {
   };
 }
 
-export function fetchCourseSectionQuery(sectionIds: string[], shouldScroll = false) {
+/**
+ * Fetches course sections and optionally scrolls to a specific subsection/unit.
+ *
+ * @param {string[]} sectionIds - An array of section IDs to fetch.
+ * @param {object} [scrollToId] - Optional object containing details for scrolling.
+ * @param {string} [scrollToId.subsectionId] - The ID of the subsection to scroll to.
+ * @param {string} [scrollToId.unitId] - The ID of the unit within the subsection to scroll to.
+ */
+export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
+  subsectionId: string,
+  unitId?: string,
+}) {
   return async (dispatch) => {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const sections = {};
       const results = await Promise.all(sectionIds.map((sectionId) => getCourseItem(sectionId)));
-      results.forEach((data) => {
-        // eslint-disable-next-line no-param-reassign
-        data.shouldScroll = shouldScroll;
-        sections[data.id] = data;
-      });
+      if (scrollToId) {
+        results.forEach(section => {
+          const targetSubsection = section?.childInfo?.children?.find(
+            subsection => subsection.id === scrollToId.subsectionId
+          );
+
+          if (targetSubsection) {
+            if (scrollToId.unitId) {
+              const targetUnit = targetSubsection?.childInfo?.children?.find(unit => unit.id === scrollToId.unitId);
+              if (targetUnit) {
+                targetUnit.shouldScroll = true;
+              }
+            } else {
+              targetSubsection.shouldScroll = true;
+            }
+          }
+          sections[section.id] = section;
+        });
+      }
       dispatch(updateSectionList(sections));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -476,7 +501,9 @@ export function duplicateSubsectionQuery(subsectionId: string, sectionId: string
     dispatch(duplicateCourseItemQuery(
       subsectionId,
       sectionId,
-      async () => dispatch(fetchCourseSectionQuery([sectionId], true)),
+      async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
+        subsectionId: itemId,  // To scroll to the newly duplicated subsection
+      })),
     ));
   };
 }
@@ -486,7 +513,10 @@ export function duplicateUnitQuery(unitId: string, subsectionId: string, section
     dispatch(duplicateCourseItemQuery(
       unitId,
       subsectionId,
-      async () => dispatch(fetchCourseSectionQuery([sectionId], true)),
+      async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
+        subsectionId,
+        unitId: itemId,  // To scroll to the newly duplicated unit
+      })),
     ));
   };
 }
@@ -692,7 +722,7 @@ export function pasteClipboardContent(parentLocator: string, sectionId: string) 
     try {
       await pasteBlock(parentLocator).then(async (result: any) => {
         if (result) {
-          dispatch(fetchCourseSectionQuery([sectionId], true));
+          dispatch(fetchCourseSectionQuery([sectionId], { subsectionId: parentLocator, unitId: result.locator }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
           dispatch(setPasteFileNotices(result?.staticFileNotices));
