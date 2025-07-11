@@ -326,9 +326,12 @@ describe('library api hooks', () => {
 
     expect(axiosMock.history.post[0].url).toEqual(url);
 
-    // Two call for `containerChildren` and library predicate
-    // and two more calls to invalidate the subsections.
-    expect(spy).toHaveBeenCalledTimes(4);
+    // Keys should be invalidated:
+    // 1. library
+    // 2. containerChildren
+    // 3. containerHierarchy
+    // 4 & 5. subsections
+    expect(spy).toHaveBeenCalledTimes(5);
   });
 
   describe('publishContainer', () => {
