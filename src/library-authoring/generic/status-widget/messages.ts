@@ -46,6 +46,11 @@ const messages = defineMessages({
     defaultMessage: 'Publish',
     description: 'Label of publish button for an entity.',
   },
+  publishingButtonLabelState: {
+    id: 'course-authoring.library-authoring.generic.status-widget.publishing-button',
+    defaultMessage: 'Publishing',
+    description: 'Label of publish button for an entity in the publishing state.',
+  },
   discardChangesButtonLabel: {
     id: 'course-authoring.library-authoring.generic.status-widget.discard-button',
     defaultMessage: 'Discard Changes',
