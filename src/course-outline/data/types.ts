@@ -3,8 +3,8 @@ export interface XBlockActions {
   draggable: boolean;
   childAddable: boolean;
   duplicable: boolean;
-  allowMoveDown: boolean;
-  allowMoveUp: boolean;
+  allowMoveDown?: boolean;
+  allowMoveUp?: boolean;
 }
 
 export interface CourseStructure {
