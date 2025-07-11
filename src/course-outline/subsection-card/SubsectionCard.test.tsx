@@ -11,6 +11,7 @@ import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
+import { Xblock } from '../data/types';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -53,7 +54,7 @@ const unit = {
   id: 'unit-1',
 };
 
-const subsection = {
+const subsection: Xblock = {
   id: '123',
   displayName: 'Subsection Name',
   category: 'sequential',
@@ -73,9 +74,9 @@ const subsection = {
       id: unit.id,
     }],
   },
-};
+} as Xblock;
 
-const section = {
+const section: Xblock = {
   id: '123',
   displayName: 'Section Name',
   published: true,
@@ -87,12 +88,12 @@ const section = {
       id: subsection.id,
     }],
   },
-};
+} as Xblock;
 
 const onEditSubectionSubmit = jest.fn();
 const queryClient = new QueryClient();
 
-const renderComponent = (props, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/') => render(
   <AppProvider store={store} wrapWithRouter={false}>
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[entry]}>
@@ -105,18 +106,17 @@ const renderComponent = (props, entry = '/') => render(
             getPossibleMoves={jest.fn()}
             onOrderChange={jest.fn()}
             onOpenPublishModal={jest.fn()}
-            onOpenHighlightsModal={jest.fn()}
             onOpenDeleteModal={jest.fn()}
             onNewUnitSubmit={jest.fn()}
             onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
             isCustomRelativeDatesActive={false}
-            onEditClick={jest.fn()}
             savingStatus=""
             onEditSubmit={onEditSubectionSubmit}
             onDuplicateSubmit={jest.fn()}
-            namePrefix="subsection"
             onOpenConfigureModal={jest.fn()}
             onPasteClick={jest.fn()}
+            resetScrollState={jest.fn()}
+            isSectionsExpanded={false}
             {...props}
           >
             <span>children</span>
@@ -259,7 +259,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('check extended subsection when URL "show" param in subsection', async () => {
-    const { findByTestId } = renderComponent(null, `?show=${unit.id}`);
+    const { findByTestId } = renderComponent(undefined, `?show=${unit.id}`);
 
     const cardUnits = await findByTestId('subsection-card__units');
     const newUnitButton = await findByTestId('new-unit-button');
@@ -269,10 +269,10 @@ describe('<SubsectionCard />', () => {
 
   it('check not extended subsection when URL "show" param not in subsection', async () => {
     const randomId = 'random-id';
-    const { queryByTestId } = renderComponent(null, `?show=${randomId}`);
+    const { queryByTestId } = renderComponent(undefined, `?show=${randomId}`);
 
-    const cardUnits = await queryByTestId('subsection-card__units');
-    const newUnitButton = await queryByTestId('new-unit-button');
+    const cardUnits = queryByTestId('subsection-card__units');
+    const newUnitButton = queryByTestId('new-unit-button');
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
   });
