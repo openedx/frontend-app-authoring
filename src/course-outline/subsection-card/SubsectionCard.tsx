@@ -1,8 +1,7 @@
 // @ts-check
 import React, {
-  useContext, useEffect, useState, useRef, useCallback,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode,
 } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -21,11 +20,42 @@ import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
-import { ComponentPicker } from '../../library-authoring';
+import { ComponentPicker, SelectedComponent } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { ContentType } from '../../library-authoring/routes';
 import OutlineAddChildButtons from '../OutlineAddChildButtons';
+import { Xblock } from '../data/types';
+
+interface SubsectionCardProps {
+  section: Xblock,
+  subsection: Xblock,
+  children: ReactNode
+  isSectionsExpanded: boolean,
+  isSelfPaced: boolean,
+  isCustomRelativeDatesActive: boolean,
+  onOpenPublishModal: () => void,
+  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
+  savingStatus: string,
+  onOpenDeleteModal: () => void,
+  onDuplicateSubmit: () => void,
+  onNewUnitSubmit: (subsectionId: string) => void,
+  onAddUnitFromLibrary: (options: {
+    type: string,
+    category?: string,
+    parentLocator: string,
+    displayName?: string,
+    boilerplate?: string,
+    stagedContent?: string,
+    libraryContentKey: string,
+  }) => void,
+  index: number,
+  getPossibleMoves: (index: number, step: number) => void,
+  onOrderChange: (section: Xblock, moveDetails: any) => void,
+  onOpenConfigureModal: () => void,
+  onPasteClick: (parentLocator: string, sectionId: string) => void,
+  resetScrollState: () => void,
+};
 
 const SubsectionCard = ({
   section,
@@ -47,7 +77,7 @@ const SubsectionCard = ({
   onOpenConfigureModal,
   onPasteClick,
   resetScrollState,
-}) => {
+}: SubsectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -115,7 +145,7 @@ const SubsectionCard = ({
     dispatch(setCurrentItem(subsection));
   };
 
-  const handleEditSubmit = (titleValue) => {
+  const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
       onEditSubmit(id, section.id, titleValue);
       return;
@@ -187,7 +217,7 @@ const SubsectionCard = ({
       && !(isHeaderVisible === false)
   );
 
-  const handleSelectLibraryUnit = useCallback((selectedUnit) => {
+  const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
     onAddUnitFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Vertical,
@@ -294,63 +324,6 @@ const SubsectionCard = ({
       </StandardModal>
     </>
   );
-};
-
-SubsectionCard.defaultProps = {
-  children: null,
-};
-
-SubsectionCard.propTypes = {
-  section: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-  }).isRequired,
-  subsection: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-    enableCopyPasteUnits: PropTypes.bool,
-    proctoringExamConfigurationLink: PropTypes.string,
-    actions: PropTypes.shape({
-      deletable: PropTypes.bool.isRequired,
-      draggable: PropTypes.bool.isRequired,
-      childAddable: PropTypes.bool.isRequired,
-      duplicable: PropTypes.bool.isRequired,
-    }).isRequired,
-    isHeaderVisible: PropTypes.bool,
-    childInfo: PropTypes.shape({
-      children: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-        }),
-      ).isRequired,
-    }).isRequired,
-  }).isRequired,
-  children: PropTypes.node,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
-  onOpenPublishModal: PropTypes.func.isRequired,
-  onEditSubmit: PropTypes.func.isRequired,
-  savingStatus: PropTypes.string.isRequired,
-  onOpenDeleteModal: PropTypes.func.isRequired,
-  onDuplicateSubmit: PropTypes.func.isRequired,
-  onNewUnitSubmit: PropTypes.func.isRequired,
-  onAddUnitFromLibrary: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-  getPossibleMoves: PropTypes.func.isRequired,
-  onOrderChange: PropTypes.func.isRequired,
-  onOpenConfigureModal: PropTypes.func.isRequired,
-  onPasteClick: PropTypes.func.isRequired,
-  resetScrollState: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;
