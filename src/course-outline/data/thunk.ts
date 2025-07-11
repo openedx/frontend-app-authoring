@@ -225,7 +225,7 @@ export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
       if (scrollToId) {
         results.forEach(section => {
           const targetSubsection = section?.childInfo?.children?.find(
-            subsection => subsection.id === scrollToId.subsectionId
+            subsection => subsection.id === scrollToId.subsectionId,
           );
 
           if (targetSubsection) {
@@ -372,7 +372,7 @@ export function configureCourseUnitQuery(
   sectionId: string,
   isVisibleToStaffOnly: boolean,
   groupAccess: object,
-  discussionEnabled: boolean
+  discussionEnabled: boolean,
 ) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
@@ -460,7 +460,7 @@ export function deleteCourseUnitQuery(unitId: string, subsectionId: string, sect
 function duplicateCourseItemQuery(
   itemId: string,
   parentLocator: string,
-  duplicateFn: (locator: string) => Promise<any>
+  duplicateFn: (locator: string) => Promise<any>,
 ) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -502,7 +502,7 @@ export function duplicateSubsectionQuery(subsectionId: string, sectionId: string
       subsectionId,
       sectionId,
       async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
-        subsectionId: itemId,  // To scroll to the newly duplicated subsection
+        subsectionId: itemId, // To scroll to the newly duplicated subsection
       })),
     ));
   };
@@ -515,7 +515,7 @@ export function duplicateUnitQuery(unitId: string, subsectionId: string, section
       subsectionId,
       async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
         subsectionId,
-        unitId: itemId,  // To scroll to the newly duplicated unit
+        unitId: itemId, // To scroll to the newly duplicated unit
       })),
     ));
   };
@@ -524,7 +524,12 @@ export function duplicateUnitQuery(unitId: string, subsectionId: string, section
 /**
  * Generic function to add any course item. See wrapper functions below for specific implementations.
  */
-function addNewCourseItemQuery(parentLocator: string, category: string, displayName: string, addItemFn: (data: any) => Promise<any>) {
+function addNewCourseItemQuery(
+  parentLocator: string,
+  category: string,
+  displayName: string,
+  addItemFn: (data: any) => Promise<any>,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -654,7 +659,7 @@ function setBlockOrderListQuery(
 export function setSectionOrderListQuery(
   courseId: string,
   sectionListIds: string[],
-  restoreCallback: () => void
+  restoreCallback: () => void,
 ) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(
