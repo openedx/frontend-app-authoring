@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
+import { Xblock } from '../data/types';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -72,13 +73,13 @@ const section = {
       },
     }],
   },
-};
+} as Xblock;
 
 const onEditSectionSubmit = jest.fn();
 
 const queryClient = new QueryClient();
 
-const renderComponent = (props, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/') => render(
   <AppProvider store={store} wrapWithRouter={false}>
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[entry]}>
@@ -99,6 +100,8 @@ const renderComponent = (props, entry = '/') => render(
             onNewSubsectionSubmit={jest.fn()}
             isSelfPaced={false}
             isCustomRelativeDatesActive={false}
+            onAddSubsectionFromLibrary={jest.fn()}
+            resetScrollState={jest.fn()}
             {...props}
           >
             <span>children</span>
@@ -193,6 +196,7 @@ describe('<SectionCard />', () => {
 
   it('check extended section when URL "show" param in subsection under section', async () => {
     const collapsedSections = { ...section };
+    // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
     const { findByTestId } = renderComponent(collapsedSections, `?show=${subsection.id}`);
 
@@ -204,6 +208,7 @@ describe('<SectionCard />', () => {
 
   it('check extended section when URL "show" param in unit under section', async () => {
     const collapsedSections = { ...section };
+    // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
     const { findByTestId } = renderComponent(collapsedSections, `?show=${unit.id}`);
 
@@ -216,11 +221,12 @@ describe('<SectionCard />', () => {
   it('check not extended section when URL "show" param not in section', async () => {
     const randomId = 'random-id';
     const collapsedSections = { ...section };
+    // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
     const { queryByTestId } = renderComponent(collapsedSections, `?show=${randomId}`);
 
-    const cardSubsections = await queryByTestId('section-card__subsections');
-    const newSubsectionButton = await queryByTestId('new-subsection-button');
+    const cardSubsections = queryByTestId('section-card__subsections');
+    const newSubsectionButton = queryByTestId('new-subsection-button');
     expect(cardSubsections).toBeNull();
     expect(newSubsectionButton).toBeNull();
   });
