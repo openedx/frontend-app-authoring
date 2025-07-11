@@ -134,6 +134,7 @@ export const videoTranscriptLanguages = StrictDict({
   pi: 'Pali',
   pl: 'Polish',
   pt: 'Portuguese',
+  'pt-BR': 'Portuguese (Brazil)',
   ps: 'Pushto',
   qu: 'Quechua',
   rm: 'Romansh',
