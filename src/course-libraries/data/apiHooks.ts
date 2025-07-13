@@ -1,7 +1,7 @@
 import {
   useQuery,
 } from '@tanstack/react-query';
-import { getContainerEntityLinks, getEntityLinks, getEntityLinksSummaryByDownstreamContext } from './api';
+import { getContainerEntityLinks, getComponentEntityLinks, getEntityLinksSummaryByDownstreamContext } from './api';
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
@@ -34,10 +34,10 @@ export const courseLibrariesQueryKeys = {
 };
 
 /**
- * Hook to fetch list of publishable entity links by course key.
+ * Hook to fetch list of publishable entity links for components by course key.
  * (That is, get a list of the library components used in the given course.)
  */
-export const useEntityLinks = ({
+export const useComponentEntityLinks = ({
   courseId, readyToSync, upstreamUsageKey,
 }: {
   courseId?: string,
@@ -50,7 +50,7 @@ export const useEntityLinks = ({
       readyToSync,
       upstreamUsageKey,
     }),
-    queryFn: () => getEntityLinks(
+    queryFn: () => getComponentEntityLinks(
       courseId,
       readyToSync,
       upstreamUsageKey,

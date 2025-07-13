@@ -766,12 +766,12 @@ mockBlockTypesMetadata.blockTypesMetadata = [
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
-export async function mockGetEntityLinks(
+export async function mockGetComponentEntityLinks(
   _downstreamContextKey?: string,
   _readyToSync?: boolean,
   upstreamUsageKey?: string,
-): ReturnType<typeof courseLibApi.getEntityLinks> {
-  const thisMock = mockGetEntityLinks;
+): ReturnType<typeof courseLibApi.getComponentEntityLinks> {
+  const thisMock = mockGetComponentEntityLinks;
   switch (upstreamUsageKey) {
     case thisMock.upstreamContainerKey: return thisMock.response;
     case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
@@ -779,8 +779,8 @@ export async function mockGetEntityLinks(
     default: return [];
   }
 }
-mockGetEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
-mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
+mockGetComponentEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
+mockGetComponentEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
   id: 875,
   upstreamContextTitle: 'CS problems 3',
   upstreamVersion: 10,
@@ -794,13 +794,13 @@ mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usa
   created: '2025-02-08T14:07:05.588484Z',
   updated: '2025-02-08T14:07:05.588484Z',
 }));
-mockGetEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
-mockGetEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
+mockGetComponentEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
+mockGetComponentEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
 
-mockGetEntityLinks.applyMock = () => jest.spyOn(
+mockGetComponentEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
-  'getEntityLinks',
-).mockImplementation(mockGetEntityLinks);
+  'getComponentEntityLinks',
+).mockImplementation(mockGetComponentEntityLinks);
 
 export async function mockGetContainerEntityLinks(
   _downstreamContextKey?: string,

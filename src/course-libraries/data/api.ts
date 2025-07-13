@@ -49,7 +49,7 @@ export interface PublishableEntityLinkSummary {
   lastPublishedAt: string;
 }
 
-export const getEntityLinks = async (
+export const getComponentEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
   upstreamUsageKey?: string,

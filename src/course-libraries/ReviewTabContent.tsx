@@ -19,7 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
-import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
+import { courseLibrariesQueryKeys, useComponentEntityLinks } from './data/apiHooks';
 import {
   SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
 } from '../search-manager';
@@ -294,7 +294,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     isLoading: isSyncComponentsLoading,
     isError,
     error,
-  } = useEntityLinks({ courseId, readyToSync: true });
+  } = useComponentEntityLinks({ courseId, readyToSync: true });
 
   const downstreamKeys = useMemo(
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),

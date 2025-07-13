@@ -10,27 +10,27 @@ import * as api from './api';
 import * as libApi from '../../library-authoring/data/api';
 
 /**
- * Mock for `getEntityLinks()`
+ * Mock for `getComponentEntityLinks()`
  *
  * This mock returns a fixed response for the downstreamContextKey.
  */
-export async function mockGetEntityLinks(
+export async function mockGetComponentEntityLinks(
   downstreamContextKey?: string,
   readyToSync?: boolean,
-): ReturnType<typeof api.getEntityLinks> {
+): ReturnType<typeof api.getComponentEntityLinks> {
   switch (downstreamContextKey) {
-    case mockGetEntityLinks.invalidCourseKey:
+    case mockGetComponentEntityLinks.invalidCourseKey:
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
         path: api.getEntityLinksByDownstreamContextUrl(),
       });
-    case mockGetEntityLinks.courseKeyLoading:
+    case mockGetComponentEntityLinks.courseKeyLoading:
       return new Promise(() => {});
-    case mockGetEntityLinks.courseKeyEmpty:
+    case mockGetComponentEntityLinks.courseKeyEmpty:
       return Promise.resolve([]);
     default: {
-      let { response } = mockGetEntityLinks;
+      let { response } = mockGetComponentEntityLinks;
       if (readyToSync !== undefined) {
         response = response.filter((o) => o.readyToSync === readyToSync);
       }
@@ -38,14 +38,14 @@ export async function mockGetEntityLinks(
     }
   }
 }
-mockGetEntityLinks.courseKey = mockLinksResult[0].downstreamContextKey;
-mockGetEntityLinks.invalidCourseKey = 'course_key_error';
-mockGetEntityLinks.courseKeyLoading = 'courseKeyLoading';
-mockGetEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
-mockGetEntityLinks.response = mockLinksResult;
+mockGetComponentEntityLinks.courseKey = mockLinksResult[0].downstreamContextKey;
+mockGetComponentEntityLinks.invalidCourseKey = 'course_key_error';
+mockGetComponentEntityLinks.courseKeyLoading = 'courseKeyLoading';
+mockGetComponentEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
+mockGetComponentEntityLinks.response = mockLinksResult;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
-mockGetEntityLinks.applyMock = () => {
-  jest.spyOn(api, 'getEntityLinks').mockImplementation(mockGetEntityLinks);
+mockGetComponentEntityLinks.applyMock = () => {
+  jest.spyOn(api, 'getComponentEntityLinks').mockImplementation(mockGetComponentEntityLinks);
 };
 
 /**

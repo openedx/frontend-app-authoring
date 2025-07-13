@@ -13,7 +13,7 @@ import {
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
 import { CourseLibraries } from './CourseLibraries';
 import {
-  mockGetEntityLinks,
+  mockGetComponentEntityLinks,
   mockGetEntityLinksSummaryByDownstreamContext,
   mockFetchIndexDocuments,
   mockUseLibBlockMetadata,
@@ -22,7 +22,7 @@ import { libraryBlockChangesUrl } from '../course-unit/data/api';
 import { type ToastActionData } from '../generic/toast-context';
 
 mockContentSearchConfig.applyMock();
-mockGetEntityLinks.applyMock();
+mockGetComponentEntityLinks.applyMock();
 mockGetEntityLinksSummaryByDownstreamContext.applyMock();
 mockUseLibBlockMetadata.applyMock();
 
@@ -57,7 +57,7 @@ describe('<CourseLibraries />', () => {
   });
 
   const renderCourseLibrariesPage = async (courseKey?: string) => {
-    const courseId = courseKey || mockGetEntityLinks.courseKey;
+    const courseId = courseKey || mockGetComponentEntityLinks.courseKey;
     render(<CourseLibraries courseId={courseId} />);
   };
 
@@ -69,13 +69,13 @@ describe('<CourseLibraries />', () => {
   });
 
   it('shows empty state when no links are present', async () => {
-    await renderCourseLibrariesPage(mockGetEntityLinks.courseKeyEmpty);
+    await renderCourseLibrariesPage(mockGetComponentEntityLinks.courseKeyEmpty);
     const emptyMsg = await screen.findByText('This course does not use any content from libraries.');
     expect(emptyMsg).toBeInTheDocument();
   });
 
   it('shows alert when out of sync components are present', async () => {
-    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await renderCourseLibrariesPage(mockGetComponentEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
     // review tab should be open by default as outOfSyncCount is greater than 0
@@ -97,7 +97,7 @@ describe('<CourseLibraries />', () => {
   });
 
   it('hide alert on dismiss', async () => {
-    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await renderCourseLibrariesPage(mockGetComponentEntityLinks.courseKey);
     const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
@@ -122,11 +122,11 @@ describe('<CourseLibraries />', () => {
   it('show alert if max lastPublishedDate is greated than the local storage value', async () => {
     const lastPublishedDate = new Date('2025-05-01T22:20:44.989042Z');
     localStorage.setItem(
-      `outOfSyncCountAlert-${mockGetEntityLinks.courseKey}`,
+      `outOfSyncCountAlert-${mockGetComponentEntityLinks.courseKey}`,
       String(lastPublishedDate.getTime() - 1000),
     );
 
-    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await renderCourseLibrariesPage(mockGetComponentEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
     // review tab should be open by default as outOfSyncCount is greater than 0
@@ -142,11 +142,11 @@ describe('<CourseLibraries />', () => {
   it('doesnt show alert if max lastPublishedDate is less than the local storage value', async () => {
     const lastPublishedDate = new Date('2025-05-01T22:20:44.989042Z');
     localStorage.setItem(
-      `outOfSyncCountAlert-${mockGetEntityLinks.courseKey}`,
+      `outOfSyncCountAlert-${mockGetComponentEntityLinks.courseKey}`,
       String(lastPublishedDate.getTime() + 1000),
     );
 
-    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await renderCourseLibrariesPage(mockGetComponentEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
     // review tab should be open by default as outOfSyncCount is greater than 0
@@ -173,13 +173,13 @@ describe('<CourseLibraries ReviewTab />', () => {
   });
 
   const renderCourseLibrariesReviewPage = async (courseKey?: string) => {
-    const courseId = courseKey || mockGetEntityLinks.courseKey;
+    const courseId = courseKey || mockGetComponentEntityLinks.courseKey;
     render(<CourseLibraries courseId={courseId} />);
   };
 
   it('shows the spinner before the query is complete', async () => {
     // This mock will never return data (it loads forever):
-    await renderCourseLibrariesReviewPage(mockGetEntityLinks.courseKeyLoading);
+    await renderCourseLibrariesReviewPage(mockGetComponentEntityLinks.courseKeyLoading);
     const spinner = await screen.findByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
   });
@@ -200,7 +200,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetComponentEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
@@ -216,7 +216,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works in preview modal', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetComponentEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
@@ -235,7 +235,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetComponentEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
@@ -258,7 +258,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works in preview', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetComponentEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
