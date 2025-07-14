@@ -270,7 +270,7 @@ describe('<ComponentPicker />', () => {
     await screen.findByText(/Change Library/i);
     fireEvent.click(screen.getByText(/Change Library/i));
 
-    await screen.findByText('Select which Library would you like to reference components from.');
+    await screen.findByText('Choose a library to browse components.');
   });
 
   it('should pick multiple components using the component card button', async () => {

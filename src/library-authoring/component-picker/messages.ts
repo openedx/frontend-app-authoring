@@ -3,8 +3,8 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   selectLibraryInfo: {
     id: 'course-authoring.library-authoring.pick-components.select-library.info',
-    defaultMessage: 'Select which Library would you like to reference components from.',
-    description: 'The info text for the select library component',
+    defaultMessage: 'Choose a library to browse {itemType}.',
+    description: 'The info text for the select library item. {itemType} is replaced with the type of content being selected, e.g., "components", "units".',
   },
   selectLibrarySearchPlaceholder: {
     id: 'course-authoring.library-authoring.pick-components.select-library.search-placeholder',
