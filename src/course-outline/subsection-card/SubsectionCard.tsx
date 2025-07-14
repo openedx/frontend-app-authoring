@@ -218,6 +218,8 @@ const SubsectionCard = ({
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("SubsectionCard#(anon) selectedUnit: ", selectedUnit); // __AUTO_GENERATED_PRINT_VAR_END__
     onAddUnitFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Vertical,

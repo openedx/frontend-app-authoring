@@ -54,13 +54,13 @@ export interface Xblock {
   start: string;
   graded: boolean;
   dueDate: string;
-  due: null;
-  relativeWeeksDue: null;
-  format: null;
+  due?: string;
+  relativeWeeksDue?: string;
+  format?: string;
   courseGraders: string[];
   hasChanges: boolean;
   actions: XBlockActions;
-  explanatoryMessage: null;
+  explanatoryMessage?: string;
   userPartitions: object[];
   showCorrectness: string;
   highlights: string[];
@@ -76,6 +76,17 @@ export interface Xblock {
   shouldScroll: boolean;
   isHeaderVisible: boolean;
   proctoringExamConfigurationLink?: string;
+  isTimeLimited?: boolean;
+  defaultTimeLimitMinutes?: number;
+  hideAfterDue?: boolean;
+  isProctoredExam?: boolean;
+  isPracticeExam?: boolean;
+  isOnboardingExam?: boolean;
+  examReviewRules?: string;
+  isPrereq?: boolean;
+  prereq?: string;
+  prereqMinScore?: number;
+  prereqMinCompletion?: number;
 }
 
 export interface CourseOutlineState {

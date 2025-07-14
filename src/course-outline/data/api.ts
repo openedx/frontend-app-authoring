@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { courseId } from '@openedx-plugins/course-app-live/factories/mockApiResponses';
 import { CourseOutline, Xblock } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -40,6 +41,7 @@ export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
+export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
 
 /**
  * Get course outline index.
@@ -60,7 +62,7 @@ export async function getCourseOutlineIndex(courseId: string): Promise<CourseOut
  */
 export async function createDiscussionsTopics(courseId: string): Promise<Array<any> | object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`);
+    .post(createDiscussionsTopicsUrl(courseId));
   return camelCaseObject(data);
 }
 

@@ -222,8 +222,8 @@ export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
     try {
       const sections = {};
       const results = await Promise.all(sectionIds.map((sectionId) => getCourseItem(sectionId)));
-      if (scrollToId) {
-        results.forEach(section => {
+      results.forEach(section => {
+        if (scrollToId) {
           const targetSubsection = section?.childInfo?.children?.find(
             subsection => subsection.id === scrollToId.subsectionId,
           );
@@ -238,9 +238,9 @@ export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
               targetSubsection.shouldScroll = true;
             }
           }
-          sections[section.id] = section;
-        });
-      }
+        }
+        sections[section.id] = section;
+      });
       dispatch(updateSectionList(sections));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
