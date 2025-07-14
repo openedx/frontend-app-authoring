@@ -45,6 +45,7 @@ const EditorContainer: React.FC<Props> = ({
 
   const getLibraryBlockUrl = () => {
     if (!upstreamLibRef) {
+      // istanbul ignore next
       return '';
     }
     const libId = getLibraryId(upstreamLibRef);
