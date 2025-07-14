@@ -55,7 +55,6 @@ const OutlineAddChildButtons = ({
   return (
     <Stack direction="horizontal" gap={3}>
       <Button
-        data-testid="new-unit-button"
         className={btnClasses}
         variant={btnVariant}
         iconBefore={IconAdd}
@@ -67,7 +66,6 @@ const OutlineAddChildButtons = ({
       </Button>
       {librariesV2Enabled && (
         <Button
-          data-testid="use-unit-from-library"
           className={btnClasses}
           variant={btnVariant}
           iconBefore={Newsstand}
