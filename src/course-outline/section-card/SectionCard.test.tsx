@@ -105,10 +105,10 @@ describe('<SectionCard />', () => {
   });
 
   it('render SectionCard component correctly', () => {
-    const { getByTestId } = renderComponent();
+    renderComponent();
 
-    expect(getByTestId('section-card-header')).toBeInTheDocument();
-    expect(getByTestId('section-card__content')).toBeInTheDocument();
+    expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
+    expect(screen.getByTestId('section-card__content')).toBeInTheDocument();
   });
 
   it('expands/collapses the card when the expand button is clicked', () => {
@@ -125,18 +125,18 @@ describe('<SectionCard />', () => {
   });
 
   it('title only updates if changed', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    let editButton = await findByTestId('section-edit-button');
+    let editButton = await screen.findByTestId('section-edit-button');
     fireEvent.click(editButton);
-    let editField = await findByTestId('section-edit-field');
+    let editField = await screen.findByTestId('section-edit-field');
     fireEvent.blur(editField);
 
     expect(onEditSectionSubmit).not.toHaveBeenCalled();
 
-    editButton = await findByTestId('section-edit-button');
+    editButton = await screen.findByTestId('section-edit-button');
     fireEvent.click(editButton);
-    editField = await findByTestId('section-edit-field');
+    editField = await screen.findByTestId('section-edit-field');
     fireEvent.change(editField, { target: { value: 'some random value' } });
     fireEvent.blur(editField);
     expect(onEditSectionSubmit).toHaveBeenCalled();
@@ -153,7 +153,7 @@ describe('<SectionCard />', () => {
   });
 
   it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
-    const { findByTestId, queryByTestId } = renderComponent({
+    renderComponent({
       section: {
         ...section,
         actions: {
@@ -164,7 +164,7 @@ describe('<SectionCard />', () => {
         },
       },
     });
-    const element = await findByTestId('section-card');
+    const element = await screen.findByTestId('section-card');
     const menu = await within(element).findByTestId('section-card-header__menu-button');
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('section-card-header__menu-duplicate-button')).not.toBeInTheDocument();
@@ -176,9 +176,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    const { findByTestId } = renderComponent(collapsedSections, `?show=${subsection.id}`);
+    renderComponent(collapsedSections, `?show=${subsection.id}`);
 
-    const cardSubsections = await findByTestId('section-card__subsections');
+    const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeInTheDocument();
     expect(newSubsectionButton).toBeInTheDocument();
@@ -188,9 +188,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    const { findByTestId } = renderComponent(collapsedSections, `?show=${unit.id}`);
+    renderComponent(collapsedSections, `?show=${unit.id}`);
 
-    const cardSubsections = await findByTestId('section-card__subsections');
+    const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeInTheDocument();
     expect(newSubsectionButton).toBeInTheDocument();
@@ -201,9 +201,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    const { queryByTestId } = renderComponent(collapsedSections, `?show=${randomId}`);
+    renderComponent(collapsedSections, `?show=${randomId}`);
 
-    const cardSubsections = queryByTestId('section-card__subsections');
+    const cardSubsections = screen.queryByTestId('section-card__subsections');
     const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeNull();
     expect(newSubsectionButton).toBeNull();
