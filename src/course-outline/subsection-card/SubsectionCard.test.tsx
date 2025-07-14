@@ -122,28 +122,28 @@ describe('<SubsectionCard />', () => {
   });
 
   it('render SubsectionCard component correctly', () => {
-    const { getByTestId } = renderComponent();
+    renderComponent();
 
-    expect(getByTestId('subsection-card-header')).toBeInTheDocument();
+    expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
   });
 
   it('expands/collapses the card when the subsection button is clicked', async () => {
-    const { queryByTestId, findByTestId } = renderComponent();
+    renderComponent();
 
-    const expandButton = await findByTestId('subsection-card-header__expanded-btn');
+    const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
-    expect(queryByTestId('subsection-card__units')).toBeInTheDocument();
+    expect(screen.queryByTestId('subsection-card__units')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: `New unit` })).toBeInTheDocument();
 
     fireEvent.click(expandButton);
-    expect(queryByTestId('subsection-card__units')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('subsection-card__units')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: `New unit` })).not.toBeInTheDocument();
   });
 
   it('updates current section, subsection and item', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    const menu = await findByTestId('subsection-card-header__menu');
+    const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
     const { currentSection, currentSubsection, currentItem } = store.getState().courseOutline;
     expect(currentSection).toEqual(section);
@@ -152,35 +152,35 @@ describe('<SubsectionCard />', () => {
   });
 
   it('title only updates if changed', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    let editButton = await findByTestId('subsection-edit-button');
+    let editButton = await screen.findByTestId('subsection-edit-button');
     fireEvent.click(editButton);
-    let editField = await findByTestId('subsection-edit-field');
+    let editField = await screen.findByTestId('subsection-edit-field');
     fireEvent.blur(editField);
 
     expect(onEditSubectionSubmit).not.toHaveBeenCalled();
 
-    editButton = await findByTestId('subsection-edit-button');
+    editButton = await screen.findByTestId('subsection-edit-button');
     fireEvent.click(editButton);
-    editField = await findByTestId('subsection-edit-field');
+    editField = await screen.findByTestId('subsection-edit-field');
     fireEvent.change(editField, { target: { value: 'some random value' } });
     fireEvent.keyDown(editField, { key: 'Enter', keyCode: 13 });
     expect(onEditSubectionSubmit).toHaveBeenCalled();
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
-    const { queryByTestId } = renderComponent({
+    renderComponent({
       subsection: {
         ...subsection,
         isHeaderVisible: false,
       },
     });
-    expect(queryByTestId('subsection-card-header')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('subsection-card-header')).not.toBeInTheDocument();
   });
 
   it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
-    const { findByTestId, queryByTestId } = renderComponent({
+    renderComponent({
       subsection: {
         ...subsection,
         actions: {
@@ -191,7 +191,7 @@ describe('<SubsectionCard />', () => {
         },
       },
     });
-    const element = await findByTestId('subsection-card');
+    const element = await screen.findByTestId('subsection-card');
     const menu = await within(element).findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
@@ -200,34 +200,34 @@ describe('<SubsectionCard />', () => {
   });
 
   it('renders live status', async () => {
-    const { findByText } = renderComponent();
-    expect(await findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
+    renderComponent();
+    expect(await screen.findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders published but live status', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       subsection: {
         ...subsection,
         published: true,
         visibilityState: 'ready',
       },
     });
-    expect(await findByText(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders staff status', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       subsection: {
         ...subsection,
         published: false,
         visibilityState: 'staff_only',
       },
     });
-    expect(await findByText(cardHeaderMessages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(cardHeaderMessages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders draft status', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       subsection: {
         ...subsection,
         published: false,
@@ -235,13 +235,13 @@ describe('<SubsectionCard />', () => {
         hasChanges: true,
       },
     });
-    expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
   it('check extended subsection when URL "show" param in subsection', async () => {
-    const { findByTestId } = renderComponent(undefined, `?show=${unit.id}`);
+    renderComponent(undefined, `?show=${unit.id}`);
 
-    const cardUnits = await findByTestId('subsection-card__units');
+    const cardUnits = await screen.findByTestId('subsection-card__units');
     const newUnitButton = await screen.findByRole('button', { name: `New unit` });
     expect(cardUnits).toBeInTheDocument();
     expect(newUnitButton).toBeInTheDocument();
@@ -249,9 +249,9 @@ describe('<SubsectionCard />', () => {
 
   it('check not extended subsection when URL "show" param not in subsection', async () => {
     const randomId = 'random-id';
-    const { queryByTestId } = renderComponent(undefined, `?show=${randomId}`);
+    renderComponent(undefined, `?show=${randomId}`);
 
-    const cardUnits = queryByTestId('subsection-card__units');
+    const cardUnits = screen.queryByTestId('subsection-card__units');
     const newUnitButton = screen.queryByRole('button', { name: 'New unit' });
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
