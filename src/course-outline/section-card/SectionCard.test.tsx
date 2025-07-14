@@ -1,18 +1,9 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import {
-  act, render, fireEvent, within,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import initializeStore from '../../store';
 import SectionCard from './SectionCard';
 import { Xblock } from '../data/types';
+import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
 
-let store;
 const mockPathname = '/foo-bar';
 
 jest.mock('react-router-dom', () => ({
@@ -46,7 +37,7 @@ const subsection = {
       id: unit.id,
     }],
   },
-};
+} as Xblock;
 
 const section = {
   id: '123',
@@ -77,53 +68,40 @@ const section = {
 
 const onEditSectionSubmit = jest.fn();
 
-const queryClient = new QueryClient();
-
-const renderComponent = (props?: object, entry = '/') => render(
-  <AppProvider store={store} wrapWithRouter={false}>
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[entry]}>
-        <IntlProvider locale="en">
-          <SectionCard
-            section={section}
-            index={1}
-            canMoveItem={jest.fn()}
-            onOrderChange={jest.fn()}
-            onOpenPublishModal={jest.fn()}
-            onOpenHighlightsModal={jest.fn()}
-            onOpenDeleteModal={jest.fn()}
-            onOpenConfigureModal={jest.fn()}
-            savingStatus=""
-            onEditSectionSubmit={onEditSectionSubmit}
-            onDuplicateSubmit={jest.fn()}
-            isSectionsExpanded
-            onNewSubsectionSubmit={jest.fn()}
-            isSelfPaced={false}
-            isCustomRelativeDatesActive={false}
-            onAddSubsectionFromLibrary={jest.fn()}
-            resetScrollState={jest.fn()}
-            {...props}
-          >
-            <span>children</span>
-          </SectionCard>
-        </IntlProvider>
-      </MemoryRouter>
-    </QueryClientProvider>
-  </AppProvider>,
+const renderComponent = (props?: object, entry="/") => render(
+  <SectionCard
+    section={section}
+    index={1}
+    canMoveItem={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenHighlightsModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    savingStatus=""
+    onEditSectionSubmit={onEditSectionSubmit}
+    onDuplicateSubmit={jest.fn()}
+    isSectionsExpanded
+    onNewSubsectionSubmit={jest.fn()}
+    isSelfPaced={false}
+    isCustomRelativeDatesActive={false}
+    onAddSubsectionFromLibrary={jest.fn()}
+    resetScrollState={jest.fn()}
+    {...props}
+  >
+    <span>children</span>
+  </SectionCard>,
+  {
+    path: '/',
+    routerProps: {
+      initialEntries: [entry],
+    }
+  }
 );
 
 describe('<SectionCard />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('render SectionCard component correctly', () => {
@@ -134,16 +112,16 @@ describe('<SectionCard />', () => {
   });
 
   it('expands/collapses the card when the expand button is clicked', () => {
-    const { queryByTestId, getByTestId } = renderComponent();
+    renderComponent();
 
-    const expandButton = getByTestId('section-card-header__expanded-btn');
+    const expandButton = screen.getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__subsections')).not.toBeInTheDocument();
-    expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('section-card__subsections')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: `New subsection` })).not.toBeInTheDocument();
 
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__subsections')).toBeInTheDocument();
-    expect(queryByTestId('new-subsection-button')).toBeInTheDocument();
+    expect(screen.queryByTestId('section-card__subsections')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New subsection' })).toBeInTheDocument();
   });
 
   it('title only updates if changed', async () => {
@@ -191,7 +169,7 @@ describe('<SectionCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('section-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('section-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New subsection' })).not.toBeInTheDocument();
   });
 
   it('check extended section when URL "show" param in subsection under section', async () => {
@@ -201,7 +179,7 @@ describe('<SectionCard />', () => {
     const { findByTestId } = renderComponent(collapsedSections, `?show=${subsection.id}`);
 
     const cardSubsections = await findByTestId('section-card__subsections');
-    const newSubsectionButton = await findByTestId('new-subsection-button');
+    const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeInTheDocument();
     expect(newSubsectionButton).toBeInTheDocument();
   });
@@ -213,7 +191,7 @@ describe('<SectionCard />', () => {
     const { findByTestId } = renderComponent(collapsedSections, `?show=${unit.id}`);
 
     const cardSubsections = await findByTestId('section-card__subsections');
-    const newSubsectionButton = await findByTestId('new-subsection-button');
+    const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeInTheDocument();
     expect(newSubsectionButton).toBeInTheDocument();
   });
@@ -226,7 +204,7 @@ describe('<SectionCard />', () => {
     const { queryByTestId } = renderComponent(collapsedSections, `?show=${randomId}`);
 
     const cardSubsections = queryByTestId('section-card__subsections');
-    const newSubsectionButton = queryByTestId('new-subsection-button');
+    const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeNull();
     expect(newSubsectionButton).toBeNull();
   });
