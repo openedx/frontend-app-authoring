@@ -1,17 +1,8 @@
-import { MemoryRouter } from 'react-router-dom';
-import {
-  act, render, fireEvent, within, screen,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { Xblock } from '../data/types';
+import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -91,54 +82,43 @@ const section: Xblock = {
 } as Xblock;
 
 const onEditSubectionSubmit = jest.fn();
-const queryClient = new QueryClient();
 
 const renderComponent = (props?: object, entry = '/') => render(
-  <AppProvider store={store} wrapWithRouter={false}>
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[entry]}>
-        <IntlProvider locale="en">
-          <SubsectionCard
-            section={section}
-            subsection={subsection}
-            index={1}
-            isSelfPaced={false}
-            getPossibleMoves={jest.fn()}
-            onOrderChange={jest.fn()}
-            onOpenPublishModal={jest.fn()}
-            onOpenDeleteModal={jest.fn()}
-            onNewUnitSubmit={jest.fn()}
-            onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
-            isCustomRelativeDatesActive={false}
-            savingStatus=""
-            onEditSubmit={onEditSubectionSubmit}
-            onDuplicateSubmit={jest.fn()}
-            onOpenConfigureModal={jest.fn()}
-            onPasteClick={jest.fn()}
-            resetScrollState={jest.fn()}
-            isSectionsExpanded={false}
-            {...props}
-          >
-            <span>children</span>
-          </SubsectionCard>
-        </IntlProvider>
-      </MemoryRouter>
-    </QueryClientProvider>
-  </AppProvider>,
+  <SubsectionCard
+    section={section}
+    subsection={subsection}
+    index={1}
+    isSelfPaced={false}
+    getPossibleMoves={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onNewUnitSubmit={jest.fn()}
+    onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
+    isCustomRelativeDatesActive={false}
+    savingStatus=""
+    onEditSubmit={onEditSubectionSubmit}
+    onDuplicateSubmit={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    onPasteClick={jest.fn()}
+    resetScrollState={jest.fn()}
+    isSectionsExpanded={false}
+    {...props}
+  >
+    <span>children</span>
+  </SubsectionCard>,
+  {
+    path: '/',
+    routerProps: {
+      initialEntries: [entry],
+    }
+  }
 );
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
   });
 
   it('render SubsectionCard component correctly', () => {
@@ -153,11 +133,11 @@ describe('<SubsectionCard />', () => {
     const expandButton = await findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(queryByTestId('subsection-card__units')).toBeInTheDocument();
-    expect(queryByTestId('new-unit-button')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: `New unit` })).toBeInTheDocument();
 
     fireEvent.click(expandButton);
     expect(queryByTestId('subsection-card__units')).not.toBeInTheDocument();
-    expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: `New unit` })).not.toBeInTheDocument();
   });
 
   it('updates current section, subsection and item', async () => {
@@ -216,7 +196,7 @@ describe('<SubsectionCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: `New unit` })).not.toBeInTheDocument();
   });
 
   it('renders live status', async () => {
@@ -262,7 +242,7 @@ describe('<SubsectionCard />', () => {
     const { findByTestId } = renderComponent(undefined, `?show=${unit.id}`);
 
     const cardUnits = await findByTestId('subsection-card__units');
-    const newUnitButton = await findByTestId('new-unit-button');
+    const newUnitButton = await screen.findByRole('button', { name: `New unit` });
     expect(cardUnits).toBeInTheDocument();
     expect(newUnitButton).toBeInTheDocument();
   });
@@ -272,7 +252,7 @@ describe('<SubsectionCard />', () => {
     const { queryByTestId } = renderComponent(undefined, `?show=${randomId}`);
 
     const cardUnits = queryByTestId('subsection-card__units');
-    const newUnitButton = queryByTestId('new-unit-button');
+    const newUnitButton = screen.queryByRole('button', { name: 'New unit' });
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
   });
