@@ -425,7 +425,7 @@ describe('<CourseOutline />', () => {
       .reply(200, {
         locator: 'some',
       });
-    const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
+    const newUnitButton = await within(subsectionElement).findByRole('button', { name: `New unit` });
     await act(async () => fireEvent.click(newUnitButton));
     expect(axiosMock.history.post.length).toBe(3);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
