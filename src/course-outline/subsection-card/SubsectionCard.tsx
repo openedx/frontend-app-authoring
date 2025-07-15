@@ -25,11 +25,11 @@ import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { ContentType } from '../../library-authoring/routes';
 import OutlineAddChildButtons from '../OutlineAddChildButtons';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 
 interface SubsectionCardProps {
-  section: Xblock,
-  subsection: Xblock,
+  section: XBlock,
+  subsection: XBlock,
   children: ReactNode
   isSectionsExpanded: boolean,
   isSelfPaced: boolean,
@@ -51,7 +51,7 @@ interface SubsectionCardProps {
   }) => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
-  onOrderChange: (section: Xblock, moveDetails: any) => void,
+  onOrderChange: (section: XBlock, moveDetails: any) => void,
   onOpenConfigureModal: () => void,
   onPasteClick: (parentLocator: string, sectionId: string) => void,
   resetScrollState: () => void,

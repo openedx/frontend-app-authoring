@@ -6,12 +6,12 @@ import StatusMessages from './StatusMessages';
 import HideAfterDueMessage from './HideAfterDueMessage';
 import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage';
 import { ShowAnswerTypesKeys } from '../../editors/data/constants/problem';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 
 interface XBlockStatusProps {
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean,
-  blockData: Xblock,
+  blockData: XBlock,
 };
 
 const XBlockStatus = ({

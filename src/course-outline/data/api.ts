@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { courseId } from '@openedx-plugins/course-app-live/factories/mockApiResponses';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 import { CourseOutline } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -156,9 +156,9 @@ export async function restartIndexingOnCourse(reindexLink: string): Promise<obje
 /**
  * Get course Xblock
  * @param {string} itemId
- * @returns {Promise<Xblock>}
+ * @returns {Promise<XBlock>}
  */
-export async function getCourseItem(itemId: string): Promise<Xblock> {
+export async function getCourseItem(itemId: string): Promise<XBlock> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
@@ -354,9 +354,9 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
  * Duplicate course section
  * @param {string} itemId
  * @param {string} parentId
- * @returns {Promise<Xblock>}
+ * @returns {Promise<XBlock>}
  */
-export async function duplicateCourseItem(itemId: string, parentId: string): Promise<Xblock> {
+export async function duplicateCourseItem(itemId: string, parentId: string): Promise<XBlock> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: itemId,

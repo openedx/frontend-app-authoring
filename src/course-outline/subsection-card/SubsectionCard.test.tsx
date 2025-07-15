@@ -2,7 +2,7 @@ import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -45,7 +45,7 @@ const unit = {
   id: 'unit-1',
 };
 
-const subsection: Xblock = {
+const subsection: XBlock = {
   id: '123',
   displayName: 'Subsection Name',
   category: 'sequential',
@@ -65,9 +65,9 @@ const subsection: Xblock = {
       id: unit.id,
     }],
   },
-} as Xblock;
+} as XBlock;
 
-const section: Xblock = {
+const section: XBlock = {
   id: '123',
   displayName: 'Section Name',
   published: true,
@@ -79,7 +79,7 @@ const section: Xblock = {
       id: subsection.id,
     }],
   },
-} as Xblock;
+} as XBlock;
 
 const onEditSubectionSubmit = jest.fn();
 
