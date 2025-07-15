@@ -1,7 +1,8 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { courseId } from '@openedx-plugins/course-app-live/factories/mockApiResponses';
-import { CourseOutline, Xblock } from './types';
+import { Xblock } from '../../data/types';
+import { CourseOutline } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 

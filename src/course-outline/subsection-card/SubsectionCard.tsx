@@ -25,7 +25,7 @@ import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { ContentType } from '../../library-authoring/routes';
 import OutlineAddChildButtons from '../OutlineAddChildButtons';
-import { Xblock } from '../data/types';
+import { Xblock } from '../../data/types';
 
 interface SubsectionCardProps {
   section: Xblock,

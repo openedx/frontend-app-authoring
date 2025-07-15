@@ -54,7 +54,7 @@ import {
 import { postXBlockBaseApiUrl } from '../course-unit/data/api';
 import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 import { act, fireEvent, initializeMocks, render, screen, waitFor, within } from '../testUtils';
-import { Xblock } from './data/types';
+import { Xblock } from '../data/types';
 
 let axiosMock: import("axios-mock-adapter/types");
 let store;
@@ -2304,6 +2304,7 @@ describe('<CourseOutline />', () => {
     // Without the delay the success message renders too quickly
     const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
+    // @ts-ignore-next-line
       .withDelayInMs(500);
     delayedResponse(200, expectedResponse);
 
@@ -2331,6 +2332,7 @@ describe('<CourseOutline />', () => {
     // Without the delay the error renders too quickly
     const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
+    // @ts-ignore-next-line
       .withDelayInMs(500);
     delayedResponse(404);
 
