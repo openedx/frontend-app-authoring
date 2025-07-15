@@ -80,7 +80,7 @@ describe('processFilters', () => {
       const columns = [
         { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
-      const expectedParameter = [{ id: 'displayName', value: ['search'] }];
+      const expectedParameter = [{ id: 'displayName', value: 'search' }];
       processFilters(filters, columns, setAllFilters);
 
       expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
