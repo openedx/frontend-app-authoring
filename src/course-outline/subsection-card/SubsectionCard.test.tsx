@@ -1,8 +1,8 @@
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { Xblock } from '../data/types';
 import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
+import { Xblock } from '../../data/types';
 
 let store;
 const mockPathname = '/foo-bar';

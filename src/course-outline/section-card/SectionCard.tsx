@@ -24,7 +24,7 @@ import { ContainerType } from '../../generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '../../library-authoring';
 import { ContentType } from '../../library-authoring/routes';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { Xblock } from '../data/types';
+import { Xblock } from '../../data/types';
 
 interface SectionCardProps {
   section: Xblock,
