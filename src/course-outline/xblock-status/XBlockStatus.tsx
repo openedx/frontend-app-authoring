@@ -12,7 +12,7 @@ interface XBlockStatusProps {
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean,
   blockData: XBlock,
-};
+}
 
 const XBlockStatus = ({
   isSelfPaced,

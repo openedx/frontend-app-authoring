@@ -1,6 +1,5 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { courseId } from '@openedx-plugins/course-app-live/factories/mockApiResponses';
 import { XBlock } from '../../data/types';
 import { CourseOutline } from './types';
 
