@@ -1,7 +1,9 @@
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
+import {
+  act, fireEvent, initializeMocks, render, screen, within,
+} from '../../testUtils';
 import { XBlock } from '../../data/types';
 
 let store;
@@ -111,8 +113,8 @@ const renderComponent = (props?: object, entry = '/') => render(
     path: '/',
     routerProps: {
       initialEntries: [entry],
-    }
-  }
+    },
+  },
 );
 
 describe('<SubsectionCard />', () => {
@@ -133,11 +135,11 @@ describe('<SubsectionCard />', () => {
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(screen.queryByTestId('subsection-card__units')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: `New unit` })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New unit' })).toBeInTheDocument();
 
     fireEvent.click(expandButton);
     expect(screen.queryByTestId('subsection-card__units')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: `New unit` })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
   });
 
   it('updates current section, subsection and item', async () => {
@@ -196,7 +198,7 @@ describe('<SubsectionCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: `New unit` })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
   });
 
   it('renders live status', async () => {
@@ -242,7 +244,7 @@ describe('<SubsectionCard />', () => {
     renderComponent(undefined, `?show=${unit.id}`);
 
     const cardUnits = await screen.findByTestId('subsection-card__units');
-    const newUnitButton = await screen.findByRole('button', { name: `New unit` });
+    const newUnitButton = await screen.findByRole('button', { name: 'New unit' });
     expect(cardUnits).toBeInTheDocument();
     expect(newUnitButton).toBeInTheDocument();
   });
