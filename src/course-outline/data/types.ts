@@ -1,11 +1,4 @@
-export interface XBlockActions {
-  deletable: boolean;
-  draggable: boolean;
-  childAddable: boolean;
-  duplicable: boolean;
-  allowMoveDown?: boolean;
-  allowMoveUp?: boolean;
-}
+import { Xblock, XBlockActions } from "../../data/types";
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
@@ -29,64 +22,6 @@ export interface CourseOutline {
   proctoringErrors: string[];
   reindexLink: string;
   rerunNotificationId: null;
-}
-
-export interface XblockChildInfo {
-  displayName: string;
-  children: Array<Xblock>;
-}
-
-export interface Xblock {
-  id: string;
-  locator: string;
-  usageKey: string;
-  displayName: string;
-  category: string;
-  hasChildren: boolean;
-  editedOn: string;
-  published: boolean;
-  publishedOn: string;
-  studioUrl: string;
-  releasedToStudents: boolean;
-  releaseDate: string;
-  visibilityState: string;
-  hasExplicitStaffLock: boolean;
-  start: string;
-  graded: boolean;
-  dueDate: string;
-  due?: string;
-  relativeWeeksDue?: string;
-  format?: string;
-  courseGraders: string[];
-  hasChanges: boolean;
-  actions: XBlockActions;
-  explanatoryMessage?: string;
-  userPartitions: object[];
-  showCorrectness: string;
-  highlights: string[];
-  highlightsEnabled: boolean;
-  highlightsPreviewOnly: boolean;
-  highlightsDocUrl: string;
-  childInfo: XblockChildInfo;
-  ancestorHasStaffLock: boolean;
-  staffOnlyMessage: boolean;
-  hasPartitionGroupComponents: boolean;
-  userPartitionInfo: object;
-  enableCopyPasteUnits: boolean;
-  shouldScroll: boolean;
-  isHeaderVisible: boolean;
-  proctoringExamConfigurationLink?: string;
-  isTimeLimited?: boolean;
-  defaultTimeLimitMinutes?: number;
-  hideAfterDue?: boolean;
-  isProctoredExam?: boolean;
-  isPracticeExam?: boolean;
-  isOnboardingExam?: boolean;
-  examReviewRules?: string;
-  isPrereq?: boolean;
-  prereq?: string;
-  prereqMinScore?: number;
-  prereqMinCompletion?: number;
 }
 
 export interface CourseOutlineState {
