@@ -24,14 +24,14 @@ import { ContainerType } from '../../generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '../../library-authoring';
 import { ContentType } from '../../library-authoring/routes';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 
 interface SectionCardProps {
-  section: Xblock,
+  section: XBlock,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
   children: ReactNode,
-  onOpenHighlightsModal: (section: Xblock) => void,
+  onOpenHighlightsModal: (section: XBlock) => void,
   onOpenPublishModal: () => void,
   onOpenConfigureModal: () => void,
   onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => void,

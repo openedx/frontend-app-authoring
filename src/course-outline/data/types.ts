@@ -1,4 +1,4 @@
-import { Xblock, XBlockActions } from "../../data/types";
+import { XBlock, XBlockActions } from "../../data/types";
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
@@ -52,11 +52,11 @@ export interface CourseOutlineState {
     videoSharingEnabled: boolean;
     videoSharingOptions: string;
   };
-  sectionsList: Array<Xblock>;
+  sectionsList: Array<XBlock>;
   isCustomRelativeDatesActive: boolean;
-  currentSection: Xblock | {};
-  currentSubsection: Xblock | {};
-  currentItem: Xblock | {};
+  currentSection: XBlock | {};
+  currentSubsection: XBlock | {};
+  currentItem: XBlock | {};
   actions: XBlockActions;
   enableProctoredExams: boolean;
   pasteFileNotices: object;
