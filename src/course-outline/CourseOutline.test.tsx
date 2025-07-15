@@ -54,7 +54,7 @@ import {
 import { postXBlockBaseApiUrl } from '../course-unit/data/api';
 import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 import { act, fireEvent, initializeMocks, render, screen, waitFor, within } from '../testUtils';
-import { Xblock } from '../data/types';
+import { XBlock } from '../data/types';
 
 let axiosMock: import("axios-mock-adapter/types");
 let store;
@@ -709,7 +709,7 @@ describe('<CourseOutline />', () => {
   it('check whether section, subsection and unit is duplicated successfully', async () => {
     const { findAllByTestId } = renderComponent();
     // get section, subsection and unit
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as Xblock[];
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -774,7 +774,7 @@ describe('<CourseOutline />', () => {
 
   it('check section, subsection & unit is published when publish button is clicked', async () => {
     const { findAllByTestId, findByTestId } = renderComponent();
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as Xblock[];
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -911,7 +911,7 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = renderComponent();
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as Xblock;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1026,7 +1026,7 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = renderComponent();
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as Xblock;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection, secondSubsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1171,7 +1171,7 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = renderComponent();
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as Xblock;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1271,7 +1271,7 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = renderComponent();
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as Xblock;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [, subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1371,7 +1371,7 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = renderComponent();
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[1]) as unknown as Xblock;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[1]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -2304,6 +2304,8 @@ describe('<CourseOutline />', () => {
     // Without the delay the success message renders too quickly
     const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
+    // Issue with types in upstream lib, should be fixed by this PR
+    // https://github.com/ctimmerm/axios-mock-adapter/pull/391/files
     // @ts-ignore-next-line
       .withDelayInMs(500);
     delayedResponse(200, expectedResponse);
@@ -2332,6 +2334,8 @@ describe('<CourseOutline />', () => {
     // Without the delay the error renders too quickly
     const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
+    // Issue with types in upstream lib, should be fixed by this PR
+    // https://github.com/ctimmerm/axios-mock-adapter/pull/391/files
     // @ts-ignore-next-line
       .withDelayInMs(500);
     delayedResponse(404);

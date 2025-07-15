@@ -2,7 +2,7 @@ import React from 'react';
 
 import SectionCard from './SectionCard';
 import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
-import { Xblock } from '../../data/types';
+import { XBlock } from '../../data/types';
 
 const mockPathname = '/foo-bar';
 
@@ -37,7 +37,7 @@ const subsection = {
       id: unit.id,
     }],
   },
-} as Xblock;
+} as XBlock;
 
 const section = {
   id: '123',
@@ -64,7 +64,7 @@ const section = {
       },
     }],
   },
-} as Xblock;
+} as XBlock;
 
 const onEditSectionSubmit = jest.fn();
 

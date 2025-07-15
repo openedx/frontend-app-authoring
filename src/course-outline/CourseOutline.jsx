@@ -238,7 +238,7 @@ const CourseOutline = ({ courseId }) => {
       libraryContentKey: selectedSection.usageKey,
     });
     closeAddLibrarySectionModal();
-  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId]);
+  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId, courseUsageKey]);
 
   useEffect(() => {
     setSections(sectionsList);

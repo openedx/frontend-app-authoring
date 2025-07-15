@@ -39,7 +39,7 @@ export interface XBlockActions {
 
 export interface XblockChildInfo {
   displayName: string;
-  children: Array<Xblock>;
+  children: Array<XBlock>;
 }
 
 export interface XBlockPrereqs {
@@ -47,7 +47,7 @@ export interface XBlockPrereqs {
   blockDisplayName: string;
 }
 
-export interface Xblock {
+export interface XBlock {
   id: string;
   locator: string;
   usageKey: string;
