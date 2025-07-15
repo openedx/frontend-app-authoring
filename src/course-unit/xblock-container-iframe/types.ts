@@ -1,4 +1,4 @@
-import { UserPartitionInfoTypes, UserPartitionTypes, XBlockPrereqs } from "../../data/types";
+import { UserPartitionInfoTypes, UserPartitionTypes, XBlockPrereqs } from '../../data/types';
 
 export interface XBlockActionsTypes {
   canCopy: boolean;

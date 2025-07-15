@@ -1,7 +1,9 @@
 import React from 'react';
 
 import SectionCard from './SectionCard';
-import { act, fireEvent, initializeMocks, render, screen, within } from '../../testUtils';
+import {
+  act, fireEvent, initializeMocks, render, screen, within,
+} from '../../testUtils';
 import { XBlock } from '../../data/types';
 
 const mockPathname = '/foo-bar';
@@ -68,7 +70,7 @@ const section = {
 
 const onEditSectionSubmit = jest.fn();
 
-const renderComponent = (props?: object, entry="/") => render(
+const renderComponent = (props?: object, entry = '/') => render(
   <SectionCard
     section={section}
     index={1}
@@ -95,8 +97,8 @@ const renderComponent = (props?: object, entry="/") => render(
     path: '/',
     routerProps: {
       initialEntries: [entry],
-    }
-  }
+    },
+  },
 );
 
 describe('<SectionCard />', () => {
@@ -117,7 +119,7 @@ describe('<SectionCard />', () => {
     const expandButton = screen.getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(screen.queryByTestId('section-card__subsections')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: `New subsection` })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New subsection' })).not.toBeInTheDocument();
 
     fireEvent.click(expandButton);
     expect(screen.queryByTestId('section-card__subsections')).toBeInTheDocument();

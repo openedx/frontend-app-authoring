@@ -16,7 +16,7 @@ interface StatusMessagesProps {
   prereqs?: XBlockPrereqs[],
   userPartitionInfo?: UserPartitionInfoTypes,
   hasPartitionGroupComponents?: boolean,
-};
+}
 
 interface StatusMessagesText {
   icon: React.ComponentType;

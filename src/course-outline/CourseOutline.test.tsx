@@ -53,10 +53,12 @@ import {
 } from './drag-helper/utils';
 import { postXBlockBaseApiUrl } from '../course-unit/data/api';
 import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
-import { act, fireEvent, initializeMocks, render, screen, waitFor, within } from '../testUtils';
+import {
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+} from '../testUtils';
 import { XBlock } from '../data/types';
 
-let axiosMock: import("axios-mock-adapter/types");
+let axiosMock: import('axios-mock-adapter/types');
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
@@ -132,7 +134,7 @@ jest.mock('../studio-home/data/selectors', () => ({
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderComponent = () => render(
-  <CourseOutline courseId={courseId} />
+  <CourseOutline courseId={courseId} />,
 );
 
 describe('<CourseOutline />', () => {
@@ -140,11 +142,11 @@ describe('<CourseOutline />', () => {
     const mocks = initializeMocks();
 
     jest.mocked(useLocation).mockReturnValue({
-        pathname: mockPathname,
-        state: undefined,
-        key: '',
-        search: '',
-        hash: ''
+      pathname: mockPathname,
+      state: undefined,
+      key: '',
+      search: '',
+      hash: '',
     });
 
     store = mocks.reduxStore;
@@ -404,7 +406,7 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
-    const newSubsectionButton = await within(section).findByRole('button', { name: `New subsection` });
+    const newSubsectionButton = await within(section).findByRole('button', { name: 'New subsection' });
     await act(async () => {
       fireEvent.click(newSubsectionButton);
     });
@@ -426,7 +428,7 @@ describe('<CourseOutline />', () => {
       .reply(200, {
         locator: 'some',
       });
-    const newUnitButton = await within(subsectionElement).findByRole('button', { name: `New unit` });
+    const newUnitButton = await within(subsectionElement).findByRole('button', { name: 'New unit' });
     await act(async () => fireEvent.click(newUnitButton));
     expect(axiosMock.history.post.length).toBe(3);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
