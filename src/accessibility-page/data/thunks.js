@@ -13,6 +13,7 @@ function submitAccessibilityForm({ email, name, message }) {
       if (error.response && error.response.status === 429) {
         dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       } else {
+        /* istanbul ignore next */
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       }
     }

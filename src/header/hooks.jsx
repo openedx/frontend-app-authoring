@@ -118,7 +118,7 @@ export const useToolsMenuItems = courseId => {
       title: (
         <>
           {intl.formatMessage(messages['header.links.optimizer'])}
-          <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.beta)}</Badge>
+          <Badge variant="primary" className="ml-2">{intl.formatMessage(courseOptimizerMessages.new)}</Badge>
         </>
       ),
     }] : []),

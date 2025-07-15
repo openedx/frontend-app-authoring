@@ -28,7 +28,7 @@ const ExpandableTextArea = ({
       </div>
       {error && (
         <div className="text-danger-500 x-small">
-          {props.errorMessage}
+          {errorMessage}
         </div>
       )}
     </>

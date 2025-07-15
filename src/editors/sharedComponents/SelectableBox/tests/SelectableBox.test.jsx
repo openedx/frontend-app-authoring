@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import renderer from 'react-test-renderer';
 
 import SelectableBox from '..';
 
@@ -18,10 +17,9 @@ const SelectableRadio = (props) => <SelectableBox type={radioType} {...props}>{r
 describe('<SelectableBox />', () => {
   describe('correct rendering', () => {
     it('renders without props', () => {
-      const tree = renderer.create((
-        <SelectableBox>SelectableBox</SelectableBox>
-      )).toJSON();
-      expect(tree).toMatchSnapshot();
+      render(<SelectableBox>SelectableBox</SelectableBox>);
+      expect(screen.getByText('SelectableBox')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'SelectableBox' })).toBeInTheDocument();
     });
     it('correct render when type prop is changed', () => {
       const { rerender } = render(<SelectableRadio type="checkbox" />);

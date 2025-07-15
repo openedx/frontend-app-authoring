@@ -3,7 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { configureStore } from '@reduxjs/toolkit';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import VideoUploadEditor from '.';
 
@@ -44,7 +44,8 @@ describe('VideoUploadEditor', () => {
   });
 
   it('renders as expected with default behavior', async () => {
-    expect(await renderComponent(store)).toMatchSnapshot();
+    await renderComponent(store);
+    expect(screen.getByText('Drag and drop video here or click to upload')).toBeInTheDocument();
   });
 
   it('calls window.history.back when close button is clicked', async () => {

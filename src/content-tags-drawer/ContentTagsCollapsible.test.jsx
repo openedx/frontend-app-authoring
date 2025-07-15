@@ -651,7 +651,7 @@ describe('<ContentTagsCollapsible />', () => {
     expect(dropdownTag1pt2Div).toHaveFocus();
 
     // Press space key to check Tag 1.2, it should be staged
-    await user.keyboard('{enter}');
+    await user.keyboard('[Space]');
 
     const taxonomyId = 123;
     const addedStagedTag = {

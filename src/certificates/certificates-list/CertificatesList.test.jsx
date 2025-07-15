@@ -1,5 +1,7 @@
 import { Provider } from 'react-redux';
-import { render, waitFor, within } from '@testing-library/react';
+import {
+  render, waitFor, within, fireEvent,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -87,7 +89,7 @@ describe('CertificatesList Component', () => {
     await user.clear(nameInput);
     await user.type(nameInput, signatoryNameValue);
 
-    await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
+    fireEvent.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
     axiosMock
       .onPost(getUpdateCertificateApiUrl(courseId, certificatesMock.id))

@@ -6,6 +6,7 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import { getClipboardUrl } from '../../generic/data/api';
 import { ContentHit } from '../../search-manager';
 import ComponentCard from './ComponentCard';
@@ -53,7 +54,9 @@ const render = () => baseRender(<ComponentCard hit={contentHit} />, {
   params: { libraryId },
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>
-      { children }
+      <SidebarProvider>
+        { children }
+      </SidebarProvider>
     </LibraryProvider>
   ),
 });

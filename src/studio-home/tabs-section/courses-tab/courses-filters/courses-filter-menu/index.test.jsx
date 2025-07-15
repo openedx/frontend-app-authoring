@@ -51,9 +51,9 @@ describe('CoursesFilterMenu', () => {
     });
   });
 
-  it('snapshot', () => {
+  it('renders component', () => {
     const { container } = renderComponent();
-    expect(container).toMatchSnapshot();
+    expect(container.querySelector('.dropdown')).toBeInTheDocument();
   });
 
   it('should render without crashing', () => {

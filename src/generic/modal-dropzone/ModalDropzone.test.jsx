@@ -1,5 +1,5 @@
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -116,7 +116,7 @@ describe('<ModalDropzone />', () => {
 
     expect(response.asset.url).toBe(mockUrl);
 
-    const { getByRole, getByAltText } = render(<RootWrapper {...props} />);
+    const { getByRole, getByLabelText } = render(<RootWrapper {...props} />);
     const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
 
@@ -126,10 +126,10 @@ describe('<ModalDropzone />', () => {
       expect(uploadButton).not.toBeDisabled();
     });
 
-    user.click(uploadButton);
+    await user.click(uploadButton);
 
-    await waitFor(() => {
-      expect(getByAltText(messages.uploadImageDropzoneAlt.defaultMessage)).toBeInTheDocument();
+    await act(() => {
+      expect(getByLabelText(messages.uploadImageDropzoneAlt.defaultMessage)).toBeInTheDocument();
     });
   });
 

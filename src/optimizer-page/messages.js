@@ -9,9 +9,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.heading.title',
     defaultMessage: 'Course optimizer',
   },
-  beta: {
-    id: 'course-authoring.course-optimizer.beta',
-    defaultMessage: 'Beta',
+  new: {
+    id: 'course-authoring.course-optimizer.new',
+    defaultMessage: 'New',
   },
   headingSubtitle: {
     id: 'course-authoring.course-optimizer.heading.subtitle',
