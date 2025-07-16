@@ -1,4 +1,7 @@
-import { fireEvent, initializeMocks, render, screen } from '../../testUtils';
+import { Button } from '@openedx/paragon';
+import {
+  fireEvent, initializeMocks, render, screen,
+} from '../../testUtils';
 
 import EmptyPlaceholder from './EmptyPlaceholder';
 import messages from './messages';
@@ -7,8 +10,8 @@ const onCreateNewSectionMock = jest.fn();
 
 const renderComponent = () => render(
   <EmptyPlaceholder>
-    <button onClick={onCreateNewSectionMock}>Create New Section</button>
-  </EmptyPlaceholder>
+    <Button onClick={onCreateNewSectionMock}>Create New Section</Button>
+  </EmptyPlaceholder>,
 );
 
 describe('<EmptyPlaceholder />', () => {
