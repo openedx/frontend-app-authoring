@@ -9,19 +9,19 @@ import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
-import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus } from '@src/data/constants';
-import { isUnitReadOnly } from '@src/course-unit/data/utils';
-import CardHeader from '@src/course-outline/card-header/CardHeader';
-import SortableItem from '@src/course-outline/drag-helper/SortableItem';
-import TitleLink from '@src/course-outline/card-header/TitleLink';
-import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import { useClipboard } from '@src/generic/clipboard';
-import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
-import { XBlock } from '@src/data/types';
+import CourseOutlineUnitCardExtraActionsSlot from '../../plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
+import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
+import { fetchCourseSectionQuery } from '../data/thunk';
+import { RequestStatus } from '../../data/constants';
+import { isUnitReadOnly } from '../../course-unit/data/utils';
+import CardHeader from '../card-header/CardHeader';
+import SortableItem from '../drag-helper/SortableItem';
+import TitleLink from '../card-header/TitleLink';
+import XBlockStatus from '../xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
+import { useClipboard } from '../../generic/clipboard';
+import { PreviewLibraryXBlockChanges } from '../../course-unit/preview-changes';
+import { XBlock } from '../../data/types';
 
 interface UnitCardProps {
   unit: XBlock;
