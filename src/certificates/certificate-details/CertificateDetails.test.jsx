@@ -1,6 +1,6 @@
 import { Provider, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -102,10 +102,8 @@ describe('CertificateDetails', () => {
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
     await user.click(deleteButton);
 
-    await waitFor(async () => {
-      const confirmActionButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-      await user.click(confirmActionButton);
-    });
+    const confirmActionButton = await screen.findByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
+    await user.click(confirmActionButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(deleteCourseCertificate(courseId, certificateId));
   });

@@ -144,15 +144,13 @@ describe('<MoveModal />', () => {
 
   it('correctly navigates using breadcrumbs', async () => {
     const user = userEvent.setup();
-    const { getByRole, getByTestId } = renderComponent();
+    const { getByRole, findByRole, getByTestId } = renderComponent();
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    await waitFor(async () => {
-      await user.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
-      await user.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
-      await user.click(within(breadcrumbs).getByText(sections[1].displayName));
-    });
+    await user.click(await findByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
+    await user.click(await findByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
+    await user.click(within(breadcrumbs).getByText(sections[1].displayName));
 
     await waitFor(() => {
       expect(

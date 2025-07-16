@@ -1,8 +1,6 @@
 import {
   render,
-  act,
   screen,
-  fireEvent,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -80,20 +78,18 @@ describe('<AccessibilityPolicyForm />', () => {
       user = userEvent.setup();
       renderComponent();
       formSections = screen.getAllByRole('textbox');
-      await act(async () => {
-        await user.type(formSections[0], 'email@email.com');
-        await user.type(formSections[1], 'test name');
-        await user.type(formSections[2], 'feedback message');
-      });
+
+      await user.type(formSections[0], 'email@email.com');
+      await user.type(formSections[1], 'test name');
+      await user.type(formSections[2], 'feedback message');
+
       submitButton = screen.getByText(messages.accessibilityPolicyFormSubmitLabel.defaultMessage);
     });
 
     it('shows correct success message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(200);
 
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      await user.click(submitButton);
 
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -110,9 +106,7 @@ describe('<AccessibilityPolicyForm />', () => {
     it('shows correct rate limiting message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(429);
 
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      await user.click(submitButton);
 
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.FAILED);

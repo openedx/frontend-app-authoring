@@ -1,5 +1,5 @@
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor, act } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -128,9 +128,7 @@ describe('<ModalDropzone />', () => {
 
     await user.click(uploadButton);
 
-    await act(() => {
-      expect(getByLabelText(messages.uploadImageDropzoneAlt.defaultMessage)).toBeInTheDocument();
-    });
+    expect(getByLabelText(messages.uploadImageDropzoneAlt.defaultMessage)).toBeInTheDocument();
   });
 
   it('should handle an upload error', async () => {

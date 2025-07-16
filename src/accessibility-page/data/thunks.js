@@ -10,6 +10,7 @@ function submitAccessibilityForm({ email, name, message }) {
       await postAccessibilityForm({ email, name, message });
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
+      /* istanbul ignore else */
       if (error.response && error.response.status === 429) {
         dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       } else {

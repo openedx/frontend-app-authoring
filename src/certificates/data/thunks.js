@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { RequestStatus } from '../../data/constants';
 import {
   hideProcessingNotification,

@@ -6,6 +6,7 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
@@ -237,6 +238,7 @@ describe('Videos page', () => {
     describe('table actions', () => {
       describe('file upload', () => {
         it('should upload a single file', async () => {
+          const user = userEvent.setup({ applyAccept: false });
           await mockStore(RequestStatus.SUCCESSFUL);
 
           axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
@@ -244,14 +246,13 @@ describe('Videos page', () => {
           axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-          await act(async () => {
-            fireEvent.change(addFilesButton, { target: { files: [file] } });
-          });
+          await user.upload(addFilesButton, file);
           const addStatus = store.getState().videos.addingStatus;
           expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
 
         it('when uploads are in progress, should show dialog and set them to failed on page leave', async () => {
+          const user = userEvent.setup({ applyAccept: false });
           await mockStore(RequestStatus.SUCCESSFUL);
 
           axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
@@ -263,9 +264,7 @@ describe('Videos page', () => {
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-          await act(async () => {
-            fireEvent.change(addFilesButton, { target: { files: [file] } });
-          });
+          await user.upload(addFilesButton, file);
           await waitFor(() => {
             const addStatus = store.getState().videos.addingStatus;
             expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
@@ -283,6 +282,7 @@ describe('Videos page', () => {
         });
 
         it('should cancel all in-progress and set them to failed', async () => {
+          const user = userEvent.setup({ applyAccept: false });
           await mockStore(RequestStatus.SUCCESSFUL);
 
           axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
@@ -294,9 +294,7 @@ describe('Videos page', () => {
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
           const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-          await act(async () => {
-            fireEvent.change(addFilesButton, { target: { files: [file] } });
-          });
+          await user.upload(addFilesButton, file);
 
           await waitFor(() => {
             const addStatus = store.getState().videos.addingStatus;
@@ -604,15 +602,14 @@ describe('Videos page', () => {
       });
 
       it('invalid file size should show error', async () => {
+        const user = userEvent.setup({ applyAccept: false });
         const errorMessage = 'File download.png exceeds maximum size of 5 GB.';
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(413, { error: errorMessage });
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-        await act(async () => {
-          fireEvent.change(addFilesButton, { target: { files: [file] } });
-        });
+        await user.upload(addFilesButton, file);
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;
           expect(addStatus).toEqual(RequestStatus.FAILED);
@@ -622,14 +619,13 @@ describe('Videos page', () => {
       });
 
       it('404 add file should show error', async () => {
+        const user = userEvent.setup({ applyAccept: false });
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
-        await act(async () => {
-          fireEvent.change(addFilesButton, { target: { files: [file] } });
-        });
+        await user.upload(addFilesButton, file);
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;
           expect(addStatus).toEqual(RequestStatus.FAILED);
@@ -653,13 +649,14 @@ describe('Videos page', () => {
       });
 
       it('404 upload file to server should show error', async () => {
+        const user = userEvent.setup({ applyAccept: false });
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
         axiosUnauthenticateMock.onPut('http://testing.org').reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
         const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
 
-        fireEvent.change(addFilesButton, { target: { files: [file] } });
+        await user.upload(addFilesButton, file);
 
         await waitFor(() => {
           const addStatus = store.getState().videos.addingStatus;

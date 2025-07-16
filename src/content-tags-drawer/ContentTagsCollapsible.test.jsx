@@ -508,6 +508,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should handle search term change', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const {
       getByText, getByRole, getByDisplayValue,
     } = await getComponent();
@@ -523,7 +524,7 @@ describe('<ContentTagsCollapsible />', () => {
     const searchTerm = 'memo';
 
     // Trigger a change in the search field
-    fireEvent.change(searchField, { target: { value: searchTerm } });
+    await user.type(searchField, searchTerm);
 
     await act(async () => {
       // Fast-forward time by 500 milliseconds (for the debounce delay)

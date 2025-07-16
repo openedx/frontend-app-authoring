@@ -1,6 +1,6 @@
 import { Provider } from 'react-redux';
 import {
-  render, waitFor, within, fireEvent,
+  render, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -78,7 +78,7 @@ describe('CertificateEditForm Component', () => {
       courseTitleOverrideValue,
     );
 
-    fireEvent.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),

@@ -501,19 +501,19 @@ describe('<CourseUnit />', () => {
         children: updatedCourseVerticalChildren,
       });
 
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage }));
+    await user.click(
+      await screen.findByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage }),
+    );
 
-      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute(
-        'aria-label',
-        xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-          .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
-      );
+    const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute(
+      'aria-label',
+      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
+        .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
+    );
 
-      simulatePostMessageEvent(messageTypes.duplicateXBlock, {
-        id: courseVerticalChildrenMock.children[0].block_id,
-      });
+    simulatePostMessageEvent(messageTypes.duplicateXBlock, {
+      id: courseVerticalChildrenMock.children[0].block_id,
     });
 
     axiosMock
@@ -551,34 +551,32 @@ describe('<CourseUnit />', () => {
       .reply(200, courseSectionVerticalMock);
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
-    await waitFor(() => {
-      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute(
-        'aria-label',
-        xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-          .replace('{xblockCount}', updatedCourseVerticalChildren.length),
-      );
+    const xblockIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblockIframe).toHaveAttribute(
+      'aria-label',
+      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
+        .replace('{xblockCount}', updatedCourseVerticalChildren.length),
+    );
 
-      // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
-      expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-      expect(screen.getByText(
-        sidebarMessages.publishInfoDraftSaved.defaultMessage
-          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-      )).toBeInTheDocument();
-      expect(screen.getByText(
-        sidebarMessages.releaseInfoWithSection.defaultMessage
-          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-      )).toBeInTheDocument();
-    });
+    // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
+    expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(screen.getByText(
+      sidebarMessages.publishInfoDraftSaved.defaultMessage
+        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+    )).toBeInTheDocument();
+    expect(screen.getByText(
+      sidebarMessages.releaseInfoWithSection.defaultMessage
+        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+    )).toBeInTheDocument();
   });
 
   it('handles CourseUnit header action buttons', async () => {

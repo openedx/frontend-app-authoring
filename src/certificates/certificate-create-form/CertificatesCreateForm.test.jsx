@@ -1,5 +1,5 @@
 import {
-  fireEvent, render, waitFor, within,
+  render, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -99,7 +99,7 @@ describe('CertificateCreateForm', () => {
       getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage),
       signatoryNameValue,
     );
-    fireEvent.click(getByRole('button', { name: messages.cardCreate.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.cardCreate.defaultMessage }));
 
     axiosMock.onPost(
       getCertificateApiUrl(courseId),

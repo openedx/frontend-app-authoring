@@ -198,7 +198,7 @@ describe('<ConfigureModal /> for Unit', () => {
     store = initializeStore();
   });
 
-  it('renders unit ConfigureModal component correctly', () => {
+  it('renders unit ConfigureModal component correctly', async () => {
     const user = userEvent.setup();
     const {
       getByText, queryByText, getByRole, getByTestId,
@@ -213,15 +213,19 @@ describe('<ConfigureModal /> for Unit', () => {
     expect(queryByText(messages.unitSelectGroup.defaultMessage)).not.toBeInTheDocument();
     const input = getByTestId('group-type-select');
 
-    ['0', '1'].forEach(async (groupeTypeIndex) => {
-      await user.selectOptions(input, groupeTypeIndex);
+    await user.selectOptions(input, '0');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['0'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
-      expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-      currentUnitMock
-        .userPartitionInfo
-        .selectablePartitions[groupeTypeIndex].groups
-        .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
-    });
+    await user.selectOptions(input, '1');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['1'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
@@ -261,7 +265,7 @@ describe('<ConfigureModal /> for XBlock', () => {
     store = initializeStore();
   });
 
-  it('renders unit ConfigureModal component correctly', () => {
+  it('renders unit ConfigureModal component correctly', async () => {
     const user = userEvent.setup();
     const {
       getByText, queryByText, getByRole, getByTestId,
@@ -275,15 +279,19 @@ describe('<ConfigureModal /> for XBlock', () => {
     expect(queryByText(messages.unitSelectGroup.defaultMessage)).not.toBeInTheDocument();
     const input = getByTestId('group-type-select');
 
-    ['0', '1'].forEach(async (groupeTypeIndex) => {
-      await user.selectOptions(input, groupeTypeIndex);
+    await user.selectOptions(input, '0');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['0'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
-      expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-      currentUnitMock
-        .userPartitionInfo
-        .selectablePartitions[groupeTypeIndex].groups
-        .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
-    });
+    await user.selectOptions(input, '1');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['1'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();

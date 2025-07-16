@@ -146,11 +146,9 @@ describe('AppList', () => {
       const user = userEvent.setup();
       renderComponent();
 
-      await waitFor(async () => {
-        await user.click(screen.getByLabelText('Select Piazza'));
-        const clickedCard = screen.getByRole('radio', { checked: true });
-        expect(within(clickedCard).queryByLabelText('Select Piazza')).toBeInTheDocument();
-      });
+      await user.click(await screen.findByLabelText('Select Piazza'));
+      const clickedCard = screen.getByRole('radio', { checked: true });
+      expect(within(clickedCard).queryByLabelText('Select Piazza')).toBeInTheDocument();
     });
   });
 
