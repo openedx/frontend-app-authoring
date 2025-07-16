@@ -1,4 +1,4 @@
-import { XBlock, XBlockActions } from '../../data/types';
+import { XBlock, XBlockActions } from '@src/data/types';
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
