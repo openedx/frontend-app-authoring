@@ -1,7 +1,7 @@
 import { Button } from '@openedx/paragon';
 import {
   fireEvent, initializeMocks, render, screen,
-} from '../../testUtils';
+} from '@src/testUtils';
 
 import EmptyPlaceholder from './EmptyPlaceholder';
 import messages from './messages';
