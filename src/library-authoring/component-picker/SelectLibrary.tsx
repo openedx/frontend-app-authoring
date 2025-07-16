@@ -77,7 +77,10 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
   return (
     <Stack gap={2} className="p-5">
       <small className="text-primary-700">
-        {intl.formatMessage(messages.selectLibraryInfo, { itemType })}
+        <FormattedMessage
+          {...messages.selectLibraryInfo}
+          values={{ itemType: intl.formatMessage(messages[`itemType.${itemType}`]) }}
+        />
       </small>
       <SearchField
         onSubmit={handleSearch}

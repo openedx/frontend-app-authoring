@@ -47,6 +47,31 @@ const messages = defineMessages({
     defaultMessage: 'Only published content is visible and available for reuse.',
     description: 'The alert text on top of component-picker if only published content is visible.',
   },
+  'itemType.components': {
+    id: 'course-authoring.library-authoring.pick-components.item-type.components',
+    defaultMessage: 'components',
+    description: 'The item type for components in the select library component',
+  },
+  'itemType.units': {
+    id: 'course-authoring.library-authoring.pick-components.item-type.units',
+    defaultMessage: 'units',
+    description: 'The item type for units in the select library component',
+  },
+  'itemType.sections': {
+    id: 'course-authoring.library-authoring.pick-components.item-type.sections',
+    defaultMessage: 'sections',
+    description: 'The item type for sectionsns in the select library component',
+  },
+  'itemType.subsections': {
+    id: 'course-authoring.library-authoring.pick-components.item-type.subsections',
+    defaultMessage: 'subsections',
+    description: 'The item type for subsections in the select library component',
+  },
+  'itemType.collections': {
+    id: 'course-authoring.library-authoring.pick-components.item-type.collections',
+    defaultMessage: 'collections',
+    description: 'The item type for collections in the select library component',
+  },
 });
 
 export default messages;
