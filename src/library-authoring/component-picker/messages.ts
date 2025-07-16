@@ -1,10 +1,30 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  selectLibraryInfo: {
-    id: 'course-authoring.library-authoring.pick-components.select-library.info',
-    defaultMessage: 'Choose a library to browse {itemType}.',
-    description: 'The info text for the select library item. {itemType} is replaced with the type of content being selected, e.g., "components", "units".',
+  'selectLibraryInfo.components': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.components',
+    defaultMessage: 'Choose a library to browse components.',
+    description: 'The info text for the select library component',
+  },
+  'selectLibraryInfo.units': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.units',
+    defaultMessage: 'Choose a library to browse units.',
+    description: 'The info text for the select library for units',
+  },
+  'selectLibraryInfo.sections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.sections',
+    defaultMessage: 'Choose a library to browse sections.',
+    description: 'The info text for the select library for sections',
+  },
+  'selectLibraryInfo.subsections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.subsections',
+    defaultMessage: 'Choose a library to browse subsections.',
+    description: 'The info text for the select library for subsections',
+  },
+  'selectLibraryInfo.collections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.collections',
+    defaultMessage: 'Choose a library to browse collections.',
+    description: 'The info text for the select library for collections',
   },
   selectLibrarySearchPlaceholder: {
     id: 'course-authoring.library-authoring.pick-components.select-library.search-placeholder',
@@ -46,31 +66,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.pick-components.component-picker.information-alert',
     defaultMessage: 'Only published content is visible and available for reuse.',
     description: 'The alert text on top of component-picker if only published content is visible.',
-  },
-  'itemType.components': {
-    id: 'course-authoring.library-authoring.pick-components.item-type.components',
-    defaultMessage: 'components',
-    description: 'The item type for components in the select library component',
-  },
-  'itemType.units': {
-    id: 'course-authoring.library-authoring.pick-components.item-type.units',
-    defaultMessage: 'units',
-    description: 'The item type for units in the select library component',
-  },
-  'itemType.sections': {
-    id: 'course-authoring.library-authoring.pick-components.item-type.sections',
-    defaultMessage: 'sections',
-    description: 'The item type for sectionsns in the select library component',
-  },
-  'itemType.subsections': {
-    id: 'course-authoring.library-authoring.pick-components.item-type.subsections',
-    defaultMessage: 'subsections',
-    description: 'The item type for subsections in the select library component',
-  },
-  'itemType.collections': {
-    id: 'course-authoring.library-authoring.pick-components.item-type.collections',
-    defaultMessage: 'collections',
-    description: 'The item type for collections in the select library component',
   },
 });
 
