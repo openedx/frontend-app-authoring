@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Spinner } from '@openedx/paragon';
-import {  } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import EditorContainer from '../EditorContainer';
 // This 'module' self-import hack enables mocking during tests.
@@ -23,7 +23,7 @@ import EditorContainer from '../EditorContainer';
 import * as module from '.';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
-import { useIntl } from '@edx/frontend-platform/i18n';
+
 
 export const hooks = {
   getContent: () => ({
