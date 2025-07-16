@@ -6,8 +6,8 @@ import {
   Groups as GroupsIcon,
 } from '@openedx/paragon/icons';
 
-import messages from './messages';
 import { UserPartitionInfoTypes, XBlockPrereqs } from '@src/data/types';
+import messages from './messages';
 
 interface StatusMessagesProps {
   isVertical: boolean;
