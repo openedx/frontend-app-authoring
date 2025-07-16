@@ -47,6 +47,12 @@ export interface XBlockPrereqs {
   blockDisplayName: string;
 }
 
+export interface UpstreeamInfo {
+  readyToSync: boolean,
+  upstreamRef: string,
+  versionSynced: number,
+}
+
 export interface XBlock {
   id: string;
   locator: string;
@@ -99,4 +105,6 @@ export interface XBlock {
   prereqs?: XBlockPrereqs[];
   prereqMinScore?: number;
   prereqMinCompletion?: number;
+  discussionEnabled?: boolean;
+  upstreamInfo?: UpstreeamInfo;
 }

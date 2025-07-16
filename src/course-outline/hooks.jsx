@@ -148,10 +148,14 @@ const useCourseOutline = ({ courseId }) => {
   const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
 
   const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
-    const data = await getCourseItem(locator);
-    // Page should scroll to newly added subsection.
-    data.shouldScroll = true;
-    dispatch(addSubsection({ parentLocator, data }));
+    try {
+      const data = await getCourseItem(locator);
+      data.shouldScroll = true;
+      // Page should scroll to newly added subsection.
+      dispatch(addSubsection({ parentLocator, data }));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
   });
 
   const resetScrollState = () => {
@@ -159,10 +163,14 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
-    const data = await getCourseItem(locator);
-    // Page should scroll to newly added section.
-    data.shouldScroll = true;
-    dispatch(addSection(data));
+    try {
+      const data = await getCourseItem(locator);
+      // Page should scroll to newly added section.
+      data.shouldScroll = true;
+      dispatch(addSection(data));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
   });
 
   const headerNavigationsActions = {
