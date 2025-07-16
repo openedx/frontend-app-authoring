@@ -1,4 +1,5 @@
-import {
+// @ts-check
+import React, {
   useContext, useEffect, useState, useRef, useCallback, ReactNode,
 } from 'react';
 import { useDispatch } from 'react-redux';
@@ -9,21 +10,21 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
-import { RequestStatus } from '@src/data/constants';
-import CardHeader from '@src/course-outline/card-header/CardHeader';
-import SortableItem from '@src/course-outline/drag-helper/SortableItem';
-import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
-import TitleButton from '@src/course-outline/card-header/TitleButton';
-import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
+import { setCurrentItem, setCurrentSection } from '../data/slice';
+import { RequestStatus } from '../../data/constants';
+import CardHeader from '../card-header/CardHeader';
+import SortableItem from '../drag-helper/SortableItem';
+import { DragContext } from '../drag-helper/DragContextProvider';
+import TitleButton from '../card-header/TitleButton';
+import XBlockStatus from '../xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
-import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
-import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { XBlock } from '@src/data/types';
+import OutlineAddChildButtons from '../OutlineAddChildButtons';
+import { ContainerType } from '../../generic/key-utils';
+import { ComponentPicker, SelectedComponent } from '../../library-authoring';
+import { ContentType } from '../../library-authoring/routes';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
+import { XBlock } from '../../data/types';
 
 interface SectionCardProps {
   section: XBlock,

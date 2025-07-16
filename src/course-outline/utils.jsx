@@ -3,9 +3,9 @@ import {
   Lock as LockIcon,
 } from '@openedx/paragon/icons';
 
-import DraftIcon from '@src/generic/DraftIcon';
+import DraftIcon from '../generic/DraftIcon';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
-import { VisibilityTypes } from '@src/data/constants';
+import { VisibilityTypes } from '../data/constants';
 
 /**
  * Get section status depended on section info

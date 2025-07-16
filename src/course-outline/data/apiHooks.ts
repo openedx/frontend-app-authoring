@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { createCourseXblock } from '@src/course-unit/data/api';
+import { createCourseXblock } from '../../course-unit/data/api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],

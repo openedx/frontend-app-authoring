@@ -54,7 +54,7 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
-import { createCourseXblock } from '@src/course-unit/data/api';
+import { createCourseXblock } from '../../course-unit/data/api';
 
 /**
  * Action to fetch course outline.
