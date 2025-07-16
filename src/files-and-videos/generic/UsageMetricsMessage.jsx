@@ -1,4 +1,4 @@
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import PropTypes from 'prop-types';
 import {
@@ -17,8 +17,8 @@ const UsageMetricsMessage = ({
   usageLocations,
   error,
   // injected
-  intl,
 }) => {
+  const intl = useIntl();
   let usageMessage;
   if (usagePathStatus === RequestStatus.SUCCESSFUL) {
     usageMessage = isEmpty(usageLocations) ? (
@@ -66,7 +66,6 @@ UsageMetricsMessage.propTypes = {
   usageLocations: PropTypes.arrayOf(PropTypes.string).isRequired,
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(UsageMetricsMessage);
+export default UsageMetricsMessage;
