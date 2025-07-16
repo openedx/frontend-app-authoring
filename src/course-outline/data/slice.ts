@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
-import { RequestStatus } from '@src/data/constants';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
+import { RequestStatus } from '@src/data/constants';
 import { CourseOutlineState } from './types';
 
 const initialState = {

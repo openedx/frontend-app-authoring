@@ -19,13 +19,13 @@ import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
+import messages from './messages';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { XBlock } from '@src/data/types';
-import messages from './messages';
 
 interface SubsectionCardProps {
   section: XBlock,

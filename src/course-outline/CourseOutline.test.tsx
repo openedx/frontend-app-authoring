@@ -3,18 +3,6 @@ import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
-import { RequestStatus } from '@src/data/constants';
-import { clipboardUnit } from '@src/__mocks__';
-import { executeThunk } from '@src/utils';
-import configureModalMessages from '@src/generic/configure-modal/messages';
-import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
-import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
-import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import {
-  act, fireEvent, initializeMocks, render, screen, waitFor, within,
-} from '@src/testUtils';
-import { XBlock } from '@src/data/types';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -27,6 +15,7 @@ import {
   exportTags,
   createDiscussionsTopicsUrl,
 } from './data/api';
+import { RequestStatus } from '@src/data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -41,10 +30,15 @@ import {
   courseSectionMock,
   courseSubsectionMock,
 } from './__mocks__';
+import { clipboardUnit } from '@src/__mocks__';
+import { executeThunk } from '@src/utils';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 
+import configureModalMessages from '@src/generic/configure-modal/messages';
+import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
 import messages from './messages';
+import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
@@ -57,6 +51,12 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
+import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import {
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+} from '@src/testUtils';
+import { XBlock } from '@src/data/types';
 
 let axiosMock: import('axios-mock-adapter/types');
 let store;
