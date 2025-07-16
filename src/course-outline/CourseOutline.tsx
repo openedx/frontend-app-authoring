@@ -1,5 +1,4 @@
-// @ts-check
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -54,10 +53,11 @@ import { getTagsExportFile } from './data/api';
 import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { ContainerType } from '../generic/key-utils';
-import { ComponentPicker } from '../library-authoring';
+import { ComponentPicker, SelectedComponent } from '../library-authoring';
 import { ContentType } from '../library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '../constants';
 import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
+import { XBlock } from '../data/types';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -132,7 +132,7 @@ const CourseOutline = ({ courseId }) => {
   } = useCourseOutline({ courseId });
 
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Wait for the course data to load before exporting tags.
@@ -149,7 +149,7 @@ const CourseOutline = ({ courseId }) => {
     }
   }, [location, courseId, courseName]);
 
-  const [sections, setSections] = useState(sectionsList);
+  const [sections, setSections] = useState<XBlock[]>(sectionsList);
 
   const restoreSectionList = () => {
     setSections(() => [...sectionsList]);
@@ -167,10 +167,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Move section to new index
-   * @param {any} currentIndex
-   * @param {any} newIndex
    */
-  const updateSectionOrderByIndex = (currentIndex, newIndex) => {
+  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
     if (currentIndex === newIndex) {
       return;
     }
@@ -183,11 +181,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Uses details from move information and moves subsection
-   * @param {any} section
-   * @param {any} moveDetails
-   * @returns {void}
    */
-  const updateSubsectionOrderByIndex = (section, moveDetails) => {
+  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
     if (!args) {
       return;
@@ -206,11 +201,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Uses details from move information and moves unit
-   * @param {any} section
-   * @param {any} moveDetails
-   * @returns {void}
    */
-  const updateUnitOrderByIndex = (section, moveDetails) => {
+  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
     const {
       fn, args, sectionId, subsectionId,
     } = moveDetails;
@@ -230,7 +222,7 @@ const CourseOutline = ({ courseId }) => {
     }
   };
 
-  const handleSelectLibrarySection = useCallback((/** @type {{ usageKey: any; }} */ selectedSection) => {
+  const handleSelectLibrarySection = useCallback((selectedSection: SelectedComponent) => {
     handleAddSectionFromLibrary.mutateAsync({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Chapter,
