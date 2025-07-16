@@ -1,4 +1,5 @@
 import { logError } from '@edx/frontend-platform/logging';
+import { createCourseXblock } from '@src/course-unit/data/api';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
@@ -54,7 +55,6 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
-import { createCourseXblock } from '@src/course-unit/data/api';
 
 /**
  * Action to fetch course outline.

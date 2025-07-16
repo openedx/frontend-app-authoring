@@ -17,13 +17,13 @@ import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import messages from './messages';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
+import messages from './messages';
 
 interface SectionCardProps {
   section: XBlock,
