@@ -3,8 +3,11 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { renderHook, waitFor } from '@testing-library/react';
-import { getEntityLinksByDownstreamContextUrl } from './api';
-import { useComponentEntityLinks } from './apiHooks';
+import {
+  getComponentEntityLinksByDownstreamContextUrl,
+  getEntityLinksByDownstreamContextUrl,
+} from './api';
+import { useComponentEntityLinks, useEntityLinks } from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -39,9 +42,9 @@ describe('course libraries api hooks', () => {
     axiosMock.reset();
   });
 
-  it('should return links for course', async () => {
+  it('should return component links for course', async () => {
     const courseId = 'course-v1:some+key';
-    const url = getEntityLinksByDownstreamContextUrl();
+    const url = getComponentEntityLinksByDownstreamContextUrl();
     axiosMock.onGet(url).reply(200, []);
     const { result } = renderHook(() => useComponentEntityLinks({ courseId }), { wrapper });
     await waitFor(() => {
@@ -53,6 +56,24 @@ describe('course libraries api hooks', () => {
       ready_to_sync: undefined,
       upstream_usage_key: undefined,
       no_page: true,
+    });
+  });
+
+  it('should return links for course', async () => {
+    const courseId = 'course-v1:some+key';
+    const url = getEntityLinksByDownstreamContextUrl();
+    axiosMock.onGet(url).reply(200, []);
+    const { result } = renderHook(() => useEntityLinks({ courseId }), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(axiosMock.history.get[0].params).toEqual({
+      course_id: courseId,
+      ready_to_sync: undefined,
+      upstream_usage_key: undefined,
+      no_page: true,
+      content_type: undefined,
     });
   });
 });

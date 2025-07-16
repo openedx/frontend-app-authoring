@@ -23,7 +23,7 @@ export async function mockGetComponentEntityLinks(
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
-        path: api.getEntityLinksByDownstreamContextUrl(),
+        path: api.getComponentEntityLinksByDownstreamContextUrl(),
       });
     case mockGetComponentEntityLinks.courseKeyLoading:
       return new Promise(() => {});
@@ -61,7 +61,7 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
-        path: api.getEntityLinksByDownstreamContextUrl(),
+        path: api.getComponentEntityLinksByDownstreamContextUrl(),
       });
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyLoading:
       return new Promise(() => {});

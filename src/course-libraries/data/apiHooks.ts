@@ -1,14 +1,20 @@
 import {
   useQuery,
 } from '@tanstack/react-query';
-import { getContainerEntityLinks, getComponentEntityLinks, getEntityLinksSummaryByDownstreamContext } from './api';
+import {
+  getContainerEntityLinks,
+  getComponentEntityLinks,
+  getEntityLinksSummaryByDownstreamContext,
+  getEntityLinks,
+} from './api';
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
   courseLibraries: (courseId?: string) => [...courseLibrariesQueryKeys.all, courseId],
   courseReadyToSyncLibraries: ({
-    courseId, readyToSync, upstreamUsageKey, upstreamContainerKey,
+    contentType, courseId, readyToSync, upstreamUsageKey, upstreamContainerKey,
   }: {
+    contentType?: 'all' | 'components' | 'containers',
     courseId?: string,
     readyToSync?: boolean,
     upstreamUsageKey?: string,
@@ -16,6 +22,9 @@ export const courseLibrariesQueryKeys = {
     pageSize?: number,
   }) => {
     const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all];
+    if (contentType !== undefined) {
+      key.push(contentType);
+    }
     if (courseId !== undefined) {
       key.push(courseId);
     }
@@ -32,6 +41,30 @@ export const courseLibrariesQueryKeys = {
   },
   courseLibrariesSummary: (courseId?: string) => [...courseLibrariesQueryKeys.courseLibraries(courseId), 'summary'],
 };
+
+export const useEntityLinks = ({
+  courseId, readyToSync, upstreamUsageKey, contentType,
+}: {
+  courseId?: string,
+  readyToSync?: boolean,
+  upstreamUsageKey?: string,
+  contentType?: 'all' | 'components' | 'containers',
+}) => (
+  useQuery({
+    queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries({
+      contentType,
+      courseId,
+      readyToSync,
+      upstreamUsageKey,
+    }),
+    queryFn: () => getEntityLinks(
+      courseId,
+      readyToSync,
+      upstreamUsageKey,
+    ),
+    enabled: courseId !== undefined || upstreamUsageKey !== undefined || readyToSync !== undefined,
+  })
+);
 
 /**
  * Hook to fetch list of publishable entity links for components by course key.
