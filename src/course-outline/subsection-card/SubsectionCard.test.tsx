@@ -1,10 +1,10 @@
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, within,
-} from '@src/testUtils';
-import { XBlock } from '@src/data/types';
+} from '../../testUtils';
+import { XBlock } from '../../data/types';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -26,7 +26,7 @@ jest.mock('react-redux', () => ({
 }));
 
 // Mock ComponentPicker to call onComponentSelected on click
-jest.mock('@src/library-authoring/component-picker', () => ({
+jest.mock('../../library-authoring/component-picker', () => ({
   ComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types

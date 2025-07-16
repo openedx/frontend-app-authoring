@@ -5,9 +5,9 @@ import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import moment from 'moment';
-import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
-import { useWaffleFlags } from '@src/data/apiHooks';
-import { RequestStatus } from '@src/data/constants';
+import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
+import { useWaffleFlags } from '../data/apiHooks';
+import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   addSection,

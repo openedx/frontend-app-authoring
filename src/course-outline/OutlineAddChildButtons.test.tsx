@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
-import { ContainerType } from '@src/generic/key-utils';
-import { initializeMocks, render, screen } from '@src/testUtils';
+import { ContainerType } from '../generic/key-utils';
+import { initializeMocks, render, screen } from '../testUtils';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('react-redux', () => ({

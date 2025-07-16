@@ -18,18 +18,18 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
-import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
+import { CourseAuthoringOutlineSidebarSlot } from '../plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
-import { LoadingSpinner } from '@src/generic/Loading';
-import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
-import { RequestStatus } from '@src/data/constants';
-import SubHeader from '@src/generic/sub-header/SubHeader';
-import ProcessingNotification from '@src/generic/processing-notification';
-import InternetConnectionAlert from '@src/generic/internet-connection-alert';
-import DeleteModal from '@src/generic/delete-modal/DeleteModal';
-import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
-import AlertMessage from '@src/generic/alert-message';
-import getPageHeadTitle from '@src/generic/utils';
+import { LoadingSpinner } from '../generic/Loading';
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
+import { RequestStatus } from '../data/constants';
+import SubHeader from '../generic/sub-header/SubHeader';
+import ProcessingNotification from '../generic/processing-notification';
+import InternetConnectionAlert from '../generic/internet-connection-alert';
+import DeleteModal from '../generic/delete-modal/DeleteModal';
+import ConfigureModal from '../generic/configure-modal/ConfigureModal';
+import AlertMessage from '../generic/alert-message';
+import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import StatusBar from './status-bar/StatusBar';
@@ -50,14 +50,14 @@ import {
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
-import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
+import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
-import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { XBlock } from '@src/data/types';
+import { ContainerType } from '../generic/key-utils';
+import { ComponentPicker, SelectedComponent } from '../library-authoring';
+import { ContentType } from '../library-authoring/routes';
+import { NOTIFICATION_MESSAGES } from '../constants';
+import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
+import { XBlock } from '../data/types';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
