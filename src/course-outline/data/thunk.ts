@@ -207,11 +207,6 @@ export function fetchCourseReindexQuery(reindexLink: string) {
 
 /**
  * Fetches course sections and optionally scrolls to a specific subsection/unit.
- *
- * @param {string[]} sectionIds - An array of section IDs to fetch.
- * @param {object} [scrollToId] - Optional object containing details for scrolling.
- * @param {string} [scrollToId.subsectionId] - The ID of the subsection to scroll to.
- * @param {string} [scrollToId.unitId] - The ID of the unit within the subsection to scroll to.
  */
 export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
   subsectionId: string,

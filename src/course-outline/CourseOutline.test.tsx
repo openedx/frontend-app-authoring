@@ -62,7 +62,8 @@ let axiosMock: import('axios-mock-adapter/types');
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
-const containerKey = 'lct:org:lib:unit:1';
+const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
+const getContainerType = jest.fn().mockReturnValue('unit');
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -98,8 +99,8 @@ jest.mock('../library-authoring/component-picker', () => ({
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
-        usageKey: containerKey,
-        blockType: 'unit',
+        usageKey: getContainerKey(),
+        blockType: getContainerType(),
       });
     };
     return (
@@ -441,6 +442,8 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a unit from library correctly', async () => {
+    getContainerKey.mockReturnValue('lct:org:lib:unit:1');
+    getContainerKey.mockReturnValue('unit');
     renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -472,7 +475,80 @@ describe('<CourseOutline />', () => {
         type: COMPONENT_TYPES.libraryV2,
         category: 'vertical',
         parent_locator: subsection.id,
-        library_content_key: containerKey,
+        library_content_key: getContainerKey(),
+      }));
+    });
+  });
+
+  it('adds a subsection from library correctly', async () => {
+    getContainerKey.mockReturnValue('lct:org:lib:subsection:1');
+    getContainerKey.mockReturnValue('subsection');
+    renderComponent();
+    const [sectionElement] = await screen.findAllByTestId('section-card');
+    const subsections = await within(sectionElement).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(2);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+        parent_locator: 'parent',
+      });
+
+    const addSubsectionFromLibraryButton = within(sectionElement).getByRole('button', {
+      name: /use subsection from library/i,
+    });
+    fireEvent.click(addSubsectionFromLibraryButton);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    waitFor(() => {
+      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+        type: COMPONENT_TYPES.libraryV2,
+        category: 'sequential',
+        parent_locator: section.id,
+        library_content_key: getContainerKey(),
+      }));
+    });
+  });
+
+  it('adds a section from library correctly', async () => {
+    getContainerKey.mockReturnValue('lct:org:lib:section:1');
+    getContainerKey.mockReturnValue('section');
+    renderComponent();
+    const sections = await screen.findAllByTestId('section-card');
+    expect(sections.length).toBe(4);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+        parent_locator: 'parent',
+      });
+
+    const addSectionFromLibraryButton = await screen.findByRole('button', {
+      name: /use section from library/i,
+    });
+    fireEvent.click(addSectionFromLibraryButton);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+
+    const courseUsageKey = courseOutlineIndexMock.courseStructure.id;
+    waitFor(() => {
+      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+        type: COMPONENT_TYPES.libraryV2,
+        category: 'chapter',
+        parent_locator: courseUsageKey,
+        library_content_key: getContainerKey(),
       }));
     });
   });
