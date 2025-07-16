@@ -8,7 +8,8 @@ import {
   screen,
   waitFor,
   within,
-} from '../testUtils';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
@@ -19,7 +20,6 @@ import {
   mockXBlockFields,
 } from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
-import { studioHomeMock } from '../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';

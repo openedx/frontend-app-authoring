@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 
-import { initializeMocks, render } from '../../testUtils';
-import { COURSE_CREATOR_STATES } from '../../constants';
-import { studioHomeMock } from '../__mocks__';
+import { initializeMocks, render } from '@src/testUtils';
+import { COURSE_CREATOR_STATES } from '@src/constants';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import HomeSidebar from '.';
 
 jest.mock('react-redux', () => ({

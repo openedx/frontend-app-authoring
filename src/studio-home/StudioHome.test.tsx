@@ -10,7 +10,7 @@ import {
 } from '@src/testUtils';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { studioHomeMock } from './__mocks__';
+import studioHomeMock from './__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from './data/api';
 import { StudioHome } from '.';
 

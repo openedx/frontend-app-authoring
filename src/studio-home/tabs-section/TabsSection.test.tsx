@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 
-import { studioHomeMock } from '../__mocks__';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import messages from '../messages';
 import tabMessages from './messages';
 import TabsSection from '.';
