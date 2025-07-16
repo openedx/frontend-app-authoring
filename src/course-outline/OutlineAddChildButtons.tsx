@@ -2,9 +2,9 @@ import { Button, Stack } from '@openedx/paragon';
 import { Add as IconAdd, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
-import { getStudioHomeData } from '../studio-home/data/selectors';
+import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import messages from './messages';
-import { ContainerType } from '../generic/key-utils';
+import { ContainerType } from '@src/generic/key-utils';
 
 interface NewChildButtonsProps {
   handleNewButtonClick: () => void;
