@@ -1,15 +1,10 @@
 import {
-  act, render, fireEvent, within, screen,
-  waitFor,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+} from '@src/testUtils';
 
-import initializeStore from '../../store';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import { XBlock } from '../../data/types';
 
 let store;
 const mockUseAcceptLibraryBlockChanges = jest.fn();
@@ -31,7 +26,7 @@ const section = {
   visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
-};
+} as XBlock;
 
 const subsection = {
   id: '12',
@@ -39,7 +34,7 @@ const subsection = {
   published: true,
   visibilityState: 'live',
   hasChanges: false,
-};
+} as XBlock;
 
 const unit = {
   id: '123',
@@ -60,49 +55,36 @@ const unit = {
     upstreamRef: 'lct:org1:lib1:unit:1',
     versionSynced: 1,
   },
-};
+} as XBlock;
 
-const queryClient = new QueryClient();
-
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <IntlProvider locale="en">
-        <UnitCard
-          section={section}
-          subsection={subsection}
-          unit={unit}
-          index={1}
-          getPossibleMoves={jest.fn()}
-          onOrderChange={jest.fn()}
-          onOpenPublishModal={jest.fn()}
-          onOpenDeleteModal={jest.fn()}
-          onOpenConfigureModal={jest.fn()}
-          savingStatus=""
-          onEditSubmit={jest.fn()}
-          onDuplicateSubmit={jest.fn()}
-          getTitleLink={(id) => `/some/${id}`}
-          isSelfPaced={false}
-          isCustomRelativeDatesActive={false}
-          {...props}
-        />
-      </IntlProvider>
-    </QueryClientProvider>
-  </AppProvider>,
+const renderComponent = (props?: object) => render(
+  <UnitCard
+    section={section}
+    subsection={subsection}
+    unit={unit}
+    index={1}
+    getPossibleMoves={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    savingStatus=""
+    onEditSubmit={jest.fn()}
+    onDuplicateSubmit={jest.fn()}
+    getTitleLink={(id) => `/some/${id}`}
+    isSelfPaced={false}
+    isCustomRelativeDatesActive={false}
+    discussionsSettings={{
+      providerType: '',
+      enableGradedUnits: false
+    }}
+    {...props}  />
 );
 
 describe('<UnitCard />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
   });
 
   it('render UnitCard component correctly', async () => {
