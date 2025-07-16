@@ -6,6 +6,7 @@ import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 import { XBlock } from '../../data/types';
 
+let store;
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
@@ -75,15 +76,15 @@ const renderComponent = (props?: object) => render(
     isCustomRelativeDatesActive={false}
     discussionsSettings={{
       providerType: '',
-      enableGradedUnits: false,
+      enableGradedUnits: false
     }}
-    {...props}
-  />,
+    {...props}  />
 );
 
 describe('<UnitCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
   });
 
   it('render UnitCard component correctly', async () => {

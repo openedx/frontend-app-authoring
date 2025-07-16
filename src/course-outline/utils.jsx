@@ -4,8 +4,8 @@ import {
 } from '@openedx/paragon/icons';
 
 import DraftIcon from '@src/generic/DraftIcon';
-import { VisibilityTypes } from '@src/data/constants';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
+import { VisibilityTypes } from '@src/data/constants';
 
 /**
  * Get section status depended on section info

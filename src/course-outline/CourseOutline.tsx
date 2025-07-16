@@ -30,13 +30,6 @@ import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
-import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
-import { NOTIFICATION_MESSAGES } from '@src/constants';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { XBlock } from '@src/data/types';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import StatusBar from './status-bar/StatusBar';
@@ -57,7 +50,14 @@ import {
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
+import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { ContainerType } from '@src/generic/key-utils';
+import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { ContentType } from '@src/library-authoring/routes';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { XBlock } from '@src/data/types';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
