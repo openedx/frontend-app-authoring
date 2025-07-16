@@ -52,7 +52,7 @@ export const useEntityLinks = ({
 }) => (
   useQuery({
     queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries({
-      contentType,
+      contentType: contentType ?? 'all',
       courseId,
       readyToSync,
       upstreamUsageKey,

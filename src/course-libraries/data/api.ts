@@ -34,7 +34,7 @@ export interface BasePublishableEntityLink {
   readyToSync: boolean;
 }
 
-export interface PublishableEntityLink extends BasePublishableEntityLink {
+export interface ComponentPublishableEntityLink extends BasePublishableEntityLink {
   upstreamUsageKey: string;
 }
 
@@ -42,9 +42,10 @@ export interface ContainerPublishableEntityLink extends BasePublishableEntityLin
   upstreamContainerKey: string;
 }
 
-export type MixedPublishableEntityLink =
-  | PublishableEntityLink
-  | ContainerPublishableEntityLink;
+export interface PublishableEntityLink extends BasePublishableEntityLink {
+  upstreamKey: string;
+  upstreamType: 'component' | 'container';
+}
 
 export interface PublishableEntityLinkSummary {
   upstreamContextKey: string;
@@ -58,13 +59,15 @@ export const getEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
   upstreamUsageKey?: string,
-): Promise<MixedPublishableEntityLink[]> => {
+  contentType?: 'all' | 'components' | 'containers',
+): Promise<PublishableEntityLink[]> => {
   const { data } = await getAuthenticatedHttpClient()
     .get(getEntityLinksByDownstreamContextUrl(), {
       params: {
         course_id: downstreamContextKey,
         ready_to_sync: readyToSync,
         upstream_usage_key: upstreamUsageKey,
+        content_type: contentType,
         no_page: true,
       },
     });
@@ -75,7 +78,7 @@ export const getComponentEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
   upstreamUsageKey?: string,
-): Promise<PublishableEntityLink[]> => {
+): Promise<ComponentPublishableEntityLink[]> => {
   const { data } = await getAuthenticatedHttpClient()
     .get(getComponentEntityLinksByDownstreamContextUrl(), {
       params: {

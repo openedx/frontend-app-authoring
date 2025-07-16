@@ -795,7 +795,7 @@ mockGetComponentEntityLinks.response = downstreamLinkInfo.results[0].hits.map((o
   updated: '2025-02-08T14:07:05.588484Z',
 }));
 mockGetComponentEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
-mockGetComponentEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
+mockGetComponentEntityLinks.emptyComponentUsage = [] as courseLibApi.ComponentPublishableEntityLink[];
 
 mockGetComponentEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
