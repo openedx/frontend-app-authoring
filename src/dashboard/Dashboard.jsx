@@ -143,7 +143,7 @@ const Dashboard = () => {
         const isLocal = process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'production';
         console.log(isLocal, 'TEST');
         console.log(process.env.NODE_ENV, 'process.env.NODE_ENV');
-        if (!isLocal) {
+        if (isLocal) {
           // Local mock API
           const response = await fetch('http://localhost:3001/dashboard');
           const data = await response.json();
