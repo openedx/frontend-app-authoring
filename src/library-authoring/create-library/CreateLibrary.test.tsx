@@ -8,10 +8,10 @@ import {
   render,
   screen,
   waitFor,
-} from '../../testUtils';
-import { studioHomeMock } from '../../studio-home/__mocks__';
-import { getStudioHomeApiUrl } from '../../studio-home/data/api';
-import { getApiWaffleFlagsUrl } from '../../data/api';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
+import { getApiWaffleFlagsUrl } from '@src/data/api';
 import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
 

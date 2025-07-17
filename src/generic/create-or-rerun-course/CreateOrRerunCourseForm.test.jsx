@@ -14,7 +14,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import MockAdapter from 'axios-mock-adapter';
 
-import { studioHomeMock } from '../../studio-home/__mocks__';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import { fetchStudioHomeData } from '../../studio-home/data/thunks';
 import { RequestStatus } from '../../data/constants';

@@ -8,7 +8,8 @@ import {
   waitFor,
   screen,
   initializeMocks,
-} from '../../testUtils';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import mockResult from '../__mocks__/library-search.json';
 import editorCmsApi from '../../editors/data/services/cms/api';
 import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
@@ -19,7 +20,6 @@ import {
 } from '../data/api.mocks';
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
-import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import LibraryLayout from '../LibraryLayout';
 
