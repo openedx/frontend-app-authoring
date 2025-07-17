@@ -29,6 +29,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
@@ -138,20 +140,45 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        let url = "http://localhost:3001/dashboard";
-        if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
-          url = "https://design.titaned.com/dashboard";
+        const isLocal = process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'production';
+        console.log(isLocal, 'TEST');
+        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV');
+        if (!isLocal) {
+          // Local mock API
+          const response = await fetch('http://localhost:3001/dashboard');
+          const data = await response.json();
+          const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
+          setDashboardData({ ...data, widgets: sortedWidgets });
+          setSelectedWidgets(sortedWidgets.filter(widget => widget.enabled).map(widget => widget.id));
+          setTempOrderedWidgets(sortedWidgets);
+          setAllWidgets(sortedWidgets);
+        } else {
+          // Real API endpoints
+          const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+          const client = getAuthenticatedHttpClient();
+          // Fetch all in parallel
+          const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.all([
+            client.get(`${baseUrl}/metrics`),
+            client.get(`${baseUrl}/widgets`),
+            client.get(`${baseUrl}/titan-ai-suggestions`),
+            client.get(`${baseUrl}/todo-list`),
+          ]);
+          const metrics = metricsRes.data;
+          console.log(metrics, "metrics");
+          const widgets = widgetsRes.data;
+          console.log(widgets, "widgets");
+          const titanAISuggestions = aiRes.data;
+          const todoList = todoRes.data;
+          console.log(todoList, "todoList");
+          // Sort widgets by order before setting state
+          const sortedWidgets = [...widgets].sort((a, b) => a.order - b.order);
+          setDashboardData({
+            metrics, widgets: sortedWidgets, titanAISuggestions, todoList,
+          });
+          setSelectedWidgets(sortedWidgets.filter(widget => widget.enabled).map(widget => widget.id));
+          setTempOrderedWidgets(sortedWidgets);
+          setAllWidgets(sortedWidgets);
         }
-        // Use the https://design.titaned.com/dashboard endpoint for deployment and http://localhost:3001/dashboard for local development
-        const response = await fetch(url);
-        const data = await response.json();
-        // Sort widgets by order before setting state
-        const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
-        setDashboardData({ ...data, widgets: sortedWidgets });
-        // Set selected widgets based on enabled property
-        setSelectedWidgets(sortedWidgets.filter(widget => widget.enabled).map(widget => widget.id));
-        setTempOrderedWidgets(sortedWidgets);
-        setAllWidgets(sortedWidgets);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -311,30 +338,42 @@ const Dashboard = () => {
         order: index + 1,
         enabled: tempSelectedWidgets.includes(widget.id),
       }));
-
-      // Update the dashboard data in db.json
-      const response = await fetch('http://localhost:3001/dashboard', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...dashboardData,
-          widgets: updatedWidgets,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update dashboard data');
+      const isLocal = process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'production';
+      console.log(isLocal, 'TEST');
+      if (!isLocal) {
+        // Local mock API
+        const response = await fetch('http://localhost:3001/dashboard', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...dashboardData,
+            widgets: updatedWidgets,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to update dashboard data');
+        }
+        const updatedData = await response.json();
+        setDashboardData(updatedData);
+        setIsModalOpen(false);
+      } else {
+        // Real API endpoint
+        const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+        const client = getAuthenticatedHttpClient();
+        const response = await client.post(`${baseUrl}/widgets/filter`, updatedWidgets);
+        if (response.status !== 200 && response.status !== 201) {
+          throw new Error('Failed to update dashboard widgets');
+        }
+        // Refetch widgets after update
+        const widgetsRes = await client.get(`${baseUrl}/widgets`);
+        const sortedWidgets = [...widgetsRes.data].sort((a, b) => a.order - b.order);
+        setDashboardData(prev => ({ ...prev, widgets: sortedWidgets }));
+        setIsModalOpen(false);
       }
-
-      // Update local state with the response data
-      const updatedData = await response.json();
-      setDashboardData(updatedData);
-      setIsModalOpen(false);
     } catch (error) {
       console.error('Error updating dashboard data:', error);
-      // You might want to show an error message to the user here
     }
   };
 
