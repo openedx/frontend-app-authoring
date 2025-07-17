@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -12,12 +11,19 @@ import {
 } from '@openedx/paragon/icons';
 import messages from './messages';
 
+interface TitleButtonProps {
+  title: string;
+  isExpanded: boolean;
+  onTitleClick: () => void;
+  namePrefix: string;
+};
+
 const TitleButton = ({
   title,
   isExpanded,
   onTitleClick,
   namePrefix,
-}) => {
+}: TitleButtonProps) => {
   const intl = useIntl();
   const titleTooltipMessage = intl.formatMessage(messages.expandTooltip);
 
@@ -43,13 +49,6 @@ const TitleButton = ({
       </Button>
     </OverlayTrigger>
   );
-};
-
-TitleButton.propTypes = {
-  title: PropTypes.string.isRequired,
-  isExpanded: PropTypes.bool.isRequired,
-  onTitleClick: PropTypes.func.isRequired,
-  namePrefix: PropTypes.string.isRequired,
 };
 
 export default TitleButton;
