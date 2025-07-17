@@ -1,15 +1,10 @@
-import { MemoryRouter } from 'react-router-dom';
-import {
-  act, render, fireEvent, waitFor, screen,
-} from '@testing-library/react';
 import { setConfig, getConfig } from '@edx/frontend-platform';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
-import { ITEM_BADGE_STATUS } from '../constants';
+import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
+import { act, fireEvent, initializeMocks, render, screen, waitFor } from '@src/testUtils';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -56,9 +51,7 @@ const cardHeaderProps = {
   },
 };
 
-const queryClient = new QueryClient();
-
-const renderComponent = (props, entry = '/') => {
+const renderComponent = (props?: object, entry = '/') => {
   const titleComponent = (
     <TitleButton
       isExpanded
@@ -70,21 +63,25 @@ const renderComponent = (props, entry = '/') => {
   );
 
   return render(
-    <IntlProvider locale="en">
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[entry]}>
-          <CardHeader
-            {...cardHeaderProps}
-            titleComponent={titleComponent}
-            {...props}
-          />
-        </MemoryRouter>
-      </QueryClientProvider>
-    </IntlProvider>,
+    <CardHeader
+      {...cardHeaderProps}
+      titleComponent={titleComponent}
+      {...props}
+    />,
+    {
+      path: '/',
+      routerProps: {
+        initialEntries: [entry],
+      },
+    },
   );
 };
 
 describe('<CardHeader />', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('render CardHeader component correctly', async () => {
     const { findByText, findByTestId, queryByTestId } = renderComponent();
 
@@ -241,32 +238,27 @@ describe('<CardHeader />', () => {
   });
 
   it('check editing is enabled when isDisabledEditField is false', async () => {
-    const { getByTestId } = renderComponent({
-      ...cardHeaderProps,
-    });
+    renderComponent({ ...cardHeaderProps });
 
-    expect(getByTestId('subsection-edit-button')).toBeEnabled();
+    expect(screen.getByTestId('subsection-edit-button')).toBeEnabled();
 
     // Ensure menu items related to editing are enabled
-    const menuButton = getByTestId('subsection-card-header__menu-button');
+    const menuButton = screen.getByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
-    expect(await getByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute('aria-disabled');
-    expect(await getByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
+    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute('aria-disabled');
+    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
   });
 
   it('check editing is disabled when isDisabledEditField is true', async () => {
-    const { getByTestId } = renderComponent({
-      ...cardHeaderProps,
-      isDisabledEditField: true,
-    });
+    renderComponent({ ...cardHeaderProps, isDisabledEditField: true });
 
-    expect(await getByTestId('subsection-edit-button')).toBeDisabled();
+    expect(await screen.findByTestId('subsection-edit-button')).toBeDisabled();
 
     // Ensure menu items related to editing are disabled
-    const menuButton = getByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
-    expect(await getByTestId('subsection-card-header__menu-configure-button')).toHaveAttribute('aria-disabled', 'true');
-    expect(await getByTestId('subsection-card-header__menu-manage-tags-button')).toHaveAttribute('aria-disabled', 'true');
+    expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).toHaveAttribute('aria-disabled', 'true');
+    expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('calls onClickDelete when item is clicked', async () => {
