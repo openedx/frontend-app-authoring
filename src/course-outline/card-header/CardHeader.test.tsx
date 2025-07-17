@@ -1,10 +1,12 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
+import {
+  act, fireEvent, initializeMocks, render, screen, waitFor,
+} from '@src/testUtils';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
-import { act, fireEvent, initializeMocks, render, screen, waitFor } from '@src/testUtils';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();

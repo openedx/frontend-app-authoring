@@ -1,4 +1,6 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode, useEffect, useRef, useState,
+} from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -59,13 +61,13 @@ interface CardHeaderProps {
   parentInfo?: {
     graded: boolean;
     isTimeLimited?: boolean;
-},
+  },
   // An optional component that is rendered before the dropdown. This is used by the Subsection
   // and Unit card components to render their plugin slots.
   extraActionsComponent?: ReactNode,
   onClickSync?: () => void;
   readyToSync?: boolean;
-};
+}
 
 const CardHeader = ({
   title,
