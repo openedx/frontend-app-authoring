@@ -83,97 +83,97 @@ describe('<CardHeader />', () => {
   });
 
   it('render CardHeader component correctly', async () => {
-    const { findByText, findByTestId, queryByTestId } = renderComponent();
+    renderComponent();
 
-    expect(await findByText(cardHeaderProps.title)).toBeInTheDocument();
-    expect(await findByTestId('subsection-card-header__expanded-btn')).toBeInTheDocument();
-    expect(await findByTestId('subsection-card-header__menu')).toBeInTheDocument();
+    expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
+    expect(await screen.findByTestId('subsection-card-header__expanded-btn')).toBeInTheDocument();
+    expect(await screen.findByTestId('subsection-card-header__menu')).toBeInTheDocument();
     await waitFor(() => {
-      expect(queryByTestId('edit field')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('edit field')).not.toBeInTheDocument();
     });
   });
 
   it('render status badge as live', async () => {
-    const { findByText } = renderComponent();
-    expect(await findByText(messages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
+    renderComponent();
+    expect(await screen.findByText(messages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
   });
 
   it('render status badge as published_not_live', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
-    expect(await findByText(messages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
   });
 
   it('render status badge as staff_only', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.staffOnly,
     });
 
-    expect(await findByText(messages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
   });
 
   it('render status badge as draft', async () => {
-    const { findByText } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.draft,
     });
 
-    expect(await findByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
   it('check publish menu item is disabled when subsection status is live or published not live and it has no changes', async () => {
-    const { findByText, findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
-    expect(await findByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
+    expect(await screen.findByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('check publish menu item is enabled when subsection status is live or published not live and it has changes', async () => {
-    const { findByText, findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
       hasChanges: true,
     });
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
-    expect(await findByText(messages.menuPublish.defaultMessage)).not.toHaveAttribute('aria-disabled');
+    expect(await screen.findByText(messages.menuPublish.defaultMessage)).not.toHaveAttribute('aria-disabled');
   });
 
   it('calls handleExpanded when button is clicked', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    const expandButton = await findByTestId('subsection-card-header__expanded-btn');
+    const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(onExpandMock).toHaveBeenCalled();
   });
 
   it('calls onClickMenuButton when menu is clicked', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
     expect(onClickMenuButtonMock).toHaveBeenCalled();
   });
 
   it('calls onClickPublish when item is clicked', async () => {
-    const { findByText, findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.draft,
     });
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
 
-    const publishMenuItem = await findByText(messages.menuPublish.defaultMessage);
+    const publishMenuItem = await screen.findByText(messages.menuPublish.defaultMessage);
     await act(async () => fireEvent.click(publishMenuItem));
     expect(onClickPublishMock).toHaveBeenCalled();
   });
@@ -207,34 +207,34 @@ describe('<CardHeader />', () => {
   });
 
   it('calls onClickEdit when the button is clicked', async () => {
-    const { findByTestId } = renderComponent();
+    renderComponent();
 
-    const editButton = await findByTestId('subsection-edit-button');
+    const editButton = await screen.findByTestId('subsection-edit-button');
     await act(async () => fireEvent.click(editButton));
     expect(onClickEditMock).toHaveBeenCalled();
   });
 
   it('check is field visible when isFormOpen is true', async () => {
-    const { findByTestId, queryByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       isFormOpen: true,
     });
 
-    expect(await findByTestId('subsection-edit-field')).toBeInTheDocument();
+    expect(await screen.findByTestId('subsection-edit-field')).toBeInTheDocument();
     waitFor(() => {
-      expect(queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
-      expect(queryByTestId('edit-button')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('edit-button')).not.toBeInTheDocument();
     });
   });
 
   it('check is field disabled when isDisabledEditField is true', async () => {
-    const { findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       isFormOpen: true,
       isDisabledEditField: true,
     });
 
-    expect(await findByTestId('subsection-edit-field')).toBeDisabled();
+    expect(await screen.findByTestId('subsection-edit-field')).toBeDisabled();
   });
 
   it('check editing is enabled when isDisabledEditField is false', async () => {
@@ -262,59 +262,59 @@ describe('<CardHeader />', () => {
   });
 
   it('calls onClickDelete when item is clicked', async () => {
-    const { findByText, findByTestId } = renderComponent();
+    renderComponent();
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
-    const deleteMenuItem = await findByText(messages.menuDelete.defaultMessage);
+    const deleteMenuItem = await screen.findByText(messages.menuDelete.defaultMessage);
     await act(async () => fireEvent.click(deleteMenuItem));
     expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onClickDuplicate when item is clicked', async () => {
-    const { findByText, findByTestId } = renderComponent();
+    renderComponent();
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
 
-    const duplicateMenuItem = await findByText(messages.menuDuplicate.defaultMessage);
+    const duplicateMenuItem = await screen.findByText(messages.menuDuplicate.defaultMessage);
     fireEvent.click(duplicateMenuItem);
     await act(async () => fireEvent.click(duplicateMenuItem));
     expect(onClickDuplicateMock).toHaveBeenCalled();
   });
 
   it('check if proctoringExamConfigurationLink is visible', async () => {
-    const { findByText, findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       proctoringExamConfigurationLink: 'proctoringlink',
       isSequential: true,
     });
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
 
-    const element = await findByText(messages.menuProctoringLinkText.defaultMessage);
+    const element = await screen.findByText(messages.menuProctoringLinkText.defaultMessage);
     expect(element).toBeInTheDocument();
     expect(element.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/proctoringlink`);
   });
 
   it('check if proctoringExamConfigurationLink is absolute', async () => {
-    const { findByText, findByTestId } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       proctoringExamConfigurationLink: 'http://localhost:9000/proctoringlink',
       isSequential: true,
     });
 
-    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
 
-    const element = await findByText(messages.menuProctoringLinkText.defaultMessage);
+    const element = await screen.findByText(messages.menuProctoringLinkText.defaultMessage);
     expect(element).toBeInTheDocument();
     expect(element.getAttribute('href')).toBe('http://localhost:9000/proctoringlink');
   });
 
   it('check if discussion enabled badge is visible', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...cardHeaderProps,
       isVertical: true,
       discussionEnabled: true,
@@ -328,7 +328,7 @@ describe('<CardHeader />', () => {
       },
     });
 
-    expect(queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
   });
 
   it('should render tag count if is not zero and the waffle flag is enabled', async () => {
