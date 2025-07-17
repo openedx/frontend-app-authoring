@@ -156,22 +156,22 @@ const Dashboard = () => {
           // Real API endpoints
           const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
           const client = getAuthenticatedHttpClient();
-          // Fetch all in parallel
-          const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.all([
+          // Fetch all in parallel, but handle errors for each
+          const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.allSettled([
             client.get(`${baseUrl}/metrics`),
             client.get(`${baseUrl}/widgets`),
             client.get(`${baseUrl}/titan-ai-suggestions`),
             client.get(`${baseUrl}/todo-list`),
           ]);
-          const metrics = metricsRes.data;
-          console.log(metrics, "metrics");
-          const widgets = widgetsRes.data;
-          console.log(widgets, "widgets");
-          const titanAISuggestions = aiRes.data;
-          const todoList = todoRes.data;
-          console.log(todoList, "todoList");
+
+          const metrics = metricsRes.status === 'fulfilled' ? metricsRes.value.data : {};
+          const widgets = widgetsRes.status === 'fulfilled' ? widgetsRes.value.data : [];
+          const titanAISuggestions = aiRes.status === 'fulfilled' ? aiRes.value.data : [];
+          const todoList = todoRes.status === 'fulfilled' ? todoRes.value.data : [];
+
           // Sort widgets by order before setting state
           const sortedWidgets = [...widgets].sort((a, b) => a.order - b.order);
+
           setDashboardData({
             metrics, widgets: sortedWidgets, titanAISuggestions, todoList,
           });
