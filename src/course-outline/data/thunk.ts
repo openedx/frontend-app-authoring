@@ -593,12 +593,12 @@ export function addNewUnitQuery(parentLocator: string, callback: { (locator: any
 
 export function addUnitFromLibrary(body: {
   type: string;
-  category?: string | undefined;
+  category?: string;
   parentLocator: string;
-  displayName?: string | undefined;
-  boilerplate?: string | undefined;
-  stagedContent?: string | undefined;
-  libraryContentKey?: string | undefined;
+  displayName?: string;
+  boilerplate?: string;
+  stagedContent?: string;
+  libraryContentKey?: string;
 }, callback: (arg0: any) => void) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
