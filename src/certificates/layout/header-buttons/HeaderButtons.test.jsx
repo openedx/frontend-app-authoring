@@ -53,16 +53,17 @@ describe('HeaderButtons Component', () => {
   });
 
   it('updates preview URL param based on selected dropdown item', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const previewLink = getByRole('link', { name: messages.headingActionsPreview.defaultMessage });
 
     expect(previewLink).toHaveAttribute('href', expect.stringContaining(certificatesDataMock.courseModes[0]));
 
     const dropdownButton = getByRole('button', { name: certificatesDataMock.courseModes[0] });
-    userEvent.click(dropdownButton);
+    await user.click(dropdownButton);
 
     const verifiedMode = await getByRole('button', { name: certificatesDataMock.courseModes[1] });
-    userEvent.click(verifiedMode);
+    await user.click(verifiedMode);
 
     await waitFor(() => {
       expect(previewLink).toHaveAttribute('href', expect.stringContaining(certificatesDataMock.courseModes[1]));
@@ -70,6 +71,7 @@ describe('HeaderButtons Component', () => {
   });
 
   it('activates certificate when button is clicked', async () => {
+    const user = userEvent.setup();
     const newCertificateData = {
       ...certificatesDataMock,
       isActive: true,
@@ -78,7 +80,7 @@ describe('HeaderButtons Component', () => {
     const { getByRole, queryByRole } = renderComponent();
 
     const activationButton = getByRole('button', { name: messages.headingActionsActivate.defaultMessage });
-    userEvent.click(activationButton);
+    await user.click(activationButton);
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
@@ -97,6 +99,7 @@ describe('HeaderButtons Component', () => {
   });
 
   it('deactivates certificate when button is clicked', async () => {
+    const user = userEvent.setup();
     axiosMock
       .onGet(getCertificatesApiUrl(courseId))
       .reply(200, { ...certificatesDataMock, isActive: true });
@@ -110,7 +113,7 @@ describe('HeaderButtons Component', () => {
     const { getByRole, queryByRole } = renderComponent();
 
     const deactivateButton = getByRole('button', { name: messages.headingActionsDeactivate.defaultMessage });
-    userEvent.click(deactivateButton);
+    await user.click(deactivateButton);
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),

@@ -34,11 +34,12 @@ describe('Signatory Component', () => {
     expect(queryByText(messages.namePlaceholder.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('calls handleEdit when the edit button is clicked', () => {
+  it('calls handleEdit when the edit button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderSignatory(defaultProps);
 
     const editButton = getByRole('button', { name: commonMessages.editTooltip.defaultMessage });
-    userEvent.click(editButton);
+    await user.click(editButton);
 
     expect(mockHandleEdit).toHaveBeenCalled();
   });

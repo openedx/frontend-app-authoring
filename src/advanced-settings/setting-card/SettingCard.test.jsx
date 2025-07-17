@@ -79,11 +79,12 @@ describe('<SettingCard />', () => {
     expect(queryByText(messages.deprecated.defaultMessage)).toBeNull();
   });
   it('calls setEdited on blur', async () => {
+    const user = userEvent.setup();
     const { getByLabelText } = render(<RootWrapper />);
     const inputBox = getByLabelText(/Setting Name/i);
     fireEvent.focus(inputBox);
-    userEvent.clear(inputBox);
-    userEvent.type(inputBox, '3, 2, 1');
+    await user.clear(inputBox);
+    await user.type(inputBox, '3, 2, 1');
     await waitFor(() => {
       expect(inputBox).toHaveValue('3, 2, 1');
     });

@@ -143,16 +143,17 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Subsection,
     },
   ])('$label', async ({ containerType }) => {
+    const user = userEvent.setup();
     render(<ContainerCard hit={getContainerHitSample(containerType)} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Open menu item
     const openMenuItem = await screen.findByRole('button', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
-    userEvent.click(openMenuItem);
+    await user.click(openMenuItem);
     expect(mockNavigate).toHaveBeenCalledWith({
       pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
       search: '',
@@ -173,12 +174,13 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Subsection,
     },
   ])('$label', async ({ containerType }) => {
+    const user = userEvent.setup();
     render(<ContainerCard hit={getContainerHitSample(containerType)} />);
 
     // Open menu item
     const cardItem = await screen.findByText(`${containerType} Display Formated Name`);
     expect(cardItem).toBeInTheDocument();
-    userEvent.click(cardItem, undefined, { clickCount: 2 });
+    await user.dblClick(cardItem);
     expect(mockNavigate).toHaveBeenCalledWith({
       pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
       search: '',
@@ -186,13 +188,14 @@ describe('<ContainerCard />', () => {
   });
 
   it('should delete the container from the menu & restore the container', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(200);
 
     render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Click on Delete Item
     const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
@@ -223,13 +226,14 @@ describe('<ContainerCard />', () => {
   });
 
   it('should show error on delete the container from the menu', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(400);
 
     render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Click on Delete Item
     const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
@@ -425,7 +429,7 @@ describe('<ContainerCard />', () => {
       containerType: parentType,
       displayName: 'Parent Container Display Name',
     });
-
+    const user = userEvent.setup();
     render(
       <ContainerCard hit={containerHit} />,
       false,
@@ -434,7 +438,7 @@ describe('<ContainerCard />', () => {
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Click on Remove Item
     const removeMenuItem = await screen.findByRole('button', { name: expectedRemoveText });

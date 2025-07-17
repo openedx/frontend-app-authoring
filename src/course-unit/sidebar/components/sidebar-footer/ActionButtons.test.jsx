@@ -74,11 +74,12 @@ describe('<ActionButtons />', () => {
   });
 
   it('click on the Copy to clipboard button updates clipboardData', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const copyXBlockBtn = getByRole('button', { name: messages.actionButtonCopyUnitTitle.defaultMessage });
 
-    userEvent.click(copyXBlockBtn);
+    await user.click(copyXBlockBtn);
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(
       JSON.stringify({ usage_key: courseSectionVerticalMock.xblock_info.id }),
