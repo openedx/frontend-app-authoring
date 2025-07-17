@@ -1,12 +1,17 @@
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button, Truncate } from '@openedx/paragon';
+
+interface TitleLinkProps {
+  title: string;
+  titleLink: string;
+  namePrefix: string;
+};
 
 const TitleLink = ({
   title,
   titleLink,
   namePrefix,
-}) => (
+}: TitleLinkProps) => (
   <Button
     as={Link}
     variant="tertiary"
@@ -17,11 +22,5 @@ const TitleLink = ({
     <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
   </Button>
 );
-
-TitleLink.propTypes = {
-  title: PropTypes.string.isRequired,
-  titleLink: PropTypes.string.isRequired,
-  namePrefix: PropTypes.string.isRequired,
-};
 
 export default TitleLink;
