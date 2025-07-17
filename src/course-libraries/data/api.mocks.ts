@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
+import mockComponentLinksResult from '../__mocks__/publishableComponentEntityLinks.json';
 import mockLinksResult from '../__mocks__/publishableEntityLinks.json';
 import mockSummaryResult from '../__mocks__/linkCourseSummary.json';
 import mockLinkDetailsFromIndex from '../__mocks__/linkDetailsFromIndex.json';
@@ -8,6 +9,40 @@ import mockLibBlockMetadata from '../__mocks__/libBlockMetadata.json';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 import * as libApi from '../../library-authoring/data/api';
+
+export async function mockGetEntityLinks(
+  downstreamContextKey?: string,
+  readyToSync?: boolean,
+): ReturnType<typeof api.getEntityLinks> {
+  switch (downstreamContextKey) {
+    case mockGetEntityLinks.invalidCourseKey:
+      throw createAxiosError({
+        code: 404,
+        message: 'Not found.',
+        path: api.getEntityLinksByDownstreamContextUrl(),
+      });
+    case mockGetEntityLinks.courseKeyLoading:
+      return new Promise(() => {});
+    case mockGetEntityLinks.courseKeyEmpty:
+      return Promise.resolve([]);
+    default: {
+      let { response } = mockGetEntityLinks;
+      if (readyToSync !== undefined) {
+        response = response.filter((o) => o.readyToSync === readyToSync);
+      }
+      return Promise.resolve(response);
+    }
+  }
+}
+mockGetEntityLinks.courseKey = mockLinksResult[0].downstreamContextKey;
+mockGetEntityLinks.invalidCourseKey = 'course_key_error';
+mockGetEntityLinks.courseKeyLoading = 'courseKeyLoading';
+mockGetEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
+mockGetEntityLinks.response = mockLinksResult;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetEntityLinks.applyMock = () => {
+  jest.spyOn(api, 'getEntityLinks').mockImplementation(mockGetEntityLinks);
+};
 
 /**
  * Mock for `getComponentEntityLinks()`
@@ -38,11 +73,11 @@ export async function mockGetComponentEntityLinks(
     }
   }
 }
-mockGetComponentEntityLinks.courseKey = mockLinksResult[0].downstreamContextKey;
+mockGetComponentEntityLinks.courseKey = mockComponentLinksResult[0].downstreamContextKey;
 mockGetComponentEntityLinks.invalidCourseKey = 'course_key_error';
 mockGetComponentEntityLinks.courseKeyLoading = 'courseKeyLoading';
 mockGetComponentEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
-mockGetComponentEntityLinks.response = mockLinksResult;
+mockGetComponentEntityLinks.response = mockComponentLinksResult;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetComponentEntityLinks.applyMock = () => {
   jest.spyOn(api, 'getComponentEntityLinks').mockImplementation(mockGetComponentEntityLinks);
