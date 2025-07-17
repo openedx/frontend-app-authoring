@@ -13,6 +13,7 @@ import messages from './messages';
 
 interface TitleButtonProps {
   title: string;
+  prefixIcon?: React.ReactNode;
   isExpanded: boolean;
   onTitleClick: () => void;
   namePrefix: string;
@@ -20,6 +21,7 @@ interface TitleButtonProps {
 
 const TitleButton = ({
   title,
+  prefixIcon,
   isExpanded,
   onTitleClick,
   namePrefix,
@@ -45,6 +47,7 @@ const TitleButton = ({
         className="item-card-header__title-btn"
         onClick={onTitleClick}
       >
+        {prefixIcon}
         <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
       </Button>
     </OverlayTrigger>
