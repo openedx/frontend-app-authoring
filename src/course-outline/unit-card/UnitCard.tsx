@@ -1,13 +1,12 @@
-// @ts-check
-import React, {
+import {
   useCallback,
   useEffect,
   useMemo,
   useRef,
 } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
+import { Icon, useToggle } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
@@ -23,6 +22,29 @@ import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import { useClipboard } from '../../generic/clipboard';
 import { PreviewLibraryXBlockChanges } from '../../course-unit/preview-changes';
+import { XBlock } from '../../data/types';
+
+interface UnitCardProps {
+  unit: XBlock;
+  subsection: XBlock;
+  section: XBlock;
+  onOpenPublishModal: () => void;
+  onOpenConfigureModal: () => void;
+  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
+  savingStatus: string;
+  onOpenDeleteModal: () => void;
+  onDuplicateSubmit: () => void;
+  getTitleLink: (locator: string) => string;
+  index: number;
+  getPossibleMoves: (index: number, step: number) => void,
+  onOrderChange: (section: XBlock, moveDetails: any) => void,
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean;
+  discussionsSettings: {
+    providerType: string;
+    enableGradedUnits: boolean;
+  };
+}
 
 const UnitCard = ({
   unit,
@@ -41,7 +63,7 @@ const UnitCard = ({
   getTitleLink,
   onOrderChange,
   discussionsSettings,
-}) => {
+}: UnitCardProps) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
@@ -68,7 +90,7 @@ const UnitCard = ({
   } = unit;
 
   const blockSyncData = useMemo(() => {
-    if (!upstreamInfo.readyToSync) {
+    if (!upstreamInfo?.readyToSync) {
       return undefined;
     }
     return {
@@ -108,7 +130,7 @@ const UnitCard = ({
     dispatch(setCurrentSubsection(subsection));
   };
 
-  const handleEditSubmit = (titleValue) => {
+  const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
       onEditSubmit(id, section.id, titleValue);
       return;
@@ -129,8 +151,8 @@ const UnitCard = ({
     copyToClipboard(id);
   };
 
-  const handleOnPostChangeSync = useCallback(async () => {
-    await dispatch(fetchCourseSectionQuery([section.id]));
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
   }, [dispatch, section]);
 
   const titleComponent = (
@@ -138,6 +160,9 @@ const UnitCard = ({
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
+      prefixIcon={!!unit.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} size="sm" className="mr-1" />
+      )}
     />
   );
 
@@ -151,12 +176,10 @@ const UnitCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    // we need to check section.shouldScroll as whole section is fetched when a
-    // unit is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || unit.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
-      scrollToElement(currentRef.current, alignWithTop);
+      scrollToElement(currentRef.current, alignWithTop, true);
     }
   }, [isScrolledToElement]);
 
@@ -218,7 +241,7 @@ const UnitCard = ({
             discussionsSettings={discussionsSettings}
             parentInfo={parentInfo}
             extraActionsComponent={extraActionsComponent}
-            readyToSync={upstreamInfo.readyToSync}
+            readyToSync={upstreamInfo?.readyToSync}
           />
           <div className="unit-card__content item-children" data-testid="unit-card__content">
             <XBlockStatus
@@ -239,70 +262,6 @@ const UnitCard = ({
       )}
     </>
   );
-};
-
-UnitCard.defaultProps = {
-  discussionsSettings: {},
-};
-
-UnitCard.propTypes = {
-  unit: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-    actions: PropTypes.shape({
-      deletable: PropTypes.bool.isRequired,
-      draggable: PropTypes.bool.isRequired,
-      childAddable: PropTypes.bool.isRequired,
-      duplicable: PropTypes.bool.isRequired,
-    }).isRequired,
-    isHeaderVisible: PropTypes.bool,
-    enableCopyPasteUnits: PropTypes.bool,
-    discussionEnabled: PropTypes.bool,
-    upstreamInfo: PropTypes.shape({
-      readyToSync: PropTypes.bool.isRequired,
-      upstreamRef: PropTypes.string.isRequired,
-      versionSynced: PropTypes.number.isRequired,
-    }).isRequired,
-  }).isRequired,
-  subsection: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-    isTimeLimited: PropTypes.bool,
-    graded: PropTypes.bool,
-  }).isRequired,
-  section: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-  }).isRequired,
-  onOpenPublishModal: PropTypes.func.isRequired,
-  onOpenConfigureModal: PropTypes.func.isRequired,
-  onEditSubmit: PropTypes.func.isRequired,
-  savingStatus: PropTypes.string.isRequired,
-  onOpenDeleteModal: PropTypes.func.isRequired,
-  onDuplicateSubmit: PropTypes.func.isRequired,
-  getTitleLink: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-  getPossibleMoves: PropTypes.func.isRequired,
-  onOrderChange: PropTypes.func.isRequired,
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
-  discussionsSettings: PropTypes.shape({
-    providerType: PropTypes.string,
-    enableGradedUnits: PropTypes.bool,
-  }),
 };
 
 export default UnitCard;

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -12,12 +11,21 @@ import {
 } from '@openedx/paragon/icons';
 import messages from './messages';
 
+interface TitleButtonProps {
+  title: string;
+  prefixIcon?: React.ReactNode;
+  isExpanded: boolean;
+  onTitleClick: () => void;
+  namePrefix: string;
+}
+
 const TitleButton = ({
   title,
+  prefixIcon,
   isExpanded,
   onTitleClick,
   namePrefix,
-}) => {
+}: TitleButtonProps) => {
   const intl = useIntl();
   const titleTooltipMessage = intl.formatMessage(messages.expandTooltip);
 
@@ -39,17 +47,11 @@ const TitleButton = ({
         className="item-card-header__title-btn"
         onClick={onTitleClick}
       >
+        {prefixIcon}
         <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
       </Button>
     </OverlayTrigger>
   );
-};
-
-TitleButton.propTypes = {
-  title: PropTypes.string.isRequired,
-  isExpanded: PropTypes.bool.isRequired,
-  onTitleClick: PropTypes.func.isRequired,
-  namePrefix: PropTypes.string.isRequired,
 };
 
 export default TitleButton;
