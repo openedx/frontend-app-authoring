@@ -100,7 +100,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
           >
             <Stack direction="horizontal" gap={1}>
               <Icon size="xs" src={Description} />
-              <FormattedMessage {...messages.draftChipText} />
+              <FormattedMessage {...containerMessages.draftChipText} />
             </Stack>
           </Badge>
         )}
