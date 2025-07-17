@@ -6,7 +6,7 @@ interface TitleLinkProps {
   titleLink: string;
   namePrefix: string;
   prefixIcon?: React.ReactNode;
-};
+}
 
 const TitleLink = ({
   title,

@@ -161,7 +161,7 @@ const UnitCard = ({
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
       prefixIcon={!!unit.upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} size='sm' className="mr-1" />
+        <Icon src={Newsstand} size="sm" className="mr-1" />
       )}
     />
   );
