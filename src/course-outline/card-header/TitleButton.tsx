@@ -17,7 +17,7 @@ interface TitleButtonProps {
   isExpanded: boolean;
   onTitleClick: () => void;
   namePrefix: string;
-};
+}
 
 const TitleButton = ({
   title,
