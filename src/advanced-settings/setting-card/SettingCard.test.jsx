@@ -29,7 +29,6 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
 const RootWrapper = () => (
   <IntlProvider locale="en">
     <SettingCard
-      intl={{}}
       isOn
       name="settingName"
       setEdited={setEdited}
@@ -58,7 +57,6 @@ describe('<SettingCard />', () => {
     const { getByText } = render(
       <IntlProvider locale="en">
         <SettingCard
-          intl={{}}
           isOn
           name="settingName"
           setEdited={setEdited}
