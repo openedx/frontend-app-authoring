@@ -180,6 +180,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     <CourseStepper
                       // @ts-ignore
                       steps={courseStepperSteps}
+                      // @ts-ignore
                       activeKey={currentStage}
                       hasError={currentStage === 1 && !!errorMessage}
                       errorMessage={errorMessage}
