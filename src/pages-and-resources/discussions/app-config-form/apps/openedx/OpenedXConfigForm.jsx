@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Card, Form } from '@openedx/paragon';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -22,8 +22,9 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 setupYupExtensions();
 
 const OpenedXConfigForm = ({
-  onSubmit, formRef, intl, legacy,
+  onSubmit, formRef, legacy,
 }) => {
+  const intl = useIntl();
   const {
     selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds, postingRestrictions,
   } = useSelector(state => state.discussions);
@@ -155,7 +156,6 @@ OpenedXConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(OpenedXConfigForm);
+export default OpenedXConfigForm;

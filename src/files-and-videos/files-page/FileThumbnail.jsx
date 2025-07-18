@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Icon,
   Image,
@@ -14,9 +14,9 @@ const FileThumbnail = ({
   externalUrl,
   displayName,
   imageSize,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
+
   const src = getSrc({
     thumbnail,
     externalUrl,
@@ -65,8 +65,6 @@ FileThumbnail.propTypes = {
     width: PropTypes.string,
     height: PropTypes.string.isRequired,
   }).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FileThumbnail);
+export default FileThumbnail;
