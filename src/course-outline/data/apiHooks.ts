@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { createCourseXblock } from '@src/course-unit/data/api';
+// Convert `../..` to `@src` after the imported file is converted to TypeScript
+import { createCourseXblock } from '../../course-unit/data/api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
