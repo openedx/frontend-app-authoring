@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import ErrorAlert from '../../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { getLanguages, getSortedTranscripts } from '../data/utils';
@@ -20,9 +20,8 @@ import messages from './messages';
 
 const TranscriptTab = ({
   video,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const divRef = useRef(null);
   const { transcriptStatus, errors } = useSelector(state => state.videos);
@@ -145,8 +144,6 @@ TranscriptTab.propTypes = {
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
   }).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(TranscriptTab);
+export default TranscriptTab;
