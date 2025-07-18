@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Stack, Form } from '@openedx/paragon';
-import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { DatepickerControl, DATEPICKER_TYPES } from '../datepicker-control';
 import messages from './messages';
@@ -111,4 +111,4 @@ BasicTab.propTypes = {
   isSelfPaced: PropTypes.bool.isRequired,
 };
 
-export default injectIntl(BasicTab);
+export default BasicTab;

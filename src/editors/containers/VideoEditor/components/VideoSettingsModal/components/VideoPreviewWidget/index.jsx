@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Collapsible, Image, Stack, Hyperlink,
 } from '@openedx/paragon';
@@ -17,8 +17,8 @@ export const VideoPreviewWidget = ({
   videoSource,
   transcripts,
   blockTitle,
-  intl,
 }) => {
+  const intl = useIntl();
   const imgRef = React.useRef();
   const videoType = intl.formatMessage(hooks.getVideoType(videoSource));
   const thumbnailImage = thumbnail || videoThumbnail;
@@ -65,7 +65,6 @@ export const VideoPreviewWidget = ({
 };
 
 VideoPreviewWidget.propTypes = {
-  intl: intlShape.isRequired,
   videoSource: PropTypes.string.isRequired,
   thumbnail: PropTypes.string.isRequired,
   transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -79,4 +78,4 @@ export const mapStateToProps = (state) => ({
   blockTitle: selectors.app.blockTitle(state),
 });
 
-export default injectIntl(connect(mapStateToProps)(VideoPreviewWidget));
+export default connect(mapStateToProps)(VideoPreviewWidget);
