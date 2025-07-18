@@ -2,14 +2,14 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 
+import { XBlock } from '@src/data/types';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
-import { XBlock } from '../../data/types';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
-jest.mock('../../course-unit/data/apiHooks', () => ({
+jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
     mutateAsync: mockUseAcceptLibraryBlockChanges,
   }),
