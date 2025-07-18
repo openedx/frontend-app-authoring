@@ -15,7 +15,7 @@ import {
   exportTags,
   createDiscussionsTopicsUrl,
 } from './data/api';
-import { RequestStatus } from '../data/constants';
+import { RequestStatus } from '@src/data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -30,15 +30,15 @@ import {
   courseSectionMock,
   courseSubsectionMock,
 } from './__mocks__';
-import { clipboardUnit } from '../__mocks__';
-import { executeThunk } from '../utils';
+import { clipboardUnit } from '@src/__mocks__';
+import { executeThunk } from '@src/utils';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 
-import configureModalMessages from '../generic/configure-modal/messages';
-import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
+import configureModalMessages from '@src/generic/configure-modal/messages';
+import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
 import messages from './messages';
-import { getApiBaseUrl, getClipboardUrl } from '../generic/data/api';
+import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
@@ -51,12 +51,12 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
-import { postXBlockBaseApiUrl } from '../course-unit/data/api';
-import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
+import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
-} from '../testUtils';
-import { XBlock } from '../data/types';
+} from '@src/testUtils';
+import { XBlock } from '@src/data/types';
 
 let axiosMock: import('axios-mock-adapter/types');
 let store;
@@ -72,7 +72,7 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 
-jest.mock('../help-urls/hooks', () => ({
+jest.mock('@src/help-urls/hooks', () => ({
   useHelpUrls: () => ({
     contentHighlights: 'some',
     visibility: 'some',
@@ -94,7 +94,7 @@ jest.mock('./data/api', () => ({
 }));
 
 // Mock ComponentPicker to call onComponentSelected on click
-jest.mock('../library-authoring/component-picker', () => ({
+jest.mock('@src/library-authoring/component-picker', () => ({
   ComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
@@ -124,8 +124,8 @@ jest.mock('@dnd-kit/core', () => ({
   closestCorners: jest.fn(),
 }));
 
-jest.mock('../studio-home/data/selectors', () => ({
-  ...jest.requireActual('../studio-home/data/selectors'),
+jest.mock('@src/studio-home/data/selectors', () => ({
+  ...jest.requireActual('@src/studio-home/data/selectors'),
   getStudioHomeData: jest.fn().mockReturnValue({
     librariesV2Enabled: true,
   }),
