@@ -1,7 +1,6 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import { isNil } from 'lodash';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 import { RequestStatus } from '../../../../data/constants';
@@ -25,4 +24,4 @@ ActiveColumn.propTypes = {
   pageLoadStatus: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ActiveColumn);
+export default ActiveColumn;
