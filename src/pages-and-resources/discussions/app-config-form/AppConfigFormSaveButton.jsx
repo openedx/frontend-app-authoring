@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { StatefulButton } from '@openedx/paragon';
 
@@ -10,7 +10,8 @@ import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 import { useModel } from '../../../generic/model-store';
 
-const AppConfigFormSaveButton = ({ intl, labelText }) => {
+const AppConfigFormSaveButton = ({ labelText }) => {
+  const intl = useIntl();
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { selectedAppId } = useSelector((state) => state.discussions);
 
@@ -48,7 +49,6 @@ const AppConfigFormSaveButton = ({ intl, labelText }) => {
 };
 
 AppConfigFormSaveButton.propTypes = {
-  intl: intlShape.isRequired,
   labelText: PropTypes.string,
 };
 
@@ -56,4 +56,4 @@ AppConfigFormSaveButton.defaultProps = {
   labelText: '',
 };
 
-export default injectIntl(AppConfigFormSaveButton);
+export default AppConfigFormSaveButton;
