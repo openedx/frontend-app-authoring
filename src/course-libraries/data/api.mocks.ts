@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
+import mockComponentLinksResult from '../__mocks__/publishableComponentEntityLinks.json';
 import mockLinksResult from '../__mocks__/publishableEntityLinks.json';
 import mockSummaryResult from '../__mocks__/linkCourseSummary.json';
 import mockLinkDetailsFromIndex from '../__mocks__/linkDetailsFromIndex.json';
@@ -9,11 +10,6 @@ import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 import * as libApi from '../../library-authoring/data/api';
 
-/**
- * Mock for `getEntityLinks()`
- *
- * This mock returns a fixed response for the downstreamContextKey.
- */
 export async function mockGetEntityLinks(
   downstreamContextKey?: string,
   readyToSync?: boolean,
@@ -49,6 +45,45 @@ mockGetEntityLinks.applyMock = () => {
 };
 
 /**
+ * Mock for `getComponentEntityLinks()`
+ *
+ * This mock returns a fixed response for the downstreamContextKey.
+ */
+export async function mockGetComponentEntityLinks(
+  downstreamContextKey?: string,
+  readyToSync?: boolean,
+): ReturnType<typeof api.getComponentEntityLinks> {
+  switch (downstreamContextKey) {
+    case mockGetComponentEntityLinks.invalidCourseKey:
+      throw createAxiosError({
+        code: 404,
+        message: 'Not found.',
+        path: api.getComponentEntityLinksByDownstreamContextUrl(),
+      });
+    case mockGetComponentEntityLinks.courseKeyLoading:
+      return new Promise(() => {});
+    case mockGetComponentEntityLinks.courseKeyEmpty:
+      return Promise.resolve([]);
+    default: {
+      let { response } = mockGetComponentEntityLinks;
+      if (readyToSync !== undefined) {
+        response = response.filter((o) => o.readyToSync === readyToSync);
+      }
+      return Promise.resolve(response);
+    }
+  }
+}
+mockGetComponentEntityLinks.courseKey = mockComponentLinksResult[0].downstreamContextKey;
+mockGetComponentEntityLinks.invalidCourseKey = 'course_key_error';
+mockGetComponentEntityLinks.courseKeyLoading = 'courseKeyLoading';
+mockGetComponentEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
+mockGetComponentEntityLinks.response = mockComponentLinksResult;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetComponentEntityLinks.applyMock = () => {
+  jest.spyOn(api, 'getComponentEntityLinks').mockImplementation(mockGetComponentEntityLinks);
+};
+
+/**
  * Mock for `getEntityLinksSummaryByDownstreamContext()`
  *
  * This mock returns a fixed response for the downstreamContextKey.
@@ -61,7 +96,7 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
-        path: api.getEntityLinksByDownstreamContextUrl(),
+        path: api.getComponentEntityLinksByDownstreamContextUrl(),
       });
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyLoading:
       return new Promise(() => {});
