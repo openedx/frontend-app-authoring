@@ -220,7 +220,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     });
     expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
   test.each([
@@ -250,7 +250,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     });
     expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
   test.each([
@@ -282,7 +282,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     });
     expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
   test.each([
@@ -317,6 +317,6 @@ describe('<CourseLibraries ReviewTab />', () => {
     });
     expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 });

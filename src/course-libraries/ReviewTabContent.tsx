@@ -182,7 +182,7 @@ const ItemReviewList = ({
 
   const reloadLinks = useCallback((usageKey: string) => {
     const courseKey = outOfSyncItemsByKey[usageKey].downstreamContextKey;
-    queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
+    queryClient.invalidateQueries({ queryKey: courseLibrariesQueryKeys.courseLibraries(courseKey) });
   }, [outOfSyncItemsByKey]);
 
   const postChange = (accept: boolean) => {

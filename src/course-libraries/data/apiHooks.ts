@@ -22,11 +22,11 @@ export const courseLibrariesQueryKeys = {
     pageSize?: number,
   }) => {
     const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all];
-    if (contentType !== undefined) {
-      key.push(contentType);
-    }
     if (courseId !== undefined) {
       key.push(courseId);
+    }
+    if (contentType !== undefined) {
+      key.push(contentType);
     }
     if (readyToSync !== undefined) {
       key.push(readyToSync);
