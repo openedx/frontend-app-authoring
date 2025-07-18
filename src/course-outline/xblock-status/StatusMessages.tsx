@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import messages from './messages';
-import { UserPartitionInfoTypes, XBlockPrereqs } from '../../data/types';
+import { UserPartitionInfoTypes, XBlockPrereqs } from '@src/data/types';
 
 interface StatusMessagesProps {
   isVertical: boolean;

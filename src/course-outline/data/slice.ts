@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '@src/data/constants';
 import { CourseOutlineState } from './types';
 
 const initialState = {
