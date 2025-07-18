@@ -3,8 +3,9 @@ import {
   Lock as LockIcon,
 } from '@openedx/paragon/icons';
 
-import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
+// Convert `../` to `@src` after the imported file is converted to TypeScript
+import DraftIcon from '../generic/DraftIcon';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 
 /**
