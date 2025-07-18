@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
@@ -33,4 +33,4 @@ AriaLiveRegion.propTypes = {
   enableQuality: PropTypes.bool.isRequired,
 };
 
-export default injectIntl(AriaLiveRegion);
+export default AriaLiveRegion;
