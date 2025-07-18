@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  injectIntl,
+  useIntl,
   FormattedMessage,
-  intlShape,
 } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -51,9 +50,8 @@ import UploadModal from './upload-modal';
 
 const VideosPage = ({
   courseId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const [
     isTranscriptSettingsOpen,
@@ -331,8 +329,6 @@ const VideosPage = ({
 
 VideosPage.propTypes = {
   courseId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(VideosPage);
+export default VideosPage;

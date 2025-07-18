@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Hyperlink, MailtoLink, Stack } from '@openedx/paragon';
 
 import messages from './messages';
@@ -95,4 +95,4 @@ AccessibilityBody.propTypes = {
   email: PropTypes.string.isRequired,
 };
 
-export default injectIntl(AccessibilityBody);
+export default AccessibilityBody;
