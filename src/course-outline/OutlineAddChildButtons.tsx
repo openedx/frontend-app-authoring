@@ -3,8 +3,8 @@ import { Add as IconAdd, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
-import messages from './messages';
 import { ContainerType } from '@src/generic/key-utils';
+import messages from './messages';
 
 interface NewChildButtonsProps {
   handleNewButtonClick: () => void;
@@ -46,6 +46,12 @@ const OutlineAddChildButtons = ({
       messageMap = {
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
+      };
+      break;
+    case ContainerType.Unit:
+      messageMap = {
+        newButton: messages.newUnitButton,
+        importButton: messages.useUnitFromLibraryButton,
       };
       break;
     default:

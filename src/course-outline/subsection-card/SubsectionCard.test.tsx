@@ -1,10 +1,10 @@
-import SubsectionCard from './SubsectionCard';
-import cardHeaderMessages from '../card-header/messages';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import cardHeaderMessages from '../card-header/messages';
+import SubsectionCard from './SubsectionCard';
 
 let store;
 const mockPathname = '/foo-bar';

@@ -1,11 +1,12 @@
 import { logError } from '@edx/frontend-platform/logging';
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
+} from '@src/generic/processing-notification/data/slice';
+import { createCourseXblock } from '@src/course-unit/data/api';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
@@ -54,7 +55,6 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
-import { createCourseXblock } from '@src/course-unit/data/api';
 
 /**
  * Action to fetch course outline.
