@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
+
 import { Button } from '@openedx/paragon';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 
@@ -15,7 +16,6 @@ const MIN_NUMBER_VALUE = 0;
 const MAX_NUMBER_VALUE = 100;
 
 const AssignmentSection = ({
-  intl,
   handleRemoveAssignment,
   setShowSavePrompt,
   graders,
@@ -23,6 +23,7 @@ const AssignmentSection = ({
   courseAssignmentLists,
   setShowSuccessAlert,
 }) => {
+  const intl = useIntl();
   const [errorList, setErrorList] = useState({});
   const {
     type, weight, minCount, dropCount,
@@ -201,7 +202,6 @@ AssignmentSection.defaultProps = {
 };
 
 AssignmentSection.propTypes = {
-  intl: intlShape.isRequired,
   handleRemoveAssignment: PropTypes.func.isRequired,
   setGradingData: PropTypes.func.isRequired,
   setShowSavePrompt: PropTypes.func.isRequired,
@@ -212,4 +212,4 @@ AssignmentSection.propTypes = {
   ),
 };
 
-export default injectIntl(AssignmentSection);
+export default AssignmentSection;

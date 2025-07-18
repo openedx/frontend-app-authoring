@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import {
   FormattedDate,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +17,8 @@ import {
 } from '../data/selectors';
 import messages from './messages';
 
-const ImportStepper = ({ intl, courseId }) => {
+const ImportStepper = ({ courseId }) => {
+  const intl = useIntl();
   const currentStage = useSelector(getCurrentStage);
   const fileName = useSelector(getFileName);
   const { hasError, message: errorMessage } = useSelector(getError);
@@ -109,8 +109,7 @@ const ImportStepper = ({ intl, courseId }) => {
 };
 
 ImportStepper.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ImportStepper);
+export default ImportStepper;
