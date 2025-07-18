@@ -103,13 +103,19 @@ const ItemCard: React.FC<ItemCardProps> = ({
               )}
               {intl.formatMessage(messages.breadcrumbLabel)}
               <Hyperlink showLaunchIcon={false} destination={getItemLink()} target="_blank">
-                <Breadcrumb
-                  className="micro text-gray-700 border-bottom"
-                  ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
-                  links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
-                  spacer={<span className="custom-spacer">/</span>}
-                  linkAs="span"
-                />
+                {info.blockType === 'chapter' ? (
+                  <div className="micro text-gray-700 border-bottom">
+                    {intl.formatMessage(messages.viewSectionInCourseLabel)}
+                  </div>
+                ) : (
+                  <Breadcrumb
+                    className="micro text-gray-700 border-bottom"
+                    ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
+                    links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
+                    spacer={<span className="custom-spacer">/</span>}
+                    linkAs="span"
+                  />
+                )}
               </Hyperlink>
             </Stack>
           </Stack>

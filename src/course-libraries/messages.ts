@@ -116,6 +116,11 @@ const messages = defineMessages({
     defaultMessage: 'Something went wrong! Could not fetch results.',
     description: 'Generic error message displayed when fetching link data fails.',
   },
+  viewSectionInCourseLabel: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.view-section.label',
+    defaultMessage: 'View Section in Course',
+    description: 'Label of the button to see the section in the course',
+  },
 });
 
 export default messages;
