@@ -35,7 +35,7 @@ export const processFilters = (filters, columns, setAllFilters) => {
   const [displayNameFilter] = filters.filter(filter => isArray(filter));
   if (displayNameFilter) {
     const [id, filterValue] = displayNameFilter;
-    allFilters.push({ id, value: [filterValue] });
+    allFilters.push({ id, value: filterValue });
   }
 
   filterableColumns.forEach(({ id, filterChoices }) => {

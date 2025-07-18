@@ -115,11 +115,12 @@ describe('TopicItem', () => {
   });
 
   test('displays expand view of general discussion topic', async () => {
+    const user = userEvent.setup();
     await mockStore(legacyApiResponse);
     createComponent(generalTopic);
 
     const generalTopicNode = queryByTestId(container, 'course');
-    userEvent.click(queryByLabelText(generalTopicNode, 'Expand'));
+    await user.click(queryByLabelText(generalTopicNode, 'Expand'));
 
     expect(queryByLabelText(generalTopicNode, 'Expand')).not.toBeInTheDocument();
     expect(queryByLabelText(generalTopicNode, 'Collapse')).toBeInTheDocument();
@@ -128,11 +129,12 @@ describe('TopicItem', () => {
   });
 
   test('displays expand view of additional discussion topic', async () => {
+    const user = userEvent.setup();
     await mockStore(legacyApiResponse);
     createComponent(additionalTopic);
 
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    await user.click(queryByLabelText(topicCard, 'Expand'));
 
     expect(queryByLabelText(topicCard, 'Expand')).not.toBeInTheDocument();
     expect(queryByLabelText(topicCard, 'Collapse')).toBeInTheDocument();
@@ -141,12 +143,13 @@ describe('TopicItem', () => {
   });
 
   test('renders delete topic popup with providerName, label, helping text, a delete and a cancel button', async () => {
+    const user = userEvent.setup();
     await mockStore(legacyApiResponse);
     createComponent(additionalTopic);
 
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
-    userEvent.click(queryByRole(topicCard, 'button', { name: 'Delete Topic' }));
+    await user.click(queryByLabelText(topicCard, 'Expand'));
+    await user.click(queryByRole(topicCard, 'button', { name: 'Delete Topic' }));
 
     expect(queryAllByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toHaveLength(1);
     expect(queryByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toBeInTheDocument();
@@ -157,11 +160,12 @@ describe('TopicItem', () => {
   });
 
   test('shows help text on field focus', async () => {
+    const user = userEvent.setup();
     await mockStore(legacyApiResponse);
     createComponent(additionalTopic);
 
     const topicCard = await findByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    await user.click(queryByLabelText(topicCard, 'Expand'));
     topicCard.querySelector('input').focus();
 
     await findByText(topicCard, messages.addTopicHelpText.defaultMessage);

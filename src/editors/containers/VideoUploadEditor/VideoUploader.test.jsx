@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
+import {
+  render, fireEvent, act, screen,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { configureStore } from '@reduxjs/toolkit';
@@ -53,7 +55,10 @@ describe('VideoUploader', () => {
   });
 
   it('renders as expected with default behavior', async () => {
-    expect(await renderComponent(store, setLoadingMock)).toMatchSnapshot();
+    await renderComponent(store);
+    expect(screen.getByPlaceholderText('Paste your video ID or URL')).toBeInTheDocument();
+    expect(screen.getByText('Drag and drop video here or click to upload')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
   });
 
   it('calls onURLUpload when URL submit button is clicked', async () => {

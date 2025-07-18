@@ -106,20 +106,22 @@ describe('<HeaderNavigations />', () => {
   });
 
   it('render reindex button tooltip correctly', async () => {
+    const user = userEvent.setup();
     const { getByText, getByRole } = renderComponent({
       isDisabledReindexButton: false,
     });
-    userEvent.hover(getByRole('button', { name: messages.reindexButton.defaultMessage }));
+    await user.hover(getByRole('button', { name: messages.reindexButton.defaultMessage }));
     await waitFor(() => {
       expect(getByText(messages.reindexButtonTooltip.defaultMessage)).toBeInTheDocument();
     });
   });
 
   it('not render reindex button tooltip when button is disabled correctly', async () => {
+    const user = userEvent.setup();
     const { queryByText, getByRole } = renderComponent({
       isDisabledReindexButton: true,
     });
-    userEvent.hover(getByRole('button', { name: messages.reindexButton.defaultMessage }));
+    await user.pointer(getByRole('button', { name: messages.reindexButton.defaultMessage }));
     await waitFor(() => {
       expect(queryByText(messages.reindexButtonTooltip.defaultMessage)).not.toBeInTheDocument();
     });

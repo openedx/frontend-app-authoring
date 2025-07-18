@@ -1,6 +1,6 @@
 import { Provider, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -86,24 +86,24 @@ describe('CertificateDetails', () => {
     expect(getByText(defaultProps.detailsCourseTitle)).toBeInTheDocument();
   });
 
-  it('opens confirm modal on delete button click', () => {
+  it('opens confirm modal on delete button click', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent(defaultProps);
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(getByText(messages.deleteCertificateConfirmationTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('dispatches delete action on confirm modal action', async () => {
+    const user = userEvent.setup();
     const props = { ...defaultProps, courseId, certificateId };
     const { getByRole } = renderComponent(props);
     const deleteButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-    userEvent.click(deleteButton);
+    await user.click(deleteButton);
 
-    await waitFor(() => {
-      const confirmActionButton = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-      userEvent.click(confirmActionButton);
-    });
+    const confirmActionButton = await screen.findByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
+    await user.click(confirmActionButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(deleteCourseCertificate(courseId, certificateId));
   });

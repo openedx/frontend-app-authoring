@@ -14,7 +14,7 @@ let store;
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <ExportStepper intl={{ formatMessage: jest.fn() }} courseId={courseId} />
+      <ExportStepper courseId={courseId} />
     </IntlProvider>
   </AppProvider>
 );

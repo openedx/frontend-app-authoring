@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {
-  injectIntl, intlShape, isRtl, getLocale,
+  useIntl, isRtl, getLocale,
 } from '@edx/frontend-platform/i18n';
 import { Button, useWindowSize, breakpoints } from '@openedx/paragon';
 import {
@@ -19,7 +19,6 @@ import messages from '../messages';
 import SequenceNavigationTabs from './SequenceNavigationTabs';
 
 const SequenceNavigation = ({
-  intl,
   courseId,
   unitId,
   sequenceId,
@@ -27,6 +26,7 @@ const SequenceNavigation = ({
   handleCreateNewCourseXBlock,
   showPasteUnit,
 }) => {
+  const intl = useIntl();
   const sequenceStatus = useSelector(getSequenceStatus);
   const {
     isFirstUnit, isLastUnit, nextLink, previousLink,
@@ -106,7 +106,6 @@ const SequenceNavigation = ({
 };
 
 SequenceNavigation.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
   unitId: PropTypes.string,
   className: PropTypes.string,
@@ -121,4 +120,4 @@ SequenceNavigation.defaultProps = {
   className: undefined,
 };
 
-export default injectIntl(SequenceNavigation);
+export default SequenceNavigation;

@@ -7,8 +7,8 @@ const PageGrid = ({ pages, pluginSlotComponent, courseId }) => (
   <CardGrid columnSizes={{
     xs: 12,
     sm: 6,
-    lg: 4,
-    xl: 4,
+    lg: 6,
+    xl: 6,
   }}
   >
     {pages.map((page) => (

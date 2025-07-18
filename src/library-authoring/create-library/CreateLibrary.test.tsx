@@ -3,16 +3,15 @@ import type MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
 
 import {
-  act,
   fireEvent,
   initializeMocks,
   render,
   screen,
   waitFor,
-} from '../../testUtils';
-import { studioHomeMock } from '../../studio-home/__mocks__';
-import { getStudioHomeApiUrl } from '../../studio-home/data/api';
-import { getApiWaffleFlagsUrl } from '../../data/api';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
+import { getApiWaffleFlagsUrl } from '@src/data/api';
 import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
 
@@ -46,6 +45,7 @@ describe('<CreateLibrary />', () => {
   });
 
   test('call api data with correct data', async () => {
+    const user = userEvent.setup();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
       id: 'library-id',
@@ -54,17 +54,17 @@ describe('<CreateLibrary />', () => {
     render(<CreateLibrary />);
 
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
-    userEvent.click(titleInput);
-    userEvent.type(titleInput, 'Test Library Name');
+    await user.click(titleInput);
+    await user.type(titleInput, 'Test Library Name');
 
     const orgInput = await screen.findByRole('combobox', { name: /organization/i });
-    userEvent.click(orgInput);
-    userEvent.type(orgInput, 'org1');
-    act(() => userEvent.tab());
+    await user.click(orgInput);
+    await user.type(orgInput, 'org1');
+    await user.tab();
 
     const slugInput = await screen.findByRole('textbox', { name: /library id/i });
-    userEvent.click(slugInput);
-    userEvent.type(slugInput, 'test_library_slug');
+    await user.click(slugInput);
+    await user.type(slugInput, 'test_library_slug');
 
     fireEvent.click(await screen.findByRole('button', { name: /create/i }));
     await waitFor(() => {
@@ -77,6 +77,7 @@ describe('<CreateLibrary />', () => {
   });
 
   test('cannot create new org unless allowed', async () => {
+    const user = userEvent.setup();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
       id: 'library-id',
@@ -85,23 +86,23 @@ describe('<CreateLibrary />', () => {
     render(<CreateLibrary />);
 
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
-    userEvent.click(titleInput);
-    userEvent.type(titleInput, 'Test Library Name');
+    await user.click(titleInput);
+    await user.type(titleInput, 'Test Library Name');
 
     // We cannot create a new org, and so we're restricted to the allowed list
     const orgOptions = screen.getByTestId('autosuggest-iconbutton');
-    userEvent.click(orgOptions);
+    await user.click(orgOptions);
     expect(screen.getByText('org1')).toBeInTheDocument();
     ['org2', 'org3', 'org4', 'org5'].forEach((org) => expect(screen.queryByText(org)).not.toBeInTheDocument());
 
     const orgInput = await screen.findByRole('combobox', { name: /organization/i });
-    userEvent.click(orgInput);
-    userEvent.type(orgInput, 'NewOrg');
-    act(() => userEvent.tab());
+    await user.click(orgInput);
+    await user.type(orgInput, 'NewOrg');
+    await user.tab();
 
     const slugInput = await screen.findByRole('textbox', { name: /library id/i });
-    userEvent.click(slugInput);
-    userEvent.type(slugInput, 'test_library_slug');
+    await user.click(slugInput);
+    await user.type(slugInput, 'test_library_slug');
 
     fireEvent.click(await screen.findByRole('button', { name: /create/i }));
     await waitFor(() => {
@@ -111,6 +112,7 @@ describe('<CreateLibrary />', () => {
   });
 
   test('can create new org if allowed', async () => {
+    const user = userEvent.setup();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
       ...studioHomeMock,
       allow_to_create_new_org: true,
@@ -122,22 +124,22 @@ describe('<CreateLibrary />', () => {
     render(<CreateLibrary />);
 
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
-    userEvent.click(titleInput);
-    userEvent.type(titleInput, 'Test Library Name');
+    await user.click(titleInput);
+    await user.type(titleInput, 'Test Library Name');
 
     // We can create a new org, so we're also allowed to use any existing org
     const orgOptions = screen.getByTestId('autosuggest-iconbutton');
-    userEvent.click(orgOptions);
+    await user.click(orgOptions);
     ['org1', 'org2', 'org3', 'org4', 'org5'].forEach((org) => expect(screen.queryByText(org)).toBeInTheDocument());
 
     const orgInput = await screen.findByRole('combobox', { name: /organization/i });
-    userEvent.click(orgInput);
-    userEvent.type(orgInput, 'NewOrg');
-    act(() => userEvent.tab());
+    await user.click(orgInput);
+    await user.type(orgInput, 'NewOrg');
+    await user.tab();
 
     const slugInput = await screen.findByRole('textbox', { name: /library id/i });
-    userEvent.click(slugInput);
-    userEvent.type(slugInput, 'test_library_slug');
+    await user.click(slugInput);
+    await user.type(slugInput, 'test_library_slug');
 
     fireEvent.click(await screen.findByRole('button', { name: /create/i }));
     await waitFor(() => {
@@ -150,6 +152,7 @@ describe('<CreateLibrary />', () => {
   });
 
   test('show api error', async () => {
+    const user = userEvent.setup();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(400, {
       field: 'Error message',
@@ -157,17 +160,17 @@ describe('<CreateLibrary />', () => {
     render(<CreateLibrary />);
 
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
-    userEvent.click(titleInput);
-    userEvent.type(titleInput, 'Test Library Name');
+    await user.click(titleInput);
+    await user.type(titleInput, 'Test Library Name');
 
     const orgInput = await screen.findByTestId('autosuggest-textbox-input');
-    userEvent.click(orgInput);
-    userEvent.type(orgInput, 'org1');
-    act(() => userEvent.tab());
+    await user.click(orgInput);
+    await user.type(orgInput, 'org1');
+    await user.tab();
 
     const slugInput = await screen.findByRole('textbox', { name: /library id/i });
-    userEvent.click(slugInput);
-    userEvent.type(slugInput, 'test_library_slug');
+    await user.click(slugInput);
+    await user.type(slugInput, 'test_library_slug');
 
     fireEvent.click(await screen.findByRole('button', { name: /create/i }));
     await waitFor(async () => {

@@ -71,11 +71,12 @@ describe('<ConfigureModal /> for Section', () => {
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
   });
 
-  it('switches to the Visibility tab and renders correctly', () => {
+  it('switches to the Visibility tab and renders correctly', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent();
 
     const visibilityTab = getByRole('tab', { name: messages.visibilityTabTitle.defaultMessage });
-    userEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     expect(getByText('Section visibility')).toBeInTheDocument();
     expect(getByText(messages.hideFromLearners.defaultMessage)).toBeInTheDocument();
   });
@@ -134,11 +135,12 @@ describe('<ConfigureModal /> for Subsection', () => {
     expect(queryByText(messages.dueTimeUTC.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('switches to the subsection Visibility tab and renders correctly', () => {
+  it('switches to the subsection Visibility tab and renders correctly', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderSubsectionComponent();
 
     const visibilityTab = getByRole('tab', { name: messages.visibilityTabTitle.defaultMessage });
-    userEvent.click(visibilityTab);
+    await user.click(visibilityTab);
     expect(getByText('Subsection visibility')).toBeInTheDocument();
     expect(getByText(messages.showEntireSubsection.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.showEntireSubsectionDescription.defaultMessage)).toBeInTheDocument();
@@ -155,11 +157,12 @@ describe('<ConfigureModal /> for Subsection', () => {
     expect(getByText(messages.showAssessmentResultsPastDueDescription.defaultMessage)).toBeInTheDocument();
   });
 
-  it('switches to the subsection Advanced tab and renders correctly', () => {
+  it('switches to the subsection Advanced tab and renders correctly', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderSubsectionComponent();
 
     const advancedTab = getByRole('tab', { name: messages.advancedTabTitle.defaultMessage });
-    userEvent.click(advancedTab);
+    await user.click(advancedTab);
     expect(getByText(messages.setSpecialExam.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.none.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.timed.defaultMessage)).toBeInTheDocument();
@@ -195,7 +198,8 @@ describe('<ConfigureModal /> for Unit', () => {
     store = initializeStore();
   });
 
-  it('renders unit ConfigureModal component correctly', () => {
+  it('renders unit ConfigureModal component correctly', async () => {
+    const user = userEvent.setup();
     const {
       getByText, queryByText, getByRole, getByTestId,
     } = renderUnitComponent();
@@ -209,15 +213,19 @@ describe('<ConfigureModal /> for Unit', () => {
     expect(queryByText(messages.unitSelectGroup.defaultMessage)).not.toBeInTheDocument();
     const input = getByTestId('group-type-select');
 
-    ['0', '1'].forEach(groupeTypeIndex => {
-      userEvent.selectOptions(input, groupeTypeIndex);
+    await user.selectOptions(input, '0');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['0'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
-      expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-      currentUnitMock
-        .userPartitionInfo
-        .selectablePartitions[groupeTypeIndex].groups
-        .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
-    });
+    await user.selectOptions(input, '1');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['1'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
@@ -257,7 +265,8 @@ describe('<ConfigureModal /> for XBlock', () => {
     store = initializeStore();
   });
 
-  it('renders unit ConfigureModal component correctly', () => {
+  it('renders unit ConfigureModal component correctly', async () => {
+    const user = userEvent.setup();
     const {
       getByText, queryByText, getByRole, getByTestId,
     } = renderXBlockComponent();
@@ -270,15 +279,19 @@ describe('<ConfigureModal /> for XBlock', () => {
     expect(queryByText(messages.unitSelectGroup.defaultMessage)).not.toBeInTheDocument();
     const input = getByTestId('group-type-select');
 
-    ['0', '1'].forEach(groupeTypeIndex => {
-      userEvent.selectOptions(input, groupeTypeIndex);
+    await user.selectOptions(input, '0');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['0'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
-      expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
-      currentUnitMock
-        .userPartitionInfo
-        .selectablePartitions[groupeTypeIndex].groups
-        .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
-    });
+    await user.selectOptions(input, '1');
+    expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+    currentUnitMock
+      .userPartitionInfo
+      .selectablePartitions['1'].groups
+      .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();

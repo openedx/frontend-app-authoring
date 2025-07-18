@@ -131,15 +131,16 @@ describe('DiscussionTopics', () => {
   });
 
   test('updates discussion topic name', async () => {
+    const user = userEvent.setup();
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
 
-    await act(async () => userEvent.click(queryByLabelText(topicCard, 'Expand')));
+    await act(async () => user.click(queryByLabelText(topicCard, 'Expand')));
     await act(async () => {
       fireEvent.change(topicCard.querySelector('input'), { target: { value: 'new name' } });
     });
-    await act(async () => userEvent.click(queryByLabelText(topicCard, 'Collapse')));
+    await act(async () => user.click(queryByLabelText(topicCard, 'Collapse')));
 
     expect(queryByText(topicCard, 'new name')).toBeInTheDocument();
   });

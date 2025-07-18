@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 import SettingsOption from '../SettingsOption';
 import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/constants/problem';
@@ -13,13 +13,12 @@ const ShowAnswerCard = ({
   showAnswer,
   updateSettings,
   defaultValue,
-  // inject
-  intl,
   // redux
   studioEndpointUrl,
   learningContextId,
   isLibrary,
 }) => {
+  const intl = useIntl();
   const {
     handleShowAnswerChange,
     handleAttemptsChange,
@@ -90,7 +89,6 @@ const ShowAnswerCard = ({
 };
 
 ShowAnswerCard.propTypes = {
-  intl: intlShape.isRequired,
   // eslint-disable-next-line
   showAnswer: PropTypes.any.isRequired,
   solutionExplanation: PropTypes.string,
@@ -115,4 +113,4 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = {};
 
 export const ShowAnswerCardInternal = ShowAnswerCard; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ShowAnswerCard));
+export default connect(mapStateToProps, mapDispatchToProps)(ShowAnswerCard);

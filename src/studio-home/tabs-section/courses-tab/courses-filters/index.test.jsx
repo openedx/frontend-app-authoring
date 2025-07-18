@@ -45,9 +45,9 @@ describe('CoursesFilters', () => {
     });
   });
 
-  it('snapshot', () => {
-    const { container } = renderComponent();
-    expect(container).toMatchSnapshot();
+  it('renders component', () => {
+    renderComponent();
+    expect(screen.getByText('search')).toBeInTheDocument();
   });
 
   it('should render without crashing', () => {
@@ -119,11 +119,12 @@ describe('CoursesFilters', () => {
     }));
   });
 
-  it('should handle search input submission', () => {
+  it('should handle search input submission', async () => {
+    const user = userEvent.setup();
     const handleSubmit = jest.fn();
     renderComponent({ onSubmitSearchField: handleSubmit });
     const searchInput = screen.getByRole('searchbox');
-    userEvent.type(searchInput, 'testing{enter}');
+    await user.type(searchInput, 'testing{enter}');
     expect(handleSubmit).toHaveBeenCalled();
   });
 

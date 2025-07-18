@@ -42,9 +42,9 @@ describe('CoursesTypesFilterMenu', () => {
     });
   });
 
-  it('snapshot', () => {
-    const { container } = renderComponent();
-    expect(container).toMatchSnapshot();
+  it('renders component', () => {
+    renderComponent();
+    expect(screen.getByText('All courses')).toBeInTheDocument();
   });
 
   it('should render without crashing', () => {

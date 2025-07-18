@@ -64,6 +64,7 @@ describe('CreateContainerModal container linking', () => {
   }
 
   it('links container to collection when inside a collection', async () => {
+    const user = userEvent.setup();
     renderWithProvider(
       <>
         <AddContent />
@@ -73,11 +74,11 @@ describe('CreateContainerModal container linking', () => {
     );
     // Disambiguate: select the "Section" button by exact match
     const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
-    userEvent.click(sectionButton);
+    await user.click(sectionButton);
     const nameInput = await screen.findByLabelText(/name your section/i);
-    userEvent.type(nameInput, 'Test Section');
+    await user.type(nameInput, 'Test Section');
     const createButton = await screen.findByRole('button', { name: /create/i });
-    userEvent.click(createButton);
+    await user.click(createButton);
     await waitFor(() => {
       expect(axiosMock.history.post).toHaveLength(1);
     });
@@ -90,6 +91,7 @@ describe('CreateContainerModal container linking', () => {
   });
 
   it('links container to section when inside a section', async () => {
+    const user = userEvent.setup();
     axiosMock.onPost(getLibraryContainerApiUrl(newSectionId)).reply(200, {
       id: newSectionId,
       containerType: 'section',
@@ -106,11 +108,11 @@ describe('CreateContainerModal container linking', () => {
     );
 
     const subsectionButton = await screen.findByRole('button', { name: /New subsection/i });
-    userEvent.click(subsectionButton);
+    await user.click(subsectionButton);
     const nameInput = await screen.findByLabelText(/name your subsection/i);
-    userEvent.type(nameInput, 'Test Subsection');
+    await user.type(nameInput, 'Test Subsection');
     const createButton = await screen.findByRole('button', { name: /create/i });
-    userEvent.click(createButton);
+    await user.click(createButton);
     await waitFor(() => {
       expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
     });
@@ -122,6 +124,7 @@ describe('CreateContainerModal container linking', () => {
   });
 
   it('handles linking error gracefully', async () => {
+    const user = userEvent.setup();
     axiosMock.onPost(getLibraryContainersApiUrl(libraryId)).reply(500);
     renderWithProvider(
       <>
@@ -132,11 +135,11 @@ describe('CreateContainerModal container linking', () => {
     );
     // Disambiguate: select the "Section" button by exact match
     const sectionButton = await screen.findByRole('button', { name: /^Section$/ });
-    userEvent.click(sectionButton);
+    await user.click(sectionButton);
     const nameInput = await screen.findByLabelText(/name your section/i);
-    userEvent.type(nameInput, 'Test Section');
+    await user.type(nameInput, 'Test Section');
     const createButton = await screen.findByRole('button', { name: /create/i });
-    userEvent.click(createButton);
+    await user.click(createButton);
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(/error/i));
     });

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useFormikContext } from 'formik';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
@@ -10,9 +10,9 @@ import ConfirmationPopup from '../../../../../generic/ConfirmationPopup';
 const InContextDiscussionFields = ({
   onBlur,
   onChange,
-  intl,
   values,
 }) => {
+  const intl = useIntl();
   const {
     setFieldValue,
   } = useFormikContext();
@@ -67,11 +67,10 @@ const InContextDiscussionFields = ({
 InContextDiscussionFields.propTypes = {
   onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
   values: PropTypes.shape({
     enableGradedUnits: PropTypes.bool,
     groupAtSubsection: PropTypes.bool,
   }).isRequired,
 };
 
-export default injectIntl(InContextDiscussionFields);
+export default InContextDiscussionFields;

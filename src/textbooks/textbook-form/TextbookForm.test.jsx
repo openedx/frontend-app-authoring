@@ -84,6 +84,7 @@ describe('<TextbookForm />', () => {
   });
 
   it('calls onSubmit when the "Save" button is clicked with a valid form', async () => {
+    const user = userEvent.setup();
     const { getByPlaceholderText, getByRole } = renderComponent();
 
     const tabTitleInput = getByPlaceholderText(messages.tabTitlePlaceholder.defaultMessage);
@@ -102,11 +103,11 @@ describe('<TextbookForm />', () => {
       ],
     };
 
-    userEvent.type(tabTitleInput, formValues.tab_title);
-    userEvent.type(chapterInput, formValues.chapters[0].title);
-    userEvent.type(urlInput, formValues.chapters[0].url);
+    await user.type(tabTitleInput, formValues.tab_title);
+    await user.type(chapterInput, formValues.chapters[0].title);
+    await user.type(urlInput, formValues.chapters[0].url);
 
-    userEvent.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
 
     await waitFor(() => {
       expect(onSubmitMock).toHaveBeenCalledTimes(1);
@@ -133,12 +134,13 @@ describe('<TextbookForm />', () => {
   });
 
   it('"Save" button is disabled when the chapters length less than 1', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByTestId } = renderComponent();
 
     const deleteChapterButton = getByTestId('chapter-delete-button');
     const saveButton = getByRole('button', { name: messages.saveButton.defaultMessage });
 
-    userEvent.click(deleteChapterButton);
+    await user.click(deleteChapterButton);
 
     await waitFor(() => {
       expect(saveButton).toBeDisabled();
@@ -155,11 +157,12 @@ describe('<TextbookForm />', () => {
   });
 
   it('"Add a chapter" button add new chapters field', async () => {
+    const user = userEvent.setup();
     const { getByRole, getAllByTestId } = renderComponent();
 
     const addChapterButton = getByRole('button', { name: messages.addChapterButton.defaultMessage });
 
-    userEvent.click(addChapterButton);
+    await user.click(addChapterButton);
 
     await waitFor(() => {
       expect(getAllByTestId('form-chapters-fields')).toHaveLength(2);
@@ -167,14 +170,15 @@ describe('<TextbookForm />', () => {
   });
 
   it('open modal dropzone when "Upload" button is clicked', async () => {
+    const user = userEvent.setup();
     const { findByTestId, findByRole } = renderComponent();
 
     const button = await findByTestId('chapter-upload-button');
-    await userEvent.click(button);
+    await await user.click(button);
     const modalBackdrop = await findByTestId('modal-backdrop');
 
     const cancelButton = await within(await findByRole('dialog')).findByText('Cancel');
-    await userEvent.click(cancelButton);
+    await await user.click(cancelButton);
     await waitFor(() => {
       expect(modalBackdrop).not.toBeInTheDocument();
     });

@@ -1,10 +1,30 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  selectLibraryInfo: {
-    id: 'course-authoring.library-authoring.pick-components.select-library.info',
-    defaultMessage: 'Select which Library would you like to reference components from.',
+  'selectLibraryInfo.components': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.components',
+    defaultMessage: 'Choose a library to browse components.',
     description: 'The info text for the select library component',
+  },
+  'selectLibraryInfo.units': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.units',
+    defaultMessage: 'Choose a library to browse units.',
+    description: 'The info text for the select library for units',
+  },
+  'selectLibraryInfo.sections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.sections',
+    defaultMessage: 'Choose a library to browse sections.',
+    description: 'The info text for the select library for sections',
+  },
+  'selectLibraryInfo.subsections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.subsections',
+    defaultMessage: 'Choose a library to browse subsections.',
+    description: 'The info text for the select library for subsections',
+  },
+  'selectLibraryInfo.collections': {
+    id: 'course-authoring.library-authoring.pick-components.select-library.info.collections',
+    defaultMessage: 'Choose a library to browse collections.',
+    description: 'The info text for the select library for collections',
   },
   selectLibrarySearchPlaceholder: {
     id: 'course-authoring.library-authoring.pick-components.select-library.search-placeholder',

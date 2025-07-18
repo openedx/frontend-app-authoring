@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Button, Container, Row, Col,
 } from '@openedx/paragon';
-
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { isLibraryV1Key } from '../../../generic/key-utils';
 import { navigateTo } from '../../hooks';
@@ -20,9 +19,8 @@ const ErrorPage = ({
   learningContextId,
   // redux
   unitData,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const outlineType = isLibraryV1Key(learningContextId) ? 'library' : 'course';
   const outlineUrl = `${studioEndpointUrl}/${outlineType}/${learningContextId}`;
   const unitUrl = unitData?.data ? `${studioEndpointUrl}/container/${unitData?.data.ancestors[0].id}` : null;
@@ -73,8 +71,6 @@ ErrorPage.propTypes = {
       ),
     }),
   }),
-  // injected
-  intl: intlShape.isRequired,
 };
 
 ErrorPage.defaultProps = {
@@ -87,4 +83,4 @@ export const mapStateToProps = (state) => ({
 });
 
 export const ErrorPageInternal = ErrorPage; // For testing only
-export default injectIntl(connect(mapStateToProps)(ErrorPage));
+export default connect(mapStateToProps)(ErrorPage);

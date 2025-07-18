@@ -132,13 +132,14 @@ describe('<LibraryTeam />', () => {
   );
 
   it('allows library to be made "public read"', async () => {
+    const user = userEvent.setup();
     const url = getContentLibraryApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onPatch(url).reply(204);
 
     await renderLibraryTeam();
     const checkbox = screen.getByRole('switch', { name: /Allow public read/i });
-    userEvent.click(checkbox);
+    await user.click(checkbox);
 
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
@@ -149,6 +150,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('allows new library team members to be added', async () => {
+    const user = userEvent.setup();
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onPost(url).reply(204, {});
@@ -156,22 +158,22 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     let addButton = screen.getByRole('button', { name: 'New team member' });
-    userEvent.click(addButton);
+    await user.click(addButton);
 
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(0);
     });
 
     addButton = screen.getByRole('button', { name: 'New team member' });
-    userEvent.click(addButton);
+    await user.click(addButton);
     const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
-    userEvent.click(emailInput);
-    userEvent.type(emailInput, 'another@user.tld');
+    await user.click(emailInput);
+    await user.type(emailInput, 'another@user.tld');
 
     const saveButton = screen.getByRole('button', { name: /add member/i });
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
@@ -184,6 +186,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('shows error when specific error (string)', async () => {
+    const user = userEvent.setup();
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onPost(url).reply(400, { email: 'This is a specific error.' });
@@ -191,13 +194,13 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
-    userEvent.click(addButton);
+    await user.click(addButton);
     const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
-    userEvent.click(emailInput);
-    userEvent.type(emailInput, 'another@user.tld');
+    await user.click(emailInput);
+    await user.type(emailInput, 'another@user.tld');
 
     const saveButton = screen.getByRole('button', { name: /add member/i });
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
@@ -209,6 +212,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('shows error when specific error (Array)', async () => {
+    const user = userEvent.setup();
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onPost(url).reply(400, { email: ['This is a specific error.'] });
@@ -216,13 +220,13 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
-    userEvent.click(addButton);
+    await user.click(addButton);
     const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
-    userEvent.click(emailInput);
-    userEvent.type(emailInput, 'another@user.tld');
+    await user.click(emailInput);
+    await user.type(emailInput, 'another@user.tld');
 
     const saveButton = screen.getByRole('button', { name: /add member/i });
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
@@ -234,6 +238,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('shows error', async () => {
+    const user = userEvent.setup();
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onPost(url).reply(400, {});
@@ -241,13 +246,13 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     const addButton = screen.getByRole('button', { name: 'New team member' });
-    userEvent.click(addButton);
+    await user.click(addButton);
     const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
-    userEvent.click(emailInput);
-    userEvent.type(emailInput, 'another@user.tld');
+    await user.click(emailInput);
+    await user.type(emailInput, 'another@user.tld');
 
     const saveButton = screen.getByRole('button', { name: /add member/i });
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
@@ -257,6 +262,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('allows library team member roles to be changed', async () => {
+    const user = userEvent.setup();
     const { username } = mockGetLibraryTeam.readerMember;
     const url = getLibraryTeamMemberApiUrl(libraryId, username);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
@@ -265,7 +271,7 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     const makeAuthor = screen.getByRole('button', { name: 'Make Author' });
-    userEvent.click(makeAuthor);
+    await user.click(makeAuthor);
 
     await waitFor(() => {
       expect(axiosMock.history.put.length).toEqual(1);
@@ -276,6 +282,7 @@ describe('<LibraryTeam />', () => {
   });
 
   it('allows library team members to be deleted', async () => {
+    const user = userEvent.setup();
     const { username } = mockGetLibraryTeam.authorMember;
     const url = getLibraryTeamMemberApiUrl(libraryId, username);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
@@ -284,7 +291,7 @@ describe('<LibraryTeam />', () => {
     await renderLibraryTeam();
 
     const deleteMember = screen.getAllByRole('button', { name: 'Delete team member' })[0];
-    userEvent.click(deleteMember);
+    await user.click(deleteMember);
 
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);

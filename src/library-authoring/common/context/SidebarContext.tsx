@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '../../../hooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
+import { useLibraryRoutes } from '../../routes';
 
 export enum SidebarBodyItemId {
   AddContent = 'add-content',
@@ -86,6 +87,7 @@ export type SidebarContextData = {
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   openContainerInfoSidebar: (usageKey: string) => void;
+  openItemSidebar: (selectedItemId: string, type: SidebarBodyItemId) => void;
   sidebarItemInfo?: SidebarItemInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
@@ -172,6 +174,12 @@ export const SidebarProvider = ({
     });
   }, []);
 
+  const { navigateTo } = useLibraryRoutes();
+  const openItemSidebar = useCallback((selectedItemId: string, type: SidebarBodyItemId) => {
+    navigateTo({ selectedItemId });
+    setSidebarItemInfo({ id: selectedItemId, type });
+  }, [navigateTo, setSidebarItemInfo]);
+
   // Set the initial sidebar state based on the URL parameters and context.
   const { selectedItemId } = useParams();
   const { collectionId, containerId } = useLibraryContext();
@@ -236,6 +244,7 @@ export const SidebarProvider = ({
       sidebarItemInfo,
       openCollectionInfoSidebar,
       openContainerInfoSidebar,
+      openItemSidebar,
       sidebarAction,
       setSidebarAction,
       resetSidebarAction,
@@ -254,6 +263,7 @@ export const SidebarProvider = ({
     sidebarItemInfo,
     openCollectionInfoSidebar,
     openContainerInfoSidebar,
+    openItemSidebar,
     sidebarAction,
     setSidebarAction,
     resetSidebarAction,
@@ -281,6 +291,7 @@ export function useSidebarContext(): SidebarContextData {
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
       openContainerInfoSidebar: () => {},
+      openItemSidebar: () => {},
       sidebarAction: SidebarActions.None,
       setSidebarAction: () => {},
       resetSidebarAction: () => {},
