@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Stack } from '@openedx/paragon';
@@ -18,8 +18,8 @@ import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 const CourseChecklist = ({
   courseId,
   // injected,
-  intl,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const courseDetails = useModel('courseDetails', courseId);
   const enableQuality = getConfig().ENABLE_CHECKLIST_QUALITY === 'true';
@@ -98,7 +98,6 @@ const CourseChecklist = ({
 CourseChecklist.propTypes = {
   courseId: PropTypes.string.isRequired,
   // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(CourseChecklist);
+export default CourseChecklist;
