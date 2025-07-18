@@ -28,6 +28,12 @@ const messages = defineMessages({
   newSectionButton: {
     id: 'course-authoring.course-outline.section-list.button.new-section',
     defaultMessage: 'New section',
+    description: 'Text of button to create new section in course outline',
+  },
+  useSectionFromLibraryButton: {
+    id: 'course-authoring.course-outline.button.use-section-from-library',
+    defaultMessage: 'Use section from library',
+    description: 'Text of the button to add a section from a library in a course.',
   },
   exportTagsCreatingToastMessage: {
     id: 'course-authoring.course-outline.export-tags.toast.creating.message',
@@ -43,6 +49,31 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.export-tags.toast.error.message',
     defaultMessage: 'An error has occurred creating the file',
     description: 'Error message in toast when exporting tags of a course',
+  },
+  newUnitButton: {
+    id: 'course-authoring.course-outline.button.new-unit',
+    defaultMessage: 'New unit',
+    description: 'Message of the button to create a new unit in a subsection.',
+  },
+  useUnitFromLibraryButton: {
+    id: 'course-authoring.course-outline.button.use-unit-from-library',
+    defaultMessage: 'Use unit from library',
+    description: 'Message of the button to add a new unit from a library in a subsection.',
+  },
+  newSubsectionButton: {
+    id: 'course-authoring.course-outline.button.new-subsection',
+    defaultMessage: 'New subsection',
+    description: 'Text of button to create new subsection in a section',
+  },
+  useSubsectionFromLibraryButton: {
+    id: 'course-authoring.course-outline.button.use-subsection-from-library',
+    defaultMessage: 'Use subsection from library',
+    description: 'Message of the button to add a new subsection from a library in a subsection.',
+  },
+  sectionPickerModalTitle: {
+    id: 'course-authoring.course-outline.button.section-modal.title',
+    defaultMessage: 'Select section',
+    description: 'Section modal picker title text in outline',
   },
 });
 
