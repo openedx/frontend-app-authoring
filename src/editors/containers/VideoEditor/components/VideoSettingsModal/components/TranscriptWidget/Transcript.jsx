@@ -12,10 +12,7 @@ import {
 } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
-import {
-  FormattedMessage,
-  injectIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { thunkActions } from '../../../../../../data/redux';
 
 import TranscriptActionMenu from './TranscriptActionMenu';
@@ -125,4 +122,4 @@ export const mapDispatchToProps = {
 };
 
 export const TranscriptInternal = Transcript; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(Transcript));
+export default connect(mapStateToProps, mapDispatchToProps)(Transcript);
