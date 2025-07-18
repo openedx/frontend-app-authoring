@@ -1,3 +1,5 @@
+import { ShowAnswerTypesKeys } from '@src/editors/data/constants/problem';
+import { XBlock } from '@src/data/types';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import ReleaseStatus from './ReleaseStatus';
 import GradingPolicyAlert from './GradingPolicyAlert';
@@ -5,8 +7,6 @@ import GradingTypeAndDueDate from './GradingTypeAndDueDate';
 import StatusMessages from './StatusMessages';
 import HideAfterDueMessage from './HideAfterDueMessage';
 import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage';
-import { ShowAnswerTypesKeys } from '@src/editors/data/constants/problem';
-import { XBlock } from '@src/data/types';
 
 interface XBlockStatusProps {
   isSelfPaced: boolean;

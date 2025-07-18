@@ -1,8 +1,8 @@
-import SectionCard from './SectionCard';
 import {
   act, fireEvent, initializeMocks, render, screen, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import SectionCard from './SectionCard';
 
 const mockPathname = '/foo-bar';
 
