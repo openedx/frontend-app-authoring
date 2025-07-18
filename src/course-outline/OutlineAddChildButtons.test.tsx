@@ -1,6 +1,8 @@
 import userEvent from '@testing-library/user-event';
 import { ContainerType } from '@src/generic/key-utils';
-import { initializeMocks, render, screen } from '@src/testUtils';
+import {
+  initializeMocks, render, screen, waitFor,
+} from '@src/testUtils';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('react-redux', () => ({
@@ -32,9 +34,9 @@ jest.mock('react-redux', () => ({
       const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
       expect(useBtn).toBeInTheDocument();
       userEvent.click(newBtn);
-      expect(newClickHandler).toHaveBeenCalled();
+      waitFor(() => expect(newClickHandler).toHaveBeenCalled());
       userEvent.click(useBtn);
-      expect(useFromLibClickHandler).toHaveBeenCalled();
+      waitFor(() => expect(useFromLibClickHandler).toHaveBeenCalled());
     });
   });
 });
