@@ -12,18 +12,17 @@ import classNames from 'classnames';
 import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
 import { RequestStatus } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
+import SortableItem from '@src/course-outline/drag-helper/SortableItem';
+import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
+import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
-import SortableItem from '../drag-helper/SortableItem';
-// Convert `../` to `@src` after the imported file is converted to TypeScript
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
-import TitleButton from '../card-header/TitleButton';
-import { DragContext } from '../drag-helper/DragContextProvider';
 import messages from './messages';
 
 interface SectionCardProps {

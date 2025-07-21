@@ -20,25 +20,23 @@ import {
 import { useLocation } from 'react-router-dom';
 import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
+import { LoadingSpinner } from '@src/generic/Loading';
+import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
 import { RequestStatus } from '@src/data/constants';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import ProcessingNotification from '@src/generic/processing-notification';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import AlertMessage from '@src/generic/alert-message';
+import getPageHeadTitle from '@src/generic/utils';
+import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
-
-// Convert `../` to `@src` after the imported file is converted to TypeScript
-import { LoadingSpinner } from '../generic/Loading';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
-import SubHeader from '../generic/sub-header/SubHeader';
-import ProcessingNotification from '../generic/processing-notification';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import ConfigureModal from '../generic/configure-modal/ConfigureModal';
-import getPageHeadTitle from '../generic/utils';
-import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
-import { NOTIFICATION_MESSAGES } from '../constants';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import StatusBar from './status-bar/StatusBar';

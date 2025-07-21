@@ -8,23 +8,22 @@ import { StandardModal, useToggle } from '@openedx/paragon';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
+import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
+import { RequestStatus } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
+import SortableItem from '@src/course-outline/drag-helper/SortableItem';
+import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
+import { useClipboard, PasteComponent } from '@src/generic/clipboard';
+import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { XBlock } from '@src/data/types';
-// Convert `../..` to `@src` after the imported file is converted to TypeScript
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
-import TitleButton from '../card-header/TitleButton';
-import { useClipboard, PasteComponent } from '../../generic/clipboard';
-import { DragContext } from '../drag-helper/DragContextProvider';
-import SortableItem from '../drag-helper/SortableItem';
-import { RequestStatus } from '../../data/constants';
-import CourseOutlineSubsectionCardExtraActionsSlot from '../../plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import messages from './messages';
 
 interface SubsectionCardProps {

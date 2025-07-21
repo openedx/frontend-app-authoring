@@ -1,12 +1,11 @@
 import { logError } from '@edx/frontend-platform/logging';
 import { RequestStatus } from '@src/data/constants';
-// Convert `../..` to `@src` after the imported file is converted to TypeScript
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import { NOTIFICATION_MESSAGES } from '../../constants';
-import { createCourseXblock } from '../../course-unit/data/api';
+} from '@src/generic/processing-notification/data/slice';
+import { createCourseXblock } from '@src/course-unit/data/api';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,

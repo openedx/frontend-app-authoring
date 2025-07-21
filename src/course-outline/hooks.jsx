@@ -5,10 +5,9 @@ import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import moment from 'moment';
+import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { RequestStatus } from '@src/data/constants';
-// Convert `../` to `@src` after the imported file is converted to TypeScript
-import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   addSection,

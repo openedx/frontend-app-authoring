@@ -2,9 +2,8 @@ import { Button, Stack } from '@openedx/paragon';
 import { Add as IconAdd, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
+import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
-// Convert `../` to `@src` after the imported file is converted to TypeScript
-import { getStudioHomeData } from '../studio-home/data/selectors';
 import messages from './messages';
 
 interface NewChildButtonsProps {
