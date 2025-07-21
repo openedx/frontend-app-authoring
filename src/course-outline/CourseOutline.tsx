@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
@@ -59,7 +58,11 @@ import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
-const CourseOutline = ({ courseId }) => {
+interface CourseOutlineProps {
+  courseId: string,
+}
+
+const CourseOutline = ({ courseId }: CourseOutlineProps) => {
   const intl = useIntl();
   const location = useLocation();
 
@@ -528,7 +531,7 @@ const CourseOutline = ({ courseId }) => {
       </Container>
       <div className="alert-toast">
         <ProcessingNotification
-          // Show processing taost if any mutation is running
+          // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
             || handleAddUnitFromLibrary.isPending
@@ -555,10 +558,6 @@ const CourseOutline = ({ courseId }) => {
       )}
     </>
   );
-};
-
-CourseOutline.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseOutline;
