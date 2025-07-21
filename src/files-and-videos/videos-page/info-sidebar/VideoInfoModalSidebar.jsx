@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Tabs,
   Tab,
@@ -14,33 +14,34 @@ const VideoInfoModalSidebar = ({
   video,
   activeTab,
   setActiveTab,
-  // injected
-  intl,
-}) => (
-  <Tabs
-    id="controlled-info-sidebar-tab"
-    activeKey={activeTab}
-    onSelect={(tab) => setActiveTab(tab)}
-  >
-    <Tab eventKey="fileInfo" title={intl.formatMessage(messages.infoTabTitle)}>
-      <InfoTab {...{ video }} />
-    </Tab>
-    <Tab
-      eventKey="fileTranscripts"
-      title={intl.formatMessage(
-        messages.transcriptTabTitle,
-        { transcriptCount: video.transcripts.length },
-      )}
-      notification={TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
+}) => {
+  const intl = useIntl();
+  return (
+    <Tabs
+      id="controlled-info-sidebar-tab"
+      activeKey={activeTab}
+      onSelect={(tab) => setActiveTab(tab)}
+    >
+      <Tab eventKey="fileInfo" title={intl.formatMessage(messages.infoTabTitle)}>
+        <InfoTab {...{ video }} />
+      </Tab>
+      <Tab
+        eventKey="fileTranscripts"
+        title={intl.formatMessage(
+          messages.transcriptTabTitle,
+          { transcriptCount: video.transcripts.length },
+        )}
+        notification={TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
         <span>
           <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
         </span>
-      )}
-    >
-      <TranscriptTab {...{ video }} />
-    </Tab>
-  </Tabs>
-);
+        )}
+      >
+        <TranscriptTab {...{ video }} />
+      </Tab>
+    </Tabs>
+  );
+};
 
 VideoInfoModalSidebar.propTypes = {
   video: PropTypes.shape({
@@ -54,12 +55,10 @@ VideoInfoModalSidebar.propTypes = {
   }),
   activeTab: PropTypes.string.isRequired,
   setActiveTab: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 VideoInfoModalSidebar.defaultProps = {
   video: null,
 };
 
-export default injectIntl(VideoInfoModalSidebar);
+export default VideoInfoModalSidebar;
