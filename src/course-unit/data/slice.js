@@ -88,6 +88,10 @@ const slice = createSlice({
     updateMovedXBlockParams: (state, { payload }) => {
       state.movedXBlockParams = { ...state.movedXBlockParams, ...payload };
     },
+    setXBlockPublishState: (state, { payload }) => {
+      state.courseSectionVertical.xblockInfo.published = payload;
+      state.courseSectionVertical.xblockInfo.hasChanges = !payload;
+    },
   },
 });
 
@@ -108,6 +112,7 @@ export const {
   updateCourseOutlineInfo,
   updateCourseOutlineInfoLoadingStatus,
   updateMovedXBlockParams,
+  setXBlockPublishState,
 } = slice.actions;
 
 export const {
