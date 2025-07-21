@@ -2380,13 +2380,10 @@ describe('<CourseOutline />', () => {
 
     // Delay to ensure we see "Please wait."
     // Without the delay the success message renders too quickly
-    const delayedResponse = axiosMock
+    axiosMock
       .onGet(exportTags(courseId))
-    // Issue with types in upstream lib, should be fixed by this PR
-    // https://github.com/ctimmerm/axios-mock-adapter/pull/391/files
-    // @ts-ignore-next-line
-      .withDelayInMs(500);
-    delayedResponse(200, expectedResponse);
+      .withDelayInMs(500)
+      .reply(200, expectedResponse);
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: '/foo-bar',
@@ -2410,13 +2407,10 @@ describe('<CourseOutline />', () => {
   it('should show toast on export tags error', async () => {
     // Delay to ensure we see "Please wait."
     // Without the delay the error renders too quickly
-    const delayedResponse = axiosMock
+    axiosMock
       .onGet(exportTags(courseId))
-    // Issue with types in upstream lib, should be fixed by this PR
-    // https://github.com/ctimmerm/axios-mock-adapter/pull/391/files
-    // @ts-ignore-next-line
-      .withDelayInMs(500);
-    delayedResponse(404);
+      .withDelayInMs(500)
+      .reply(404);
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: '/foo-bar',
