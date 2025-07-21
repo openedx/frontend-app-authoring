@@ -9,8 +9,8 @@ import {
 
 jest.mock('file-saver');
 
-let axiosMock;
-let axiosUnauthenticatedMock;
+let axiosMock: MockAdapter;
+let axiosUnauthenticatedMock: MockAdapter;
 
 describe('api.js', () => {
   beforeEach(() => {
@@ -85,14 +85,15 @@ describe('api.js', () => {
       expect(actual).toEqual(expected);
     });
     it('pushes an empty usageLocations field when video api call fails', async () => {
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] }).reply(404);
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
+        .reply(404);
       const expected = [];
       const actual = await getAllUsagePaths({ courseId, videoIds });
       expect(actual).toEqual(expected);
     });
     it('sets activeStatus to active', async () => {
       const usageLocations = [{ link: '/test', name: 'test' }];
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] })
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
         .reply(200, { usageLocations });
       const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'active' }];
       const actual = await getAllUsagePaths({ courseId, videoIds });
@@ -100,7 +101,7 @@ describe('api.js', () => {
     });
     it('sets activeStatus to inactive', async () => {
       const usageLocations = [];
-      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] })
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`)
         .reply(200, { usageLocations });
       const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'inactive' }];
       const actual = await getAllUsagePaths({ courseId, videoIds });
@@ -129,8 +130,11 @@ describe('api.js', () => {
       axiosUnauthenticatedMock.onPut(mockUrl).reply((config) => {
         const total = 1024; // mocked file size
         const progress = 0.4;
+        const loaded = total * progress;
         if (config.onUploadProgress) {
-          config.onUploadProgress({ loaded: total * progress, total });
+          config.onUploadProgress({
+            loaded, total, bytes: loaded, lengthComputable: true,
+          });
         }
         return [200, expectedResult];
       });
