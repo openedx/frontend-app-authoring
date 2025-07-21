@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -163,4 +162,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const LicenseDetailsInternal = LicenseDetails; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseDetails));
+export default connect(mapStateToProps, mapDispatchToProps)(LicenseDetails);
