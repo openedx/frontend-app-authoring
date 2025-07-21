@@ -1,6 +1,6 @@
-// @ts-check
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import {
+  ReactNode, useEffect, useRef, useState,
+} from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -18,14 +18,56 @@ import {
   Sync as SyncIcon,
 } from '@openedx/paragon/icons';
 
-import { useContentTagsCount } from '../../generic/data/apiHooks';
-import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
-import TagCount from '../../generic/tag-count';
-import { useEscapeClick } from '../../hooks';
+import { useContentTagsCount } from '@src/generic/data/apiHooks';
+import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
+import TagCount from '@src/generic/tag-count';
+import { useEscapeClick } from '@src/hooks';
+import { XBlockActions } from '@src/data/types';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
+
+interface CardHeaderProps {
+  title: string;
+  status: string;
+  cardId?: string,
+  hasChanges: boolean;
+  onClickPublish: () => void;
+  onClickConfigure: () => void;
+  onClickMenuButton: () => void;
+  onClickEdit: () => void;
+  isFormOpen: boolean;
+  onEditSubmit: (titleValue: string) => void;
+  closeForm: () => void;
+  isDisabledEditField: boolean;
+  onClickDelete: () => void;
+  onClickDuplicate: () => void;
+  onClickMoveUp: () => void;
+  onClickMoveDown: () => void;
+  onClickCopy?: () => void;
+  titleComponent: ReactNode;
+  namePrefix: string;
+  proctoringExamConfigurationLink?: string,
+  actions: XBlockActions,
+  enableCopyPasteUnits?: boolean;
+  isVertical?: boolean;
+  isSequential?: boolean;
+  discussionEnabled?: boolean;
+  discussionsSettings?: {
+    providerType: string;
+    enableGradedUnits: boolean;
+  };
+  parentInfo?: {
+    graded: boolean;
+    isTimeLimited?: boolean;
+  },
+  // An optional component that is rendered before the dropdown. This is used by the Subsection
+  // and Unit card components to render their plugin slots.
+  extraActionsComponent?: ReactNode,
+  onClickSync?: () => void;
+  readyToSync?: boolean;
+}
 
 const CardHeader = ({
   title,
@@ -58,7 +100,7 @@ const CardHeader = ({
   extraActionsComponent,
   onClickSync,
   readyToSync,
-}) => {
+}: CardHeaderProps) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
@@ -93,7 +135,7 @@ const CardHeader = ({
       && discussionsSettings?.providerType === 'openedx'
       && (
         discussionsSettings?.enableGradedUnits
-          || (!discussionsSettings?.enableGradedUnits && !parentInfo.graded)
+          || (!discussionsSettings?.enableGradedUnits && !parentInfo?.graded)
       )
   );
 
@@ -155,7 +197,7 @@ const CardHeader = ({
         )}
         <div className="ml-auto d-flex">
           {(isVertical || isSequential) && (
-            <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
+            <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge || false} />
           )}
           { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
@@ -258,69 +300,6 @@ const CardHeader = ({
       />
     </>
   );
-};
-
-CardHeader.defaultProps = {
-  enableCopyPasteUnits: false,
-  isVertical: false,
-  isSequential: false,
-  onClickCopy: null,
-  proctoringExamConfigurationLink: null,
-  discussionEnabled: false,
-  discussionsSettings: {},
-  parentInfo: {},
-  cardId: '',
-  extraActionsComponent: null,
-  readyToSync: false,
-  onClickSync: null,
-};
-
-CardHeader.propTypes = {
-  title: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
-  cardId: PropTypes.string,
-  hasChanges: PropTypes.bool.isRequired,
-  onClickPublish: PropTypes.func.isRequired,
-  onClickConfigure: PropTypes.func.isRequired,
-  onClickMenuButton: PropTypes.func.isRequired,
-  onClickEdit: PropTypes.func.isRequired,
-  isFormOpen: PropTypes.bool.isRequired,
-  onEditSubmit: PropTypes.func.isRequired,
-  closeForm: PropTypes.func.isRequired,
-  isDisabledEditField: PropTypes.bool.isRequired,
-  onClickDelete: PropTypes.func.isRequired,
-  onClickDuplicate: PropTypes.func.isRequired,
-  onClickMoveUp: PropTypes.func.isRequired,
-  onClickMoveDown: PropTypes.func.isRequired,
-  onClickCopy: PropTypes.func,
-  titleComponent: PropTypes.node.isRequired,
-  namePrefix: PropTypes.string.isRequired,
-  proctoringExamConfigurationLink: PropTypes.string,
-  actions: PropTypes.shape({
-    deletable: PropTypes.bool.isRequired,
-    draggable: PropTypes.bool.isRequired,
-    childAddable: PropTypes.bool.isRequired,
-    duplicable: PropTypes.bool.isRequired,
-    allowMoveUp: PropTypes.bool,
-    allowMoveDown: PropTypes.bool,
-  }).isRequired,
-  enableCopyPasteUnits: PropTypes.bool,
-  isVertical: PropTypes.bool,
-  isSequential: PropTypes.bool,
-  discussionEnabled: PropTypes.bool,
-  discussionsSettings: PropTypes.shape({
-    providerType: PropTypes.string,
-    enableGradedUnits: PropTypes.bool,
-  }),
-  parentInfo: PropTypes.shape({
-    isTimeLimited: PropTypes.bool,
-    graded: PropTypes.bool,
-  }),
-  // An optional component that is rendered before the dropdown. This is used by the Subsection
-  // and Unit card components to render their plugin slots.
-  extraActionsComponent: PropTypes.node,
-  onClickSync: PropTypes.func,
-  readyToSync: PropTypes.bool,
 };
 
 export default CardHeader;

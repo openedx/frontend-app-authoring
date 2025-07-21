@@ -257,7 +257,8 @@ const LibraryAuthoringPage = ({
   // or when inside a specific Section or Subsection.
   const onlyOneType = (
     insideCollections || insideUnits || insideSections || insideSubsections
-    || insideSection || insideSubsection
+      || insideSection || insideSubsection
+      || !([ContentType.home, ContentType.components].includes(activeKey))
   );
   const overrideTypesFilter = onlyOneType
     ? new TypesFilterData()
