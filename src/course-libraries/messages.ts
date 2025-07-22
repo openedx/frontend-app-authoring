@@ -116,6 +116,11 @@ const messages = defineMessages({
     defaultMessage: 'Something went wrong! Could not fetch results.',
     description: 'Generic error message displayed when fetching link data fails.',
   },
+  unitsUpdatesWarning: {
+    id: 'course-authoring.course-libraries.home-tab.warning.units',
+    defaultMessage: 'Currently this page only tracks component updates. To check for unit updates, go to your Course Outline.',
+    description: 'Warning message shown in library sync page about units updates.',
+  },
 });
 
 export default messages;
