@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { ProblemTypes } from '../../../../../data/constants/problem';
+import { ProblemTypes, getProblemTypes } from '../../../../../data/constants/problem';
 import AnswersContainer from './AnswersContainer';
 
 // This widget should be connected, grab all answers from store, update them as needed.
@@ -12,7 +12,10 @@ const AnswerWidget = ({
   problemType,
 }) => {
   const intl = useIntl();
-  const problemStaticData = ProblemTypes[problemType];
+
+  const localizedProblemTypes = getProblemTypes(intl.formatMessage);
+  const localizedProblemStaticData = localizedProblemTypes[problemType];
+
   return (
     <div>
       <div className="mt-4 text-primary-500">
@@ -20,7 +23,7 @@ const AnswerWidget = ({
           <FormattedMessage {...messages.answerWidgetTitle} />
         </div>
         <div className="small">
-          {intl.formatMessage(messages.answerHelperText, { helperText: problemStaticData.description })}
+          {intl.formatMessage(messages.answerHelperText, { helperText: localizedProblemStaticData.description })}
         </div>
       </div>
       <AnswersContainer problemType={problemType} />
