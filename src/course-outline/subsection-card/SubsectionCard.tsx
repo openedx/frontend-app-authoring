@@ -218,6 +218,7 @@ const SubsectionCard = ({
     actions.draggable
       && (actions.allowMoveUp || actions.allowMoveDown)
       && !(isHeaderVisible === false)
+      && !section.upstreamInfo?.upstreamRef
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
