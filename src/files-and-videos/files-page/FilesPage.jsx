@@ -6,6 +6,7 @@ import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '../../editors/Placeholder';
 
 import { RequestStatus } from '../../data/constants';
+import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
 import { useModels, useModel } from '../../generic/model-store';
 import {
   addAssetFile,
@@ -90,7 +91,8 @@ const FilesPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  const maxFileSize = 20 * 1048576;
+  //const maxFileSize = 20 * 1048576;
+  const maxFileSize = UPLOAD_FILE_MAX_SIZE;
 
   const activeColumn = {
     id: 'activeStatus',
