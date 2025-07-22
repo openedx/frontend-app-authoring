@@ -17,9 +17,10 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import {
-  Cached, CheckCircle, Launch, Loop,
+  Cached, CheckCircle, Launch, Loop, Info,
 } from '@openedx/paragon/icons';
 
+import AlertMessage from '@src/generic/alert-message';
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import getPageHeadTitle from '../generic/utils';
@@ -198,6 +199,12 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
           onReview={onAlertReview}
           showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
           setShowAlert={setShowReviewAlert}
+        />
+        { /* TODO: Remove this alert after implement container in this page */}
+        <AlertMessage
+          title={intl.formatMessage(messages.unitsUpdatesWarning)}
+          icon={Info}
+          variant="info"
         />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
