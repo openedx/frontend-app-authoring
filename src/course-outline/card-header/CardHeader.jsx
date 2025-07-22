@@ -133,15 +133,6 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
-            {readyToSync && (
-              <IconButton
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-sync-button`}
-                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-                iconAs={SyncIcon}
-                onClick={onClickSync}
-              />
-            )}
             <IconButton
               className="item-card-button-icon"
               data-testid={`${namePrefix}-edit-button`}
@@ -161,6 +152,14 @@ const CardHeader = ({
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
+          {readyToSync && (
+            <IconButton
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              onClick={onClickSync}
+            />
+          )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
