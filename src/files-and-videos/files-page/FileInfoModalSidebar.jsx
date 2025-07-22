@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  injectIntl,
-  FormattedMessage,
-  FormattedDate,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Stack,
   IconButton,
@@ -24,9 +19,8 @@ import messages from './messages';
 const FileInfoModalSidebar = ({
   asset,
   handleLockedAsset,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [lockedState, setLockedState] = useState(asset?.locked);
   const handleLock = (e) => {
     const locked = e.target.checked;
@@ -123,8 +117,6 @@ FileInfoModalSidebar.propTypes = {
     usageLocations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FileInfoModalSidebar);
+export default FileInfoModalSidebar;
