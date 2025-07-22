@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import SettingsOption from '../SettingsOption';
-import { ProblemTypeKeys, ProblemTypes, getProblemTypes } from '../../../../../../data/constants/problem';
+import { ProblemTypeKeys, getProblemTypes } from '../../../../../../data/constants/problem';
 import messages from '../messages';
 import TypeRow from './TypeRow';
 

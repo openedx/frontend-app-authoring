@@ -5,7 +5,6 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 // SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import {
-  ProblemTypes,
   ProblemTypeKeys,
   AdvanceProblemKeys,
   AdvancedProblemType,

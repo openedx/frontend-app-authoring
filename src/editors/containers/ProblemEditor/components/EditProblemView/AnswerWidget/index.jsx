@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { ProblemTypes, getProblemTypes } from '../../../../../data/constants/problem';
+import { getProblemTypes } from '../../../../../data/constants/problem';
 import AnswersContainer from './AnswersContainer';
 
 // This widget should be connected, grab all answers from store, update them as needed.

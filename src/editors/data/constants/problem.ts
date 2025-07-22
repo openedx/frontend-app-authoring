@@ -6,7 +6,17 @@ import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
 import advancedOlxTemplates from './advancedOlxTemplates';
 import basicProblemTemplates from './basicProblemTemplates';
-import problemMessages from '../../../editors/containers/ProblemEditor/components/SelectTypeModal/SelectTypeWrapper/messages';
+import problemMessages from '../../containers/ProblemEditor/components/SelectTypeModal/SelectTypeWrapper/messages';
+
+export const ProblemTypeKeys = StrictDict({
+  SINGLESELECT: 'multiplechoiceresponse',
+  MULTISELECT: 'choiceresponse',
+  DROPDOWN: 'optionresponse',
+  NUMERIC: 'numericalresponse',
+  TEXTINPUT: 'stringresponse',
+  ADVANCED: 'advanced',
+} as const);
+export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
 
 /**
  * Get problem types with internationalized strings.
@@ -89,71 +99,6 @@ export const getProblemTypes = (formatMessage) => ({
   },
 });
 
-/**
- * Get advanced problem types with internationalized strings.
- * @param {Function} formatMessage - The intl.formatMessage function
- * @returns {Object} AdvanceProblems object with localized strings
- *
- * Usage in React components:
- *
- * import { useIntl } from '@edx/frontend-platform/i18n';
- * import { getAdvanceProblems } from '../path/to/problem';
- *
- * const MyComponent = () => {
- *   const intl = useIntl();
- *   const localizedAdvanceProblems = getAdvanceProblems(intl.formatMessage);
- *
- *   return <div>{localizedAdvanceProblems[AdvanceProblemKeys.BLANK].title}</div>;
- * };
- */
-export const getAdvanceProblems = (formatMessage) => ({
-  [AdvanceProblemKeys.BLANK]: {
-    title: formatMessage(problemMessages.blankProblemTitle),
-    status: '',
-    template: '<problem></problem>',
-  },
-  [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
-    title: formatMessage(problemMessages.circuitSchematicTitle),
-    status: 'Not supported',
-    template: advancedOlxTemplates.circuitSchematic,
-  },
-  [AdvanceProblemKeys.JSINPUT]: {
-    title: formatMessage(problemMessages.customJavaScriptTitle),
-    status: '',
-    template: advancedOlxTemplates.jsInputResponse,
-  },
-  [AdvanceProblemKeys.CUSTOMGRADER]: {
-    title: formatMessage(problemMessages.customPythonTitle),
-    status: 'Provisional',
-    template: advancedOlxTemplates.customGrader,
-  },
-  [AdvanceProblemKeys.IMAGE]: {
-    title: formatMessage(problemMessages.imageMappedTitle),
-    status: 'Not supported',
-    template: advancedOlxTemplates.imageResponse,
-  },
-  [AdvanceProblemKeys.FORMULA]: {
-    title: formatMessage(problemMessages.mathExpressionTitle),
-    status: '',
-    template: advancedOlxTemplates.formulaResponse,
-  },
-  [AdvanceProblemKeys.PROBLEMWITHHINT]: {
-    title: formatMessage(problemMessages.problemWithHintTitle),
-    status: 'Not supported',
-    template: advancedOlxTemplates.problemWithHint,
-  },
-});
-
-export const ProblemTypeKeys = StrictDict({
-  SINGLESELECT: 'multiplechoiceresponse',
-  MULTISELECT: 'choiceresponse',
-  DROPDOWN: 'optionresponse',
-  NUMERIC: 'numericalresponse',
-  TEXTINPUT: 'stringresponse',
-  ADVANCED: 'advanced',
-} as const);
-export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
-
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
     title: 'Single select',
@@ -232,6 +177,61 @@ export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof Advance
 export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
   return Object.values(AdvanceProblemKeys).includes(pt as any);
 }
+
+/**
+ * Get advanced problem types with internationalized strings.
+ * @param {Function} formatMessage - The intl.formatMessage function
+ * @returns {Object} AdvanceProblems object with localized strings
+ *
+ * Usage in React components:
+ *
+ * import { useIntl } from '@edx/frontend-platform/i18n';
+ * import { getAdvanceProblems } from '../path/to/problem';
+ *
+ * const MyComponent = () => {
+ *   const intl = useIntl();
+ *   const localizedAdvanceProblems = getAdvanceProblems(intl.formatMessage);
+ *
+ *   return <div>{localizedAdvanceProblems[AdvanceProblemKeys.BLANK].title}</div>;
+ * };
+ */
+export const getAdvanceProblems = (formatMessage) => ({
+  [AdvanceProblemKeys.BLANK]: {
+    title: formatMessage(problemMessages.blankProblemTitle),
+    status: '',
+    template: '<problem></problem>',
+  },
+  [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
+    title: formatMessage(problemMessages.circuitSchematicTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.circuitSchematic,
+  },
+  [AdvanceProblemKeys.JSINPUT]: {
+    title: formatMessage(problemMessages.customJavaScriptTitle),
+    status: '',
+    template: advancedOlxTemplates.jsInputResponse,
+  },
+  [AdvanceProblemKeys.CUSTOMGRADER]: {
+    title: formatMessage(problemMessages.customPythonTitle),
+    status: 'Provisional',
+    template: advancedOlxTemplates.customGrader,
+  },
+  [AdvanceProblemKeys.IMAGE]: {
+    title: formatMessage(problemMessages.imageMappedTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.imageResponse,
+  },
+  [AdvanceProblemKeys.FORMULA]: {
+    title: formatMessage(problemMessages.mathExpressionTitle),
+    status: '',
+    template: advancedOlxTemplates.formulaResponse,
+  },
+  [AdvanceProblemKeys.PROBLEMWITHHINT]: {
+    title: formatMessage(problemMessages.problemWithHintTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.problemWithHint,
+  },
+});
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {

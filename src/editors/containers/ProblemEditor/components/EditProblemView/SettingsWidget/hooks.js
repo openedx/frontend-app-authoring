@@ -318,7 +318,8 @@ export const typeRowHooks = ({
     let shouldUpdateBlockTitle = false;
     if (formatMessage) {
       const localizedProblemTypes = getProblemTypes(formatMessage);
-      shouldUpdateBlockTitle = blockTitle === localizedProblemTypes[problemType].title || blockTitle === ProblemTypes[problemType].title;
+      shouldUpdateBlockTitle = blockTitle === localizedProblemTypes[problemType].title
+        || blockTitle === ProblemTypes[problemType].title;
     } else {
       shouldUpdateBlockTitle = blockTitle === ProblemTypes[problemType].title;
     }
