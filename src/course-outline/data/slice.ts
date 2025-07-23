@@ -47,6 +47,7 @@ const initialState = {
     allowMoveDown: false,
   },
   enableProctoredExams: false,
+  enableTimedExams: false,
   pasteFileNotices: {},
   createdOn: null,
 } satisfies CourseOutlineState as unknown as CourseOutlineState;
@@ -60,6 +61,7 @@ const slice = createSlice({
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
       state.enableProctoredExams = payload.courseStructure?.enableProctoredExams;
+      state.enableTimedExams = payload.courseStructure?.enableTimedExams;
       state.createdOn = payload.createdOn;
     },
     updateOutlineIndexLoadingStatus: (state: CourseOutlineState, { payload }) => {

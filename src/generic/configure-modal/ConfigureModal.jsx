@@ -27,6 +27,7 @@ const ConfigureModal = ({
   onConfigureSubmit,
   currentItemData,
   enableProctoredExams = false,
+  enableTimedExams = false,
   isXBlockComponent = false,
   isSelfPaced,
 }) => {
@@ -172,7 +173,7 @@ const ConfigureModal = ({
       case COURSE_BLOCK_NAMES.libraryContent.id:
       case COURSE_BLOCK_NAMES.splitTest.id:
       case COURSE_BLOCK_NAMES.component.id:
-      // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
+        // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
         if (data.selectedPartitionIndex >= 0) {
           const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
           groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
@@ -239,6 +240,7 @@ const ConfigureModal = ({
                 releasedToStudents={releasedToStudents}
                 wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
                 enableProctoredExams={enableProctoredExams}
+                enableTimedExams={enableTimedExams}
                 supportsOnboarding={supportsOnboarding}
                 showReviewRules={showReviewRules}
                 wasProctoredExam={isProctoredExam}
@@ -325,6 +327,7 @@ ConfigureModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onConfigureSubmit: PropTypes.func.isRequired,
   enableProctoredExams: PropTypes.bool,
+  enableTimedExams: PropTypes.bool,
   currentItemData: PropTypes.shape({
     displayName: PropTypes.string,
     start: PropTypes.string,

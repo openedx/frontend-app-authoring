@@ -231,6 +231,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.practice-exam-description',
     defaultMessage: 'Use a practice proctored exam to introduce learners to the proctoring tools and processes. Results of a practice exam do not affect a learner\'s grade.',
   },
+  timedExamsDisabledTooltip: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-exams-disabled-tooltip',
+    defaultMessage: 'Timed exams are not enabled for this Open edX instance',
+  },
   advancedTabTitle: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.title',
     defaultMessage: 'Advanced',
