@@ -508,6 +508,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should handle search term change', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const {
       getByText, getByRole, getByDisplayValue,
     } = await getComponent();
@@ -523,7 +524,7 @@ describe('<ContentTagsCollapsible />', () => {
     const searchTerm = 'memo';
 
     // Trigger a change in the search field
-    userEvent.type(searchField, searchTerm);
+    await user.type(searchField, searchTerm);
 
     await act(async () => {
       // Fast-forward time by 500 milliseconds (for the debounce delay)
@@ -535,14 +536,14 @@ describe('<ContentTagsCollapsible />', () => {
     expect(getByDisplayValue(searchTerm)).toBeInTheDocument();
 
     // Clear search
-    userEvent.clear(searchField);
+    fireEvent.change(searchField, { target: { value: '' } });
 
     // Check that the search term has been cleared
     expect(searchField).toHaveValue('');
   });
 
   it('should close dropdown selector when clicking away', async () => {
-    const { getByText, queryByText } = await getComponent();
+    const { container, getByText, queryByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -554,10 +555,9 @@ describe('<ContentTagsCollapsible />', () => {
     expect(queryByText('Tag 3')).toBeInTheDocument();
 
     // Simulate clicking outside the dropdown remove focus
-    userEvent.click(document.body);
-
-    // Simulate clicking outside the dropdown again to close it
-    userEvent.click(document.body);
+    const outsideElement = container.querySelector('.taxonomy-tags-count-chip');
+    const selectElement = container.querySelector('.react-select-add-tags__input');
+    fireEvent.blur(selectElement, { relatedTarget: outsideElement });
 
     // Wait for the dropdown selector for tags to close, Tag 3 is no longer on
     // the page
@@ -565,6 +565,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should test keyboard navigation of add tags widget', async () => {
+    const user = userEvent.setup({ delay: null });
     const {
       getByText,
       queryByText,
@@ -598,59 +599,61 @@ describe('<ContentTagsCollapsible />', () => {
      */
 
     // Press tab to focus on first element in dropdown, Tag 1 should be focused
-    userEvent.tab();
+    await user.keyboard('{Tab}');
+
     const dropdownTag1Div = queryAllByText('Tag 1')[1].closest('.dropdown-selector-tag-actions');
     expect(dropdownTag1Div).toHaveFocus();
 
     // Press right arrow to expand Tag 1, Tag 1.1 & Tag 1.2 should now be visible
-    userEvent.keyboard('{arrowright}');
+    await user.keyboard('{arrowright}');
     expect(queryAllByText('Tag 1.1').length).toBe(2);
     expect(queryByText('Tag 1.2')).toBeInTheDocument();
 
     // Press left arrow to collapse Tag 1, Tag 1.1 & Tag 1.2 should not be visible
-    userEvent.keyboard('{arrowleft}');
+    await user.keyboard('{arrowleft}');
     expect(queryAllByText('Tag 1.1').length).toBe(1);
     expect(queryByText('Tag 1.2')).not.toBeInTheDocument();
 
     // Press enter key to expand Tag 1, Tag 1.1 & Tag 1.2 should now be visible
-    userEvent.keyboard('{enter}');
+    await user.keyboard('{enter}');
     expect(queryAllByText('Tag 1.1').length).toBe(2);
     expect(queryByText('Tag 1.2')).toBeInTheDocument();
 
     // Press down arrow to navigate to Tag 1.1, it should be focused
-    userEvent.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
     const dropdownTag1pt1Div = queryAllByText('Tag 1.1')[1].closest('.dropdown-selector-tag-actions');
     expect(dropdownTag1pt1Div).toHaveFocus();
 
     // Press down arrow again to navigate to Tag 1.2, it should be fouced
-    userEvent.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
     const dropdownTag1pt2Div = queryAllByText('Tag 1.2')[0].closest('.dropdown-selector-tag-actions');
     expect(dropdownTag1pt2Div).toHaveFocus();
 
     // Press down arrow again to navigate to Tag 2, it should be fouced
-    userEvent.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
     const dropdownTag2Div = queryAllByText('Tag 2')[1].closest('.dropdown-selector-tag-actions');
     expect(dropdownTag2Div).toHaveFocus();
 
     // Press up arrow to navigate back to Tag 1.2, it should be focused
-    userEvent.keyboard('{arrowup}');
+    await user.keyboard('{arrowup}');
     expect(dropdownTag1pt2Div).toHaveFocus();
 
     // Press up arrow to navigate back to Tag 1.1, it should be focused
-    userEvent.keyboard('{arrowup}');
+    await user.keyboard('{arrowup}');
     expect(dropdownTag1pt1Div).toHaveFocus();
 
     // Press up arrow again to navigate to Tag 1, it should be focused
-    userEvent.keyboard('{arrowup}');
+    await user.keyboard('{arrowup}');
     expect(dropdownTag1Div).toHaveFocus();
 
     // Press down arrow twice to navigate to Tag 1.2, it should be focsed
-    userEvent.keyboard('{arrowdown}');
-    userEvent.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
     expect(dropdownTag1pt2Div).toHaveFocus();
 
     // Press space key to check Tag 1.2, it should be staged
-    userEvent.keyboard('{space}');
+    await user.keyboard('[Space]');
+
     const taxonomyId = 123;
     const addedStagedTag = {
       value: 'Tag%201,Tag%201.2',
@@ -659,35 +662,35 @@ describe('<ContentTagsCollapsible />', () => {
     expect(data.addStagedContentTag).toHaveBeenCalledWith(taxonomyId, addedStagedTag);
 
     // Press enter key again to uncheck Tag 1.2 (since it's a leaf), it should be unstaged
-    userEvent.keyboard('{enter}');
+    await user.keyboard('{enter}');
     const tagValue = 'Tag%201,Tag%201.2';
     expect(data.removeStagedContentTag).toHaveBeenCalledWith(taxonomyId, tagValue);
 
     // Press left arrow to navigate back to Tag 1, it should be focused
-    userEvent.keyboard('{arrowleft}');
+    await user.keyboard('{arrowleft}');
     expect(dropdownTag1Div).toHaveFocus();
 
     // Press tab key it should jump to cancel button, it should be focused
-    userEvent.tab();
+    await user.keyboard('{Tab}');
     const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
     expect(dropdownCancel).toHaveFocus();
 
     // Press tab again, it should exit and close the select menu, since there are not staged tags
-    userEvent.tab();
+    await user.keyboard('{Tab}');
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
 
     // Press shift tab, focus back on select menu input, it should open the menu
-    userEvent.tab({ shift: true });
+    await user.tab({ shift: true });
     expect(queryByText('Tag 3')).toBeInTheDocument();
 
     // Press shift tab again, it should focus out and close the select menu
-    userEvent.tab({ shift: true });
+    await user.tab({ shift: true });
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
 
     // Press tab again, the select menu should open, then press escape, it should close
-    userEvent.tab();
+    await user.keyboard('{Tab}');
     expect(queryByText('Tag 3')).toBeInTheDocument();
-    userEvent.keyboard('{escape}');
+    await user.keyboard('{escape}');
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
   });
 
@@ -699,7 +702,7 @@ describe('<ContentTagsCollapsible />', () => {
     const xButtonAppliedTag = within(appliedTag).getByRole('button', {
       name: /delete/i,
     });
-    await userEvent.click(xButtonAppliedTag);
+    fireEvent.click(xButtonAppliedTag);
 
     // Check that the applied tag has been removed
     expect(appliedTag).not.toBeInTheDocument();

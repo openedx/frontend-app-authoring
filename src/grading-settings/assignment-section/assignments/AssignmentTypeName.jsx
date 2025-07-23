@@ -1,15 +1,18 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 
 import { ASSIGNMENT_TYPES, DUPLICATE_ASSIGNMENT_NAME } from '../utils/enum';
 import messages from '../messages';
 
 const AssignmentTypeName = ({
-  intl, value, errorEffort, onChange,
+  value,
+  errorEffort,
+  onChange,
 }) => {
+  const intl = useIntl();
   const initialAssignmentName = useRef(value);
 
   return (
@@ -60,10 +63,9 @@ AssignmentTypeName.defaultProps = {
 };
 
 AssignmentTypeName.propTypes = {
-  intl: intlShape.isRequired,
   onChange: PropTypes.func.isRequired,
   errorEffort: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
 };
 
-export default injectIntl(AssignmentTypeName);
+export default AssignmentTypeName;

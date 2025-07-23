@@ -71,7 +71,9 @@ function renderComponent(route) {
 }
 
 describe('DiscussionsSettings', () => {
+  let user;
   beforeEach(() => {
+    user = userEvent.setup();
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -127,10 +129,8 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      await waitFor(() => {
-        userEvent.click(queryByLabelText(container, 'Select Piazza'));
-        userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-      });
+      await user.click(queryByLabelText(container, 'Select Piazza'));
+      await user.click(queryByText(container, messages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -147,10 +147,8 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      await waitFor(() => {
-        userEvent.click(queryByLabelText(container, 'Select edX'));
-        userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-      });
+      await user.click(queryByLabelText(container, 'Select edX'));
+      await user.click(queryByText(container, messages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -166,7 +164,7 @@ describe('DiscussionsSettings', () => {
 
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
 
-      await waitFor(() => userEvent.click(queryByText(container, appMessages.backButton.defaultMessage)));
+      await waitFor(() => user.click(queryByText(container, appMessages.backButton.defaultMessage)));
 
       await waitFor(() => {
         expect(queryByTestId(container, 'appList')).toBeInTheDocument();
@@ -182,7 +180,7 @@ describe('DiscussionsSettings', () => {
 
       expect(queryByTestId(container, 'appList')).toBeInTheDocument();
 
-      userEvent.click(queryByLabelText(container, 'Close'));
+      await user.click(queryByLabelText(container, 'Close'));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
@@ -196,10 +194,10 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      userEvent.click(screen.getByLabelText('Select Piazza'));
+      await user.click(screen.getByLabelText('Select Piazza'));
 
       // Have to use fireEvent.click with these Stepper buttons so that the
-      // onClick handler is triggered. (userEvent.click doesn't trigger onClick).
+      // onClick handler is triggered. (await user.click doesn't trigger onClick).
       await act(async () => {
         fireEvent.click(getByRole(container, 'button', { name: 'Next' }));
       });
@@ -226,14 +224,14 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      userEvent.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
-      userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+      await user.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
+      await user.click(getByRole(container, 'button', { name: 'Next' }));
 
       await findByRole(container, 'button', { name: 'Save' });
-      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'key');
-      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
-      userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
-      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+      await user.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'key');
+      await user.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
+      await user.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
+      await user.click(getByRole(container, 'button', { name: 'Save' }));
 
       await waitFor(() => expect(queryByRole(container, 'dialog', { name: 'OK' })).toBeInTheDocument());
     });
@@ -249,21 +247,21 @@ describe('DiscussionsSettings', () => {
 
       const discourseBox = getByRole(container, 'checkbox', { name: 'Select Discourse' });
       expect(discourseBox).not.toBeDisabled();
-      userEvent.click(discourseBox);
+      await user.click(discourseBox);
 
-      userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+      await user.click(getByRole(container, 'button', { name: 'Next' }));
 
       await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
 
       expect(await findByRole(container, 'heading', { name: 'Discourse' })).toBeInTheDocument();
 
-      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
-      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
-      userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
-      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+      await user.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
+      await user.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
+      await user.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
+      await user.click(getByRole(container, 'button', { name: 'Save' }));
 
       await waitFor(() => expect(getByRole(container, 'dialog', { name: 'OK' })).toBeInTheDocument());
-      userEvent.click(getByRole(container, 'button', { name: 'Cancel' }));
+      await user.click(getByRole(container, 'button', { name: 'Cancel' }));
 
       expect(queryByRole(container, 'dialog', { name: 'Confirm' })).not.toBeInTheDocument();
       expect(queryByRole(container, 'dialog', { name: 'Configure discussion' }));
@@ -317,7 +315,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
       // Apply causes an async action to take place
-      userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
+      await user.click(queryByText(container, appMessages.saveButton.defaultMessage));
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
 
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -360,7 +358,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+      await user.click(getByRole(container, 'button', { name: 'Save' }));
 
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
 
@@ -412,7 +410,7 @@ describe.each([
 
   test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin `, async () => {
     const showLTIConfig = isAdmin;
-
+    const user = userEvent.setup();
     renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
 
     let spinner = await screen.findByRole('status');
@@ -420,11 +418,11 @@ describe.each([
       expect(spinner).not.toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByLabelText('Select Piazza'));
-    await userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+    await user.click(screen.getByLabelText('Select Piazza'));
+    await user.click(queryByText(container, messages.nextButton.defaultMessage));
 
-    spinner = await screen.findByRole('status');
     await waitFor(() => {
+      spinner = screen.queryByRole('status');
       expect(spinner).not.toBeInTheDocument();
     });
 
@@ -473,6 +471,7 @@ describe.each([
 
   test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
     : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
+    const user = userEvent.setup();
     renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
 
     let spinner = await screen.findByRole('status');
@@ -480,11 +479,11 @@ describe.each([
       expect(spinner).not.toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByLabelText('Select Piazza'));
-    await userEvent.click(screen.getByText(messages.nextButton.defaultMessage));
+    await user.click(screen.getByLabelText('Select Piazza'));
+    await user.click(screen.getByText(messages.nextButton.defaultMessage));
 
-    spinner = await screen.findByRole('status');
     await waitFor(() => {
+      spinner = screen.queryByRole('status');
       expect(spinner).not.toBeInTheDocument();
     });
 

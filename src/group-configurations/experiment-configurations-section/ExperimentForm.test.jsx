@@ -78,6 +78,7 @@ describe('<ExperimentForm />', () => {
   });
 
   it('calls onCreateClick when the "Create" button is clicked with a valid form', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText } = renderComponent();
     const nameInput = getByPlaceholderText(
       messages.experimentConfigurationNamePlaceholder.defaultMessage,
@@ -85,8 +86,8 @@ describe('<ExperimentForm />', () => {
     const descriptionInput = getByPlaceholderText(
       messages.experimentConfigurationNamePlaceholder.defaultMessage,
     );
-    userEvent.type(nameInput, 'New name of the group configuration');
-    userEvent.type(
+    await user.type(nameInput, 'New name of the group configuration');
+    await user.type(
       descriptionInput,
       'New description of the group configuration',
     );
@@ -94,7 +95,7 @@ describe('<ExperimentForm />', () => {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(onCreateClickMock).toHaveBeenCalledTimes(1);
@@ -102,17 +103,18 @@ describe('<ExperimentForm />', () => {
   });
 
   it('shows error when the "Create" button is clicked with empty name', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText, getByText } = renderComponent();
     const nameInput = getByPlaceholderText(
       messages.experimentConfigurationNamePlaceholder.defaultMessage,
     );
-    userEvent.type(nameInput, '');
+    await user.clear(nameInput);
 
     const createButton = getByRole('button', {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(
@@ -122,6 +124,7 @@ describe('<ExperimentForm />', () => {
   });
 
   it('shows error when the "Create" button is clicked without groups', async () => {
+    const user = userEvent.setup();
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
       name: 'My group configuration name',
@@ -134,7 +137,7 @@ describe('<ExperimentForm />', () => {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(
@@ -144,6 +147,7 @@ describe('<ExperimentForm />', () => {
   });
 
   it('shows error when the "Create" button is clicked with duplicate groups', async () => {
+    const user = userEvent.setup();
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
       name: 'My group configuration name',
@@ -163,7 +167,7 @@ describe('<ExperimentForm />', () => {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(
@@ -175,6 +179,7 @@ describe('<ExperimentForm />', () => {
   });
 
   it('shows error when the "Create" button is clicked with empty name of group', async () => {
+    const user = userEvent.setup();
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
       name: 'My group configuration name',
@@ -191,7 +196,7 @@ describe('<ExperimentForm />', () => {
       name: messages.experimentConfigurationCreate.defaultMessage,
     });
     expect(createButton).toBeInTheDocument();
-    userEvent.click(createButton);
+    await user.click(createButton);
 
     await waitFor(() => {
       expect(
@@ -203,6 +208,7 @@ describe('<ExperimentForm />', () => {
   });
 
   it('calls onEditClick when the "Save" button is clicked with a valid form', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByPlaceholderText } = renderComponent({
       isEditMode: true,
       initialValues: experimentConfiguration,
@@ -211,12 +217,12 @@ describe('<ExperimentForm />', () => {
     const nameInput = getByPlaceholderText(
       messages.experimentConfigurationNamePlaceholder.defaultMessage,
     );
-    userEvent.type(nameInput, newConfigurationNameText);
+    await user.type(nameInput, newConfigurationNameText);
     const saveButton = getByRole('button', {
       name: messages.experimentConfigurationSave.defaultMessage,
     });
     expect(saveButton).toBeInTheDocument();
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => {
       expect(onEditClickMock).toHaveBeenCalledTimes(1);
@@ -224,12 +230,13 @@ describe('<ExperimentForm />', () => {
   });
 
   it('calls onCancelClick when the "Cancel" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const cancelButton = getByRole('button', {
       name: messages.experimentConfigurationCancel.defaultMessage,
     });
     expect(cancelButton).toBeInTheDocument();
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(onCancelClickMock).toHaveBeenCalledTimes(1);
   });

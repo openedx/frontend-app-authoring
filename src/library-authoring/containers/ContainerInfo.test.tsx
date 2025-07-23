@@ -169,12 +169,13 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`should delete the ${containerType} using the menu`, async () => {
+      const user = userEvent.setup();
       axiosMock.onDelete(getLibraryContainerApiUrl(containerId)).reply(200);
       render(containerId);
 
       // Open menu
       expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
-      userEvent.click(screen.getByTestId('container-info-menu-toggle'));
+      await user.click(screen.getByTestId('container-info-menu-toggle'));
 
       // Click on Delete Item
       const deleteMenuItem = await screen.findByRole('button', { name: 'Delete' });
@@ -200,13 +201,14 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`can publish the ${containerType} from the container page`, async () => {
+      const user = userEvent.setup();
       axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
       render(containerId, containerType);
 
       // Click on Publish button
       let publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
-      userEvent.click(publishButton);
+      await user.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
       // Reveals the confirmation box with warning text and publish hierarchy
@@ -227,19 +229,19 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });
       expect(publishCancel).toBeInTheDocument();
-      userEvent.click(publishCancel);
+      await user.click(publishCancel);
       expect(axiosMock.history.post.length).toBe(0);
 
       // Click on Publish button again
       publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
-      userEvent.click(publishButton);
+      await user.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
       // Click on the confirm Publish button
       const publishConfirm = await screen.findByRole('button', { name: 'Publish' });
       expect(publishConfirm).toBeInTheDocument();
-      userEvent.click(publishConfirm);
+      await user.click(publishConfirm);
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);
@@ -248,19 +250,20 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`shows an error if publishing the ${containerType} fails`, async () => {
+      const user = userEvent.setup();
       axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(500);
       render(containerId, containerType);
 
       // Click on Publish button to reveal the confirmation box
       const publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
-      userEvent.click(publishButton);
+      await user.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
       // Click on the confirm Publish button
       const publishConfirm = await screen.findByRole('button', { name: 'Publish' });
       expect(publishConfirm).toBeInTheDocument();
-      userEvent.click(publishConfirm);
+      await user.click(publishConfirm);
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);
@@ -269,12 +272,13 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`shows single child / parent message before publishing the ${containerType}`, async () => {
+      const user = userEvent.setup();
       render(singleChild(containerId), containerType);
 
       // Click on Publish button
       const publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
-      userEvent.click(publishButton);
+      await user.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
       // Check warning text in the confirmation box
@@ -291,12 +295,13 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`omits child count before publishing an empty ${containerType}`, async () => {
+      const user = userEvent.setup();
       render(emptyId(containerId), containerType);
 
       // Click on Publish button
       const publishButton = await screen.findByRole('button', { name: /publish changes/i });
       expect(publishButton).toBeInTheDocument();
-      userEvent.click(publishButton);
+      await user.click(publishButton);
       expect(publishButton).not.toBeInTheDocument();
 
       // Check warning text in the confirmation box
@@ -328,9 +333,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`shows the ${containerType} hierarchy in the Usage tab`, async () => {
+      const user = userEvent.setup();
       render(containerId, containerType);
       const usageTab = await screen.findByText('Usage');
-      userEvent.click(usageTab);
+      await user.click(usageTab);
       expect(usageTab).toHaveAttribute('aria-selected', 'true');
 
       // Content hierarchy selects the current containerType and shows its display name

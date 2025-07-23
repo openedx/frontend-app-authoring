@@ -45,17 +45,19 @@ describe('<ExperimentCard />', () => {
     expect(getByTestId('configuration-card-header-delete')).toBeInTheDocument();
   });
 
-  it('expands/collapses the container experiment configuration on title click', () => {
+  it('expands/collapses the container experiment configuration on title click', async () => {
+    const user = userEvent.setup();
     const { queryByTestId, getByTestId } = renderComponent();
     const cardTitle = getByTestId('configuration-card-header-button');
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(queryByTestId('configuration-card-content')).toBeInTheDocument();
 
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(queryByTestId('configuration-card-content')).not.toBeInTheDocument();
   });
 
-  it('renders experiment configuration without access to units', () => {
+  it('renders experiment configuration without access to units', async () => {
+    const user = userEvent.setup();
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
       usage: [],
@@ -68,13 +70,14 @@ describe('<ExperimentCard />', () => {
     ).not.toBeInTheDocument();
 
     const cardTitle = getByTestId('configuration-card-header-button');
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
     expect(
       getByTestId('experiment-configuration-card-usage-empty'),
     ).toBeInTheDocument();
   });
 
-  it('renders usage with validation error message', () => {
+  it('renders usage with validation error message', async () => {
+    const user = userEvent.setup();
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
       usage: [{
@@ -91,7 +94,7 @@ describe('<ExperimentCard />', () => {
     });
 
     const cardTitle = getByTestId('configuration-card-header-button');
-    userEvent.click(cardTitle);
+    await user.click(cardTitle);
 
     expect(
       getByText(experimentConfigurationUpdated.usage[0].validation.text),

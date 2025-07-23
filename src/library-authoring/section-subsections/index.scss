@@ -30,17 +30,3 @@
     box-shadow: 0 .125rem .25rem rgb(0 0 0 / .15), 0 .125rem .5rem rgb(0 0 0 / .15);
   }
 }
-
-.breadcrumb-menu {
-  button {
-    padding: 0;
-  }
-}
-
-.subsection-breadcrumb {
-  max-width: 700px;
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}

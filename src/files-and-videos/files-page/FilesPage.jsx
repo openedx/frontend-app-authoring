@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '../../editors/Placeholder';
 
@@ -36,9 +36,8 @@ import './FilesPage.scss';
 
 const FilesPage = ({
   courseId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
@@ -222,8 +221,6 @@ const FilesPage = ({
 
 FilesPage.propTypes = {
   courseId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FilesPage);
+export default FilesPage;

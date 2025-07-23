@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Button,
@@ -14,9 +14,8 @@ import messages from './messages';
 
 const FileValidationModal = ({
   handleFileOverwrite,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [isOpen, open, close] = useToggle();
 
   const { duplicateFiles } = useSelector(state => state.assets);
@@ -61,8 +60,6 @@ const FileValidationModal = ({
 
 FileValidationModal.propTypes = {
   handleFileOverwrite: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FileValidationModal);
+export default FileValidationModal;

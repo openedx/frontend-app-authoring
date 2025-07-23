@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import renderer from 'react-test-renderer';
 
 import SelectableBox from '..';
 
@@ -18,10 +17,9 @@ const SelectableRadio = (props) => <SelectableBox type={radioType} {...props}>{r
 describe('<SelectableBox />', () => {
   describe('correct rendering', () => {
     it('renders without props', () => {
-      const tree = renderer.create((
-        <SelectableBox>SelectableBox</SelectableBox>
-      )).toJSON();
-      expect(tree).toMatchSnapshot();
+      render(<SelectableBox>SelectableBox</SelectableBox>);
+      expect(screen.getByText('SelectableBox')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'SelectableBox' })).toBeInTheDocument();
     });
     it('correct render when type prop is changed', () => {
       const { rerender } = render(<SelectableRadio type="checkbox" />);
@@ -75,18 +73,20 @@ describe('<SelectableBox />', () => {
       expect(selectableBox.classList.contains('pgn__selectable_box-invalid')).toEqual(true);
     });
     it('renders with on click event when onClick is passed', async () => {
+      const user = userEvent.setup();
       const onClickSpy = jest.fn();
       render(<SelectableCheckbox onClick={onClickSpy} />);
       const selectableBox = screen.getByRole('button');
-      await userEvent.click(selectableBox);
+      await await user.click(selectableBox);
       expect(onClickSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with on key press event when onClick is passed', async () => {
+      const user = userEvent.setup();
       const onClickSpy = jest.fn();
       render(<SelectableCheckbox onClick={onClickSpy} />);
       const selectableBox = screen.getByRole('button');
       selectableBox.focus();
-      await userEvent.keyboard('{enter}');
+      await await user.keyboard('{enter}');
       expect(onClickSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with hidden input when inputHidden is passed', () => {
@@ -112,12 +112,13 @@ describe('<SelectableBox />', () => {
       rerender(<SelectableRadio checked />);
       expect(radio.className).toContain('pgn__selectable_box-active');
     });
-    it('ref is passed to onClick function', () => {
+    it('ref is passed to onClick function', async () => {
+      const user = userEvent.setup();
       let inputRef;
       const onClick = (ref) => { inputRef = ref; };
       render(<SelectableRadio onClick={onClick} />);
       const radio = screen.getByRole('button');
-      userEvent.click(radio);
+      await user.click(radio);
       expect(inputRef).not.toBeFalsy();
     });
   });

@@ -694,6 +694,7 @@ export const useRestoreContainer = (containerId: string) => {
   return useMutation({
     mutationFn: async () => api.restoreContainer(containerId),
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });

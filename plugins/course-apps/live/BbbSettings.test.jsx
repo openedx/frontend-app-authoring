@@ -124,12 +124,13 @@ describe('BBB Settings', () => {
   );
 
   test('free plans message is visible when free plan is selected', async () => {
+    const user = userEvent.setup();
     await mockStore({ emailSharing: true, isFreeTier: true });
     renderComponent();
     const spinner = getByRole(container, 'status');
     await waitForElementToBeRemoved(spinner);
     const dropDown = container.querySelector('select[name="tierType"]');
-    userEvent.selectOptions(
+    await user.selectOptions(
       dropDown,
       getByRole(dropDown, 'option', { name: 'Free' }),
     );

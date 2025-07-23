@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { ClosedCaptionOff, ClosedCaption } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
@@ -6,7 +6,8 @@ import React from 'react';
 import messages from '../messages';
 import { hooks as transcriptHooks } from '../TranscriptWidget';
 
-const LanguageNamesWidget = ({ transcripts, intl }) => {
+const LanguageNamesWidget = ({ transcripts }) => {
+  const intl = useIntl();
   let icon = ClosedCaptionOff;
   const hasTranscripts = transcriptHooks.hasTranscripts(transcripts);
   let message = intl.formatMessage(messages.noTranscriptsAdded);
@@ -25,8 +26,7 @@ const LanguageNamesWidget = ({ transcripts, intl }) => {
 };
 
 LanguageNamesWidget.propTypes = {
-  intl: intlShape.isRequired,
   transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-export default injectIntl(LanguageNamesWidget);
+export default LanguageNamesWidget;

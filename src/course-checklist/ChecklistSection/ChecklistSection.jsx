@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import { Container, Stack } from '@openedx/paragon';
-
 import { LoadingSpinner } from '../../generic/Loading';
 import { getCompletionCount, useChecklistState } from './hooks';
 import ChecklistItemBody from './ChecklistItemBody';
@@ -129,4 +127,4 @@ ChecklistSection.propTypes = {
   isLoading: PropTypes.bool.isRequired,
 };
 
-export default injectIntl(ChecklistSection);
+export default ChecklistSection;

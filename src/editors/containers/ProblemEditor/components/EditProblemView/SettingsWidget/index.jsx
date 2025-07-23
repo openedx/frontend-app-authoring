@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { connect } from 'react-redux';
 import {
   Button, Collapsible,
@@ -228,4 +228,4 @@ export const mapDispatchToProps = {
 };
 
 export const SettingsWidgetInternal = SettingsWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SettingsWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsWidget);

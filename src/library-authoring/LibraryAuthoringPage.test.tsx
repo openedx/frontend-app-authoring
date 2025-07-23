@@ -8,7 +8,8 @@ import {
   screen,
   waitFor,
   within,
-} from '../testUtils';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
@@ -19,7 +20,6 @@ import {
   mockXBlockFields,
 } from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
-import { studioHomeMock } from '../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';
@@ -398,7 +398,7 @@ describe('<LibraryAuthoringPage />', () => {
     });
   }, 10000);
 
-  it('should open and close the component sidebar', async () => {
+  it('should open, close and re-open the component sidebar', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
@@ -416,6 +416,10 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(closeButton);
 
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
   });
 
   it('should open component sidebar, showing manage tab on clicking add to collection menu item - component', async () => {

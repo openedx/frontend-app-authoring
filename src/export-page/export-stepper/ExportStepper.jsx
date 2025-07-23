@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  FormattedDate,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
@@ -17,7 +13,8 @@ import { EXPORT_STAGES } from '../data/constants';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
 
-const ExportStepper = ({ intl, courseId }) => {
+const ExportStepper = ({ courseId }) => {
+  const intl = useIntl();
   const currentStage = useSelector(getCurrentStage);
   const downloadPath = useSelector(getDownloadPath);
   const successDate = useSelector(getSuccessDate);
@@ -96,8 +93,7 @@ const ExportStepper = ({ intl, courseId }) => {
 };
 
 ExportStepper.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ExportStepper);
+export default ExportStepper;

@@ -78,12 +78,13 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   });
 
   it('accept changes works', async () => {
+    const user = userEvent.setup();
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     render();
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
-    userEvent.click(acceptBtn);
+    await user.click(acceptBtn);
     await waitFor(() => {
       expect(mockSendMessageToIframe).toHaveBeenCalledWith(
         messageTypes.completeXBlockEditing,
@@ -96,12 +97,13 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   });
 
   it('shows toast if accept changes fails', async () => {
+    const user = userEvent.setup();
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(500, {});
     render();
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
-    userEvent.click(acceptBtn);
+    await user.click(acceptBtn);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
@@ -111,14 +113,15 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   });
 
   it('ignore changes works', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(200, {});
     render();
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     const ignoreBtn = await screen.findByRole('button', { name: 'Ignore changes' });
-    userEvent.click(ignoreBtn);
+    await user.click(ignoreBtn);
     const ignoreConfirmBtn = await screen.findByRole('button', { name: 'Ignore' });
-    userEvent.click(ignoreConfirmBtn);
+    await user.click(ignoreConfirmBtn);
     await waitFor(() => {
       expect(mockSendMessageToIframe).toHaveBeenCalledWith(
         messageTypes.completeXBlockEditing,

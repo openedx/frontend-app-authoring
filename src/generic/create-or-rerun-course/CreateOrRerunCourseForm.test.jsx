@@ -14,7 +14,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import MockAdapter from 'axios-mock-adapter';
 
-import { studioHomeMock } from '../../studio-home/__mocks__';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import { fetchStudioHomeData } from '../../studio-home/data/thunks';
 import { RequestStatus } from '../../data/constants';
@@ -135,6 +135,7 @@ describe('<CreateOrRerunCourseForm />', () => {
 
   describe('handleOnClickCreate', () => {
     it('should call window.location.assign with url', async () => {
+      const user = userEvent.setup();
       render(<RootWrapper {...props} />);
       await mockStore();
       const url = '/course/courseId';
@@ -144,17 +145,18 @@ describe('<CreateOrRerunCourseForm />', () => {
       const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
 
-      userEvent.type(displayNameInput, 'foo course name');
+      await user.type(displayNameInput, 'foo course name');
       fireEvent.click(orgInput);
-      userEvent.type(numberInput, '777');
-      userEvent.type(runInput, '1');
-      userEvent.click(createBtn);
+      await user.type(numberInput, '777');
+      await user.type(runInput, '1');
+      await user.click(createBtn);
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
       expect(mockedUsedNavigate).toHaveBeenCalledWith(url);
     });
     it('should call window.location.assign with url and destinationCourseKey', async () => {
+      const user = userEvent.setup();
       render(<RootWrapper {...props} />);
       await mockStore();
       const url = '/course/';
@@ -166,11 +168,11 @@ describe('<CreateOrRerunCourseForm />', () => {
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url, destinationCourseKey });
 
-      userEvent.type(displayNameInput, 'foo course name');
+      await user.type(displayNameInput, 'foo course name');
       fireEvent.click(orgInput);
-      userEvent.type(numberInput, '777');
-      userEvent.type(runInput, '1');
-      userEvent.click(createBtn);
+      await user.type(numberInput, '777');
+      await user.type(runInput, '1');
+      await user.click(createBtn);
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}${destinationCourseKey}`);
@@ -215,6 +217,7 @@ describe('<CreateOrRerunCourseForm />', () => {
   });
 
   it('should be disabled create button if form has error', async () => {
+    const user = userEvent.setup();
     render(<RootWrapper {...props} />);
     await mockStore();
     const createBtn = await screen.findByRole('button', { name: messages.createButton.defaultMessage });
@@ -224,7 +227,7 @@ describe('<CreateOrRerunCourseForm />', () => {
     const runInput = await screen.findByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
 
     fireEvent.change(displayNameInput, { target: { value: 'foo course name' } });
-    await userEvent.click(orgInput);
+    await user.click(orgInput);
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
     fireEvent.change(runInput, { target: { value: 'number with invalid (=) symbol' } });
 

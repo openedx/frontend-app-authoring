@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import { ProblemTypes } from '../../../../../data/constants/problem';
@@ -10,9 +10,8 @@ import AnswersContainer from './AnswersContainer';
 const AnswerWidget = ({
   // Redux
   problemType,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const problemStaticData = ProblemTypes[problemType];
   return (
     <div>
@@ -31,8 +30,6 @@ const AnswerWidget = ({
 
 AnswerWidget.propTypes = {
   problemType: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 export const AnswerWidgetInternal = AnswerWidget; // For testing only
-export default injectIntl(AnswerWidget);
+export default AnswerWidget;

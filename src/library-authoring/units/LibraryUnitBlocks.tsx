@@ -26,9 +26,8 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes } from '../routes';
 import messages from './messages';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useRunOnNextRender } from '../../utils';
@@ -57,8 +56,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
-  const { navigateTo } = useLibraryRoutes();
-  const { setSidebarAction } = useSidebarContext();
+  const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const updateMutation = useUpdateXBlockFields(block.originalId);
 
@@ -84,7 +82,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
 
   /* istanbul ignore next */
   const jumpToManageTags = () => {
-    navigateTo({ selectedItemId: block.originalId });
+    openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
     scheduleJumpToTags();
   };
 
@@ -132,19 +130,18 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
 /** ComponentBlock to render preview of given component under Unit */
 const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { navigateTo } = useLibraryRoutes();
 
   const { openComponentEditor } = useLibraryContext();
-  const { sidebarItemInfo } = useSidebarContext();
+  const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
-    navigateTo({ selectedItemId: block.originalId });
+    openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
       openComponentEditor(block.originalId);
     }
-  }, [block, navigateTo, canEditComponent, openComponentEditor]);
+  }, [block, openItemSidebar, canEditComponent, openComponentEditor]);
 
   useEffect(() => {
     if (block.isNew) {
@@ -185,6 +182,11 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
         }}
         isClickable={!readOnly}
         onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleComponentSelection(e.detail);
+          }
+        }}
         disabled={readOnly}
         cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
       >

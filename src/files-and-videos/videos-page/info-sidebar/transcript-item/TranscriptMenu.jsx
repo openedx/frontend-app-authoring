@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Icon,
@@ -82,4 +82,4 @@ TranscriptActionMenu.propTypes = {
   }).isRequired,
 };
 
-export default injectIntl(TranscriptActionMenu);
+export default TranscriptActionMenu;

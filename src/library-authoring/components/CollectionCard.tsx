@@ -116,7 +116,7 @@ type CollectionCardProps = {
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { setCollectionId, showOnlyPublished } = useLibraryContext();
-  const { openCollectionInfoSidebar, sidebarItemInfo } = useSidebarContext();
+  const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     type: itemType,
@@ -144,7 +144,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       if (doubleClicked) {
         navigateTo({ collectionId });
       } else {
-        navigateTo({ selectedItemId: collectionId });
+        openItemSidebar(collectionId, SidebarBodyItemId.CollectionInfo);
       }
 
       // In component picker mode, we want to open the sidebar or the collection
@@ -154,7 +154,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
     } else {
       openCollectionInfoSidebar(collectionId);
     }
-  }, [collectionId, navigateTo, openCollectionInfoSidebar, setCollectionId, componentPickerMode]);
+  }, [collectionId, navigateTo, openItemSidebar, openCollectionInfoSidebar, setCollectionId, componentPickerMode]);
 
   return (
     <BaseCard
