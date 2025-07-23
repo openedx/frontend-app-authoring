@@ -37,11 +37,6 @@ const subsection = {
       id: unit.id,
     }],
   },
-  upstreamInfo: {
-    readyToSync: true,
-    upstreamRef: 'lct:org1:lib1:section:1',
-    versionSynced: 1,
-  },
 } as XBlock;
 
 const section = {
@@ -68,6 +63,11 @@ const section = {
         }],
       },
     }],
+  },
+  upstreamInfo: {
+    readyToSync: true,
+    upstreamRef: 'lct:org1:lib1:section:1',
+    versionSynced: 1,
   },
 } as XBlock;
 
