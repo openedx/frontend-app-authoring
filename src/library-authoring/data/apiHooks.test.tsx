@@ -292,7 +292,7 @@ describe('library api hooks', () => {
   });
 
   it('should remove container children', async () => {
-    const containerId = 'lct:org:lib1';
+    const containerId = 'lct:org:lib:unit:unit-1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onDelete(url).reply(200);
@@ -331,7 +331,8 @@ describe('library api hooks', () => {
     // 2. containerChildren
     // 3. containerHierarchy
     // 4 & 5. subsections
-    expect(spy).toHaveBeenCalledTimes(5);
+    // 6 & 7. subsections hierarchy
+    expect(spy).toHaveBeenCalledTimes(7);
   });
 
   describe('publishContainer', () => {

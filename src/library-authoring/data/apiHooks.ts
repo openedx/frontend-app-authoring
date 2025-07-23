@@ -790,6 +790,14 @@ export const useAddItemsToContainer = (containerId?: string) => {
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
 
       const containerType = getBlockType(containerId);
+      if (['subsection', 'section'].includes(containerType)) {
+        // If the container is a subsection or section, we invalidate the
+        // children query to update the hierarchy.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
+        });
+      }
+
       if (containerType === 'section') {
         // We invalidate the search query of the each itemId if the container is a section.
         // This because the subsection page calls this query individually.
@@ -849,13 +857,13 @@ export const useUpdateContainerChildren = (containerId?: string) => {
 export const useRemoveContainerChildren = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (usageKeys: string[]) => {
+    mutationFn: async (itemIds: string[]) => {
       if (!containerId) {
         return undefined;
       }
-      return api.removeLibraryContainerChildren(containerId, usageKeys);
+      return api.removeLibraryContainerChildren(containerId, itemIds);
     },
-    onSettled: () => {
+    onSettled: (_data, _error, variables) => {
       if (!containerId) {
         return;
       }
@@ -864,6 +872,15 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+
+      const containerType = getBlockType(containerId);
+      if (['subsection', 'section'].includes(containerType)) {
+        // If the container is a subsection or section, we invalidate the
+        // children query to update the hierarchy.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
+        });
+      }
     },
   });
 };
