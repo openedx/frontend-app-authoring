@@ -1,5 +1,5 @@
 import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -17,6 +17,7 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
@@ -24,6 +25,7 @@ import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
+import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -107,6 +109,7 @@ const SectionCard = ({
   };
   const [isExpanded, setIsExpanded] = useState(containsSearchResult() || isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'section';
 
   useEffect(() => {
@@ -123,7 +126,21 @@ const SectionCard = ({
     highlights,
     actions: sectionActions,
     isHeaderVisible = true,
+    upstreamInfo,
   } = section;
+
+  const blockSyncData = useMemo(() => {
+    if (!upstreamInfo?.readyToSync) {
+      return undefined;
+    }
+    return {
+      displayName,
+      downstreamBlockId: id,
+      upstreamBlockId: upstreamInfo.upstreamRef,
+      upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isVertical: true,
+    };
+  }, [upstreamInfo]);
 
   useEffect(() => {
     if (activeId === id && isExpanded) {
@@ -147,6 +164,10 @@ const SectionCard = ({
     // if it contains the result, in order to scroll to it
     setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
+
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
+  }, [dispatch, section]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };
@@ -225,7 +246,7 @@ const SectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!section.upstreamInfo?.upstreamRef && (
+      prefixIcon={!!upstreamInfo?.upstreamRef && (
         <Icon src={Newsstand} className="mr-1" />
       )}
     />
@@ -264,6 +285,7 @@ const SectionCard = ({
                 onClickDelete={onOpenDeleteModal}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
+                onClickSync={openSyncModal}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -272,6 +294,7 @@ const SectionCard = ({
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}
+                readyToSync={upstreamInfo?.readyToSync}
               />
             )}
             <div className="section-card__content" data-testid="section-card__content">
@@ -327,6 +350,14 @@ const SectionCard = ({
           visibleTabs={[ContentType.subsections]}
         />
       </StandardModal>
+      {blockSyncData && (
+        <PreviewLibraryXBlockChanges
+          blockData={blockSyncData}
+          isModalOpen={isSyncModalOpen}
+          closeModal={closeSyncModal}
+          postChange={handleOnPostChangeSync}
+        />
+      )}
     </>
   );
 };
