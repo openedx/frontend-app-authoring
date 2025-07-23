@@ -67,6 +67,11 @@ const subsection: XBlock = {
       id: unit.id,
     }],
   },
+  upstreamInfo: {
+    readyToSync: true,
+    upstreamRef: 'lct:org1:lib1:subsection:1',
+    versionSynced: 1,
+  },
 } as XBlock;
 
 const section: XBlock = {

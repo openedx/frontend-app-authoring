@@ -4,7 +4,8 @@ import React, {
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { StandardModal, useToggle } from '@openedx/paragon';
+import { Icon, StandardModal, useToggle } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -170,6 +171,9 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
+      prefixIcon={!!subsection.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} className="mr-1" />
+      )}
     />
   );
 

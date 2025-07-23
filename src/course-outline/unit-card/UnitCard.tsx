@@ -5,7 +5,8 @@ import {
   useRef,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
+import { Icon, useToggle } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
@@ -159,6 +160,9 @@ const UnitCard = ({
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
+      prefixIcon={!!unit.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} size="sm" className="mr-1" />
+      )}
     />
   );
 
