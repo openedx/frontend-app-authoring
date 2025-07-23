@@ -1,8 +1,9 @@
 import React from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { render, screen, initializeMocks } from '../../../../../../testUtils';
 import Preview from './Preview';
 
-// Mock ProblemTypes and messages
+// Mock ProblemTypes and getProblemTypes functions
 jest.mock('../../../../../data/constants/problem', () => ({
   ProblemTypes: {
     example: {
@@ -12,11 +13,45 @@ jest.mock('../../../../../data/constants/problem', () => ({
       helpLink: 'https://help.example.com',
     },
   },
+  getProblemTypes: jest.fn(() => ({
+    example: {
+      title: 'Example Title',
+      previewDescription: 'Example description',
+    },
+  })),
 }));
 
+// Mock useIntl
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  ...jest.requireActual('@edx/frontend-platform/i18n'),
+  useIntl: jest.fn(),
+}));
+
+const mockUseIntl = useIntl as jest.MockedFunction<typeof useIntl>;
+
 describe('Preview', () => {
+  const mockFormatMessage = jest.fn((message, values = {}) => {
+    if (message.id === 'authoring.problemEditor.preview.title') {
+      return `${values.previewTitle} problem`;
+    }
+    if (message.id === 'authoring.problemEditor.preview.altText') {
+      return `A preview illustration of a ${values.problemType} problem`;
+    }
+    if (message.id === 'authoring.problemEditor.preview.description') {
+      return values.previewDescription;
+    }
+    if (message.id === 'authoring.problemEditor.learnMoreButtonLabel.label') {
+      return 'Learn more';
+    }
+    return message.defaultMessage;
+  });
+
   beforeEach(() => {
     initializeMocks();
+    mockUseIntl.mockReturnValue({
+      formatMessage: mockFormatMessage,
+    } as any);
+    mockFormatMessage.mockClear();
   });
 
   it('renders nothing if problemType is null', () => {
@@ -30,7 +65,7 @@ describe('Preview', () => {
     expect(screen.getByText('Example Title problem')).toBeInTheDocument();
     expect(screen.getByText('Example description')).toBeInTheDocument();
     expect(screen.getByRole('img')).toHaveAttribute('src', 'example.png');
-    expect(screen.getByRole('img')).toHaveAttribute('alt', 'A preview illustration of a null problem');
+    expect(screen.getByRole('img')).toHaveAttribute('alt', 'A preview illustration of a example problem');
     expect(screen.getByRole('link', { name: 'Learn more in a new tab' })).toHaveAttribute('href', 'https://help.example.com');
   });
 
