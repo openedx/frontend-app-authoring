@@ -173,12 +173,20 @@ const WidgetCard = ({
 
   const { series: chartSeries, options: chartOptions } = getChartOptionsAndSeries();
 
+  // Allow iframes for text widgets
+  const purifyConfig = {
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: [
+      'allow', 'allowfullscreen', 'frameborder', 'scrolling', 'src', 'title', 'width', 'height', 'referrerpolicy',
+    ],
+  };
+
   return (
     <Card className="overview-card">
       <h4 className="card-header">{title}</h4>
       <Card.Section className="card-section">
         {type === 'text' && (
-          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content, purifyConfig) }} />
         )}
         {type === 'html' && content && (
           <div className="html-widget-container">
