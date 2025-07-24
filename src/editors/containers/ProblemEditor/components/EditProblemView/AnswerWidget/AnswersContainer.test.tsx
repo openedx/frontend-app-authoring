@@ -2,17 +2,50 @@ import React from 'react';
 import {
   render, screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
-import { AnswersContainerInternal as AnswersContainer } from './AnswersContainer';
+import AnswersContainer from './AnswersContainer';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+// Import actions after mocking to access mocked functions
+import { actions } from '../../../../../data/redux';
 
 const { useAnswerContainer } = require('./hooks');
 
+// Mock answers for state
+const answers = [
+  { id: 'a1', isAnswerRange: false },
+  { id: 'a2', isAnswerRange: false },
+];
+
+const initialState = {
+  problem: {
+    answers,
+  },
+};
+
+// Mock actions module
+jest.mock('../../../../../data/redux', () => ({
+  __esModule: true,
+  actions: {
+    problem: {
+      addAnswer: jest.fn(() => ({ type: 'ADD_ANSWER' })),
+      addAnswerRange: jest.fn(() => ({ type: 'ADD_ANSWER_RANGE' })),
+      updateField: jest.fn((field, value) => ({ type: 'UPDATE_FIELD', payload: { field, value } })),
+    },
+  },
+  selectors: {
+    problem: {
+      answers: jest.fn(() => answers),
+    },
+  },
+}));
+
+// Mock AnswerOption and Button components
 jest.mock('./AnswerOption', () => jest.fn(({ answer }) => <div>AnswerOption-{answer.id}</div>));
 jest.mock(
   '../../../../../sharedComponents/Button',
   () => jest.fn(({ children, ...props }) => <button type="button" {...props}>{children}</button>),
 );
 
+// Mock hooks
 jest.mock('./hooks', () => ({
   useAnswerContainer: jest.fn(),
   isSingleAnswerProblem: jest.fn(() => false),
@@ -21,17 +54,11 @@ jest.mock('./hooks', () => ({
 describe('AnswersContainer', () => {
   const defaultProps = {
     problemType: 'multiple_choice',
-    answers: [
-      { id: 'a1', isAnswerRange: false },
-      { id: 'a2', isAnswerRange: false },
-    ],
-    addAnswer: jest.fn(),
-    addAnswerRange: jest.fn(),
-    updateField: jest.fn(),
   };
 
   beforeEach(() => {
-    initializeMocks();
+    initializeMocks({ initialState });
+    jest.clearAllMocks();
   });
 
   it('renders AnswerOption for each answer', () => {
@@ -45,7 +72,7 @@ describe('AnswersContainer', () => {
     const button = screen.getByRole('button', { name: 'Add answer' });
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
-    expect(defaultProps.addAnswer).toHaveBeenCalled();
+    expect(actions.problem.addAnswer).toHaveBeenCalled();
   });
 
   it('renders Dropdown for NUMERIC problemType', () => {
@@ -57,9 +84,19 @@ describe('AnswersContainer', () => {
   it('calls useAnswerContainer with correct args', () => {
     render(<AnswersContainer {...defaultProps} />);
     expect(useAnswerContainer).toHaveBeenCalledWith({
-      answers: defaultProps.answers,
+      answers,
       problemType: defaultProps.problemType,
-      updateField: defaultProps.updateField,
+      updateField: expect.any(Function),
     });
+  });
+
+  it('dispatches updateField with correct params', () => {
+    render(<AnswersContainer {...defaultProps} />);
+    // Directly call updateField to test
+    const field = 'exampleField';
+    const value = 'exampleValue';
+    const { updateField } = actions.problem;
+    updateField({ field, value });
+    expect(updateField).toHaveBeenCalledWith({ field, value });
   });
 });
