@@ -1,42 +1,40 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Spinner } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import SelectTypeModal from './components/SelectTypeModal';
 import EditProblemView from './components/EditProblemView';
-import { selectors, thunkActions } from '../../data/redux';
+import { EditorState, selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
-import { ProblemType } from '../../data/constants/problem';
 import type { EditorComponent } from '../../EditorComponent';
 
-export interface Props extends EditorComponent {
-  // redux
-  advancedSettingsFinished: boolean;
-  blockFinished: boolean;
-  blockFailed: boolean;
-  /** null if this is a new problem */
-  problemType: ProblemType | null;
-  initializeProblemEditor: (blockValue: any) => void;
-  blockValue: Record<string, any> | null;
-}
+export interface Props extends EditorComponent {}
 
 const ProblemEditor: React.FC<Props> = ({
   onClose,
   returnFunction = null,
-  // Redux
-  problemType,
-  blockFinished,
-  blockFailed,
-  blockValue,
-  initializeProblemEditor,
-  advancedSettingsFinished,
 }) => {
-  React.useEffect(() => {
+  const dispatch = useDispatch();
+
+  const blockFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }));
+
+  const blockFailed = useSelector(
+    (state: EditorState) => selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
+  );
+
+  const problemType = useSelector(selectors.problem.problemType);
+  const blockValue = useSelector(selectors.app.blockValue);
+
+  const advancedSettingsFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }));
+
+  useEffect(() => {
     if (blockFinished && !blockFailed) {
-      initializeProblemEditor(blockValue);
+      dispatch(thunkActions.problem.initializeProblem(blockValue));
     }
-  }, [blockFinished, blockFailed]);
+  }, [blockFinished, blockFailed, blockValue, dispatch]);
 
   if (!blockFinished || !advancedSettingsFinished) {
     return (
@@ -59,24 +57,10 @@ const ProblemEditor: React.FC<Props> = ({
   }
 
   if (problemType === null) {
-    return (<SelectTypeModal {...{ onClose }} />);
+    return (<SelectTypeModal onClose={onClose} />);
   }
-  return (<EditProblemView {...{ onClose, returnFunction }} />);
+
+  return (<EditProblemView returnFunction={returnFunction} />);
 };
 
-export const mapStateToProps = (state) => ({
-  blockFinished: selectors.app.shouldCreateBlock(state)
-  || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
-  blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
-  problemType: selectors.problem.problemType(state),
-  blockValue: selectors.app.blockValue(state),
-  advancedSettingsFinished: selectors.app.shouldCreateBlock(state)
-  || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }),
-});
-
-export const mapDispatchToProps = {
-  initializeProblemEditor: thunkActions.problem.initializeProblem,
-};
-
-export const ProblemEditorInternal = ProblemEditor; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(ProblemEditor);
+export default ProblemEditor;
