@@ -155,7 +155,7 @@ const slice = createSlice({
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id === payload.parentLocator) {
           section.childInfo.children = [
-            ...section.childInfo.children,
+            ...section.childInfo.children.filter(child => child.id !== payload.data.id), // Filter to avoid duplicates
             payload.data,
           ];
         }
