@@ -8,7 +8,7 @@ import ReactApexChart from 'react-apexcharts';
 import './WidgetCard.scss';
 
 const WidgetCard = ({
-  title, content, styles, type,
+  title, content, type,
 }) => {
   const generateColors = (count) => {
     const colors = [];
@@ -178,14 +178,10 @@ const WidgetCard = ({
       <h4 className="card-header">{title}</h4>
       <Card.Section className="card-section">
         {type === 'text' && (
-          <>
-            {styles && <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(styles) }} />}
-            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
-          </>
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} />
         )}
         {type === 'html' && content && (
           <div className="html-widget-container">
-            {styles && <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(styles) }} />}
             <div
               className="html-content"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.html) }}
@@ -340,7 +336,6 @@ WidgetCard.propTypes = {
       })),
     }),
   ]).isRequired,
-  styles: PropTypes.string,
   type: PropTypes.string,
 };
 
