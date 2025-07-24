@@ -193,7 +193,11 @@ const UnitCard = ({
     return null;
   }
 
-  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+  const isDraggable = (
+    actions.draggable
+      && (actions.allowMoveUp || actions.allowMoveDown)
+      && !subsection.upstreamInfo?.upstreamRef
+  );
 
   return (
     <>
