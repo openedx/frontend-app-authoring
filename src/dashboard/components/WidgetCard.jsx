@@ -185,17 +185,17 @@ const WidgetCard = ({
     <Card className="overview-card">
       <h4 className="card-header">{title}</h4>
       <Card.Section className="card-section">
-        {type === 'text' && (
+        {(type === 'text' || type === 'html') && (
           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content, purifyConfig) }} />
         )}
-        {type === 'html' && content && (
+        {/* {type === 'html' && content && (
           <div className="html-widget-container">
             <div
               className="html-content"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.html) }}
             />
           </div>
-        )}
+        )} */}
         {type === 'chart' && content && content.data && (
           <div className="chart-widget-container">
             {(content.chartType === 'pie' || content.chartType === 'donut' || content.chartType === 'bar' || content.chartType === 'line' || content.chartType === 'area') && (
@@ -262,7 +262,7 @@ const WidgetCard = ({
             )}
           </div>
         )}
-        {type === 'calendar' && content && (
+        {/* {type === 'calendar' && content && (
           <div className="calendar-widget">
             {content.embedUrl ? (
               <div className="calendar-embed-container">
@@ -301,7 +301,7 @@ const WidgetCard = ({
               </>
             )}
           </div>
-        )}
+        )} */}
       </Card.Section>
     </Card>
   );
