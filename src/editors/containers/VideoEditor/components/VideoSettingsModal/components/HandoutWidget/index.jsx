@@ -11,11 +11,7 @@ import {
   ActionRow,
 } from '@openedx/paragon';
 import { FileUpload, MoreHoriz } from '@openedx/paragon/icons';
-import {
-  FormattedMessage,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import * as hooks from './hooks';
@@ -32,8 +28,6 @@ import { RequestKeys } from '../../../../../../data/constants/requests';
  * Collapsible Form widget controlling video handouts
  */
 const HandoutWidget = ({
-  // injected
-  intl,
   // redux
   isLibrary,
   handout,
@@ -41,6 +35,7 @@ const HandoutWidget = ({
   updateField,
   isUploadError,
 }) => {
+  const intl = useIntl();
   const [error] = React.useContext(ErrorContext).handout;
   const { fileSizeError } = hooks.fileSizeError();
   const fileInput = hooks.fileInput({ fileSizeError });
@@ -114,8 +109,6 @@ const HandoutWidget = ({
 };
 
 HandoutWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
   // redux
   isLibrary: PropTypes.bool.isRequired,
   handout: PropTypes.shape({}).isRequired,
@@ -135,4 +128,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const HandoutWidgetInternal = HandoutWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(HandoutWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(HandoutWidget);

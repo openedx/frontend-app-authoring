@@ -14,9 +14,6 @@ const defaultProps = {
   handleSort: jest.fn(),
   fileType: 'video',
   setInitialState: jest.fn(),
-  intl: {
-    formatMessage: (msg, values) => msg.defaultMessage.replace('{fileType}', values?.fileType ?? ''),
-  },
 };
 
 const mockColumns = [

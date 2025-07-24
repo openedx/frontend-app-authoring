@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Hyperlink, MailtoLink,
 } from '@openedx/paragon';
@@ -11,11 +11,11 @@ import messages from '../lti/messages';
 
 const AppExternalLinks = ({
   externalLinks,
-  intl,
   providerName,
   showLaunchIcon,
   customClasses,
 }) => {
+  const intl = useIntl();
   const { contactEmail, ...links } = externalLinks;
   const linkTypes = Object.keys(links).filter(key => links[key]);
   return (
@@ -71,7 +71,6 @@ AppExternalLinks.propTypes = {
     contactEmail: PropTypes.string,
   }).isRequired,
   providerName: PropTypes.string.isRequired,
-  intl: intlShape.isRequired,
   showLaunchIcon: PropTypes.bool,
   customClasses: PropTypes.string,
 };
@@ -81,4 +80,4 @@ AppExternalLinks.defaultProps = {
   customClasses: '',
 };
 
-export default injectIntl(AppExternalLinks);
+export default AppExternalLinks;
