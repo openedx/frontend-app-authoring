@@ -6,25 +6,6 @@
       "enrollments": 2500,
       "submissions": 1800
     },
-    "recentCourses": [
-      "Create Course",
-      "Start Communication"
-    ],
-    "notifications": [],
-    "upcomingEvents": [],
-    "calendar": {
-      "date": "Mon April 22",
-      "events": [
-        {
-          "title": "TitanEd - Upcoming Event 1",
-          "time": "10:30 – 11:30pm"
-        },
-        {
-          "title": "TitanEd - Upcoming Event 2",
-          "time": "10:30 – 11:30pm"
-        }
-      ]
-    },
     "titanAISuggestions": [
       "Consider adding more interactive elements to engage students",
       "Review course completion rates and identify areas for improvement",
