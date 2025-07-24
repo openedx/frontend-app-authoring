@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,8 @@ import { DiscussionsContext } from '../DiscussionsProvider';
 
 import messages from './messages';
 
-const AppListNextButton = ({ intl }) => {
+const AppListNextButton = () => {
+  const intl = useIntl();
   const { selectedAppId } = useSelector(state => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
   const navigate = useNavigate();
@@ -27,8 +28,4 @@ const AppListNextButton = ({ intl }) => {
   );
 };
 
-AppListNextButton.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(AppListNextButton);
+export default AppListNextButton;
