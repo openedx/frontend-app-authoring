@@ -4,11 +4,12 @@ import {
   render as baseRender,
   screen,
   fireEvent,
-} from '../../testUtils';
-import { mockFetchIndexDocuments, mockContentSearchConfig } from '../../search-manager/data/api.mock';
+} from '@src/testUtils';
+import { mockFetchIndexDocuments, mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+
 import {
   mockContentLibrary,
-  mockGetComponentEntityLinks,
+  mockGetEntityLinks,
   mockLibraryBlockMetadata,
   mockXBlockAssets,
   mockXBlockOLX,
@@ -22,7 +23,7 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
-mockGetComponentEntityLinks.applyMock();
+mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 
 const {

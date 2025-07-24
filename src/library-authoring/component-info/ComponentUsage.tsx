@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Collapsible, Hyperlink, Stack } from '@openedx/paragon';
-import { useMemo } from 'react';
-import { useComponentEntityLinks } from '../../course-libraries/data/apiHooks';
 
-import AlertError from '../../generic/alert-error';
-import Loading from '../../generic/Loading';
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+import AlertError from '@src/generic/alert-error';
+import Loading from '@src/generic/Loading';
+
 import messages from './messages';
 import { useContentFromSearchIndex } from '../data/apiHooks';
 
@@ -34,7 +36,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     isError: isErrorDownstreamLinks,
     error: errorDownstreamLinks,
     isLoading: isLoadingDownstreamLinks,
-  } = useComponentEntityLinks({ upstreamUsageKey: usageKey });
+  } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
 
   const downstreamKeys = useMemo(
     () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],

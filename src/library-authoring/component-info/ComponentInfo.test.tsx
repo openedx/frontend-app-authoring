@@ -3,13 +3,14 @@ import {
   render,
   screen,
   waitFor,
-} from '../../testUtils';
+} from '@src/testUtils';
+import { mockContentSearchConfig, mockFetchIndexDocuments } from '@src/search-manager/data/api.mock';
+
 import {
   mockContentLibrary,
   mockLibraryBlockMetadata,
-  mockGetComponentEntityLinks,
+  mockGetEntityLinks,
 } from '../data/api.mocks';
-import { mockContentSearchConfig, mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfo from './ComponentInfo';
@@ -18,7 +19,7 @@ import { getXBlockPublishApiUrl } from '../data/api';
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
-mockGetComponentEntityLinks.applyMock();
+mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 jest.mock('./ComponentPreview', () => ({
   __esModule: true, // Required when mocking 'default' export

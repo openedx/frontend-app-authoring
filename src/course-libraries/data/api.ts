@@ -3,10 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getComponentEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/`;
 export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams-all/`;
-export const getContainerEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstream-containers/`;
-
 export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
 
 export interface PaginatedData<T> {
@@ -44,7 +41,7 @@ export interface ContainerPublishableEntityLink extends BasePublishableEntityLin
 
 export interface PublishableEntityLink extends BasePublishableEntityLink {
   upstreamKey: string;
-  upstreamType: 'component' | 'container';
+  upstreamType: string;
 }
 
 export interface PublishableEntityLinkSummary {
@@ -58,7 +55,7 @@ export interface PublishableEntityLinkSummary {
 export const getEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
-  upstreamUsageKey?: string,
+  upstreamKey?: string,
   contentType?: 'all' | 'components' | 'containers',
 ): Promise<PublishableEntityLink[]> => {
   const { data } = await getAuthenticatedHttpClient()
@@ -66,42 +63,8 @@ export const getEntityLinks = async (
       params: {
         course_id: downstreamContextKey,
         ready_to_sync: readyToSync,
-        upstream_usage_key: upstreamUsageKey,
-        content_type: contentType,
-        no_page: true,
-      },
-    });
-  return camelCaseObject(data);
-};
-
-export const getComponentEntityLinks = async (
-  downstreamContextKey?: string,
-  readyToSync?: boolean,
-  upstreamUsageKey?: string,
-): Promise<ComponentPublishableEntityLink[]> => {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getComponentEntityLinksByDownstreamContextUrl(), {
-      params: {
-        course_id: downstreamContextKey,
-        ready_to_sync: readyToSync,
-        upstream_usage_key: upstreamUsageKey,
-        no_page: true,
-      },
-    });
-  return camelCaseObject(data);
-};
-
-export const getContainerEntityLinks = async (
-  downstreamContextKey?: string,
-  readyToSync?: boolean,
-  upstreamContainerKey?: string,
-): Promise<ContainerPublishableEntityLink[]> => {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getContainerEntityLinksByDownstreamContextUrl(), {
-      params: {
-        course_id: downstreamContextKey,
-        ready_to_sync: readyToSync,
-        upstream_container_key: upstreamContainerKey,
+        upstream_key: upstreamKey,
+        item_type: contentType,
         no_page: true,
       },
     });

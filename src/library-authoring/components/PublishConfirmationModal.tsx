@@ -1,11 +1,12 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Alert, Button } from '@openedx/paragon';
 
-import BaseModal from '../../editors/sharedComponents/BaseModal';
+import BaseModal from '@src/editors/sharedComponents/BaseModal';
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+
 import messages from './messages';
 import infoMessages from '../component-info/messages';
 import { ComponentUsage } from '../component-info/ComponentUsage';
-import { useComponentEntityLinks } from '../../course-libraries/data/apiHooks';
 
 interface PublishConfirmationModalProps {
   isOpen: boolean,
@@ -29,7 +30,7 @@ const PublishConfirmationModal = ({
   const {
     data: dataDownstreamLinks,
     isLoading: isLoadingDownstreamLinks,
-  } = useComponentEntityLinks({ upstreamUsageKey: usageKey });
+  } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
 
   const hasDownstreamUsages = !isLoadingDownstreamLinks && dataDownstreamLinks?.length !== 0;
 

@@ -1,12 +1,14 @@
 /* istanbul ignore file */
 import { camelCaseObject } from '@edx/frontend-platform';
-import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { createAxiosError } from '../../testUtils';
+
+import { mockContentTaxonomyTagsData } from '@src/content-tags-drawer/data/api.mocks';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
+import { createAxiosError } from '@src/testUtils';
+import downstreamLinkInfo from '@src/search-manager/data/__mocks__/downstream-links.json';
+import * as courseLibApi from '@src/course-libraries/data/api';
+
 import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
-import downstreamLinkInfo from '../../search-manager/data/__mocks__/downstream-links.json';
 import * as api from './api';
-import * as courseLibApi from '../../course-libraries/data/api';
 
 /**
  * Mock for `getContentLibraryV2List()`
@@ -766,26 +768,38 @@ mockBlockTypesMetadata.blockTypesMetadata = [
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
-export async function mockGetComponentEntityLinks(
+export async function mockGetEntityLinks(
   _downstreamContextKey?: string,
   _readyToSync?: boolean,
-  upstreamUsageKey?: string,
-): ReturnType<typeof courseLibApi.getComponentEntityLinks> {
-  const thisMock = mockGetComponentEntityLinks;
-  switch (upstreamUsageKey) {
-    case thisMock.upstreamContainerKey: return thisMock.response;
-    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
-    case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
-    default: return [];
+  upstreamKey?: string,
+  contentType?: 'all' | 'components' | 'containers',
+): ReturnType<typeof courseLibApi.getEntityLinks> {
+  const thisMock = mockGetEntityLinks;
+  if (contentType === 'components') {
+    switch (upstreamKey) {
+      case thisMock.upstreamContainerKey: return thisMock.componentResponse;
+      case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentResponse;
+      case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
+      default: return [];
+    }
+  } else if (contentType === 'containers') {
+    switch (upstreamKey) {
+      case thisMock.unitKey: return thisMock.unitResponse;
+      case thisMock.subsectionKey: return thisMock.subsectionResponse;
+      case thisMock.sectionKey: return thisMock.sectionResponse;
+      default: return [];
+    }
   }
+  return thisMock.allResponse;
 }
-mockGetComponentEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
-mockGetComponentEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
+
+mockGetEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
+mockGetEntityLinks.componentResponse = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
   id: 875,
   upstreamContextTitle: 'CS problems 3',
   upstreamVersion: 10,
   readyToSync: true,
-  upstreamUsageKey: mockLibraryBlockMetadata.usageKeyPublished,
+  upstreamKey: mockLibraryBlockMetadata.usageKeyPublished,
   upstreamContextKey: 'lib:Axim:TEST2',
   downstreamUsageKey: obj.usageKey,
   downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -793,36 +807,18 @@ mockGetComponentEntityLinks.response = downstreamLinkInfo.results[0].hits.map((o
   versionDeclined: null,
   created: '2025-02-08T14:07:05.588484Z',
   updated: '2025-02-08T14:07:05.588484Z',
+  upstreamType: 'component',
 }));
-mockGetComponentEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
-mockGetComponentEntityLinks.emptyComponentUsage = [] as courseLibApi.ComponentPublishableEntityLink[];
-
-mockGetComponentEntityLinks.applyMock = () => jest.spyOn(
-  courseLibApi,
-  'getComponentEntityLinks',
-).mockImplementation(mockGetComponentEntityLinks);
-
-export async function mockGetContainerEntityLinks(
-  _downstreamContextKey?: string,
-  _readyToSync?: boolean,
-  upstreamContainerKey?: string,
-): ReturnType<typeof courseLibApi.getContainerEntityLinks> {
-  const thisMock = mockGetContainerEntityLinks;
-  switch (upstreamContainerKey) {
-    case thisMock.unitKey: return thisMock.unitResponse;
-    case thisMock.subsectionKey: return thisMock.subsectionResponse;
-    case thisMock.sectionKey: return thisMock.sectionResponse;
-    default: return [];
-  }
-}
-mockGetContainerEntityLinks.unitKey = mockGetContainerMetadata.unitId;
-mockGetContainerEntityLinks.unitResponse = [
+mockGetEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
+mockGetEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
+mockGetEntityLinks.unitKey = mockGetContainerMetadata.unitId;
+mockGetEntityLinks.unitResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamKey: mockGetEntityLinks.unitKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -830,13 +826,14 @@ mockGetContainerEntityLinks.unitResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamKey: mockGetEntityLinks.unitKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -844,16 +841,17 @@ mockGetContainerEntityLinks.unitResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
 ];
-mockGetContainerEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
-mockGetContainerEntityLinks.subsectionResponse = [
+mockGetEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
+mockGetEntityLinks.subsectionResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamKey: mockGetEntityLinks.subsectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-subsection-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -861,13 +859,14 @@ mockGetContainerEntityLinks.subsectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamKey: mockGetEntityLinks.subsectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-subsection-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -875,16 +874,17 @@ mockGetContainerEntityLinks.subsectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
 ];
-mockGetContainerEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
-mockGetContainerEntityLinks.sectionResponse = [
+mockGetEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
+mockGetEntityLinks.sectionResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamKey: mockGetEntityLinks.sectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-section-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -892,13 +892,14 @@ mockGetContainerEntityLinks.sectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamKey: mockGetEntityLinks.sectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-section-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -906,10 +907,16 @@ mockGetContainerEntityLinks.sectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
 ];
-
-mockGetContainerEntityLinks.applyMock = () => jest.spyOn(
+mockGetEntityLinks.allResponse = [
+  ...mockGetEntityLinks.componentResponse,
+  ...mockGetEntityLinks.unitResponse,
+  ...mockGetEntityLinks.subsectionResponse,
+  ...mockGetEntityLinks.sectionResponse,
+];
+mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
-  'getContainerEntityLinks',
-).mockImplementation(mockGetContainerEntityLinks);
+  'getEntityLinks',
+).mockImplementation(mockGetEntityLinks);
