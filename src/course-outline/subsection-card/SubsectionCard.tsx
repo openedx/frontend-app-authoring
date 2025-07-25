@@ -235,8 +235,12 @@ const SubsectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
-        childAddable={actions.childAddable}
+        data={{
+          category,
+          displayName,
+          childAddable:actions.childAddable,
+          status: subsectionStatus,
+        }}
         key={id}
         isDraggable={isDraggable}
         isDroppable={actions.childAddable || section.actions.childAddable}

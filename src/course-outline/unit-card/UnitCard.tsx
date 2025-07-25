@@ -203,8 +203,12 @@ const UnitCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
         key={id}
+        data={{
+          category,
+          status: unitStatus,
+          displayName,
+        }}
         isDraggable={isDraggable}
         isDroppable={subsection.actions.childAddable}
         componentStyle={{

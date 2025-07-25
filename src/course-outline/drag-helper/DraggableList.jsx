@@ -8,6 +8,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -24,6 +25,8 @@ import {
   moveUnit,
   dragHelpers,
 } from './utils';
+import { createPortal } from 'react-dom';
+import CourseItemOverlay from './CourseItemOverlay';
 
 const DraggableList = ({
   items,
@@ -42,6 +45,7 @@ const DraggableList = ({
     }),
   );
   const [activeId, setActiveId] = React.useState();
+  const [draggedItemClone, setDraggedItemClone] = React.useState(null);
   const [currentOverId, setCurrentOverId] = React.useState();
 
   const findItemInfo = (id) => {
@@ -210,12 +214,18 @@ const DraggableList = ({
     }
   };
 
+  const handleDragCancel = React.useCallback(() => {
+    setActiveId?.(null);
+    setDraggedItemClone(null);
+  }, [setActiveId]);
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!active || !over) {
       return;
     }
     setActiveId(null);
+    setDraggedItemClone(null);
     setCurrentOverId(null);
     const { id } = active;
     const { id: overId } = over;
@@ -290,6 +300,16 @@ const DraggableList = ({
     const { id } = active;
 
     setActiveId(id);
+    // Get the dragged element data
+    const { displayName, category, status } = active.data.current;
+    // Create a simple clone of the item to use in the overlay
+    setDraggedItemClone(
+      <CourseItemOverlay
+        displayName={displayName}
+        category={category}
+        status={status}
+      />
+    );
   };
 
   const customClosestCorners = ({
@@ -325,10 +345,18 @@ const DraggableList = ({
       onDragOver={handleDragOver}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragAbort={handleDragCancel}
+      onDragCancel={handleDragCancel}
     >
       <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
+      {createPortal(
+        <DragOverlay>
+          {draggedItemClone && activeId ? draggedItemClone : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 };
