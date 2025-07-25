@@ -15,6 +15,7 @@ const SortableItem = ({
   category,
   isDraggable,
   isDroppable,
+  childAddable,
   componentStyle,
   children,
 }) => {
@@ -31,6 +32,7 @@ const SortableItem = ({
     id,
     data: {
       category,
+      childAddable,
     },
     disabled: {
       draggable: !isDraggable,
@@ -84,11 +86,13 @@ SortableItem.defaultProps = {
   componentStyle: null,
   isDroppable: true,
   isDraggable: true,
+  childAddable: true,
 };
 
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
   category: PropTypes.string.isRequired,
+  childAddable: PropTypes.bool,
   isDroppable: PropTypes.bool,
   isDraggable: PropTypes.bool,
   children: PropTypes.node.isRequired,

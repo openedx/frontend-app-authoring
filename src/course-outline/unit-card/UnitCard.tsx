@@ -206,7 +206,7 @@ const UnitCard = ({
         category={category}
         key={id}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={subsection.actions.childAddable}
         componentStyle={{
           background: '#fdfdfd',
           ...borderStyle,

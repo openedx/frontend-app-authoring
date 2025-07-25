@@ -106,7 +106,6 @@ const DraggableList = ({
       activeInfo.parent.id === overInfo.parent.id
       || activeInfo.parent.id === overInfo.item.id
       || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
-      || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
     }
@@ -145,7 +144,6 @@ const DraggableList = ({
     if (
       activeInfo.parent.id === overInfo.parent.id
       || activeInfo.parent.id === overInfo.item.id
-      || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
       || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
@@ -304,9 +302,11 @@ const DraggableList = ({
           case COURSE_BLOCK_NAMES.chapter.id:
             return container.data?.current?.category === activeCategory;
           case COURSE_BLOCK_NAMES.sequential.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id && container.data?.current?.childAddable
+              || container.data?.current?.category === activeCategory);
           case COURSE_BLOCK_NAMES.vertical.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id && container.data?.current?.childAddable
+              || container.data?.current?.category === activeCategory);
           default:
             return true;
         }

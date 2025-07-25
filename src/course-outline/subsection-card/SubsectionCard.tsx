@@ -236,9 +236,10 @@ const SubsectionCard = ({
       <SortableItem
         id={id}
         category={category}
+        childAddable={actions.childAddable}
         key={id}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={actions.childAddable || section.actions.childAddable}
         componentStyle={{
           background: '#f8f7f6',
           ...borderStyle,

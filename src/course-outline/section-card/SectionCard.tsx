@@ -239,7 +239,7 @@ const SectionCard = ({
         id={id}
         category={category}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        childAddable={actions.childAddable}
         componentStyle={{
           padding: '1.75rem',
           ...borderStyle,
