@@ -28,3 +28,10 @@ export const adoptCourseSectionUrl = (
 
   return newUrl;
 };
+
+export const subsectionFirstUnitEditUrl = (
+  { courseId, subsectionId }: { courseId: string, subsectionId: string },
+): string => {
+  const url = `/course/${courseId}/subsection/${subsectionId}`;
+  return url;
+};
