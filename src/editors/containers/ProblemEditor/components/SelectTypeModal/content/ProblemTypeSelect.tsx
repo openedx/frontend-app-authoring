@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button, Container } from '@openedx/paragon';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 // SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import {
-  ProblemTypes,
   ProblemTypeKeys,
   AdvanceProblemKeys,
   AdvancedProblemType,
   ProblemType,
+  getProblemTypes,
 } from '../../../../../data/constants/problem';
 import messages from './messages';
 
@@ -22,6 +22,9 @@ const ProblemTypeSelect: React.FC<Props> = ({
   selected,
   setSelected,
 }) => {
+  const intl = useIntl();
+  const localizedProblemTypes = getProblemTypes(intl.formatMessage);
+
   const handleChange = e => setSelected(e.target.value);
   const handleClick = () => setSelected(AdvanceProblemKeys.BLANK);
   const settings = { type: 'radio' };
@@ -45,7 +48,7 @@ const ProblemTypeSelect: React.FC<Props> = ({
                 value={key}
                 {...settings}
               >
-                {ProblemTypes[key].title}
+                {localizedProblemTypes[key].title}
               </SelectableBox>
             )
             : null

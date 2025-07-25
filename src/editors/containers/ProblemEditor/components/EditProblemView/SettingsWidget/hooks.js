@@ -14,6 +14,7 @@ import {
   ProblemTypes,
   RichTextProblems,
   ShowAnswerTypesKeys,
+  getProblemTypes,
 } from '../../../../../data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
@@ -232,6 +233,7 @@ export const typeRowHooks = ({
   typeKey,
   updateField,
   updateAnswer,
+  formatMessage,
 }) => {
   const clearPreviouslySelectedAnswers = () => {
     let currentAnswerTitles;
@@ -312,8 +314,25 @@ export const typeRowHooks = ({
       updateAnswersToCorrect();
     }
 
-    if (blockTitle === ProblemTypes[problemType].title) {
-      setBlockTitle(ProblemTypes[typeKey].title);
+    // Check if blockTitle matches either the localized or non-localized problem type title
+    let shouldUpdateBlockTitle = false;
+    if (formatMessage) {
+      const localizedProblemTypes = getProblemTypes(formatMessage);
+      shouldUpdateBlockTitle = blockTitle === localizedProblemTypes[problemType].title
+        || blockTitle === ProblemTypes[problemType].title;
+    } else {
+      shouldUpdateBlockTitle = blockTitle === ProblemTypes[problemType].title;
+    }
+
+    if (shouldUpdateBlockTitle) {
+      // Use localized problem type titles when setting block titles
+      if (formatMessage) {
+        const localizedProblemTypes = getProblemTypes(formatMessage);
+        setBlockTitle(localizedProblemTypes[typeKey].title);
+      } else {
+        // Fallback for tests or cases where formatMessage is not provided
+        setBlockTitle(ProblemTypes[typeKey].title);
+      }
     }
     updateField({ problemType: typeKey });
   };
