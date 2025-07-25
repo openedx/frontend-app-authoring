@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import {
   Button, Collapsible,
 } from '@openedx/paragon';
-import { selectors, actions } from '../../../../../data/redux';
+import { useEditorContext } from '@src/editors/EditorContext';
+import { selectors, actions } from '@src/editors/data/redux';
 import ScoringCard from './settingsComponents/ScoringCard';
 import ShowAnswerCard from './settingsComponents/ShowAnswerCard';
 import HintsCard from './settingsComponents/HintsCard';
@@ -38,9 +39,13 @@ const SettingsWidget = ({
   defaultSettings,
   images,
   isLibrary,
-  learningContextId,
-  showMarkdownEditorButton,
 }) => {
+  const {
+    learningContextId,
+    isMarkdownEditorEnabledForContext,
+  } = useEditorContext();
+  const rawMarkdown = useSelector(selectors.problem.rawMarkdown);
+  const showMarkdownEditorButton = isMarkdownEditorEnabledForContext && rawMarkdown;
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -199,11 +204,9 @@ SettingsWidget.propTypes = {
     rerandomize: PropTypes.string,
   }).isRequired,
   images: PropTypes.shape({}).isRequired,
-  learningContextId: PropTypes.string.isRequired,
   isLibrary: PropTypes.bool.isRequired,
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
-  showMarkdownEditorButton: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -215,9 +218,6 @@ const mapStateToProps = (state) => ({
   defaultSettings: selectors.problem.defaultSettings(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
-  learningContextId: selectors.app.learningContextId(state),
-  showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state)
-  && selectors.problem.rawMarkdown(state),
 });
 
 export const mapDispatchToProps = {

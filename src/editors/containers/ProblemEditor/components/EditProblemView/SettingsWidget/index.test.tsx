@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
+import { screen, initializeMocks } from '@src/testUtils';
+import { editorRender } from '@src/editors/editorTestRender';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
 
@@ -17,6 +17,7 @@ jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');
 jest.mock('./settingsComponents/SwitchEditorCard', () => 'SwitchEditorCard');
 jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
 jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
+mockWaffleFlags();
 
 describe('SettingsWidget', () => {
   const showAdvancedSettingsCardsBaseProps = {
@@ -55,7 +56,7 @@ describe('SettingsWidget', () => {
   describe('behavior', () => {
     it('calls showAdvancedSettingsCards when initialized', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      render(<SettingsWidget {...props} />);
+      editorRender(<SettingsWidget {...props} />);
       expect(hooks.showAdvancedSettingsCards).toHaveBeenCalled();
     });
   });
@@ -63,7 +64,7 @@ describe('SettingsWidget', () => {
   describe('renders', () => {
     test('renders Settings widget page', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      render(<SettingsWidget {...props} />);
+      editorRender(<SettingsWidget {...props} />);
       expect(screen.getByText('Show advanced settings')).toBeInTheDocument();
     });
 
@@ -73,7 +74,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = render(<SettingsWidget {...props} />);
+      const { container } = editorRender(<SettingsWidget {...props} />);
       expect(screen.queryByText('Show advanced settings')).not.toBeInTheDocument();
       expect(container.querySelector('showanswercard')).toBeInTheDocument();
       expect(container.querySelector('resetcard')).toBeInTheDocument();
@@ -85,7 +86,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = render(
+      const { container } = editorRender(
         <SettingsWidget {...props} problemType={ProblemTypeKeys.ADVANCED} />,
       );
       expect(container.querySelector('randomization')).toBeInTheDocument();
@@ -99,7 +100,7 @@ describe('SettingsWidget', () => {
     };
     test('renders Settings widget page', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      const { container } = render(<SettingsWidget {...libraryProps} />);
+      const { container } = editorRender(<SettingsWidget {...libraryProps} />);
       expect(container.querySelector('timercard')).not.toBeInTheDocument();
       expect(container.querySelector('resetcard')).not.toBeInTheDocument();
       expect(container.querySelector('typecard')).toBeInTheDocument();
@@ -113,7 +114,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = render(<SettingsWidget {...libraryProps} />);
+      const { container } = editorRender(<SettingsWidget {...libraryProps} />);
       expect(screen.queryByText('Show advanced settings')).not.toBeInTheDocument();
       expect(container.querySelector('showanswearscard')).not.toBeInTheDocument();
       expect(container.querySelector('resetcard')).not.toBeInTheDocument();
@@ -127,7 +128,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = render(<SettingsWidget {...libraryProps} problemType={ProblemTypeKeys.ADVANCED} />);
+      const { container } = editorRender(<SettingsWidget {...libraryProps} problemType={ProblemTypeKeys.ADVANCED} />);
       expect(container.querySelector('randomization')).toBeInTheDocument();
     });
   });

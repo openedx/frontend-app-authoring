@@ -1,3 +1,5 @@
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { isCourseKey } from '@src/generic/key-utils';
 import React from 'react';
 
 /**
@@ -6,8 +8,21 @@ import React from 'react';
  * Note: we're in the process of moving things from redux into this.
  */
 export interface EditorContext {
+  /**
+   * The ID of the current course or library.
+   * Use `isCourseKey()` from '@src/generic/key-utils' if you need to check what type it is.
+   */
   learningContextId: string;
+  /** Is the so-called "Markdown" problem editor available in this learning context? */
+  isMarkdownEditorEnabledForContext: boolean;
+  // TODO - add this in a future PR:
+  // editorInitialized: boolean;
+  // setEditorInitialized: (value: boolean) => void;
 }
+
+export type EditorContextInit = {
+  learningContextId: string;
+};
 
 const context = React.createContext<EditorContext | undefined>(undefined);
 
@@ -21,10 +36,24 @@ export function useEditorContext() {
   return ctx;
 }
 
-export const EditorContextProvider: React.FC<{
-  children: React.ReactNode,
-  learningContextId: string;
-}> = ({ children, ...contextData }) => {
-  const ctx: EditorContext = React.useMemo(() => ({ ...contextData }), []);
+export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & EditorContextInit> = ({
+  children,
+  learningContextId,
+}) => {
+  // const [editorInitialized, setEditorInitialized] = React.useState(false);
+  const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
+  const isMarkdownEditorEnabledForContext = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
+
+  const ctx: EditorContext = React.useMemo(() => ({
+    learningContextId,
+    isMarkdownEditorEnabledForContext,
+    // editorInitialized,
+    // setEditorInitialized,
+  }), [
+    // Dependencies - make sure we update the context object if any of these values change:
+    learningContextId,
+    isMarkdownEditorEnabledForContext,
+    // editorInitialized,
+  ]);
   return <context.Provider value={ctx}>{children}</context.Provider>;
 };
