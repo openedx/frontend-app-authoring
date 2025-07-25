@@ -217,6 +217,7 @@ const DraggableList = ({
   const handleDragCancel = React.useCallback(() => {
     setActiveId?.(null);
     setDraggedItemClone(null);
+    restoreSectionList();
   }, [setActiveId]);
 
   const handleDragEnd = (event) => {
