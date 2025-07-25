@@ -4,22 +4,22 @@ import { AvailableGroup } from '../constants';
 import ContentGroupCard from '../content-groups-section/ContentGroupCard';
 
 interface TeamGroupsSectionProps {
-    availableGroup: AvailableGroup;
+  availableGroup: AvailableGroup;
 }
 
 const TeamGroupsSection: React.FC<TeamGroupsSectionProps> = ({
-    availableGroup: { groups, name }
+  availableGroup: { groups, name },
 }) => (
-    <div className="mt-2.5">
-        <h2 className="lead text-black mb-3 configuration-section-name">{name}</h2>
-        {groups.map((group) => (
-            <ContentGroupCard
-                group={group}
-                key={group.id}
-                readOnly
-            />
-        ))}
-    </div>
+  <div className="mt-2.5">
+    <h2 className="lead text-black mb-3 configuration-section-name">{name}</h2>
+    {groups.map((group) => (
+      <ContentGroupCard
+        group={group}
+        key={group.id}
+        readOnly
+      />
+    ))}
+  </div>
 );
 
 export default TeamGroupsSection;

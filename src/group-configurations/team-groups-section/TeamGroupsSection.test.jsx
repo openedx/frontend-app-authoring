@@ -9,7 +9,7 @@ const renderComponent = (props = {}) => {
     <TeamGroupsSection
       availableGroup={teamGroupsMock}
       {...props}
-    />
+    />,
   );
 };
 
