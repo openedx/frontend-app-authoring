@@ -155,14 +155,18 @@ const defaultUser = {
  *
  * Returns the new `axiosMock` in case you need to mock out axios requests.
  */
-export function initializeMocks({ user = defaultUser, initialState = undefined }: {
+export function initializeMocks({
+  user = defaultUser, initialState = undefined,
+  initializeStore = initializeReduxStore,
+}: {
   user?: { userId: number, username: string },
   initialState?: Record<string, any>, // TODO: proper typing for our redux state
+  initializeStore?: (initialState?: Record<string, any>) => Store, // add this line
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,
   });
-  reduxStore = initializeReduxStore(initialState as any);
+  reduxStore = initializeStore(initialState as any);
   queryClient = new QueryClient({
     defaultOptions: {
       queries: {
