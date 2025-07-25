@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Alert, Form, Hyperlink } from '@openedx/paragon';
 import {
-  Warning as WarningIcon,
-} from '@openedx/paragon/icons';
+  Alert,
+  Form,
+  Hyperlink,
+  OverlayTrigger,
+  Tooltip,
+} from '@openedx/paragon';
+import { Warning as WarningIcon, Question } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
@@ -17,6 +21,7 @@ const AdvancedTab = ({
   releasedToStudents,
   wasExamEverLinkedWithExternal,
   enableProctoredExams,
+  enableTimedExams = true,
   supportsOnboarding,
   wasProctoredExam,
   showReviewRules,
@@ -129,7 +134,26 @@ const AdvancedTab = ({
 
   return (
     <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.setSpecialExam} /></h5>
+      <div className="d-flex align-items-center mt-4">
+        <h5 className="text-gray-700 mb-0">
+          <FormattedMessage {...messages.setSpecialExam} />
+        </h5>
+        {!enableTimedExams && (
+          <OverlayTrigger
+            placement="top"
+            overlay={(
+              <Tooltip>
+                <FormattedMessage {...messages.timedExamsDisabledTooltip} />
+              </Tooltip>
+            )}
+          >
+            <Question
+              className="ml-2 text-gray-500"
+              style={{ cursor: 'help' }}
+            />
+          </OverlayTrigger>
+        )}
+      </div>
       <hr />
       <Form.RadioSet
         name="specialExam"
@@ -137,11 +161,12 @@ const AdvancedTab = ({
         value={examTypeValue}
       >
         {renderAlerts()}
-        <Form.Radio value="none">
+        <Form.Radio value="none" disabled={!enableTimedExams}>
           <FormattedMessage {...messages.none} />
         </Form.Radio>
         <Form.Radio
           value="timed"
+          disabled={!enableTimedExams}
           description={<FormattedMessage {...messages.timedDescription} />}
           controlClassName="mw-1-25rem"
         >
@@ -242,6 +267,7 @@ AdvancedTab.defaultProps = {
   prereqs: [],
   wasExamEverLinkedWithExternal: false,
   enableProctoredExams: false,
+  enableTimedExams: true,
   supportsOnboarding: false,
   wasProctoredExam: false,
   showReviewRules: false,
@@ -269,6 +295,7 @@ AdvancedTab.propTypes = {
   releasedToStudents: PropTypes.bool.isRequired,
   wasExamEverLinkedWithExternal: PropTypes.bool,
   enableProctoredExams: PropTypes.bool,
+  enableTimedExams: PropTypes.bool,
   supportsOnboarding: PropTypes.bool,
   wasProctoredExam: PropTypes.bool,
   showReviewRules: PropTypes.bool,
