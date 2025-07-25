@@ -4,8 +4,9 @@ import {
   render as baseRender,
   screen,
   fireEvent,
-} from '../../testUtils';
-import { mockFetchIndexDocuments, mockContentSearchConfig } from '../../search-manager/data/api.mock';
+} from '@src/testUtils';
+import { mockFetchIndexDocuments, mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+
 import {
   mockContentLibrary,
   mockGetEntityLinks,
