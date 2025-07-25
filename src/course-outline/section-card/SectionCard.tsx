@@ -241,7 +241,7 @@ const SectionCard = ({
           category,
           displayName,
           status: sectionStatus,
-          childAddable:actions.childAddable,
+          childAddable: actions.childAddable,
         }}
         isDraggable={isDraggable}
         componentStyle={{

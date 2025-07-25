@@ -25,8 +25,8 @@ interface SortableItemProps {
 
 const SortableItem = ({
   id,
-  isDraggable,
-  isDroppable,
+  isDraggable = true,
+  isDroppable = true,
   componentStyle,
   data,
   children,
