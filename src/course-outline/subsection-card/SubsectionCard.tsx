@@ -1,5 +1,5 @@
 import React, {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -17,6 +17,7 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
@@ -25,6 +26,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { XBlock } from '@src/data/types';
+import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -86,6 +88,7 @@ const SubsectionCard = ({
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const [
@@ -105,7 +108,21 @@ const SubsectionCard = ({
     isHeaderVisible = true,
     enableCopyPasteUnits = false,
     proctoringExamConfigurationLink,
+    upstreamInfo,
   } = subsection;
+
+  const blockSyncData = useMemo(() => {
+    if (!upstreamInfo?.readyToSync) {
+      return undefined;
+    }
+    return {
+      displayName,
+      downstreamBlockId: id,
+      upstreamBlockId: upstreamInfo.upstreamRef,
+      upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isVertical: true,
+    };
+  }, [upstreamInfo]);
 
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
@@ -145,6 +162,10 @@ const SubsectionCard = ({
     dispatch(setCurrentItem(subsection));
   };
 
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
+  }, [dispatch, section]);
+
   const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
       onEditSubmit(id, section.id, titleValue);
@@ -171,7 +192,7 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!subsection.upstreamInfo?.upstreamRef && (
+      prefixIcon={!!upstreamInfo?.upstreamRef && (
         <Icon src={Newsstand} className="mr-1" />
       )}
     />
@@ -262,6 +283,7 @@ const SubsectionCard = ({
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
+                onClickSync={openSyncModal}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -273,6 +295,7 @@ const SubsectionCard = ({
                 proctoringExamConfigurationLink={proctoringExamConfigurationLink}
                 isSequential
                 extraActionsComponent={extraActionsComponent}
+                readyToSync={upstreamInfo?.readyToSync}
               />
               <div className="subsection-card__content item-children" data-testid="subsection-card__content">
                 <XBlockStatus
@@ -325,6 +348,14 @@ const SubsectionCard = ({
           visibleTabs={[ContentType.units]}
         />
       </StandardModal>
+      {blockSyncData && (
+        <PreviewLibraryXBlockChanges
+          blockData={blockSyncData}
+          isModalOpen={isSyncModalOpen}
+          closeModal={closeSyncModal}
+          postChange={handleOnPostChangeSync}
+        />
+      )}
     </>
   );
 };
