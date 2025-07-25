@@ -1,17 +1,17 @@
-import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { initializeMocks, render } from '../../testUtils';
 
 import { teamGroupsMock } from '../__mocks__';
 import TeamGroupsSection from '.';
 
-const renderComponent = (props = {}) => render(
-  <IntlProvider locale="en">
+const renderComponent = (props = {}) => {
+  initializeMocks();
+  return render(
     <TeamGroupsSection
       availableGroup={teamGroupsMock}
       {...props}
     />
-  </IntlProvider>,
-);
+  );
+};
 
 describe('<TeamGroupsSection />', () => {
   it('renders component correctly', () => {
