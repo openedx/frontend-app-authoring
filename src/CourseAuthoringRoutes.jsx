@@ -17,7 +17,7 @@ import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
-import { CourseUnit } from './course-unit';
+import { CourseUnit, SubsectionUnitRedirect } from './course-unit';
 import { Certificates } from './certificates';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseOptimizerPage from './optimizer-page/CourseOptimizerPage';
@@ -81,6 +81,10 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="custom-pages/*"
           element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="/subsection/:subsectionId"
+          element={<PageWrap><SubsectionUnitRedirect courseId={courseId} /></PageWrap>}
         />
         {DECODED_ROUTES.COURSE_UNIT.map((path) => (
           <Route
