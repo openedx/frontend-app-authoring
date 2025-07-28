@@ -228,7 +228,7 @@ const PSCourseForm = ({
 
     try {
       setIsSubmitting(true); // Show loader and disable button
-      const response = await getAuthenticatedHttpClient().post('http://studio.local.openedx.io:8001/titaned/api/v1/create-course/', editedValues);
+      const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', editedValues);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to save course data');
