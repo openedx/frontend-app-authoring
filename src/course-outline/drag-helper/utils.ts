@@ -1,24 +1,26 @@
+import { Active, Over } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { XBlock } from '@src/data/types';
 
 export const dragHelpers = {
-  copyBlockChildren: (block) => {
+  copyBlockChildren: (block: XBlock) => {
     // eslint-disable-next-line no-param-reassign
     block.childInfo = { ...block.childInfo };
     // eslint-disable-next-line no-param-reassign
     block.childInfo.children = [...block.childInfo.children];
     return block;
   },
-  setBlockChildren: (block, children) => {
+  setBlockChildren: (block: XBlock, children: XBlock[]) => {
     // eslint-disable-next-line no-param-reassign
     block.childInfo.children = children;
     return block;
   },
-  setBlockChild: (block, child, id) => {
+  setBlockChild: (block: XBlock, child: XBlock, id: number) => {
     // eslint-disable-next-line no-param-reassign
     block.childInfo.children[id] = child;
     return block;
   },
-  insertChild: (block, child, index) => {
+  insertChild: (block: XBlock, child: XBlock, index: number) => {
     // eslint-disable-next-line no-param-reassign
     block.childInfo.children = [
       ...block.childInfo.children.slice(0, index),
@@ -27,18 +29,18 @@ export const dragHelpers = {
     ];
     return block;
   },
-  isBelowOverItem: (active, over) => over
+  isBelowOverItem: (active: Active, over: Over) => over
       && active.rect.current.translated
       && active.rect.current.translated.top
         > over.rect.top + over.rect.height,
 };
 
 export const moveSubsectionOver = (
-  prevCopy,
-  activeSectionIdx,
-  activeSubsectionIdx,
-  overSectionIdx,
-  newIndex,
+  prevCopy: XBlock[],
+  activeSectionIdx: number,
+  activeSubsectionIdx: number,
+  overSectionIdx: number,
+  newIndex: number,
 ) => {
   let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
   let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[overSectionIdx] });
@@ -59,13 +61,13 @@ export const moveSubsectionOver = (
 };
 
 export const moveUnitOver = (
-  prevCopy,
-  activeSectionIdx,
-  activeSubsectionIdx,
-  activeUnitIdx,
-  overSectionIdx,
-  overSubsectionIdx,
-  newIndex,
+  prevCopy: XBlock[],
+  activeSectionIdx: number,
+  activeSubsectionIdx: number,
+  activeUnitIdx: number,
+  overSectionIdx: number,
+  overSubsectionIdx: number,
+  newIndex: number,
 ) => {
   const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
   let activeSubsection = dragHelpers.copyBlockChildren(
@@ -99,10 +101,10 @@ export const moveUnitOver = (
 };
 
 export const moveSubsection = (
-  prevCopy,
-  sectionIdx,
-  currentIdx,
-  newIdx,
+  prevCopy: XBlock[],
+  sectionIdx: number,
+  currentIdx: number,
+  newIdx: number,
 ) => {
   let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
 
@@ -115,11 +117,11 @@ export const moveSubsection = (
 };
 
 export const moveUnit = (
-  prevCopy,
-  sectionIdx,
-  subsectionIdx,
-  currentIdx,
-  newIdx,
+  prevCopy: XBlock[],
+  sectionIdx: number,
+  subsectionIdx: number,
+  currentIdx: number,
+  newIdx: number,
 ) => {
   let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
   let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[subsectionIdx] });
@@ -139,10 +141,8 @@ export const moveUnit = (
  * is out of bounds of item length.
  * If it is within bounds, returns draggable flag of the item in the new index.
  * This helps us avoid moving the item to a position of unmovable item.
- * @param {Array} items
- * @returns {(id, step) => bool}
  */
-export const canMoveSection = (sections) => (id, step) => {
+export const canMoveSection = (sections: XBlock[]) => (id: number, step: number) => {
   const newId = id + step;
   const indexCheck = newId >= 0 && newId < sections.length;
   if (!indexCheck) {
@@ -152,7 +152,12 @@ export const canMoveSection = (sections) => (id, step) => {
   return newItem.actions.draggable;
 };
 
-export const possibleSubsectionMoves = (sections, sectionIndex, section, subsections) => (index, step) => {
+export const possibleSubsectionMoves = (
+  sections: XBlock[],
+  sectionIndex: number,
+  section: XBlock,
+  subsections: string | any[]
+) => (index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
     return {};
   }
@@ -207,13 +212,13 @@ export const possibleSubsectionMoves = (sections, sectionIndex, section, subsect
 };
 
 export const possibleUnitMoves = (
-  sections,
-  sectionIndex,
-  subsectionIndex,
-  section,
-  subsection,
-  units,
-) => (index, step) => {
+  sections: XBlock[],
+  sectionIndex: number,
+  subsectionIndex: number,
+  section: XBlock,
+  subsection: XBlock,
+  units: string | any[],
+) => (index: number, step: number) => {
   if (!units[index].actions.draggable) {
     return {};
   }
