@@ -55,6 +55,7 @@ export interface PublishableEntityLinkSummary {
 export const getEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
+  useTopLevelParents?: boolean,
   upstreamKey?: string,
   contentType?: 'all' | 'components' | 'containers',
 ): Promise<PublishableEntityLink[]> => {
@@ -64,6 +65,7 @@ export const getEntityLinks = async (
         course_id: downstreamContextKey,
         ready_to_sync: readyToSync,
         upstream_key: upstreamKey,
+        use_top_level_parents: useTopLevelParents,
         item_type: contentType,
         no_page: true,
       },

@@ -771,6 +771,7 @@ mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockIm
 export async function mockGetEntityLinks(
   _downstreamContextKey?: string,
   _readyToSync?: boolean,
+  _useTopLevelParents?: boolean,
   upstreamKey?: string,
   contentType?: 'all' | 'components' | 'containers',
 ): ReturnType<typeof courseLibApi.getEntityLinks> {

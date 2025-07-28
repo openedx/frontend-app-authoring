@@ -34,10 +34,11 @@ export const courseLibrariesQueryKeys = {
 };
 
 export const useEntityLinks = ({
-  courseId, readyToSync, upstreamKey, contentType,
+  courseId, readyToSync, useTopLevelParents, upstreamKey, contentType,
 }: {
   courseId?: string,
   readyToSync?: boolean,
+  useTopLevelParents?: boolean,
   upstreamKey?: string,
   contentType?: 'all' | 'components' | 'containers',
 }) => (
@@ -51,6 +52,7 @@ export const useEntityLinks = ({
     queryFn: () => getEntityLinks(
       courseId,
       readyToSync,
+      useTopLevelParents,
       upstreamKey,
       contentType,
     ),

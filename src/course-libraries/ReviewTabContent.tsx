@@ -43,7 +43,7 @@ interface Props {
 
 interface ItemCardProps {
   info: ContentHit;
-  itemType: 'component' | 'container';
+  itemType: string;
   actions?: React.ReactNode;
   libraryName?: string;
 }
@@ -171,7 +171,7 @@ const ItemReviewList = ({
       downstreamBlockId: info.usageKey,
       upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
       upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
-      isVertical: info.blockType === 'vertical',
+      isContainer: info.blockType === 'vertical' || info.blockType === 'sequencial' || info.blockType === 'chapter',
     });
   }, [outOfSyncItemsByKey]);
 
@@ -316,7 +316,11 @@ const ReviewTabContent = ({ courseId }: Props) => {
     isLoading: isSyncItemsLoading,
     isError,
     error,
-  } = useEntityLinks({ courseId, readyToSync: true });
+  } = useEntityLinks({
+    courseId,
+    readyToSync: true,
+    useTopLevelParents: true,
+  });
 
   const downstreamKeys = useMemo(
     () => outOfSyncItems?.map(link => link.downstreamUsageKey),
