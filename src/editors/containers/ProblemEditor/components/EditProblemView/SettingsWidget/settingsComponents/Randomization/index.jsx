@@ -1,5 +1,5 @@
 import React from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../../SettingsOption';
@@ -12,8 +12,8 @@ export const RandomizationCard = ({
   defaultValue,
   updateSettings,
   // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const curretRandomization = randomization || defaultValue;
   const { summary, handleChange } = useRandomizationSettingStatus({
     randomization: curretRandomization,
@@ -56,7 +56,6 @@ RandomizationCard.propTypes = {
   defaultValue: PropTypes.string.isRequired,
   randomization: PropTypes.string.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(RandomizationCard);
+export default RandomizationCard;
