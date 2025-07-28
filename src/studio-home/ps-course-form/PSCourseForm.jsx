@@ -89,10 +89,10 @@ const PSCourseForm = ({
     const fetchOrganizations = async () => {
       try {
         const response = await getAuthenticatedHttpClient().get('https://studio.staging.titaned.com/organizations');
-        // console.log('allowedOrganizations', response);
+        console.log('allowedOrganizations response', response);
         // Transform the response to match the expected format
-        const organizations = response.data || [];
-        setAllowedOrganizations(organizations);
+        // const organizations = response.data || [];
+        setAllowedOrganizations(response);
         console.log('allowedOrganizations', allowedOrganizations);
       } catch (error) {
         console.error('Error fetching organizations:', error);
@@ -217,6 +217,48 @@ const PSCourseForm = ({
     validateForm();
   };
 
+  const transformFormDataToApiPayload = (formData) => {
+    // Convert date objects to ISO strings if they exist
+    const formatDate = (date) => {
+      if (!date) { return null; }
+      return new Date(date).toISOString();
+    };
+
+    return {
+      display_name: formData.title || '',
+      org: formData.organization || '',
+      number: formData.courseNumber || '',
+      run: formData.courseRun || '',
+      start_date: formatDate(formData.startDate),
+      end_date: formatDate(formData.endDate),
+      enrollment_start: formatDate(formData.enrollmentStartDate),
+      enrollment_end: formatDate(formData.enrollmentEndDate),
+      title: formData.title || '',
+      description: formData.description || '',
+      short_description: formData.shortDescription || '',
+      subtitle: '',
+      duration: formData.duration || '',
+      intro_video: formData.introVideo || 'None',
+      course_image_name: formData.cardImage?.name || '',
+      course_image_asset_path: formData.cardImageAssetPath || '',
+      banner_image_name: formData.bannerImage?.name || '',
+      banner_image_asset_path: formData.bannerImageAssetPath || '',
+      video_thumbnail_image_name: formData.cardImage?.name || '',
+      video_thumbnail_image_asset_path: formData.cardImageAssetPath || '',
+      self_paced: formData.coursePacing === 'self',
+      effort: formData.hoursOfEffort || 'None',
+      pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
+      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
+      entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '70',
+      language: formData.language || 'en',
+      price: formData.pricingModel === 'paid' ? formData.price : '',
+      amount: formData.pricingModel === 'paid' ? formData.price : '',
+      license: formData.license || 'all-rights-reserved',
+      overview: formData.description || '',
+      learning_info: [],
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
@@ -228,7 +270,9 @@ const PSCourseForm = ({
 
     try {
       setIsSubmitting(true); // Show loader and disable button
-      const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', editedValues);
+      const apiPayload = transformFormDataToApiPayload(editedValues);
+      console.log('API Payload:', apiPayload);
+      const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to save course data');
