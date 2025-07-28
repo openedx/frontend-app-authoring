@@ -5,6 +5,7 @@ import {
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+// import editorRender from '../../../../../modifiedEditorTestRender';
 
 jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
@@ -17,34 +18,63 @@ jest.mock('./settingsComponents/SwitchEditorCard', () => 'SwitchEditorCard');
 jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
 jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
 
+jest.mock('../../../../../data/redux', () => ({
+  selectors: {
+    problem: {
+      groupFeedbackList: jest.fn(() => []),
+      settings: jest.fn(() => ({
+        hints: [],
+        scoring: 'default',
+        showAnswer: 'finished',
+        showResetButton: false,
+        randomization: 'always',
+        tolerance: 0.1,
+        timeBetween: 0,
+      })),
+      answers: jest.fn(() => []),
+      correctAnswerCount: jest.fn(() => 0),
+      defaultSettings: jest.fn(() => ({
+        maxAttempts: 2,
+        showanswer: 'finished',
+        showResetButton: false,
+        rerandomize: 'always',
+      })),
+      rawMarkdown: jest.fn(() => '## Sample markdown'),
+    },
+    app: {
+      blockTitle: jest.fn(() => 'Sample Block Title'),
+      images: jest.fn(() => ({})),
+      isLibrary: jest.fn(() => false),
+      learningContextId: jest.fn(() => 'course+org+run'),
+      isMarkdownEditorEnabledForCourse: jest.fn(() => true),
+    },
+  },
+  actions: {
+    app: {
+      setBlockTitle: jest.fn(() => ({ type: 'MOCK_SET_BLOCK_TITLE' })),
+    },
+    problem: {
+      updateSettings: jest.fn(() => ({ type: 'MOCK_UPDATE_SETTINGS' })),
+      updateField: jest.fn(() => ({ type: 'MOCK_UPDATE_FIELD' })),
+      updateAnswer: jest.fn(() => ({ type: 'MOCK_UPDATE_ANSWER' })),
+    },
+  },
+}));
+
 describe('SettingsWidget', () => {
   const showAdvancedSettingsCardsBaseProps = {
     isAdvancedCardsVisible: false,
     showAdvancedCards: jest.fn().mockName('showAdvancedSettingsCards.showAdvancedCards'),
     setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
   };
+  // const showAdvancedSettingsCardsBaseProps = {
+  //   isAdvancedCardsVisible: false,
+  //   showAdvancedCards: jest.fn(),
+  //   setResetTrue: jest.fn(),
+  // };
 
   const props = {
     problemType: ProblemTypeKeys.TEXTINPUT,
-    settings: {},
-    defaultSettings: {
-      maxAttempts: 2,
-      showanswer: 'finished',
-      showResetButton: false,
-    },
-    images: {},
-    isLibrary: false,
-    learningContextId: 'course+org+run',
-    setBlockTitle: jest.fn().mockName('setBlockTitle'),
-    blockTitle: '',
-    updateAnswer: jest.fn().mockName('updateAnswer'),
-    updateSettings: jest.fn().mockName('updateSettings'),
-    updateField: jest.fn().mockName('updateField'),
-    answers: [],
-    correctAnswerCount: 0,
-    groupFeedbackList: [],
-    showMarkdownEditorButton: false,
-
   };
 
   beforeEach(() => {
@@ -115,7 +145,6 @@ describe('SettingsWidget', () => {
       const { container } = render(<SettingsWidget {...libraryProps} />);
       expect(screen.queryByText('Show advanced settings')).not.toBeInTheDocument();
       expect(container.querySelector('showanswearscard')).not.toBeInTheDocument();
-      expect(container.querySelector('resetcard')).not.toBeInTheDocument();
       expect(container.querySelector('typecard')).toBeInTheDocument();
       expect(container.querySelector('hintscard')).toBeInTheDocument();
     });

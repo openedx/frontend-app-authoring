@@ -1,36 +1,40 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { selectors } from '../../../../../data/redux';
 import messages from './messages';
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
+import {
+  prepareEditorRef,
+  replaceStaticWithAsset,
+} from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
-const QuestionWidget = ({
-  // redux
-  question,
-  learningContextId,
-  images,
-  isLibrary,
-  blockId,
-  // injected
-  intl,
-}) => {
+const QuestionWidget = () => {
+  const intl = useIntl();
+  const question = useSelector(selectors.problem.question);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const images = useSelector(selectors.app.images);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const blockId = useSelector(selectors.app.blockId);
+
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+
   const initialContent = question;
   const newContent = replaceStaticWithAsset({
     initialContent,
     learningContextId,
   });
   const questionContent = newContent || initialContent;
+
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
+
   if (!refReady) { return null; }
+
   return (
     <div className="tinyMceWidget">
       <div className="h4 mb-3">
@@ -55,23 +59,4 @@ const QuestionWidget = ({
   );
 };
 
-QuestionWidget.propTypes = {
-  // redux
-  question: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  images: PropTypes.shape({}).isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-  blockId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
-};
-export const mapStateToProps = (state) => ({
-  question: selectors.problem.question(state),
-  learningContextId: selectors.app.learningContextId(state),
-  images: selectors.app.images(state),
-  isLibrary: selectors.app.isLibrary(state),
-  blockId: selectors.app.blockId(state),
-});
-
-export const QuestionWidgetInternal = QuestionWidget; // For testing only
-export default injectIntl(connect(mapStateToProps)(QuestionWidget));
+export default QuestionWidget;

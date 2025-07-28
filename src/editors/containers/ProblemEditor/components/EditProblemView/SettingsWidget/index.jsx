@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { connect } from 'react-redux';
 import {
   Button, Collapsible,
 } from '@openedx/paragon';
@@ -17,44 +17,60 @@ import GroupFeedbackCard from './settingsComponents/GroupFeedback/index';
 import SwitchEditorCard from './settingsComponents/SwitchEditorCard';
 import messages from './messages';
 import { showAdvancedSettingsCards } from './hooks';
-
-import './index.scss';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import Randomization from './settingsComponents/Randomization';
 
-// This widget should be connected, grab all settings from store, update them as needed.
+import './index.scss';
+
 const SettingsWidget = ({
   problemType,
-  // redux
-  answers,
-  groupFeedbackList,
-  blockTitle,
-  correctAnswerCount,
-  settings,
-  setBlockTitle,
-  updateSettings,
-  updateField,
-  updateAnswer,
-  defaultSettings,
-  images,
-  isLibrary,
-  learningContextId,
-  showMarkdownEditorButton,
 }) => {
+  const dispatch = useDispatch();
+  const {
+    groupFeedbackList,
+    settings,
+    answers,
+    blockTitle,
+    correctAnswerCount,
+    defaultSettings,
+    images,
+    isLibrary,
+    learningContextId,
+    showMarkdownEditorButton,
+  } = useSelector((state) => ({
+    groupFeedbackList: selectors.problem.groupFeedbackList(state),
+    settings: selectors.problem.settings(state),
+    answers: selectors.problem.answers(state),
+    blockTitle: selectors.app.blockTitle(state),
+    correctAnswerCount: selectors.problem.correctAnswerCount(state),
+    defaultSettings: selectors.problem.defaultSettings(state),
+    images: selectors.app.images(state),
+    isLibrary: selectors.app.isLibrary(state),
+    learningContextId: selectors.app.learningContextId(state),
+    showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state)
+      && selectors.problem.rawMarkdown(state),
+  }));
+
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
+
+  const setBlockTitle = (title) => dispatch(actions.app.setBlockTitle(title));
+  const updateSettings = (newSettings) => dispatch(actions.problem.updateSettings(newSettings));
+  const updateField = (fieldName, value) => dispatch(actions.problem.updateField(fieldName, value));
+  const updateAnswer = (index, update) => dispatch(actions.problem.updateAnswer(index, update));
+
   const feedbackCard = () => {
-    if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
+    if (problemType === ProblemTypeKeys.MULTISELECT) {
       return (
-        <div className="mt-3"><GroupFeedbackCard
-          groupFeedbacks={groupFeedbackList}
-          updateSettings={updateField}
-          answers={answers}
-        />
+        <div className="mt-3">
+          <GroupFeedbackCard
+            groupFeedbacks={groupFeedbackList}
+            updateSettings={updateField}
+            answers={answers}
+          />
         </div>
       );
     }
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return (<></>);
+    return null;
   };
 
   return (
@@ -70,17 +86,18 @@ const SettingsWidget = ({
           updateAnswer={updateAnswer}
         />
       </div>
-      {ProblemTypeKeys.NUMERIC === problemType
-          && (
-          <div className="my-3">
-            <ToleranceCard
-              updateSettings={updateSettings}
-              answers={answers}
-              tolerance={settings.tolerance}
-              correctAnswerCount={correctAnswerCount}
-            />
-          </div>
-          )}
+
+      {problemType === ProblemTypeKeys.NUMERIC && (
+        <div className="my-3">
+          <ToleranceCard
+            updateSettings={updateSettings}
+            answers={answers}
+            tolerance={settings.tolerance}
+            correctAnswerCount={correctAnswerCount}
+          />
+        </div>
+      )}
+
       {!isLibrary && (
         <div className="my-3">
           <ScoringCard
@@ -90,19 +107,20 @@ const SettingsWidget = ({
           />
         </div>
       )}
+
       <div className="mt-3">
         <HintsCard
           problemType={problemType}
           hints={settings.hints}
           updateSettings={updateSettings}
-          {...{
-            images,
-            isLibrary,
-            learningContextId,
-          }}
+          images={images}
+          isLibrary={isLibrary}
+          learningContextId={learningContextId}
         />
       </div>
+
       {feedbackCard()}
+
       <div>
         <Collapsible.Advanced open={!isAdvancedCardsVisible}>
           <Collapsible.Body className="collapsible-body small">
@@ -117,6 +135,7 @@ const SettingsWidget = ({
           </Collapsible.Body>
         </Collapsible.Advanced>
       </div>
+
       <Collapsible.Advanced open={isAdvancedCardsVisible}>
         <Collapsible.Body className="collapsible-body">
           {!isLibrary && (
@@ -137,8 +156,7 @@ const SettingsWidget = ({
               />
             </div>
           )}
-          {
-            problemType === ProblemTypeKeys.ADVANCED && (
+          {problemType === ProblemTypeKeys.ADVANCED && (
             <div className="my-3">
               <Randomization
                 randomization={settings.randomization}
@@ -146,21 +164,22 @@ const SettingsWidget = ({
                 updateSettings={updateSettings}
               />
             </div>
-            )
-          }
+          )}
           {!isLibrary && (
             <div className="my-3">
-              <TimerCard timeBetween={settings.timeBetween} updateSettings={updateSettings} />
+              <TimerCard
+                timeBetween={settings.timeBetween}
+                updateSettings={updateSettings}
+              />
             </div>
           )}
           <div className="my-3">
             <SwitchEditorCard problemType={problemType} editorType="advanced" />
           </div>
-          { showMarkdownEditorButton
-          && (
-          <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="markdown" />
-          </div>
+          {showMarkdownEditorButton && (
+            <div className="my-3">
+              <SwitchEditorCard problemType={problemType} editorType="markdown" />
+            </div>
           )}
         </Collapsible.Body>
       </Collapsible.Advanced>
@@ -169,63 +188,8 @@ const SettingsWidget = ({
 };
 
 SettingsWidget.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.shape({
-    correct: PropTypes.bool,
-    id: PropTypes.string,
-    selectedFeedback: PropTypes.string,
-    title: PropTypes.string,
-    unselectedFeedback: PropTypes.string,
-  })).isRequired,
-  groupFeedbackList: PropTypes.arrayOf(
-    PropTypes.shape(
-      {
-        id: PropTypes.number,
-        feedback: PropTypes.string,
-        answers: PropTypes.arrayOf(PropTypes.string),
-      },
-    ),
-  ).isRequired,
-  blockTitle: PropTypes.string.isRequired,
-  correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
-  setBlockTitle: PropTypes.func.isRequired,
-  updateAnswer: PropTypes.func.isRequired,
-  updateField: PropTypes.func.isRequired,
-  updateSettings: PropTypes.func.isRequired,
-  defaultSettings: PropTypes.shape({
-    maxAttempts: PropTypes.number,
-    showanswer: PropTypes.string,
-    showResetButton: PropTypes.bool,
-    rerandomize: PropTypes.string,
-  }).isRequired,
-  images: PropTypes.shape({}).isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-  // eslint-disable-next-line
-  settings: PropTypes.any.isRequired,
-  showMarkdownEditorButton: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  groupFeedbackList: selectors.problem.groupFeedbackList(state),
-  settings: selectors.problem.settings(state),
-  answers: selectors.problem.answers(state),
-  blockTitle: selectors.app.blockTitle(state),
-  correctAnswerCount: selectors.problem.correctAnswerCount(state),
-  defaultSettings: selectors.problem.defaultSettings(state),
-  images: selectors.app.images(state),
-  isLibrary: selectors.app.isLibrary(state),
-  learningContextId: selectors.app.learningContextId(state),
-  showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state)
-  && selectors.problem.rawMarkdown(state),
-});
-
-export const mapDispatchToProps = {
-  setBlockTitle: actions.app.setBlockTitle,
-  updateSettings: actions.problem.updateSettings,
-  updateField: actions.problem.updateField,
-  updateAnswer: actions.problem.updateAnswer,
-};
-
-export const SettingsWidgetInternal = SettingsWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SettingsWidget));
+export const SettingsWidgetInternal = SettingsWidget; // For testing
+export default injectIntl(SettingsWidget);
