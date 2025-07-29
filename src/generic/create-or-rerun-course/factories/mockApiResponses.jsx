@@ -1,5 +1,5 @@
-import { RequestStatus } from '../../../data/constants';
-import { studioHomeMock } from '../../../studio-home/__mocks__';
+import { RequestStatus } from '@src/data/constants';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 
 export const courseId = 'course-v1:edX+DemoX+Demo_Course';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Row } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
@@ -14,9 +14,8 @@ const LibrariesTab = ({
   libraries,
   isLoading,
   isFailed,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   if (isLoading) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
@@ -65,8 +64,6 @@ LibrariesTab.propTypes = {
   ).isRequired,
   isLoading: PropTypes.bool.isRequired,
   isFailed: PropTypes.bool.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(LibrariesTab);
+export default LibrariesTab;

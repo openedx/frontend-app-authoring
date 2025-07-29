@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '../../testUtils';
 import { ErrorPageInternal as ErrorPage } from './ErrorPage';
 
 jest.mock('../../data/redux', () => ({
@@ -15,13 +14,11 @@ describe('Editor Page', () => {
   const emptyProps = {
     learningContextId: 'course-v1:edX+DemoX+Demo_Course',
     studioEndpointUrl: 'fakeurl.com',
-    intl: { formatMessage },
   };
   const passedProps = {
     learningContextId: 'course-v1:edX+DemoX+Demo_Course',
     studioEndpointUrl: 'fakeurl.com',
     message: 'cUStomMEssagE',
-    intl: { formatMessage },
   };
   const unitData = {
     data: {

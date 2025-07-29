@@ -73,7 +73,8 @@ describe('<MoveModal />', () => {
     expect(getByText('Loading...')).toBeInTheDocument();
   });
 
-  it('renders component properly', () => {
+  it('renders component properly', async () => {
+    const user = userEvent.setup();
     const { getByText, getByRole, getByTestId } = renderComponent();
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
@@ -88,11 +89,12 @@ describe('<MoveModal />', () => {
     expect(getByRole('button', { name: messages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
 
-    userEvent.click(getByRole('button', { name: messages.moveModalCancelButton.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.moveModalCancelButton.defaultMessage }));
     expect(closeModalMockFn).toHaveBeenCalledTimes(1);
   });
 
   it('correctly navigates through the structure list', async () => {
+    const user = userEvent.setup();
     const { getByText, getByRole, getByTestId } = renderComponent();
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
@@ -106,7 +108,7 @@ describe('<MoveModal />', () => {
     sections.forEach((section) => {
       expect(getByText(section.displayName)).toBeInTheDocument();
     });
-    userEvent.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
+    await user.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
     await waitFor(() => {
       expect(
         within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage),
@@ -116,7 +118,7 @@ describe('<MoveModal />', () => {
         expect(getByRole('button', { name: new RegExp(subsection.displayName, 'i') })).toBeInTheDocument();
       });
     });
-    userEvent.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
+    await user.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
     await waitFor(() => {
       expect(
         within(categoryIndicator).getByText(messages.moveModalBreadcrumbsUnits.defaultMessage),
@@ -126,7 +128,7 @@ describe('<MoveModal />', () => {
         expect(getByRole('button', { name: new RegExp(unit.displayName, 'i') })).toBeInTheDocument();
       });
     });
-    userEvent.click(getByRole('button', { name: new RegExp(units[0].displayName, 'i') }));
+    await user.click(getByRole('button', { name: new RegExp(units[0].displayName, 'i') }));
     await waitFor(() => {
       expect(
         within(categoryIndicator).getByText(messages.moveModalBreadcrumbsComponents.defaultMessage),
@@ -141,15 +143,14 @@ describe('<MoveModal />', () => {
   });
 
   it('correctly navigates using breadcrumbs', async () => {
-    const { getByRole, getByTestId } = renderComponent();
+    const user = userEvent.setup();
+    const { getByRole, findByRole, getByTestId } = renderComponent();
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    await waitFor(() => {
-      userEvent.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
-      userEvent.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
-      userEvent.click(within(breadcrumbs).getByText(sections[1].displayName));
-    });
+    await user.click(await findByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
+    await user.click(await findByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
+    await user.click(within(breadcrumbs).getByText(sections[1].displayName));
 
     await waitFor(() => {
       expect(
@@ -163,16 +164,17 @@ describe('<MoveModal />', () => {
   });
 
   it('renders empty message when no components are provided', async () => {
+    const user = userEvent.setup();
     const { getByText, getByRole } = renderComponent();
 
-    await waitFor(() => {
-      userEvent.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
-      userEvent.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
+    await waitFor(async () => {
+      await user.click(getByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));
+      await user.click(getByRole('button', { name: new RegExp(subsections[1].displayName, 'i') }));
     });
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const unitBtn = getByRole('button', { name: new RegExp(units[7].displayName, 'i') });
-      userEvent.click(unitBtn);
+      await user.click(unitBtn);
     });
 
     await waitFor(() => {

@@ -88,20 +88,22 @@ describe('CertificateSignatories', () => {
     });
   });
 
-  it('adds a new signatory when add button is clicked', () => {
+  it('adds a new signatory when add button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = renderComponent({ ...defaultProps, isForm: true });
 
-    userEvent.click(getByText(messages.addSignatoryButton.defaultMessage));
+    await user.click(getByText(messages.addSignatoryButton.defaultMessage));
     expect(useCreateSignatory().handleAddSignatory).toHaveBeenCalled();
   });
 
   it('calls remove for the correct signatory when delete icon is clicked', async () => {
+    const user = userEvent.setup();
     const { getAllByRole } = renderComponent(defaultProps);
 
     const deleteIcons = getAllByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
     expect(deleteIcons.length).toBe(signatoriesMock.length);
 
-    userEvent.click(deleteIcons[0]);
+    await user.click(deleteIcons[0]);
 
     waitFor(() => {
       expect(mockArrayHelpers.remove).toHaveBeenCalledWith(0);

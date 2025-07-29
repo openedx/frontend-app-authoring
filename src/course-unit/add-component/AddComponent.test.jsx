@@ -169,25 +169,26 @@ describe('<AddComponent />', () => {
         ],
       });
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const customComponentButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Custom`, 'i'),
     });
 
-    userEvent.click(customComponentButton);
+    await user.click(customComponentButton);
     expect(handleCreateNewCourseXBlockMock).not.toHaveBeenCalled();
   });
 
-  it('calls handleCreateNewCourseXblock with correct parameters when Discussion xblock create button is clicked', () => {
+  it('calls handleCreateNewCourseXblock with correct parameters when Discussion xblock create button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Discussion`, 'i'),
     });
 
-    userEvent.click(discussionButton);
+    await user.click(discussionButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -195,14 +196,15 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('calls handleCreateNewCourseXblock with correct parameters when Drag-and-Drop xblock create button is clicked', () => {
+  it('calls handleCreateNewCourseXblock with correct parameters when Drag-and-Drop xblock create button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Drag and Drop`, 'i'),
     });
 
-    userEvent.click(discussionButton);
+    await user.click(discussionButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -210,14 +212,15 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('calls handleCreateNewCourseXBlock with correct parameters when Problem xblock create button is clicked', () => {
+  it('calls handleCreateNewCourseXBlock with correct parameters when Problem xblock create button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
       name: new RegExp(`problem ${messages.buttonText.defaultMessage} Problem`, 'i'),
     });
 
-    userEvent.click(discussionButton);
+    await user.click(discussionButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -225,14 +228,15 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
-  it('calls handleCreateNewCourseXBlock with correct parameters when Problem bank xblock create button is clicked', () => {
+  it('calls handleCreateNewCourseXBlock with correct parameters when Problem bank xblock create button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const problemBankBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Problem Bank`, 'i'),
     });
 
-    userEvent.click(problemBankBtn);
+    await user.click(problemBankBtn);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -241,14 +245,15 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('calls handleCreateNewCourseXBlock with correct parameters when Video xblock create button is clicked', () => {
+  it('calls handleCreateNewCourseXBlock with correct parameters when Video xblock create button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
     });
 
-    userEvent.click(discussionButton);
+    await user.click(discussionButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -256,14 +261,15 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
-  it('creates new "Library" xblock on click', () => {
+  it('creates new "Library" xblock on click', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const libraryButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Legacy Library Content`, 'i'),
     });
 
-    userEvent.click(libraryButton);
+    await user.click(libraryButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -273,31 +279,33 @@ describe('<AddComponent />', () => {
   });
 
   it('verifies modal behavior on button click', async () => {
+    const user = userEvent.setup();
     const { getByRole, queryByRole } = renderComponent();
     const advancedBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
     });
 
-    userEvent.click(advancedBtn);
+    await user.click(advancedBtn);
     const modalContainer = getByRole('dialog');
 
     expect(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage })).toBeInTheDocument();
     expect(within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage })).toBeInTheDocument();
 
-    userEvent.click(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage }));
+    await user.click(within(modalContainer).getByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage }));
 
     expect(queryByRole('button', { name: messages.modalContainerCancelBtnText.defaultMessage })).toBeNull();
     expect(queryByRole('button', { name: messages.modalBtnText.defaultMessage })).toBeNull();
   });
 
   it('verifies "Advanced" component selection in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent();
     const advancedBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
     });
     const componentTemplates = courseSectionVerticalMock.component_templates;
 
-    userEvent.click(advancedBtn);
+    await user.click(advancedBtn);
     const modalContainer = getByRole('dialog');
 
     await waitFor(() => {
@@ -313,12 +321,13 @@ describe('<AddComponent />', () => {
   });
 
   it('verifies "Text" component selection in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent();
     const textBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Text`, 'i'),
     });
     const componentTemplates = courseSectionVerticalMock.component_templates;
-    userEvent.click(textBtn);
+    await user.click(textBtn);
     const modalContainer = getByRole('dialog');
 
     await waitFor(() => {
@@ -334,13 +343,14 @@ describe('<AddComponent />', () => {
   });
 
   it('verifies "Open Response" component selection in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByText } = renderComponent();
     const openResponseBtn = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Open Response`, 'i'),
     });
     const componentTemplates = courseSectionVerticalMock.component_templates;
 
-    userEvent.click(openResponseBtn);
+    await user.click(openResponseBtn);
     const modalContainer = getByRole('dialog');
 
     await waitFor(() => {
@@ -355,23 +365,24 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('verifies "Advanced" component creation and submission in modal', () => {
+  it('verifies "Advanced" component creation and submission in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const advancedButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
     });
 
-    userEvent.click(advancedButton);
+    await user.click(advancedButton);
     const modalContainer = getByRole('dialog');
 
     const radioInput = within(modalContainer).getByRole('radio', { name: 'Annotation' });
     const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
 
     expect(sendBtn).toBeDisabled();
-    userEvent.click(radioInput);
+    await user.click(radioInput);
     expect(sendBtn).not.toBeDisabled();
 
-    userEvent.click(sendBtn);
+    await user.click(sendBtn);
 
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
@@ -381,23 +392,24 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('verifies "Text" component creation and submission in modal', () => {
+  it('verifies "Text" component creation and submission in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const textButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Text`, 'i'),
     });
 
-    userEvent.click(textButton);
+    await user.click(textButton);
     const modalContainer = getByRole('dialog');
 
     const radioInput = within(modalContainer).getByRole('radio', { name: 'Text' });
     const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
 
     expect(sendBtn).toBeDisabled();
-    userEvent.click(radioInput);
+    await user.click(radioInput);
     expect(sendBtn).not.toBeDisabled();
 
-    userEvent.click(sendBtn);
+    await user.click(sendBtn);
 
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
@@ -407,23 +419,24 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
-  it('verifies "Open Response" component creation and submission in modal', () => {
+  it('verifies "Open Response" component creation and submission in modal', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
     const openResponseButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Open Response`, 'i'),
     });
 
-    userEvent.click(openResponseButton);
+    await user.click(openResponseButton);
     const modalContainer = getByRole('dialog');
 
     const radioInput = within(modalContainer).getByRole('radio', { name: 'Peer Assessment Only' });
     const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
 
     expect(sendBtn).toBeDisabled();
-    userEvent.click(radioInput);
+    await user.click(radioInput);
     expect(sendBtn).not.toBeDisabled();
 
-    userEvent.click(sendBtn);
+    await user.click(sendBtn);
 
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
@@ -434,15 +447,16 @@ describe('<AddComponent />', () => {
   });
 
   it('shows library picker on clicking v2 library content btn', async () => {
+    const user = userEvent.setup();
     renderComponent();
     const libBtn = await screen.findByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Library content`, 'i'),
     });
-    userEvent.click(libBtn);
+    await user.click(libBtn);
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    userEvent.click(dummyBtn);
+    await user.click(dummyBtn);
 
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
@@ -454,21 +468,23 @@ describe('<AddComponent />', () => {
   });
 
   it('closes library component picker on close', async () => {
+    const user = userEvent.setup();
     renderComponent();
     const libBtn = await screen.findByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Library content`, 'i'),
     });
-    userEvent.click(libBtn);
+    await user.click(libBtn);
 
     expect(screen.queryByRole('button', { name: 'Dummy button' })).toBeInTheDocument();
     // click dummy button to execute onComponentSelected prop.
     const closeBtn = await screen.findByRole('button', { name: 'Close' });
-    userEvent.click(closeBtn);
+    await user.click(closeBtn);
 
     expect(screen.queryByRole('button', { name: 'Dummy button' })).not.toBeInTheDocument();
   });
 
   it('shows component picker on window message', async () => {
+    const user = userEvent.setup();
     renderComponent();
     const message = {
       data: {
@@ -482,10 +498,10 @@ describe('<AddComponent />', () => {
 
     // click dummy button to execute onChangeComponentSelection prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    userEvent.click(dummyBtn);
+    await user.click(dummyBtn);
 
     const submitBtn = await screen.findByRole('button', { name: 'Add selected components' });
-    userEvent.click(submitBtn);
+    await user.click(submitBtn);
 
     expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.addSelectedComponentsToBank, {
       selectedComponents: [{
@@ -522,13 +538,13 @@ describe('<AddComponent />', () => {
           ],
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-
+      const user = userEvent.setup();
       const { getByRole } = renderComponent();
       const advancedButton = getByRole('button', {
         name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
       });
 
-      userEvent.click(advancedButton);
+      await user.click(advancedButton);
       const modalContainer = getByRole('dialog');
       const fullySupportLabel = within(modalContainer)
         .queryByText(messages.modalComponentSupportLabelFullySupported.defaultMessage);
@@ -565,13 +581,13 @@ describe('<AddComponent />', () => {
           ],
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-
+      const user = userEvent.setup();
       const { getByRole, getByText } = renderComponent();
       const advancedButton = getByRole('button', {
         name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
       });
 
-      userEvent.click(advancedButton);
+      await user.click(advancedButton);
       const modalContainer = getByRole('dialog');
       const fullySupportLabel = within(modalContainer)
         .getByText(messages.modalComponentSupportLabelFullySupported.defaultMessage);
@@ -581,10 +597,10 @@ describe('<AddComponent />', () => {
       expect(fullySupportLabel).toBeInTheDocument();
       expect(provisionallySupportLabel).toBeInTheDocument();
 
-      userEvent.hover(fullySupportLabel);
+      await user.hover(fullySupportLabel);
       expect(getByText(messages.modalComponentSupportTooltipFullySupported.defaultMessage)).toBeInTheDocument();
 
-      userEvent.hover(provisionallySupportLabel);
+      await user.hover(provisionallySupportLabel);
       expect(getByText(messages.modalComponentSupportTooltipProvisionallySupported.defaultMessage)).toBeInTheDocument();
     });
   });

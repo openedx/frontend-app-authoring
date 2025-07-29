@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '@src/editors/testUtils';
 import { HandoutWidgetInternal as HandoutWidget } from '.';
 
 jest.mock('@src/editors/data/redux', () => ({
@@ -25,7 +24,6 @@ jest.mock('@src/editors/data/redux', () => ({
 
 describe('HandoutWidget', () => {
   const props = {
-    intl: { formatMessage },
     isLibrary: false,
     handout: '',
     isUploadError: false,

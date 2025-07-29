@@ -60,12 +60,13 @@ describe('Signatory Component', () => {
   });
 
   it('handles input change', async () => {
+    const user = userEvent.setup();
     const handleChange = jest.fn();
     const { getByPlaceholderText } = renderSignatory({ ...defaultProps, handleChange });
     const input = getByPlaceholderText(messages.namePlaceholder.defaultMessage);
     const newInputValue = 'Jane Doe';
 
-    userEvent.type(input, newInputValue, { name: 'signatories[0].name' });
+    await user.type(input, newInputValue, { name: 'signatories[0].name' });
 
     waitFor(() => {
       expect(handleChange).toHaveBeenCalledWith(expect.anything());
@@ -73,7 +74,8 @@ describe('Signatory Component', () => {
     });
   });
 
-  it('opens image upload modal on button click', () => {
+  it('opens image upload modal on button click', async () => {
+    const user = userEvent.setup();
     const { getByRole, queryByRole } = renderSignatory(defaultProps);
     const replaceButton = getByRole(
       'button',
@@ -82,28 +84,30 @@ describe('Signatory Component', () => {
 
     expect(queryByRole('presentation')).not.toBeInTheDocument();
 
-    userEvent.click(replaceButton);
+    await user.click(replaceButton);
 
     expect(getByRole('presentation')).toBeInTheDocument();
   });
 
   it('shows confirm modal on delete icon click', async () => {
+    const user = userEvent.setup();
     const { getByLabelText, getByText } = renderSignatory(defaultProps);
     const deleteIcon = getByLabelText(commonMessages.deleteTooltip.defaultMessage);
 
-    userEvent.click(deleteIcon);
+    await user.click(deleteIcon);
 
     expect(getByText(messages.deleteSignatoryConfirmationMessage.defaultMessage)).toBeInTheDocument();
   });
 
-  it('cancels deletion of a signatory', () => {
+  it('cancels deletion of a signatory', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderSignatory(defaultProps);
 
     const deleteIcon = getByRole('button', { name: commonMessages.deleteTooltip.defaultMessage });
-    userEvent.click(deleteIcon);
+    await user.click(deleteIcon);
 
     const cancelButton = getByRole('button', { name: commonMessages.cardCancel.defaultMessage });
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(defaultProps.handleDeleteSignatory).not.toHaveBeenCalled();
   });

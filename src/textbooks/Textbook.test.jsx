@@ -45,11 +45,12 @@ describe('<Textbooks />', () => {
   });
 
   it('renders textbooks form when "New textbooks" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByTestId, getByRole } = renderComponent();
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const newTextbookButton = getByRole('button', { name: messages.newTextbookButton.defaultMessage });
-      userEvent.click(newTextbookButton);
+      await user.click(newTextbookButton);
       expect(getByTestId('textbook-form')).toBeInTheDocument();
     });
   });

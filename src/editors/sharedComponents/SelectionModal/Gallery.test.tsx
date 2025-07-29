@@ -85,10 +85,11 @@ describe('Gallery', () => {
     expect(screen.getByText('GalleryCard 1')).toBeInTheDocument();
   });
 
-  it('GalleryLoadMoreButton receives correct props', () => {
+  it('GalleryLoadMoreButton receives correct props', async () => {
+    const user = userEvent.setup();
     render(<Gallery {...baseProps} allowLazyLoad isLibrary={false} assetCount={5} />);
     const btn = screen.getByRole('button', { name: /load more/i });
-    userEvent.click(btn);
+    await user.click(btn);
     expect(baseProps.fetchNextPage).toHaveBeenCalled();
   });
 });

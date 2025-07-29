@@ -47,16 +47,18 @@ describe('<ContentGroupsSection />', () => {
   });
 
   it('renders container with new group on create click if section is empty', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByTestId } = renderComponent({ availableGroup: {} });
-    userEvent.click(
+    await user.click(
       getByRole('button', { name: placeholderMessages.button.defaultMessage }),
     );
     expect(getByTestId('content-group-form')).toBeInTheDocument();
   });
 
   it('renders container with new group on create click if section has groups', async () => {
+    const user = userEvent.setup();
     const { getByRole, getByTestId } = renderComponent();
-    userEvent.click(
+    await user.click(
       getByRole('button', { name: messages.addNewGroup.defaultMessage }),
     );
     expect(getByTestId('content-group-form')).toBeInTheDocument();

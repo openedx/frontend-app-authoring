@@ -1,5 +1,4 @@
 import React from 'react';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import {
   Settings as SettingsIcon,
   ManageHistory as SuccessIcon,
@@ -115,4 +114,4 @@ CourseStepper.propTypes = {
   hasError: PropTypes.bool,
 };
 
-export default injectIntl(CourseStepper);
+export default CourseStepper;

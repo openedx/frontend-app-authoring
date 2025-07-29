@@ -64,10 +64,11 @@ describe('<SelectableBox.Set />', () => {
       expect(screen.getByText(checkboxText(1))).toBeInTheDocument();
     });
     it('renders with on change event', async () => {
+      const user = userEvent.setup();
       const onChangeSpy = jest.fn();
       render(<SelectableCheckboxSet onChange={onChangeSpy} />);
       const checkbox = screen.getByRole('button', { name: checkboxText(1) });
-      await userEvent.click(checkbox);
+      await await user.click(checkbox);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with checkbox type', () => {

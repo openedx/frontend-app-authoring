@@ -21,11 +21,12 @@ describe('<EmptyPlaceholder />', () => {
     expect(getByRole('button', { name: messages.button.defaultMessage })).toBeInTheDocument();
   });
 
-  it('calls the onCreateNewTextbook function when the button is clicked', () => {
+  it('calls the onCreateNewTextbook function when the button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const addButton = getByRole('button', { name: messages.button.defaultMessage });
-    userEvent.click(addButton);
+    await user.click(addButton);
     expect(onCreateNewTextbookMock).toHaveBeenCalledTimes(1);
   });
 });

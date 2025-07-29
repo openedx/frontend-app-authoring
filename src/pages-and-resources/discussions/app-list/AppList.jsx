@@ -1,7 +1,7 @@
 import React, {
   useCallback, useEffect, useMemo, useState, useContext,
 } from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
 } from '@openedx/paragon';
@@ -22,7 +22,8 @@ import { saveProviderConfig, fetchDiscussionSettings } from '../data/thunks';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import { discussionRestriction } from '../data/constants';
 
-const AppList = ({ intl }) => {
+const AppList = () => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const { courseId } = useContext(PagesAndResourcesContext);
   const {
@@ -190,11 +191,7 @@ const AppList = ({ intl }) => {
   );
 };
 
-AppList.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-const IntlAppList = injectIntl(AppList);
+const IntlAppList = AppList;
 
 IntlAppList.NextButton = AppListNextButton;
 

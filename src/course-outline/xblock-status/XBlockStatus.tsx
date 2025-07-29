@@ -1,6 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
+import { ShowAnswerTypesKeys } from '@src/editors/data/constants/problem';
+import { XBlock } from '@src/data/types';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import ReleaseStatus from './ReleaseStatus';
 import GradingPolicyAlert from './GradingPolicyAlert';
@@ -8,13 +7,18 @@ import GradingTypeAndDueDate from './GradingTypeAndDueDate';
 import StatusMessages from './StatusMessages';
 import HideAfterDueMessage from './HideAfterDueMessage';
 import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage';
-import { ShowAnswerTypesKeys } from '../../editors/data/constants/problem';
+
+interface XBlockStatusProps {
+  isSelfPaced: boolean;
+  isCustomRelativeDatesActive: boolean,
+  blockData: XBlock,
+}
 
 const XBlockStatus = ({
   isSelfPaced,
   isCustomRelativeDatesActive,
   blockData,
-}) => {
+}: XBlockStatusProps) => {
   const {
     category,
     explanatoryMessage,
@@ -87,43 +91,6 @@ const XBlockStatus = ({
       />
     </div>
   );
-};
-
-XBlockStatus.defaultProps = {
-  isCustomRelativeDatesActive: false,
-};
-
-XBlockStatus.propTypes = {
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool,
-  blockData: PropTypes.shape({
-    category: PropTypes.string.isRequired,
-    explanatoryMessage: PropTypes.string,
-    releasedToStudents: PropTypes.bool,
-    releaseDate: PropTypes.string,
-    isProctoredExam: PropTypes.bool,
-    isOnboardingExam: PropTypes.bool,
-    isPracticeExam: PropTypes.bool,
-    prereq: PropTypes.string,
-    prereqs: PropTypes.arrayOf(PropTypes.shape({
-      blockUsageKey: PropTypes.string.isRequired,
-      blockDisplayName: PropTypes.string.isRequired,
-    })),
-    staffOnlyMessage: PropTypes.bool,
-    userPartitionInfo: PropTypes.shape({
-      selectedPartitionIndex: PropTypes.number,
-      selectedGroupsLabel: PropTypes.string,
-    }),
-    hasPartitionGroupComponents: PropTypes.bool,
-    format: PropTypes.string,
-    dueDate: PropTypes.string,
-    relativeWeeksDue: PropTypes.number,
-    isTimeLimited: PropTypes.bool,
-    graded: PropTypes.bool,
-    courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired),
-    hideAfterDue: PropTypes.bool,
-    showCorrectness: PropTypes.string,
-  }).isRequired,
 };
 
 export default XBlockStatus;

@@ -111,11 +111,13 @@ describe('Certificates', () => {
       .reply(200, noCertificatesMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
+    const user = userEvent.setup();
+
     const { queryByTestId, getByTestId, getByRole } = renderComponent();
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const addCertificateButton = getByRole('button', { name: messages.setupCertificateBtn.defaultMessage });
-      userEvent.click(addCertificateButton);
+      await user.click(addCertificateButton);
     });
 
     expect(getByTestId('certificates-create-form')).toBeInTheDocument();
@@ -131,11 +133,13 @@ describe('Certificates', () => {
       .reply(200, certificatesDataMock);
     await executeThunk(fetchCertificates(courseId), store.dispatch);
 
+    const user = userEvent.setup();
+
     const { queryByTestId, getByTestId, getAllByLabelText } = renderComponent();
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const editCertificateButton = getAllByLabelText(messages.editTooltip.defaultMessage)[0];
-      userEvent.click(editCertificateButton);
+      await user.click(editCertificateButton);
     });
 
     expect(getByTestId('certificates-edit-form')).toBeInTheDocument();

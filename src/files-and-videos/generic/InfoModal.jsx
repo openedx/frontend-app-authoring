@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  injectIntl,
-  intlShape,
-  FormattedMessage,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Icon,
   ModalDialog,
@@ -28,9 +24,8 @@ const InfoModal = ({
   usagePathStatus,
   error,
   sidebar,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [activeTab, setActiveTab] = useState('fileInfo');
   const showTranscriptionError = TRANSCRIPT_FAILURE_STATUSES.includes(file?.transcriptionStatus)
     && activeTab !== 'fileInfo';
@@ -119,12 +114,10 @@ InfoModal.propTypes = {
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   sidebar: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 InfoModal.defaultProps = {
   file: null,
 };
 
-export default injectIntl(InfoModal);
+export default InfoModal;

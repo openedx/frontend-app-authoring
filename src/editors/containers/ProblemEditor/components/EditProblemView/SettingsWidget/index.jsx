@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {

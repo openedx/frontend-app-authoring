@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, initializeMocks } from '../../../../../testUtils';
-import editorRender from '../../../../modifiedEditorTestRender';
+import editorRender from '../../../../editorTestRender';
 import EditProblemView from './index';
 import { initializeStore } from '../../../../data/redux';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';

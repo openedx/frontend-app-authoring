@@ -191,6 +191,7 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should open and close the unit sidebar', async () => {
+    const user = userEvent.setup();
     renderLibraryUnitPage();
 
     // sidebar should be visible by default
@@ -202,15 +203,16 @@ describe('<LibraryUnitPage />', () => {
     expect(await findByText('Test Unit')).toBeInTheDocument();
 
     // should close if open
-    userEvent.click(await screen.findByText('Unit Info'));
+    await user.click(await screen.findByText('Unit Info'));
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
 
     // Open again
-    userEvent.click(await screen.findByText('Unit Info'));
+    await user.click(await screen.findByText('Unit Info'));
     expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
   });
 
   it('should open and close component sidebar on component selection', async () => {
+    const user = userEvent.setup();
     renderLibraryUnitPage();
     expect((await screen.findAllByText('Test Unit'))).toHaveLength(2); // Header + Sidebar
     // No Preview tab shown in sidebar
@@ -218,7 +220,7 @@ describe('<LibraryUnitPage />', () => {
 
     const component = await screen.findByText('text block 0');
     // Card is 3 levels up the component name div
-    userEvent.click(component.parentElement!.parentElement!.parentElement!);
+    await user.click(component.parentElement!.parentElement!.parentElement!);
     const sidebar = await screen.findByTestId('library-sidebar');
 
     const { findByRole, findByText } = within(sidebar);
@@ -229,7 +231,7 @@ describe('<LibraryUnitPage />', () => {
     expect(screen.queryByText('Preview')).not.toBeInTheDocument();
 
     const closeButton = await findByRole('button', { name: /close/i });
-    userEvent.click(closeButton);
+    await user.click(closeButton);
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
@@ -432,12 +434,13 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component from component sidebar', async () => {
+    const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
     const component = await screen.findByText('text block 0');
-    userEvent.click(component.parentElement!.parentElement!.parentElement!);
+    await user.click(component.parentElement!.parentElement!.parentElement!);
     const sidebar = await screen.findByTestId('library-sidebar');
 
     const { findByRole, findByText } = within(sidebar);
@@ -455,17 +458,19 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show editor on double click', async () => {
+    const user = userEvent.setup();
     renderLibraryUnitPage();
     const component = await screen.findByText('text block 0');
-    // trigger double click
-    userEvent.click(component.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
-    expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
+    await user.dblClick(component.parentElement!.parentElement!.parentElement!);
+    const dialog = screen.getByRole('dialog', { name: 'Editor Dialog' });
+    expect(dialog).toBeInTheDocument();
   });
 
   it('"Add New Content" button should open "Add Content" sidebar', async () => {
+    const user = userEvent.setup();
     renderLibraryUnitPage();
     const addContent = await screen.findByRole('button', { name: /add new content/i });
-    userEvent.click(addContent);
+    await user.click(addContent);
 
     expect(await screen.findByRole('button', { name: /existing library content/i })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /text/i })).toBeInTheDocument();

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   activeTab: 'courses',
   allowCourseReruns: true,
   allowedOrganizations: ['edx', 'org'],

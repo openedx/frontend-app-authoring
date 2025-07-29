@@ -84,7 +84,7 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
         'discussion-page',
         'embedded-course-sections',
         'wcag-2.1',
-        'lti',
+        'lti-advanced-sharing-mode',
       ],
       external_links: {
         learn_more: '',

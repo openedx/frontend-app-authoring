@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Icon,
@@ -21,9 +21,8 @@ const MoreInfoColumn = ({
   handleOpenFileInfo,
   handleOpenDeleteConfirmation,
   fileType,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
 
@@ -144,12 +143,10 @@ MoreInfoColumn.propTypes = {
   handleOpenFileInfo: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 MoreInfoColumn.defaultProps = {
   handleLock: null,
 };
 
-export default injectIntl(MoreInfoColumn);
+export default MoreInfoColumn;

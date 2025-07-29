@@ -69,6 +69,7 @@ describe('<CollectionInfoHeader />', () => {
   });
 
   it('should update collection title', async () => {
+    const user = userEvent.setup();
     render();
 
     expect(await screen.findByText('Test Collection')).toBeInTheDocument();
@@ -80,8 +81,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Collection Title{enter}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Collection Title{enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
@@ -93,6 +94,7 @@ describe('<CollectionInfoHeader />', () => {
   });
 
   it('should not update collection title if title is the same', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Collection')).toBeInTheDocument();
 
@@ -103,8 +105,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, `${mockGetCollectionMetadata.collectionData.title}{enter}`);
+    await user.clear(textBox);
+    await user.type(textBox, `${mockGetCollectionMetadata.collectionData.title}{enter}`);
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -112,6 +114,7 @@ describe('<CollectionInfoHeader />', () => {
   });
 
   it('should not update collection title if title is empty', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Collection')).toBeInTheDocument();
 
@@ -122,8 +125,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, '{enter}');
+    await user.clear(textBox);
+    await user.type(textBox, '{enter}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -131,6 +134,7 @@ describe('<CollectionInfoHeader />', () => {
   });
 
   it('should close edit collection title on press Escape', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Collection')).toBeInTheDocument();
 
@@ -141,8 +145,9 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Collection Title{esc}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Collection Title');
+    await user.keyboard('{Escape}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -150,6 +155,7 @@ describe('<CollectionInfoHeader />', () => {
   });
 
   it('should show error on edit collection title', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Collection')).toBeInTheDocument();
 
@@ -160,8 +166,9 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Collection Title{enter}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Collection Title');
+    await user.keyboard('{Enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);

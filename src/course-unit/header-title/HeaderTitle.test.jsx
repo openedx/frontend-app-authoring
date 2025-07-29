@@ -99,27 +99,29 @@ describe('<HeaderTitle />', () => {
     expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
-  it('calls toggle edit title form by clicking on Edit button', () => {
+  it('calls toggle edit title form by clicking on Edit button', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const editTitleButton = getByRole('button', { name: messages.altButtonEdit.defaultMessage });
-    userEvent.click(editTitleButton);
+    await user.click(editTitleButton);
     expect(handleTitleEdit).toHaveBeenCalledTimes(1);
   });
 
-  it('calls saving title by clicking outside or press Enter key', () => {
+  it('calls saving title by clicking outside or press Enter key', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent({
       isTitleEditFormOpen: true,
     });
 
     const titleField = getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage });
-    userEvent.type(titleField, ' 1');
+    await user.type(titleField, ' 1');
     expect(titleField).toHaveValue(`${unitTitle} 1`);
-    userEvent.click(document.body);
+    await user.click(document.body);
     expect(handleTitleEditSubmit).toHaveBeenCalledTimes(1);
 
-    userEvent.click(titleField);
-    userEvent.type(titleField, ' 2[Enter]');
+    await user.click(titleField);
+    await user.type(titleField, ' 2[Enter]');
     expect(titleField).toHaveValue(`${unitTitle} 1 2`);
     expect(handleTitleEditSubmit).toHaveBeenCalledTimes(2);
   });

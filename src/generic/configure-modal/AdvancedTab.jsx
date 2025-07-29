@@ -5,7 +5,7 @@ import { Alert, Form, Hyperlink } from '@openedx/paragon';
 import {
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 import PrereqSettings from './PrereqSettings';
@@ -275,4 +275,4 @@ AdvancedTab.propTypes = {
   onlineProctoringRules: PropTypes.string,
 };
 
-export default injectIntl(AdvancedTab);
+export default AdvancedTab;

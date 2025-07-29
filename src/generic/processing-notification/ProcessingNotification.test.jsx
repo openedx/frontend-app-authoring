@@ -19,12 +19,13 @@ describe('<ProcessingNotification />', () => {
   });
 
   it('renders successfully', async () => {
+    const user = userEvent.setup();
     render(<ProcessingNotification {...props} close={() => {}} />);
     await screen.findByText(props.title);
     const undo = await screen.findByText('Undo');
     const alert = await screen.findByRole('alert', { hidden: true });
     expect(alert.classList.contains('processing-notification-hide-close-button')).toBeFalsy();
-    await userEvent.click(undo);
+    await user.click(undo);
     expect(mockUndo).toHaveBeenCalled();
   });
 
