@@ -562,7 +562,7 @@ const PSCourseForm = ({
                                             key={org}
                                             onClick={() => handleInputChange('organization', org)}
                                           >
-                                            {org.label}
+                                            {org}
                                           </Dropdown.Item>
                                         ))}
                                       </Dropdown.Menu>
