@@ -268,31 +268,14 @@ const PSCourseForm = ({
       return;
     }
 
-        try {
+    try {
       setIsSubmitting(true); // Show loader and disable button
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
-      
-      // Use FormData to avoid body stream issues
-      const formData = new FormData();
-      Object.entries(apiPayload).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          if (Array.isArray(value)) {
-            value.forEach(item => formData.append(key, item));
-          } else {
-            formData.append(key, value);
-          }
-        }
-      });
-      
-      const response = await getAuthenticatedHttpClient().post(
-        'https://studio.staging.titaned.com/titaned/api/v1/create-course', 
-        formData
-      );
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to save course data');
+      const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
+
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error('Failed to save course data');
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
