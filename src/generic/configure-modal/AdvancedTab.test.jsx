@@ -269,21 +269,18 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       renderComponent({
         setFieldValue: mockSetFieldValue,
         enableProctoredExams: true,
+        supportsOnboarding: false, // Explicitly set to false to show practice exam
       });
 
-      const practiceRadio = screen.queryByLabelText('Practice Proctored');
+      const practiceRadio = screen.getByLabelText('Practice proctored');
+      expect(practiceRadio).toBeInTheDocument();
 
-      if (practiceRadio) {
-        await user.click(practiceRadio);
+      await user.click(practiceRadio);
 
-        expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', true);
-        expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
-        expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
-        expect(mockSetFieldValue).toHaveBeenCalledWith(
-          'isOnboardingExam',
-          false,
-        );
-      }
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isProctoredExam', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isTimeLimited', true);
+      expect(mockSetFieldValue).toHaveBeenCalledWith('isOnboardingExam', false);
     });
 
     it('handles onboarding exam selection', async () => {
@@ -340,7 +337,7 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
         },
       });
 
-      const practiceRadio = screen.queryByLabelText('Practice Proctored');
+      const practiceRadio = screen.queryByLabelText('Practice proctored');
       if (practiceRadio) {
         expect(practiceRadio).toBeChecked();
       }
@@ -458,6 +455,17 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
           ...defaultProps.values,
           isTimeLimited: true,
           defaultTimeLimitMinutes: NaN,
+        },
+      });
+      expect(screen.queryByDisplayValue('00:00')).toBeInTheDocument();
+    });
+
+    it('handles undefined values in time formatting', () => {
+      renderComponent({
+        values: {
+          ...defaultProps.values,
+          isTimeLimited: true,
+          defaultTimeLimitMinutes: undefined,
         },
       });
       expect(screen.queryByDisplayValue('00:00')).toBeInTheDocument();
