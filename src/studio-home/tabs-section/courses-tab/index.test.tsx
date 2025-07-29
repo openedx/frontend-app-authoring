@@ -3,9 +3,9 @@ import {
   initializeMocks,
   render,
   screen,
-} from '../../../testUtils';
-import { COURSE_CREATOR_STATES } from '../../../constants';
-import { studioHomeMock } from '../../__mocks__';
+} from '@src/testUtils';
+import { COURSE_CREATOR_STATES } from '@src/constants';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { initialState } from '../../factories/mockApiResponses';
 
 import CoursesTab from '.';

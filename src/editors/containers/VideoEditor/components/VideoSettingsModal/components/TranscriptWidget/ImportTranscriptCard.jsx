@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Button,
@@ -58,4 +58,4 @@ export const mapDispatchToProps = {
 };
 
 export const ImportTranscriptCardInternal = ImportTranscriptCard; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ImportTranscriptCard));
+export default connect(mapStateToProps, mapDispatchToProps)(ImportTranscriptCard);

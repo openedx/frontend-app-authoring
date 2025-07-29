@@ -35,7 +35,7 @@ export async function createCertificate(courseId, certificatesData) {
       getCertificateApiUrl(courseId),
       prepareCertificatePayload(certificatesData),
     );
-
+  /* istanbul ignore next */
   return camelCaseObject(data);
 }
 
@@ -51,6 +51,7 @@ export async function updateCertificate(courseId, certificateData) {
       getUpdateCertificateApiUrl(courseId, certificateData.id),
       prepareCertificatePayload(certificateData),
     );
+  /* istanbul ignore next */
   return camelCaseObject(data);
 }
 

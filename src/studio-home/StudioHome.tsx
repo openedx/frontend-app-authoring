@@ -102,7 +102,6 @@ const StudioHome = () => {
           iconBefore={AddIcon}
           size="sm"
           onClick={newLibraryClick}
-          data-testid="new-library-button"
         >
           {intl.formatMessage(messages.addNewLibraryBtnText)}
         </Button>,

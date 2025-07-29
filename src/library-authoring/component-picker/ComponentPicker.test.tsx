@@ -165,6 +165,7 @@ describe('<ComponentPicker />', () => {
   });
 
   it('double clicking a collection should open it', async () => {
+    const user = userEvent.setup();
     render(<ComponentPicker />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -178,7 +179,7 @@ describe('<ComponentPicker />', () => {
     mockSearchResult(mockCollectionResult);
 
     // Double click on the collection card to open the collection
-    userEvent.dblClick(screen.queryAllByText('Collection 1')[0]);
+    await user.dblClick(screen.queryAllByText('Collection 1')[0]);
 
     // Wait for the collection to load
     await screen.findByText(/Back to Library/i);
@@ -270,7 +271,7 @@ describe('<ComponentPicker />', () => {
     await screen.findByText(/Change Library/i);
     fireEvent.click(screen.getByText(/Change Library/i));
 
-    await screen.findByText('Select which Library would you like to reference components from.');
+    await screen.findByText('Choose a library to browse components.');
   });
 
   it('should pick multiple components using the component card button', async () => {

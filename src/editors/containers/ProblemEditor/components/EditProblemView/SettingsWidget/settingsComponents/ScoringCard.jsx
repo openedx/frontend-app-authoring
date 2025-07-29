@@ -16,7 +16,6 @@ const ScoringCard = ({
 }) => {
   const intl = useIntl();
 
-  // Redux state
   const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl);
   const learningContextId = useSelector(selectors.app.learningContextId);
   const isLibrary = useSelector(selectors.app.isLibrary);

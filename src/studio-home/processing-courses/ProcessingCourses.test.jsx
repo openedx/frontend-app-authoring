@@ -5,8 +5,8 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import initializeStore from '../../store';
-import { studioHomeMock } from '../__mocks__';
 import messages from './messages';
 import ProcessingCourses from '.';
 

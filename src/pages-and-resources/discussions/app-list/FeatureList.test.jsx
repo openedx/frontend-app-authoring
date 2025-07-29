@@ -15,8 +15,9 @@ describe('FeaturesList', () => {
     id: 'legacy',
   };
   let container;
-
+  let user;
   beforeEach(() => {
+    user = userEvent.setup();
     const wrapper = render(
       <IntlProvider locale="en">
         <FeaturesList
@@ -31,24 +32,24 @@ describe('FeaturesList', () => {
     expect(queryByText(container, messages['supportedFeatureList-mobile-show'].defaultMessage)).toBeInTheDocument();
   });
 
-  test('displays hide available feature message on expand', () => {
+  test('displays hide available feature message on expand', async () => {
     const button = getByRole(container, 'button');
-    userEvent.click(button);
+    await user.click(button);
     expect(queryByText(container, messages['supportedFeatureList-mobile-hide'].defaultMessage)).toBeInTheDocument();
   });
 
-  test('displays a row for each available feature', () => {
+  test('displays a row for each available feature', async () => {
     const button = getByRole(container, 'button');
-    userEvent.click(button);
+    await user.click(button);
     app.featureIds.forEach((id) => {
       const featureNodes = queryAllByText(container, messages[`featureName-${id}`].defaultMessage);
       expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
     });
   });
 
-  test('A check icon is shown with each supported feature', () => {
+  test('A check icon is shown with each supported feature', async () => {
     const button = getByRole(container, 'button');
-    userEvent.click(button);
+    await user.click(button);
     app.featureIds.forEach((id) => {
       const featureElement = queryByText(container, messages[`featureName-${id}`].defaultMessage);
       expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'check-icon');

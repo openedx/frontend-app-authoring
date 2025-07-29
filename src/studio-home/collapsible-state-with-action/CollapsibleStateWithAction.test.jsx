@@ -9,12 +9,12 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { COURSE_CREATOR_STATES } from '../../constants';
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
 import { requestCourseCreatorQuery } from '../data/thunks';
 import { getRequestCourseCreatorUrl } from '../data/api';
-import { studioHomeMock } from '../__mocks__';
 import messages from './messages';
 import CollapsibleStateWithAction from '.';
 

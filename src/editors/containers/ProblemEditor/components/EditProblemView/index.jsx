@@ -33,7 +33,6 @@ const EditProblemView = ({ returnFunction }) => {
   const dispatch = useDispatch();
   const editorRef = useRef(null);
 
-  // ⬇️ useSelector for all previously mapped state
   const analytics = useSelector(selectors.app.analytics);
   const lmsEndpointUrl = useSelector(selectors.app.lmsEndpointUrl);
   const returnUrl = useSelector(selectors.app.returnUrl);

@@ -5,8 +5,8 @@ import {
   fireEvent,
   render,
   waitFor,
-} from '../testUtils';
-import { studioHomeMock } from '../studio-home/__mocks__';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';

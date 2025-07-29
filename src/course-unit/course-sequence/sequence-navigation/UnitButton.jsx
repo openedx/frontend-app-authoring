@@ -14,7 +14,6 @@ const UnitButton = ({
   const courseId = useSelector(getCourseId);
   const sequenceId = useSelector(getSequenceId);
 
-  // Fetch unit data from Redux using unitId prop
   const unit = useSelector((state) => state.models.units[unitId]);
 
   const { title, contentType, isActive } = unit || {};

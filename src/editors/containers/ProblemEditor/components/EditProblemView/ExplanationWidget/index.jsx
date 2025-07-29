@@ -12,7 +12,6 @@ const ExplanationWidget = () => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
-  // Select state values using useSelector
   const settings = useSelector(selectors.problem.settings);
   const learningContextId = useSelector(selectors.app.learningContextId);
   const images = useSelector(selectors.app.images);

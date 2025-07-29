@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, initializeMocks } from '../../../testUtils';
-import editorRender from '../../modifiedEditorTestRender';
+import editorRender from '../../editorTestRender';
 import { initializeStore } from '../../data/redux';
 import ProblemEditor from './index';
 import messages from './messages';

@@ -1,4 +1,6 @@
-import { render, waitFor, within } from '@testing-library/react';
+import {
+  render, waitFor, within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -85,17 +87,19 @@ describe('CertificateCreateForm', () => {
       }],
     };
 
+    const user = userEvent.setup();
+
     const { getByPlaceholderText, getByRole, getByDisplayValue } = renderComponent();
 
-    userEvent.type(
+    await user.type(
       getByPlaceholderText(detailsMessages.detailsCourseTitleOverride.defaultMessage),
       courseTitleOverrideValue,
     );
-    userEvent.type(
+    await user.type(
       getByPlaceholderText(signatoryMessages.namePlaceholder.defaultMessage),
       signatoryNameValue,
     );
-    userEvent.click(getByRole('button', { name: messages.cardCreate.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.cardCreate.defaultMessage }));
 
     axiosMock.onPost(
       getCertificateApiUrl(courseId),
@@ -109,8 +113,9 @@ describe('CertificateCreateForm', () => {
   });
 
   it('cancel certificates creation', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
-    userEvent.click(getByRole('button', { name: messages.cardCancel.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.cardCancel.defaultMessage }));
 
     await waitFor(() => {
       expect(store.getState().certificates.componentMode).toBe(MODE_STATES.noCertificates);
@@ -127,13 +132,14 @@ describe('CertificateCreateForm', () => {
   });
 
   it('add and delete signatory', async () => {
+    const user = userEvent.setup();
     const {
       getAllByRole, queryAllByRole, getByText, getByRole,
     } = renderComponent();
 
     const addSignatoryBtn = getByText(signatoryMessages.addSignatoryButton.defaultMessage);
 
-    userEvent.click(addSignatoryBtn);
+    await user.click(addSignatoryBtn);
 
     const deleteIcons = getAllByRole('button', { name: messages.deleteTooltip.defaultMessage });
 
@@ -141,13 +147,13 @@ describe('CertificateCreateForm', () => {
       expect(deleteIcons.length).toBe(2);
     });
 
-    userEvent.click(deleteIcons[0]);
+    await user.click(deleteIcons[0]);
 
     const confirModal = getByRole('dialog');
     const deleteModalButton = within(confirModal).getByRole('button', { name: messages.deleteTooltip.defaultMessage });
 
-    userEvent.click(deleteIcons[0]);
-    userEvent.click(deleteModalButton);
+    await user.click(deleteIcons[0]);
+    await user.click(deleteModalButton);
 
     await waitFor(() => {
       expect(queryAllByRole('button', { name: messages.deleteTooltip.defaultMessage }).length).toBe(0);

@@ -73,11 +73,12 @@ describe('FormGroup', () => {
     fireEvent.click(formInput);
     expect(mockHandleClick).toHaveBeenCalled();
   });
-  it('handles element change', () => {
+  it('handles element change', async () => {
+    const user = userEvent.setup();
     renderComponent(defaultProps);
     const formInput = screen.getByTestId('formControl');
     fireEvent.focus(formInput);
-    userEvent.type(formInput, 'opt1');
+    await user.type(formInput, 'opt1');
     expect(mockHandleChange).toHaveBeenCalled();
   });
 });

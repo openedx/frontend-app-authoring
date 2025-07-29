@@ -71,7 +71,7 @@ describe('SettingsComponent', () => {
 
       return <div data-testid="location-display">{location.pathname}</div>;
     };
-
+    const user = userEvent.setup();
     render(
       <>
         <SettingsComponent url="/some-url" />
@@ -85,7 +85,7 @@ describe('SettingsComponent', () => {
     expect(firstLocation).toHaveTextContent('/');
 
     const cancelButton = await screen.findByText('Cancel');
-    await userEvent.click(cancelButton);
+    await user.click(cancelButton);
     const secondLocation = await screen.findByTestId('location-display');
     expect(secondLocation).toHaveTextContent('/some-url');
   });

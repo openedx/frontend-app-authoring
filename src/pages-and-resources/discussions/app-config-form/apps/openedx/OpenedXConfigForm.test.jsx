@@ -57,8 +57,10 @@ describe('OpenedXConfigForm', () => {
   let axiosMock;
   let store;
   let container;
+  let user;
 
   beforeEach(async () => {
+    user = userEvent.setup();
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -240,7 +242,7 @@ describe('OpenedXConfigForm', () => {
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    await act(async () => { userEvent.click(queryByLabelText(topicCard, 'Expand')); });
+    await act(async () => { await user.click(queryByLabelText(topicCard, 'Expand')); });
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
     await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
@@ -282,7 +284,7 @@ describe('OpenedXConfigForm', () => {
 
     const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
     const collapseButton = queryByLabelText(topicCard, 'Collapse');
-    await act(async () => userEvent.click(collapseButton));
+    await act(async () => user.click(collapseButton));
 
     expect(collapseButton).toBeInTheDocument();
   });
@@ -308,7 +310,7 @@ describe('OpenedXConfigForm', () => {
     test('check duplicate error is removed on fields when name is fixed', async () => {
       const duplicateTopicInput = duplicateTopicCard.querySelector('input');
       duplicateTopicInput.focus();
-      await act(async () => { userEvent.type(duplicateTopicInput, 'valid'); });
+      await act(async () => { await user.type(duplicateTopicInput, 'valid'); });
       duplicateTopicInput.blur();
 
       await waitForElementToBeRemoved(
@@ -321,10 +323,10 @@ describe('OpenedXConfigForm', () => {
     });
 
     test('check duplicate error is removed on deleting duplicate topic', async () => {
-      await userEvent.click(
+      await await user.click(
         await findByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
       );
-      await userEvent.click(
+      await await user.click(
         await findByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
       );
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));

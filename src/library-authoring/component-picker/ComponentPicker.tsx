@@ -114,7 +114,11 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       activeKey={currentStep}
     >
       <Stepper.Step eventKey="select-library" title="Select a library">
-        <SelectLibrary selectedLibrary={selectedLibrary} setSelectedLibrary={handleLibrarySelection} />
+        <SelectLibrary
+          selectedLibrary={selectedLibrary}
+          setSelectedLibrary={handleLibrarySelection}
+          itemType={visibleTabs.length === 1 ? visibleTabs[0] : ContentType.components}
+        />
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">

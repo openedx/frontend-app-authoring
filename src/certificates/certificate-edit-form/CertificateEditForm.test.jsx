@@ -1,5 +1,7 @@
 import { Provider } from 'react-redux';
-import { render, waitFor, within } from '@testing-library/react';
+import {
+  render, waitFor, within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -68,15 +70,15 @@ describe('CertificateEditForm Component', () => {
         }],
       }],
     };
-
+    const user = userEvent.setup();
     const { getByDisplayValue, getByRole, getByPlaceholderText } = renderComponent();
 
-    userEvent.type(
+    await user.type(
       getByPlaceholderText(messagesDetails.detailsCourseTitleOverride.defaultMessage),
       courseTitleOverrideValue,
     );
 
-    userEvent.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.saveTooltip.defaultMessage }));
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
@@ -91,16 +93,17 @@ describe('CertificateEditForm Component', () => {
   });
 
   it('deletes a certificate and updates the store', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
     ).reply(200);
 
     const { getByRole } = renderComponent();
 
-    userEvent.click(getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
 
     const confirmDeleteModal = getByRole('dialog');
-    userEvent.click(within(confirmDeleteModal).getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
+    await user.click(within(confirmDeleteModal).getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
 
     await executeThunk(deleteCourseCertificate(courseId, certificatesDataMock.certificates[0].id), store.dispatch);
 
@@ -110,16 +113,17 @@ describe('CertificateEditForm Component', () => {
   });
 
   it('updates loading status if delete fails', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
     ).reply(404);
 
     const { getByRole } = renderComponent();
 
-    userEvent.click(getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
 
     const confirmDeleteModal = getByRole('dialog');
-    userEvent.click(within(confirmDeleteModal).getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
+    await user.click(within(confirmDeleteModal).getByRole('button', { name: messages.deleteTooltip.defaultMessage }));
 
     await executeThunk(deleteCourseCertificate(courseId, certificatesDataMock.certificates[0].id), store.dispatch);
 
@@ -129,11 +133,12 @@ describe('CertificateEditForm Component', () => {
   });
 
   it('cancel edit form', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     expect(store.getState().certificates.componentMode).toBe(MODE_STATES.editAll);
 
-    userEvent.click(getByRole('button', { name: messages.cardCancel.defaultMessage }));
+    await user.click(getByRole('button', { name: messages.cardCancel.defaultMessage }));
 
     expect(store.getState().certificates.componentMode).toBe(MODE_STATES.view);
   });

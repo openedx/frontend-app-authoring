@@ -3,18 +3,10 @@ import {
   screen, initializeMocks, fireEvent,
 } from '@src/testUtils';
 import ScoringCard from './ScoringCard';
-import { selectors, initializeStore } from '../../../../../../data/redux';
-import editorRender from '../../../../../../modifiedEditorTestRender';
+import { selectors } from '../../../../../../data/redux';
+import editorRender from '../../../../../../editorTestRender';
 
 const { app } = selectors;
-
-const initialState = {
-  app: {
-    studioEndpointUrl: 'studioEndpointUrl',
-    learningContextId: 'learningContextId',
-    isLibrary: false,
-  },
-};
 
 describe('ScoringCard', () => {
   const scoring = {
@@ -33,7 +25,7 @@ describe('ScoringCard', () => {
   };
 
   beforeEach(() => {
-    initializeMocks({ initialState, initializeStore });
+    initializeMocks();
   });
 
   test('render the component', () => {

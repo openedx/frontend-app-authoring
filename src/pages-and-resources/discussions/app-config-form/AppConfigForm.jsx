@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Container,
@@ -29,8 +29,9 @@ import AppConfigFormSaveButton from './AppConfigFormSaveButton';
 import messages from './messages';
 
 const AppConfigForm = ({
-  courseId, intl,
+  courseId,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -146,10 +147,9 @@ const AppConfigForm = ({
 
 AppConfigForm.propTypes = {
   courseId: PropTypes.string.isRequired,
-  intl: intlShape.isRequired,
 };
 
-const IntlAppConfigForm = injectIntl(AppConfigForm);
+const IntlAppConfigForm = AppConfigForm;
 
 IntlAppConfigForm.Provider = AppConfigFormProvider;
 IntlAppConfigForm.SaveButton = AppConfigFormSaveButton;

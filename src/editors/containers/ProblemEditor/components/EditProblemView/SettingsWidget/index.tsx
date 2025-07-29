@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button, Collapsible,
 } from '@openedx/paragon';
@@ -19,11 +20,14 @@ import messages from './messages';
 import { showAdvancedSettingsCards } from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import Randomization from './settingsComponents/Randomization';
+import type { EditorState } from '../../../../../data/redux';
 
 import './index.scss';
 
 const SettingsWidget = ({
   problemType,
+}: {
+  problemType: string;
 }) => {
   const dispatch = useDispatch();
   const {
@@ -37,7 +41,7 @@ const SettingsWidget = ({
     isLibrary,
     learningContextId,
     showMarkdownEditorButton,
-  } = useSelector((state) => ({
+  } = useSelector((state: EditorState) => ({
     groupFeedbackList: selectors.problem.groupFeedbackList(state),
     settings: selectors.problem.settings(state),
     answers: selectors.problem.answers(state),
@@ -55,8 +59,8 @@ const SettingsWidget = ({
 
   const setBlockTitle = (title) => dispatch(actions.app.setBlockTitle(title));
   const updateSettings = (newSettings) => dispatch(actions.problem.updateSettings(newSettings));
-  const updateField = (fieldName, value) => dispatch(actions.problem.updateField(fieldName, value));
-  const updateAnswer = (index, update) => dispatch(actions.problem.updateAnswer(index, update));
+  const updateField = (payload) => dispatch(actions.problem.updateField(payload));
+  const updateAnswer = (payload) => dispatch(actions.problem.updateAnswer(payload));
 
   const feedbackCard = () => {
     if (problemType === ProblemTypeKeys.MULTISELECT) {
@@ -78,7 +82,7 @@ const SettingsWidget = ({
       <div className="mb-3">
         <TypeCard
           answers={answers}
-          blockTitle={blockTitle}
+          blockTitle={blockTitle!}
           correctAnswerCount={correctAnswerCount}
           problemType={problemType}
           setBlockTitle={setBlockTitle}
@@ -115,7 +119,7 @@ const SettingsWidget = ({
           updateSettings={updateSettings}
           images={images}
           isLibrary={isLibrary}
-          learningContextId={learningContextId}
+          learningContextId={learningContextId!}
         />
       </div>
 
@@ -150,7 +154,7 @@ const SettingsWidget = ({
           {!isLibrary && (
             <div className="my-3">
               <ResetCard
-                showResetButton={settings.showResetButton}
+                showResetButton={settings.showResetButton!}
                 defaultValue={defaultSettings.showResetButton}
                 updateSettings={updateSettings}
               />
@@ -192,4 +196,4 @@ SettingsWidget.propTypes = {
 };
 
 export const SettingsWidgetInternal = SettingsWidget; // For testing
-export default injectIntl(SettingsWidget);
+export default SettingsWidget;

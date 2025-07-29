@@ -59,6 +59,7 @@ describe('<ManageCollections />', () => {
   });
 
   it('should show all collections in library and allow users to select for the current component', async () => {
+    const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(200);
     render(<ManageCollections
@@ -67,13 +68,13 @@ describe('<ManageCollections />', () => {
       useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
-    userEvent.click(manageBtn);
+    await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
-    userEvent.click(secondCollection);
+    await user.click(secondCollection);
     const confirmBtn = await screen.findByRole('button', { name: 'Confirm' });
-    userEvent.click(confirmBtn);
+    await user.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
     });
@@ -85,6 +86,7 @@ describe('<ManageCollections />', () => {
   });
 
   it('should show all collections in library and allow users to select for the current container', async () => {
+    const user = userEvent.setup();
     const url = getLibraryContainerCollectionsUrl(mockGetContainerMetadata.unitIdWithCollections);
     axiosMock.onPatch(url).reply(200);
     render(<ManageCollections
@@ -93,13 +95,13 @@ describe('<ManageCollections />', () => {
       useUpdateCollectionsHook={useUpdateContainerCollections}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
-    userEvent.click(manageBtn);
+    await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
-    userEvent.click(secondCollection);
+    await user.click(secondCollection);
     const confirmBtn = await screen.findByRole('button', { name: 'Confirm' });
-    userEvent.click(confirmBtn);
+    await user.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
     });
@@ -111,6 +113,7 @@ describe('<ManageCollections />', () => {
   });
 
   it('should show toast and close manage collections selection on failure', async () => {
+    const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
     render(<ManageCollections
@@ -120,13 +123,13 @@ describe('<ManageCollections />', () => {
     />);
     screen.logTestingPlaygroundURL();
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
-    userEvent.click(manageBtn);
+    await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
-    userEvent.click(secondCollection);
+    await user.click(secondCollection);
     const confirmBtn = await screen.findByRole('button', { name: 'Confirm' });
-    userEvent.click(confirmBtn);
+    await user.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
     });
@@ -138,6 +141,7 @@ describe('<ManageCollections />', () => {
   });
 
   it('should close manage collections selection on cancel', async () => {
+    const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
     render(<ManageCollections
@@ -146,13 +150,13 @@ describe('<ManageCollections />', () => {
       useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
-    userEvent.click(manageBtn);
+    await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     expect(screen.queryByRole('search')).toBeInTheDocument();
     const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
-    userEvent.click(secondCollection);
+    await user.click(secondCollection);
     const cancelBtn = await screen.findByRole('button', { name: 'Cancel' });
-    userEvent.click(cancelBtn);
+    await user.click(cancelBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
     });

@@ -13,6 +13,7 @@ import Loading from '../../generic/Loading';
 import AlertError from '../../generic/alert-error';
 import { useContentLibraryV2List } from '../data/apiHooks';
 import messages from './messages';
+import { ContentType } from '../routes';
 
 interface EmptyStateProps {
   hasSearchQuery: boolean;
@@ -40,9 +41,10 @@ const EmptyState = ({ hasSearchQuery }: EmptyStateProps) => (
 interface SelectLibraryProps {
   selectedLibrary: string;
   setSelectedLibrary: (libraryKey: string) => void;
+  itemType: ContentType;
 }
 
-const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryProps) => {
+const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: SelectLibraryProps) => {
   const intl = useIntl();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -75,7 +77,9 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
   return (
     <Stack gap={2} className="p-5">
       <small className="text-primary-700">
-        {intl.formatMessage(messages.selectLibraryInfo)}
+        <FormattedMessage
+          {...messages[`selectLibraryInfo.${itemType}`]}
+        />
       </small>
       <SearchField
         onSubmit={handleSearch}

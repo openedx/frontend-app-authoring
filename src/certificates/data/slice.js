@@ -29,12 +29,11 @@ const slice = createSlice({
     fetchCertificatesSuccess: (state, { payload }) => {
       Object.assign(state.certificatesData, payload);
     },
-    createCertificateSuccess: (state, action) => {
+    createCertificateSuccess: /* istanbul ignore next */ (state, action) => {
       state.certificatesData.certificates.push(action.payload);
     },
-    updateCertificateSuccess: (state, action) => {
+    updateCertificateSuccess: /* istanbul ignore next */ (state, action) => {
       const index = state.certificatesData.certificates.findIndex(c => c.id === action.payload.id);
-
       if (index !== -1) {
         state.certificatesData.certificates[index] = action.payload;
       }

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -17,9 +17,8 @@ const SortableItem = ({
   isDroppable,
   componentStyle,
   children,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const {
     attributes,
     listeners,
@@ -94,8 +93,6 @@ SortableItem.propTypes = {
   isDraggable: PropTypes.bool,
   children: PropTypes.node.isRequired,
   componentStyle: PropTypes.shape({}),
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(SortableItem);
+export default SortableItem;

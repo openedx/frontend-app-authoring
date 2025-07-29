@@ -2,8 +2,14 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { render as baseRender } from '../testUtils';
 import { EditorContextProvider } from './EditorContext';
-import { initializeStore } from './data/redux'; // adjust path if needed
 
+import { type EditorState, initializeStore } from './data/redux'; // adjust path if needed
+
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+};
+
+export type PartialEditorState = RecursivePartial<EditorState>;
 /**
  * Custom render function for testing React components with the editor context and Redux store.
  *

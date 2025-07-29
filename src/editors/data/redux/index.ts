@@ -12,7 +12,7 @@ import type { RequestKeys, RequestStates } from '../constants/requests';
 import { AdvancedProblemType, ProblemType } from '../constants/problem';
 
 export { default as thunkActions } from './thunkActions';
-// editor redux store
+
 const editorReducer = combineReducers({
   app: app.reducer,
   requests: requests.reducer,
@@ -194,7 +194,7 @@ export interface EditorState {
 
 export { actions, selectors };
 
-export function initializeStore(preloadedState = undefined) {
+export function initializeStore(preloadedState = {}) {
   return configureStore({
     reducer: editorReducer,
     preloadedState,

@@ -1,15 +1,22 @@
-// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { XBlock } from '@src/data/types';
+import { CourseOutline } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getCourseOutlineIndexApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
+export const getCourseOutlineIndexApiUrl = (
+  courseId: string,
+) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
 
 export const getCourseBestPracticesApiUrl = ({
   courseId,
   excludeGraded,
   all,
+}: {
+  courseId: string,
+  excludeGraded: boolean,
+  all: boolean,
 }) => `${getApiBaseUrl()}/api/courses/v1/quality/${courseId}/?exclude_graded=${excludeGraded}&all=${all}`;
 
 export const getCourseLaunchApiUrl = ({
@@ -17,42 +24,31 @@ export const getCourseLaunchApiUrl = ({
   gradedOnly,
   validateOras,
   all,
+}:{
+  courseId: string,
+  gradedOnly: boolean,
+  validateOras: boolean,
+  all: boolean,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
-export const getCourseBlockApiUrl = (courseId) => {
+export const getCourseBlockApiUrl = (courseId: string) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
 
-export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
+export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl()}${reindexLink}`;
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
-export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
-export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
-export const exportTags = (courseId) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
-
-/**
- * @typedef {Object} courseOutline
- * @property {string} courseReleaseDate
- * @property {Object} courseStructure
- * @property {Object} deprecatedBlocksInfo
- * @property {string} discussionsIncontextLearnmoreUrl
- * @property {Object} initialState
- * @property {Object} initialUserClipboard
- * @property {string} languageCode
- * @property {string} lmsLink
- * @property {string} mfeProctoredExamSettingsUrl
- * @property {string} notificationDismissUrl
- * @property {string[]} proctoringErrors
- * @property {string} reindexLink
- * @property {null} rerunNotificationId
- */
+export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}`;
+export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
+export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
 
 /**
  * Get course outline index.
  * @param {string} courseId
  * @returns {Promise<courseOutline>}
  */
-export async function getCourseOutlineIndex(courseId) {
+export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseOutlineIndexApiUrl(courseId));
 
@@ -64,9 +60,9 @@ export async function getCourseOutlineIndex(courseId) {
  * @param courseId
  * @returns {Promise<Array|Object>}
  */
-export async function createDiscussionsTopics(courseId) {
+export async function createDiscussionsTopics(courseId: string): Promise<Array<any> | object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(`${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`);
+    .post(createDiscussionsTopicsUrl(courseId));
   return camelCaseObject(data);
 }
 
@@ -79,35 +75,46 @@ export async function getCourseBestPractices({
   courseId,
   excludeGraded,
   all,
-}) {
+}: {
+  courseId: string;
+  excludeGraded: boolean;
+  all: boolean;
+}): Promise<{
+    isSelfPaced: boolean;
+    sections: any;
+    subsection: any;
+    units: any;
+    videos: any;
+  }> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseBestPracticesApiUrl({ courseId, excludeGraded, all }));
 
   return camelCaseObject(data);
 }
 
-/** @typedef {object} courseLaunchData
- * @property {boolean} isSelfPaced
- * @property {object} dates
- * @property {object} assignments
- * @property {object} grades
- * @property {number} grades.sum_of_weights
- * @property {object} certificates
- * @property {object} updates
- * @property {object} proctoring
- */
+interface CourseLaunchData {
+  isSelfPaced: boolean;
+  dates: object;
+  assignments: object;
+  grades: {
+    sum_of_weights: number;
+  };
+  certificates: object;
+  updates: object;
+  proctoring: object;
+}
 
 /**
  * Get course launch.
  * @param {{courseId: string, gradedOnly: boolean, validateOras: boolean, all: boolean}} options
- * @returns {Promise<courseLaunchData>}
+ * @returns {Promise<CourseLaunchData>}
  */
 export async function getCourseLaunch({
   courseId,
   gradedOnly,
   validateOras,
   all,
-}) {
+}: { courseId: string; gradedOnly: boolean; validateOras: boolean; all: boolean; }): Promise<CourseLaunchData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseLaunchApiUrl({
       courseId, gradedOnly, validateOras, all,
@@ -121,7 +128,7 @@ export async function getCourseLaunch({
  * @param {string} courseId
  * @returns {Promise<Object>}
  */
-export async function enableCourseHighlightsEmails(courseId) {
+export async function enableCourseHighlightsEmails(courseId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseBlockApiUrl(courseId), {
       publish: 'republish',
@@ -138,7 +145,7 @@ export async function enableCourseHighlightsEmails(courseId) {
  * @param {string} reindexLink
  * @returns {Promise<Object>}
  */
-export async function restartIndexingOnCourse(reindexLink) {
+export async function restartIndexingOnCourse(reindexLink: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseReindexApiUrl(reindexLink));
 
@@ -146,49 +153,11 @@ export async function restartIndexingOnCourse(reindexLink) {
 }
 
 /**
- * @typedef {Object} section
- * @property {string} id
- * @property {string} displayName
- * @property {string} category
- * @property {boolean} hasChildren
- * @property {string} editedOn
- * @property {boolean} published
- * @property {string} publishedOn
- * @property {string} studioUrl
- * @property {boolean} releasedToStudents
- * @property {string} releaseDate
- * @property {string} visibilityState
- * @property {boolean} hasExplicitStaffLock
- * @property {string} start
- * @property {boolean} graded
- * @property {string} dueDate
- * @property {null} due
- * @property {null} relativeWeeksDue
- * @property {null} format
- * @property {string[]} courseGraders
- * @property {boolean} hasChanges
- * @property {object} actions
- * @property {null} explanatoryMessage
- * @property {object[]} userPartitions
- * @property {string} showCorrectness
- * @property {string[]} highlights
- * @property {boolean} highlightsEnabled
- * @property {boolean} highlightsPreviewOnly
- * @property {string} highlightsDocUrl
- * @property {object} childInfo
- * @property {boolean} ancestorHasStaffLock
- * @property {boolean} staffOnlyMessage
- * @property {boolean} hasPartitionGroupComponents
- * @property {object} userPartitionInfo
- * @property {boolean} enableCopyPasteUnits
- */
-
-/**
- * Get course section
+ * Get course Xblock
  * @param {string} itemId
- * @returns {Promise<section>}
+ * @returns {Promise<XBlock>}
  */
-export async function getCourseItem(itemId) {
+export async function getCourseItem(itemId: string): Promise<XBlock> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
@@ -200,7 +169,10 @@ export async function getCourseItem(itemId) {
  * @param {Array<string>} highlights
  * @returns {Promise<Object>}
  */
-export async function updateCourseSectionHighlights(sectionId, highlights) {
+export async function updateCourseSectionHighlights(
+  sectionId: string,
+  highlights: Array<string>,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(sectionId), {
       publish: 'republish',
@@ -217,7 +189,7 @@ export async function updateCourseSectionHighlights(sectionId, highlights) {
  * @param {string} sectionId
  * @returns {Promise<Object>}
  */
-export async function publishCourseSection(sectionId) {
+export async function publishCourseSection(sectionId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(sectionId), {
       publish: 'make_public',
@@ -233,7 +205,11 @@ export async function publishCourseSection(sectionId) {
  * @param {string} startDatetime
  * @returns {Promise<Object>}
  */
-export async function configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime) {
+export async function configureCourseSection(
+  sectionId: string,
+  isVisibleToStaffOnly: boolean,
+  startDatetime: string,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(sectionId), {
       publish: 'republish',
@@ -269,24 +245,24 @@ export async function configureCourseSection(sectionId, isVisibleToStaffOnly, st
  * @returns {Promise<Object>}
  */
 export async function configureCourseSubsection(
-  itemId,
-  isVisibleToStaffOnly,
-  releaseDate,
-  graderType,
-  dueDate,
-  isTimeLimited,
-  isProctoredExam,
-  isOnboardingExam,
-  isPracticeExam,
-  examReviewRules,
-  defaultTimeLimitMin,
-  hideAfterDue,
-  showCorrectness,
-  isPrereq,
-  prereqUsageKey,
-  prereqMinScore,
-  prereqMinCompletion,
-) {
+  itemId: string,
+  isVisibleToStaffOnly: string,
+  releaseDate: string,
+  graderType: string,
+  dueDate: string,
+  isTimeLimited: boolean,
+  isProctoredExam: boolean,
+  isOnboardingExam: boolean,
+  isPracticeExam: boolean,
+  examReviewRules: string,
+  defaultTimeLimitMin: number,
+  hideAfterDue: string,
+  showCorrectness: string,
+  isPrereq: boolean,
+  prereqUsageKey: string,
+  prereqMinScore: number,
+  prereqMinCompletion: number,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       publish: 'republish',
@@ -318,9 +294,15 @@ export async function configureCourseSubsection(
  * @param {string} unitId
  * @param {boolean} isVisibleToStaffOnly
  * @param {object} groupAccess
+ * @param {boolean} discussionEnabled
  * @returns {Promise<Object>}
  */
-export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAccess, discussionEnabled) {
+export async function configureCourseUnit(
+  unitId: string,
+  isVisibleToStaffOnly: boolean,
+  groupAccess: object,
+  discussionEnabled: boolean,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(unitId), {
       publish: 'republish',
@@ -341,7 +323,10 @@ export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAcc
  * @param {string} displayName
  * @returns {Promise<Object>}
  */
-export async function editItemDisplayName(itemId, displayName) {
+export async function editItemDisplayName(
+  itemId: string,
+  displayName: string,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       metadata: {
@@ -357,7 +342,7 @@ export async function editItemDisplayName(itemId, displayName) {
  * @param {string} itemId
  * @returns {Promise<Object>}
  */
-export async function deleteCourseItem(itemId) {
+export async function deleteCourseItem(itemId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .delete(getCourseItemApiUrl(itemId));
 
@@ -368,9 +353,9 @@ export async function deleteCourseItem(itemId) {
  * Duplicate course section
  * @param {string} itemId
  * @param {string} parentId
- * @returns {Promise<Object>}
+ * @returns {Promise<XBlock>}
  */
-export async function duplicateCourseItem(itemId, parentId) {
+export async function duplicateCourseItem(itemId: string, parentId: string): Promise<XBlock> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: itemId,
@@ -387,7 +372,7 @@ export async function duplicateCourseItem(itemId, parentId) {
  * @param {string} displayName
  * @returns {Promise<Object>}
  */
-export async function addNewCourseItem(parentLocator, category, displayName) {
+export async function addNewCourseItem(parentLocator: string, category: string, displayName: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       parent_locator: parentLocator,
@@ -404,7 +389,7 @@ export async function addNewCourseItem(parentLocator, category, displayName) {
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
 */
-export async function setSectionOrderList(courseId, children) {
+export async function setSectionOrderList(courseId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseBlockApiUrl(courseId), {
       children,
@@ -419,7 +404,7 @@ export async function setSectionOrderList(courseId, children) {
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
 */
-export async function setCourseItemOrderList(itemId, children) {
+export async function setCourseItemOrderList(itemId: string, children: Array<string>): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .put(getCourseItemApiUrl(itemId), {
       children,
@@ -434,7 +419,10 @@ export async function setCourseItemOrderList(itemId, children) {
  * @param {string} videoSharingOption
  * @returns {Promise<Object>}
 */
-export async function setVideoSharingOption(courseId, videoSharingOption) {
+export async function setVideoSharingOption(
+  courseId: string,
+  videoSharingOption: string,
+): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseBlockApiUrl(courseId), {
       metadata: {
@@ -450,7 +438,7 @@ export async function setVideoSharingOption(courseId, videoSharingOption) {
  * @param {string} parentLocator
  * @returns {Promise<Object>}
 */
-export async function pasteBlock(parentLocator) {
+export async function pasteBlock(parentLocator: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       parent_locator: parentLocator,
@@ -465,7 +453,7 @@ export async function pasteBlock(parentLocator) {
  * @param {string} url
  * @returns void
 */
-export async function dismissNotification(url) {
+export async function dismissNotification(url: string) {
   await getAuthenticatedHttpClient()
     .delete(url);
 }
@@ -473,9 +461,10 @@ export async function dismissNotification(url) {
 /**
  * Downloads the file of the exported tags
  * @param {string} courseId The ID of the content
+ * @param {string} courseName
  * @returns void
  */
-export async function getTagsExportFile(courseId, courseName) {
+export async function getTagsExportFile(courseId: string, courseName: string) {
   // Gets exported tags and builds the blob to download CSV file.
   // This can be done with this code:
   // `window.location.href = exportTags(contentId);`
