@@ -59,6 +59,7 @@ export interface CourseOutlineState {
   currentItem: XBlock | {};
   actions: XBlockActions;
   enableProctoredExams: boolean;
+  enableTimedExams: boolean;
   pasteFileNotices: object;
   createdOn: null | Date;
 }

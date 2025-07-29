@@ -1,26 +1,62 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Alert, Form, Hyperlink } from '@openedx/paragon';
 import {
-  Warning as WarningIcon,
-} from '@openedx/paragon/icons';
+  Alert,
+  Form,
+  Hyperlink,
+  OverlayTrigger,
+  Tooltip,
+} from '@openedx/paragon';
+import { Warning as WarningIcon, Question } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 import PrereqSettings from './PrereqSettings';
 
-const AdvancedTab = ({
+interface ValuesProps {
+  isTimeLimited: boolean;
+  defaultTimeLimitMinutes?: number;
+  isPrereq?: boolean;
+  prereqUsageKey?: string;
+  prereqMinScore?: number;
+  prereqMinCompletion?: number;
+  isProctoredExam?: boolean;
+  isPracticeExam?: boolean;
+  isOnboardingExam?: boolean;
+  examReviewRules?: string;
+}
+
+interface PrereqItem {
+  blockUsageKey: string;
+  blockDisplayName: string;
+}
+
+interface AdvancedTabProps {
+  values: ValuesProps;
+  setFieldValue: (field: string, value: any) => void;
+  releasedToStudents: boolean;
+  prereqs?: PrereqItem[];
+  wasExamEverLinkedWithExternal?: boolean;
+  enableProctoredExams?: boolean;
+  enableTimedExams?: boolean;
+  supportsOnboarding?: boolean;
+  wasProctoredExam?: boolean;
+  showReviewRules?: boolean;
+  onlineProctoringRules?: string;
+}
+
+const AdvancedTab: React.FC<AdvancedTabProps> = ({
   values,
   setFieldValue,
-  prereqs,
   releasedToStudents,
-  wasExamEverLinkedWithExternal,
-  enableProctoredExams,
-  supportsOnboarding,
-  wasProctoredExam,
-  showReviewRules,
-  onlineProctoringRules,
+  prereqs = [],
+  wasExamEverLinkedWithExternal = false,
+  enableProctoredExams = false,
+  enableTimedExams = true,
+  supportsOnboarding = false,
+  wasProctoredExam = false,
+  showReviewRules = false,
+  onlineProctoringRules = '',
 }) => {
   const {
     isTimeLimited,
@@ -46,7 +82,11 @@ const AdvancedTab = ({
     examTypeValue = 'timed';
   }
 
-  const formatHour = (hour) => {
+  const formatHour = (hour: number | undefined): string => {
+    if (hour === undefined) {
+      return '00:00';
+    }
+
     const hh = Math.floor(hour / 60);
     const mm = hour % 60;
     let hhs = `${hh}`;
@@ -66,10 +106,12 @@ const AdvancedTab = ({
     return `${hhs}:${mms}`;
   };
 
-  const [timeLimit, setTimeLimit] = useState(formatHour(defaultTimeLimitMinutes));
+  const [timeLimit, setTimeLimit] = useState(
+    formatHour(defaultTimeLimitMinutes),
+  );
   const showReviewRulesDiv = showReviewRules && isProctoredExam && !isPracticeExam && !isOnboardingExam;
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === 'timed') {
       setFieldValue('isTimeLimited', true);
       setFieldValue('isOnboardingExam', false);
@@ -98,8 +140,10 @@ const AdvancedTab = ({
     }
   };
 
-  const setCurrentTimeLimit = (event) => {
-    const { validity: { valid } } = event.target;
+  const setCurrentTimeLimit = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      validity: { valid },
+    } = event.target;
     let { value } = event.target;
     value = value.trim();
     if (value && valid) {
@@ -115,12 +159,16 @@ const AdvancedTab = ({
       <>
         {proctoredExamLockedIn && !wasProctoredExam && (
           <Alert variant="warning" icon={WarningIcon}>
-            <FormattedMessage {...messages.proctoredExamLockedAndisNotProctoredExamAlert} />
+            <FormattedMessage
+              {...messages.proctoredExamLockedAndisNotProctoredExamAlert}
+            />
           </Alert>
         )}
         {proctoredExamLockedIn && wasProctoredExam && (
           <Alert variant="warning" icon={WarningIcon}>
-            <FormattedMessage {...messages.proctoredExamLockedAndisProctoredExamAlert} />
+            <FormattedMessage
+              {...messages.proctoredExamLockedAndisProctoredExamAlert}
+            />
           </Alert>
         )}
       </>
@@ -129,7 +177,26 @@ const AdvancedTab = ({
 
   return (
     <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.setSpecialExam} /></h5>
+      <div className="d-flex align-items-center mt-4">
+        <h5 className="text-gray-700 mb-0">
+          <FormattedMessage {...messages.setSpecialExam} />
+        </h5>
+        {!enableTimedExams && (
+          <OverlayTrigger
+            placement="top"
+            overlay={(
+              <Tooltip id={messages.timedExamsDisabledTooltip.id}>
+                <FormattedMessage {...messages.timedExamsDisabledTooltip} />
+              </Tooltip>
+            )}
+          >
+            <Question
+              className="ml-2 text-gray-500"
+              style={{ cursor: 'help' }}
+            />
+          </OverlayTrigger>
+        )}
+      </div>
       <hr />
       <Form.RadioSet
         name="specialExam"
@@ -137,11 +204,12 @@ const AdvancedTab = ({
         value={examTypeValue}
       >
         {renderAlerts()}
-        <Form.Radio value="none">
+        <Form.Radio value="none" disabled={!enableTimedExams}>
           <FormattedMessage {...messages.none} />
         </Form.Radio>
         <Form.Radio
           value="timed"
+          disabled={!enableTimedExams}
           description={<FormattedMessage {...messages.timedDescription} />}
           controlClassName="mw-1-25rem"
         >
@@ -151,14 +219,18 @@ const AdvancedTab = ({
           <>
             <Form.Radio
               value="proctoredExam"
-              description={<FormattedMessage {...messages.proctoredExamDescription} />}
+              description={
+                <FormattedMessage {...messages.proctoredExamDescription} />
+              }
               controlClassName="mw-1-25rem"
             >
               <FormattedMessage {...messages.proctoredExam} />
             </Form.Radio>
             {supportsOnboarding ? (
               <Form.Radio
-                description={<FormattedMessage {...messages.onboardingExamDescription} />}
+                description={
+                  <FormattedMessage {...messages.onboardingExamDescription} />
+                }
                 value="onboardingExam"
                 controlClassName="mw-1-25rem"
               >
@@ -168,7 +240,9 @@ const AdvancedTab = ({
               <Form.Radio
                 value="practiceExam"
                 controlClassName="mw-1-25rem"
-                description={<FormattedMessage {...messages.practiceExamDescription} />}
+                description={
+                  <FormattedMessage {...messages.practiceExamDescription} />
+                }
               >
                 <FormattedMessage {...messages.practiceExam} />
               </Form.Radio>
@@ -176,7 +250,7 @@ const AdvancedTab = ({
           </>
         )}
       </Form.RadioSet>
-      { isTimeLimited && (
+      {isTimeLimited && (
         <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
           <Form.Group>
             <Form.Label>
@@ -189,10 +263,12 @@ const AdvancedTab = ({
               pattern="^[0-9][0-9]:[0-5][0-9]$"
             />
           </Form.Group>
-          <Form.Text><FormattedMessage {...messages.timeLimitDescription} /></Form.Text>
+          <Form.Text>
+            <FormattedMessage {...messages.timeLimitDescription} />
+          </Form.Text>
         </div>
       )}
-      { showReviewRulesDiv && (
+      {showReviewRulesDiv && (
         <div className="mt-3">
           <Form.Group>
             <Form.Label>
@@ -206,7 +282,7 @@ const AdvancedTab = ({
             />
           </Form.Group>
           <Form.Text>
-            { onlineProctoringRules ? (
+            {onlineProctoringRules ? (
               <FormattedMessage
                 {...messages.reviewRulesDescriptionWithLink}
                 values={{
@@ -236,43 +312,6 @@ const AdvancedTab = ({
       />
     </>
   );
-};
-
-AdvancedTab.defaultProps = {
-  prereqs: [],
-  wasExamEverLinkedWithExternal: false,
-  enableProctoredExams: false,
-  supportsOnboarding: false,
-  wasProctoredExam: false,
-  showReviewRules: false,
-  onlineProctoringRules: '',
-};
-
-AdvancedTab.propTypes = {
-  values: PropTypes.shape({
-    isTimeLimited: PropTypes.bool.isRequired,
-    defaultTimeLimitMinutes: PropTypes.number,
-    isPrereq: PropTypes.bool,
-    prereqUsageKey: PropTypes.string,
-    prereqMinScore: PropTypes.number,
-    prereqMinCompletion: PropTypes.number,
-    isProctoredExam: PropTypes.bool,
-    isPracticeExam: PropTypes.bool,
-    isOnboardingExam: PropTypes.bool,
-    examReviewRules: PropTypes.string,
-  }).isRequired,
-  setFieldValue: PropTypes.func.isRequired,
-  prereqs: PropTypes.arrayOf(PropTypes.shape({
-    blockUsageKey: PropTypes.string.isRequired,
-    blockDisplayName: PropTypes.string.isRequired,
-  })),
-  releasedToStudents: PropTypes.bool.isRequired,
-  wasExamEverLinkedWithExternal: PropTypes.bool,
-  enableProctoredExams: PropTypes.bool,
-  supportsOnboarding: PropTypes.bool,
-  wasProctoredExam: PropTypes.bool,
-  showReviewRules: PropTypes.bool,
-  onlineProctoringRules: PropTypes.string,
 };
 
 export default AdvancedTab;
