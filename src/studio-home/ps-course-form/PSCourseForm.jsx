@@ -91,8 +91,8 @@ const PSCourseForm = ({
         const response = await getAuthenticatedHttpClient().get('https://studio.staging.titaned.com/organizations');
         console.log('allowedOrganizations response', response);
         // Transform the response to match the expected format
-        // const organizations = response.data || [];
-        setAllowedOrganizations(response);
+        const organizations = response.data || [];
+        setAllowedOrganizations(organizations);
         console.log('allowedOrganizations', allowedOrganizations);
       } catch (error) {
         console.error('Error fetching organizations:', error);
@@ -559,8 +559,8 @@ const PSCourseForm = ({
                                       <Dropdown.Menu>
                                         {allowedOrganizations?.map((org) => (
                                           <Dropdown.Item
-                                            key={org.value}
-                                            onClick={() => handleInputChange('organization', org.value)}
+                                            key={org}
+                                            onClick={() => handleInputChange('organization', org)}
                                           >
                                             {org.label}
                                           </Dropdown.Item>
