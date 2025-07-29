@@ -45,11 +45,12 @@ import messages from './messages';
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
   const response = await getAuthenticatedHttpClient().get('https://staging.titaned.com/titaned/api/v1/menu-config/');
-  if (!response.ok) {
+
+  if (response.status !== 200) {
     throw new Error('Failed to fetch Navigation Items');
   }
-  const data = await response.json();
-  return data;
+
+  return response.data;
 };
 
 const Layout = () => {
@@ -108,9 +109,8 @@ const Layout = () => {
     const fetchMenu = async () => {
       try {
         const menuConfig = await fetchNavigationItems();
-        console.log('Menu configuration:', menuConfig);
 
-        if (isMounted) {
+        if (isMounted && menuConfig) {
           // Define all sidebar items with their visibility conditions
           const sidebarItemsConfig = [
             {
@@ -283,7 +283,7 @@ const Layout = () => {
     return () => {
       isMounted = false;
     };
-  }, [intl]);
+  }, []);
 
   const handleNavigate = (path) => {
     navigate(path);
