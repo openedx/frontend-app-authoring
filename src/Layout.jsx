@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import { FooterProps } './studio-home/interfaces/components';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import messages from './messages';
 
 // Icon mapping for API icon names
@@ -42,7 +44,7 @@ import messages from './messages';
 
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
-  const response = await fetch('http://localhost:3002/navigation');
+  const response = await getAuthenticatedHttpClient().get('https://staging.titaned.com/titaned/api/v1/menu-config/');
   if (!response.ok) {
     throw new Error('Failed to fetch Navigation Items');
   }
@@ -82,7 +84,7 @@ const Layout = () => {
   const [loadingSidebar, setLoadingSidebar] = useState(true);
   const [headerButtons, setHeaderButtons] = useState({});
 
-  const DefaultIcon = ParagonIcons.Home;
+  // const DefaultIcon = ParagonIcons.Home;
 
   // useEffect(() => {
   //   let isMounted = true;
@@ -102,33 +104,182 @@ const Layout = () => {
 
   useEffect(() => {
     let isMounted = true;
+
     const fetchMenu = async () => {
       try {
-        const apiItems = await fetchNavigationItems();
-        if (isMounted && apiItems.sidemenu) {
-          const formattedApiItems = apiItems.sidemenu.map((item) => ({
-            label: item.label,
-            path: item.path,
-            icon: ParagonIcons[item.iconName]
-              ? React.createElement(ParagonIcons[item.iconName])
-              : <DefaultIcon />,
-          }));
-          setSidebarItems((prev) => [prev[0], ...formattedApiItems]);
-        }
+        const menuConfig = await fetchNavigationItems();
+        console.log('Menu configuration:', menuConfig);
 
-        if (isMounted && apiItems.header.headerButtons) {
-          setHeaderButtons(apiItems.header.headerButtons);
+        if (isMounted) {
+          // Define all sidebar items with their visibility conditions
+          const sidebarItemsConfig = [
+            {
+              label: intl.formatMessage(messages.sidebarDashboardTitle),
+              path: '/home',
+              icon: <ParagonIcons.Home />,
+              isVisible: true, // Always visible
+            },
+            {
+              label: intl.formatMessage(messages.sidebarCreateNewCourseTitle),
+              path: '/new-course',
+              icon: <ParagonIcons.LibraryAdd />,
+              isVisible: menuConfig.allow_to_create_new_course || false,
+            },
+            {
+              label: intl.formatMessage(messages.sidebarMyCoursesTitle),
+              path: '/my-courses',
+              icon: <ParagonIcons.LmsBook />,
+              isVisible: true, // Always visible
+            },
+            {
+              label: intl.formatMessage(messages.sidebarContentLibrariesTitle),
+              path: '/libraries',
+              icon: <ParagonIcons.LibraryBooks />,
+              isVisible: true, // Always visible
+            },
+            {
+              label: intl.formatMessage(messages.sidebarCalendarTitle),
+              path: '/calendar',
+              icon: <ParagonIcons.Calendar />,
+              isVisible: true, // Always visible
+            },
+            {
+              label: intl.formatMessage(messages.sidebarClassPlannerTitle),
+              path: '/class-planner',
+              icon: <ParagonIcons.Analytics />,
+              isVisible: menuConfig.show_class_planner || false,
+            },
+            {
+              label: intl.formatMessage(messages.sidebarInsightsReportsTitle),
+              path: '/reports',
+              icon: <ParagonIcons.Lightbulb />,
+              isVisible: menuConfig.show_insights_and_reports || false,
+            },
+            {
+              label: intl.formatMessage(messages.sidebarTitanAITitle),
+              path: '/ai-assistant',
+              icon: <ParagonIcons.Assistant />,
+              isVisible: menuConfig.assistant_is_enabled || false,
+            },
+            {
+              label: intl.formatMessage(messages.sidebarSharedResourcesTitle),
+              path: '/shared-resources',
+              icon: <ParagonIcons.FolderShared />,
+              isVisible: menuConfig.resources_is_enabled || false,
+            },
+            {
+              label: intl.formatMessage(messages.sidebarTaxonomiesTitle),
+              path: '/taxonomies',
+              icon: <ParagonIcons.Assignment />,
+              isVisible: true, // Always visible
+            },
+          ];
+
+          // Filter visible items and remove the isVisible property
+          const visibleSidebarItems = sidebarItemsConfig
+            .filter(item => item.isVisible)
+            .map(({ isVisible, ...item }) => item);
+
+          setSidebarItems(visibleSidebarItems);
+
+          const headerButtonsConfig = {
+            reSync: true,
+            contextSwitcher: true,
+            help: true,
+            translation: menuConfig.language_selector_is_enabled || false,
+            notification: menuConfig.notification_is_enabled || false,
+          };
+
+          setHeaderButtons(headerButtonsConfig);
         }
       } catch (error) {
-        // Optionally log error
-        // console.error('Failed to fetch sidebar items:', error);
-        // Only Home will be shown
-        setSidebarItems((prev) => [prev[0]]);
+        // Fallback to always-visible items when API fails
+        const fallbackItems = [
+          {
+            label: intl.formatMessage(messages.sidebarDashboardTitle),
+            path: '/home',
+            icon: <ParagonIcons.Home />,
+            isVisible: true,
+          },
+          {
+            label: intl.formatMessage(messages.sidebarCreateNewCourseTitle),
+            path: '/new-course',
+            icon: <ParagonIcons.LibraryAdd />,
+            isVisible: false, // Hide when API fails
+          },
+          {
+            label: intl.formatMessage(messages.sidebarMyCoursesTitle),
+            path: '/my-courses',
+            icon: <ParagonIcons.LmsBook />,
+            isVisible: true,
+          },
+          {
+            label: intl.formatMessage(messages.sidebarContentLibrariesTitle),
+            path: '/libraries',
+            icon: <ParagonIcons.LibraryBooks />,
+            isVisible: true,
+          },
+          {
+            label: intl.formatMessage(messages.sidebarCalendarTitle),
+            path: '/calendar',
+            icon: <ParagonIcons.Calendar />,
+            isVisible: true,
+          },
+          {
+            label: intl.formatMessage(messages.sidebarClassPlannerTitle),
+            path: '/class-planner',
+            icon: <ParagonIcons.Analytics />,
+            isVisible: false, // Hide when API fails
+          },
+          {
+            label: intl.formatMessage(messages.sidebarInsightsReportsTitle),
+            path: '/reports',
+            icon: <ParagonIcons.Lightbulb />,
+            isVisible: false, // Hide when API fails
+          },
+          {
+            label: intl.formatMessage(messages.sidebarTitanAITitle),
+            path: '/ai-assistant',
+            icon: <ParagonIcons.Assistant />,
+            isVisible: false, // Hide when API fails
+          },
+          {
+            label: intl.formatMessage(messages.sidebarSharedResourcesTitle),
+            path: '/shared-resources',
+            icon: <ParagonIcons.FolderShared />,
+            isVisible: false, // Hide when API fails
+          },
+          {
+            label: intl.formatMessage(messages.sidebarTaxonomiesTitle),
+            path: '/taxonomies',
+            icon: <ParagonIcons.Assignment />,
+            isVisible: true,
+          },
+        ];
+
+        // Filter visible items and remove the isVisible property
+        const visibleFallbackItems = fallbackItems
+          .filter(item => item.isVisible)
+          .map(({ isVisible, ...item }) => item);
+
+        setSidebarItems(visibleFallbackItems);
+
+        const fallbackHeaderButtonsConfig = {
+          reSync: true,
+          contextSwitcher: true,
+          help: true,
+          translation: false,
+          notification: false,
+        };
+
+        setHeaderButtons(fallbackHeaderButtonsConfig);
       } finally {
         setLoadingSidebar(false);
       }
     };
+
     fetchMenu();
+
     return () => {
       isMounted = false;
     };
@@ -163,8 +314,7 @@ const Layout = () => {
   //   { label: intl.formatMessage(messages.sidebarClassPlannerTitle), path: '/class-planner', icon: <Analytics /> },
   //   { label: intl.formatMessage(messages.sidebarInsightsReportsTitle), path: '/reports', icon: <Lightbulb /> },
   //   { label: intl.formatMessage(messages.sidebarTitanAITitle), path: '/ai-assistant', icon: <Assistant /> },
-  //   { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources',
-  //      icon: <FolderShared /> },
+  //   { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources', icon: <FolderShared /> },
   //   { label: intl.formatMessage(messages.sidebarTaxonomiesTitle), path: '/taxonomies', icon: <Assignment /> },
   // ];
 
