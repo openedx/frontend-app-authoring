@@ -1,9 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Col, Form } from '@openedx/paragon';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import { keyStore } from '../../../../../../utils';
@@ -17,13 +16,13 @@ import './index.scss';
  * Collapsible Form widget controlling video start and end times
  * Also displays the total run time of the video.
  */
-const DurationWidget = ({
-  // redux
-  duration,
-  updateField,
-  // injected
-  intl,
-}) => {
+const DurationWidget = () => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const duration = useSelector(selectors.video.duration);
+
+  const updateField = (payload) => dispatch(actions.video.updateField(payload));
+
   const {
     unsavedDuration,
     onBlur,
@@ -84,21 +83,7 @@ const DurationWidget = ({
   );
 };
 
-DurationWidget.propTypes = {
-  // redux
-  duration: PropTypes.objectOf(PropTypes.number).isRequired,
-  updateField: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
-};
+// For testing
+export const DurationWidgetInternal = DurationWidget;
 
-export const mapStateToProps = (state) => ({
-  duration: selectors.video.duration(state),
-});
-
-export const mapDispatchToProps = {
-  updateField: actions.video.updateField,
-};
-
-export const DurationWidgetInternal = DurationWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(DurationWidget));
+export default DurationWidget;

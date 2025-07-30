@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '@src/editors/testUtils';
+import { initializeMocks } from '@src/testUtils';
+import { RequestKeys } from '@src/editors/data/constants/requests';
 import { SelectImageModalInternal as SelectImageModal } from '.';
+import editorRender from '../../../editorTestRender';
 
 jest.mock('../../BaseModal', () => 'BaseModal');
 jest.mock('../../FileInput', () => 'FileInput');
@@ -45,49 +46,52 @@ jest.mock('./hooks', () => ({
   })),
 }));
 
-jest.mock('../../../data/redux', () => ({
-  selectors: {
-    requests: {
-      isPending: (state, { requestKey }) => ({ isPending: { state, requestKey } }),
-    },
-  },
-}));
-
 describe('SelectImageModal', () => {
+  const initialState = {
+    app: {
+      imageCount: 1,
+      learningContextId: 'library-v1:abc123', // so isLibrary returns true
+      blockId: null, // optional since contextId alone is enough
+    },
+    requests: {
+      [RequestKeys.fetchImages]: {
+        status: 'completed', // or 'FAILED' for error case
+      },
+      [RequestKeys.uploadAsset]: {
+        status: 'completed', // or 'FAILED' for error case
+      },
+    },
+  };
+
   describe('component', () => {
     const props = {
       isOpen: true,
       close: jest.fn().mockName('props.close'),
       setSelection: jest.fn().mockName('props.setSelection'),
       clearSelection: jest.fn().mockName('props.clearSelection'),
-      isLoaded: true,
-      isFetchError: false,
-      isUploadError: false,
-      imageCount: 1,
       images: ['image.pgn'],
-      intl: { formatMessage },
     };
     beforeEach(() => {
-      initializeMocks();
+      initializeMocks({ initialState });
     });
     test('renders correctly', () => {
-      const { container } = render(<SelectImageModal {...props} />);
+      const { container } = editorRender(<SelectImageModal {...props} />, { initialState });
       expect(container.querySelector('SelectionModal')).toBeInTheDocument();
     });
     it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
-      const { container } = render(<SelectImageModal {...props} />);
+      const { container } = editorRender(<SelectImageModal {...props} />, { initialState });
       expect(container.querySelector('SelectionModal')?.getAttribute('selectBtnProps')).toBeTruthy();
     });
     it('provides file upload button linked to fileInput.click', () => {
-      const { container } = render(<SelectImageModal {...props} />);
+      const { container } = editorRender(<SelectImageModal {...props} />, { initialState });
       expect(container.querySelector('SelectionModal')?.getAttribute('fileInput')).toBeTruthy();
     });
     it('provides a SearchSort component with searchSortProps from imgHooks', () => {
-      const { container } = render(<SelectImageModal {...props} />);
+      const { container } = editorRender(<SelectImageModal {...props} />, { initialState });
       expect(container.querySelector('SelectionModal')?.getAttribute('searchSortProps')).toBeTruthy();
     });
     it('provides a Gallery component with galleryProps from imgHooks', () => {
-      const { container } = render(<SelectImageModal {...props} />);
+      const { container } = editorRender(<SelectImageModal {...props} />, { initialState });
       expect(container.querySelector('SelectionModal')?.getAttribute('galleryProps')).toBeTruthy();
     });
   });
