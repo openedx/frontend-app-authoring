@@ -22,6 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
+import { createPortal } from 'react-dom';
 import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import {
@@ -31,7 +32,6 @@ import {
   moveUnit,
   dragHelpers,
 } from './utils';
-import { createPortal } from 'react-dom';
 import CourseItemOverlay from './CourseItemOverlay';
 import { XBlock } from '../../data/types';
 
@@ -54,7 +54,7 @@ interface DraggableListProps {
     restoreSectionList: () => void,
   ) => void,
   children: React.ReactNode,
-};
+}
 
 interface ItemInfoType {
   index: number;
@@ -147,7 +147,7 @@ const DraggableList = ({
     active: Active,
     over: Over,
     activeInfo: ItemInfoType,
-    overInfo: ItemInfoType
+    overInfo: ItemInfoType,
   ) => {
     if (
       activeInfo.parent?.id === overInfo.parent?.id
@@ -191,8 +191,8 @@ const DraggableList = ({
     active: Active,
     over: Over,
     activeInfo: ItemInfoType,
-    overInfo: ItemInfoType
-) => {
+    overInfo: ItemInfoType,
+  ) => {
     if (
       activeInfo.parent?.id === overInfo.parent?.id
       || activeInfo.parent?.id === overInfo.item.id
@@ -358,7 +358,7 @@ const DraggableList = ({
         displayName={displayName}
         category={category}
         status={status}
-      />
+      />,
     );
   };
 
@@ -372,11 +372,13 @@ const DraggableList = ({
           case COURSE_BLOCK_NAMES.chapter.id:
             return container.data?.current?.category === activeCategory;
           case COURSE_BLOCK_NAMES.sequential.id:
-            return (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id && container.data?.current?.childAddable
-              || container.data?.current?.category === activeCategory);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id
+              && container.data?.current?.childAddable)
+              || (container.data?.current?.category === activeCategory);
           case COURSE_BLOCK_NAMES.vertical.id:
-            return (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id && container.data?.current?.childAddable
-              || container.data?.current?.category === activeCategory);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id
+              && container.data?.current?.childAddable)
+              || (container.data?.current?.category === activeCategory);
           default:
             return true;
         }
@@ -405,7 +407,7 @@ const DraggableList = ({
         <DragOverlay>
           {draggedItemClone && activeId ? draggedItemClone : null}
         </DragOverlay>,
-        document.body
+        document.body,
       )}
     </DndContext>
   );

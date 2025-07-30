@@ -1,7 +1,7 @@
-import { Col, Icon, Row } from "@openedx/paragon";
-import { ArrowRight, DragIndicator } from "@openedx/paragon/icons";
-import { ContainerType } from "../../generic/key-utils";
-import { getItemStatusBorder } from "../utils";
+import { Col, Icon, Row } from '@openedx/paragon';
+import { ArrowRight, DragIndicator } from '@openedx/paragon/icons';
+import { ContainerType } from '../../generic/key-utils';
+import { getItemStatusBorder } from '../utils';
 
 interface ItemProps {
   displayName: string;
@@ -17,21 +17,19 @@ const commonStyle = {
   marginBottom: '1.5rem',
   borderRadius: '0.35rem',
   boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
-}
+};
 
-const DragIndicatorBtn = () => {
-  return (
-    <button
-      key="drag-to-reorder-icon"
-      className="btn-icon btn-icon-secondary btn-icon-md"
-      type="button"
-    >
-      <span className="btn-icon__icon-container">
-        <Icon src={DragIndicator} />
-      </span>
-    </button>
-  );
-}
+const DragIndicatorBtn = () => (
+  <button
+    key="drag-to-reorder-icon"
+    className="btn-icon btn-icon-secondary btn-icon-md"
+    type="button"
+  >
+    <span className="btn-icon__icon-container">
+      <Icon src={DragIndicator} />
+    </span>
+  </button>
+);
 
 const SectionCard = ({ status, displayName }: ItemProps) => {
   const style = {
@@ -39,12 +37,12 @@ const SectionCard = ({ status, displayName }: ItemProps) => {
     paddingTop: '2rem',
     paddingBottom: '5rem',
     ...getItemStatusBorder(status),
-  }
+  };
 
   return (
     <Row
       style={style}
-      className='mx-0 bg-white'
+      className="mx-0 bg-white"
     >
       <Col className="extend-margin px-0">
         <div className="item-card-header h3">
@@ -55,7 +53,7 @@ const SectionCard = ({ status, displayName }: ItemProps) => {
       <DragIndicatorBtn />
     </Row>
   );
-}
+};
 
 const SubsectionCard = ({ status, displayName }: ItemProps) => {
   const style = {
@@ -63,12 +61,12 @@ const SubsectionCard = ({ status, displayName }: ItemProps) => {
     paddingTop: '1rem',
     paddingBottom: '2.5rem',
     ...getItemStatusBorder(status),
-  }
+  };
 
   return (
     <Row
       style={style}
-      className='mx-0 bg-light-200'
+      className="mx-0 bg-light-200"
     >
       <Col className="extend-margin px-0">
         <div className="item-card-header h4 pt-2">
@@ -79,19 +77,19 @@ const SubsectionCard = ({ status, displayName }: ItemProps) => {
       <DragIndicatorBtn />
     </Row>
   );
-}
+};
 
 const UnitCard = ({ status, displayName }: ItemProps) => {
   const style = {
     ...commonStyle,
     paddingBottom: '1.5rem',
     ...getItemStatusBorder(status),
-  }
+  };
 
   return (
     <Row
       style={style}
-      className='mx-0 bg-white'
+      className="mx-0 bg-white"
     >
       <Col className="extend-margin px-0">
         <div className="item-card-header h5 pt-3">
@@ -101,19 +99,19 @@ const UnitCard = ({ status, displayName }: ItemProps) => {
       <DragIndicatorBtn />
     </Row>
   );
-}
+};
 
 const CourseItemOverlay = ({ category, displayName, status }: CourseItemOverlayProps) => {
   switch (category) {
     case ContainerType.Chapter:
-      return <SectionCard displayName={displayName} status={status} />
+      return <SectionCard displayName={displayName} status={status} />;
     case ContainerType.Sequential:
-      return <SubsectionCard displayName={displayName} status={status} />
+      return <SubsectionCard displayName={displayName} status={status} />;
     case ContainerType.Vertical:
-      return <UnitCard displayName={displayName} status={status} />
+      return <UnitCard displayName={displayName} status={status} />;
     default:
       throw new Error(`Invalid course item type: ${category}`);
   }
-}
+};
 
-export default CourseItemOverlay
+export default CourseItemOverlay;

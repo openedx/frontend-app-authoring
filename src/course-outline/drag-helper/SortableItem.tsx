@@ -21,7 +21,7 @@ interface SortableItemProps {
   isDraggable?: boolean;
   children: React.ReactNode;
   componentStyle?: object;
-};
+}
 
 const SortableItem = ({
   id,

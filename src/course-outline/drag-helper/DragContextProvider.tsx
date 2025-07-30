@@ -5,7 +5,7 @@ interface DragContextProviderProps {
   activeId?: UniqueIdentifier | null,
   overId?: UniqueIdentifier | null,
   children?: React.ReactNode,
-};
+}
 
 export const DragContext = React.createContext<DragContextProviderProps>({
   activeId: '',

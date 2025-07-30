@@ -1,98 +1,51 @@
 import { XBlock } from '../../data/types';
-import { possibleSubsectionMoves, moveSubsection, moveSubsectionOver, possibleUnitMoves, moveUnit, moveUnitOver } from './utils';
-
-const unit1 = { displayName: 'Unit 1' }
-const unit2 = { displayName: 'Unit 2' }
-const unit3 = { displayName: 'Unit 3' }
-const unit4 = { displayName: 'Unit 4' }
-
-const subsection1 = {
-  id: 'Subection-1',
-  displayName: 'Subection 1',
-  childInfo: {
-    children: [
-      unit1,
-      unit2
-    ],
-  },
-  actions: {
-    draggable: true,
-    childAddable: true,
-  }
-} as XBlock;
-
-const subsection2 = {
-  id: 'Subection-2',
-  displayName: 'Subection 2',
-  childInfo: {
-    children: [
-      unit3,
-    ],
-  },
-  actions: {
-    draggable: true,
-    childAddable: true,
-  }
-} as XBlock;
-
-const subsection3 = {
-  id: 'Subection-3',
-  displayName: 'Subection 3',
-  childInfo: {
-    children: [
-      unit4,
-    ],
-  },
-  actions: {
-    draggable: true,
-    childAddable: true,
-  }
-} as XBlock;
-
+import {
+  possibleSubsectionMoves, moveSubsection, moveSubsectionOver, possibleUnitMoves, moveUnit, moveUnitOver,
+} from './utils';
 
 describe('possibleSubsectionMoves', () => {
   const mockSections = [
     {
       id: 'section1',
       actions: { childAddable: true },
-      childInfo: { children: [] }
+      childInfo: { children: [] },
     },
     {
       id: 'section2',
       actions: { childAddable: true },
-      childInfo: { children: [] }
+      childInfo: { children: [] },
     },
     {
       id: 'section3',
       actions: { childAddable: false },
-      childInfo: { children: [] }
-    }
+      childInfo: { children: [] },
+    },
   ] as unknown as XBlock[];
 
   const mockSubsections = [
     { actions: { draggable: true } },
     { actions: { draggable: true } },
-    { actions: { draggable: true } }
+    { actions: { draggable: true } },
   ];
 
   const createMoveFunction = possibleSubsectionMoves(
     mockSections,
     1,
     mockSections[1],
-    mockSubsections
+    mockSubsections,
   );
 
   test('should return empty object if subsection is not draggable', () => {
     const mockNonDraggableSubsections = [
       { actions: { draggable: false } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ];
 
     const createMove = possibleSubsectionMoves(
       mockSections,
       1,
       mockSections[1],
-      mockNonDraggableSubsections
+      mockNonDraggableSubsections,
     );
 
     const result = createMove(0, 1);
@@ -104,7 +57,7 @@ describe('possibleSubsectionMoves', () => {
     expect(result).toEqual({
       fn: moveSubsection,
       args: [mockSections, 1, 0, 1],
-      sectionId: 'section2'
+      sectionId: 'section2',
     });
   });
 
@@ -113,7 +66,7 @@ describe('possibleSubsectionMoves', () => {
     expect(result).toEqual({
       fn: moveSubsection,
       args: [mockSections, 1, 1, 0],
-      sectionId: 'section2'
+      sectionId: 'section2',
     });
   });
 
@@ -122,21 +75,21 @@ describe('possibleSubsectionMoves', () => {
     expect(result).toEqual({
       fn: moveSubsectionOver,
       args: [mockSections, 1, 0, 0, mockSections[0].childInfo.children.length + 1],
-      sectionId: 'section1'
+      sectionId: 'section1',
     });
   });
 
   test('should return empty object when moving to previous section not allowed', () => {
     const mockRestrictedSections = [
       { id: 'section1', actions: { childAddable: false } },
-      { id: 'section2', actions: { childAddable: true } }
+      { id: 'section2', actions: { childAddable: true } },
     ] as unknown as XBlock[];
 
     const createMove = possibleSubsectionMoves(
       mockRestrictedSections,
       1,
       mockRestrictedSections[1],
-      mockSubsections
+      mockSubsections,
     );
 
     const result = createMove(0, -1);
@@ -155,7 +108,7 @@ describe('possibleSubsectionMoves', () => {
     expect(result).toEqual({
       fn: moveSubsectionOver,
       args: [mockSections, 0, 2, 1, 0],
-      sectionId: 'section2'
+      sectionId: 'section2',
     });
   });
 
@@ -167,14 +120,14 @@ describe('possibleSubsectionMoves', () => {
   test('should return empty object when moving to next section not allowed', () => {
     const mockRestrictedSections = [
       { id: 'section1', actions: { childAddable: true } },
-      { id: 'section2', actions: { childAddable: false } }
+      { id: 'section2', actions: { childAddable: false } },
     ] as unknown as XBlock[];
 
     const createMove = possibleSubsectionMoves(
       mockRestrictedSections,
       0,
       mockRestrictedSections[0],
-      mockSubsections
+      mockSubsections,
     );
 
     const result = createMove(2, 1);
@@ -187,7 +140,7 @@ describe('possibleSubsectionMoves', () => {
       mockSections,
       0,
       mockSections[0],
-      mockSubsections
+      mockSubsections,
     );
 
     const resultUp = firstSectionMove(0, -1);
@@ -198,7 +151,7 @@ describe('possibleSubsectionMoves', () => {
       mockSections,
       2,
       mockSections[2],
-      mockSubsections
+      mockSubsections,
     );
 
     const resultDown = lastSectionMove(2, 1);
@@ -213,7 +166,7 @@ describe('possibleSubsectionMoves', () => {
       emptySections,
       0,
       {} as unknown as XBlock,
-      emptySubsections
+      emptySubsections,
     );
 
     const result = createMove(0, 1);
@@ -226,7 +179,7 @@ describe('possibleSubsectionMoves', () => {
     expect(resultPositive).toEqual({
       fn: moveSubsection,
       args: [mockSections, 1, 1, 2],
-      sectionId: 'section2'
+      sectionId: 'section2',
     });
 
     // Negative step
@@ -234,7 +187,7 @@ describe('possibleSubsectionMoves', () => {
     expect(resultNegative).toEqual({
       fn: moveSubsection,
       args: [mockSections, 1, 1, 0],
-      sectionId: 'section2'
+      sectionId: 'section2',
     });
   });
 });
@@ -245,27 +198,27 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
       {
         id: 'section1',
         actions: { childAddable: true },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section2',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section3',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section4',
         actions: { childAddable: true },
-        childInfo: { children: [] }
-      }
+        childInfo: { children: [] },
+      },
     ] as unknown as XBlock[];
 
     const subsections = [
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     // Moving from first section (index 0) to the next available childAddable section
@@ -273,14 +226,14 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
       sectionsWithBlockers,
       0,
       sectionsWithBlockers[0],
-      subsections
+      subsections,
     );
 
     const resultMoveDown = createMove(0, 1);
     expect(resultMoveDown).toEqual({
       fn: moveSubsectionOver,
       args: [sectionsWithBlockers, 0, 0, 3, 0],
-      sectionId: 'section4'
+      sectionId: 'section4',
     });
   });
 
@@ -289,27 +242,27 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
       {
         id: 'section1',
         actions: { childAddable: true },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section2',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section3',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section4',
         actions: { childAddable: true },
-        childInfo: { children: ['existing'] }
-      }
+        childInfo: { children: ['existing'] },
+      },
     ] as unknown as XBlock[];
 
     const subsections = [
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     // Moving from last section (index 4) to the previous available childAddable section
@@ -317,14 +270,14 @@ describe('possibleSubsectionMoves - skipping non-childAddable sections', () => {
       sectionsWithBlockers,
       3,
       sectionsWithBlockers[3],
-      subsections
+      subsections,
     );
 
     const resultMoveUp = createMove(0, -1);
     expect(resultMoveUp).toEqual({
       fn: moveSubsectionOver,
       args: [sectionsWithBlockers, 3, 0, 0, sectionsWithBlockers[0].childInfo.children.length + 1],
-      sectionId: 'section1'
+      sectionId: 'section1',
     });
   });
 });
@@ -339,15 +292,15 @@ describe('possibleUnitMoves', () => {
           {
             id: 'subsection1',
             actions: { childAddable: true },
-            childInfo: { children: [] }
+            childInfo: { children: [] },
           },
           {
             id: 'subsection2',
             actions: { childAddable: true },
-            childInfo: { children: [] }
-          }
-        ]
-      }
+            childInfo: { children: [] },
+          },
+        ],
+      },
     },
     {
       id: 'section2',
@@ -357,17 +310,17 @@ describe('possibleUnitMoves', () => {
           {
             id: 'subsection3',
             actions: { childAddable: true },
-            childInfo: { children: [] }
-          }
-        ]
-      }
-    }
+            childInfo: { children: [] },
+          },
+        ],
+      },
+    },
   ] as unknown as XBlock[];
 
   const mockUnits = [
     { actions: { draggable: true } },
     { actions: { draggable: true } },
-    { actions: { draggable: true } }
+    { actions: { draggable: true } },
   ] as unknown as XBlock[];
 
   test('should move unit within same units array', () => {
@@ -377,7 +330,7 @@ describe('possibleUnitMoves', () => {
       0,
       mockSections[0],
       mockSections[0].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const resultMoveDown = createMove(0, 1);
@@ -385,7 +338,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnit,
       args: [mockSections, 0, 0, 0, 1],
       sectionId: 'section1',
-      subsectionId: 'subsection1'
+      subsectionId: 'subsection1',
     });
 
     const resultMoveUp = createMove(1, -1);
@@ -393,14 +346,14 @@ describe('possibleUnitMoves', () => {
       fn: moveUnit,
       args: [mockSections, 0, 0, 1, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection1'
+      subsectionId: 'subsection1',
     });
   });
 
   test('should return empty object for non-draggable units', () => {
     const nonDraggableUnits = [
       { actions: { draggable: false } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -409,7 +362,7 @@ describe('possibleUnitMoves', () => {
       0,
       mockSections[0],
       mockSections[0].childInfo.children[0],
-      nonDraggableUnits
+      nonDraggableUnits,
     );
 
     const result = createMove(0, 1);
@@ -423,7 +376,7 @@ describe('possibleUnitMoves', () => {
       0,
       mockSections[0],
       mockSections[0].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(2, 1);
@@ -431,7 +384,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [mockSections, 0, 0, 2, 0, 1, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 
@@ -442,7 +395,7 @@ describe('possibleUnitMoves', () => {
       0,
       mockSections[1],
       mockSections[1].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(0, -1);
@@ -450,7 +403,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [mockSections, 1, 0, 0, 0, 1, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 
@@ -464,10 +417,10 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -477,16 +430,16 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection2',
               actions: { childAddable: true },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -495,7 +448,7 @@ describe('possibleUnitMoves', () => {
       0,
       sectionsWithMultipleSubsections[0],
       sectionsWithMultipleSubsections[0].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(2, 1);
@@ -503,7 +456,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [sectionsWithMultipleSubsections, 0, 0, 2, 1, 0, 0],
       sectionId: 'section2',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 
@@ -512,13 +465,13 @@ describe('possibleUnitMoves', () => {
       {
         id: 'section1',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section2',
         actions: { childAddable: false },
-        childInfo: { children: [] }
-      }
+        childInfo: { children: [] },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -527,7 +480,7 @@ describe('possibleUnitMoves', () => {
       0,
       restrictedSections[0],
       { id: 'subsection1', actions: { childAddable: true }, childInfo: { children: [] } } as unknown as XBlock,
-      mockUnits
+      mockUnits,
     );
 
     const resultMoveDown = createMove(2, 1);
@@ -542,8 +495,8 @@ describe('possibleUnitMoves', () => {
       {
         id: 'section1',
         actions: { childAddable: true },
-        childInfo: { children: [] }
-      }
+        childInfo: { children: [] },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -552,7 +505,7 @@ describe('possibleUnitMoves', () => {
       0,
       emptySections[0],
       { id: 'subsection1', actions: { childAddable: true }, childInfo: { children: [] } } as unknown as XBlock,
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(0, -1);
@@ -569,15 +522,15 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection1',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection2',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -587,11 +540,11 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -600,7 +553,7 @@ describe('possibleUnitMoves', () => {
       0,
       sectionsWithMixedSubsections[0],
       sectionsWithMixedSubsections[0].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(2, 1);
@@ -608,7 +561,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [sectionsWithMixedSubsections, 0, 0, 2, 0, 1, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 
@@ -622,10 +575,10 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -635,16 +588,16 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -653,7 +606,7 @@ describe('possibleUnitMoves', () => {
       1,
       sectionsWithMixedSubsections[1],
       sectionsWithMixedSubsections[1].childInfo.children[1],
-      mockUnits
+      mockUnits,
     );
 
     const result = createMove(0, -1);
@@ -661,7 +614,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [sectionsWithMixedSubsections, 1, 1, 0, 0, 0, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection1'
+      subsectionId: 'subsection1',
     });
   });
 
@@ -670,7 +623,7 @@ describe('possibleUnitMoves', () => {
       {
         id: 'section1',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section2',
@@ -680,15 +633,15 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section3',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section4',
@@ -698,11 +651,11 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection2',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -711,7 +664,7 @@ describe('possibleUnitMoves', () => {
       0,
       complexSections[1],
       complexSections[1].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const resultMoveDown = createMove(2, 1);
@@ -719,7 +672,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [complexSections, 1, 0, 2, 3, 0, 0],
       sectionId: 'section4',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
 
     const createMoveUp = possibleUnitMoves(
@@ -728,7 +681,7 @@ describe('possibleUnitMoves', () => {
       0,
       complexSections[3],
       complexSections[3].childInfo.children[0],
-      mockUnits
+      mockUnits,
     );
 
     const resultMoveUp = createMoveUp(0, -1);
@@ -736,7 +689,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [complexSections, 3, 0, 0, 1, 0, 0],
       sectionId: 'section2',
-      subsectionId: 'subsection1'
+      subsectionId: 'subsection1',
     });
   });
 
@@ -745,13 +698,13 @@ describe('possibleUnitMoves', () => {
       {
         id: 'section1',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section2',
         actions: { childAddable: false },
-        childInfo: { children: [] }
-      }
+        childInfo: { children: [] },
+      },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -760,7 +713,7 @@ describe('possibleUnitMoves', () => {
       0,
       restrictedSections[0],
       { id: 'subsection1', actions: { childAddable: true }, childInfo: { children: [] } } as unknown as XBlock,
-      mockUnits
+      mockUnits,
     );
 
     const resultMoveDown = createMove(2, 1);
@@ -780,10 +733,10 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -793,11 +746,11 @@ describe('possibleUnitMoves', () => {
             {
               id: 'subsection2',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const singleUnit = [{ actions: { draggable: true } }] as unknown as XBlock[];
@@ -808,7 +761,7 @@ describe('possibleUnitMoves', () => {
       0,
       singleUnitSections[0],
       singleUnitSections[0].childInfo.children[0],
-      singleUnit
+      singleUnit,
     );
 
     const resultMoveDown = createMove(0, 1);
@@ -816,7 +769,7 @@ describe('possibleUnitMoves', () => {
       fn: moveUnitOver,
       args: [singleUnitSections, 0, 0, 0, 1, 0, 0],
       sectionId: 'section2',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 });
@@ -832,26 +785,26 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
       { actions: { draggable: true } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -860,7 +813,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       sectionsWithMixedSubsections[0],
       sectionsWithMixedSubsections[0].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveDown = createMove(1, 1);
@@ -868,7 +821,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [sectionsWithMixedSubsections, 0, 0, 1, 0, 2, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection3'
+      subsectionId: 'subsection3',
     });
   });
 
@@ -882,10 +835,10 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -895,26 +848,26 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection4',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
       { actions: { draggable: true } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -923,7 +876,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       sectionsWithMixedSubsections[0],
       sectionsWithMixedSubsections[0].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveDown = createMove(1, 1);
@@ -931,7 +884,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [sectionsWithMixedSubsections, 0, 0, 1, 1, 2, 0],
       sectionId: 'section2',
-      subsectionId: 'subsection4'
+      subsectionId: 'subsection4',
     });
   });
 
@@ -945,20 +898,20 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -968,16 +921,16 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection4',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
       { actions: { draggable: true } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMove = possibleUnitMoves(
@@ -986,7 +939,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       sectionsWithMixedSubsections[1],
       sectionsWithMixedSubsections[1].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveUp = createMove(0, -1);
@@ -994,7 +947,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [sectionsWithMixedSubsections, 1, 0, 0, 0, 2, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection3'
+      subsectionId: 'subsection3',
     });
   });
 
@@ -1008,20 +961,20 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection3',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -1031,21 +984,21 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection4',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection5',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
       { actions: { draggable: true } },
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     // Moving from first section to second section, skipping non-childAddable subsections
@@ -1055,7 +1008,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       2,
       complexSections[0],
       complexSections[0].childInfo.children[2],
-      units
+      units,
     );
 
     const resultMoveDown = createMoveDown(1, 1);
@@ -1063,7 +1016,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [complexSections, 0, 2, 1, 1, 1, 0],
       sectionId: 'section2',
-      subsectionId: 'subsection5'
+      subsectionId: 'subsection5',
     });
 
     // Moving from second section to first section, skipping non-childAddable subsections
@@ -1073,7 +1026,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       1,
       complexSections[1],
       complexSections[1].childInfo.children[1],
-      units
+      units,
     );
 
     const resultMoveUp = createMoveUp(0, -1);
@@ -1081,7 +1034,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [complexSections, 1, 1, 0, 0, 2, 0],
       sectionId: 'section1',
-      subsectionId: 'subsection3'
+      subsectionId: 'subsection3',
     });
   });
 
@@ -1095,15 +1048,15 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection2',
               actions: { childAddable: false },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
@@ -1113,20 +1066,20 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection3',
               actions: { childAddable: false },
-              childInfo: { children: [] }
+              childInfo: { children: [] },
             },
             {
               id: 'subsection4',
               actions: { childAddable: false },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMoveDown = possibleUnitMoves(
@@ -1135,7 +1088,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       sectionsWithNoChildAddable[0],
       sectionsWithNoChildAddable[0].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveDown = createMoveDown(0, 1);
@@ -1147,7 +1100,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       sectionsWithNoChildAddable[1],
       sectionsWithNoChildAddable[1].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveUp = createMoveUp(0, -1);
@@ -1164,15 +1117,15 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection1',
               actions: { childAddable: false },
-              childInfo: { children: [] }
-            }
-          ]
-        }
+              childInfo: { children: [] },
+            },
+          ],
+        },
       },
       {
         id: 'section2',
         actions: { childAddable: false },
-        childInfo: { children: [] }
+        childInfo: { children: [] },
       },
       {
         id: 'section3',
@@ -1182,15 +1135,15 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
             {
               id: 'subsection2',
               actions: { childAddable: true },
-              childInfo: { children: [] }
-            }
-          ]
-        }
-      }
+              childInfo: { children: [] },
+            },
+          ],
+        },
+      },
     ] as unknown as XBlock[];
 
     const units = [
-      { actions: { draggable: true } }
+      { actions: { draggable: true } },
     ] as unknown as XBlock[];
 
     const createMoveDown = possibleUnitMoves(
@@ -1199,7 +1152,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       0,
       multipleSections[0],
       multipleSections[0].childInfo.children[0],
-      units
+      units,
     );
 
     const resultMoveDown = createMoveDown(0, 1);
@@ -1207,7 +1160,7 @@ describe('possibleUnitMoves - skipping non-childAddable subsections', () => {
       fn: moveUnitOver,
       args: [multipleSections, 0, 0, 0, 2, 0, 0],
       sectionId: 'section3',
-      subsectionId: 'subsection2'
+      subsectionId: 'subsection2',
     });
   });
 });

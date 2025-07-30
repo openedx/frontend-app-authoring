@@ -233,7 +233,7 @@ const SubsectionCard = ({
 
   const parentInfo = {
     graded: subsection.graded,
-    hasUpstream: section.upstreamInfo?.upstreamRef,
+    hasUpstream: !!section.upstreamInfo?.upstreamRef,
   };
 
   return (
@@ -243,7 +243,7 @@ const SubsectionCard = ({
         data={{
           category,
           displayName,
-          childAddable:actions.childAddable,
+          childAddable: actions.childAddable,
           status: subsectionStatus,
         }}
         key={id}
