@@ -11,7 +11,7 @@ import {
   isAdvancedProblemType,
   ProblemType,
   ProblemTypeKeys,
-} from '../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
 
 interface Props {
   onClose: (() => void) | null;

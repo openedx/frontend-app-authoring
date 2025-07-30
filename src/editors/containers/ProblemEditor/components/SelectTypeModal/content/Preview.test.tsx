@@ -1,24 +1,29 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { render, screen, initializeMocks } from '../../../../../../testUtils';
+import { getProblemTitles } from '@src/editors/data/constants/problem';
 import Preview from './Preview';
 
 // Mock ProblemTypes and getProblemTypes functions
-jest.mock('../../../../../data/constants/problem', () => ({
-  ProblemTypes: {
-    example: {
-      title: 'Example Title',
-      preview: 'example.png',
-      previewDescription: 'Example description',
-      helpLink: 'https://help.example.com',
+jest.mock('@src/editors/data/constants/problem', () => {
+  const actualModule = jest.requireActual('@src/editors/data/constants/problem');
+
+  return {
+    ...actualModule,
+    ProblemTypes: {
+      example: {
+        title: 'Example Title',
+        preview: 'example.png',
+        previewDescription: 'Example description',
+        helpLink: 'https://help.example.com',
+      },
     },
-  },
-  getProblemTypes: jest.fn(() => ({
-    example: {
-      title: 'Example Title',
-      previewDescription: 'Example description',
-    },
-  })),
+    getProblemTypes: jest.fn(() => ({
+      example: {
+        title: 'Example Title',
+        previewDescription: 'Example description',
+      },
+    })),
 }));
 
 // Mock useIntl

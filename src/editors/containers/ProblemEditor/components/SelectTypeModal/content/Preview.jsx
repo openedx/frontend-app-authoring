@@ -6,7 +6,7 @@ import {
   useIntl,
 } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { ProblemTypes, getProblemTypes } from '../../../../../data/constants/problem';
+import { ProblemTypes, getProblemTypes } from '@src/editors/data/constants/problem';
 
 const Preview = ({
   problemType,

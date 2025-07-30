@@ -3,7 +3,7 @@ import {
   render, screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
 import { AnswersContainerInternal as AnswersContainer } from './AnswersContainer';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 
 const { useAnswerContainer } = require('./hooks');
 

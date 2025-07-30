@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import TypeCard from './TypeCard';
-import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 
 describe('TypeCard', () => {
   const props = {

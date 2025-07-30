@@ -10,7 +10,7 @@ import {
   AdvancedProblemType,
   ProblemType,
   getProblemTypes,
-} from '../../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
 import messages from './messages';
 
 interface Props {
