@@ -15,7 +15,7 @@ import {
   RichTextProblems,
   ShowAnswerTypesKeys,
   getProblemTypes,
-} from '../../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
 export const state = {

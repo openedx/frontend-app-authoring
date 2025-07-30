@@ -3,6 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { render, screen } from '@testing-library/react';
 import Preview from './Preview';
 import messages from './messages';
+import { ProblemTypeKeys, getProblemTypes } from '@src/editors/data/constants/problem';
 
 // Mock ProblemTypes to provide test data
 jest.mock('@src/editors/data/constants/problem', () => {

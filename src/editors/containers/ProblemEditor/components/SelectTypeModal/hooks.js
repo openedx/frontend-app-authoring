@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {
   AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes, getProblemTypes, getAdvanceProblems,
-} from '../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
 import { snakeCaseKeys } from '../../../../utils';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
