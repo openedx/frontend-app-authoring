@@ -1,16 +1,20 @@
-import {
-  act, render, waitFor, fireEvent, within, screen,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { getConfig, initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getConfig } from '@edx/frontend-platform';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
+import { RequestStatus } from '@src/data/constants';
+import { clipboardUnit } from '@src/__mocks__';
+import { executeThunk } from '@src/utils';
+import configureModalMessages from '@src/generic/configure-modal/messages';
+import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages';
+import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
+import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import {
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
+} from '@src/testUtils';
+import { XBlock } from '@src/data/types';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -21,16 +25,14 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
-  createDiscussionsTopics,
+  createDiscussionsTopicsUrl,
 } from './data/api';
-import { RequestStatus } from '../data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
   updateCourseSectionHighlightsQuery,
 } from './data/thunk';
-import initializeStore from '../store';
 import {
   courseOutlineIndexMock,
   courseOutlineIndexWithoutSections,
@@ -39,15 +41,10 @@ import {
   courseSectionMock,
   courseSubsectionMock,
 } from './__mocks__';
-import { clipboardUnit } from '../__mocks__';
-import { executeThunk } from '../utils';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 
-import configureModalMessages from '../generic/configure-modal/messages';
-import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
 import messages from './messages';
-import { getApiBaseUrl, getClipboardUrl } from '../generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
@@ -60,14 +57,13 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
-import { postXBlockBaseApiUrl } from '../course-unit/data/api';
-import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 
-let axiosMock;
+let axiosMock: import('axios-mock-adapter/types');
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
-const containerKey = 'lct:org:lib:unit:1';
+const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
+const getContainerType = jest.fn().mockReturnValue('unit');
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -76,7 +72,7 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 
-jest.mock('../help-urls/hooks', () => ({
+jest.mock('@src/help-urls/hooks', () => ({
   useHelpUrls: () => ({
     contentHighlights: 'some',
     visibility: 'some',
@@ -98,13 +94,13 @@ jest.mock('./data/api', () => ({
 }));
 
 // Mock ComponentPicker to call onComponentSelected on click
-jest.mock('../library-authoring/component-picker', () => ({
+jest.mock('@src/library-authoring/component-picker', () => ({
   ComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
-        usageKey: containerKey,
-        blockType: 'unti',
+        usageKey: getContainerKey(),
+        blockType: getContainerType(),
       });
     };
     return (
@@ -119,8 +115,6 @@ jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));
 
-const queryClient = new QueryClient();
-
 jest.mock('@dnd-kit/core', () => ({
   ...jest.requireActual('@dnd-kit/core'),
   // Since jsdom (used by jest) does not support getBoundingClientRect function
@@ -130,38 +124,34 @@ jest.mock('@dnd-kit/core', () => ({
   closestCorners: jest.fn(),
 }));
 
+jest.mock('@src/studio-home/data/selectors', () => ({
+  ...jest.requireActual('@src/studio-home/data/selectors'),
+  getStudioHomeData: jest.fn().mockReturnValue({
+    librariesV2Enabled: true,
+  }),
+}));
+
 // eslint-disable-next-line no-promise-executor-return
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <IntlProvider locale="en">
-        <CourseOutline courseId={courseId} />
-      </IntlProvider>
-    </QueryClientProvider>
-  </AppProvider>
+const renderComponent = () => render(
+  <CourseOutline courseId={courseId} />,
 );
 
 describe('<CourseOutline />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    useLocation.mockReturnValue({
+    jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,
+      state: undefined,
+      key: '',
+      search: '',
+      hash: '',
     });
 
-    store = initializeStore({
-      studioHome: { studioHomeData: { librariesV2Enabled: true } },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
@@ -188,7 +178,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component correctly', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
 
     await waitFor(() => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
@@ -198,10 +188,10 @@ describe('<CourseOutline />', () => {
 
   it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
     axiosMock
-      .onGet(createDiscussionsTopics(courseId))
+      .onPost(createDiscussionsTopicsUrl(courseId))
       .reply(500, 'some internal error');
 
-    await executeThunk(syncDiscussionsTopics(), store.dispatch);
+    await executeThunk(syncDiscussionsTopics(courseId), store.dispatch);
 
     expect(logError).toHaveBeenCalledTimes(1);
   });
@@ -211,7 +201,7 @@ describe('<CourseOutline />', () => {
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(500, 'some internal error');
 
-    const { findByText, queryByRole } = render(<RootWrapper />);
+    const { findByText, queryByRole } = renderComponent();
     expect(await findByText('"some internal error"')).toBeInTheDocument();
     // check errors in store
     expect(store.getState().courseOutline.errors).toEqual({
@@ -230,7 +220,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check reindex and render success alert is correctly', async () => {
-    const { findByText, findByTestId } = render(<RootWrapper />);
+    const { findByText, findByTestId } = renderComponent();
 
     axiosMock
       .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
@@ -242,7 +232,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option udpates correctly', async () => {
-    const { findByLabelText } = render(<RootWrapper />);
+    const { findByLabelText } = renderComponent();
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -265,7 +255,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
-    render(<RootWrapper />);
+    renderComponent();
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -295,7 +285,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('render error alert after failed reindex correctly', async () => {
-    const { findByText, findByTestId } = render(<RootWrapper />);
+    const { findByText, findByTestId } = renderComponent();
 
     axiosMock
       .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
@@ -307,7 +297,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new section list is saved when dragged', async () => {
-    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
     const [section] = store.getState().courseOutline.sectionsList;
@@ -319,7 +309,7 @@ describe('<CourseOutline />', () => {
       .reply(200, { dummy: 'value' });
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
-    closestCorners.mockReturnValue([{ id: section1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: section1 }]);
 
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
@@ -334,7 +324,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section list is restored to original order when API call fails', async () => {
-    const { findAllByRole, findByTestId } = render(<RootWrapper />);
+    const { findAllByRole, findByTestId } = renderComponent();
     const expandAllButton = await findByTestId('expand-collapse-all-button');
     fireEvent.click(expandAllButton);
     const [section] = store.getState().courseOutline.sectionsList;
@@ -346,7 +336,7 @@ describe('<CourseOutline />', () => {
       .reply(500);
 
     const section1 = store.getState().courseOutline.sectionsList[0].id;
-    closestCorners.mockReturnValue([{ id: section1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: section1 }]);
 
     fireEvent.keyDown(draggableButton, { code: 'Space' });
     await sleep(1);
@@ -361,11 +351,18 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     let elements = await findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
+      height: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      left: 0,
+      right: 0,
+      toJSON: () => {},
     }));
     expect(elements.length).toBe(4);
 
@@ -377,22 +374,29 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
-    const newSectionButton = await findByTestId('new-section-button');
+    const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
     await act(async () => fireEvent.click(newSectionButton));
 
     elements = await findAllByTestId('section-card');
     expect(elements.length).toBe(5);
-    expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
+    expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
   it('adds new subsection correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
+      height: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+      left: 0,
+      right: 0,
+      toJSON: () => {},
     }));
 
     axiosMock
@@ -403,18 +407,18 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
-    const newSubsectionButton = await within(section).findByTestId('new-subsection-button');
+    const newSubsectionButton = await within(section).findByRole('button', { name: 'New subsection' });
     await act(async () => {
       fireEvent.click(newSubsectionButton);
     });
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(3);
-    expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
+    expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
   it('adds new unit correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const units = await within(subsectionElement).findAllByTestId('unit-card');
@@ -425,7 +429,7 @@ describe('<CourseOutline />', () => {
       .reply(200, {
         locator: 'some',
       });
-    const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
+    const newUnitButton = await within(subsectionElement).findByRole('button', { name: 'New unit' });
     await act(async () => fireEvent.click(newUnitButton));
     expect(axiosMock.history.post.length).toBe(3);
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -438,7 +442,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds a unit from library correctly', async () => {
-    render(<RootWrapper />);
+    getContainerKey.mockReturnValue('lct:org:lib:unit:1');
+    getContainerKey.mockReturnValue('unit');
+    renderComponent();
     const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const units = await within(subsectionElement).findAllByTestId('unit-card');
@@ -448,6 +454,7 @@ describe('<CourseOutline />', () => {
       .onPost(postXBlockBaseApiUrl())
       .reply(200, {
         locator: 'some',
+        parent_locator: 'parent',
       });
 
     const addUnitFromLibraryButton = within(subsectionElement).getByRole('button', {
@@ -459,20 +466,95 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(2));
+    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-      type: COMPONENT_TYPES.libraryV2,
-      category: 'vertical',
-      parent_locator: subsection.id,
-      library_content_key: containerKey,
-    }));
+    waitFor(() => {
+      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+        type: COMPONENT_TYPES.libraryV2,
+        category: 'vertical',
+        parent_locator: subsection.id,
+        library_content_key: getContainerKey(),
+      }));
+    });
+  });
+
+  it('adds a subsection from library correctly', async () => {
+    getContainerKey.mockReturnValue('lct:org:lib:subsection:1');
+    getContainerKey.mockReturnValue('subsection');
+    renderComponent();
+    const [sectionElement] = await screen.findAllByTestId('section-card');
+    const subsections = await within(sectionElement).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(2);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+        parent_locator: 'parent',
+      });
+
+    const addSubsectionFromLibraryButton = within(sectionElement).getByRole('button', {
+      name: /use subsection from library/i,
+    });
+    fireEvent.click(addSubsectionFromLibraryButton);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    waitFor(() => {
+      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+        type: COMPONENT_TYPES.libraryV2,
+        category: 'sequential',
+        parent_locator: section.id,
+        library_content_key: getContainerKey(),
+      }));
+    });
+  });
+
+  it('adds a section from library correctly', async () => {
+    getContainerKey.mockReturnValue('lct:org:lib:section:1');
+    getContainerKey.mockReturnValue('section');
+    renderComponent();
+    const sections = await screen.findAllByTestId('section-card');
+    expect(sections.length).toBe(4);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+        parent_locator: 'parent',
+      });
+
+    const addSectionFromLibraryButton = await screen.findByRole('button', {
+      name: /use section from library/i,
+    });
+    fireEvent.click(addSectionFromLibraryButton);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+
+    const courseUsageKey = courseOutlineIndexMock.courseStructure.id;
+    waitFor(() => {
+      expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
+        type: COMPONENT_TYPES.libraryV2,
+        category: 'chapter',
+        parent_locator: courseUsageKey,
+        library_content_key: getContainerKey(),
+      }));
+    });
   });
 
   it('render checklist value correctly', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText } = renderComponent();
 
     await executeThunk(fetchCourseLaunchQuery({
       courseId, gradedOnly: true, validateOras: true, all: true,
@@ -490,7 +572,7 @@ describe('<CourseOutline />', () => {
         courseId, gradedOnly: true, validateOras: true, all: true,
       }))
       .reply(500);
-    const { findByText, findByRole } = render(<RootWrapper />);
+    const { findByText, findByRole } = renderComponent();
 
     await executeThunk(fetchCourseLaunchQuery({
       courseId, gradedOnly: true, validateOras: true, all: true,
@@ -520,7 +602,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {
-    const { findByTestId, findByText } = render(<RootWrapper />);
+    const { findByTestId, findByText } = renderComponent();
 
     axiosMock.reset();
     axiosMock
@@ -549,7 +631,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('should expand and collapse subsections, after click on subheader buttons', async () => {
-    const { queryAllByTestId, findByText } = render(<RootWrapper />);
+    const { queryAllByTestId, findByText } = renderComponent();
 
     const collapseBtn = await findByText(headerMessages.collapseAllButton.defaultMessage);
     expect(collapseBtn).toBeInTheDocument();
@@ -573,7 +655,7 @@ describe('<CourseOutline />', () => {
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
 
-    const { getByTestId } = render(<RootWrapper />);
+    const { getByTestId } = renderComponent();
 
     await waitFor(() => {
       expect(getByTestId('empty-placeholder')).toBeInTheDocument();
@@ -588,7 +670,7 @@ describe('<CourseOutline />', () => {
         notificationDismissUrl: '/some/url',
       });
 
-    render(<RootWrapper />);
+    renderComponent();
     const alert = await screen.findByText(pageAlertMessages.configurationErrorTitle.defaultMessage);
     expect(alert).toBeInTheDocument();
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
@@ -601,15 +683,11 @@ describe('<CourseOutline />', () => {
   });
 
   it('check edit title works for section, subsection and unit', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     const checkEditTitle = async (section, element, item, newName, elementName) => {
       axiosMock.reset();
       axiosMock
-        .onPost(getCourseItemApiUrl(item.id, {
-          metadata: {
-            display_name: newName,
-          },
-        }))
+        .onPost(getCourseItemApiUrl(item.id))
         .reply(200, { dummy: 'value' });
       // mock section, subsection and unit name and check within the elements.
       // this is done to avoid adding conditions to this mock.
@@ -643,14 +721,13 @@ describe('<CourseOutline />', () => {
       await act(async () => fireEvent.blur(editField));
       expect(
         axiosMock.history.post[axiosMock.history.post.length - 1].data,
-        `Failed for ${elementName}!`,
       ).toBe(JSON.stringify({
         metadata: {
           display_name: newName,
         },
       }));
       const results = await within(element).findAllByText(newName);
-      expect(results.length, `Failed for ${elementName}!`).toBeGreaterThan(0);
+      expect(results.length).toBeGreaterThan(0);
     };
 
     // check section
@@ -670,7 +747,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
-    render(<RootWrapper />);
+    renderComponent();
     // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await screen.findAllByTestId('section-card');
@@ -681,7 +758,7 @@ describe('<CourseOutline />', () => {
 
     const checkDeleteBtn = async (item, element, elementName) => {
       await waitFor(() => {
-        expect(screen.queryByText(item.displayName), `Failed for ${elementName}!`).toBeInTheDocument();
+        expect(screen.queryByText(item.displayName)).toBeInTheDocument();
       });
 
       axiosMock.onDelete(getCourseItemApiUrl(item.id)).reply(200);
@@ -694,7 +771,7 @@ describe('<CourseOutline />', () => {
       fireEvent.click(confirmButton);
 
       await waitFor(() => {
-        expect(screen.queryByText(item.displayName), `Failed for ${elementName}!`).not.toBeInTheDocument();
+        expect(screen.queryByText(item.displayName)).not.toBeInTheDocument();
       });
     };
 
@@ -708,9 +785,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is duplicated successfully', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get section, subsection and unit
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -722,12 +799,10 @@ describe('<CourseOutline />', () => {
       if (parentElement) {
         expect(
           await within(parentElement).findAllByTestId(`${elementName}-card`),
-          `Failed for ${elementName}!`,
         ).toHaveLength(expectedLength - 1);
       } else {
         expect(
           await findAllByTestId(`${elementName}-card`),
-          `Failed for ${elementName}!`,
         ).toHaveLength(expectedLength - 1);
       }
 
@@ -758,12 +833,10 @@ describe('<CourseOutline />', () => {
       if (parentElement) {
         expect(
           await within(parentElement).findAllByTestId(`${elementName}-card`),
-          `Failed for ${elementName}!`,
         ).toHaveLength(expectedLength);
       } else {
         expect(
           await findAllByTestId(`${elementName}-card`),
-          `Failed for ${elementName}!`,
         ).toHaveLength(expectedLength);
       }
     };
@@ -778,8 +851,8 @@ describe('<CourseOutline />', () => {
   });
 
   it('check section, subsection & unit is published when publish button is clicked', async () => {
-    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const { findAllByTestId, findByTestId } = renderComponent();
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children as unknown as XBlock[];
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -788,8 +861,7 @@ describe('<CourseOutline />', () => {
 
     const checkPublishBtn = async (item, element, elementName) => {
       expect(
-        (await within(element).getAllByRole('status'))[0],
-        `Failed for ${elementName}!`,
+        (await within(element).findAllByRole('status'))[0],
       ).toHaveTextContent(cardHeaderMessages.statusBadgeDraft.defaultMessage);
 
       axiosMock
@@ -819,6 +891,7 @@ describe('<CourseOutline />', () => {
               {
                 ...section.childInfo.children[0],
                 childInfo: {
+                  displayName: 'Unit Tests',
                   children: [
                     {
                       ...section.childInfo.children[0].childInfo.children[0],
@@ -846,8 +919,7 @@ describe('<CourseOutline />', () => {
       await act(async () => fireEvent.click(confirmButton));
 
       expect(
-        (await within(element).getAllByRole('status'))[0],
-        `Failed for ${elementName}!`,
+        (await within(element).findAllByRole('status'))[0],
       ).toHaveTextContent(cardHeaderMessages.statusBadgeLive.defaultMessage);
     };
 
@@ -860,7 +932,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for section', async () => {
-    const { findByTestId, findAllByTestId } = render(<RootWrapper />);
+    const { findByTestId, findAllByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDateIso = '2025-09-10T22:00:00Z';
     const newReleaseDate = '09/10/2025';
@@ -916,8 +988,8 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByTestId,
-    } = render(<RootWrapper />);
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    } = renderComponent();
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -953,7 +1025,7 @@ describe('<CourseOutline />', () => {
     subsection.format = expectedRequestData.graderType;
     subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
     subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
-    subsection.hideAfterDue = expectedRequestData.metadata.hideAfterDue;
+    subsection.hideAfterDue = expectedRequestData.metadata.hide_after_due;
     section.childInfo.children[0] = subsection;
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -1009,7 +1081,7 @@ describe('<CourseOutline />', () => {
     expect(releaseDatePicker).toHaveValue('08/10/2025');
     releaseDateTimePicker = await within(releaseDateStack).findByPlaceholderText('HH:MM');
     expect(releaseDateTimePicker).toHaveValue('00:00');
-    dueDateStack = await await within(configureModal).findByTestId('due-date-stack');
+    dueDateStack = await within(configureModal).findByTestId('due-date-stack');
     dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(dueDatePicker).toHaveValue('09/10/2025');
     dueDateTimePicker = await within(dueDateStack).findByPlaceholderText('HH:MM');
@@ -1031,8 +1103,8 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByTestId,
-    } = render(<RootWrapper />);
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    } = renderComponent();
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection, secondSubsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1176,8 +1248,8 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByTestId,
-    } = render(<RootWrapper />);
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    } = renderComponent();
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1276,8 +1348,8 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByTestId,
-    } = render(<RootWrapper />);
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    } = renderComponent();
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]) as unknown as XBlock;
     const [, subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1376,8 +1448,8 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByTestId,
-    } = render(<RootWrapper />);
-    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[1]);
+    } = renderComponent();
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[1]) as unknown as XBlock;
     const [subsection] = section.childInfo.children;
     const expectedRequestData = {
       publish: 'republish',
@@ -1466,7 +1538,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure modal for unit', async () => {
-    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
+    const { findAllByTestId, findByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const [subsection] = section.childInfo.children;
     const [unit] = subsection.childInfo.children;
@@ -1530,7 +1602,7 @@ describe('<CourseOutline />', () => {
       .reply(200, section);
 
     fireEvent.click(unitDropdownButton);
-    const configureBtn = await within(firstUnit).getByTestId('unit-card-header__menu-configure-button');
+    const configureBtn = await within(firstUnit).findByTestId('unit-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
     let configureModal = await findByTestId('configure-modal');
@@ -1575,7 +1647,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
-    const { getByRole } = render(<RootWrapper />);
+    const { getByRole } = renderComponent();
 
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const highlights = [
@@ -1610,7 +1682,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section move up and down options work correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section element
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
     const [, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
@@ -1639,7 +1711,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section move up & down option is rendered correctly based on index', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get first, second and last section element
     const {
       0: firstSection, 1: secondSection, length, [length - 1]: lastSection,
@@ -1682,7 +1754,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up and down options work correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
@@ -1721,7 +1793,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up to prev section if it is on top of its parent section', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     const [firstSection, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
@@ -1757,7 +1829,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move down to next section if it is in bottom position of its parent section', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     const [section, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
     const lastSubsectionIdx = section.childInfo.children.length - 1;
@@ -1794,7 +1866,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether subsection move up & down option is rendered correctly based on index', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // using first section
     const sectionElements = await findAllByTestId('section-card');
     const firstSectionElement = sectionElements[0];
@@ -1844,7 +1916,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit move up and down options work correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> second unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -1883,7 +1955,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves up to previous subsection if it is in top position in parent subsection', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -1917,7 +1989,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves up to previous subsection of prev section if it is in top position in parent subsection & section', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [firstSection, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -1962,7 +2034,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves down to next subsection if it is in last position in parent subsection', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -1997,7 +2069,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit moves down to next subsection of next section if it is in last position in parent subsection & section', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get second section -> second subsection -> first unit element
     const [, secondSection, thirdSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [, sectionElement] = await findAllByTestId('section-card');
@@ -2044,7 +2116,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit move up & down option is rendered correctly based on index', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // using first section -> first subsection -> first unit
     const sections = await findAllByTestId('section-card');
     const [sectionElement] = sections;
@@ -2085,7 +2157,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new subsection list is saved when dragged', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
 
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -2095,7 +2167,7 @@ describe('<CourseOutline />', () => {
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
     const subsection1 = section.childInfo.children[0].id;
-    closestCorners.mockReturnValue([{ id: subsection1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: subsection1 }]);
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
       .reply(200, { dummy: 'value' });
@@ -2119,7 +2191,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new subsection list is restored to original order when API call fails', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
 
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -2129,7 +2201,7 @@ describe('<CourseOutline />', () => {
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
     const subsection1 = section.childInfo.children[0].id;
-    closestCorners.mockReturnValue([{ id: subsection1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: subsection1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
@@ -2148,7 +2220,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new unit list is saved when dragged', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get third section
     const [, , sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -2159,7 +2231,7 @@ describe('<CourseOutline />', () => {
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
 
     const unit1 = subsection.childInfo.children[0].id;
-    closestCorners.mockReturnValue([{ id: unit1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: unit1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
@@ -2182,7 +2254,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that new unit list is restored to original order when API call fails', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = renderComponent();
     // get third section
     const [, , sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
@@ -2193,7 +2265,7 @@ describe('<CourseOutline />', () => {
     const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
 
     const unit1 = subsection.childInfo.children[0].id;
-    closestCorners.mockReturnValue([{ id: unit1 }]);
+    jest.mocked(closestCorners).mockReturnValue([{ id: unit1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
@@ -2216,7 +2288,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
-    render(<RootWrapper />);
+    renderComponent();
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await screen.findAllByTestId('section-card');
@@ -2251,7 +2323,7 @@ describe('<CourseOutline />', () => {
 
     // find clipboard content popover link
     const popoverContent = screen.queryByTestId('popover-content');
-    expect(popoverContent.tagName).toBe('A');
+    expect(popoverContent?.tagName).toBe('A');
     expect(popoverContent).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${unit.studioUrl}`);
 
     // check paste button functionality
@@ -2308,18 +2380,22 @@ describe('<CourseOutline />', () => {
 
     // Delay to ensure we see "Please wait."
     // Without the delay the success message renders too quickly
-    const delayedResponse = axiosMock
+    axiosMock
       .onGet(exportTags(courseId))
-      .withDelayInMs(500);
-    delayedResponse(200, expectedResponse);
+      .withDelayInMs(500)
+      .reply(200, expectedResponse);
 
-    useLocation.mockReturnValue({
+    jest.mocked(useLocation).mockReturnValue({
       pathname: '/foo-bar',
       hash: '#export-tags',
+      state: undefined,
+      key: '',
+      search: '',
     });
+
     window.URL.createObjectURL = jest.fn().mockReturnValue('http://example.com/archivo');
     window.URL.revokeObjectURL = jest.fn();
-    render(<RootWrapper />);
+    renderComponent();
     await screen.findByText('Please wait. Creating export file for course tags...');
 
     const expectedRequest = axiosMock.history.get.filter(request => request.url === exportTags(courseId));
@@ -2331,17 +2407,20 @@ describe('<CourseOutline />', () => {
   it('should show toast on export tags error', async () => {
     // Delay to ensure we see "Please wait."
     // Without the delay the error renders too quickly
-    const delayedResponse = axiosMock
+    axiosMock
       .onGet(exportTags(courseId))
-      .withDelayInMs(500);
-    delayedResponse(404);
+      .withDelayInMs(500)
+      .reply(404);
 
-    useLocation.mockReturnValue({
+    jest.mocked(useLocation).mockReturnValue({
       pathname: '/foo-bar',
       hash: '#export-tags',
+      state: undefined,
+      key: '',
+      search: '',
     });
 
-    render(<RootWrapper />);
+    renderComponent();
     await screen.findByText('Please wait. Creating export file for course tags...');
     await screen.findByText('An error has occurred creating the file');
   });
@@ -2351,7 +2430,7 @@ describe('<CourseOutline />', () => {
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(403);
 
-    const { getByTestId } = render(<RootWrapper />);
+    const { getByTestId } = renderComponent();
 
     await waitFor(() => {
       expect(getByTestId('redux-provider')).toBeInTheDocument();

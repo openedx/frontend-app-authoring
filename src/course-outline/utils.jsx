@@ -3,9 +3,9 @@ import {
   Lock as LockIcon,
 } from '@openedx/paragon/icons';
 
-import DraftIcon from '../generic/DraftIcon';
+import DraftIcon from '@src/generic/DraftIcon';
+import { VisibilityTypes } from '@src/data/constants';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
-import { VisibilityTypes } from '../data/constants';
 
 /**
  * Get section status depended on section info
@@ -167,9 +167,11 @@ const getHighlightsFormValues = (currentHighlights) => {
  * @param {Object} target - DOM Element
  * @param {boolean} alignWithTop (optional) - Whether top of the target will be aligned to
  *                                            the top of viewpoint. (default: false)
+ * @param {boolean} highlight (optional) - Whether highlight the target after scrolling.
+ *                                            (default: false)
  * @returns {undefined}
  */
-const scrollToElement = (target, alignWithTop = false) => {
+const scrollToElement = (target, alignWithTop = false, highlight = false) => {
   if (target.getBoundingClientRect().bottom > window.innerHeight) {
     // if alignWithTop is set, the top of the target will be aligned to the top of visible area
     // of the scrollable ancestor, Otherwise, the bottom of the target will be aligned to the
@@ -185,6 +187,10 @@ const scrollToElement = (target, alignWithTop = false) => {
   if (target.getBoundingClientRect().top < 0) {
     // The top of the target will be aligned to the top of the visible area of the scrollable ancestor
     target.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  if (highlight && !target.classList.contains('highlight')) {
+    target.classList.add('highlight');
   }
 };
 

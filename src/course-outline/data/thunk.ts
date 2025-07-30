@@ -1,11 +1,12 @@
 import { logError } from '@edx/frontend-platform/logging';
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
+} from '@src/generic/processing-notification/data/slice';
+import { createCourseXblock } from '@src/course-unit/data/api';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
@@ -54,9 +55,14 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
-import { createCourseXblock } from '../../course-unit/data/api';
 
-export function fetchCourseOutlineIndexQuery(courseId) {
+/**
+ * Action to fetch course outline.
+ *
+ * @param {string} courseId - ID of the course
+ * @returns {Object} - Object containing fetch course outline index query success or failure status
+ */
+export function fetchCourseOutlineIndexQuery(courseId: string): object {
   return async (dispatch) => {
     dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
@@ -81,7 +87,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
       dispatch(updateCourseActions(actions));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.status === 403) {
         dispatch(updateOutlineIndexLoadingStatus({
           status: RequestStatus.DENIED,
@@ -96,7 +102,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
   };
 }
 
-export function syncDiscussionsTopics(courseId) {
+export function syncDiscussionsTopics(courseId: string) {
   return async () => {
     try {
       await createDiscussionsTopics(courseId);
@@ -148,7 +154,7 @@ export function fetchCourseBestPracticesQuery({
   };
 }
 
-export function enableCourseHighlightsEmailsQuery(courseId) {
+export function enableCourseHighlightsEmailsQuery(courseId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -165,7 +171,7 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
   };
 }
 
-export function setVideoSharingOptionQuery(courseId, option) {
+export function setVideoSharingOptionQuery(courseId: string, option: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -183,7 +189,7 @@ export function setVideoSharingOptionQuery(courseId, option) {
   };
 }
 
-export function fetchCourseReindexQuery(courseId, reindexLink) {
+export function fetchCourseReindexQuery(reindexLink: string) {
   return async (dispatch) => {
     dispatch(updateReindexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
@@ -199,16 +205,36 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
   };
 }
 
-export function fetchCourseSectionQuery(sectionIds, shouldScroll = false) {
+/**
+ * Fetches course sections and optionally scrolls to a specific subsection/unit.
+ */
+export function fetchCourseSectionQuery(sectionIds: string[], scrollToId?: {
+  subsectionId: string,
+  unitId?: string,
+}) {
   return async (dispatch) => {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const sections = {};
       const results = await Promise.all(sectionIds.map((sectionId) => getCourseItem(sectionId)));
-      results.forEach((data) => {
-        // eslint-disable-next-line no-param-reassign
-        data.shouldScroll = shouldScroll;
-        sections[data.id] = data;
+      results.forEach(section => {
+        if (scrollToId) {
+          const targetSubsection = section?.childInfo?.children?.find(
+            subsection => subsection.id === scrollToId.subsectionId,
+          );
+
+          if (targetSubsection) {
+            if (scrollToId.unitId) {
+              const targetUnit = targetSubsection?.childInfo?.children?.find(unit => unit.id === scrollToId.unitId);
+              if (targetUnit) {
+                targetUnit.shouldScroll = true;
+              }
+            } else {
+              targetSubsection.shouldScroll = true;
+            }
+          }
+        }
+        sections[section.id] = section;
       });
       dispatch(updateSectionList(sections));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -221,7 +247,7 @@ export function fetchCourseSectionQuery(sectionIds, shouldScroll = false) {
   };
 }
 
-export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
+export function updateCourseSectionHighlightsQuery(sectionId: string, highlights: string[]) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -241,7 +267,7 @@ export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
   };
 }
 
-export function publishCourseItemQuery(itemId, sectionId) {
+export function publishCourseItemQuery(itemId: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -261,7 +287,7 @@ export function publishCourseItemQuery(itemId, sectionId) {
   };
 }
 
-export function configureCourseItemQuery(sectionId, configureFn) {
+export function configureCourseItemQuery(sectionId: string, configureFn: () => Promise<any>) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -281,7 +307,7 @@ export function configureCourseItemQuery(sectionId, configureFn) {
   };
 }
 
-export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+export function configureCourseSectionQuery(sectionId: string, isVisibleToStaffOnly: boolean, startDatetime: string) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
       sectionId,
@@ -291,24 +317,24 @@ export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, sta
 }
 
 export function configureCourseSubsectionQuery(
-  itemId,
-  sectionId,
-  isVisibleToStaffOnly,
-  releaseDate,
-  graderType,
-  dueDate,
-  isTimeLimited,
-  isProctoredExam,
-  isOnboardingExam,
-  isPracticeExam,
-  examReviewRules,
-  defaultTimeLimitMin,
-  hideAfterDue,
-  showCorrectness,
-  isPrereq,
-  prereqUsageKey,
-  prereqMinScore,
-  prereqMinCompletion,
+  itemId: string,
+  sectionId: string,
+  isVisibleToStaffOnly: string,
+  releaseDate: string,
+  graderType: string,
+  dueDate: string,
+  isTimeLimited: boolean,
+  isProctoredExam: boolean,
+  isOnboardingExam: boolean,
+  isPracticeExam: boolean,
+  examReviewRules: string,
+  defaultTimeLimitMin: number,
+  hideAfterDue: string,
+  showCorrectness: string,
+  isPrereq: boolean,
+  prereqUsageKey: string,
+  prereqMinScore: number,
+  prereqMinCompletion: number,
 ) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
@@ -336,7 +362,13 @@ export function configureCourseSubsectionQuery(
   };
 }
 
-export function configureCourseUnitQuery(itemId, sectionId, isVisibleToStaffOnly, groupAccess, discussionEnabled) {
+export function configureCourseUnitQuery(
+  itemId: string,
+  sectionId: string,
+  isVisibleToStaffOnly: boolean,
+  groupAccess: object,
+  discussionEnabled: boolean,
+) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
       sectionId,
@@ -345,7 +377,7 @@ export function configureCourseUnitQuery(itemId, sectionId, isVisibleToStaffOnly
   };
 }
 
-export function editCourseItemQuery(itemId, sectionId, displayName) {
+export function editCourseItemQuery(itemId: string, sectionId: string, displayName: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -369,9 +401,8 @@ export function editCourseItemQuery(itemId, sectionId, displayName) {
  * Generic function to delete course item, see below wrapper funcs for specific implementations.
  * @param {string} itemId
  * @param {() => {}} deleteItemFn
- * @returns {}
  */
-function deleteCourseItemQuery(itemId, deleteItemFn) {
+function deleteCourseItemQuery(itemId: string, deleteItemFn: () => {}) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
@@ -388,7 +419,7 @@ function deleteCourseItemQuery(itemId, deleteItemFn) {
   };
 }
 
-export function deleteCourseSectionQuery(sectionId) {
+export function deleteCourseSectionQuery(sectionId: string) {
   return async (dispatch) => {
     dispatch(deleteCourseItemQuery(
       sectionId,
@@ -397,7 +428,7 @@ export function deleteCourseSectionQuery(sectionId) {
   };
 }
 
-export function deleteCourseSubsectionQuery(subsectionId, sectionId) {
+export function deleteCourseSubsectionQuery(subsectionId: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(deleteCourseItemQuery(
       subsectionId,
@@ -406,7 +437,7 @@ export function deleteCourseSubsectionQuery(subsectionId, sectionId) {
   };
 }
 
-export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
+export function deleteCourseUnitQuery(unitId: string, subsectionId: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(deleteCourseItemQuery(
       unitId,
@@ -420,9 +451,12 @@ export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
  * @param {string} itemId
  * @param {string} parentLocator
  * @param {(locator) => Promise<any>} duplicateFn
- * @returns {}
  */
-function duplicateCourseItemQuery(itemId, parentLocator, duplicateFn) {
+function duplicateCourseItemQuery(
+  itemId: string,
+  parentLocator: string,
+  duplicateFn: (locator: string) => Promise<any>,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
@@ -442,7 +476,7 @@ function duplicateCourseItemQuery(itemId, parentLocator, duplicateFn) {
   };
 }
 
-export function duplicateSectionQuery(sectionId, courseBlockId) {
+export function duplicateSectionQuery(sectionId: string, courseBlockId: string) {
   return async (dispatch) => {
     dispatch(duplicateCourseItemQuery(
       sectionId,
@@ -457,35 +491,40 @@ export function duplicateSectionQuery(sectionId, courseBlockId) {
   };
 }
 
-export function duplicateSubsectionQuery(subsectionId, sectionId) {
+export function duplicateSubsectionQuery(subsectionId: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(duplicateCourseItemQuery(
       subsectionId,
       sectionId,
-      async () => dispatch(fetchCourseSectionQuery([sectionId], true)),
+      async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
+        subsectionId: itemId, // To scroll to the newly duplicated subsection
+      })),
     ));
   };
 }
 
-export function duplicateUnitQuery(unitId, subsectionId, sectionId) {
+export function duplicateUnitQuery(unitId: string, subsectionId: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(duplicateCourseItemQuery(
       unitId,
       subsectionId,
-      async () => dispatch(fetchCourseSectionQuery([sectionId], true)),
+      async (itemId: string) => dispatch(fetchCourseSectionQuery([sectionId], {
+        subsectionId,
+        unitId: itemId, // To scroll to the newly duplicated unit
+      })),
     ));
   };
 }
 
 /**
  * Generic function to add any course item. See wrapper functions below for specific implementations.
- * @param {string} parentLocator
- * @param {string} category
- * @param {string} displayName
- * @param {(data) => {}} addItemFn
- * @returns {}
  */
-function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn) {
+function addNewCourseItemQuery(
+  parentLocator: string,
+  category: string,
+  displayName: string,
+  addItemFn: (data: any) => Promise<any>,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -509,7 +548,7 @@ function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn) 
   };
 }
 
-export function addNewSectionQuery(parentLocator) {
+export function addNewSectionQuery(parentLocator: string) {
   return async (dispatch) => {
     dispatch(addNewCourseItemQuery(
       parentLocator,
@@ -525,7 +564,7 @@ export function addNewSectionQuery(parentLocator) {
   };
 }
 
-export function addNewSubsectionQuery(parentLocator) {
+export function addNewSubsectionQuery(parentLocator: string) {
   return async (dispatch) => {
     dispatch(addNewCourseItemQuery(
       parentLocator,
@@ -541,7 +580,7 @@ export function addNewSubsectionQuery(parentLocator) {
   };
 }
 
-export function addNewUnitQuery(parentLocator, callback) {
+export function addNewUnitQuery(parentLocator: string, callback: { (locator: any): void }) {
   return async (dispatch) => {
     dispatch(addNewCourseItemQuery(
       parentLocator,
@@ -552,7 +591,15 @@ export function addNewUnitQuery(parentLocator, callback) {
   };
 }
 
-export function addUnitFromLibrary(body, callback) {
+export function addUnitFromLibrary(body: {
+  type: string;
+  category?: string;
+  parentLocator: string;
+  displayName?: string;
+  boilerplate?: string;
+  stagedContent?: string;
+  libraryContentKey?: string;
+}, callback: (arg0: any) => void) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
@@ -573,11 +620,16 @@ export function addUnitFromLibrary(body, callback) {
 }
 
 function setBlockOrderListQuery(
-  parentId,
-  blockIds,
-  apiFn,
-  restoreCallback,
-  successCallback,
+  parentId: string,
+  blockIds: string[],
+  apiFn: {
+    (courseId: string, children: string[]): Promise<object>;
+    (itemId: string, children: string[]): Promise<object>;
+    (itemId: string, children: string[]): Promise<object>;
+    (arg0: any, arg1: any): Promise<any>;
+  },
+  restoreCallback: () => void,
+  successCallback: { (): any; (): void; (): void; (): void; },
 ) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -599,7 +651,11 @@ function setBlockOrderListQuery(
   };
 }
 
-export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallback) {
+export function setSectionOrderListQuery(
+  courseId: string,
+  sectionListIds: string[],
+  restoreCallback: () => void,
+) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(
       courseId,
@@ -612,10 +668,10 @@ export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallba
 }
 
 export function setSubsectionOrderListQuery(
-  sectionId,
-  prevSectionId,
-  subsectionListIds,
-  restoreCallback,
+  sectionId: string,
+  prevSectionId: string,
+  subsectionListIds: string[],
+  restoreCallback: () => void,
 ) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(
@@ -635,11 +691,11 @@ export function setSubsectionOrderListQuery(
 }
 
 export function setUnitOrderListQuery(
-  sectionId,
-  subsectionId,
-  prevSectionId,
-  unitListIds,
-  restoreCallback,
+  sectionId: string,
+  subsectionId: string,
+  prevSectionId: string,
+  unitListIds: string[],
+  restoreCallback: () => void,
 ) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(
@@ -658,15 +714,15 @@ export function setUnitOrderListQuery(
   };
 }
 
-export function pasteClipboardContent(parentLocator, sectionId) {
+export function pasteClipboardContent(parentLocator: string, sectionId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
 
     try {
-      await pasteBlock(parentLocator).then(async (result) => {
+      await pasteBlock(parentLocator).then(async (result: any) => {
         if (result) {
-          dispatch(fetchCourseSectionQuery([sectionId], true));
+          dispatch(fetchCourseSectionQuery([sectionId], { subsectionId: parentLocator, unitId: result.locator }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
           dispatch(setPasteFileNotices(result?.staticFileNotices));
@@ -679,7 +735,7 @@ export function pasteClipboardContent(parentLocator, sectionId) {
   };
 }
 
-export function dismissNotificationQuery(url) {
+export function dismissNotificationQuery(url: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
 

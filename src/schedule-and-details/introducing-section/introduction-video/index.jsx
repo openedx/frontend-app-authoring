@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Button, Card } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-const IntroductionVideo = ({ intl, introVideo, onChange }) => {
+const IntroductionVideo = ({ introVideo, onChange }) => {
+  const intl = useIntl();
   const embedVideoUrl = introVideo
     ? `//www.youtube.com/embed/${introVideo}`
     : '';
@@ -56,9 +57,8 @@ IntroductionVideo.defaultProps = {
 };
 
 IntroductionVideo.propTypes = {
-  intl: intlShape.isRequired,
   introVideo: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(IntroductionVideo);
+export default IntroductionVideo;

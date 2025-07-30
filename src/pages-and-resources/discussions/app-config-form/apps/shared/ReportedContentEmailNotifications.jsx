@@ -1,11 +1,12 @@
 import React from 'react';
 import { useFormikContext } from 'formik';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import messages from '../../messages';
 
-const ReportedContentEmailNotifications = ({ intl }) => {
+const ReportedContentEmailNotifications = () => {
+  const intl = useIntl();
   const {
     handleChange,
     handleBlur,
@@ -29,8 +30,4 @@ const ReportedContentEmailNotifications = ({ intl }) => {
   );
 };
 
-ReportedContentEmailNotifications.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(ReportedContentEmailNotifications);
+export default ReportedContentEmailNotifications;

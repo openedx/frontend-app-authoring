@@ -1,20 +1,15 @@
-// @ts-check
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button,
   Container,
   Layout,
   Row,
   TransitionReplace,
   Toast,
+  StandardModal,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import {
-  Add as IconAdd,
-  CheckCircle as CheckCircleIcon,
-} from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -22,18 +17,25 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
-import { CourseAuthoringOutlineSidebarSlot } from '../plugin-slots/CourseAuthoringOutlineSidebarSlot';
+import { CourseAuthoringOutlineSidebarSlot } from '@src/plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
-import { LoadingSpinner } from '../generic/Loading';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
-import { RequestStatus } from '../data/constants';
-import SubHeader from '../generic/sub-header/SubHeader';
-import ProcessingNotification from '../generic/processing-notification';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import DeleteModal from '../generic/delete-modal/DeleteModal';
-import ConfigureModal from '../generic/configure-modal/ConfigureModal';
-import AlertMessage from '../generic/alert-message';
-import getPageHeadTitle from '../generic/utils';
+import { LoadingSpinner } from '@src/generic/Loading';
+import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
+import { RequestStatus } from '@src/data/constants';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import ProcessingNotification from '@src/generic/processing-notification';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
+import AlertMessage from '@src/generic/alert-message';
+import getPageHeadTitle from '@src/generic/utils';
+import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
+import { ContainerType } from '@src/generic/key-utils';
+import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { ContentType } from '@src/library-authoring/routes';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { XBlock } from '@src/data/types';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import StatusBar from './status-bar/StatusBar';
@@ -54,13 +56,18 @@ import {
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
-import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
+import OutlineAddChildButtons from './OutlineAddChildButtons';
 
-const CourseOutline = ({ courseId }) => {
+interface CourseOutlineProps {
+  courseId: string,
+}
+
+const CourseOutline = ({ courseId }: CourseOutlineProps) => {
   const intl = useIntl();
   const location = useLocation();
 
   const {
+    courseUsageKey,
     courseName,
     savingStatus,
     statusBarData,
@@ -89,6 +96,9 @@ const CourseOutline = ({ courseId }) => {
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
+    isAddLibrarySectionModalOpen,
+    openAddLibrarySectionModal,
+    closeAddLibrarySectionModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
@@ -104,6 +114,8 @@ const CourseOutline = ({ courseId }) => {
     handleNewSubsectionSubmit,
     handleNewUnitSubmit,
     handleAddUnitFromLibrary,
+    handleAddSubsectionFromLibrary,
+    handleAddSectionFromLibrary,
     getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
@@ -119,10 +131,11 @@ const CourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
+    resetScrollState,
   } = useCourseOutline({ courseId });
 
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Wait for the course data to load before exporting tags.
@@ -139,7 +152,7 @@ const CourseOutline = ({ courseId }) => {
     }
   }, [location, courseId, courseName]);
 
-  const [sections, setSections] = useState(sectionsList);
+  const [sections, setSections] = useState<XBlock[]>(sectionsList);
 
   const restoreSectionList = () => {
     setSections(() => [...sectionsList]);
@@ -157,10 +170,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Move section to new index
-   * @param {any} currentIndex
-   * @param {any} newIndex
    */
-  const updateSectionOrderByIndex = (currentIndex, newIndex) => {
+  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
     if (currentIndex === newIndex) {
       return;
     }
@@ -173,11 +184,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Uses details from move information and moves subsection
-   * @param {any} section
-   * @param {any} moveDetails
-   * @returns {void}
    */
-  const updateSubsectionOrderByIndex = (section, moveDetails) => {
+  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
     const { fn, args, sectionId } = moveDetails;
     if (!args) {
       return;
@@ -196,11 +204,8 @@ const CourseOutline = ({ courseId }) => {
 
   /**
    * Uses details from move information and moves unit
-   * @param {any} section
-   * @param {any} moveDetails
-   * @returns {void}
    */
-  const updateUnitOrderByIndex = (section, moveDetails) => {
+  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
     const {
       fn, args, sectionId, subsectionId,
     } = moveDetails;
@@ -219,6 +224,16 @@ const CourseOutline = ({ courseId }) => {
       );
     }
   };
+
+  const handleSelectLibrarySection = useCallback((selectedSection: SelectedComponent) => {
+    handleAddSectionFromLibrary.mutateAsync({
+      type: COMPONENT_TYPES.libraryV2,
+      category: ContainerType.Chapter,
+      parentLocator: courseUsageKey,
+      libraryContentKey: selectedSection.usageKey,
+    });
+    closeAddLibrarySectionModal();
+  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId, courseUsageKey]);
 
   useEffect(() => {
     setSections(sectionsList);
@@ -357,6 +372,8 @@ const CourseOutline = ({ courseId }) => {
                                     isSectionsExpanded={isSectionsExpanded}
                                     onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
+                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
+                                    resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
                                       id={section.id}
@@ -385,9 +402,10 @@ const CourseOutline = ({ courseId }) => {
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
                                           onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary}
+                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
+                                          resetScrollState={resetScrollState}
                                         >
                                           <SortableContext
                                             id={subsection.id}
@@ -431,23 +449,25 @@ const CourseOutline = ({ courseId }) => {
                               </SortableContext>
                             </DraggableList>
                             {courseActions.childAddable && (
-                              <Button
-                                data-testid="new-section-button"
-                                className="mt-4"
-                                variant="outline-primary"
-                                onClick={handleNewSectionSubmit}
-                                iconBefore={IconAdd}
-                                block
-                              >
-                                {intl.formatMessage(messages.newSectionButton)}
-                              </Button>
+                              <OutlineAddChildButtons
+                                handleNewButtonClick={handleNewSectionSubmit}
+                                handleUseFromLibraryClick={openAddLibrarySectionModal}
+                                childType={ContainerType.Section}
+                              />
                             )}
                           </>
                         ) : (
-                          <EmptyPlaceholder
-                            onCreateNewSection={handleNewSectionSubmit}
-                            childAddable={courseActions.childAddable}
-                          />
+                          <EmptyPlaceholder>
+                            {courseActions.childAddable && (
+                              <OutlineAddChildButtons
+                                handleNewButtonClick={handleNewSectionSubmit}
+                                handleUseFromLibraryClick={openAddLibrarySectionModal}
+                                childType={ContainerType.Section}
+                                btnVariant="primary"
+                                btnClasses="mt-1"
+                              />
+                            )}
+                          </EmptyPlaceholder>
                         )}
                       </div>
                     )}
@@ -493,11 +513,33 @@ const CourseOutline = ({ courseId }) => {
           close={closeDeleteModal}
           onDeleteSubmit={handleDeleteItemSubmit}
         />
+        <StandardModal
+          title={intl.formatMessage(messages.sectionPickerModalTitle)}
+          isOpen={isAddLibrarySectionModalOpen}
+          onClose={closeAddLibrarySectionModal}
+          isOverflowVisible={false}
+          size="xl"
+        >
+          <ComponentPicker
+            showOnlyPublished
+            extraFilter={['block_type = "section"']}
+            componentPickerMode="single"
+            onComponentSelected={handleSelectLibrarySection}
+            visibleTabs={[ContentType.sections]}
+          />
+        </StandardModal>
       </Container>
       <div className="alert-toast">
         <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
+          // Show processing toast if any mutation is running
+          isShow={
+            isShowProcessingNotification
+            || handleAddUnitFromLibrary.isPending
+            || handleAddSubsectionFromLibrary.isPending
+            || handleAddSectionFromLibrary.isPending
+          }
+          // HACK: Use saving as default title till we have a need for better messages
+          title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}
         />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
@@ -516,10 +558,6 @@ const CourseOutline = ({ courseId }) => {
       )}
     </>
   );
-};
-
-CourseOutline.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseOutline;

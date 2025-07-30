@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import {
@@ -7,7 +6,22 @@ import {
   Groups as GroupsIcon,
 } from '@openedx/paragon/icons';
 
+import { UserPartitionInfoTypes, XBlockPrereqs } from '@src/data/types';
 import messages from './messages';
+
+interface StatusMessagesProps {
+  isVertical: boolean;
+  staffOnlyMessage?: boolean,
+  prereq?: string,
+  prereqs?: XBlockPrereqs[],
+  userPartitionInfo?: UserPartitionInfoTypes,
+  hasPartitionGroupComponents?: boolean,
+}
+
+interface StatusMessagesText {
+  icon: React.ComponentType;
+  text: string;
+}
 
 const StatusMessages = ({
   isVertical,
@@ -16,13 +30,13 @@ const StatusMessages = ({
   prereqs,
   userPartitionInfo,
   hasPartitionGroupComponents,
-}) => {
+}: StatusMessagesProps) => {
   const intl = useIntl();
-  const statusMessages = [];
+  const statusMessages: StatusMessagesText[] = [];
 
   if (prereq) {
     let prereqDisplayName = '';
-    prereqs.forEach((block) => {
+    prereqs?.forEach((block) => {
       if (block.blockUsageKey === prereq) {
         prereqDisplayName = block.blockDisplayName;
       }
@@ -34,7 +48,7 @@ const StatusMessages = ({
   }
 
   if (!staffOnlyMessage && isVertical) {
-    const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo;
+    const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo || {};
     if (selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex)) {
       statusMessages.push({
         icon: GroupsIcon,
@@ -61,29 +75,6 @@ const StatusMessages = ({
     );
   }
   return null;
-};
-
-StatusMessages.defaultProps = {
-  staffOnlyMessage: false,
-  prereq: '',
-  prereqs: [],
-  userPartitionInfo: {},
-  hasPartitionGroupComponents: false,
-};
-
-StatusMessages.propTypes = {
-  isVertical: PropTypes.bool.isRequired,
-  staffOnlyMessage: PropTypes.bool,
-  prereq: PropTypes.string,
-  prereqs: PropTypes.arrayOf(PropTypes.shape({
-    blockUsageKey: PropTypes.string.isRequired,
-    blockDisplayName: PropTypes.string.isRequired,
-  })),
-  userPartitionInfo: PropTypes.shape({
-    selectedPartitionIndex: PropTypes.number,
-    selectedGroupsLabel: PropTypes.string,
-  }),
-  hasPartitionGroupComponents: PropTypes.bool,
 };
 
 export default StatusMessages;

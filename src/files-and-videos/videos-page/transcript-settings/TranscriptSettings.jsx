@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Collapsible,
@@ -136,4 +136,4 @@ TranscriptSettings.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(TranscriptSettings);
+export default TranscriptSettings;

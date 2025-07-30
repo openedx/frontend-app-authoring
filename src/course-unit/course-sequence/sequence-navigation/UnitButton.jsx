@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
@@ -7,10 +7,16 @@ import UnitIcon from './UnitIcon';
 import { getCourseId, getSequenceId } from '../../data/selectors';
 
 const UnitButton = ({
-  title, contentType, isActive, unitId, className, showTitle,
+  unitId,
+  className,
+  showTitle,
 }) => {
   const courseId = useSelector(getCourseId);
   const sequenceId = useSelector(getSequenceId);
+
+  const unit = useSelector((state) => state.models.units[unitId]);
+
+  const { title, contentType, isActive } = unit || {};
 
   return (
     <Button
@@ -29,26 +35,13 @@ const UnitButton = ({
 
 UnitButton.propTypes = {
   className: PropTypes.string,
-  contentType: PropTypes.string.isRequired,
-  isActive: PropTypes.bool,
   showTitle: PropTypes.bool,
-  title: PropTypes.string.isRequired,
   unitId: PropTypes.string.isRequired,
 };
 
 UnitButton.defaultProps = {
   className: undefined,
-  isActive: false,
   showTitle: false,
 };
 
-const mapStateToProps = (state, props) => {
-  if (props.unitId) {
-    return {
-      ...state.models.units[props.unitId],
-    };
-  }
-  return {};
-};
-
-export default connect(mapStateToProps)(UnitButton);
+export default UnitButton;

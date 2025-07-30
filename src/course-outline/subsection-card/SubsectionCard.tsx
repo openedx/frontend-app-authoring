@@ -1,32 +1,61 @@
-// @ts-check
 import React, {
-  useContext, useEffect, useState, useRef, useCallback,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode,
 } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, StandardModal, useToggle } from '@openedx/paragon';
-import { Add as IconAdd } from '@openedx/paragon/icons';
+import { Icon, StandardModal, useToggle } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
-import CourseOutlineSubsectionCardExtraActionsSlot from '../../plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
-import { RequestStatus } from '../../data/constants';
-import CardHeader from '../card-header/CardHeader';
-import SortableItem from '../drag-helper/SortableItem';
-import { DragContext } from '../drag-helper/DragContextProvider';
-import { useClipboard, PasteComponent } from '../../generic/clipboard';
-import TitleButton from '../card-header/TitleButton';
-import XBlockStatus from '../xblock-status/XBlockStatus';
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
+import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
+import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
+import { RequestStatus } from '@src/data/constants';
+import CardHeader from '@src/course-outline/card-header/CardHeader';
+import SortableItem from '@src/course-outline/drag-helper/SortableItem';
+import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
+import { useClipboard, PasteComponent } from '@src/generic/clipboard';
+import TitleButton from '@src/course-outline/card-header/TitleButton';
+import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
+import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { ContainerType } from '@src/generic/key-utils';
+import { ContentType } from '@src/library-authoring/routes';
+import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
+import { XBlock } from '@src/data/types';
 import messages from './messages';
-import { ComponentPicker } from '../../library-authoring';
-import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { ContainerType } from '../../generic/key-utils';
-import { ContentType } from '../../library-authoring/routes';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
+
+interface SubsectionCardProps {
+  section: XBlock,
+  subsection: XBlock,
+  children: ReactNode
+  isSectionsExpanded: boolean,
+  isSelfPaced: boolean,
+  isCustomRelativeDatesActive: boolean,
+  onOpenPublishModal: () => void,
+  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
+  savingStatus: string,
+  onOpenDeleteModal: () => void,
+  onDuplicateSubmit: () => void,
+  onNewUnitSubmit: (subsectionId: string) => void,
+  onAddUnitFromLibrary: (options: {
+    type: string,
+    category?: string,
+    parentLocator: string,
+    displayName?: string,
+    boilerplate?: string,
+    stagedContent?: string,
+    libraryContentKey: string,
+  }) => void,
+  index: number,
+  getPossibleMoves: (index: number, step: number) => void,
+  onOrderChange: (section: XBlock, moveDetails: any) => void,
+  onOpenConfigureModal: () => void,
+  onPasteClick: (parentLocator: string, sectionId: string) => void,
+  resetScrollState: () => void,
+}
 
 const SubsectionCard = ({
   section,
@@ -47,7 +76,8 @@ const SubsectionCard = ({
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
-}) => {
+  resetScrollState,
+}: SubsectionCardProps) => {
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -58,12 +88,6 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
-  // as it has a useEffect that fetches course waffle flags whenever
-  // location.search is updated. Course search updates location.search when
-  // user types, which will then trigger the useEffect and reload the page.
-  // See https://github.com/openedx/frontend-app-authoring/pull/1938.
-  const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const [
     isAddLibraryUnitModalOpen,
     openAddLibraryUnitModal,
@@ -121,7 +145,7 @@ const SubsectionCard = ({
     dispatch(setCurrentItem(subsection));
   };
 
-  const handleEditSubmit = (titleValue) => {
+  const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
       onEditSubmit(id, section.id, titleValue);
       return;
@@ -147,6 +171,9 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
+      prefixIcon={!!subsection.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} className="mr-1" />
+      )}
     />
   );
 
@@ -167,12 +194,11 @@ const SubsectionCard = ({
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
-    // we need to check section.shouldScroll as whole section is fetched when a
-    // subsection is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
+    if (currentRef.current && (subsection.shouldScroll || isScrolledToElement)) {
       // Align element closer to the top of the screen if scrolling for search result
       const alignWithTop = !!isScrolledToElement;
-      scrollToElement(currentRef.current, alignWithTop);
+      scrollToElement(currentRef.current, alignWithTop, true);
+      resetScrollState();
     }
   }, [isScrolledToElement]);
 
@@ -194,7 +220,7 @@ const SubsectionCard = ({
       && !(isHeaderVisible === false)
   );
 
-  const handleSelectLibraryUnit = useCallback((selectedUnit) => {
+  const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
     onAddUnitFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Vertical,
@@ -202,7 +228,7 @@ const SubsectionCard = ({
       libraryContentKey: selectedUnit.usageKey,
     });
     closeAddLibraryUnitModal();
-  }, []);
+  }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
   return (
     <>
@@ -265,35 +291,18 @@ const SubsectionCard = ({
               {children}
               {actions.childAddable && (
                 <>
-                  <Button
-                    data-testid="new-unit-button"
-                    className="mt-4"
-                    variant="outline-primary"
-                    iconBefore={IconAdd}
-                    block
-                    onClick={handleNewButtonClick}
-                  >
-                    {intl.formatMessage(messages.newUnitButton)}
-                  </Button>
+                  <OutlineAddChildButtons
+                    handleNewButtonClick={handleNewButtonClick}
+                    handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    childType={ContainerType.Unit}
+                  />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent
-                      className="mt-4"
+                      className="mt-4 border-gray-500 rounded-0"
                       text={intl.formatMessage(messages.pasteButton)}
                       clipboardData={sharedClipboardData}
                       onClick={handlePasteButtonClick}
                     />
-                  )}
-                  {librariesV2Enabled && (
-                    <Button
-                      data-testid="use-unit-from-library"
-                      className="mt-4"
-                      variant="outline-primary"
-                      iconBefore={IconAdd}
-                      block
-                      onClick={openAddLibraryUnitModal}
-                    >
-                      {intl.formatMessage(messages.useUnitFromLibraryButton)}
-                    </Button>
                   )}
                 </>
               )}
@@ -318,62 +327,6 @@ const SubsectionCard = ({
       </StandardModal>
     </>
   );
-};
-
-SubsectionCard.defaultProps = {
-  children: null,
-};
-
-SubsectionCard.propTypes = {
-  section: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-  }).isRequired,
-  subsection: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    displayName: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    published: PropTypes.bool.isRequired,
-    hasChanges: PropTypes.bool.isRequired,
-    visibilityState: PropTypes.string.isRequired,
-    shouldScroll: PropTypes.bool,
-    enableCopyPasteUnits: PropTypes.bool,
-    proctoringExamConfigurationLink: PropTypes.string,
-    actions: PropTypes.shape({
-      deletable: PropTypes.bool.isRequired,
-      draggable: PropTypes.bool.isRequired,
-      childAddable: PropTypes.bool.isRequired,
-      duplicable: PropTypes.bool.isRequired,
-    }).isRequired,
-    isHeaderVisible: PropTypes.bool,
-    childInfo: PropTypes.shape({
-      children: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-        }),
-      ).isRequired,
-    }).isRequired,
-  }).isRequired,
-  children: PropTypes.node,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
-  onOpenPublishModal: PropTypes.func.isRequired,
-  onEditSubmit: PropTypes.func.isRequired,
-  savingStatus: PropTypes.string.isRequired,
-  onOpenDeleteModal: PropTypes.func.isRequired,
-  onDuplicateSubmit: PropTypes.func.isRequired,
-  onNewUnitSubmit: PropTypes.func.isRequired,
-  onAddUnitFromLibrary: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-  getPossibleMoves: PropTypes.func.isRequired,
-  onOrderChange: PropTypes.func.isRequired,
-  onOpenConfigureModal: PropTypes.func.isRequired,
-  onPasteClick: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;

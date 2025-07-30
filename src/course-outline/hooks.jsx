@@ -5,13 +5,16 @@ import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import moment from 'moment';
-import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
-import { useWaffleFlags } from '../data/apiHooks';
-import { RequestStatus } from '../data/constants';
+import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { RequestStatus } from '@src/data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
+  addSection,
+  addSubsection,
   setCurrentItem,
   setCurrentSection,
+  resetScrollField,
   updateSavingStatus,
 } from './data/slice';
 import {
@@ -55,8 +58,10 @@ import {
   setUnitOrderListQuery,
   pasteClipboardContent,
   dismissNotificationQuery,
-  addUnitFromLibrary, syncDiscussionsTopics,
+  syncDiscussionsTopics,
 } from './data/thunk';
+import { useCreateCourseBlock } from './data/apiHooks';
+import { getCourseItem } from './data/api';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -75,6 +80,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
   } = useSelector(getOutlineIndexData);
+  /** Course usage key is different than courseKey and useful in using as parentLocator for imported sections */
   const createdOn = useSelector(getCreatedOn);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
@@ -96,6 +102,11 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [
+    isAddLibrarySectionModalOpen,
+    openAddLibrarySectionModal,
+    closeAddLibrarySectionModal,
+  ] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -131,9 +142,36 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(addNewUnitQuery(subsectionId, openUnitPage));
   };
 
-  const handleAddUnitFromLibrary = (body) => {
-    dispatch(addUnitFromLibrary(body, openUnitPage));
+  /**
+  * import a unit block from library and redirect user to this unit page.
+  */
+  const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
+
+  const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
+    try {
+      const data = await getCourseItem(locator);
+      data.shouldScroll = true;
+      // Page should scroll to newly added subsection.
+      dispatch(addSubsection({ parentLocator, data }));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  });
+
+  const resetScrollState = () => {
+    dispatch(resetScrollField());
   };
+
+  const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
+    try {
+      const data = await getCourseItem(locator);
+      // Page should scroll to newly added section.
+      data.shouldScroll = true;
+      dispatch(addSection(data));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  });
 
   const headerNavigationsActions = {
     handleNewSection: handleNewSectionSubmit,
@@ -141,7 +179,7 @@ const useCourseOutline = ({ courseId }) => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
 
-      dispatch(fetchCourseReindexQuery(courseId, reindexLink)).then(() => {
+      dispatch(fetchCourseReindexQuery(reindexLink)).then(() => {
         setDisableReindexButton(false);
       });
     },
@@ -305,6 +343,7 @@ const useCourseOutline = ({ courseId }) => {
   }, [reIndexLoadingStatus]);
 
   return {
+    courseUsageKey: courseStructure?.id,
     courseActions,
     savingStatus,
     sectionsList,
@@ -320,6 +359,9 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
+    isAddLibrarySectionModalOpen,
+    openAddLibrarySectionModal,
+    closeAddLibrarySectionModal,
     handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
@@ -350,6 +392,8 @@ const useCourseOutline = ({ courseId }) => {
     openUnitPage,
     handleNewUnitSubmit,
     handleAddUnitFromLibrary,
+    handleAddSubsectionFromLibrary,
+    handleAddSectionFromLibrary,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -365,6 +409,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
     errors,
+    resetScrollState,
   };
 };
 

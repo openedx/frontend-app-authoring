@@ -32,6 +32,8 @@ export async function getVideos(courseId) {
 }
 
 export async function getAllUsagePaths({ courseId, videoIds }) {
+  // Hack: pass 'videoId' into the 'config' object; it will be ignored by axios
+  // but allows us to read it out later to easily get the videoId per result.
   const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
     .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
   const updatedUsageLocations = [];

@@ -111,7 +111,6 @@ describe('group configurations API calls', () => {
     axiosMock
       .onDelete(
         getLegacyApiUrl(courseId, parentGroupId, groupId),
-        updatedContentGroups,
       )
       .reply(200, response);
 
