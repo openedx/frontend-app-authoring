@@ -25,6 +25,8 @@ export const editorRender = (
     ...options
   }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState, learningContextId?: string } = {},
 ) => {
+  // We might need a way for the test cases to access this store directly. In that case we could allow either an
+  // initialState parameter OR an editorStore parameter.
   const store = initializeStore(initialState as any);
 
   return baseRender(ui, {
