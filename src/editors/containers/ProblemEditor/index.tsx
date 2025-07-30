@@ -7,7 +7,6 @@ import EditProblemView from './components/EditProblemView';
 import { EditorState, selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
-import { ProblemType } from '@src/editors/data/constants/problem';
 import type { EditorComponent } from '../../EditorComponent';
 
 export interface Props extends EditorComponent {}

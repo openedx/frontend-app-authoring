@@ -3,7 +3,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { render, screen } from '@testing-library/react';
 import Preview from './Preview';
 import messages from './messages';
-import { ProblemTypeKeys, getProblemTypes } from '@src/editors/data/constants/problem';
 
 // Mock ProblemTypes to provide test data
 jest.mock('@src/editors/data/constants/problem', () => {
@@ -26,7 +25,7 @@ jest.mock('@src/editors/data/constants/problem', () => {
 const renderWithIntl = (component: React.ReactElement) => {
   // Convert message objects to message strings for IntlProvider
   const messageStrings = Object.fromEntries(
-    Object.entries(messages).map(([key, value]) => [key, (value as any).defaultMessage])
+    Object.entries(messages).map(([key, value]) => [key, (value as any).defaultMessage]),
   );
 
   return render(

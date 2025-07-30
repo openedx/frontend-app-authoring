@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import messages from './messages';
 import { getProblemTypes } from '@src/editors/data/constants/problem';
+import messages from './messages';
 import AnswersContainer from './AnswersContainer';
 
 // This widget should be connected, grab all answers from store, update them as needed.
@@ -23,7 +23,10 @@ const AnswerWidget = ({
           <FormattedMessage {...messages.answerWidgetTitle} />
         </div>
         <div className="small">
-          <FormattedMessage {...messages.answerHelperText} values={{ helperText: localizedProblemStaticData.description }} />
+          <FormattedMessage
+            {...messages.answerHelperText}
+            values={{ helperText: localizedProblemStaticData.description }}
+          />
         </div>
       </div>
       <AnswersContainer problemType={problemType} />

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import SettingsOption from '../SettingsOption';
+
 import { ProblemTypeKeys, getProblemTypes } from '@src/editors/data/constants/problem';
+import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import TypeRow from './TypeRow';
 
