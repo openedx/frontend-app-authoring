@@ -6,7 +6,7 @@ import {
   useIntl,
 } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { ProblemTypes, getProblemTypes } from '@src/editors/data/constants/problem';
+import { ProblemTypes } from '../../../../../data/constants/problem';
 
 const Preview = ({
   problemType,
@@ -16,14 +16,12 @@ const Preview = ({
     return null;
   }
 
-  const localizedProblemTypes = getProblemTypes(intl.formatMessage);
-  const localizedData = localizedProblemTypes[problemType];
   const staticData = ProblemTypes[problemType];
 
   return (
     <Container style={{ width: '494px', height: '400px' }} className="bg-light-300 rounded p-4">
       <div className="small">
-        {intl.formatMessage(messages.previewTitle, { previewTitle: localizedData.title })}
+        <FormattedMessage {...messages[`problemType.${problemType}.title`]} /> problem
       </div>
       <Image
         fluid
@@ -32,7 +30,7 @@ const Preview = ({
         alt={intl.formatMessage(messages.previewAltText, { problemType })}
       />
       <div className="mb-3">
-        {intl.formatMessage(messages.previewDescription, { previewDescription: localizedData.previewDescription })}
+        <FormattedMessage {...messages[`problemType.${problemType}.description`]} />
       </div>
       <Hyperlink
         destination={staticData.helpLink}

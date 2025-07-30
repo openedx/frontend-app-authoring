@@ -9,8 +9,7 @@ import {
   AdvanceProblemKeys,
   AdvancedProblemType,
   ProblemType,
-  getProblemTypes,
-} from '@src/editors/data/constants/problem';
+} from '../../../../../data/constants/problem';
 import messages from './messages';
 
 interface Props {
@@ -23,7 +22,6 @@ const ProblemTypeSelect: React.FC<Props> = ({
   setSelected,
 }) => {
   const intl = useIntl();
-  const localizedProblemTypes = getProblemTypes(intl.formatMessage);
 
   const handleChange = e => setSelected(e.target.value);
   const handleClick = () => setSelected(AdvanceProblemKeys.BLANK);
@@ -48,7 +46,7 @@ const ProblemTypeSelect: React.FC<Props> = ({
                 value={key}
                 {...settings}
               >
-                {localizedProblemTypes[key].title}
+                <FormattedMessage {...messages[`problemType.${key}.title`]} />
               </SelectableBox>
             )
             : null
