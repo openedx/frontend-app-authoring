@@ -115,6 +115,7 @@ const UnitCard = ({
   const parentInfo = {
     graded: subsection.graded,
     isTimeLimited: subsection.isTimeLimited,
+    hasUpstream: subsection.upstreamInfo?.upstreamRef,
   };
 
   const unitStatus = getItemStatus({

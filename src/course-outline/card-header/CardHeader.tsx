@@ -61,6 +61,7 @@ interface CardHeaderProps {
   parentInfo?: {
     graded: boolean;
     isTimeLimited?: boolean;
+    hasUpstream?: boolean;
   },
   // An optional component that is rendered before the dropdown. This is used by the Subsection
   // and Unit card components to render their plugin slots.
@@ -262,7 +263,7 @@ const CardHeader = ({
                   {intl.formatMessage(messages.menuDuplicate)}
                 </Dropdown.Item>
               )}
-              {actions.draggable && (
+              {actions.draggable && !parentInfo?.hasUpstream && (
                 <>
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-move-up-button`}

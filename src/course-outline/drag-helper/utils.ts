@@ -1,6 +1,7 @@
 import { Active, Over } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { XBlock } from '@src/data/types';
+import { findIndex, findLastIndex } from 'lodash';
 
 export const dragHelpers = {
   copyBlockChildren: (block: XBlock) => {
@@ -35,6 +36,10 @@ export const dragHelpers = {
         > over.rect.top + over.rect.height,
 };
 
+/**
+* This function moves a subsection from one section to another in the copy of blocks.
+* It updates the copy with the new positions for the sections and their subsections, while keeping other sections intact.
+*/
 export const moveSubsectionOver = (
   prevCopy: XBlock[],
   activeSectionIdx: number,
@@ -100,6 +105,9 @@ export const moveUnitOver = (
   return [prevCopy, overSubsection.childInfo.children];
 };
 
+/**
+* Handles dragging and dropping a subsection within the same section.
+*/
 export const moveSubsection = (
   prevCopy: XBlock[],
   sectionIdx: number,
@@ -152,6 +160,11 @@ export const canMoveSection = (sections: XBlock[]) => (id: number, step: number)
   return newItem.actions.draggable;
 };
 
+/**
+* Checks if a user can move a specific subsection within its parent section or other sections.
+* It ensures that the new position for the subsection is valid and that it's not
+* attempting to drag an unmovable item or beyond the bounds of existing sections.
+*/
 export const possibleSubsectionMoves = (
   sections: XBlock[],
   sectionIndex: number,
@@ -173,9 +186,10 @@ export const possibleSubsectionMoves = (
       ],
       sectionId: section.id,
     };
-  } if (step === -1 && index === 0 && sectionIndex > 0) {
-    // move subsection to last position of previous section
-    if (!sections[sectionIndex + step]?.actions?.childAddable) {
+  } else if (step === -1 && index === 0 && sectionIndex > 0) {
+    // find a section that accepts children above/before the current section
+    const newSectionIndex = findLastIndex(sections, { actions: { childAddable: true } }, sectionIndex + step);
+    if (newSectionIndex === -1) {
       // return if previous section doesn't allow adding subsections
       return {};
     }
@@ -185,15 +199,17 @@ export const possibleSubsectionMoves = (
         sections,
         sectionIndex,
         index,
-        sectionIndex + step,
-        sections[sectionIndex + step].childInfo.children.length + 1,
+        newSectionIndex,
+        sections[newSectionIndex].childInfo.children.length + 1,
       ],
-      sectionId: sections[sectionIndex + step].id,
+      sectionId: sections[newSectionIndex].id,
     };
-  } if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
+  } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length + step) {
+    // find a section that accepts children below/after the current section
+    const newSectionIndex = findIndex(sections, { actions: { childAddable: true } }, sectionIndex + 1);
     // move subsection to first position of next section
-    if (!sections[sectionIndex + step]?.actions?.childAddable) {
-      // return if next section doesn't allow adding subsections
+    if (newSectionIndex === -1) {
+      // return if below sections don't allow adding subsections
       return {};
     }
     return {
@@ -202,46 +218,109 @@ export const possibleSubsectionMoves = (
         sections,
         sectionIndex,
         index,
-        sectionIndex + step,
+        newSectionIndex,
         0,
       ],
-      sectionId: sections[sectionIndex + step].id,
+      sectionId: sections[newSectionIndex].id,
     };
   }
   return {};
 };
 
+/**
+* Checks if a user can move a specific unit within all subsections
+* It ensures that the new position for the unit is valid and that it's not
+* attempting to drag an unmovable item or beyond the bounds of existing subsections and sections.
+*/
 export const possibleUnitMoves = (
   sections: XBlock[],
   sectionIndex: number,
   subsectionIndex: number,
   section: XBlock,
   subsection: XBlock,
-  units: string | any[],
+  units: XBlock[]
 ) => (index: number, step: number) => {
-  if (!units[index].actions.draggable) {
+  // Early return if unit is not draggable
+  if (!units[index]?.actions?.draggable) {
     return {};
   }
+
+  // Move within current subsection
   if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
     return {
       fn: moveUnit,
-      args: [
-        sections,
-        sectionIndex,
-        subsectionIndex,
-        index,
-        index + step,
-      ],
+      args: [sections, sectionIndex, subsectionIndex, index, index + step],
       sectionId: section.id,
       subsectionId: subsection.id,
     };
-  } if (step === -1 && index === 0) {
-    if (subsectionIndex > 0) {
-      // move unit to last position of previous subsection inside same section.
-      if (!sections[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
-        // return if previous subsection doesn't allow adding subsections
-        return {};
-      }
+  }
+
+  // Move to previous subsection/section
+  if (step === -1 && index === 0) {
+    return moveToPreviousLocation(sections, sectionIndex, subsectionIndex, index);
+  }
+
+  // Move to next subsection/section
+  if (step === 1 && index === units.length - 1) {
+    return moveToNextLocation(sections, sectionIndex, subsectionIndex, index);
+  }
+
+  return {};
+};
+
+/**
+* Function to find the valid subsection index based on the current position and the step. It uses the provided find method.
+*/
+const findValidSubsectionIndex = (
+  sections: XBlock[],
+  sectionIndex: number,
+  step: number,
+  findMethod: typeof findLastIndex | typeof findIndex
+): {
+  newSectionIndex: number;
+  newSubsectionIndex: number
+} | null => {
+  const newSectionIndex = findMethod(
+    sections,
+    { actions: { childAddable: true } },
+    sectionIndex + step
+  );
+
+  if (newSectionIndex === -1 || sections[newSectionIndex].childInfo.children.length === 0) {
+    return null;
+  }
+
+  const newSubsectionIndex = findMethod(
+    sections[newSectionIndex].childInfo.children,
+    { actions: { childAddable: true } }
+  );
+
+  return newSubsectionIndex === -1
+    ? null
+    : { newSectionIndex, newSubsectionIndex };
+};
+
+/**
+ * Moves a unit to a previous location within the XBlock structure.  This function attempts to move the unit
+ * to the previous subsection within the same section, and if that fails, it will attempt to move it to the
+ * previous section.
+*/
+const moveToPreviousLocation = (
+  sections: XBlock[],
+  sectionIndex: number,
+  subsectionIndex: number,
+  index: number
+) => {
+  if (subsectionIndex > 0) {
+    // Find the previous childAddable subsection within the same section
+    let newSubsectionIndex = findLastIndex(
+      sections[sectionIndex].childInfo.children,
+      { actions: { childAddable: true } },
+      subsectionIndex - 1
+    );
+
+    // If found a valid subsection within the same section
+    if (newSubsectionIndex !== -1) {
       return {
         fn: moveUnitOver,
         args: [
@@ -250,87 +329,99 @@ export const possibleUnitMoves = (
           subsectionIndex,
           index,
           sectionIndex,
-          subsectionIndex + step,
-          sections[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
-        ],
-        sectionId: section.id,
-        subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
-      };
-    } if (sectionIndex > 0) {
-      // move unit to last position of previous subsection inside previous section.
-      const newSectionIndex = sectionIndex + step;
-      if (sections[newSectionIndex].childInfo.children.length === 0) {
-        // return if previous section has no subsections.
-        return {};
-      }
-      const newSubsectionIndex = sections[newSectionIndex].childInfo.children.length - 1;
-      if (!sections[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
-        // return if previous subsection doesn't allow adding subsections
-        return {};
-      }
-      return {
-        fn: moveUnitOver,
-        args: [
-          sections,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          newSectionIndex,
           newSubsectionIndex,
-          sections[newSectionIndex].childInfo.children[newSubsectionIndex].childInfo.children.length + 1,
+          sections[sectionIndex].childInfo.children[newSubsectionIndex].childInfo.children.length,
         ],
-        sectionId: sections[newSectionIndex].id,
-        subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
-      };
-    }
-  } else if (step === 1 && index === units.length - 1) {
-    if (subsectionIndex < sections[sectionIndex].childInfo.children.length - 1) {
-      // move unit to first position of next subsection inside same section.
-      if (!sections[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
-        // return if next subsection doesn't allow adding subsections
-        return {};
-      }
-      return {
-        fn: moveUnitOver,
-        args: [
-          sections,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          sectionIndex,
-          subsectionIndex + step,
-          0,
-        ],
-        sectionId: section.id,
-        subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
-      };
-    } if (sectionIndex < sections.length - 1) {
-      // move unit to first position of next subsection inside next section.
-      const newSectionIndex = sectionIndex + step;
-      if (sections[newSectionIndex].childInfo.children.length === 0) {
-        // return if next section has no subsections.
-        return {};
-      }
-      const newSubsectionIndex = 0;
-      if (!sections[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
-        // return if next subsection doesn't allow adding subsections
-        return {};
-      }
-      return {
-        fn: moveUnitOver,
-        args: [
-          sections,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          newSectionIndex,
-          newSubsectionIndex,
-          0,
-        ],
-        sectionId: sections[newSectionIndex].id,
-        subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
+        sectionId: sections[sectionIndex].id,
+        subsectionId: sections[sectionIndex].childInfo.children[newSubsectionIndex].id,
       };
     }
   }
-  return {};
+
+  // Try moving to previous section
+  const previousLocationResult = findValidSubsectionIndex(sections, sectionIndex, -1, findLastIndex);
+
+  if (!previousLocationResult) {
+    return {};
+  }
+
+  return {
+    fn: moveUnitOver,
+    args: [
+      sections,
+      sectionIndex,
+      subsectionIndex,
+      index,
+      previousLocationResult.newSectionIndex,
+      previousLocationResult.newSubsectionIndex,
+      sections[previousLocationResult.newSectionIndex]
+        .childInfo.children[previousLocationResult.newSubsectionIndex]
+        .childInfo.children.length,
+    ],
+    sectionId: sections[previousLocationResult.newSectionIndex].id,
+    subsectionId: sections[previousLocationResult.newSectionIndex]
+      .childInfo.children[previousLocationResult.newSubsectionIndex].id,
+  };
+};
+
+/**
+ * This function attempts to move a unit to the next childAddable subsection within the current section.
+ * If no such subsection exists, it will attempt to move the unit to the next section.
+*/
+const moveToNextLocation = (
+  sections: XBlock[],
+  sectionIndex: number,
+  subsectionIndex: number,
+  index: number
+) => {
+  // Find the next childAddable subsection within the same section
+  const subsections = sections[sectionIndex].childInfo.children;
+  if (subsectionIndex < (subsections.length - 1) ) {
+    const newSubsectionIndex = findIndex(
+      subsections,
+      { actions: { childAddable: true } },
+      subsectionIndex + 1
+    );
+
+    // If found a valid subsection within the same section
+    if (newSubsectionIndex !== -1) {
+      return {
+        fn: moveUnitOver,
+        args: [
+          sections,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          sectionIndex,
+          newSubsectionIndex,
+          0,
+        ],
+        sectionId: sections[sectionIndex].id,
+        subsectionId: subsections[newSubsectionIndex].id,
+      };
+    }
+  }
+
+  // Try moving to next section
+  const nextLocationResult = findValidSubsectionIndex(sections, sectionIndex, 1, findIndex);
+
+  if (!nextLocationResult) {
+    return {};
+  }
+
+  return {
+    fn: moveUnitOver,
+    args: [
+      sections,
+      sectionIndex,
+      subsectionIndex,
+      index,
+      nextLocationResult.newSectionIndex,
+      nextLocationResult.newSubsectionIndex,
+      0,
+    ],
+    sectionId: sections[nextLocationResult.newSectionIndex].id,
+    subsectionId: sections[nextLocationResult.newSectionIndex]
+      .childInfo.children[nextLocationResult.newSubsectionIndex].id,
+  };
 };
