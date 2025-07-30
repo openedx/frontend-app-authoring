@@ -31,7 +31,7 @@ const renderWithIntl = (component: React.ReactElement) => {
   return render(
     <IntlProvider locale="en" messages={messageStrings}>
       {component}
-    </IntlProvider>
+    </IntlProvider>,
   );
 };
 

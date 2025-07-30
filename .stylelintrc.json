@@ -14,11 +14,9 @@
       "ignoreValues": ["fill-available"]
     }],
     "function-no-unknown": null,
-    "number-leading-zero": "never",
     "no-descending-specificity": null,
     "selector-class-pattern": null,
     "scss/no-global-function-names": null,
-    "color-hex-case": "upper",
     "color-hex-length": "long",
     "scss/dollar-variable-empty-line-before": null,
     "scss/dollar-variable-colon-space-after": "at-least-one-space",
