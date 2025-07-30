@@ -72,6 +72,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
       return `${getConfig().STUDIO_BASE_URL}/course/${info.contextKey}?show=${encodedKey}`;
     }
 
+    // istanbul ignore next
     return '';
   }, [info]);
 

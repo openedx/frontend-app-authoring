@@ -74,7 +74,7 @@
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
-  {
+    {
     "id": 891,
     "upstreamContextTitle": "CS problems 3",
     "upstreamVersion": 17,
@@ -83,6 +83,21 @@
     "upstreamType": "container",
     "upstreamContextKey": "lib:OpenedX:CSPROB3",
     "downstreamUsageKey": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@20f2c12b8b7f4b4bab7a900576c78ad8",
+    "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
+    "versionSynced": 2,
+    "versionDeclined": null,
+    "created": "2025-02-08T14:07:05.588484Z",
+    "updated": "2025-02-08T14:07:05.588484Z"
+  },
+  {
+    "id": 892,
+    "upstreamContextTitle": "CS problems 3",
+    "upstreamVersion": 3,
+    "readyToSync": true,
+    "upstreamKey": "lct:OpenedX:CSPROB3:section:9a90e4e4-cdf9-48ce-89b5-a8f9f07ccbfc",
+    "upstreamType": "container",
+    "upstreamContextKey": "lib:OpenedX:CSPROB3",
+    "downstreamUsageKey": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@20f2c12b8b7e4b4cab7a900576c78cv5",
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,

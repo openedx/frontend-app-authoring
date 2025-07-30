@@ -428,6 +428,54 @@
             "org": "OpenEdx",
             "access_id": "4"
           }
+        },
+        {
+          "display_name": "Section 1",
+          "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "This is a super section"
+          },
+          "description": "This is a super section",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypechapterblocka20f2c12b8b7e4b4cab7a900576c78cv5",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@20f2c12b8b7e4b4cab7a900576c78cv5",
+          "block_type": "chapter",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Section 1",
+            "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "This is a super section"
+            },
+            "description": "This is a super section",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypechapterblocka20f2c12b8b7e4b4cab7a900576c78cv5",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@20f2c12b8b7e4b4cab7a900576c78cv5",
+            "block_type": "chapter",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
         }
       ],
       "query": "",

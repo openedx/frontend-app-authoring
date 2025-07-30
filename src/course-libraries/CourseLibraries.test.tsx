@@ -78,14 +78,14 @@ describe('<CourseLibraries />', () => {
     const user = userEvent.setup();
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 6' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '6 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
     expect(allTab).toHaveAttribute('aria-selected', 'true');
 
@@ -93,14 +93,14 @@ describe('<CourseLibraries />', () => {
     await user.click(reviewBtn);
 
     expect(allTab).toHaveAttribute('aria-selected', 'false');
-    expect(await screen.findByRole('tab', { name: 'Review Content Updates 6' })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByRole('tab', { name: 'Review Content Updates 7' })).toHaveAttribute('aria-selected', 'true');
     expect(alert).not.toBeInTheDocument();
   });
 
   it('hide alert on dismiss', async () => {
     const user = userEvent.setup();
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 6' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
@@ -109,7 +109,7 @@ describe('<CourseLibraries />', () => {
 
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '6 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     await user.click(dismissBtn);
@@ -118,7 +118,7 @@ describe('<CourseLibraries />', () => {
     // review updates button
     const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
     await user.click(reviewActionBtn);
-    expect(await screen.findByRole('tab', { name: 'Review Content Updates 6' })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByRole('tab', { name: 'Review Content Updates 7' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('show alert if max lastPublishedDate is greated than the local storage value', async () => {
@@ -131,14 +131,14 @@ describe('<CourseLibraries />', () => {
 
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 6' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '6 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
   });
 
@@ -152,7 +152,7 @@ describe('<CourseLibraries />', () => {
 
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 6' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
     await user.click(allTab);
@@ -195,9 +195,9 @@ describe('<CourseLibraries ReviewTab />', () => {
   it('shows all readyToSync links', async () => {
     await renderCourseLibrariesReviewPage();
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
-    expect(updateBtns.length).toEqual(6);
+    expect(updateBtns.length).toEqual(7);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
-    expect(ignoreBtns.length).toEqual(6);
+    expect(ignoreBtns.length).toEqual(7);
   });
 
   test.each([
@@ -218,7 +218,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
-    expect(updateBtns.length).toEqual(6);
+    expect(updateBtns.length).toEqual(7);
     await user.click(updateBtns[itemIndex]);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
@@ -246,7 +246,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
-    expect(previewBtns.length).toEqual(6);
+    expect(previewBtns.length).toEqual(7);
     await user.click(previewBtns[itemIndex]);
     const dialog = await screen.findByRole('dialog');
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Accept changes' });
@@ -277,7 +277,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
-    expect(ignoreBtns.length).toEqual(6);
+    expect(ignoreBtns.length).toEqual(7);
     // Show confirmation modal on clicking ignore.
     await user.click(ignoreBtns[itemIndex]);
     const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?' });
@@ -310,7 +310,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
-    expect(previewBtns.length).toEqual(6);
+    expect(previewBtns.length).toEqual(7);
     await user.click(previewBtns[itemIndex]);
     const previewDialog = await screen.findByRole('dialog');
     const ignoreBtn = await within(previewDialog).findByRole('button', { name: 'Ignore changes' });
