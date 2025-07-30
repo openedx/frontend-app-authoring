@@ -25,6 +25,12 @@ const section = {
   visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const subsection = {
@@ -33,6 +39,12 @@ const subsection = {
   published: true,
   visibilityState: 'live',
   hasChanges: false,
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const unit = {

@@ -241,6 +241,9 @@ const findValidSubsectionIndex = (
   newSectionIndex: number;
   newSubsectionIndex: number
 } | null => {
+  if (sectionIndex + step < 0) {
+    return null;
+  }
   const newSectionIndex = findMethod(
     sections,
     { actions: { childAddable: true } },

@@ -86,6 +86,12 @@ const section: XBlock = {
       id: subsection.id,
     }],
   },
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const onEditSubectionSubmit = jest.fn();
