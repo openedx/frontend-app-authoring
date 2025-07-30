@@ -23,7 +23,7 @@ const AnswerWidget = ({
           <FormattedMessage {...messages.answerWidgetTitle} />
         </div>
         <div className="small">
-          {intl.formatMessage(messages.answerHelperText, { helperText: localizedProblemStaticData.description })}
+          <FormattedMessage {...messages.answerHelperText} values={{ helperText: localizedProblemStaticData.description }} />
         </div>
       </div>
       <AnswersContainer problemType={problemType} />
