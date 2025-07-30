@@ -125,16 +125,6 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
     content,
     onSuccess: (response) => {
       dispatch(actions.app.setSaveResponse(response));
-      const parsedData = JSON.parse(response.config.data);
-      if (parsedData?.has_changes) {
-        const storageKey = 'courseRefreshTriggerOnComponentEditSave';
-        localStorage.setItem(storageKey, Date.now());
-
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: storageKey,
-          newValue: Date.now().toString(),
-        }));
-      }
       returnToUnit(response.data);
     },
   }));

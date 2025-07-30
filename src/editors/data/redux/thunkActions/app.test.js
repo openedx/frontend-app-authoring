@@ -352,11 +352,7 @@ describe('app thunkActions', () => {
     });
     it('dispatches actions.app.setSaveResponse with response and then calls returnToUnit', () => {
       dispatch.mockClear();
-      const mockParsedData = { has_changes: true };
-      const response = {
-        config: { data: JSON.stringify(mockParsedData) },
-        data: {},
-      };
+      const response = 'testRESPONSE';
       calls[1][0].saveBlock.onSuccess(response);
       expect(dispatch).toHaveBeenCalledWith(actions.app.setSaveResponse(response));
       expect(returnToUnit).toHaveBeenCalled();
