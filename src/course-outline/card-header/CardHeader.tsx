@@ -259,23 +259,24 @@ const CardHeader = ({
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
                   onClick={onClickDuplicate}
+                  disabled={parentInfo?.hasUpstream}
                 >
                   {intl.formatMessage(messages.menuDuplicate)}
                 </Dropdown.Item>
               )}
-              {actions.draggable && !parentInfo?.hasUpstream && (
+              {actions.draggable && (
                 <>
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-move-up-button`}
                     onClick={onClickMoveUp}
-                    disabled={!actions.allowMoveUp}
+                    disabled={!actions.allowMoveUp || parentInfo?.hasUpstream}
                   >
                     {intl.formatMessage(messages.menuMoveUp)}
                   </Dropdown.Item>
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-move-down-button`}
                     onClick={onClickMoveDown}
-                    disabled={!actions.allowMoveDown}
+                    disabled={!actions.allowMoveDown || parentInfo?.hasUpstream}
                   >
                     {intl.formatMessage(messages.menuMoveDown)}
                   </Dropdown.Item>
@@ -286,6 +287,7 @@ const CardHeader = ({
                   className="border-top border-light"
                   data-testid={`${namePrefix}-card-header__menu-delete-button`}
                   onClick={onClickDelete}
+                  disabled={parentInfo?.hasUpstream}
                 >
                   {intl.formatMessage(messages.menuDelete)}
                 </Dropdown.Item>
