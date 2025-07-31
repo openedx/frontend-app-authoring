@@ -10,7 +10,7 @@ export const createStore = () => {
 
   const middleware = [thunkMiddleware, loggerMiddleware];
 
-  const store = redux.createStore<EditorState, any, any, any>(
+  const store: redux.Store<EditorState> = redux.createStore<EditorState, any, any, any>(
     reducer as any,
     composeWithDevToolsLogOnlyInProduction(redux.applyMiddleware(...middleware)),
   );
