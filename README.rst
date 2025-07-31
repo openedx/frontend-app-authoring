@@ -7,6 +7,7 @@ frontend-app-authoring
 Purpose
 *******
 
+
 This implements most of the frontend for **Open edX Studio**, allowing authors to create and edit courses, libraries, and their learning components.
 
 A few parts of Studio still default to the `"legacy" pages defined in edx-platform <https://github.com/openedx/edx-platform/tree/master/cms>`_, but those are rapidly being deprecated and replaced with the React- and Paragon-based pages defined here.
