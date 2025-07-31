@@ -111,8 +111,8 @@ const UnitCard = ({
   const moveDownDetails = getPossibleMoves(index, 1);
   actions.allowMoveUp = !isEmpty(moveUpDetails) && !subsection.upstreamInfo?.upstreamRef;
   actions.allowMoveDown = !isEmpty(moveDownDetails) && !subsection.upstreamInfo?.upstreamRef;
-  actions.deletable = !subsection.upstreamInfo?.upstreamRef;
-  actions.duplicable = !subsection.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !subsection.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection.upstreamInfo?.upstreamRef;
 
   const parentInfo = {
     graded: subsection.graded,

@@ -114,8 +114,8 @@ const SubsectionCard = ({
   const moveDownDetails = getPossibleMoves(index, 1);
   actions.allowMoveUp = !isEmpty(moveUpDetails) && !section.upstreamInfo?.upstreamRef;
   actions.allowMoveDown = !isEmpty(moveDownDetails) && !section.upstreamInfo?.upstreamRef;
-  actions.deletable = !section.upstreamInfo?.upstreamRef;
-  actions.duplicable = !section.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !section.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !section.upstreamInfo?.upstreamRef;
 
   // Expand the subsection if a search result should be shown/scrolled to
   const containsSearchResult = () => {
