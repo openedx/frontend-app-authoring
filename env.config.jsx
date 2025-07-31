@@ -10,7 +10,11 @@ import {
     IconButton,
     Dropdown,
     Button,
-    ProgressBar
+    ProgressBar,
+    Container,
+    Stack,
+    ActionRow,
+    Layout
 } from '@openedx/paragon';
 import FormSwitchGroup from './src/generic/FormSwitchGroup';
 import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
@@ -33,6 +37,8 @@ import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
 import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
 import CourseUpdateNew from './src/course-updates/course-update/CourseUpdateNew';
+import CourseRerunForm from './src/course-rerun/course-rerun-form';
+import CourseRerunSideBar from './src/course-rerun/course-rerun-sidebar';
 
 // Example custom component for the schedule_and_details_plugin_slot
 import CustomCreateLibrary from './src/library-authoring/create-library/CustomCreateLibrary';
@@ -528,6 +534,86 @@ const config = {
                     },
                 }
             ],
+        },
+
+        course_rerun_header_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                    widget: {
+                        id: "course-rerun-header-content",
+                    }
+                }
+            ]
+        },
+
+        course_rerun_footer_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Hide,
+                    widget: {
+                        id: "course-rerun-footer-content",
+                    }
+                }
+            ]
+        },
+
+        course_rerun_content_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course-rerun-content-content",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => (
+                            <Container size="xl" className="small p-4 mt-3">
+                                <section >
+                                    <Layout
+                                        lg={[{ span: 9 }, { span: 3 }]}
+                                        md={[{ span: 9 }, { span: 3 }]}
+                                        sm={[{ span: 9 }, { span: 3 }]}
+                                        xs={[{ span: 9 }, { span: 3 }]}
+                                        xl={[{ span: 9 }, { span: 3 }]}
+                                    >
+                                        <Layout.Element>
+                                            <div className='course-rerun-content'>
+                                                <section>
+                                                    <header className="d-flex">
+                                                        <Stack>
+                                                            <h2>
+                                                                {props.rerunTitle} {props.displayName}
+                                                            </h2>
+                                                            <span className="large">{props.originalCourseData}</span>
+                                                        </Stack>
+                                                        <ActionRow className="ml-auto">
+                                                            <Button variant="outline-primary" size="sm" onClick={props.cancelButtonClick}>
+                                                                {props.cancelButton}
+                                                            </Button>
+                                                        </ActionRow>
+                                                    </header>
+                                                    <hr className='customHr' />
+                                                </section>
+
+                                                <div className='course-rerun-form'>
+                                                    <CourseRerunForm
+                                                        initialFormValues={props.initialFormValues}
+                                                        onClickCancel={props.handleRerunCourseCancel}
+                                                    />
+                                                </div>
+
+                                            </div>
+                                        </Layout.Element>
+                                        <Layout.Element>
+                                            <CourseRerunSideBar />
+                                        </Layout.Element>
+                                    </Layout>
+                                </section>
+                            </Container>
+                        ),
+                    }
+                }
+            ]
         },
 
         taxonomy_list_page_plugin_slot: {

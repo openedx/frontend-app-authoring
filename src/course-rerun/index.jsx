@@ -10,6 +10,7 @@ import {
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Header from '../header';
 import Loading from '../generic/Loading';
 import { getLoadingStatuses } from '../generic/data/selectors';
@@ -42,53 +43,75 @@ const CourseRerun = () => {
 
   return (
     <>
-      <Header isHiddenMainMenu />
-      <Container size="xl" className="small p-4 mt-3">
-        <section className="mb-4">
-          <article>
-            <section>
-              <header className="d-flex">
-                <Stack>
-                  <h2>
-                    {intl.formatMessage(messages.rerunTitle)} {displayName}
-                  </h2>
-                  <span className="large">{originalCourseData}</span>
-                </Stack>
-                <ActionRow className="ml-auto">
-                  <Button variant="outline-primary" size="sm" onClick={handleRerunCourseCancel}>
-                    {intl.formatMessage(messages.cancelButton)}
-                  </Button>
-                </ActionRow>
-              </header>
-              <hr />
-            </section>
-          </article>
-          <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
-            <Layout.Element>
-              <CourseRerunForm
-                initialFormValues={initialFormValues}
-                onClickCancel={handleRerunCourseCancel}
-              />
-            </Layout.Element>
-            <Layout.Element>
-              <CourseRerunSideBar />
-            </Layout.Element>
-          </Layout>
-        </section>
-      </Container>
+      <PluginSlot
+        id="course_rerun_header_plugin_slot"
+      >
+        <Header isHiddenMainMenu />
+      </PluginSlot>
+      <PluginSlot
+        id="course_rerun_content_plugin_slot"
+        pluginProps={{
+          rerunTitle: intl.formatMessage(messages.rerunTitle),
+          displayName,
+          originalCourseData,
+          cancelButton: intl.formatMessage(messages.cancelButton),
+          cancelButtonClick: handleRerunCourseCancel,
+          initialFormValues,
+          handleRerunCourseCancel,
+        }}
+      >
+        <Container size="xl" className="small p-4 mt-3">
+          <section className="mb-4">
+            <article>
+              <section>
+                <header className="d-flex">
+                  <Stack>
+                    <h2 className="course-rerun-title">
+                      {intl.formatMessage(messages.rerunTitle)} {displayName}
+                    </h2>
+                    <span className="large">{originalCourseData}</span>
+                  </Stack>
+                  <ActionRow className="ml-auto">
+                    <Button variant="outline-primary" size="sm" onClick={handleRerunCourseCancel}>
+                      {intl.formatMessage(messages.cancelButton)}
+                    </Button>
+                  </ActionRow>
+                </header>
+                <hr />
+              </section>
+            </article>
+            <Layout
+              lg={[{ span: 9 }, { span: 3 }]}
+              md={[{ span: 9 }, { span: 3 }]}
+              sm={[{ span: 9 }, { span: 3 }]}
+              xs={[{ span: 9 }, { span: 3 }]}
+              xl={[{ span: 9 }, { span: 3 }]}
+            >
+              <Layout.Element>
+                <CourseRerunForm
+                  initialFormValues={initialFormValues}
+                  onClickCancel={handleRerunCourseCancel}
+                />
+              </Layout.Element>
+              <Layout.Element>
+                <CourseRerunSideBar />
+              </Layout.Element>
+            </Layout>
+          </section>
+        </Container>
+      </PluginSlot>
+
       <div className="alert-toast">
         <InternetConnectionAlert
           isFailed={savingStatus === RequestStatus.FAILED}
           isQueryPending={savingStatus === RequestStatus.PENDING}
         />
       </div>
-      <StudioFooter />
+      <PluginSlot
+        id="course_rerun_footer_plugin_slot"
+      >
+        <StudioFooter />
+      </PluginSlot>
     </>
   );
 };

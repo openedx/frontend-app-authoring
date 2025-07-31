@@ -1951,6 +1951,25 @@
   }
 }
 
+.course-rerun-content {
+  @include card-style1;
+  padding: 1rem;
+
+  .course-rerun-title {
+    @include section-title-style1;
+  }
+}
+
+.course-rerun-form {
+  @include card-style2;
+  background-color: var(--bg-body) !important;
+  padding: 1rem;
+
+  button {
+    margin-top: 1rem;
+  }
+}
+
 // S Styles End
 
 // N Styles Start
