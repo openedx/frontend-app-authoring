@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Image,
@@ -28,30 +26,30 @@ import { FileInput } from '../../../../../../sharedComponents/FileInput';
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import { ErrorContext } from '../../../../hooks';
 
-/**
- * Collapsible Form widget controlling video thumbnail
- */
-const ThumbnailWidget = ({
-  // injected
-  intl,
-  // redux
-  isLibrary,
-  allowThumbnailUpload,
-  thumbnail,
-  videoId,
-}) => {
+const ThumbnailWidget = () => {
   const dispatch = useDispatch();
+  const intl = useIntl();
+
+  // Redux selectors
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const allowThumbnailUpload = useSelector(selectors.video.allowThumbnailUpload);
+  const thumbnail = useSelector(selectors.video.thumbnail);
+  const videoId = useSelector(selectors.video.videoId);
+
   const [error] = React.useContext(ErrorContext).thumbnail;
   const imgRef = React.useRef();
   const [thumbnailSrc, setThumbnailSrc] = React.useState(thumbnail);
+
   const { fileSizeError } = hooks.fileSizeError();
   const fileInput = hooks.fileInput({
     setThumbnailSrc,
     imgRef,
     fileSizeError,
   });
+
   const edxVideo = isEdxVideo(videoId);
   const deleteThumbnail = hooks.deleteThumbnail({ dispatch });
+
   const getSubtitle = () => {
     if (edxVideo) {
       if (thumbnail) {
@@ -61,6 +59,7 @@ const ThumbnailWidget = ({
     }
     return intl.formatMessage(messages.unavailableSubtitle);
   };
+
   return (!isLibrary && edxVideo ? (
     <CollapsibleFormWidget
       fontSize="x-small"
@@ -75,11 +74,13 @@ const ThumbnailWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
+
       {!allowThumbnailUpload && (
         <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
       )}
+
       {thumbnail ? (
         <Stack direction="horizontal" gap={3}>
           <Image
@@ -125,23 +126,6 @@ const ThumbnailWidget = ({
   ) : null);
 };
 
-ThumbnailWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
-  // redux
-  isLibrary: PropTypes.bool.isRequired,
-  allowThumbnailUpload: PropTypes.bool.isRequired,
-  thumbnail: PropTypes.string.isRequired,
-  videoId: PropTypes.string.isRequired,
-};
-export const mapStateToProps = (state) => ({
-  isLibrary: selectors.app.isLibrary(state),
-  allowThumbnailUpload: selectors.video.allowThumbnailUpload(state),
-  thumbnail: selectors.video.thumbnail(state),
-  videoId: selectors.video.videoId(state),
-});
+ThumbnailWidget.propTypes = {};
 
-export const mapDispatchToProps = {};
-
-export const ThumbnailWidgetInternal = ThumbnailWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ThumbnailWidget));
+export default ThumbnailWidget;

@@ -1,29 +1,31 @@
-import { connect } from 'react-redux';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button, Container, Row, Col,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
+
 import messages from './messages';
 import { isLibraryV1Key } from '../../../generic/key-utils';
 import { navigateTo } from '../../hooks';
 import { selectors } from '../../data/redux';
 
 /**
- * An error page that displays a generic message for unexpected errors.  Also contains a "Try
- * Again" button to refresh the page.
+ * An error page that displays a generic message for unexpected errors.
+ * Also contains a "Try Again" button to refresh the page.
  */
 const ErrorPage = ({
   message,
   studioEndpointUrl,
   learningContextId,
-  // redux
-  unitData,
 }) => {
   const intl = useIntl();
+  const unitData = useSelector(selectors.app.unitUrl);
+
   const outlineType = isLibraryV1Key(learningContextId) ? 'library' : 'course';
   const outlineUrl = `${studioEndpointUrl}/${outlineType}/${learningContextId}`;
-  const unitUrl = unitData?.data ? `${studioEndpointUrl}/container/${unitData?.data.ancestors[0].id}` : null;
+  const unitUrl = unitData?.data ? `${studioEndpointUrl}/container/${unitData.data.ancestors[0].id}` : null;
 
   return (
     <Container fluid className="py-5 justify-content-center align-items-start text-center">
@@ -61,26 +63,10 @@ ErrorPage.propTypes = {
   message: PropTypes.string,
   learningContextId: PropTypes.string.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
-  // redux
-  unitData: PropTypes.shape({
-    data: PropTypes.shape({
-      ancestors: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string,
-        }),
-      ),
-    }),
-  }),
 };
 
 ErrorPage.defaultProps = {
   message: null,
-  unitData: null,
 };
 
-export const mapStateToProps = (state) => ({
-  unitData: selectors.app.unitUrl(state),
-});
-
-export const ErrorPageInternal = ErrorPage; // For testing only
-export default connect(mapStateToProps)(ErrorPage);
+export default ErrorPage;

@@ -1,15 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
-import {
-  Hyperlink,
-  Form,
-} from '@openedx/paragon';
+import { useSelector, useDispatch } from 'react-redux';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { Hyperlink, Form } from '@openedx/paragon';
 
 import { selectors, actions } from '../../../../../../data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
@@ -19,30 +11,31 @@ import * as hooks from './hooks';
 /**
  * Collapsible Form widget controlling video thumbnail
  */
-const SocialShareWidget = ({
-  // injected
-  intl,
-  // redux
-  allowVideoSharing,
-  isLibrary,
-  videoSharingEnabledForAll,
-  videoSharingEnabledForCourse,
-  videoSharingLearnMoreLink,
-  updateField,
-}) => {
+const SocialShareWidget = () => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+
+  const allowVideoSharing = useSelector(selectors.video.allowVideoSharing);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const videoSharingLearnMoreLink = useSelector(selectors.video.videoSharingLearnMoreLink);
+  const videoSharingEnabledForAll = useSelector(selectors.video.videoSharingEnabledForAll);
+  const videoSharingEnabledForCourse = useSelector(selectors.video.videoSharingEnabledForCourse);
+
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
   const learnMoreLink = videoSharingLearnMoreLink || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
-  const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
-  const getSubtitle = () => {
-    if (allowVideoSharing.value) {
-      return intl.formatMessage(messages.enabledSubtitle);
-    }
-    return intl.formatMessage(messages.disabledSubtitle);
-  };
+  const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({
+    updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
+  });
 
-  return (videoSharingEnabled ? (
+  const getSubtitle = () => (allowVideoSharing.value
+    ? intl.formatMessage(messages.enabledSubtitle)
+    : intl.formatMessage(messages.disabledSubtitle));
+
+  if (!videoSharingEnabled) { return null; }
+
+  return (
     <CollapsibleFormWidget
       fontSize="x-small"
       title={intl.formatMessage(messages.title)}
@@ -72,49 +65,16 @@ const SocialShareWidget = ({
         </>
       )}
       <div className="mt-3">
-        <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">
+        <Hyperlink
+          className="text-primary-500"
+          destination={learnMoreLink}
+          target="_blank"
+        >
           {intl.formatMessage(messages.learnMoreLinkLabel)}
         </Hyperlink>
       </div>
     </CollapsibleFormWidget>
-  ) : null);
+  );
 };
 
-SocialShareWidget.defaultProps = {
-  allowVideoSharing: {
-    level: 'block',
-    value: false,
-  },
-  videoSharingEnabledForCourse: false,
-  videoSharingEnabledForAll: false,
-};
-
-SocialShareWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
-  // redux
-  allowVideoSharing: PropTypes.shape({
-    level: PropTypes.string.isRequired,
-    value: PropTypes.bool.isRequired,
-  }),
-  isLibrary: PropTypes.bool.isRequired,
-  videoSharingEnabledForAll: PropTypes.bool,
-  videoSharingEnabledForCourse: PropTypes.bool,
-  videoSharingLearnMoreLink: PropTypes.string.isRequired,
-  updateField: PropTypes.func.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  allowVideoSharing: selectors.video.allowVideoSharing(state),
-  isLibrary: selectors.app.isLibrary(state),
-  videoSharingLearnMoreLink: selectors.video.videoSharingLearnMoreLink(state),
-  videoSharingEnabledForAll: selectors.video.videoSharingEnabledForAll(state),
-  videoSharingEnabledForCourse: selectors.video.videoSharingEnabledForCourse(state),
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
-});
-
-export const SocialShareWidgetInternal = SocialShareWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SocialShareWidget));
+export default SocialShareWidget;
