@@ -1,33 +1,7 @@
 import React from 'react';
-import { render, screen, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '@src/editors/testUtils';
-import { QuestionWidgetInternal as QuestionWidget } from '.';
-
-jest.mock('@src/editors/data/redux', () => ({
-  __esModule: true,
-  default: jest.fn(),
-  actions: {
-    problem: {
-      updateQuestion: jest.fn().mockName('actions.problem.updateQuestion'),
-    },
-  },
-  selectors: {
-    app: {
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
-    },
-    problem: {
-      question: jest.fn(state => ({ question: state })),
-    },
-  },
-  thunkActions: {
-    video: {
-      importTranscript: jest.fn(),
-    },
-  },
-}));
+import { screen, initializeMocks } from '@src/testUtils';
+import editorRender from '../../../../../modifiedEditorTestRender';
+import QuestionWidget from '.';
 
 jest.mock('@src/editors/sharedComponents/TinyMceWidget/hooks', () => ({
   ...jest.requireActual('../../../../../sharedComponents/TinyMceWidget/hooks'),
@@ -39,23 +13,28 @@ jest.mock('@src/editors/sharedComponents/TinyMceWidget/hooks', () => ({
 
 jest.mock('@src/editors/sharedComponents/TinyMceWidget', () => ('TinyMceWidget'));
 
-describe('QuestionWidget', () => {
-  const props = {
+const initialState = {
+  problem: {
     question: 'This is my question',
-    updateQuestion: jest.fn(),
+  },
+  app: {
     learningContextId: 'course+org+run',
     images: {},
     isLibrary: false,
     blockId: '',
-    // injected
-    intl: { formatMessage },
-  };
+  },
+};
+
+describe('QuestionWidget', () => {
+  beforeEach(() => {
+    initializeMocks({ initialState });
+  });
   describe('render', () => {
     beforeEach(() => {
       initializeMocks();
     });
     test('renders correct default', () => {
-      render(<QuestionWidget {...props} />);
+      editorRender(<QuestionWidget />, { initialState });
       expect(screen.getByText('Question')).toBeInTheDocument();
     });
   });
