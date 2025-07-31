@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -9,27 +8,31 @@ import messages from './messages';
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
-const ExplanationWidget = ({
-  // redux
-  settings,
-  learningContextId,
-  images,
-  isLibrary,
-  blockId,
-}) => {
+const ExplanationWidget = () => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+
+  // Select state values using useSelector
+  const settings = useSelector(selectors.problem.settings);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const images = useSelector(selectors.app.images);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const blockId = useSelector(selectors.app.blockId);
+
   const initialContent = settings?.solutionExplanation || '';
   const newContent = replaceStaticWithAsset({
     initialContent,
     learningContextId,
   });
   const solutionContent = newContent || initialContent;
+
   let staticRootUrl;
   if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
+
   if (!refReady) { return null; }
+
   return (
     <div className="tinyMceWidget mt-4 text-primary-500">
       <div className="h4 mb-3">
@@ -57,22 +60,4 @@ const ExplanationWidget = ({
   );
 };
 
-ExplanationWidget.propTypes = {
-  // redux
-  // eslint-disable-next-line
-  settings: PropTypes.any.isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  images: PropTypes.shape({}).isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-  blockId: PropTypes.string.isRequired,
-};
-export const mapStateToProps = (state) => ({
-  settings: selectors.problem.settings(state),
-  learningContextId: selectors.app.learningContextId(state),
-  images: selectors.app.images(state),
-  isLibrary: selectors.app.isLibrary(state),
-  blockId: selectors.app.blockId(state),
-});
-
-export const ExplanationWidgetInternal = ExplanationWidget; // For testing only
-export default connect(mapStateToProps)(ExplanationWidget);
+export default ExplanationWidget;
