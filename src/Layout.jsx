@@ -2,7 +2,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import 'titaned-lib/dist/index.css';
 // import { fetchTemplateData } from 'utils/themeService';
 import './index.scss';
 import * as ParagonIcons from '@openedx/paragon/icons';

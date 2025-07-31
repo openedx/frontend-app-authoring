@@ -249,7 +249,7 @@ const PSCourseForm = ({
       effort: formData.hoursOfEffort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
       entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
-      entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '70',
+      entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
       amount: formData.pricingModel === 'paid' ? formData.price : '',
