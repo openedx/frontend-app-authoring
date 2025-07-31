@@ -2384,7 +2384,6 @@ describe('<CourseOutline />', () => {
     // Without the delay the success message renders too quickly
     axiosMock
       .onGet(exportTags(courseId))
-      // @ts-ignore-next-line
       .withDelayInMs(500)
       .reply(200, expectedResponse);
 
@@ -2412,7 +2411,6 @@ describe('<CourseOutline />', () => {
     // Without the delay the error renders too quickly
     axiosMock
       .onGet(exportTags(courseId))
-      // @ts-ignore-next-line
       .withDelayInMs(500)
       .reply(404);
 

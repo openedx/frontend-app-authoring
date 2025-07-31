@@ -112,8 +112,10 @@ const SubsectionCard = ({
   // add actions to control display of move up & down menu button.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.deletable = !section.upstreamInfo?.upstreamRef;
+  actions.duplicable = !section.upstreamInfo?.upstreamRef;
 
   // Expand the subsection if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -231,11 +233,6 @@ const SubsectionCard = ({
     closeAddLibraryUnitModal();
   }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
-  const parentInfo = {
-    graded: subsection.graded,
-    hasUpstream: !!section.upstreamInfo?.upstreamRef,
-  };
-
   return (
     <>
       <SortableItem
@@ -284,7 +281,6 @@ const SubsectionCard = ({
                 proctoringExamConfigurationLink={proctoringExamConfigurationLink}
                 isSequential
                 extraActionsComponent={extraActionsComponent}
-                parentInfo={parentInfo}
               />
               <div className="subsection-card__content item-children" data-testid="subsection-card__content">
                 <XBlockStatus

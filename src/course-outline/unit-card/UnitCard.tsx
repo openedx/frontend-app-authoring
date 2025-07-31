@@ -109,13 +109,14 @@ const UnitCard = ({
   // add actions to control display of move up & down menu buton.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.deletable = !subsection.upstreamInfo?.upstreamRef;
+  actions.duplicable = !subsection.upstreamInfo?.upstreamRef;
 
   const parentInfo = {
     graded: subsection.graded,
     isTimeLimited: subsection.isTimeLimited,
-    hasUpstream: !!subsection.upstreamInfo?.upstreamRef,
   };
 
   const unitStatus = getItemStatus({

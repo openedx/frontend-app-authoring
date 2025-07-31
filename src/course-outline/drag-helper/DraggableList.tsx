@@ -82,9 +82,9 @@ const DraggableList = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>();
+  const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const [draggedItemClone, setDraggedItemClone] = React.useState<React.ReactNode>(null);
-  const [currentOverId, setCurrentOverId] = React.useState<string | null>();
+  const [currentOverId, setCurrentOverId] = React.useState<string | null>(null);
 
   const findItemInfo = (id: UniqueIdentifier): ItemInfoType | null => {
     // search id in sections
@@ -168,7 +168,7 @@ const DraggableList = ({
       const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSectionIndex = overInfo.parentIndex;
-      setCurrentOverId(overInfo.parent?.id);
+      setCurrentOverId(overInfo.parent?.id || null);
     }
 
     setSections((prev) => {
@@ -215,7 +215,7 @@ const DraggableList = ({
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSubsectionIndex = overInfo.parentIndex;
       overSectionIndex = overInfo.grandParentIndex;
-      setCurrentOverId(overInfo.parent?.id);
+      setCurrentOverId(overInfo.parent?.id || null);
     }
 
     setSections((prev: XBlock[]) => {

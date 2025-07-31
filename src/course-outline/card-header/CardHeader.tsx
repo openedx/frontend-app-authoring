@@ -61,7 +61,6 @@ interface CardHeaderProps {
   parentInfo?: {
     graded: boolean;
     isTimeLimited?: boolean;
-    hasUpstream?: boolean;
   },
   // An optional component that is rendered before the dropdown. This is used by the Subsection
   // and Unit card components to render their plugin slots.
@@ -259,7 +258,6 @@ const CardHeader = ({
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
                   onClick={onClickDuplicate}
-                  disabled={parentInfo?.hasUpstream}
                 >
                   {intl.formatMessage(messages.menuDuplicate)}
                 </Dropdown.Item>
@@ -269,14 +267,14 @@ const CardHeader = ({
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-move-up-button`}
                     onClick={onClickMoveUp}
-                    disabled={!actions.allowMoveUp || parentInfo?.hasUpstream}
+                    disabled={!actions.allowMoveUp}
                   >
                     {intl.formatMessage(messages.menuMoveUp)}
                   </Dropdown.Item>
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-move-down-button`}
                     onClick={onClickMoveDown}
-                    disabled={!actions.allowMoveDown || parentInfo?.hasUpstream}
+                    disabled={!actions.allowMoveDown}
                   >
                     {intl.formatMessage(messages.menuMoveDown)}
                   </Dropdown.Item>
@@ -287,7 +285,6 @@ const CardHeader = ({
                   className="border-top border-light"
                   data-testid={`${namePrefix}-card-header__menu-delete-button`}
                   onClick={onClickDelete}
-                  disabled={parentInfo?.hasUpstream}
                 >
                   {intl.formatMessage(messages.menuDelete)}
                 </Dropdown.Item>
