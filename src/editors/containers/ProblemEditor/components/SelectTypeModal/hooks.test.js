@@ -65,6 +65,27 @@ describe('SelectTypeModal hooks', () => {
       });
       expect(mocksetBlockTitle).toHaveBeenCalledWith(ProblemTypes[mockSelected].title);
     });
+    test('onSelect sets localized advanced problem title when formatMessage is provided', () => {
+      const mockSetBlockTitle = jest.fn();
+      const mockUpdateField = jest.fn();
+      const mockFormatMessage = (msg) => `localized-${msg.id || msg.defaultMessage || msg}`;
+      const mockSelected = 'circuitschematic';
+
+      jest.spyOn(require('@src/editors/data/constants/problem'), 'getAdvanceProblems').mockImplementation((fmt) => ({
+        circuitschematic: { title: fmt({ id: 'problem.circuitschematic.title' }) },
+      }));
+      hooks.onSelect({
+        selected: mockSelected,
+        updateField: mockUpdateField,
+        setBlockTitle: mockSetBlockTitle,
+        formatMessage: mockFormatMessage,
+      })();
+      expect(mockSetBlockTitle).toHaveBeenCalledWith('localized-problem.circuitschematic.title');
+      expect(mockUpdateField).toHaveBeenCalledWith({
+        problemType: ProblemTypeKeys.ADVANCED,
+        rawOLX: AdvanceProblems[mockSelected].template,
+      });
+    });
   });
 
   describe('useArrowNav', () => {
