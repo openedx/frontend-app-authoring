@@ -1970,6 +1970,12 @@
   }
 }
 
+.learning-outcomes-section {
+  .form-group-custom {
+    margin-bottom: 1rem !important;
+  }
+}
+
 // S Styles End
 
 // N Styles Start
@@ -2204,6 +2210,12 @@
   .pacing-section .pgn__form-group .pgn__form-control-set {
     padding-left: 0rem;
     padding-top: 0rem;
+  }
+
+  .schedule-and-details {
+    .alert-toast {
+      width: 70% !important;
+    }
   }
 }
 

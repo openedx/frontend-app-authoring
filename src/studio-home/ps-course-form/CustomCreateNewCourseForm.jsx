@@ -1,214 +1,219 @@
+/* eslint-disable no-console */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Container,
-    Row,
-    Col,
+  Container,
+  Row,
+  Col,
 } from '@openedx/paragon';
 import PSCourseForm from './PSCourseForm';
 import { validateImageFile } from '../../utils/imageValidation';
 
 const CustomCreateNewCourseForm = ({
-    editedValues,
-    courseSettings,
-    handleValuesChange,
+  editedValues,
+  handleValuesChange,
 }) => {
-    const initialFormValues = {
-        title: '',
-        shortDescription: '',
-        description: '',
-        organization: '',
-        courseNumber: '',
-        courseRun: '',
-        coursePacing: 'instructor',
-        startDate: null,
-        startTime: null,
-        endDate: null,
-        endTime: null,
-        enrollmentStartDate: null,
-        enrollmentStartTime: null,
-        enrollmentEndDate: null,
-        enrollmentEndTime: null,
-        pricingModel: 'free',
-        price: '',
-        language: 'en',
-        duration: '',
-        invitationOnly: false,
-        cardImage: null,
-        bannerImage: null,
-        introVideo: null,
-        prerequisites: '',
-        license: null,
-    };
+  // Calculate next year's January 1st
+  const getNextYearJanuaryFirst = () => {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+    return new Date(nextYear, 0, 1); // Month is 0-indexed, so 0 = January
+  };
 
-    const [formValues, setFormValues] = useState(editedValues || initialFormValues);
-    const [imageErrors, setImageErrors] = useState({ cardImage: '', bannerImage: '' });
-    const [cardImagePreview, setCardImagePreview] = useState('');
-    const [bannerImagePreview, setBannerImagePreview] = useState('');
+  const initialFormValues = {
+    title: '',
+    shortDescription: '',
+    description: '',
+    organization: '',
+    courseNumber: '',
+    courseRun: '',
+    coursePacing: 'instructor',
+    startDate: getNextYearJanuaryFirst(),
+    startTime: null,
+    endDate: null,
+    endTime: null,
+    enrollmentStartDate: null,
+    enrollmentStartTime: null,
+    enrollmentEndDate: null,
+    enrollmentEndTime: null,
+    pricingModel: 'free',
+    price: '',
+    language: 'en',
+    duration: '',
+    invitationOnly: false,
+    cardImage: null,
+    bannerImage: null,
+    introVideo: null,
+    prerequisites: '',
+    license: null,
+    // learningInfo: [],
+    // instructorInfo: { instructors: [] },
+  };
 
-    useEffect(() => {
-        if (editedValues) {
-            setFormValues(prevValues => ({
-                ...prevValues,
-                ...editedValues
-            }));
-        }
-    }, [editedValues]);
+  const [formValues, setFormValues] = useState(editedValues || initialFormValues);
+  const [imageErrors, setImageErrors] = useState({ cardImage: '', bannerImage: '' });
+  const [cardImagePreview, setCardImagePreview] = useState('');
+  const [bannerImagePreview, setBannerImagePreview] = useState('');
 
-    const handleFieldChange = (value, field) => {
-        if (field === 'introVideo') {
-            let videoId = value;
-            if (value && (value.includes('youtube.com') || value.includes('youtu.be'))) {
-                const urlParams = new URLSearchParams(new URL(value).search);
-                videoId = urlParams.get('v') || value.split('/').pop();
-            }
-            setFormValues(prev => ({
-                ...prev,
-                [field]: videoId
-            }));
-            if (handleValuesChange) {
-                handleValuesChange(videoId, field);
-            }
-        } else {
-            setFormValues(prev => ({
-                ...prev,
-                [field]: value
-            }));
-            if (handleValuesChange) {
-                handleValuesChange(value, field);
-            }
-        }
-    };
+  useEffect(() => {
+    if (editedValues) {
+      setFormValues(prevValues => ({
+        ...prevValues,
+        ...editedValues,
+      }));
+    }
+  }, [editedValues]);
 
-    const handleImageUpload = async (field, event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+  const handleFieldChange = (value, field) => {
+    if (field === 'introVideo') {
+      let videoId = value;
+      if (value && (value.includes('youtube.com') || value.includes('youtu.be'))) {
+        const urlParams = new URLSearchParams(new URL(value).search);
+        videoId = urlParams.get('v') || value.split('/').pop();
+      }
+      setFormValues(prev => ({
+        ...prev,
+        [field]: videoId,
+      }));
+      if (handleValuesChange) {
+        handleValuesChange(videoId, field);
+      }
+    } else {
+      setFormValues(prev => ({
+        ...prev,
+        [field]: value,
+      }));
+      if (handleValuesChange) {
+        handleValuesChange(value, field);
+      }
+    }
+  };
 
-        try {
-            const validationResult = await validateImageFile(file);
-            if (!validationResult.isValid) {
-                const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-                setImageErrors(prev => ({
-                    ...prev,
-                    [errorField]: validationResult.error
-                }));
-                return;
-            }
+  const handleImageUpload = async (field, event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
 
-            const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-            setImageErrors(prev => ({
-                ...prev,
-                [errorField]: ''
-            }));
+    try {
+      const validationResult = await validateImageFile(file);
+      if (!validationResult.isValid) {
+        const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+        setImageErrors(prev => ({
+          ...prev,
+          [errorField]: validationResult.error,
+        }));
+        return;
+      }
 
-            const previewUrl = URL.createObjectURL(file);
+      const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+      setImageErrors(prev => ({
+        ...prev,
+        [errorField]: '',
+      }));
 
-            if (field === 'courseImageAssetPath') {
-                setCardImagePreview(previewUrl);
-                handleFieldChange(file, 'cardImage');
-                handleFieldChange(previewUrl, 'cardImageAssetPath');
-            } else if (field === 'bannerImageAssetPath') {
-                setBannerImagePreview(previewUrl);
-                handleFieldChange(file, 'bannerImage');
-                handleFieldChange(previewUrl, 'bannerImageAssetPath');
-            }
-        } catch (error) {
-            console.error('Image validation error:', error);
-            const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-            setImageErrors(prev => ({
-                ...prev,
-                [errorField]: 'Error validating image file.'
-            }));
-        }
-    };
+      const previewUrl = URL.createObjectURL(file);
 
-    const handleRemoveImage = (field) => {
-        if (field === 'courseImageAssetPath') {
-            setCardImagePreview('');
-            handleFieldChange(null, 'cardImage');
-            handleFieldChange('', 'cardImageAssetPath');
-            setImageErrors(prev => ({
-                ...prev,
-                cardImage: ''
-            }));
-        } else if (field === 'bannerImageAssetPath') {
-            setBannerImagePreview('');
-            handleFieldChange(null, 'bannerImage');
-            handleFieldChange('', 'bannerImageAssetPath');
-            setImageErrors(prev => ({
-                ...prev,
-                bannerImage: ''
-            }));
-        }
-    };
+      if (field === 'courseImageAssetPath') {
+        setCardImagePreview(previewUrl);
+        handleFieldChange(file, 'cardImage');
+        handleFieldChange(previewUrl, 'cardImageAssetPath');
+      } else if (field === 'bannerImageAssetPath') {
+        setBannerImagePreview(previewUrl);
+        handleFieldChange(file, 'bannerImage');
+        handleFieldChange(previewUrl, 'bannerImageAssetPath');
+      }
+    } catch (error) {
+      console.error('Image validation error:', error);
+      const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+      setImageErrors(prev => ({
+        ...prev,
+        [errorField]: 'Error validating image file.',
+      }));
+    }
+  };
 
-    const handleCreateNewCourse = (formData) => {
-        console.log('Create New Course form data:', {
-            ...formData,
-            cardImage: formValues.cardImage,
-            bannerImage: formValues.bannerImage,
-            cardImageAssetPath: formValues.cardImageAssetPath,
-            bannerImageAssetPath: formValues.bannerImageAssetPath
-        });
-    };
+  const handleRemoveImage = (field) => {
+    if (field === 'courseImageAssetPath') {
+      setCardImagePreview('');
+      handleFieldChange(null, 'cardImage');
+      handleFieldChange('', 'cardImageAssetPath');
+      setImageErrors(prev => ({
+        ...prev,
+        cardImage: '',
+      }));
+    } else if (field === 'bannerImageAssetPath') {
+      setBannerImagePreview('');
+      handleFieldChange(null, 'bannerImage');
+      handleFieldChange('', 'bannerImageAssetPath');
+      setImageErrors(prev => ({
+        ...prev,
+        bannerImage: '',
+      }));
+    }
+  };
 
-    const resetForm = () => {
-        setFormValues(initialFormValues);
-        setImageErrors({ cardImage: '', bannerImage: '' });
-        setCardImagePreview('');
-        setBannerImagePreview('');
-    };
+  const handleCreateNewCourse = (formData) => {
+    console.log('Create New Course form data:', {
+      ...formData,
+      cardImage: formValues.cardImage,
+      bannerImage: formValues.bannerImage,
+      cardImageAssetPath: formValues.cardImageAssetPath,
+      bannerImageAssetPath: formValues.bannerImageAssetPath,
+    });
+  };
 
-    return (
-        <div className="create-new-course-form mt-4">
-            <Container size="xl" className="pb-0 px-2">
-                <Row>
-                    <Col xs={12}>
-                        <PSCourseForm
-                            hideGeneralTab={false}
-                            editedValues={formValues}
-                            handleValuesChange={handleFieldChange}
-                            onImageUpload={handleImageUpload}
-                            onBannerImageUpload={handleImageUpload}
-                            onRemoveImage={handleRemoveImage}
-                            onFieldChange={handleFieldChange}
-                            cardImagePreview={cardImagePreview}
-                            bannerImagePreview={bannerImagePreview}
-                            hasCardImage={Boolean(cardImagePreview)}
-                            hasBannerImage={Boolean(bannerImagePreview)}
-                            cardImageFile={formValues.cardImage}
-                            bannerImageFile={formValues.bannerImage}
-                            imageErrors={imageErrors}
-                            onSubmit={handleCreateNewCourse}
-                            onResetForm={resetForm}
-                        />
-                    </Col>
-                </Row>
-            </Container>
-        </div>
-    );
+  const resetForm = () => {
+    setFormValues(initialFormValues);
+    setImageErrors({ cardImage: '', bannerImage: '' });
+    setCardImagePreview('');
+    setBannerImagePreview('');
+  };
+
+  return (
+    <div className="create-new-course-form mt-4">
+      <Container size="xl" className="pb-0 px-2">
+        <Row>
+          <Col xs={12}>
+            <PSCourseForm
+              hideGeneralTab={false}
+              editedValues={formValues}
+              handleValuesChange={handleFieldChange}
+              onImageUpload={handleImageUpload}
+              onBannerImageUpload={handleImageUpload}
+              onRemoveImage={handleRemoveImage}
+              onFieldChange={handleFieldChange}
+              cardImagePreview={cardImagePreview}
+              bannerImagePreview={bannerImagePreview}
+              hasCardImage={Boolean(cardImagePreview)}
+              hasBannerImage={Boolean(bannerImagePreview)}
+              cardImageFile={formValues.cardImage}
+              bannerImageFile={formValues.bannerImage}
+              imageErrors={imageErrors}
+              onSubmit={handleCreateNewCourse}
+              onResetForm={resetForm}
+            //   scheduleSettings
+            />
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
 };
 
 CustomCreateNewCourseForm.propTypes = {
-    editedValues: PropTypes.shape({
-        org: PropTypes.string,
-        courseId: PropTypes.string,
-        run: PropTypes.string,
-        selfPaced: PropTypes.bool,
-        startDate: PropTypes.string,
-    }).isRequired,
-    courseSettings: PropTypes.shape({
-        lmsLinkForAboutPage: PropTypes.string,
-        marketingEnabled: PropTypes.bool,
-        courseDisplayName: PropTypes.string,
-        platformName: PropTypes.string,
-    }),
-    handleValuesChange: PropTypes.func,
+  editedValues: PropTypes.shape({
+    org: PropTypes.string,
+    courseId: PropTypes.string,
+    run: PropTypes.string,
+    selfPaced: PropTypes.bool,
+    startDate: PropTypes.string,
+  }).isRequired,
+  handleValuesChange: PropTypes.func,
 };
 
 CustomCreateNewCourseForm.defaultProps = {
-    courseSettings: {},
-    handleValuesChange: () => { },
+  handleValuesChange: () => { },
 };
 
-export default CustomCreateNewCourseForm; 
+export default CustomCreateNewCourseForm;

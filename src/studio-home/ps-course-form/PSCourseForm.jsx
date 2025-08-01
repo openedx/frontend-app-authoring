@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
 import PropTypes from 'prop-types';
 import {
@@ -25,6 +26,8 @@ import {
 import {
   Calendar, Money, More, Add, Close, InfoOutline, Warning, CheckCircle,
   Photo,
+  LmsOutline,
+  Face3,
 } from '@openedx/paragon/icons';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
@@ -43,6 +46,10 @@ import LicenseIcons from '../../schedule-and-details/license-section/license-ico
 import licenseMessages from '../../schedule-and-details/license-section/messages';
 import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
 import AlertMessage from '../../generic/alert-message';
+import ModalNotification from '../../generic/modal-notification';
+import LearningOutcomesSection from '../../schedule-and-details/learning-outcomes-section';
+import InstructorsSection from '../../schedule-and-details/instructors-section';
+import { WysiwygEditor } from '../../generic/WysiwygEditor';
 
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
@@ -81,9 +88,11 @@ const PSCourseForm = ({
   onSubmit,
   onImageValidationErrorChange,
   onResetForm,
+  scheduleSettings = false,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   //   const { allowedOrganizations } = useSelector(getStudioHomeData);
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -129,6 +138,9 @@ const PSCourseForm = ({
     introVideo: null,
     prerequisites: '',
     license: null,
+    learningInfo: [],
+    instructorInfo: { instructors: [] },
+    overview: '',
   };
 
   const [activeTab, setActiveTab] = useState(hideGeneralTab ? 'schedule' : 'general');
@@ -136,6 +148,8 @@ const PSCourseForm = ({
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [allowedOrganizations, setAllowedOrganizations] = useState([]);
 
   const {
@@ -171,6 +185,7 @@ const PSCourseForm = ({
       return () => clearTimeout(timer);
     }
   }, [showSuccessAlert]);
+
   const {
     organizations: createOrRerunOrganizations,
   } = useCreateOrRerunCourse(initialValues);
@@ -254,8 +269,9 @@ const PSCourseForm = ({
       price: formData.pricingModel === 'paid' ? formData.price : '',
       amount: formData.pricingModel === 'paid' ? formData.price : '',
       license: formData.license || 'all-rights-reserved',
-      overview: formData.description || '',
-      learning_info: [],
+      overview: formData.overview || '',
+      learning_info: formData.learningInfo || [],
+      instructor_info: formData.instructorInfo || {},
     };
   };
 
@@ -270,30 +286,66 @@ const PSCourseForm = ({
 
     try {
       setIsSubmitting(true); // Show loader and disable button
+      setShowErrorModal(false); // Hide any previous error modals
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
       const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
-        throw new Error('Failed to save course data');
+        throw new Error('Failed to create course. Please try again.');
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
       setShowSuccessAlert(true); // Show success alert
-      setTimeout(() => setShowSuccessAlert(false), 10000);
+
+      // Redirect to /home after 2 seconds
+      setTimeout(() => {
+        navigate('/home');
+      }, 2000);
 
       if (typeof onSubmit === 'function') {
         onSubmit(editedValues);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+
+      // Set error message based on the type of error
+      let errorMsg = 'Failed to create course. Please try again.';
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 401) {
+          errorMsg = 'Authentication failed. Please log in again.';
+        } else if (error.response.status === 403) {
+          errorMsg = 'You do not have permission to create courses.';
+        } else if (error.response.status === 422) {
+          errorMsg = 'Invalid course data. Please check your inputs.';
+        } else if (error.response.status >= 500) {
+          errorMsg = 'Server error. Please try again later.';
+        } else if (error.response.data && error.response.data.message) {
+          errorMsg = error.response.data.message;
+        }
+      } else if (error.request) {
+        // Network error
+        errorMsg = 'Network error. Please check your connection and try again.';
+      } else if (error.message) {
+        // Other error
+        errorMsg = error.message;
+      }
+
+      setErrorMessage(errorMsg);
+      setShowErrorModal(true);
       setErrors((prev) => ({
         ...prev,
-        submit: 'Failed to submit form. Please try again.',
+        submit: errorMsg,
       }));
     } finally {
       setIsSubmitting(false); // Hide loader and enable button
     }
+  };
+
+  const handleErrorModalClose = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
   };
 
   const handleVideoChange = (value, field) => {
@@ -406,6 +458,8 @@ const PSCourseForm = ({
     { key: 'additional', label: 'Additional', icon: More },
     { key: 'pricing', label: 'Pricing', icon: Money },
     { key: 'license', label: 'Course content license', icon: InfoOutline },
+    scheduleSettings && { key: 'learningOutcomes', label: 'Learning outcomes', icon: LmsOutline },
+    scheduleSettings && { key: 'instructors', label: 'Instructors', icon: Face3 },
   ].filter(Boolean);
 
   const validateForm = () => {
@@ -422,6 +476,14 @@ const PSCourseForm = ({
     setErrors({});
   };
 
+  const handleLearningOutcomesChange = (learningInfo, field) => {
+    handleInputChange(field, learningInfo);
+  };
+
+  const handleInstructorsChange = (instructorInfo, field) => {
+    handleInputChange(field, instructorInfo);
+  };
+
   const handleCustomBlurForDropdown = (e) => {
     const { value, name } = e.target;
     handleInputChange(name, value);
@@ -436,12 +498,24 @@ const PSCourseForm = ({
           <AlertMessage
             variant="success"
             icon={CheckCircle}
-            title="Data saved succesfully"
+            title="Course has been created successfully"
             className="success-alert"
             aria-hidden="true"
           />
         </div>
       )}
+
+      <ModalNotification
+        isOpen={showErrorModal}
+        title="Course Creation Failed"
+        message={errorMessage}
+        handleCancel={handleErrorModalClose}
+        handleAction={handleErrorModalClose}
+        cancelButtonText=""
+        actionButtonText="OK"
+        variant="danger"
+        icon={Warning}
+      />
       <Container size="xl" className="pl-3">
         <Row>
           <Col xs={12} className="pr-0 pb-0">
@@ -491,7 +565,7 @@ const PSCourseForm = ({
                       )}
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
+                    <Form.Group className={scheduleSettings ? 'mb-1' : 'mb-3'}>
                       <Form.Label><>Description</></Form.Label>
                       <Form.Control
                         as="textarea"
@@ -508,6 +582,20 @@ const PSCourseForm = ({
                         </Form.Control.Feedback>
                       )}
                     </Form.Group>
+
+                    {scheduleSettings && (
+                      <Form.Group className="mb-3">
+                        <Form.Label><>Course overview</></Form.Label>
+                        <WysiwygEditor
+                          initialValue={editedValues.overview || ''}
+                          onChange={(value) => handleInputChange('overview', value)}
+                        />
+                        <Form.Control.Feedback>
+                          Provide a detailed overview of your course content and objectives.
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    )}
+
                   </div>
                   <div className="options-container">
                     <Row>
@@ -760,7 +848,7 @@ const PSCourseForm = ({
                                         <div className="datepicker-control">
                                           <Form.Label>
                                             Enrollment start date{' '}
-                                            <span className="required-asterisk">*</span>
+                                            {/* <span className="required-asterisk">*</span> */}
                                           </Form.Label>
                                           <DatepickerControl
                                             type={DATEPICKER_TYPES.date}
@@ -1050,6 +1138,22 @@ const PSCourseForm = ({
                           </Stack>
                         </div>
                         )}
+                        {activeTab === 'learningOutcomes' && (
+                          <div className="form-section learning-outcomes-section pl-12-pr-12">
+                            <LearningOutcomesSection
+                              learningInfo={editedValues.learningInfo || []}
+                              onChange={handleLearningOutcomesChange}
+                            />
+                          </div>
+                        )}
+                        {activeTab === 'instructors' && (
+                          <div className="form-section instructors-section pl-12-pr-12">
+                            <InstructorsSection
+                              instructors={editedValues.instructorInfo?.instructors || []}
+                              onChange={handleInstructorsChange}
+                            />
+                          </div>
+                        )}
                       </Col>
                     </Row>
                   </div>
@@ -1151,6 +1255,7 @@ PSCourseForm.propTypes = {
   onSubmit: PropTypes.func,
   onImageValidationErrorChange: PropTypes.func,
   onResetForm: PropTypes.func,
+  scheduleSettings: PropTypes.bool,
 };
 
 PSCourseForm.defaultProps = {
@@ -1173,6 +1278,7 @@ PSCourseForm.defaultProps = {
   onSubmit: undefined,
   onImageValidationErrorChange: () => { },
   onResetForm: () => { },
+  scheduleSettings: false,
 };
 
 export default PSCourseForm;
