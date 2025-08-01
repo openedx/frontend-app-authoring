@@ -1,4 +1,4 @@
-import { XBlock } from '../../data/types';
+import { XBlock } from '@src/data/types';
 import {
   possibleSubsectionMoves, moveSubsection, moveSubsectionOver, possibleUnitMoves, moveUnit, moveUnitOver,
 } from './utils';
