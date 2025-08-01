@@ -52,7 +52,7 @@ export const DECODED_ROUTES = {
   ],
 };
 
-export const UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; // 100mb
+export const UPLOAD_FILE_MAX_SIZE = 1024 * 1024 * 1024; // 1GB
 
 export const COURSE_BLOCK_NAMES = ({
   chapter: { id: 'chapter', name: 'Section' },
