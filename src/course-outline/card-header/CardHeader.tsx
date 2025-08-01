@@ -10,6 +10,7 @@ import {
   Hyperlink,
   Icon,
   IconButton,
+  IconButtonWithTooltip,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -175,19 +176,12 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
-            {readyToSync && (
-              <IconButton
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-sync-button`}
-                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-                iconAs={SyncIcon}
-                onClick={onClickSync}
-              />
-            )}
-            <IconButton
+            <IconButtonWithTooltip
               className="item-card-button-icon"
+              variant={isDisabledEditField ? 'light' : 'primary'}
               data-testid={`${namePrefix}-edit-button`}
               alt={intl.formatMessage(messages.altButtonEdit)}
+              tooltipContent={<div>{intl.formatMessage(messages.altButtonEdit)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
@@ -203,6 +197,15 @@ const CardHeader = ({
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
+          {readyToSync && (
+            <IconButtonWithTooltip
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              onClick={onClickSync}
+            />
+          )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
