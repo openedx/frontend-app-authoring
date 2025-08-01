@@ -1,6 +1,6 @@
 import { Col, Icon, Row } from '@openedx/paragon';
 import { ArrowRight, DragIndicator } from '@openedx/paragon/icons';
-import { ContainerType } from '../../generic/key-utils';
+import { ContainerType } from '@src/generic/key-utils';
 import { getItemStatusBorder } from '../utils';
 
 interface ItemProps {

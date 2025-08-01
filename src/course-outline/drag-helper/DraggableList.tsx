@@ -23,8 +23,9 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import { createPortal } from 'react-dom';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { XBlock } from '@src/data/types';
 import DragContextProvider from './DragContextProvider';
-import { COURSE_BLOCK_NAMES } from '../../constants';
 import {
   moveSubsectionOver,
   moveUnitOver,
@@ -33,7 +34,6 @@ import {
   dragHelpers,
 } from './utils';
 import CourseItemOverlay from './CourseItemOverlay';
-import { XBlock } from '../../data/types';
 
 interface DraggableListProps {
   items: XBlock[],
