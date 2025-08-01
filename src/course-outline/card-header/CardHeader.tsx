@@ -10,6 +10,7 @@ import {
   Hyperlink,
   Icon,
   IconButton,
+  IconButtonWithTooltip,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -175,10 +176,12 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
-            <IconButton
+            <IconButtonWithTooltip
               className="item-card-button-icon"
+              variant={isDisabledEditField ? 'light' : 'primary'}
               data-testid={`${namePrefix}-edit-button`}
               alt={intl.formatMessage(messages.altButtonEdit)}
+              tooltipContent={<div>{intl.formatMessage(messages.altButtonEdit)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
@@ -195,10 +198,11 @@ const CardHeader = ({
           )}
           {extraActionsComponent}
           {readyToSync && (
-            <IconButton
+            <IconButtonWithTooltip
               data-testid={`${namePrefix}-sync-button`}
               alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
               iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
               onClick={onClickSync}
             />
           )}
