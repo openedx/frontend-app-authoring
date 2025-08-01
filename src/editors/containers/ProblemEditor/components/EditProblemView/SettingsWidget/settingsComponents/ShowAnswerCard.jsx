@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
+import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 import SettingsOption from '../SettingsOption';
 import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/constants/problem';
@@ -13,12 +13,12 @@ const ShowAnswerCard = ({
   showAnswer,
   updateSettings,
   defaultValue,
-  // redux
-  studioEndpointUrl,
-  learningContextId,
-  isLibrary,
+  intl,
 }) => {
-  const intl = useIntl();
+  const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+
   const {
     handleShowAnswerChange,
     handleAttemptsChange,
@@ -50,7 +50,10 @@ const ShowAnswerCard = ({
           {Object.values(ShowAnswerTypesKeys).map((answerType) => {
             let optionDisplayName = ShowAnswerTypes[answerType];
             if (answerType === defaultValue) {
-              optionDisplayName = { ...optionDisplayName, defaultMessage: `${optionDisplayName.defaultMessage} (Default)` };
+              optionDisplayName = {
+                ...optionDisplayName,
+                defaultMessage: `${optionDisplayName.defaultMessage} (Default)`,
+              };
             }
             return (
               <option
@@ -63,8 +66,7 @@ const ShowAnswerCard = ({
           })}
         </Form.Control>
       </Form.Group>
-      {showAttempts
-        && (
+      {showAttempts && (
         <Form.Group className="pb-0 mb-0 mt-4">
           <Form.Control
             type="number"
@@ -74,7 +76,7 @@ const ShowAnswerCard = ({
             floatingLabel={intl.formatMessage(messages.showAnswerAttemptsInputLabel)}
           />
         </Form.Group>
-        )}
+      )}
     </>
   );
 
@@ -89,28 +91,21 @@ const ShowAnswerCard = ({
 };
 
 ShowAnswerCard.propTypes = {
-  // eslint-disable-next-line
-  showAnswer: PropTypes.any.isRequired,
+  intl: intlShape.isRequired,
+  showAnswer: PropTypes.shape({
+    on: PropTypes.string,
+    afterAttempts: PropTypes.number,
+  }).isRequired,
   solutionExplanation: PropTypes.string,
   updateSettings: PropTypes.func.isRequired,
-  studioEndpointUrl: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string,
-  isLibrary: PropTypes.bool.isRequired,
   defaultValue: PropTypes.string,
 };
+
 ShowAnswerCard.defaultProps = {
   solutionExplanation: '',
-  learningContextId: null,
   defaultValue: 'finished',
 };
 
-export const mapStateToProps = (state) => ({
-  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
-  learningContextId: selectors.app.learningContextId(state),
-  isLibrary: selectors.app.isLibrary(state),
-});
+export const ShowAnswerCardInternal = ShowAnswerCard; // For testing
 
-export const mapDispatchToProps = {};
-
-export const ShowAnswerCardInternal = ShowAnswerCard; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(ShowAnswerCard);
+export default injectIntl(ShowAnswerCard);

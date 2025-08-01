@@ -1,58 +1,77 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  screen, initializeMocks, fireEvent,
 } from '@src/testUtils';
-import { SwitchEditorCardInternal as SwitchEditorCard, mapDispatchToProps } from './SwitchEditorCard';
+import SwitchEditorCard from './SwitchEditorCard';
 import { thunkActions } from '../../../../../../data/redux';
+import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
+import editorRender from '../../../../../../modifiedEditorTestRender';
+
+jest.mock('../../../../../../data/redux/thunkActions/problem', () => ({
+  switchEditor: jest.fn(() => ({ type: 'SWITCH_EDITOR' })),
+}));
 
 describe('SwitchEditorCard', () => {
-  const mockSwitchEditor = jest.fn().mockName('switchEditor');
-  const baseProps = {
-    switchEditor: mockSwitchEditor,
-    problemType: 'stringresponse',
-    editorType: 'markdown',
-    isMarkdownEditorEnabled: false,
+  const initialStateBase = {
+    problem: {
+      isMarkdownEditorEnabled: false,
+    },
+    app: {
+      isMarkdownEditorEnabledForCourse: true,
+    },
   };
 
   beforeEach(() => {
-    initializeMocks();
+    initializeMocks({ initialState: initialStateBase });
+    jest.clearAllMocks();
   });
 
-  test('renders SwitchEditorCard', () => {
-    render(<SwitchEditorCard {...baseProps} />);
+  test('renders SwitchEditorCard and opens modal', () => {
+    editorRender(<SwitchEditorCard problemType="stringresponse" editorType="markdown" />, {
+      initialState: initialStateBase,
+    });
+
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
     const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
     expect(switchButton).toBeInTheDocument();
+
     fireEvent.click(switchButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  test('calls switchEditor function when confirm button is clicked', () => {
-    render(<SwitchEditorCard {...baseProps} />);
-    const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
-    expect(switchButton).toBeInTheDocument();
-    fireEvent.click(switchButton);
-    const confirmButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
-    expect(confirmButton).toBeInTheDocument();
-    fireEvent.click(confirmButton);
-    expect(mockSwitchEditor).toHaveBeenCalledWith('markdown');
-  });
-
-  test('renders nothing for advanced problemType', () => {
-    const { container } = render(<SwitchEditorCard {...baseProps} problemType="advanced" />);
-    const reduxWrapper = (container.firstChild as HTMLElement | null);
-    expect(reduxWrapper?.innerHTML).toBe('');
-  });
-
-  test('snapshot: SwitchEditorCard returns null when editor is Markdown', () => {
-    const { container } = render(<SwitchEditorCard {...baseProps} editorType="markdown" isMarkdownEditorEnabled />);
-    const reduxWrapper = (container.firstChild as HTMLElement | null);
-    expect(reduxWrapper?.innerHTML).toBe('');
-  });
-
-  describe('mapDispatchToProps', () => {
-    test('updateField from actions.problem.updateField', () => {
-      expect(mapDispatchToProps.switchEditor).toEqual(thunkActions.problem.switchEditor);
+  test('dispatches switchEditor on confirm', () => {
+    editorRender(<SwitchEditorCard problemType="stringresponse" editorType="markdown" />, {
+      initialState: initialStateBase,
     });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to markdown editor' }));
+    const confirmButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
+
+    fireEvent.click(confirmButton);
+
+    expect(thunkActions.problem.switchEditor).toHaveBeenCalledWith('markdown');
+  });
+
+  test('renders nothing for advanced problem type', () => {
+    editorRender(<SwitchEditorCard problemType={ProblemTypeKeys.ADVANCED} editorType="markdown" />, {
+      initialState: initialStateBase,
+    });
+
+    expect(screen.getByTestId('redux-provider').outerHTML)
+      .toBe('<div data-testid="redux-provider"></div>');
+  });
+
+  test('renders nothing when markdown editor already enabled', () => {
+    const modifiedState = {
+      ...initialStateBase,
+      problem: { isMarkdownEditorEnabled: true },
+    };
+    initializeMocks({ initialState: modifiedState });
+    editorRender(<SwitchEditorCard problemType="stringresponse" editorType="markdown" />, {
+      initialState: modifiedState,
+    });
+    expect(screen.getByTestId('redux-provider').outerHTML)
+      .toBe('<div data-testid="redux-provider"></div>');
   });
 });
