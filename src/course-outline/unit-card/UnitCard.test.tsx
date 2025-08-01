@@ -25,6 +25,12 @@ const section = {
   visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const subsection = {
@@ -33,6 +39,12 @@ const subsection = {
   published: true,
   visibilityState: 'live',
   hasChanges: false,
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const unit = {
@@ -120,6 +132,30 @@ describe('<UnitCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
+  });
+
+  it('hides move, duplicate & delete options if parent was imported from library', async () => {
+    const { findByTestId } = renderComponent({
+      subsection: {
+        ...subsection,
+        upstreamInfo: {
+          readyToSync: true,
+          upstreamRef: 'lct:org1:lib1:subsection:1',
+          versionSynced: 1,
+        },
+      },
+    });
+    const element = await findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
+    expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
+    expect(
+      await within(element).findByTestId('unit-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      await within(element).findByTestId('unit-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('shows copy option based on enableCopyPasteUnits flag', async () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -10,14 +9,28 @@ import { DragIndicator } from '@openedx/paragon/icons';
 
 import messages from './messages';
 
+interface SortableItemProps {
+  id: string;
+  data: {
+    category: string;
+    childAddable?: boolean;
+    displayName: string;
+    status: string;
+  }
+  isDroppable?: boolean;
+  isDraggable?: boolean;
+  children: React.ReactNode;
+  componentStyle?: object;
+}
+
 const SortableItem = ({
   id,
-  category,
-  isDraggable,
-  isDroppable,
+  isDraggable = true,
+  isDroppable = true,
   componentStyle,
+  data,
   children,
-}) => {
+}: SortableItemProps) => {
   const intl = useIntl();
   const {
     attributes,
@@ -29,9 +42,7 @@ const SortableItem = ({
     setActivatorNodeRef,
   } = useSortable({
     id,
-    data: {
-      category,
-    },
+    data,
     disabled: {
       draggable: !isDraggable,
       droppable: !isDroppable,
@@ -78,21 +89,6 @@ const SortableItem = ({
       )}
     </Row>
   );
-};
-
-SortableItem.defaultProps = {
-  componentStyle: null,
-  isDroppable: true,
-  isDraggable: true,
-};
-
-SortableItem.propTypes = {
-  id: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
-  isDroppable: PropTypes.bool,
-  isDraggable: PropTypes.bool,
-  children: PropTypes.node.isRequired,
-  componentStyle: PropTypes.shape({}),
 };
 
 export default SortableItem;
