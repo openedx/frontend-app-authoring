@@ -3,18 +3,19 @@ import { useState, useEffect } from 'react';
 import {
   includes, isEmpty, isFinite, isNaN, isNil,
 } from 'lodash';
+import {
+  ProblemTypeKeys,
+  ProblemTypes,
+  RichTextProblems,
+  ShowAnswerTypesKeys,
+  getProblemTypes,
+} from '@src/editors/data/constants/problem';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
 import messages from './messages';
-import {
-  ProblemTypeKeys,
-  ProblemTypes,
-  RichTextProblems,
-  ShowAnswerTypesKeys,
-} from '../../../../../data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
 export const state = {
@@ -232,6 +233,7 @@ export const typeRowHooks = ({
   typeKey,
   updateField,
   updateAnswer,
+  formatMessage,
 }) => {
   const clearPreviouslySelectedAnswers = () => {
     let currentAnswerTitles;
@@ -312,8 +314,25 @@ export const typeRowHooks = ({
       updateAnswersToCorrect();
     }
 
-    if (blockTitle === ProblemTypes[problemType].title) {
-      setBlockTitle(ProblemTypes[typeKey].title);
+    // Check if blockTitle matches either the localized or non-localized problem type title
+    let shouldUpdateBlockTitle = false;
+    if (formatMessage) {
+      const localizedProblemTypes = getProblemTypes(formatMessage);
+      shouldUpdateBlockTitle = blockTitle === localizedProblemTypes[problemType].title
+        || blockTitle === ProblemTypes[problemType].title;
+    } else {
+      shouldUpdateBlockTitle = blockTitle === ProblemTypes[problemType].title;
+    }
+
+    if (shouldUpdateBlockTitle) {
+      // Use localized problem type titles when setting block titles
+      if (formatMessage) {
+        const localizedProblemTypes = getProblemTypes(formatMessage);
+        setBlockTitle(localizedProblemTypes[typeKey].title);
+      } else {
+        // Fallback for tests or cases where formatMessage is not provided
+        setBlockTitle(ProblemTypes[typeKey].title);
+      }
     }
     updateField({ problemType: typeKey });
   };

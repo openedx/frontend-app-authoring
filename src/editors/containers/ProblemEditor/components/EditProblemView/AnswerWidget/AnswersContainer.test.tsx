@@ -1,10 +1,10 @@
 import React from 'react';
+
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import {
   render, screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
 import AnswersContainer from './AnswersContainer';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
-// Import actions after mocking to access mocked functions
 import { actions } from '../../../../../data/redux';
 
 const { useAnswerContainer } = require('./hooks');
