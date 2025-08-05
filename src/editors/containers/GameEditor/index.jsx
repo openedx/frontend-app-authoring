@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Spinner } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import EditorContainer from '../EditorContainer';
 // This 'module' self-import hack enables mocking during tests.
@@ -23,6 +23,7 @@ import EditorContainer from '../EditorContainer';
 import * as module from '.';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
+
 
 export const hooks = {
   getContent: () => ({
@@ -40,9 +41,10 @@ export const thumbEditor = ({
   initializeEditor,
   exampleValue,
   // inject
-  intl,
-}) => (
-  <EditorContainer
+}) => {
+  const intl = useIntl();
+  return (
+    <EditorContainer
     getContent={module.hooks.getContent}
     onClose={onClose}
   >
@@ -70,7 +72,8 @@ export const thumbEditor = ({
         )}
     </div>
   </EditorContainer>
-);
+  )
+};
 thumbEditor.defaultProps = {
   blockValue: null,
   lmsEndpointUrl: null,
@@ -86,7 +89,6 @@ thumbEditor.propTypes = {
   blockFinished: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
   // inject
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -103,4 +105,4 @@ export const mapDispatchToProps = {
   // TODO fill with dispatches here if needed
 };
 
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(thumbEditor));
+export default connect(mapStateToProps, mapDispatchToProps)(thumbEditor);

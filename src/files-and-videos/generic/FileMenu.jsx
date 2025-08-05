@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown,
   IconButton,
@@ -20,9 +20,10 @@ const FileMenu = ({
   id,
   fileType,
   // injected
-  intl,
-}) => (
-  <Dropdown data-testid={`file-menu-dropdown-${id}`}>
+}) => {
+  const intl = useIntl();
+  return (
+    <Dropdown data-testid={`file-menu-dropdown-${id}`}>
     <Dropdown.Toggle
       id={`file-menu-dropdown-${id}`}
       as={IconButton}
@@ -70,7 +71,8 @@ const FileMenu = ({
       </Dropdown.Item>
     </Dropdown.Menu>
   </Dropdown>
-);
+  )
+};
 
 FileMenu.propTypes = {
   externalUrl: PropTypes.string,
@@ -83,7 +85,6 @@ FileMenu.propTypes = {
   id: PropTypes.string.isRequired,
   fileType: PropTypes.string.isRequired,
   // injected
-  intl: intlShape.isRequired,
 };
 
 FileMenu.defaultProps = {
@@ -93,4 +94,4 @@ FileMenu.defaultProps = {
   portableUrl: null,
 };
 
-export default injectIntl(FileMenu);
+export default FileMenu;
