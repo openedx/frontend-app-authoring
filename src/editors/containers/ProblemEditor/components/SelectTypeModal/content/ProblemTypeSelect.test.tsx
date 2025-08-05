@@ -1,8 +1,9 @@
 import React from 'react';
+
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import {
   render, screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ProblemTypeSelect from './ProblemTypeSelect';
 
 describe('ProblemTypeSelect', () => {
