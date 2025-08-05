@@ -934,7 +934,7 @@ describe('<CourseOutline />', () => {
   it('check configure modal for section', async () => {
     const { findByTestId, findAllByTestId } = renderComponent();
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const newReleaseDateIso = '2025-09-10T22:00:00Z';
+    const newReleaseDateIso = '2025-09-10T22:00:00.000Z';
     const newReleaseDate = '09/10/2025';
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
@@ -999,7 +999,7 @@ describe('<CourseOutline />', () => {
       prereqMinCompletion: 100,
       metadata: {
         visible_to_staff_only: null,
-        due: '2025-09-10T05:00:00Z',
+        due: '2025-09-10T05:00:00.000Z',
         hide_after_due: true,
         show_correctness: 'always',
         is_practice_exam: false,
@@ -1008,7 +1008,7 @@ describe('<CourseOutline />', () => {
         exam_review_rules: '',
         default_time_limit_minutes: 3270,
         is_onboarding_exam: false,
-        start: '2025-08-10T00:00:00Z',
+        start: '2025-08-10T00:00:00.000Z',
       },
     };
 

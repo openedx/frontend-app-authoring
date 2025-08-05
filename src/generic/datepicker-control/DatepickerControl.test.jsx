@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { convertToStringFromDate } from '../../utils';
 import { DatepickerControl, DATEPICKER_TYPES } from '.';
 import messages from './messages';
 import { DATE_FORMAT } from '../../constants';
@@ -45,7 +44,7 @@ describe('<DatepickerControl />', () => {
     const input = getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     fireEvent.change(input, { target: { value: '06/16/2023' } });
     expect(onChangeMock).toHaveBeenCalledWith(
-      convertToStringFromDate('06/16/2023'),
+      new Date('2023-06-16T00:00:00.000Z'),
     );
   });
 });

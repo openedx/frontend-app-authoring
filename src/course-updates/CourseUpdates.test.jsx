@@ -389,5 +389,38 @@ describe('<CourseUpdates />', () => {
       expect(getByText(courseHandoutsMock.data)).toBeVisible();
       expect(getByText(messages.savingHandoutsErrorDescription.defaultMessage));
     });
+
+    it.only('should trigger handleUpdatesSubmit when submitting the form', async () => {
+      const { getByRole, getByText } = render(<RootWrapper />);
+
+      // Open form
+      const newUpdateButton = getByRole('button', { name: messages.newUpdateButton.defaultMessage });
+      fireEvent.click(newUpdateButton);
+
+      // Wait for form
+      await waitFor(() => {
+        expect(getByText('Add new update')).toBeInTheDocument();
+      });
+
+      // Mock POST response
+      const submittedUpdate = {
+        content: '<p>Submitted update content</p>',
+        date: 'August 15, 2025',
+      };
+
+      axiosMock
+        .onPost(getCourseUpdatesApiUrl(courseId))
+        .reply(200, submittedUpdate);
+
+      // Simulate form submit by clicking the Save button
+      const saveButton = getByRole('button', { name: /Post/i }); // Match case-insensitively
+      fireEvent.click(saveButton);
+
+      // Expect new update to be rendered
+      await waitFor(() => {
+        expect(getByText('Submitted update content')).toBeInTheDocument();
+        expect(getByText('August 15, 2025')).toBeInTheDocument();
+      });
+    });
   });
 });
