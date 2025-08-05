@@ -2,7 +2,7 @@ import React from 'react';
 import {
   screen, initializeMocks,
 } from '@src/testUtils';
-import editorRender from '@src/editors/editorTestRender';
+import { editorRender } from '@src/editors/editorTestRender';
 import * as hooks from './hooks';
 import TinyMceWidget from '.';
 
