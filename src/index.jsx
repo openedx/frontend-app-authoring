@@ -1,6 +1,7 @@
 import {
-  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
+  APP_INIT_ERROR, APP_READY, APP_AUTH_INITIALIZED, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -143,6 +144,40 @@ subscribe(APP_INIT_ERROR, (error) => {
       <ErrorPage message={error.message} />
     </StrictMode>,
   );
+});
+
+subscribe(APP_AUTH_INITIALIZED, async () => {
+  // Authoring also requires authenticated access to the Studio APIs.
+  // Some of these APIs also require a logged in Studio user,
+  // so we must ensure that's the case there.
+  // If there isn't a logged in Studio user, then we can redirect to the Studio login page.
+
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  // hacky try/catch with xblock handler as a PoC
+  try {
+    const url = `${studioBaseUrl }/xblock/`;
+    await getAuthenticatedHttpClient().get(url, {
+      validateStatus: (status) => (status >= 200 && status <= 500),
+    });
+  // if response indicates not logged in
+  } catch {
+    console.log('STUDIO IS NOT LOGGED IN');
+    // TODO: check for a redirect from the studio login page, to avoid infinite redirect loops
+    // code from upstream lms auth handler for reference:
+    // const isRedirectFromLoginPage = global.document.referrer
+    // && global.document.referrer.startsWith(this.config.LOGIN_URL);
+
+    // if (isRedirectFromLoginPage) {
+    // const redirectLoopError = new Error('Redirect from login page. Rejecting to avoid infinite redirect loop.');
+    // logFrontendAuthError(this.loggingService, redirectLoopError);
+    // throw redirectLoopError;
+    // }
+
+    console.log(`REDIRECTING TO: ${studioBaseUrl}/login?next=${encodeURIComponent(window.location.href)}`);
+    global.location.assign(`${studioBaseUrl}/login?next=${encodeURIComponent(window.location.href)}`);
+    return;
+  }
+  console.log('STUDIO IS LOGGED IN');
 });
 
 initialize({
