@@ -62,7 +62,7 @@ const FilterByPublished = ({
       onChange={() => { toggleFilterMode(filter); }}
     >
       <div>
-        {filterLabels[filter]}
+        {filterLabels[filter]}{' '}
         <Badge variant="light" pill>{publishStatus[filter] ?? 0}</Badge>
       </div>
     </MenuItem>
