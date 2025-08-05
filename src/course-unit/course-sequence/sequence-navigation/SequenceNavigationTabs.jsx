@@ -6,7 +6,7 @@ import { Plus as PlusIcon, ContentPasteGo as ContentPasteGoIcon } from '@openedx
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from '../../data/slice';
-import { getCourseId, getSequenceId } from '../../data/selectors';
+import { getCourseUnitData, getCourseId, getSequenceId } from '../../data/selectors';
 import messages from '../messages';
 import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
@@ -20,6 +20,8 @@ const SequenceNavigationTabs = ({
   const navigate = useNavigate();
   const sequenceId = useSelector(getSequenceId);
   const courseId = useSelector(getCourseId);
+  const courseUnit = useSelector(getCourseUnitData);
+  const sequenceChildAddable = courseUnit?.ancestorInfo?.ancestors?.[0]?.actions?.childAddable;
 
   const [
     indexOfLastVisibleChild,
@@ -58,6 +60,7 @@ const SequenceNavigationTabs = ({
               isActive={unitId === buttonUnitId}
             />
           ))}
+          {sequenceChildAddable && (
           <Button
             className="sequence-navigation-tabs-action-btn"
             variant="outline-primary"
@@ -66,6 +69,7 @@ const SequenceNavigationTabs = ({
           >
             {intl.formatMessage(messages.newUnitBtnText)}
           </Button>
+          )}
           {showPasteUnit && (
             <Button
               className="sequence-navigation-tabs-action-btn"
