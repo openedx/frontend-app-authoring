@@ -3,7 +3,7 @@ import { screen, initializeMocks } from '@src/testUtils';
 import { formatMessage } from '@src/editors/testUtils';
 import { ShowAnswerCardInternal as ShowAnswerCard } from './ShowAnswerCard';
 import * as hooks from '../hooks';
-import editorRender from '../../../../../../editorTestRender';
+import { editorRender } from '../../../../../../editorTestRender';
 
 describe('ShowAnswerCard', () => {
   const showAnswer = {

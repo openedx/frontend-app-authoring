@@ -4,7 +4,7 @@ import {
 } from '@src/testUtils';
 import ScoringCard from './ScoringCard';
 import { selectors } from '../../../../../../data/redux';
-import editorRender from '../../../../../../editorTestRender';
+import { editorRender } from '../../../../../../editorTestRender';
 
 const { app } = selectors;
 

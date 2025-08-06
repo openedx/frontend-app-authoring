@@ -37,8 +37,7 @@ const EditProblemView = ({ returnFunction }) => {
   const lmsEndpointUrl = useSelector(selectors.app.lmsEndpointUrl);
   const returnUrl = useSelector(selectors.app.returnUrl);
   const problemType = useSelector(selectors.problem.problemType);
-  const problemState = useSelector(selectors.problem.completeState)?.completeState;
-  const problemStateWithoutComplete = useSelector(selectors.problem.completeState);
+  const problemState = useSelector(selectors.problem.completeState);
   const isDirty = useSelector(selectors.problem.isDirty);
 
   const isMarkdownEditorEnabledSelector = useSelector(selectors.problem.isMarkdownEditorEnabled);
@@ -60,7 +59,7 @@ const EditProblemView = ({ returnFunction }) => {
   return (
     <EditorContainer
       getContent={() => getContent({
-        problemState: problemStateWithoutComplete,
+        problemState,
         openSaveWarningModal,
         isAdvancedProblemType,
         isMarkdownEditorEnabled,

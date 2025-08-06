@@ -1,9 +1,10 @@
 import React from 'react';
 import { screen, initializeMocks } from '@src/testUtils';
-import editorRender, { type PartialEditorState } from '@src/editors/editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 
 jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');

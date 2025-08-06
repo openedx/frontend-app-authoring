@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, initializeMocks } from '@src/testUtils';
-import editorRender from '../../../../../editorTestRender';
+import { editorRender } from '../../../../../editorTestRender';
 import ExplanationWidget from './index';
 
 jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({

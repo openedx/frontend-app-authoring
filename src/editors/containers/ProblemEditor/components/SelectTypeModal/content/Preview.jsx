@@ -15,23 +15,25 @@ const Preview = ({
   if (problemType === null) {
     return null;
   }
-  const data = ProblemTypes[problemType];
+
+  const staticData = ProblemTypes[problemType];
+
   return (
     <Container style={{ width: '494px', height: '400px' }} className="bg-light-300 rounded p-4">
       <div className="small">
-        {intl.formatMessage(messages.previewTitle, { previewTitle: data.title })}
+        <FormattedMessage {...messages[`problemType.${problemType}.title`]} /> problem
       </div>
       <Image
         fluid
         className="my-3"
-        src={data.preview}
+        src={staticData.preview}
         alt={intl.formatMessage(messages.previewAltText, { problemType })}
       />
       <div className="mb-3">
-        {intl.formatMessage(messages.previewDescription, { previewDescription: data.previewDescription })}
+        <FormattedMessage {...messages[`problemType.${problemType}.description`]} />
       </div>
       <Hyperlink
-        destination={data.helpLink}
+        destination={staticData.helpLink}
         target="_blank"
       >
         <FormattedMessage {...messages.learnMoreButtonLabel} />

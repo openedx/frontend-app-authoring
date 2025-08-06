@@ -1,9 +1,8 @@
 import React from 'react';
-import { screen, fireEvent, initializeMocks } from '../../../../../testUtils';
-import editorRender from '../../../../editorTestRender';
+import { screen, fireEvent, initializeMocks } from '@src/testUtils';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import EditProblemView from './index';
-import { initializeStore } from '../../../../data/redux';
-import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 const { saveBlock } = require('../../../../hooks');
 const { saveWarningModalToggle } = require('./hooks');
@@ -41,20 +40,16 @@ jest.mock('./hooks', () => ({
 }));
 
 // 🗂️ Initial state based on baseProps
-const initialState = {
+const initialState: PartialEditorState = {
   app: {
-    analytics: {},
     lmsEndpointUrl: null,
-    returnUrl: '/return',
     isMarkdownEditorEnabledForCourse: false,
   },
   problem: {
-    problemType: 'standard',
+    problemType: null,
     isMarkdownEditorEnabled: false,
-    completeState: {
-      rawOLX: '<problem></problem>',
-      rawMarkdown: '## Problem',
-    },
+    rawOLX: '<problem></problem>',
+    rawMarkdown: '## Problem',
     isDirty: false,
   },
 };
@@ -63,11 +58,11 @@ describe('EditProblemView', () => {
   const returnFunction = jest.fn();
 
   beforeEach(() => {
-    initializeMocks({ initialState, initializeStore });
+    initializeMocks();
   });
 
   it('renders standard problem widgets', () => {
-    editorRender(<EditProblemView returnFunction={returnFunction} />);
+    editorRender(<EditProblemView returnFunction={returnFunction} />, { initialState });
     expect(screen.getByText('QuestionWidget')).toBeInTheDocument();
     expect(screen.getByText('ExplanationWidget')).toBeInTheDocument();
     expect(screen.getByText('AnswerWidget')).toBeInTheDocument();
@@ -77,14 +72,6 @@ describe('EditProblemView', () => {
   });
 
   it('renders advanced problem with RawEditor', () => {
-    initializeMocks({
-      initializeStore,
-      ...initialState,
-      problem: {
-        ...initialState.problem,
-        problemType: ProblemTypeKeys.ADVANCED,
-      },
-    });
     editorRender(<EditProblemView returnFunction={returnFunction} />, {
       initialState: {
         ...initialState,
@@ -99,27 +86,19 @@ describe('EditProblemView', () => {
   });
 
   it('renders markdown editor with RawEditor', () => {
-    const modifiedInitialState = {
+    const modifiedInitialState: PartialEditorState = {
       app: {
-        analytics: {},
         lmsEndpointUrl: null,
-        returnUrl: '/return',
         isMarkdownEditorEnabledForCourse: true,
       },
       problem: {
-        problemType: 'standard',
+        problemType: null,
         isMarkdownEditorEnabled: true,
-        completeState: {
-          rawOLX: '<problem></problem>',
-          rawMarkdown: '## Problem',
-        },
+        rawOLX: '<problem></problem>',
+        rawMarkdown: '## Problem',
         isDirty: false,
       },
     };
-    initializeMocks({
-      initializeStore,
-      initialState: modifiedInitialState,
-    });
     editorRender(<EditProblemView returnFunction={returnFunction} />, { initialState: modifiedInitialState });
     expect(screen.getByText('markdown:## Problem')).toBeInTheDocument();
   });

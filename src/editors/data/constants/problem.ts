@@ -6,6 +6,7 @@ import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
 import advancedOlxTemplates from './advancedOlxTemplates';
 import basicProblemTemplates from './basicProblemTemplates';
+import problemMessages from '../../containers/ProblemEditor/components/SelectTypeModal/SelectTypeWrapper/messages';
 
 export const ProblemTypeKeys = StrictDict({
   SINGLESELECT: 'multiplechoiceresponse',
@@ -16,6 +17,87 @@ export const ProblemTypeKeys = StrictDict({
   ADVANCED: 'advanced',
 } as const);
 export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
+
+/**
+ * Get problem types with internationalized strings.
+ * @param {Function} formatMessage - The intl.formatMessage function
+ * @returns {Object} ProblemTypes object with localized strings
+ *
+ * Usage in React components:
+ *
+ * import { useIntl } from '@edx/frontend-platform/i18n';
+ * import { getProblemTypes } from '../path/to/problem';
+ *
+ * const MyComponent = () => {
+ *   const intl = useIntl();
+ *   const localizedProblemTypes = getProblemTypes(intl.formatMessage);
+ *
+ *   return <div>{localizedProblemTypes[ProblemTypeKeys.SINGLESELECT].title}</div>;
+ * };
+ */
+export const getProblemTypes = (formatMessage) => ({
+  [ProblemTypeKeys.SINGLESELECT]: {
+    title: formatMessage(problemMessages.singleSelectTitle),
+    preview: singleSelect,
+    previewDescription: formatMessage(problemMessages.singleSelectDescription),
+    description: formatMessage(problemMessages.singleSelectInstruction),
+    helpLink: 'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html',
+    prev: ProblemTypeKeys.TEXTINPUT,
+    next: ProblemTypeKeys.MULTISELECT,
+    template: basicProblemTemplates.singleSelect.olx,
+    markdownTemplate: basicProblemTemplates.singleSelect.markdown,
+  },
+  [ProblemTypeKeys.MULTISELECT]: {
+    title: formatMessage(problemMessages.multiSelectTitle),
+    preview: multiSelect,
+    previewDescription: formatMessage(problemMessages.multiSelectDescription),
+    description: formatMessage(problemMessages.multiSelectInstruction),
+    helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html',
+    next: ProblemTypeKeys.DROPDOWN,
+    prev: ProblemTypeKeys.SINGLESELECT,
+    template: basicProblemTemplates.multiSelect.olx,
+    markdownTemplate: basicProblemTemplates.multiSelect.markdown,
+  },
+  [ProblemTypeKeys.DROPDOWN]: {
+    title: formatMessage(problemMessages.dropdownTitle),
+    preview: dropdown,
+    previewDescription: formatMessage(problemMessages.dropdownDescription),
+    description: formatMessage(problemMessages.dropdownInstruction),
+    helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html',
+    next: ProblemTypeKeys.NUMERIC,
+    prev: ProblemTypeKeys.MULTISELECT,
+    template: basicProblemTemplates.dropdown.olx,
+    markdownTemplate: basicProblemTemplates.dropdown.markdown,
+  },
+  [ProblemTypeKeys.NUMERIC]: {
+    title: formatMessage(problemMessages.numericalInputTitle),
+    preview: numericalInput,
+    previewDescription: formatMessage(problemMessages.numericalInputDescription),
+    description: formatMessage(problemMessages.numericalInputInstruction),
+    helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html',
+    next: ProblemTypeKeys.TEXTINPUT,
+    prev: ProblemTypeKeys.DROPDOWN,
+    template: basicProblemTemplates.numeric.olx,
+    markdownTemplate: basicProblemTemplates.numeric.markdown,
+  },
+  [ProblemTypeKeys.TEXTINPUT]: {
+    title: formatMessage(problemMessages.textInputTitle),
+    preview: textInput,
+    previewDescription: formatMessage(problemMessages.textInputDescription),
+    description: formatMessage(problemMessages.textInputInstruction),
+    helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html',
+    prev: ProblemTypeKeys.NUMERIC,
+    next: ProblemTypeKeys.SINGLESELECT,
+    template: basicProblemTemplates.textInput.olx,
+    markdownTemplate: basicProblemTemplates.textInput.markdown,
+  },
+  [ProblemTypeKeys.ADVANCED]: {
+    title: formatMessage(problemMessages.advancedProblemTitle),
+    preview: ('<div />'),
+    description: formatMessage(problemMessages.advancedProblemDescription),
+    helpLink: 'something.com',
+  },
+});
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
@@ -95,6 +177,61 @@ export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof Advance
 export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
   return Object.values(AdvanceProblemKeys).includes(pt as any);
 }
+
+/**
+ * Get advanced problem types with internationalized strings.
+ * @param {Function} formatMessage - The intl.formatMessage function
+ * @returns {Object} AdvanceProblems object with localized strings
+ *
+ * Usage in React components:
+ *
+ * import { useIntl } from '@edx/frontend-platform/i18n';
+ * import { getAdvanceProblems } from '../path/to/problem';
+ *
+ * const MyComponent = () => {
+ *   const intl = useIntl();
+ *   const localizedAdvanceProblems = getAdvanceProblems(intl.formatMessage);
+ *
+ *   return <div>{localizedAdvanceProblems[AdvanceProblemKeys.BLANK].title}</div>;
+ * };
+ */
+export const getAdvanceProblems = (formatMessage) => ({
+  [AdvanceProblemKeys.BLANK]: {
+    title: formatMessage(problemMessages.blankProblemTitle),
+    status: '',
+    template: '<problem></problem>',
+  },
+  [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
+    title: formatMessage(problemMessages.circuitSchematicTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.circuitSchematic,
+  },
+  [AdvanceProblemKeys.JSINPUT]: {
+    title: formatMessage(problemMessages.customJavaScriptTitle),
+    status: '',
+    template: advancedOlxTemplates.jsInputResponse,
+  },
+  [AdvanceProblemKeys.CUSTOMGRADER]: {
+    title: formatMessage(problemMessages.customPythonTitle),
+    status: 'Provisional',
+    template: advancedOlxTemplates.customGrader,
+  },
+  [AdvanceProblemKeys.IMAGE]: {
+    title: formatMessage(problemMessages.imageMappedTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.imageResponse,
+  },
+  [AdvanceProblemKeys.FORMULA]: {
+    title: formatMessage(problemMessages.mathExpressionTitle),
+    status: '',
+    template: advancedOlxTemplates.formulaResponse,
+  },
+  [AdvanceProblemKeys.PROBLEMWITHHINT]: {
+    title: formatMessage(problemMessages.problemWithHintTitle),
+    status: 'Not supported',
+    template: advancedOlxTemplates.problemWithHint,
+  },
+});
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
@@ -248,3 +385,13 @@ export const ignoredOlxAttributes = [
 // Useful for the block creation workflow.
 export const problemTitles = new Set([...Object.values(ProblemTypes).map((problem) => problem.title),
   ...Object.values(AdvanceProblems).map((problem) => problem.title)]);
+
+/**
+ * Get problem titles with internationalization support
+ * @param {Function} formatMessage - The intl.formatMessage function
+ * @returns {Set<string>} Set of localized problem titles
+ */
+export const getProblemTitles = (formatMessage) => new Set([
+  ...Object.values(getProblemTypes(formatMessage)).map((problem) => problem.title),
+  ...Object.values(getAdvanceProblems(formatMessage)).map((problem) => problem.title),
+]);

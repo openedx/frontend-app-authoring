@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   DndContext,
@@ -8,6 +7,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
+  DragOverEvent,
+  UniqueIdentifier,
+  Active,
+  Over,
+  DragEndEvent,
+  DragStartEvent,
+  CollisionDetection,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -15,8 +22,10 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
+import { createPortal } from 'react-dom';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { XBlock } from '@src/data/types';
 import DragContextProvider from './DragContextProvider';
-import { COURSE_BLOCK_NAMES } from '../../constants';
 import {
   moveSubsectionOver,
   moveUnitOver,
@@ -24,6 +33,38 @@ import {
   moveUnit,
   dragHelpers,
 } from './utils';
+import CourseItemOverlay from './CourseItemOverlay';
+
+interface DraggableListProps {
+  items: XBlock[],
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>,
+  restoreSectionList: () => void,
+  handleSectionDragAndDrop: (sectionListIds: string[], restoreSectionList: () => void) => void,
+  handleSubsectionDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+    restoreSectionList: () => void,
+  ) => void,
+  handleUnitDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+    restoreSectionList: () => void,
+  ) => void,
+  children: React.ReactNode,
+}
+
+interface ItemInfoType {
+  index: number;
+  item: XBlock;
+  category: string;
+  parent?: XBlock;
+  parentIndex?: number;
+  grandParentIndex?: number;
+  grandParent?: XBlock;
+}
 
 const DraggableList = ({
   items,
@@ -33,33 +74,34 @@ const DraggableList = ({
   handleSubsectionDragAndDrop,
   handleUnitDragAndDrop,
   children,
-}) => {
-  const prevContainerInfo = React.useRef();
+}: DraggableListProps) => {
+  const prevContainerInfo = React.useRef<string | null>();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const [activeId, setActiveId] = React.useState();
-  const [currentOverId, setCurrentOverId] = React.useState();
+  const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
+  const [draggedItemClone, setDraggedItemClone] = React.useState<React.ReactNode>(null);
+  const [currentOverId, setCurrentOverId] = React.useState<string | null>(null);
 
-  const findItemInfo = (id) => {
+  const findItemInfo = (id: UniqueIdentifier): ItemInfoType | null => {
     // search id in sections
-    const sectionIndex = items.findIndex((section) => section.id === id);
+    const sectionIndex = items.findIndex((section: XBlock) => section.id === id);
     if (sectionIndex !== -1) {
       return {
         index: sectionIndex,
         item: items[sectionIndex],
         category: COURSE_BLOCK_NAMES.chapter.id,
-        parent: 'root',
+        parent: undefined,
       };
     }
 
     // search id in subsections
     for (let index = 0; index < items.length; index++) {
       const section = items[index];
-      const subsectionIndex = section.childInfo.children.findIndex((subsection) => subsection.id === id);
+      const subsectionIndex = section.childInfo.children.findIndex((subsection: XBlock) => subsection.id === id);
       if (subsectionIndex !== -1) {
         return {
           index: subsectionIndex,
@@ -76,7 +118,7 @@ const DraggableList = ({
       const section = items[index];
       for (let subIndex = 0; subIndex < section.childInfo.children.length; subIndex++) {
         const subsection = section.childInfo.children[subIndex];
-        const unitIndex = subsection.childInfo.children.findIndex((unit) => unit.id === id);
+        const unitIndex = subsection.childInfo.children.findIndex((unit: XBlock) => unit.id === id);
         if (unitIndex !== -1) {
           return {
             index: unitIndex,
@@ -101,18 +143,22 @@ const DraggableList = ({
   // See https://github.com/openedx/frontend-app-course-authoring/pull/859#discussion_r1519199622
   // for more details.
   /* istanbul ignore next */
-  const subsectionDragOver = (active, over, activeInfo, overInfo) => {
+  const subsectionDragOver = (
+    active: Active,
+    over: Over,
+    activeInfo: ItemInfoType,
+    overInfo: ItemInfoType,
+  ) => {
     if (
-      activeInfo.parent.id === overInfo.parent.id
-      || activeInfo.parent.id === overInfo.item.id
-      || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
-      || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
+      activeInfo.parent?.id === overInfo.parent?.id
+      || activeInfo.parent?.id === overInfo.item.id
+      || (activeInfo.category === overInfo.category && !overInfo.parent?.actions.childAddable)
     ) {
       return;
     }
     // Find the new index for the item
-    let overSectionIndex;
-    let newIndex;
+    let overSectionIndex: number | undefined;
+    let newIndex: number;
     if (overInfo.category === COURSE_BLOCK_NAMES.chapter.id) {
       // We're at the root droppable of a container
       newIndex = overInfo.item.childInfo.children.length + 1;
@@ -122,38 +168,42 @@ const DraggableList = ({
       const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSectionIndex = overInfo.parentIndex;
-      setCurrentOverId(overInfo.parent.id);
+      setCurrentOverId(overInfo.parent?.id || null);
     }
 
     setSections((prev) => {
       const [prevCopy] = moveSubsectionOver(
         [...prev],
-        activeInfo.parentIndex,
+        activeInfo.parentIndex!,
         activeInfo.index,
-        overSectionIndex,
+        overSectionIndex!,
         newIndex,
       );
       return prevCopy;
     });
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
-      prevContainerInfo.current = activeInfo.parent.id;
+      prevContainerInfo.current = activeInfo.parent?.id;
     }
   };
 
   /* istanbul ignore next */
-  const unitDragOver = (active, over, activeInfo, overInfo) => {
+  const unitDragOver = (
+    active: Active,
+    over: Over,
+    activeInfo: ItemInfoType,
+    overInfo: ItemInfoType,
+  ) => {
     if (
-      activeInfo.parent.id === overInfo.parent.id
-      || activeInfo.parent.id === overInfo.item.id
-      || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
-      || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
+      activeInfo.parent?.id === overInfo.parent?.id
+      || activeInfo.parent?.id === overInfo.item.id
+      || (activeInfo.parent?.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
     }
-    let overSubsectionIndex;
-    let overSectionIndex;
+    let overSubsectionIndex: number | undefined;
+    let overSectionIndex: number | undefined;
     // Find the indexes for the items
-    let newIndex;
+    let newIndex: number;
     if (overInfo.category === COURSE_BLOCK_NAMES.sequential.id) {
       // We're at the root droppable of a container
       newIndex = overInfo.item.childInfo.children.length + 1;
@@ -165,28 +215,28 @@ const DraggableList = ({
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSubsectionIndex = overInfo.parentIndex;
       overSectionIndex = overInfo.grandParentIndex;
-      setCurrentOverId(overInfo.parent.id);
+      setCurrentOverId(overInfo.parent?.id || null);
     }
 
-    setSections((prev) => {
+    setSections((prev: XBlock[]) => {
       const [prevCopy] = moveUnitOver(
         [...prev],
-        activeInfo.grandParentIndex,
-        activeInfo.parentIndex,
+        activeInfo.grandParentIndex!,
+        activeInfo.parentIndex!,
         activeInfo.index,
-        overSectionIndex,
-        overSubsectionIndex,
+        overSectionIndex!,
+        overSubsectionIndex!,
         newIndex,
       );
       return prevCopy;
     });
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
-      prevContainerInfo.current = activeInfo.grandParent.id;
+      prevContainerInfo.current = activeInfo.grandParent?.id;
     }
   };
 
   /* istanbul ignore next */
-  const handleDragOver = (event) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!active || !over) {
       return;
@@ -212,12 +262,19 @@ const DraggableList = ({
     }
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragCancel = React.useCallback(() => {
+    setActiveId?.(null);
+    setDraggedItemClone(null);
+    restoreSectionList();
+  }, [setActiveId]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!active || !over) {
       return;
     }
     setActiveId(null);
+    setDraggedItemClone(null);
     setCurrentOverId(null);
     const { id } = active;
     const { id: overId } = over;
@@ -230,7 +287,7 @@ const DraggableList = ({
 
     if (
       activeInfo.category !== overInfo.category
-      || (activeInfo.parent !== 'root' && activeInfo.parentIndex !== overInfo.parentIndex)
+      || (activeInfo.parent && activeInfo.parentIndex !== overInfo.parentIndex)
     ) {
       return;
     }
@@ -248,13 +305,13 @@ const DraggableList = ({
           setSections((prev) => {
             const [prevCopy, result] = moveSubsection(
               [...prev],
-              activeInfo.parentIndex,
+              activeInfo.parentIndex!,
               activeInfo.index,
               overInfo.index,
             );
             handleSubsectionDragAndDrop(
-              activeInfo.parent.id,
-              prevContainerInfo.current,
+              activeInfo.parent!.id,
+              prevContainerInfo.current!,
               result.map(subsection => subsection.id),
               restoreSectionList,
             );
@@ -265,15 +322,15 @@ const DraggableList = ({
           setSections((prev) => {
             const [prevCopy, result] = moveUnit(
               [...prev],
-              activeInfo.grandParentIndex,
-              activeInfo.parentIndex,
+              activeInfo.grandParentIndex!,
+              activeInfo.parentIndex!,
               activeInfo.index,
               overInfo.index,
             );
             handleUnitDragAndDrop(
-              activeInfo.grandParent.id,
-              prevContainerInfo.current,
-              activeInfo.parent.id,
+              activeInfo.grandParent!.id,
+              prevContainerInfo.current!,
+              activeInfo.parent!.id,
               result.map(unit => unit.id),
               restoreSectionList,
             );
@@ -287,14 +344,25 @@ const DraggableList = ({
     }
   };
 
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const { id } = active;
 
     setActiveId(id);
+    // @ts-ignore-next-line
+    // Get the dragged element data
+    const { displayName, category, status } = active.data.current;
+    // Create a simple clone of the item to use in the overlay
+    setDraggedItemClone(
+      <CourseItemOverlay
+        displayName={displayName}
+        category={category}
+        status={status}
+      />,
+    );
   };
 
-  const customClosestCorners = ({
+  const customClosestCorners: CollisionDetection = ({
     active, droppableContainers, droppableRects, ...args
   }) => {
     const activeCategory = active.data?.current?.category;
@@ -304,9 +372,13 @@ const DraggableList = ({
           case COURSE_BLOCK_NAMES.chapter.id:
             return container.data?.current?.category === activeCategory;
           case COURSE_BLOCK_NAMES.sequential.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.chapter.id
+              && container.data?.current?.childAddable)
+              || (container.data?.current?.category === activeCategory);
           case COURSE_BLOCK_NAMES.vertical.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
+            return (container.data?.current?.category === COURSE_BLOCK_NAMES.sequential.id
+              && container.data?.current?.childAddable)
+              || (container.data?.current?.category === activeCategory);
           default:
             return true;
         }
@@ -325,38 +397,20 @@ const DraggableList = ({
       onDragOver={handleDragOver}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragAbort={handleDragCancel}
+      onDragCancel={handleDragCancel}
     >
       <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
+      {createPortal(
+        <DragOverlay>
+          {draggedItemClone && activeId ? draggedItemClone : null}
+        </DragOverlay>,
+        document.body,
+      )}
     </DndContext>
   );
-};
-
-DraggableList.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    childInfo: PropTypes.shape({
-      children: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          childInfo: PropTypes.shape({
-            children: PropTypes.arrayOf(
-              PropTypes.shape({
-                id: PropTypes.string.isRequired,
-              }),
-            ).isRequired,
-          }).isRequired,
-        }),
-      ).isRequired,
-    }).isRequired,
-  })).isRequired,
-  setSections: PropTypes.func.isRequired,
-  restoreSectionList: PropTypes.func.isRequired,
-  handleSectionDragAndDrop: PropTypes.func.isRequired,
-  handleSubsectionDragAndDrop: PropTypes.func.isRequired,
-  handleUnitDragAndDrop: PropTypes.func.isRequired,
-  children: PropTypes.node.isRequired,
 };
 
 export default DraggableList;

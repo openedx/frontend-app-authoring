@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {
-  AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes,
-} from '../../../../data/constants/problem';
+  AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes, getProblemTypes, getAdvanceProblems,
+} from '@src/editors/data/constants/problem';
 import { snakeCaseKeys } from '../../../../utils';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
@@ -10,10 +10,16 @@ export const onSelect = ({
   updateField,
   setBlockTitle,
   defaultSettings,
+  formatMessage,
 }) => () => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
     updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
-    setBlockTitle(AdvanceProblems[selected].title);
+    if (formatMessage) {
+      const localizedAdvanceProblems = getAdvanceProblems(formatMessage);
+      setBlockTitle(localizedAdvanceProblems[selected].title);
+    } else {
+      setBlockTitle(AdvanceProblems[selected].title);
+    }
   } else {
     const newOLX = ProblemTypes[selected].template;
     const newMarkdown = ProblemTypes[selected].markdownTemplate;
@@ -28,7 +34,12 @@ export const onSelect = ({
       defaultSettings: snakeCaseKeys(defaultSettings),
     });
     updateField({ ...newState, rawMarkdown: newMarkdown });
-    setBlockTitle(ProblemTypes[selected].title);
+    if (formatMessage) {
+      const localizedProblemTypes = getProblemTypes(formatMessage);
+      setBlockTitle(localizedProblemTypes[selected].title);
+    } else {
+      setBlockTitle(ProblemTypes[selected].title);
+    }
   }
 };
 

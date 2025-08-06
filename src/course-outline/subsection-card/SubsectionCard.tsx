@@ -112,8 +112,10 @@ const SubsectionCard = ({
   // add actions to control display of move up & down menu button.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !section.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !section.upstreamInfo?.upstreamRef;
 
   // Expand the subsection if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -218,6 +220,7 @@ const SubsectionCard = ({
     actions.draggable
       && (actions.allowMoveUp || actions.allowMoveDown)
       && !(isHeaderVisible === false)
+      && !section.upstreamInfo?.upstreamRef
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
@@ -234,10 +237,15 @@ const SubsectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
+        data={{
+          category,
+          displayName,
+          childAddable: actions.childAddable,
+          status: subsectionStatus,
+        }}
         key={id}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={actions.childAddable || section.actions.childAddable}
         componentStyle={{
           background: '#f8f7f6',
           ...borderStyle,
