@@ -71,6 +71,7 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
     addComponentTemplateData,
+    resetXBlockPublishState,
   } = useCourseUnit({ courseId, blockId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
@@ -213,6 +214,7 @@ const CourseUnit = ({ courseId }) => {
                 unitXBlockActions={unitXBlockActions}
                 courseVerticalChildren={courseVerticalChildren.children}
                 handleConfigureSubmit={handleConfigureSubmit}
+                resetXBlockPublishState={resetXBlockPublishState}
               />
               {!readOnly && (
                 <AddComponent
