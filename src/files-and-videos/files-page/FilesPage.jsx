@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '../../editors/Placeholder';
+import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
 
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
@@ -90,7 +91,13 @@ const FilesPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  const maxFileSize = 20 * 1048576;
+  
+  // MaxFileSize used in Files upload page
+  // checks if OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB env variable exists and is a valid number, else uses default from constants
+  const overrideMaxFileSize = parseInt(process.env.OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB, 10);
+  const maxFileSize = !isNaN(overrideMaxFileSize) && overrideMaxFileSize > 0
+  ? overrideMaxFileSize * 1024 * 1024
+  : UPLOAD_FILE_MAX_SIZE;
 
   const activeColumn = {
     id: 'activeStatus',
