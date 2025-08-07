@@ -5,13 +5,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Container, Layout, Button, Card,
+  Badge, Container, Layout, Button, Card, Spinner,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestFailureStatuses } from '../data/constants';
 import messages from './messages';
 import {
@@ -53,7 +52,6 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const linkCheckResult = useSelector(getLinkCheckResult);
   const lastScannedAt = useSelector(getLastScannedAt);
   const { msg: errorMessage } = useSelector(getError);
-  const isShowExportButton = !linkCheckInProgress || errorMessage;
   const isLoadingDenied = (RequestFailureStatuses as string[]).includes(loadingStatus);
   const isSavingDenied = (RequestFailureStatuses as string[]).includes(savingStatus);
   const interval = useRef<number | undefined>(undefined);
@@ -136,45 +134,50 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
       <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
           <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
+            lg={[{ span: 12 }, { span: 0 }]}
           >
             <Layout.Element>
               <article>
-                <SubHeader
-                  hideBorder
-                  title={
-                    (
-                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                        {intl.formatMessage(messages.headingTitle)}
-                        <Badge variant="primary" className="ml-2" style={{ fontSize: 'large' }}>{intl.formatMessage(messages.new)}</Badge>
-                      </span>
-                    )
-                  }
-                  subtitle={intl.formatMessage(messages.headingSubtitle)}
-                />
-                <Card>
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 px-3 py-3">
+                  <div>
+                    <p className="small text-muted mb-1">Tools</p>
+                    <div className="d-flex align-items-center">
+                      <h1 className="h2 mb-0 mr-3">{intl.formatMessage(messages.headingTitle)}</h1>
+                      <Badge variant="dark" className="ml-2">{intl.formatMessage(messages.new)}</Badge>
+                    </div>
+                  </div>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    className="px-4 rounded-0 scan-course-btn"
+                    onClick={() => dispatch(startLinkCheck(courseId))}
+                    disabled={linkCheckInProgress && !errorMessage}
+                  >
+                    {linkCheckInProgress && !errorMessage ? (
+                      <>
+                        <Spinner
+                          animation="border"
+                          size="sm"
+                          className="mr-2"
+                          style={{ width: '1rem', height: '1rem' }}
+                        />
+                        {intl.formatMessage(messages.buttonTitle)}
+                      </>
+                    ) : (
+                      intl.formatMessage(messages.buttonTitle)
+                    )}
+                  </Button>
+                </div>
+                <Card style={{ boxShadow: 'none', backgroundColor: 'transparent' }}>
+                  <p className="px-3 py-1 small">{intl.formatMessage(messages.description)}</p>
+                  <hr style={{ margin: '0 20px' }} />
                   <Card.Header
                     className="scan-header h3 px-3 text-black mb-2"
-                    title={intl.formatMessage(messages.card1Title)}
+                    title={intl.formatMessage(messages.scanHeader)}
                   />
-                  <p className="px-3 py-1 small ">{intl.formatMessage(messages.description)}</p>
-                  {isShowExportButton && (
                   <Card.Section className="px-3 py-1">
-                    <Button
-                      size="md"
-                      block
-                      className="mb-3"
-                      onClick={() => dispatch(startLinkCheck(courseId))}
-                    >
-                      {intl.formatMessage(messages.buttonTitle)}
-                    </Button>
                     <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                   </Card.Section>
-                  )}
                   {showStepper && (
                   <Card.Section className="px-3 py-1">
                     <CourseStepper

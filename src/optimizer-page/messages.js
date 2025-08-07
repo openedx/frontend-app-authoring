@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   buttonTitle: {
     id: 'course-authoring.course-optimizer.button.title',
-    defaultMessage: 'Start scanning',
+    defaultMessage: 'Scan course',
   },
   preparingStepTitle: {
     id: 'course-authoring.course-optimizer.peparing-step.title',
@@ -56,6 +56,10 @@ const messages = defineMessages({
   lastScannedOn: {
     id: 'course-authoring.course-optimizer.last-scanned-on',
     defaultMessage: 'Last scanned on',
+  },
+  scanHeader: {
+    id: 'course-authoring.course-optimizer.scanHeader',
+    defaultMessage: 'Scan results',
   },
 });
 

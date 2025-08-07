@@ -8,6 +8,7 @@ export interface Unit {
     brokenLinks: string[];
     lockedLinks: string[];
     externalForbiddenLinks: string[];
+    previousRunLinks: string[];
   }[];
 }
 
@@ -25,6 +26,22 @@ export interface Section {
 
 export interface LinkCheckResult {
   sections: Section[];
+  course_updates?: {
+    name: string;
+    url: string;
+    brokenLinks: string[];
+    lockedLinks: string[];
+    externalForbiddenLinks: string[];
+    previousRunLinks: string[];
+  }[];
+  custom_pages?: {
+    name: string;
+    url: string;
+    brokenLinks: string[];
+    lockedLinks: string[];
+    externalForbiddenLinks: string[];
+    previousRunLinks: string[];
+  }[];
 }
 
 export interface Filters {

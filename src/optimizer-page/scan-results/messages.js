@@ -13,13 +13,13 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.emptyResultsCard',
     defaultMessage: 'No broken links found',
   },
+  linkToPrevCourseRun: {
+    id: 'course-authoring.course-optimizer.linkToPrevCourseRun',
+    defaultMessage: 'Links to previous course run',
+  },
   noResultsFound: {
     id: 'course-authoring.course-optimizer.noResultsFound',
     defaultMessage: 'No results found',
-  },
-  scanHeader: {
-    id: 'course-authoring.course-optimizer.scanHeader',
-    defaultMessage: 'Scan results',
   },
   brokenLinksHeader: {
     id: 'course-authoring.course-optimizer.brokenLinksHeader',
@@ -61,6 +61,14 @@ const messages = defineMessages({
   clearFilters: {
     id: 'course-authoring.course-optimizer.clearFilters',
     defaultMessage: 'Clear filters',
+  },
+  customPagesHeader: {
+    id: 'course-authoring.course-optimizer.customPagesHeader',
+    defaultMessage: 'Custom pages',
+  },
+  courseUpdatesHeader: {
+    id: 'course-authoring.course-optimizer.courseUpdatesHeader',
+    defaultMessage: 'Course updates',
   },
 });
 
