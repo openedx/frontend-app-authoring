@@ -42,7 +42,6 @@ interface Props {
 }
 
 const ScanResults: FC<Props> = ({ data }) => {
-  let hasSectionsRendered = false;
   const intl = useIntl();
   const waffleFlags = useWaffleFlags();
   const [isOpen, open, close] = useToggle(false);
@@ -77,12 +76,12 @@ const ScanResults: FC<Props> = ({ data }) => {
           id: `${sectionId}-subsection`,
           displayName: `${intl.formatMessage(messages[messageKey])} Subsection`,
           units: itemsWithLinks.map(item => ({
-            id: item.name,
-            displayName: item.name,
+            id: item.id,
+            displayName: item.displayName,
             url: item.url,
             blocks: [{
-              id: `${item.name}-block`,
-              displayName: item.name,
+              id: item.id,
+              displayName: item.displayName,
               url: item.url,
               brokenLinks: item.brokenLinks || [],
               lockedLinks: item.lockedLinks || [],
@@ -94,16 +93,16 @@ const ScanResults: FC<Props> = ({ data }) => {
       };
     };
 
-    const vSections = [];
+    const vSections: any[] = [];
 
-    if (data?.courseUpdates?.length > 0) {
+    if (data?.courseUpdates && data.courseUpdates.length > 0) {
       const courseUpdatesSection = createVirtualSection(data.courseUpdates, 'course-updates', 'courseUpdatesHeader');
       if (courseUpdatesSection) {
         vSections.push(courseUpdatesSection);
       }
     }
 
-    if (data?.customPages?.length > 0) {
+    if (data?.customPages && data.customPages.length > 0) {
       const customPagesSection = createVirtualSection(
         data.customPages,
         'custom-pages',
@@ -169,7 +168,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   }, [allSectionsForBrokenLinks, allSectionsForPrevRun]);
 
   if (!data) {
-    return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
+    return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
   }
   const handleToggle = (index: number) => {
     setOpenStates(prev => prev.map((isOpened, i) => (i === index ? !isOpened : isOpened)));
@@ -182,12 +181,32 @@ const ScanResults: FC<Props> = ({ data }) => {
     { name: intl.formatMessage(messages.manualLabel), value: 'externalForbiddenLinks' },
     { name: intl.formatMessage(messages.lockedLabel), value: 'lockedLinks' },
   ];
-  const shouldSectionRender = (sectionIndex: number): boolean => (
-    (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-    || (filters.brokenLinks && brokenLinksCounts[sectionIndex] > 0)
-    || (filters.externalForbiddenLinks && externalForbiddenLinksCounts[sectionIndex] > 0)
-    || (filters.lockedLinks && lockedLinksCounts[sectionIndex] > 0)
-  );
+  // Only show sections that have at least one unit with a visible link (not just previousRunLinks)
+  const shouldSectionRender = (sectionIndex: number): boolean => {
+    const section = allSectionsForBrokenLinks[sectionIndex];
+    // eslint-disable-next-line max-len
+    const hasVisibleUnit = section.subsections.some((subsection) => subsection.units.some((unit) => unit.blocks.some((block) => {
+      const hasBroken = block.brokenLinks?.length > 0;
+      const hasLocked = block.lockedLinks?.length > 0;
+      const hasExternal = block.externalForbiddenLinks?.length > 0;
+
+      const noFilters = !filters.brokenLinks
+            && !filters.lockedLinks
+            && !filters.externalForbiddenLinks;
+
+      const showBroken = filters.brokenLinks && hasBroken;
+      const showLocked = filters.lockedLinks && hasLocked;
+      const showExternal = filters.externalForbiddenLinks && hasExternal;
+
+      return (
+        showBroken
+            || showLocked
+            || showExternal
+            || (noFilters && (hasBroken || hasLocked || hasExternal))
+      );
+    })));
+    return hasVisibleUnit;
+  };
 
   const findPreviousVisibleSection = (currentIndex: number): number => {
     let prevIndex = currentIndex - 1;
@@ -279,12 +298,24 @@ const ScanResults: FC<Props> = ({ data }) => {
         </div>
         )}
 
-        {allSectionsForBrokenLinks && allSectionsForBrokenLinks.length > 0 ? (
-          allSectionsForBrokenLinks.map((section, index) => {
+        {(() => {
+          // Find all visible sections
+          const visibleSections = allSectionsForBrokenLinks && allSectionsForBrokenLinks.length > 0
+            ? allSectionsForBrokenLinks
+              .map((_, index) => (shouldSectionRender(index) ? index : -1))
+              .filter(idx => idx !== -1)
+            : [];
+          if (visibleSections.length === 0) {
+            return (
+              <div className="no-results-found-container">
+                <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+              </div>
+            );
+          }
+          return allSectionsForBrokenLinks.map((section, index) => {
             if (!shouldSectionRender(index)) {
               return null;
             }
-            hasSectionsRendered = true;
             return (
               <SectionCollapsible
                 index={index}
@@ -308,15 +339,29 @@ const ScanResults: FC<Props> = ({ data }) => {
                 {section.subsections.map((subsection) => (
                   <>
                     {subsection.units.map((unit) => {
-                      if (
-                        (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-                       || (filters.brokenLinks && unit.blocks.some(block => block.brokenLinks.length > 0))
-                       || (filters.externalForbiddenLinks
-                           && unit.blocks.some(block => block.externalForbiddenLinks.length > 0))
-                       || (filters.lockedLinks && unit.blocks.some(block => block.lockedLinks.length > 0))
-                      ) {
+                      // Determine if any block in this unit should be shown based on filters
+                      const hasVisibleBlock = unit.blocks.some((block) => {
+                        const hasBroken = block.brokenLinks?.length > 0;
+                        const hasLocked = block.lockedLinks?.length > 0;
+                        const hasExternal = block.externalForbiddenLinks?.length > 0;
+
+                        const showBroken = filters.brokenLinks && hasBroken;
+                        const showLocked = filters.lockedLinks && hasLocked;
+                        const showExternal = filters.externalForbiddenLinks && hasExternal;
+
+                        const noFilters = !filters.brokenLinks
+                          && !filters.lockedLinks
+                          && !filters.externalForbiddenLinks;
+
+                        return showBroken
+                        || showLocked
+                        || showExternal
+                        || (noFilters && (hasBroken || hasLocked || hasExternal));
+                      });
+
+                      if (hasVisibleBlock) {
                         return (
-                          <div className="unit">
+                          <div className="unit" key={unit.id}>
                             <BrokenLinkTable unit={unit} filters={filters} />
                           </div>
                         );
@@ -327,60 +372,71 @@ const ScanResults: FC<Props> = ({ data }) => {
                 ))}
               </SectionCollapsible>
             );
-          })
-        ) : (
-          <div className="no-results-found-container">
-            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-          </div>
-        )}
-
-        {hasSectionsRendered === false && allSectionsForBrokenLinks && allSectionsForBrokenLinks.length > 0 && (
-          <div className="no-results-found-container">
-            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-          </div>
-        )}
+          });
+        })()}
       </div>
+
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
         && allSectionsForPrevRun
         && allSectionsForPrevRun.length > 0
-        && hasPreviousRunLinks && (
-        <div className="scan-results">
-          <div className="scan-header-second-title-container">
-            <header className="sub-header-content">
-              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-            </header>
+        && hasPreviousRunLinks && (() => {
+        // Filter out sections/subsections/units that have no previous run links
+        const filteredSections = allSectionsForPrevRun.map((section) => {
+          // Filter subsections
+          const filteredSubsections = section.subsections.map(subsection => {
+            // Filter units
+            const filteredUnits = subsection.units.filter(unit => unit.blocks.some(block => {
+              const hasPreviousLinks = block.previousRunLinks?.length > 0;
+              return hasPreviousLinks;
+            }));
+            return {
+              ...subsection,
+              units: filteredUnits,
+            };
+          }).filter(subsection => subsection.units.length > 0);
+          return {
+            ...section,
+            subsections: filteredSubsections,
+          };
+        }).filter(section => section.subsections.length > 0);
+
+        if (filteredSections.length === 0) {
+          return null;
+        }
+
+        return (
+          <div className="scan-results">
+            <div className="scan-header-second-title-container">
+              <header className="sub-header-content">
+                <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+              </header>
+            </div>
+            {filteredSections.map((section, index) => (
+              <PreviousRunSectionCollapsible
+                index={index}
+                handleToggle={handlePrevRunToggle}
+                isOpen={prevRunOpenStates[index]}
+                hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
+                hasNextAndIsOpen={index < filteredSections.length - 1 ? prevRunOpenStates[index + 1] : true}
+                key={section.id}
+                title={section.displayName}
+                previousRunLinksCount={previousRunLinksCounts[index]}
+                className="section-collapsible-header"
+              >
+                {section.subsections.map((subsection) => (
+                  <>
+                    {subsection.units.map((unit) => (
+                      <div className="unit">
+                        <PreviousRunLinkTable unit={unit} />
+                      </div>
+                    ))}
+                  </>
+                ))}
+              </PreviousRunSectionCollapsible>
+            ))}
           </div>
-          {allSectionsForPrevRun?.map((section, index) => (
-            <PreviousRunSectionCollapsible
-              index={index}
-              handleToggle={handlePrevRunToggle}
-              isOpen={prevRunOpenStates[index]}
-              hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
-              hasNextAndIsOpen={index < allSectionsForPrevRun.length - 1 ? prevRunOpenStates[index + 1] : true}
-              key={section.id}
-              title={section.displayName}
-              previousRunLinksCount={previousRunLinksCounts[index]}
-              className="section-collapsible-header"
-            >
-              {section.subsections.map((subsection) => (
-                <>
-                  {subsection.units.map((unit) => {
-                    // Only render units that have previous run links
-                    if (hasPreviousRunLinks) {
-                      return (
-                        <div className="unit">
-                          <PreviousRunLinkTable unit={unit} />
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </>
-              ))}
-            </PreviousRunSectionCollapsible>
-          ))}
-        </div>
-      )}
+        );
+      })()}
 
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinks && (
       <div className="scan-results">

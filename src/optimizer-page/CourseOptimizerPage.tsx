@@ -151,7 +151,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     size="md"
                     className="px-4 rounded-0 scan-course-btn"
                     onClick={() => dispatch(startLinkCheck(courseId))}
-                    disabled={linkCheckInProgress && !errorMessage}
+                    disabled={(!!linkCheckInProgress) && !errorMessage}
                   >
                     {linkCheckInProgress && !errorMessage ? (
                       <>
