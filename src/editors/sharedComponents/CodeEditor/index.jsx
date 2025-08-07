@@ -5,7 +5,7 @@ import {
   Button,
 } from '@openedx/paragon';
 
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import './index.scss';
 
@@ -15,9 +15,8 @@ const CodeEditor = ({
   innerRef,
   value,
   lang,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const DOMref = useRef();
   const btnRef = useRef();
   hooks.createCodeMirrorDomNode({
@@ -49,9 +48,8 @@ CodeEditor.propTypes = {
     PropTypes.shape({ current: PropTypes.any }),
   ]).isRequired,
   value: PropTypes.string.isRequired,
-  intl: intlShape.isRequired,
   lang: PropTypes.string.isRequired,
 };
 
 export const CodeEditorInternal = CodeEditor; // For testing only
-export default injectIntl(CodeEditor);
+export default CodeEditor;

@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Hyperlink,
@@ -20,8 +19,6 @@ import * as hooks from './hooks';
  * Collapsible Form widget controlling video thumbnail
  */
 const SocialShareWidget = ({
-  // injected
-  intl,
   // redux
   allowVideoSharing,
   isLibrary,
@@ -30,6 +27,7 @@ const SocialShareWidget = ({
   videoSharingLearnMoreLink,
   updateField,
 }) => {
+  const intl = useIntl();
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
   const learnMoreLink = videoSharingLearnMoreLink || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
@@ -90,8 +88,6 @@ SocialShareWidget.defaultProps = {
 };
 
 SocialShareWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
   // redux
   allowVideoSharing: PropTypes.shape({
     level: PropTypes.string.isRequired,
@@ -117,4 +113,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const SocialShareWidgetInternal = SocialShareWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SocialShareWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(SocialShareWidget);
