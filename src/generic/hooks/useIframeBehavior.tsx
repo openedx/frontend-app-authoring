@@ -83,6 +83,12 @@ export const useIframeBehavior = ({
           });
         }
         break;
+      case iframeMessageTypes.xblockScroll:
+        if(document.getElementsByName('xblock-iframe')){
+          const iframeElement = document.getElementsByName('xblock-iframe')[0];
+          window.scrollTo(0, data.offset + iframeElement!.offsetTop + iframeElement.parentElement!.offsetTop);
+        }
+        break;
       default:
         if (data.offset) {
           // We listen for this message from LMS to know when the page needs to
