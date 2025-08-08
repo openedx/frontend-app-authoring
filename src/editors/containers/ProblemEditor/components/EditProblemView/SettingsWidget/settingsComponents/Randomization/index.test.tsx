@@ -2,7 +2,6 @@ import React from 'react';
 import {
   render, screen, initializeMocks, fireEvent,
 } from '@src/testUtils';
-import { formatMessage } from '@src/editors/testUtils';
 import { RandomizationCard } from './index';
 import * as hooks from './hooks';
 
@@ -11,11 +10,10 @@ describe('RandomizationCard', () => {
     randomization: 'per_student',
     defaultValue: 'always',
     updateSettings: jest.fn().mockName('args.updateSettings'),
-    intl: { formatMessage },
   };
 
   const randomizationCardHooksProps = {
-    summary: { message: { defaultMessage: 'sUmmary' } },
+    summary: { message: { id: 'defaultMessage', defaultMessage: 'sUmmary' } },
     handleChange: jest.fn().mockName('randomizationCardHooks.handleChange'),
   };
 
