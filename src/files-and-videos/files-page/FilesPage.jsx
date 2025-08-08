@@ -91,13 +91,8 @@ const FilesPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  
-  // MaxFileSize used in Files upload page
-  // checks if OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB env variable exists and is a valid number, else uses default from constants
-  const overrideMaxFileSize = parseInt(process.env.OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB, 10);
-  const maxFileSize = !isNaN(overrideMaxFileSize) && overrideMaxFileSize > 0
-  ? overrideMaxFileSize * 1024 * 1024
-  : UPLOAD_FILE_MAX_SIZE;
+
+  const maxFileSize = UPLOAD_FILE_MAX_SIZE;
 
   const activeColumn = {
     id: 'activeStatus',
