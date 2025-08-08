@@ -6,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Bubble, Button, Icon, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { Newsstand } from '@openedx/paragon/icons';
+import { LinkOff, Newsstand } from '@openedx/paragon/icons';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -23,7 +23,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { XBlock } from '@src/data/types';
+import type { XBlock } from '@src/data/types';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -123,6 +123,7 @@ const SectionCard = ({
     highlights,
     actions: sectionActions,
     isHeaderVisible = true,
+    upstreamInfo,
   } = section;
 
   useEffect(() => {
@@ -219,14 +220,16 @@ const SectionCard = ({
     }
   }, [savingStatus]);
 
+  const upstreamRefOk = !upstreamInfo?.errorMessage;
+
   const titleComponent = (
     <TitleButton
       title={displayName}
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!section.upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} className="mr-1" />
+      prefixIcon={!!upstreamInfo?.upstreamRef && (
+        <Icon src={upstreamRefOk ? Newsstand : LinkOff} className="mr-1" />
       )}
     />
   );
