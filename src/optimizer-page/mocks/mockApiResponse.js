@@ -21,6 +21,7 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: [],
                     externalForbiddenLinks: [],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -34,6 +35,7 @@ export const mockApiResponse = {
                     brokenLinks: [],
                     lockedLinks: [],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -47,6 +49,7 @@ export const mockApiResponse = {
                     brokenLinks: [],
                     lockedLinks: ['https://example.com/locked-link-algo'],
                     externalForbiddenLinks: [],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -72,6 +75,7 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: [],
                     externalForbiddenLinks: [],
+                    previousRunLinks: [],
                   },
                   {
                     id: 'block-1-1-1-6',
@@ -79,6 +83,7 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: ['https://example.com/locked-link-algo'],
                     externalForbiddenLinks: [],
+                    previousRunLinks: [],
                   },
                   {
                     id: 'block-1-1-1-6',
@@ -86,6 +91,7 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: [],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -99,6 +105,7 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: [],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -112,12 +119,35 @@ export const mockApiResponse = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: ['https://example.com/locked-link-algo'],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                    previousRunLinks: [],
                   },
                 ],
               },
             ],
           },
         ],
+      },
+    ],
+    courseUpdates: [
+      {
+        id: 'update-1',
+        displayName: 'Course Update 1',
+        url: 'https://example.com/course-update-1',
+        brokenLinks: [],
+        lockedLinks: [],
+        externalForbiddenLinks: [],
+        previousRunLinks: [],
+      },
+    ],
+    customPages: [
+      {
+        id: 'custom-1',
+        displayName: 'About Page',
+        url: 'https://example.com/about',
+        brokenLinks: [],
+        lockedLinks: [],
+        externalForbiddenLinks: [],
+        previousRunLinks: [],
       },
     ],
   },
@@ -146,6 +176,7 @@ export const mockApiResponseForNoResultFound = {
                     brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: [],
                     externalForbiddenLinks: [],
+                    previousRunLinks: [],
                   },
                 ],
               },
@@ -154,5 +185,72 @@ export const mockApiResponseForNoResultFound = {
         ],
       },
     ],
+  },
+};
+
+export const mockApiResponseWithPreviousRunLinks = {
+  LinkCheckStatus: 'Succeeded',
+  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
+  LinkCheckOutput: {
+    sections: [
+      {
+        id: 'section-1',
+        displayName: 'Introduction to Programming',
+        subsections: [
+          {
+            id: 'subsection-1-1',
+            displayName: 'Getting Started',
+            units: [
+              {
+                id: 'unit-1-1-1',
+                displayName: 'Test Previous Run Links',
+                blocks: [
+                  {
+                    id: 'block-1-1-1-5',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: [],
+                    lockedLinks: [],
+                    externalForbiddenLinks: [],
+                    previousRunLinks: ['https://example.com/old-course-run/content'],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    courseUpdates: [
+      {
+        id: 'update-1',
+        displayName: 'Course Update with Previous Run Link',
+        url: 'https://example.com/course-update-1',
+        brokenLinks: [],
+        lockedLinks: [],
+        externalForbiddenLinks: [],
+        previousRunLinks: ['https://example.com/old-course-run/update'],
+      },
+    ],
+    customPages: [
+      {
+        id: 'custom-2',
+        displayName: 'About Page with Previous Run',
+        url: 'https://example.com/about',
+        brokenLinks: [],
+        lockedLinks: [],
+        externalForbiddenLinks: [],
+        previousRunLinks: ['https://example.com/old-course-run/about'],
+      },
+    ],
+  },
+};
+
+export const mockApiResponseEmpty = {
+  LinkCheckStatus: 'Succeeded',
+  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
+  LinkCheckOutput: {
+    sections: [],
+    courseUpdates: [],
+    customPages: [],
   },
 };
