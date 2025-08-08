@@ -1,3 +1,4 @@
+import { getConfig } from '@edx/frontend-platform';
 export const DATE_FORMAT = 'MM/dd/yyyy';
 export const TIME_FORMAT = 'HH:mm';
 export const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss\\Z';
@@ -53,14 +54,15 @@ export const DECODED_ROUTES = {
 };
 
 // FilesUpload page - Default max size: 20MB else use env override if exists and valid number
-const DEFAULT_UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; 
-const overrideMaxFileSizeMB = parseInt(process.env.OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB, 10);
-const computedUploadFileMaxSize = (
-  !isNaN(overrideMaxFileSizeMB) && overrideMaxFileSizeMB > 0
+const DEFAULT_UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; // 20 MB
+export const getUploadFileMaxSize = () => {
+  const config = getConfig();
+  const overrideMaxFileSizeMB = parseInt(config.OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB, 10);
+  return !isNaN(overrideMaxFileSizeMB) && overrideMaxFileSizeMB > 0
     ? overrideMaxFileSizeMB * 1024 * 1024
-    : DEFAULT_UPLOAD_FILE_MAX_SIZE
-);
-export const UPLOAD_FILE_MAX_SIZE = computedUploadFileMaxSize;
+    : DEFAULT_UPLOAD_FILE_MAX_SIZE;
+};
+export const UPLOAD_FILE_MAX_SIZE = getUploadFileMaxSize();
 
 export const COURSE_BLOCK_NAMES = ({
   chapter: { id: 'chapter', name: 'Section' },
