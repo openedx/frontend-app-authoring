@@ -52,7 +52,15 @@ export const DECODED_ROUTES = {
   ],
 };
 
-export const UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; // 20mb
+// FilesUpload page - Default max size: 20MB else use env override if exists and valid number
+const DEFAULT_UPLOAD_FILE_MAX_SIZE = 20 * 1024 * 1024; 
+const overrideMaxFileSizeMB = parseInt(process.env.OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB, 10);
+const computedUploadFileMaxSize = (
+  !isNaN(overrideMaxFileSizeMB) && overrideMaxFileSizeMB > 0
+    ? overrideMaxFileSizeMB * 1024 * 1024
+    : DEFAULT_UPLOAD_FILE_MAX_SIZE
+);
+export const UPLOAD_FILE_MAX_SIZE = computedUploadFileMaxSize;
 
 export const COURSE_BLOCK_NAMES = ({
   chapter: { id: 'chapter', name: 'Section' },
