@@ -83,7 +83,7 @@ describe('<CourseLibraries />', () => {
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
-    const alert = await screen.findByRole('alert');
+    const alert = (await screen.findAllByRole('alert'))[0];
     expect(await within(alert).findByText(
       '5 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe('<CourseLibraries />', () => {
     await user.click(allTab);
     expect(allTab).toHaveAttribute('aria-selected', 'true');
 
-    const alert = await screen.findByRole('alert');
+    const alert = (await screen.findAllByRole('alert'))[0];
     expect(await within(alert).findByText(
       '5 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('<CourseLibraries />', () => {
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
-    const alert = await screen.findByRole('alert');
+    const alert = (await screen.findAllByRole('alert'))[0];
     expect(await within(alert).findByText(
       '5 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('<CourseLibraries />', () => {
 
     screen.logTestingPlaygroundURL();
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryAllByRole('alert').length).toEqual(1);
   });
 });
 
