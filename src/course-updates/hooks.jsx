@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useToggle } from '@openedx/paragon';
 
 import { COMMA_SEPARATED_DATE_FORMAT } from '../constants';
-import { convertToDateFromString } from '../utils';
 import { getCourseHandouts, getCourseUpdates } from './data/selectors';
 import { REQUEST_TYPES } from './constants';
 import {
@@ -56,7 +55,7 @@ const useCourseUpdates = ({ courseId }) => {
   };
 
   const handleUpdatesSubmit = (data) => {
-    const dateWithoutTimezone = convertToDateFromString(data.date);
+    const dateWithoutTimezone = (data.date);
     const dataToSend = {
       ...data,
       date: moment(dateWithoutTimezone).format(COMMA_SEPARATED_DATE_FORMAT),
