@@ -128,7 +128,7 @@ export const mockApiResponse = {
         ],
       },
     ],
-    course_updates: [
+    courseUpdates: [
       {
         id: 'update-1',
         displayName: 'Course Update 1',
@@ -139,7 +139,7 @@ export const mockApiResponse = {
         previousRunLinks: [],
       },
     ],
-    custom_pages: [
+    customPages: [
       {
         id: 'custom-1',
         displayName: 'About Page',
@@ -220,7 +220,7 @@ export const mockApiResponseWithPreviousRunLinks = {
         ],
       },
     ],
-    course_updates: [
+    courseUpdates: [
       {
         id: 'update-1',
         displayName: 'Course Update with Previous Run Link',
@@ -231,7 +231,7 @@ export const mockApiResponseWithPreviousRunLinks = {
         previousRunLinks: ['https://example.com/old-course-run/update'],
       },
     ],
-    custom_pages: [
+    customPages: [
       {
         id: 'custom-2',
         displayName: 'About Page with Previous Run',
@@ -250,7 +250,7 @@ export const mockApiResponseEmpty = {
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
     sections: [],
-    course_updates: [],
-    custom_pages: [],
+    courseUpdates: [],
+    customPages: [],
   },
 };
