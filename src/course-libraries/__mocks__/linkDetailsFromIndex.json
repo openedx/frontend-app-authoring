@@ -364,13 +364,125 @@
             "org": "OpenEdx",
             "access_id": "4"
           }
+        },
+        {
+          "display_name": "Unit 1",
+          "block_id": "20f2c12b8b7f4b4bab7a900576c78ad8",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "This is a super unit"
+          },
+          "description": "This is a super unit",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypeverticalblocka20f2c12b8b7f4b4bab7a900576c78ad8-efa48aff",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@20f2c12b8b7f4b4bab7a900576c78ad8",
+          "block_type": "vertical",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Unit 1",
+            "block_id": "20f2c12b8b7f4b4bab7a900576c78ad8",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "This is a super unit"
+            },
+            "description": "This is a super unit",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypeverticalblocka20f2c12b8b7f4b4bab7a900576c78ad8-efa48aff",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@20f2c12b8b7f4b4bab7a900576c78ad8",
+            "block_type": "vertical",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        },
+        {
+          "display_name": "Section 1",
+          "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "This is a super section"
+          },
+          "description": "This is a super section",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypechapterblocka20f2c12b8b7e4b4cab7a900576c78cv5",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@20f2c12b8b7e4b4cab7a900576c78cv5",
+          "block_type": "chapter",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Section 1",
+            "block_id": "20f2c12b8b7e4b4cab7a900576c78cv5",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "This is a super section"
+            },
+            "description": "This is a super section",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypechapterblocka20f2c12b8b7e4b4cab7a900576c78cv5",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@20f2c12b8b7e4b4cab7a900576c78cv5",
+            "block_type": "chapter",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
         }
       ],
       "query": "",
       "processingTimeMs": 8,
       "limit": 20,
       "offset": 0,
-      "estimatedTotalHits": 5
+      "estimatedTotalHits": 6
     }
   ]
 }

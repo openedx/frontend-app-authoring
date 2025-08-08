@@ -78,14 +78,14 @@ describe('<CourseLibraries />', () => {
     const user = userEvent.setup();
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '5 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
     expect(allTab).toHaveAttribute('aria-selected', 'true');
 
@@ -93,14 +93,14 @@ describe('<CourseLibraries />', () => {
     await user.click(reviewBtn);
 
     expect(allTab).toHaveAttribute('aria-selected', 'false');
-    expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByRole('tab', { name: 'Review Content Updates 7' })).toHaveAttribute('aria-selected', 'true');
     expect(alert).not.toBeInTheDocument();
   });
 
   it('hide alert on dismiss', async () => {
     const user = userEvent.setup();
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
@@ -109,7 +109,7 @@ describe('<CourseLibraries />', () => {
 
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '5 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     await user.click(dismissBtn);
@@ -118,7 +118,7 @@ describe('<CourseLibraries />', () => {
     // review updates button
     const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
     await user.click(reviewActionBtn);
-    expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByRole('tab', { name: 'Review Content Updates 7' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('show alert if max lastPublishedDate is greated than the local storage value', async () => {
@@ -131,14 +131,14 @@ describe('<CourseLibraries />', () => {
 
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
 
     await user.click(allTab);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      '5 library components are out of sync. Review updates to accept or ignore changes',
+      '7 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
   });
 
@@ -152,13 +152,11 @@ describe('<CourseLibraries />', () => {
 
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
-    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 7' });
     // review tab should be open by default as outOfSyncCount is greater than 0
     expect(reviewTab).toHaveAttribute('aria-selected', 'true');
     await user.click(allTab);
     expect(allTab).toHaveAttribute('aria-selected', 'true');
-
-    screen.logTestingPlaygroundURL();
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
@@ -195,39 +193,61 @@ describe('<CourseLibraries ReviewTab />', () => {
   });
 
   it('shows all readyToSync links', async () => {
-    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    await renderCourseLibrariesReviewPage();
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
-    expect(updateBtns.length).toEqual(5);
+    expect(updateBtns.length).toEqual(7);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
-    expect(ignoreBtns.length).toEqual(5);
+    expect(ignoreBtns.length).toEqual(7);
   });
 
-  it('update changes works', async () => {
+  test.each([
+    {
+      label: 'update changes works with components',
+      itemIndex: 0,
+      expectedToastMsg: 'Success! "Dropdown" is updated',
+    },
+    {
+      label: 'update changes works with containers',
+      itemIndex: 5,
+      expectedToastMsg: 'Success! "Unit 1" is updated',
+    },
+  ])('$label', async ({ itemIndex, expectedToastMsg }) => {
     const user = userEvent.setup();
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[itemIndex].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
-    expect(updateBtns.length).toEqual(5);
-    await user.click(updateBtns[0]);
+    expect(updateBtns.length).toEqual(7);
+    await user.click(updateBtns[itemIndex]);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
     expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
-    expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
-  it('update changes works in preview modal', async () => {
+  test.each([
+    {
+      label: 'update changes works in preview modal with components',
+      itemIndex: 0,
+      expectedToastMsg: 'Success! "Dropdown" is updated',
+    },
+    {
+      label: 'update changes works in preview modal with containers',
+      itemIndex: 5,
+      expectedToastMsg: 'Success! "Unit 1" is updated',
+    },
+  ])('$label', async ({ itemIndex, expectedToastMsg }) => {
     const user = userEvent.setup();
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[itemIndex].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
-    expect(previewBtns.length).toEqual(5);
-    await user.click(previewBtns[0]);
+    expect(previewBtns.length).toEqual(7);
+    await user.click(previewBtns[itemIndex]);
     const dialog = await screen.findByRole('dialog');
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Accept changes' });
     await user.click(confirmBtn);
@@ -235,20 +255,31 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
     expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
-    expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
-  it('ignore change works', async () => {
+  test.each([
+    {
+      label: 'ignore change works with components',
+      itemIndex: 0,
+      expectedToastMsg: '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
+    },
+    {
+      label: 'ignore change works with containers',
+      itemIndex: 5,
+      expectedToastMsg: '"Unit 1" will remain out of sync with library content. You will be notified when this component is updated again.',
+    },
+  ])('$label', async ({ itemIndex, expectedToastMsg }) => {
     const user = userEvent.setup();
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[itemIndex].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
-    expect(ignoreBtns.length).toEqual(5);
+    expect(ignoreBtns.length).toEqual(7);
     // Show confirmation modal on clicking ignore.
-    await user.click(ignoreBtns[0]);
+    await user.click(ignoreBtns[itemIndex]);
     const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?' });
     expect(dialog).toBeInTheDocument();
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Ignore' });
@@ -257,21 +288,30 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.delete.length).toEqual(1);
     });
     expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
-    expect(mockShowToast).toHaveBeenCalledWith(
-      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
-    );
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 
-  it('ignore change works in preview', async () => {
+  test.each([
+    {
+      label: 'ignore change works with components',
+      itemIndex: 0,
+      expectedToastMsg: '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
+    },
+    {
+      label: 'ignore change works with containers',
+      itemIndex: 5,
+      expectedToastMsg: '"Unit 1" will remain out of sync with library content. You will be notified when this component is updated again.',
+    },
+  ])('$label', async ({ itemIndex, expectedToastMsg }) => {
     const user = userEvent.setup();
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[itemIndex].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
-    expect(previewBtns.length).toEqual(5);
-    await user.click(previewBtns[0]);
+    expect(previewBtns.length).toEqual(7);
+    await user.click(previewBtns[itemIndex]);
     const previewDialog = await screen.findByRole('dialog');
     const ignoreBtn = await within(previewDialog).findByRole('button', { name: 'Ignore changes' });
     await user.click(ignoreBtn);
@@ -284,9 +324,7 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.delete.length).toEqual(1);
     });
     expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
-    expect(mockShowToast).toHaveBeenCalledWith(
-      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
-    );
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
+    expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
 });

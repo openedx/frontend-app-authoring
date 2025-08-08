@@ -39,6 +39,24 @@ describe('course libraries api hooks', () => {
     axiosMock.reset();
   });
 
+  it('should return component links for course', async () => {
+    const courseId = 'course-v1:some+key';
+    const url = getEntityLinksByDownstreamContextUrl();
+    axiosMock.onGet(url).reply(200, []);
+    const { result } = renderHook(() => useEntityLinks({ courseId, contentType: 'components' }), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(axiosMock.history.get[0].params).toEqual({
+      course_id: courseId,
+      ready_to_sync: undefined,
+      upstream_key: undefined,
+      no_page: true,
+      item_type: 'components',
+    });
+  });
+
   it('should return links for course', async () => {
     const courseId = 'course-v1:some+key';
     const url = getEntityLinksByDownstreamContextUrl();
@@ -53,6 +71,7 @@ describe('course libraries api hooks', () => {
       ready_to_sync: undefined,
       upstream_usage_key: undefined,
       no_page: true,
+      content_type: undefined,
     });
   });
 });

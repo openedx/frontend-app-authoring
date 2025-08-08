@@ -19,7 +19,7 @@ const defaultEventData: LibraryChangesMessageData = {
   downstreamBlockId: usageKey,
   upstreamBlockId: 'lct:org:lib1:unit:1',
   upstreamBlockVersionSynced: 1,
-  isVertical: false,
+  isContainer: false,
 };
 
 const mockSendMessageToIframe = jest.fn();
@@ -66,9 +66,9 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   });
 
   it('renders default displayName for units with no displayName', async () => {
-    render({ ...defaultEventData, isVertical: true, displayName: '' });
+    render({ ...defaultEventData, isContainer: true, displayName: '' });
 
-    expect(await screen.findByText('Preview changes: Unit')).toBeInTheDocument();
+    expect(await screen.findByText('Preview changes: Container')).toBeInTheDocument();
   });
 
   it('renders default displayName for components with no displayName', async () => {
