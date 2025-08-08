@@ -9,7 +9,6 @@ type RecursivePartial<T> = {
 };
 
 export type PartialEditorState = RecursivePartial<EditorState>;
-
 /**
  * Custom render function for testing React components with the editor context and Redux store.
  *
