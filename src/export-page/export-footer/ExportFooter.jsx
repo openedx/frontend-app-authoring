@@ -1,14 +1,13 @@
 import React from 'react';
-import {
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Layout } from '@openedx/paragon';
 
 import messages from './messages';
 
-const ExportFooter = ({ intl }) => (
-  <footer className="mt-4 small">
+const ExportFooter = () => {
+  const intl = useIntl();
+  return (
+    <footer className="mt-4 small">
     <Layout
       lg={[{ span: 5 }, { span: 2 }, { span: 5 }]}
       md={[{ span: 5 }, { span: 2 }, { span: 5 }]}
@@ -40,10 +39,7 @@ const ExportFooter = ({ intl }) => (
       </Layout.Element>
     </Layout>
   </footer>
-);
-
-ExportFooter.propTypes = {
-  intl: intlShape.isRequired,
+  )
 };
 
-export default injectIntl(ExportFooter);
+export default ExportFooter;
