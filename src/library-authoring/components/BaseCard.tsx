@@ -48,11 +48,22 @@ const BaseCard = ({
   const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    const cameFromActionArea = !!(e.target as HTMLElement).closest(
+      '[data-toggle="dropdown"], .dropdown-toggle, [id*="dropdown"], .library-card-actions',
+    );
+    if (cameFromActionArea) {
+      // Ignore clicks that originated on a dropdown or any control in the action area
+      return;
+    }
+    onSelect(e);
+  };
+
   return (
     <Container className="library-item-card selected">
       <Card
         isClickable
-        onClick={onSelect}
+        onClick={handleCardClick}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
             onSelect();
@@ -65,12 +76,11 @@ const BaseCard = ({
           title={
             <Icon src={itemIcon} className="library-item-header-icon" />
           }
-          actions={
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
-            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-            jsx-a11y/no-static-element-interactions */
-            <div onClick={(e) => e.stopPropagation()}>{actions}</div>
-          }
+          actions={(
+            <div className="library-card-actions">
+              {actions}
+            </div>
+          )}
         />
         <Card.Body className="w-100">
           <Card.Section>
