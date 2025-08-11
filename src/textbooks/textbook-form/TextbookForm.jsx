@@ -180,7 +180,7 @@ const TextbookForm = ({
                   <span className="modal-preview-text">{selectedFile}</span>
                 </div>
               )}
-              maxSize={UPLOAD_FILE_MAX_SIZE}
+              maxSize={getUploadFileMaxSize()}
             />
             <PromptIfDirty dirty={dirty} />
           </>
