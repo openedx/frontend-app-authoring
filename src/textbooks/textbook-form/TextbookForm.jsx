@@ -172,7 +172,7 @@ const TextbookForm = ({
               onSavingStatus={onSavingStatus}
               invalidFileSizeMore={intl.formatMessage(
                 messages.uploadModalFileInvalidSizeText,
-                { maxSize: UPLOAD_FILE_MAX_SIZE / (1024 * 1024) },
+                { maxSize: getUploadFileMaxSize() / (1024 * 1024) },
               )}
               onSelectFile={setSelectedFile}
               previewComponent={(
@@ -181,7 +181,7 @@ const TextbookForm = ({
                   <span className="modal-preview-text">{selectedFile}</span>
                 </div>
               )}
-              maxSize={UPLOAD_FILE_MAX_SIZE}
+              maxSize={getUploadFileMaxSize()}
             />
             <PromptIfDirty dirty={dirty} />
           </>
