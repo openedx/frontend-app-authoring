@@ -41,7 +41,7 @@ export interface ContainerPublishableEntityLink extends BasePublishableEntityLin
 
 export interface PublishableEntityLink extends BasePublishableEntityLink {
   upstreamKey: string;
-  upstreamType: string;
+  upstreamType: 'component' | 'container';
 }
 
 export interface PublishableEntityLinkSummary {

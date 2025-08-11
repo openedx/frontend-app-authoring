@@ -43,7 +43,7 @@ interface Props {
 
 interface ItemCardProps {
   info: ContentHit;
-  itemType: string;
+  itemType: 'component' | 'container';
   actions?: React.ReactNode;
   libraryName?: string;
 }

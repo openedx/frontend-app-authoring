@@ -844,7 +844,7 @@ mockGetEntityLinks.unitResponse = [
     updated: '2025-02-08T14:07:05.588484Z',
     upstreamType: 'container',
   },
-];
+] as courseLibApi.PublishableEntityLink[];
 mockGetEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
 mockGetEntityLinks.subsectionResponse = [
   {
@@ -877,7 +877,7 @@ mockGetEntityLinks.subsectionResponse = [
     updated: '2025-02-08T14:07:05.588484Z',
     upstreamType: 'container',
   },
-];
+] as courseLibApi.PublishableEntityLink[];
 mockGetEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
 mockGetEntityLinks.sectionResponse = [
   {
@@ -910,7 +910,7 @@ mockGetEntityLinks.sectionResponse = [
     updated: '2025-02-08T14:07:05.588484Z',
     upstreamType: 'container',
   },
-];
+] as courseLibApi.PublishableEntityLink[];
 mockGetEntityLinks.allResponse = [
   ...mockGetEntityLinks.componentResponse,
   ...mockGetEntityLinks.unitResponse,
