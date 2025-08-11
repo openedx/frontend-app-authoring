@@ -4,8 +4,9 @@ import {
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Bubble, Button, StandardModal, useToggle,
+  Bubble, Button, Icon, StandardModal, useToggle,
 } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -224,6 +225,9 @@ const SectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
+      prefixIcon={!!section.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} className="mr-1" />
+      )}
     />
   );
 
@@ -233,9 +237,13 @@ const SectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
+        data={{
+          category,
+          displayName,
+          status: sectionStatus,
+          childAddable: actions.childAddable,
+        }}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
         componentStyle={{
           padding: '1.75rem',
           ...borderStyle,

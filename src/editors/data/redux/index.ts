@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import { combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { StrictDict } from '../../utils';
 
 import * as app from './app';
@@ -193,4 +194,10 @@ export interface EditorState {
 
 export { actions, selectors };
 
+export function initializeStore(preloadedState = undefined) {
+  return configureStore({
+    reducer: editorReducer,
+    preloadedState,
+  });
+}
 export default rootReducer;

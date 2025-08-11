@@ -2,8 +2,8 @@ import {
   fireEvent,
   screen,
   initializeMocks,
-} from '../../../../../testUtils';
-import editorRender from '../../../../editorTestRender';
+} from '@src/testUtils';
+import { editorRender } from '@src/editors/editorTestRender';
 import * as hooks from './hooks';
 import SelectTypeModal from '.';
 

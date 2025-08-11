@@ -17,7 +17,7 @@ import {
   AdvanceProblems,
   ProblemType,
   ProblemTypeKeys,
-} from '../../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
 import messages from './messages';
 
 interface Props {
@@ -30,6 +30,7 @@ const AdvanceTypeSelect: React.FC<Props> = ({
   setSelected,
 }) => {
   const intl = useIntl();
+
   const handleChange = e => { setSelected(e.target.value); };
   return (
     <Col xs={12} md={8} className="justify-content-center">
@@ -53,12 +54,12 @@ const AdvanceTypeSelect: React.FC<Props> = ({
           value={selected}
           className="px-4"
         >
-          {Object.entries(AdvanceProblems).map(([type, data]) => {
-            if (data.status !== '') {
+          {Object.entries(AdvanceProblems).map(([type, problemData]) => {
+            if (problemData.status !== '') {
               return (
                 <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100" key={type}>
                   <Form.Radio id={type} value={type}>
-                    {intl.formatMessage(messages.advanceProblemTypeLabel, { problemType: data.title })}
+                    <FormattedMessage {...messages[`problemType.${type}.title`]} />
                   </Form.Radio>
                   <ActionRow.Spacer />
                   <OverlayTrigger
@@ -66,13 +67,13 @@ const AdvanceTypeSelect: React.FC<Props> = ({
                     overlay={(
                       <Tooltip id={`tooltip-adv-${type}`}>
                         <div className="text-left">
-                          {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: data.status.replace(' ', '_') })}
+                          {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: problemData.status.replace(' ', '_') })}
                         </div>
                       </Tooltip>
                     )}
                   >
                     <div className="text-gray-500">
-                      {intl.formatMessage(messages.problemSupportStatus, { supportStatus: data.status })}
+                      {intl.formatMessage(messages.problemSupportStatus, { supportStatus: problemData.status })}
                     </div>
                   </OverlayTrigger>
                 </ActionRow>
@@ -81,7 +82,7 @@ const AdvanceTypeSelect: React.FC<Props> = ({
             return (
               <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100" key={type}>
                 <Form.Radio id={type} value={type}>
-                  {intl.formatMessage(messages.advanceProblemTypeLabel, { problemType: data.title })}
+                  <FormattedMessage {...messages[`problemType.${type}.title`]} />
                 </Form.Radio>
                 <ActionRow.Spacer />
               </ActionRow>

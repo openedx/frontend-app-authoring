@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import * as problemConstants from '@src/editors/data/constants/problem';
+import { ProblemTypeKeys, ProblemTypes } from '@src/editors/data/constants/problem';
 import { MockUseState } from '../../../../../testUtils';
 import messages from './messages';
 import { keyStore } from '../../../../../utils';
 import * as hooks from './hooks';
-import { ProblemTypeKeys, ProblemTypes } from '../../../../../data/constants/problem';
 import * as editHooks from '../hooks';
 
 jest.mock('react', () => {
@@ -380,6 +381,32 @@ describe('Problem settings hooks', () => {
       expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...typeRowProps.answers[1], title: 'testB' });
       expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, { ...typeRowProps.answers[2], title: 'testC' });
       expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.TEXTINPUT });
+    });
+
+    test('test typeRowHooks sets localized block title when formatMessage is provided', () => {
+      const mockSetBlockTitle = jest.fn();
+      const mockUpdateField = jest.fn();
+      const mockUpdateAnswer = jest.fn();
+      const mockFormatMessage = (msg) => `localized-${msg.id || msg.defaultMessage || msg}`;
+      const props = {
+        answers: [],
+        blockTitle: 'localized-problem.multiplechoiceresponse.title', // Simulate a localized title
+        correctAnswerCount: 1,
+        problemType: ProblemTypeKeys.SINGLESELECT,
+        setBlockTitle: mockSetBlockTitle,
+        typeKey: ProblemTypeKeys.MULTISELECT,
+        updateField: mockUpdateField,
+        updateAnswer: mockUpdateAnswer,
+        formatMessage: mockFormatMessage,
+      };
+      jest.spyOn(problemConstants, 'getProblemTypes').mockImplementation((fmt) => ({
+        [ProblemTypeKeys.SINGLESELECT]: { title: fmt({ id: 'problem.multiplechoiceresponse.title' }) },
+        [ProblemTypeKeys.MULTISELECT]: { title: fmt({ id: 'problem.choiceresponse.title' }) },
+      }));
+      const hook = hooks.typeRowHooks(props);
+      hook.onClick();
+      expect(mockSetBlockTitle).toHaveBeenCalledWith('localized-problem.choiceresponse.title');
+      expect(mockUpdateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.MULTISELECT });
     });
   });
   test('test handleConfirmEditorSwitch hook', () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Form } from '@openedx/paragon';
 import {
-  FormattedMessage, injectIntl, useIntl,
+  FormattedMessage, useIntl,
 } from '@edx/frontend-platform/i18n';
 import { Field } from 'formik';
 import classNames from 'classnames';
@@ -198,4 +198,4 @@ UnitTab.propTypes = {
   }).isRequired,
 };
 
-export default injectIntl(UnitTab);
+export default UnitTab;

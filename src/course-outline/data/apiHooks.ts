@@ -1,5 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
+import { getCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -7,6 +8,8 @@ export const courseOutlineQueryKeys = {
    * Base key for data specific to a course in outline
    */
   contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
+  courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
+
 };
 
 /**
@@ -22,3 +25,11 @@ export const useCreateCourseBlock = (
     callback?.(data.locator, data.parent_locator);
   },
 });
+
+export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
+  useQuery({
+    queryKey: courseOutlineQueryKeys.courseItemId(itemId),
+    queryFn: () => getCourseItem(itemId!),
+    enabled: enabled && itemId !== undefined,
+  })
+);

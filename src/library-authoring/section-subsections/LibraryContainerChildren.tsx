@@ -166,13 +166,17 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   }, [children, setOrderedChildren]);
 
   const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
+    if (readOnly) {
+      // don't allow interaction if rendered as preview
+      return;
+    }
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
       openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo);
     } else {
       navigateTo({ containerId: child.originalId });
     }
-  }, [openItemSidebar, navigateTo]);
+  }, [openItemSidebar, navigateTo, readOnly]);
 
   const getComponentStyle = useCallback((childId: string) => {
     const style: { marginBottom: string, borderRadius: string, outline?: string } = {
@@ -225,7 +229,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
-            isClickable
+            isClickable={!readOnly}
             onClick={(e) => handleChildClick(child, e.detail)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

@@ -71,6 +71,7 @@ const SelectTypeWrapper: React.FC<Props> = ({
                 updateField,
                 setBlockTitle,
                 defaultSettings,
+                formatMessage: intl.formatMessage,
               })}
               disabled={!selected}
             >

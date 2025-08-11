@@ -1,7 +1,7 @@
 import React, { useContext, useCallback } from 'react';
 import { Add } from '@openedx/paragon/icons';
 import { Button } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';
 import { remove as removeElements, uniq, uniqBy } from 'lodash';
@@ -10,7 +10,8 @@ import TopicItem from './TopicItem';
 import { OpenedXConfigFormContext } from '../../openedx/OpenedXConfigFormProvider';
 import { filterItemFromObject } from '../../../utils';
 
-const DiscussionTopics = ({ intl }) => {
+const DiscussionTopics = () => {
+  const intl = useIntl();
   const {
     values: appConfig,
     validateForm,
@@ -92,8 +93,4 @@ const DiscussionTopics = ({ intl }) => {
   );
 };
 
-DiscussionTopics.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(DiscussionTopics);
+export default DiscussionTopics;

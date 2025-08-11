@@ -9,6 +9,7 @@ export const getCurrentSubsection = (state) => state.courseOutline.currentSubsec
 export const getCourseActions = (state) => state.courseOutline.actions;
 export const getCustomRelativeDatesActiveFlag = (state) => state.courseOutline.isCustomRelativeDatesActive;
 export const getProctoredExamsFlag = (state) => state.courseOutline.enableProctoredExams;
+export const getTimedExamsFlag = (state) => state.courseOutline.enableTimedExams;
 export const getPasteFileNotices = (state) => state.courseOutline.pasteFileNotices;
 export const getErrors = (state) => state.courseOutline.errors;
 export const getCreatedOn = (state) => state.courseOutline.createdOn;

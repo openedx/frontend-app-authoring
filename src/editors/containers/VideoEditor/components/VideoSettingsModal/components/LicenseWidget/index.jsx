@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -25,8 +24,6 @@ import LicenseDisplay from './LicenseDisplay';
  * Collapsible Form widget controlling video license type and details
  */
 const LicenseWidget = ({
-  // injected
-  intl,
   // redux
   isLibrary,
   licenseType,
@@ -35,6 +32,7 @@ const LicenseWidget = ({
   courseLicenseDetails,
   updateField,
 }) => {
+  const intl = useIntl();
   const { license, details, level } = hooks.determineLicense({
     isLibrary,
     licenseType,
@@ -85,8 +83,6 @@ const LicenseWidget = ({
 };
 
 LicenseWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
   // redux
   isLibrary: PropTypes.bool.isRequired,
   licenseType: PropTypes.string.isRequired,
@@ -109,4 +105,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const LicenseWidgetInternal = LicenseWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(LicenseWidget);

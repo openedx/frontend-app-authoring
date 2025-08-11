@@ -19,22 +19,27 @@ module.exports = {
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d8a6192ade314473a78242dfeedfbf5b',
           display_name: 'Introduction 2',
+          usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@v3v57d5h5j4a8s33a78242dfeedfbf5b',
         },
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40interactive_demonstrations',
           display_name: 'Example Week 1: Getting Started',
+          usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@4bgkas5384h6f686f8ghj53feedfbf2f',
         },
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40graded_interactions',
           display_name: 'Example Week 2: Get Interactive',
+          usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@v3v57d5h5j4a8s33nsdajdsh876fbf3g',
         },
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40social_integration',
           display_name: 'Example Week 3: Be Social',
+          usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@sg8b76g7b68s7s33a78242dfeedfbf4c',
         },
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%401414ffd5143b4b508f739b563ab468b7',
           display_name: 'About Exams and Certificates',
+          usage_key: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@jhk76823jh42j5kl23kjl2dfeedfbf8d',
         },
       ],
       title: 'Example Week 1: Getting Started',
@@ -45,10 +50,12 @@ module.exports = {
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%4019a30717eff543078a5d94ae9d6c18a5',
           display_name: 'Lesson 1 - Getting Started',
+          usage_key: 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5',
         },
         {
           url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40sequential%2Bblock%40basic_questions',
           display_name: 'Homework - Question Styles',
+          usage_key: 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@basic_questions',
         },
       ],
       title: 'Lesson 1 - Getting Started',

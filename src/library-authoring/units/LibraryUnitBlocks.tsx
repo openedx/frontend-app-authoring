@@ -135,13 +135,17 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
+    if (readOnly) {
+      // don't allow interaction if rendered as preview
+      return;
+    }
     openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
       openComponentEditor(block.originalId);
     }
-  }, [block, openItemSidebar, canEditComponent, openComponentEditor]);
+  }, [block, openItemSidebar, canEditComponent, openComponentEditor, readOnly]);
 
   useEffect(() => {
     if (block.isNew) {
@@ -181,7 +185,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={(e) => !readOnly && handleComponentSelection(e.detail)}
+        onClick={(e) => handleComponentSelection(e.detail)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleComponentSelection(e.detail);
