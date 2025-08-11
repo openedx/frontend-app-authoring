@@ -25,7 +25,6 @@ import { getUploadFileMaxSize } from '@src/constants';
 import textbookFormValidationSchema from './validations';
 import messages from './messages';
 
-const UPLOAD_FILE_MAX_SIZE = getUploadFileMaxSize();
 const TextbookForm = ({
   closeTextbookForm,
   initialFormValues,
