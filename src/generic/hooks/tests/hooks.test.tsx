@@ -122,6 +122,24 @@ describe('useIframeBehavior', () => {
     expect(setWindowTopOffset).toHaveBeenCalledWith(window.scrollY);
   });
 
+  it('handles xblockScroll message correctly', () => {
+    document.body.innerHTML = '<div id="window" top: 25px;"><div id="xblock-iframe" style="position: absolute; top: 50px;"></div></div>';
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
+
+    const message = {
+      type: iframeMessageTypes.xblockScroll,
+      data: { offset: 100 },
+    };
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
+
+    expect(window.scrollY).toBe(100
+      + (document.getElementById('xblock-iframe') as HTMLElement).offsetTop
+      + (document.getElementById('xblock-iframe')?.parentElement as HTMLElement).offsetTop);
+  });
+
   it('handles offset message correctly', () => {
     document.body.innerHTML = '<div id="unit-iframe" style="position: absolute; top: 50px;"></div>';
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
