@@ -130,7 +130,7 @@ ModalDropzone.defaultProps = {
   imageHelpText: '',
   previewComponent: null,
   imageDropzoneText: '',
-  maxSize: '',
+  maxSize: 'undefined',
   invalidFileSizeMore: '',
   onSelectFile: null,
 };
