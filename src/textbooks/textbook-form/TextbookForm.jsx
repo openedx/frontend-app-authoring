@@ -25,6 +25,7 @@ import { getUploadFileMaxSize } from '@src/constants';
 import textbookFormValidationSchema from './validations';
 import messages from './messages';
 
+const UPLOAD_FILE_MAX_SIZE = getUploadFileMaxSize();
 const TextbookForm = ({
   closeTextbookForm,
   initialFormValues,
@@ -171,7 +172,7 @@ const TextbookForm = ({
               onSavingStatus={onSavingStatus}
               invalidFileSizeMore={intl.formatMessage(
                 messages.uploadModalFileInvalidSizeText,
-                { maxSize: getUploadFileMaxSize() / (1000 * 1000) },
+                { maxSize: UPLOAD_FILE_MAX_SIZE / (1024 * 1024) },
               )}
               onSelectFile={setSelectedFile}
               previewComponent={(
@@ -180,7 +181,7 @@ const TextbookForm = ({
                   <span className="modal-preview-text">{selectedFile}</span>
                 </div>
               )}
-              maxSize={getUploadFileMaxSize()}
+              maxSize={UPLOAD_FILE_MAX_SIZE}
             />
             <PromptIfDirty dirty={dirty} />
           </>
