@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '../../editors/Placeholder';
-import { getUploadFileMaxSize } from '../../constants';
+import { getUploadFileMaxSize } from '@src/constants';
 
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
