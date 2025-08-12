@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -135,11 +136,23 @@ const CardHeader = ({
           <>
             {titleComponent}
             <IconButtonWithTooltip
-              className="item-card-button-icon"
-              variant={isDisabledEditField ? 'light' : 'primary'}
+              className={classNames(
+                'item-card-button-icon',
+                {
+                  'item-card-button-icon-disabled': isDisabledEditField,
+                },
+              )}
               data-testid={`${namePrefix}-edit-button`}
-              alt={intl.formatMessage(messages.altButtonEdit)}
-              tooltipContent={<div>{intl.formatMessage(messages.altButtonEdit)}</div>}
+              alt={intl.formatMessage(
+                isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonEdit,
+              )}
+              tooltipContent={(
+                <div>
+                  {intl.formatMessage(
+                    isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonEdit,
+                  )}
+                </div>
+              )}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
