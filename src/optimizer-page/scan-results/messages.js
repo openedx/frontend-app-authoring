@@ -9,10 +9,6 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.noDataCard',
     defaultMessage: 'No Scan data available',
   },
-  noBrokenLinksCard: {
-    id: 'course-authoring.course-optimizer.emptyResultsCard',
-    defaultMessage: 'No broken links found',
-  },
   linkToPrevCourseRun: {
     id: 'course-authoring.course-optimizer.linkToPrevCourseRun',
     defaultMessage: 'Links to previous course run',

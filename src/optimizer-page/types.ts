@@ -26,7 +26,7 @@ export interface Section {
 
 export interface LinkCheckResult {
   sections: Section[];
-  course_updates?: {
+  courseUpdates?: {
     name: string;
     url: string;
     brokenLinks: string[];
@@ -34,7 +34,7 @@ export interface LinkCheckResult {
     externalForbiddenLinks: string[];
     previousRunLinks: string[];
   }[];
-  custom_pages?: {
+  customPages?: {
     name: string;
     url: string;
     brokenLinks: string[];
