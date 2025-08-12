@@ -25,6 +25,12 @@
   &:hover {
     .item-card-button-icon {
       opacity: 1;
+
+      &.item-card-button-icon-disabled {
+        pointer-events: all;
+        opacity: .5;
+        cursor: default;
+      }
     }
   }
 }
