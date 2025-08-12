@@ -82,6 +82,11 @@ const messages = defineMessages({
     defaultMessage: 'Update available - click to sync',
     description: 'Alt text for the sync icon button.',
   },
+  cannotEditTooltip: {
+    id: 'course-authoring.course-outline.card.button.edit.disable.tooltip',
+    defaultMessage: 'This object was added from a library, so it cannot be edited.',
+    description: 'Tooltip text of button when the object was added from a library.',
+  },
 });
 
 export default messages;
