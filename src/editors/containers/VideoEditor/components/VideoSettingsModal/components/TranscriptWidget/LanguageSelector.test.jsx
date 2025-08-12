@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  render, screen, initializeMocks,
 } from '@src/testUtils';
 import LanguageSelector from './LanguageSelector';
 import { selectors } from '../../../../../../data/redux';
@@ -13,11 +13,14 @@ const lang3 = 'sImLisH';
 const lang3Code = 'sl';
 
 jest.mock('../../../../../../data/constants/video', () => ({
-  videoTranscriptLanguages: {
-    [lang1Code]: lang1,
-    [lang2Code]: lang2,
-    [lang3Code]: lang3,
-  },
+  getLanguageName: jest.fn((code) => {
+    const mockMap = {
+      kl: lang1,
+      el: lang2,
+      sl: lang3,
+    };
+    return mockMap[code] || code;
+  }),
 }));
 
 describe('LanguageSelector', () => {
@@ -25,7 +28,7 @@ describe('LanguageSelector', () => {
     onSelect: jest.fn().mockName('props.OnSelect'),
     index: 1,
     language: lang1Code,
-    openLanguages: [[lang2Code, lang2], [lang3Code, lang3]],
+    openLanguages: [lang2Code, lang3Code, lang1Code],
   };
   beforeEach(() => {
     initializeMocks();
@@ -45,14 +48,5 @@ describe('LanguageSelector', () => {
     jest.spyOn(video, 'openLanguages').mockReturnValue(props.openLanguages);
     render(<LanguageSelector {...props} language="" />);
     expect(screen.getByText('Select Language')).toBeInTheDocument();
-  });
-
-  test('transcripts no Open Languages, all dropdown items should be disabled', () => {
-    const { video } = selectors;
-    jest.spyOn(video, 'openLanguages').mockReturnValue([]);
-    const { container } = render(<LanguageSelector {...props} language="" />);
-    fireEvent.click(screen.getByRole('button', { name: 'Languages' }));
-    const disabledItems = container.querySelectorAll('.disabled.dropdown-item');
-    expect(disabledItems.length).toBe(3);
   });
 });

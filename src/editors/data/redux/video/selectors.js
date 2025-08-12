@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { keyStore } from '../../../utils';
-import { videoTranscriptLanguages } from '../../constants/video';
+import { openLanguagesDataSet } from '../../constants/video';
 
 import { initialState } from './reducer';
 // This 'module' self-import hack enables mocking during tests.
@@ -50,10 +50,10 @@ export const openLanguages = createSelector(
   [module.simpleSelectors.transcripts],
   (transcripts) => {
     if (!transcripts) {
-      return videoTranscriptLanguages;
+      return Object.keys(openLanguagesDataSet);
     }
-    const open = Object.keys(videoTranscriptLanguages).filter(
-      (lang) => !transcripts.includes(lang),
+    const open = Object.keys(openLanguagesDataSet).filter(
+      (code) => !transcripts.includes(code),
     );
     return open;
   },
