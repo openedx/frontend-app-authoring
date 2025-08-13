@@ -25,6 +25,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-team.sidebar.ownership.description',
     defaultMessage: 'Every course must have an Admin. If you are the Admin and you want to transfer ownership of the course, click {strong} to make another user the Admin, then ask that user to remove you from the Course Team list.',
   },
+  helpInfoSidebarTitle: {
+    id: 'course-authoring.course-team.sidebar.helpInfoSidebarTitle',
+    defaultMessage: 'Need help across multiple courses?',
+  },
+  helpInfoDescription: {
+    id: 'course-authoring.course-team.sidebar.helpInfoDescription',
+    defaultMessage: 'Email {email_address} to add, remove, or update user access in bulk.',
+  },
   addAdminAccess: {
     id: 'course-authoring.course-team.sidebar.ownership.addAdminAccess',
     defaultMessage: 'Add admin access',
