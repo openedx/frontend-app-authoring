@@ -133,8 +133,10 @@ const ScanResults: FC<Props> = ({ data }) => {
 
   // Calculate if there are any previous run links across all sections
   const hasPreviousRunLinks = useMemo(
-    // eslint-disable-next-line max-len
-    () => allSectionsForPrevRun.some(section => section.subsections.some(subsection => subsection.units.some(unit => unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)))),
+    () => allSectionsForPrevRun.some(section => (
+      section.subsections.some(subsection => subsection.units.some(unit => (
+        unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
+      ))))),
     [allSectionsForPrevRun],
   );
 
@@ -182,27 +184,28 @@ const ScanResults: FC<Props> = ({ data }) => {
   // Only show sections that have at least one unit with a visible link (not just previousRunLinks)
   const shouldSectionRender = (sectionIndex: number): boolean => {
     const section = allSectionsForBrokenLinks[sectionIndex];
-    // eslint-disable-next-line max-len
-    const hasVisibleUnit = section.subsections.some((subsection) => subsection.units.some((unit) => unit.blocks.some((block) => {
-      const hasBroken = block.brokenLinks?.length > 0;
-      const hasLocked = block.lockedLinks?.length > 0;
-      const hasExternal = block.externalForbiddenLinks?.length > 0;
+    const hasVisibleUnit = section.subsections.some(
+      (subsection) => subsection.units.some((unit) => unit.blocks.some((block) => {
+        const hasBroken = block.brokenLinks?.length > 0;
+        const hasLocked = block.lockedLinks?.length > 0;
+        const hasExternal = block.externalForbiddenLinks?.length > 0;
 
-      const noFilters = !filters.brokenLinks
+        const noFilters = !filters.brokenLinks
             && !filters.lockedLinks
             && !filters.externalForbiddenLinks;
 
-      const showBroken = filters.brokenLinks && hasBroken;
-      const showLocked = filters.lockedLinks && hasLocked;
-      const showExternal = filters.externalForbiddenLinks && hasExternal;
+        const showBroken = filters.brokenLinks && hasBroken;
+        const showLocked = filters.lockedLinks && hasLocked;
+        const showExternal = filters.externalForbiddenLinks && hasExternal;
 
-      return (
-        showBroken
-            || showLocked
-            || showExternal
-            || (noFilters && (hasBroken || hasLocked || hasExternal))
-      );
-    })));
+        return (
+          showBroken
+              || showLocked
+              || showExternal
+              || (noFilters && (hasBroken || hasLocked || hasExternal))
+        );
+      })),
+    );
     return hasVisibleUnit;
   };
 
