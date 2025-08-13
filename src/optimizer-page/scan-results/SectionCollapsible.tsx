@@ -77,7 +77,7 @@ const SectionCollapsible: FC<Props> = ({
   );
 
   return (
-    <div className={`section ${isOpen ? 'is-open' : ''}`}>
+    <div className={`section px-3 ${isOpen ? 'is-open' : ''}`}>
       <Collapsible
         className="section-collapsible-item-container"
         styling={styling}

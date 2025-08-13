@@ -231,7 +231,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   return (
     <>
       <div className="scan-results">
-        <div className="scan-header-second-title-container">
+        <div className="scan-header-second-title-container px-3">
           <header className="sub-header-content">
             <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.brokenLinksHeader)}</h2>
             <Button
@@ -404,7 +404,7 @@ const ScanResults: FC<Props> = ({ data }) => {
 
         return (
           <div className="scan-results">
-            <div className="scan-header-second-title-container">
+            <div className="scan-header-second-title-container px-3">
               <header className="sub-header-content">
                 <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
               </header>
@@ -439,7 +439,7 @@ const ScanResults: FC<Props> = ({ data }) => {
 
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinks && (
       <div className="scan-results">
-        <div className="scan-header-second-title-container">
+        <div className="scan-header-second-title-container px-3">
           <header className="sub-header-content">
             <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
           </header>
