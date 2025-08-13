@@ -124,38 +124,38 @@ describe('useIframeBehavior', () => {
 
   it('handles xblockScroll message correctly', () => {
     const iframeElement = document.createElement('iframe');
-    iframeElement.setAttribute('name','xblock-iframe');
+    iframeElement.setAttribute('name', 'xblock-iframe');
     Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });
 
     const iframeParentElement = document.createElement('div');
-    iframeParentElement.setAttribute('id','div0');
+    iframeParentElement.setAttribute('id', 'div0');
     Object.defineProperty(iframeParentElement, 'offsetTop', { writable: true, configurable: true, value: 25 });
 
     iframeParentElement.appendChild(iframeElement);
     document.body.appendChild(iframeParentElement);
 
-    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef}));
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
       data: {
         type: iframeMessageTypes.xblockScroll,
         offset: 100,
-      }
+      },
     };
 
     act(() => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollTo).toHaveBeenCalledWith(0,175);
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 175);
     expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
   });
 
   it('handles offset message correctly', () => {
     const iframeElement = document.createElement('iframe');
-    iframeElement.setAttribute('id','unit-iframe');
-    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });;
-    
+    iframeElement.setAttribute('id', 'unit-iframe');
+    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });
+
     document.body.appendChild(iframeElement);
 
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
@@ -168,7 +168,7 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollTo).toHaveBeenCalledWith(0,150);
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 150);
     expect(window.scrollY).toBe(100 + (document.getElementById('unit-iframe') as HTMLElement).offsetTop);
   });
 
