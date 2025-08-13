@@ -123,25 +123,41 @@ describe('useIframeBehavior', () => {
   });
 
   it('handles xblockScroll message correctly', () => {
-    document.body.innerHTML = '<div id="window" top: 25px;"><div id="xblock-iframe" style="position: absolute; top: 50px;"></div></div>';
-    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
+    const iframeElement = document.createElement('iframe');
+    iframeElement.setAttribute('name','xblock-iframe');
+    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });
+
+    const iframeParentElement = document.createElement('div');
+    iframeParentElement.setAttribute('id','div0');
+    Object.defineProperty(iframeParentElement, 'offsetTop', { writable: true, configurable: true, value: 25 });
+
+    iframeParentElement.appendChild(iframeElement);
+    document.body.appendChild(iframeParentElement);
+
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef}));
 
     const message = {
-      type: iframeMessageTypes.xblockScroll,
-      data: { offset: 100 },
+      data: {
+        type: iframeMessageTypes.xblockScroll,
+        offset: 100,
+      }
     };
 
     act(() => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollY).toBe(100
-      + (document.getElementById('xblock-iframe') as HTMLElement).offsetTop
-      + (document.getElementById('xblock-iframe')?.parentElement as HTMLElement).offsetTop);
+    expect(window.scrollTo).toHaveBeenCalledWith(0,175);
+    expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
   });
 
   it('handles offset message correctly', () => {
-    document.body.innerHTML = '<div id="unit-iframe" style="position: absolute; top: 50px;"></div>';
+    const iframeElement = document.createElement('iframe');
+    iframeElement.setAttribute('id','unit-iframe');
+    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });;
+    
+    document.body.appendChild(iframeElement);
+
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
@@ -152,6 +168,7 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
+    expect(window.scrollTo).toHaveBeenCalledWith(0,150);
     expect(window.scrollY).toBe(100 + (document.getElementById('unit-iframe') as HTMLElement).offsetTop);
   });
 
