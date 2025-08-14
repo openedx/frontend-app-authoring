@@ -147,7 +147,7 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollTo).toHaveBeenCalledWith(0, 175);
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 175, left: 0, behavior: 'smooth' });
     expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
   });
 
