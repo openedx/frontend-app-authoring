@@ -5,8 +5,7 @@ import {
   useRef,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { Icon, useToggle } from '@openedx/paragon';
-import { LinkOff, Newsstand } from '@openedx/paragon/icons';
+import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
@@ -21,6 +20,7 @@ import TitleLink from '@src/course-outline/card-header/TitleLink';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { useClipboard } from '@src/generic/clipboard';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 
@@ -157,16 +157,12 @@ const UnitCard = ({
     dispatch(fetchCourseSectionQuery([section.id]));
   }, [dispatch, section]);
 
-  const upstreamRefOk = !upstreamInfo?.errorMessage;
-
   const titleComponent = (
     <TitleLink
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
-      prefixIcon={!!upstreamInfo?.upstreamRef && (
-        <Icon src={upstreamRefOk ? Newsstand : LinkOff} size="sm" className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
     />
   );
 

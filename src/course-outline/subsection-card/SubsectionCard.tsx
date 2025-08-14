@@ -4,8 +4,7 @@ import React, {
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, StandardModal, useToggle } from '@openedx/paragon';
-import { LinkOff, Newsstand } from '@openedx/paragon/icons';
+import { StandardModal, useToggle } from '@openedx/paragon';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -22,6 +21,7 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import type { XBlock } from '@src/data/types';
@@ -168,17 +168,13 @@ const SubsectionCard = ({
   const handleNewButtonClick = () => onNewUnitSubmit(id);
   const handlePasteButtonClick = () => onPasteClick(id, section.id);
 
-  const upstreamRefOk = !upstreamInfo?.errorMessage;
-
   const titleComponent = (
     <TitleButton
       title={displayName}
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!upstreamInfo?.upstreamRef && (
-        <Icon src={upstreamRefOk ? Newsstand : LinkOff} className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
     />
   );
 
