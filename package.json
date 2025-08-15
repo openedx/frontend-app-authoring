@@ -18,7 +18,7 @@
     "start": "fedx-scripts webpack-dev-server --progress",
     "start:with-theme": "paragon install-theme && npm start && npm install",
     "dev": "PUBLIC_PATH=/authoring/ MFE_CONFIG_API_URL='http://localhost:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
-    "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests",
+    "test": "TZ=UTC fedx-scripts jest --passWithNoTests",
     "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests",
     "types": "tsc --noEmit"
   },
@@ -73,6 +73,7 @@
     "file-saver": "^2.0.5",
     "formik": "2.4.6",
     "frontend-components-tinymce-advanced-plugins": "^1.0.3",
+    "iso-639-1": "^3.1.5",
     "jszip": "^3.10.1",
     "lodash": "4.17.21",
     "meilisearch": "^0.41.0",
