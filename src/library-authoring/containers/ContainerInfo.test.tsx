@@ -338,8 +338,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       // Check that there are no menu buttons for components
       expect(screen.queryAllByRole('button', { name: /component actions menu/i }).length).toBe(0);
 
-      const child = await screen.findByText(`${childType!} block 0`);
-      screen.debug(child.parentElement!.parentElement!.parentElement!);
+      // If the childType is a component, it should be displayed as a text block
+      const childTypeDisplayName = childType === 'component' ? 'text' : childType;
+      const child = await screen.findByText(`${childTypeDisplayName} block 0`);
+
       // Check that there are no menu buttons for containers
       expect(within(
         child.parentElement!.parentElement!.parentElement!,
