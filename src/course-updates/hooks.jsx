@@ -55,10 +55,9 @@ const useCourseUpdates = ({ courseId }) => {
   };
 
   const handleUpdatesSubmit = (data) => {
-    const dateWithoutTimezone = (data.date);
     const dataToSend = {
       ...data,
-      date: moment(dateWithoutTimezone).format(COMMA_SEPARATED_DATE_FORMAT),
+      date: moment(data.date).format(COMMA_SEPARATED_DATE_FORMAT),
     };
     const { id, date, content } = dataToSend;
 
