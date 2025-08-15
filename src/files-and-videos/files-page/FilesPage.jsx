@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '../../editors/Placeholder';
+import { getUploadFileMaxSize } from '@src/constants';
 
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
@@ -90,7 +91,8 @@ const FilesPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  const maxFileSize = 20 * 1048576;
+
+  const maxFileSize = getUploadFileMaxSize();
 
   const activeColumn = {
     id: 'activeStatus',
