@@ -4,7 +4,10 @@ import type MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
+  within,
 } from '@src/testUtils';
+import { ContainerType } from '@src/generic/key-utils';
+import type { ToastActionData } from '@src/generic/toast-context';
 import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
 import {
   mockContentLibrary,
@@ -16,10 +19,7 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
-import { ContainerType } from '../../generic/key-utils';
-import type { ToastActionData } from '../../generic/toast-context';
 
-mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetContainerMetadata.applyMock();
@@ -86,6 +86,12 @@ const singleChild = (id: string) => {
       return undefined;
   }
 };
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 const render = (
   containerId,
@@ -317,6 +323,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     });
 
     it(`shows the ${containerType} Preview tab by default and the children are readonly`, async () => {
+      const user = userEvent.setup();
       render(containerId);
       const previewTab = await screen.findByText('Preview');
       expect(previewTab).toBeInTheDocument();
@@ -325,11 +332,22 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       // Check that there are no edit buttons for components titles
       expect(screen.queryAllByRole('button', { name: /edit/i }).length).toBe(0);
 
-      // Check that there are no drag handle for components
+      // Check that there are no drag handle for components/containers
       expect(screen.queryAllByRole('button', { name: 'Drag to reorder' }).length).toBe(0);
 
       // Check that there are no menu buttons for components
       expect(screen.queryAllByRole('button', { name: /component actions menu/i }).length).toBe(0);
+
+      const child = await screen.findByText(`${childType!} block 0`);
+      screen.debug(child.parentElement!.parentElement!.parentElement!);
+      // Check that there are no menu buttons for containers
+      expect(within(
+        child.parentElement!.parentElement!.parentElement!,
+      ).queryAllByRole('button', { name: /container actions menu/i }).length).toBe(0);
+      // Trigger double click. Find the child card as the parent element
+      await user.dblClick(child.parentElement!.parentElement!.parentElement!);
+      // Click should not do anything in preview
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it(`shows the ${containerType} hierarchy in the Usage tab`, async () => {

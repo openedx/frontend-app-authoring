@@ -5,7 +5,8 @@ import {
   useRef,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
+import { Icon, useToggle } from '@openedx/paragon';
+import { Newsstand } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
@@ -97,7 +98,7 @@ const UnitCard = ({
       downstreamBlockId: id,
       upstreamBlockId: upstreamInfo.upstreamRef,
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
-      isVertical: true,
+      isContainer: true,
     };
   }, [upstreamInfo]);
 
@@ -108,8 +109,10 @@ const UnitCard = ({
   // add actions to control display of move up & down menu buton.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !subsection.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection.upstreamInfo?.upstreamRef;
 
   const parentInfo = {
     graded: subsection.graded,
@@ -159,6 +162,9 @@ const UnitCard = ({
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
+      prefixIcon={!!unit.upstreamInfo?.upstreamRef && (
+        <Icon src={Newsstand} size="sm" className="mr-1" />
+      )}
     />
   );
 
@@ -189,16 +195,24 @@ const UnitCard = ({
     return null;
   }
 
-  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+  const isDraggable = (
+    actions.draggable
+      && (actions.allowMoveUp || actions.allowMoveDown)
+      && !subsection.upstreamInfo?.upstreamRef
+  );
 
   return (
     <>
       <SortableItem
         id={id}
-        category={category}
         key={id}
+        data={{
+          category,
+          status: unitStatus,
+          displayName,
+        }}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={subsection.actions.childAddable}
         componentStyle={{
           background: '#fdfdfd',
           ...borderStyle,

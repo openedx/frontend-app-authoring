@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Stack, TransitionReplace } from '@openedx/paragon';
 import FormDropdown from './FormDropdown';
 import { getFidelityOptions } from '../data/utils';
@@ -12,9 +12,8 @@ const Cielo24Form = ({
   data,
   setData,
   transcriptionPlan,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   if (hasTranscriptCredentials) {
     const { fidelity } = transcriptionPlan;
     const selectedLanguage = data.preferredLanguages ? data.preferredLanguages : '';
@@ -118,8 +117,6 @@ Cielo24Form.propTypes = {
     turnaround: PropTypes.shape({}),
     fidelity: PropTypes.shape({}),
   }).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(Cielo24Form);
+export default Cielo24Form;

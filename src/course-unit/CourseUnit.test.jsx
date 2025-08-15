@@ -792,6 +792,28 @@ describe('<CourseUnit />', () => {
       .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, { replace: true });
   });
 
+  it('Show or hide new unit button based on parent sequence childAddable action', async () => {
+    render(<RootWrapper />);
+    // The new unit button should be visible when childAddable is true
+    await screen.findByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage });
+
+    const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+    // Set childAddable to false for sequence i.e. current units parent.
+    set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].actions.childAddable', false);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...updatedCourseSectionVerticalData,
+      });
+    render(<RootWrapper />);
+    // to wait for loading
+    screen.findByTestId('unit-header-title');
+    // The new unit button should not be visible when childAddable is false
+    expect(
+      screen.queryByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage }),
+    ).not.toBeInTheDocument();
+  });
+
   it('the sequence unit is updated after changing the unit header', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
