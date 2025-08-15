@@ -194,7 +194,7 @@ export interface EditorState {
 
 export { actions, selectors };
 
-export function initializeStore(preloadedState = undefined) {
+export function initializeStore(preloadedState = {}) {
   return configureStore({
     reducer: editorReducer,
     preloadedState,
