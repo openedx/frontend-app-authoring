@@ -13,8 +13,6 @@ import { Calendar as CalendarIcon, Error as ErrorIcon } from '@openedx/paragon/i
 import { Formik } from 'formik';
 
 import {
-  convertToStringFromDate,
-  convertToDateFromString,
   isValidDate,
 } from '../../utils';
 import { DATE_FORMAT, DEFAULT_EMPTY_WYSIWYG_VALUE } from '../../constants';
@@ -73,7 +71,7 @@ const UpdateForm = ({
                   <DatePicker
                     name="date"
                     data-testid="course-updates-datepicker"
-                    selected={isValidDate(values.date) ? convertToDateFromString(values.date) : ''}
+                    selected={isValidDate(values.date) ? values.date : ''}
                     dateFormat={DATE_FORMAT}
                     className={classNames('datepicker-custom-control', {
                       'datepicker-custom-control_isInvalid': !isValid,
@@ -85,7 +83,7 @@ const UpdateForm = ({
                       if (!isValidDate(value)) {
                         return;
                       }
-                      setFieldValue('date', convertToStringFromDate(value));
+                      setFieldValue('date', value);
                     }}
                   />
                 </div>
