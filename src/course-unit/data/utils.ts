@@ -1,5 +1,7 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
+import type { XBlock } from '@src/data/types';
+
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { PUBLISH_TYPES } from '../constants';
 
@@ -27,35 +29,42 @@ export function normalizeCourseSectionVerticalData(metadata) {
 
 /**
  * Get the notification message based on the publishing type and visibility.
- * @param {string} type - The publishing type.
- * @param {boolean} isVisible - The visibility status.
- * @param {boolean} isModalView - The modal view status.
- * @returns {string} The corresponding notification message.
+ * @param type - The publishing type.
+ * @param isVisible - The visibility status.
+ * @param isModalView - The modal view status.
+ * @returns The corresponding notification message.
  */
-export const getNotificationMessage = (type, isVisible, isModalView) => {
-  let notificationMessage;
-
+export const getNotificationMessage = (type: string, isVisible: boolean, isModalView: boolean): string => {
   if (type === PUBLISH_TYPES.discardChanges) {
-    notificationMessage = NOTIFICATION_MESSAGES.discardChanges;
-  } else if (type === PUBLISH_TYPES.makePublic) {
-    notificationMessage = NOTIFICATION_MESSAGES.publishing;
-  } else if (type === PUBLISH_TYPES.republish && isModalView) {
-    notificationMessage = NOTIFICATION_MESSAGES.saving;
-  } else if (type === PUBLISH_TYPES.republish && !isVisible) {
-    notificationMessage = NOTIFICATION_MESSAGES.makingVisibleToStudents;
-  } else if (type === PUBLISH_TYPES.republish && isVisible) {
-    notificationMessage = NOTIFICATION_MESSAGES.hidingFromStudents;
+    return NOTIFICATION_MESSAGES.discardChanges;
+  }
+  if (type === PUBLISH_TYPES.makePublic) {
+    return NOTIFICATION_MESSAGES.publishing;
+  }
+  if (type === PUBLISH_TYPES.republish && isModalView) {
+    return NOTIFICATION_MESSAGES.saving;
+  }
+  // istanbul ignore next: this is not used in the app
+  if (type === PUBLISH_TYPES.republish && !isVisible) {
+    return NOTIFICATION_MESSAGES.makingVisibleToStudents;
   }
 
-  return notificationMessage;
+  // istanbul ignore next: this is not used in the app
+  if (type === PUBLISH_TYPES.republish && isVisible) {
+    return NOTIFICATION_MESSAGES.hidingFromStudents;
+  }
+
+  // istanbul ignore next: should never hit this case
+  return NOTIFICATION_MESSAGES.empty;
 };
 
 /**
  * Updates the 'id' property of objects in the data structure using the 'blockId' value where present.
- * @param {Object} data - The original data structure to be updated.
- * @returns {Object} - The updated data structure with updated 'id' values.
+ * @param data - The original data structure to be updated.
+ * @returns The updated data structure with updated 'id' values.
  */
-export const updateXBlockBlockIdToId = (data) => {
+export const updateXBlockBlockIdToId = (data: object): object => {
+  // istanbul ignore if: should never hit this case
   if (typeof data !== 'object' || data === null) {
     return data;
   }
@@ -64,7 +73,7 @@ export const updateXBlockBlockIdToId = (data) => {
     return data.map(updateXBlockBlockIdToId);
   }
 
-  const updatedData = {};
+  const updatedData: Record<string, any> = {};
 
   Object.keys(data).forEach(key => {
     const value = data[key];
@@ -90,9 +99,11 @@ export const updateXBlockBlockIdToId = (data) => {
  *
  * Units sourced from libraries are read-only (temporary, for Teak).
  *
- * @param {object} unit - uses the 'upstreamInfo' object if found.
- * @returns {boolean} True if readOnly, False if editable.
+ * @param unit - uses the 'upstreamInfo' object if found.
+ * @returns True if readOnly, False if editable.
  */
-export const isUnitReadOnly = ({ upstreamInfo }) => (
-  upstreamInfo && upstreamInfo.upstreamRef && upstreamInfo.upstreamRef.startsWith('lct:')
+export const isUnitReadOnly = ({ upstreamInfo }: XBlock): boolean => (
+  !!upstreamInfo
+  && !!upstreamInfo.upstreamRef
+  && upstreamInfo.upstreamRef.startsWith('lct:')
 );
