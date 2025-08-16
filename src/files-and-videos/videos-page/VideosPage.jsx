@@ -169,8 +169,9 @@ const VideosPage = ({
     handleAddThumbnail,
     videoImageSettings,
   });
+
   const infoModalSidebar = (video, activeTab, setActiveTab) => (
-    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+    <VideoInfoModalSidebar video={video} activeTab={activeTab} setActiveTab={setActiveTab} />
   );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {

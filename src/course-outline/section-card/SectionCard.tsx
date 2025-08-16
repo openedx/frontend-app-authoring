@@ -258,9 +258,13 @@ const SectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
+        data={{
+          category,
+          displayName,
+          status: sectionStatus,
+          childAddable: actions.childAddable,
+        }}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
         componentStyle={{
           padding: '1.75rem',
           ...borderStyle,

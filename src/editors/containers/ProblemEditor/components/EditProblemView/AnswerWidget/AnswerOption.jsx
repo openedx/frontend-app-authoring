@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Collapsible,
@@ -22,15 +22,16 @@ import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextAr
 const AnswerOption = ({
   answer,
   hasSingleAnswer,
-  // redux
-  problemType,
-  images,
-  isLibrary,
-  blockId,
-  learningContextId,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+
+  const problemType = useSelector(selectors.problem.problemType);
+  const images = useSelector(selectors.app.images);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const blockId = useSelector(selectors.app.blockId);
+
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
   const setAnswerTitle = hooks.setAnswerTitle({
@@ -42,10 +43,10 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
-  let staticRootUrl;
-  if (isLibrary) {
-    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
-  }
+
+  const staticRootUrl = isLibrary
+    ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
+    : undefined;
 
   const getInputArea = () => {
     if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -55,12 +56,10 @@ const AnswerOption = ({
           setContent={setAnswerTitle}
           placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
           id={`answer-${answer.id}`}
-          {...{
-            images,
-            isLibrary,
-            learningContextId,
-            staticRootUrl,
-          }}
+          images={images}
+          isLibrary={isLibrary}
+          learningContextId={learningContextId}
+          staticRootUrl={staticRootUrl}
         />
       );
     }
@@ -93,7 +92,6 @@ const AnswerOption = ({
           <FormattedMessage {...messages.answerRangeHelperText} />
         </div>
       </div>
-
     );
   };
 
@@ -120,11 +118,9 @@ const AnswerOption = ({
             setSelectedFeedback={setSelectedFeedback}
             setUnselectedFeedback={setUnselectedFeedback}
             intl={intl}
-            {...{
-              images,
-              isLibrary,
-              learningContextId,
-            }}
+            images={images}
+            isLibrary={isLibrary}
+            learningContextId={learningContextId}
           />
         </Collapsible.Body>
       </div>
@@ -150,22 +146,6 @@ const AnswerOption = ({
 AnswerOption.propTypes = {
   answer: answerOptionProps.isRequired,
   hasSingleAnswer: PropTypes.bool.isRequired,
-  // redux
-  problemType: PropTypes.string.isRequired,
-  images: PropTypes.shape({}).isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-  blockId: PropTypes.string.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  problemType: selectors.problem.problemType(state),
-  images: selectors.app.images(state),
-  isLibrary: selectors.app.isLibrary(state),
-  learningContextId: selectors.app.learningContextId(state),
-  blockId: selectors.app.blockId(state),
-});
-
-export const mapDispatchToProps = {};
-export const AnswerOptionInternal = AnswerOption; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(memo(AnswerOption));
+export default memo(AnswerOption);
