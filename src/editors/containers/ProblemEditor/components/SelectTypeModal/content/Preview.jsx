@@ -21,7 +21,7 @@ const Preview = ({
   return (
     <Container style={{ width: '494px', height: '400px' }} className="bg-light-300 rounded p-4">
       <div className="small">
-        <FormattedMessage {...messages[`problemType.${problemType}.title`]} /> problem
+        <FormattedMessage {...messages[`problemType.${problemType}.title`]} /> {intl.formatMessage(messages.problemTextInPreviewTitle)}
       </div>
       <Image
         fluid
