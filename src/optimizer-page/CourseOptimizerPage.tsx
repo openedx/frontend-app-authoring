@@ -138,7 +138,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
           >
             <Layout.Element>
               <article>
-                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 px-3 py-3">
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 p-3">
                   <div>
                     <p className="small text-muted mb-1">Tools</p>
                     <div className="d-flex align-items-center">
@@ -151,15 +151,14 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     size="md"
                     className="px-4 rounded-0 scan-course-btn"
                     onClick={() => dispatch(startLinkCheck(courseId))}
-                    disabled={linkCheckInProgress && !errorMessage}
+                    disabled={!!(linkCheckInProgress) && !errorMessage}
                   >
                     {linkCheckInProgress && !errorMessage ? (
                       <>
                         <Spinner
                           animation="border"
                           size="sm"
-                          className="mr-2"
-                          style={{ width: '1rem', height: '1rem' }}
+                          className="mr-2 spinner-icon"
                         />
                         {intl.formatMessage(messages.buttonTitle)}
                       </>
@@ -168,9 +167,9 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     )}
                   </Button>
                 </div>
-                <Card style={{ boxShadow: 'none', backgroundColor: 'transparent' }}>
+                <Card className="scan-card">
                   <p className="px-3 py-1 small">{intl.formatMessage(messages.description)}</p>
-                  <hr style={{ margin: '0 20px' }} />
+                  <hr />
                   <Card.Header
                     className="scan-header h3 px-3 text-black mb-2"
                     title={intl.formatMessage(messages.scanHeader)}
