@@ -139,6 +139,11 @@ const messages = defineMessages({
     }`,
     description: 'Message for support status tooltip',
   },
+  problemTextInPreviewTitle: {
+    id: 'authoring.problemEditor.preview.problemTextInPreviewTitle',
+    defaultMessage: 'problem',
+    description: 'Problem text in title for the problem preview column',
+  },
   previewTitle: {
     id: 'authoring.problemEditor.preview.title',
     defaultMessage: '{previewTitle} problem',
