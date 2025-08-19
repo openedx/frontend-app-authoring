@@ -47,7 +47,7 @@ const VideoThumbnail = ({
   const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
   const failedMessage = intl.formatMessage(messages.failedCheckboxLabel);
 
-  const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
+  const showThumbnail = allowThumbnailUpload && isUploaded;
 
   return (
     <div className="video-thumbnail row justify-content-center align-itmes-center">
