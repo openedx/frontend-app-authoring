@@ -4,8 +4,7 @@ import React, {
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, StandardModal, useToggle } from '@openedx/paragon';
-import { Newsstand } from '@openedx/paragon/icons';
+import { StandardModal, useToggle } from '@openedx/paragon';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -23,10 +22,11 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
-import { XBlock } from '@src/data/types';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
+import type { XBlock } from '@src/data/types';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -194,9 +194,7 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
     />
   );
 
