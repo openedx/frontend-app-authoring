@@ -125,12 +125,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   }, [data?.courseUpdates, data?.customPages, intl]);
 
   // Combine renderable sections with regular sections
-  const allSectionsForBrokenLinks = useMemo(
-    () => [...renderableSections, ...(sections || [])],
-    [renderableSections, sections],
-  );
-
-  const allSectionsForPrevRun = useMemo(
+  const allSections = useMemo(
     () => [...renderableSections, ...(sections || [])],
     [renderableSections, sections],
   );
@@ -139,21 +134,21 @@ const ScanResults: FC<Props> = ({ data }) => {
     brokenLinksCounts,
     lockedLinksCounts,
     externalForbiddenLinksCounts,
-  } = useMemo(() => countBrokenLinks({ sections: allSectionsForBrokenLinks }), [allSectionsForBrokenLinks]);
+  } = useMemo(() => countBrokenLinks({ sections: allSections }), [allSections]);
 
   // Calculate if there are any previous run links across all sections
   const hasPreviousRunLinks = useMemo(
-    () => allSectionsForPrevRun.some(section => (
+    () => allSections.some(section => (
       section.subsections.some(subsection => subsection.units.some(unit => (
         unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
       ))))),
-    [allSectionsForPrevRun],
+    [allSections],
   );
 
-  // Calculate previous run links count for each section (including virtual sections)
+  // Calculate previous run links count for each section
   const previousRunLinksCounts = useMemo(() => {
-    if (!allSectionsForPrevRun) { return []; }
-    return allSectionsForPrevRun.map(section => section.subsections.reduce(
+    if (!allSections) { return []; }
+    return allSections.map(section => section.subsections.reduce(
       (sectionTotal, subsection) => sectionTotal
         + subsection.units.reduce(
           (unitTotal, unit) => unitTotal
@@ -165,7 +160,7 @@ const ScanResults: FC<Props> = ({ data }) => {
         ),
       0,
     ));
-  }, [allSectionsForPrevRun]);
+  }, [allSections]);
 
   const activeFilters = Object.keys(filters).filter(key => filters[key]);
   const [filterBy, {
@@ -173,9 +168,9 @@ const ScanResults: FC<Props> = ({ data }) => {
   }] = useCheckboxSetValues(activeFilters);
 
   useEffect(() => {
-    setOpenStates(allSectionsForBrokenLinks ? allSectionsForBrokenLinks.map(() => false) : []);
-    setPrevRunOpenStates(allSectionsForPrevRun ? allSectionsForPrevRun.map(() => false) : []);
-  }, [allSectionsForBrokenLinks, allSectionsForPrevRun]);
+    setOpenStates(allSections ? allSections.map(() => false) : []);
+    setPrevRunOpenStates(allSections ? allSections.map(() => false) : []);
+  }, [allSections]);
 
   if (isDataEmpty(data)) {
     return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
@@ -193,7 +188,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   ];
   // Only show sections that have at least one unit with a visible link (not just previousRunLinks)
   const shouldSectionRender = (sectionIndex: number): boolean => {
-    const section = allSectionsForBrokenLinks[sectionIndex];
+    const section = allSections[sectionIndex];
     const hasVisibleUnit = section.subsections.some(
       (subsection) => subsection.units.some((unit) => unit.blocks.some((block) => {
         const hasBroken = block.brokenLinks?.length > 0;
@@ -232,7 +227,7 @@ const ScanResults: FC<Props> = ({ data }) => {
 
   const findNextVisibleSection = (currentIndex: number): number => {
     let nextIndex = currentIndex + 1;
-    while (nextIndex < allSectionsForBrokenLinks.length) {
+    while (nextIndex < allSections.length) {
       if (shouldSectionRender(nextIndex)) {
         return nextIndex;
       }
@@ -311,8 +306,8 @@ const ScanResults: FC<Props> = ({ data }) => {
 
         {(() => {
           // Find all visible sections
-          const visibleSections = allSectionsForBrokenLinks && allSectionsForBrokenLinks.length > 0
-            ? allSectionsForBrokenLinks
+          const visibleSections = allSections && allSections.length > 0
+            ? allSections
               .map((_, index) => (shouldSectionRender(index) ? index : -1))
               .filter(idx => idx !== -1)
             : [];
@@ -323,7 +318,7 @@ const ScanResults: FC<Props> = ({ data }) => {
               </div>
             );
           }
-          return allSectionsForBrokenLinks.map((section, index) => {
+          return allSections.map((section, index) => {
             if (!shouldSectionRender(index)) {
               return null;
             }
@@ -336,7 +331,7 @@ const ScanResults: FC<Props> = ({ data }) => {
                   const prevVisibleIndex = findPreviousVisibleSection(index);
                   return prevVisibleIndex >= 0 && openStates[prevVisibleIndex];
                 })() : true}
-                hasNextAndIsOpen={index < allSectionsForBrokenLinks.length - 1 ? (() => {
+                hasNextAndIsOpen={index < allSections.length - 1 ? (() => {
                   const nextVisibleIndex = findNextVisibleSection(index);
                   return nextVisibleIndex >= 1 && openStates[nextVisibleIndex];
                 })() : true}
@@ -388,11 +383,11 @@ const ScanResults: FC<Props> = ({ data }) => {
       </div>
 
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
-        && allSectionsForPrevRun
-        && allSectionsForPrevRun.length > 0
+        && allSections
+        && allSections.length > 0
         && hasPreviousRunLinks && (() => {
         // Filter out sections/subsections/units that have no previous run links
-        const filteredSections = allSectionsForPrevRun.map((section) => {
+        const filteredSections = allSections.map((section) => {
           // Filter subsections
           const filteredSubsections = section.subsections.map(subsection => {
             // Filter units
