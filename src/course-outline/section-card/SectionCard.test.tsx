@@ -87,6 +87,7 @@ const onEditSectionSubmit = jest.fn();
 const renderComponent = (props?: object, entry = '/') => render(
   <SectionCard
     section={section}
+    courseId="5"
     index={1}
     canMoveItem={jest.fn()}
     onOrderChange={jest.fn()}

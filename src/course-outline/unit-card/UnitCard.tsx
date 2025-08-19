@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
@@ -23,11 +24,13 @@ import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
+import { invalidateLinksQuery } from '@src/course-libraries/utils';
 
 interface UnitCardProps {
   unit: XBlock;
   subsection: XBlock;
   section: XBlock;
+  courseId: string;
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
@@ -50,6 +53,7 @@ const UnitCard = ({
   unit,
   subsection,
   section,
+  courseId,
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
@@ -74,6 +78,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -155,6 +160,7 @@ const UnitCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
+    invalidateLinksQuery(queryClient, courseId);
   }, [dispatch, section]);
 
   const titleComponent = (

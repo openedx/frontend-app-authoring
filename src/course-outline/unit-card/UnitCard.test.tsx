@@ -73,6 +73,7 @@ const renderComponent = (props?: object) => render(
     section={section}
     subsection={subsection}
     unit={unit}
+    courseId="5"
     index={1}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}

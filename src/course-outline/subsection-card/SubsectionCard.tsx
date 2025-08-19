@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StandardModal, useToggle } from '@openedx/paragon';
+import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -27,10 +28,12 @@ import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
+import { invalidateLinksQuery } from '@src/course-libraries/utils';
 import messages from './messages';
 
 interface SubsectionCardProps {
   section: XBlock,
+  courseId: string,
   subsection: XBlock,
   children: ReactNode
   isSectionsExpanded: boolean,
@@ -61,6 +64,7 @@ interface SubsectionCardProps {
 
 const SubsectionCard = ({
   section,
+  courseId,
   subsection,
   isSectionsExpanded,
   isSelfPaced,
@@ -96,6 +100,7 @@ const SubsectionCard = ({
     openAddLibraryUnitModal,
     closeAddLibraryUnitModal,
   ] = useToggle(false);
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -166,6 +171,7 @@ const SubsectionCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
+    invalidateLinksQuery(queryClient, courseId);
   }, [dispatch, section]);
 
   const handleEditSubmit = (titleValue: string) => {

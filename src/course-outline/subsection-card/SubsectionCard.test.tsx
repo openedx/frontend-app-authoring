@@ -113,6 +113,7 @@ const renderComponent = (props?: object, entry = '/') => render(
     section={section}
     subsection={subsection}
     index={1}
+    courseId="5"
     isSelfPaced={false}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}

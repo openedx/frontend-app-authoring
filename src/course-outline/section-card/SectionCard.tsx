@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
 import { RequestStatus } from '@src/data/constants';
@@ -26,10 +27,12 @@ import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
+import { invalidateLinksQuery } from '@src/course-libraries/utils';
 import messages from './messages';
 
 interface SectionCardProps {
   section: XBlock,
+  courseId: string,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
   children: ReactNode,
@@ -51,6 +54,7 @@ interface SectionCardProps {
 
 const SectionCard = ({
   section,
+  courseId,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
@@ -81,6 +85,7 @@ const SectionCard = ({
     openAddLibrarySubsectionModal,
     closeAddLibrarySubsectionModal,
   ] = useToggle(false);
+  const queryClient = useQueryClient();
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -167,6 +172,7 @@ const SectionCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
+    invalidateLinksQuery(queryClient, courseId);
   }, [dispatch, section]);
 
   // re-create actions object for customizations
