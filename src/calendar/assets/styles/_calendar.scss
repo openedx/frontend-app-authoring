@@ -1,0 +1,136 @@
+// @import "./variables";
+@import "../../../styles/global-overrides.scss";
+
+
+.calendar-page {
+  padding: 1rem;
+  background: var(--bg-body);
+  color: var(--text-primary);
+
+  .calendar-header {
+    // background: var(--bg-surface);
+    // border: 1px solid var(--border-color);
+    // border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      h2 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 1.4rem;
+      }
+    }
+
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 12px;
+    }
+
+    .left-controls,
+    .right-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .center-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      flex: 1;
+    }
+
+    button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all .12s ease-in-out;
+      &:hover {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      }
+    }
+
+   
+    select.view-select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      cursor: pointer;
+    }
+
+   
+    .search-input {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      width: 220px;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--primary-hover);
+        border-color: var(--primary);
+      }
+    }
+
+  
+    .filter-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      select {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+      }
+
+      .filter-nav {
+        display: flex;
+        gap: 6px;
+
+        button {
+          padding: 6px 10px;
+          background: var(--bg-surface);
+          color: var(--text-primary);
+          border: 1px solid var(--primary);
+          border-radius: 6px;
+          &:hover{
+            background: var(--primary);
+            color: var(--text-white);
+          }
+        }
+      }
+    }
+  }
+
+
+  .calendar-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+  }
+  .fc-col-header-cell-cushion{
+    color: var(--text-primary);
+  }
+}
+
+
+.rtl {
+  direction: rtl;
+}
+.ltr {
+  direction: ltr;
+}
+

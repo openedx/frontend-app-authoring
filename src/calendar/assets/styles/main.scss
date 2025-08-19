@@ -1,0 +1,10 @@
+@import "../../../styles//global-overrides.scss";
+
+@import "./_calendar";
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  margin: 0;
+}

@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
+import "./calendar/assets/styles/main.scss";
+
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
@@ -13,6 +15,9 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+
+
+import "./calendar/i18n/i18n";
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -47,6 +52,7 @@ import Layout from './Layout';
 import 'titaned-lib/dist/index.css';
 import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
+import  Calendar  from './calendar/pages/CalendarPage';
 
 const queryClient = new QueryClient();
 
@@ -77,6 +83,7 @@ const App = () => {
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/component-picker" element={<ComponentPicker />} />
+        <Route path="/calendar" element={<Calendar />} />
         <Route
           path="/component-picker/multiple"
           element={<ComponentPicker componentPickerMode="multiple" />}
