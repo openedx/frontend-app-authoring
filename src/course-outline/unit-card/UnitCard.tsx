@@ -5,8 +5,7 @@ import {
   useRef,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { Icon, useToggle } from '@openedx/paragon';
-import { Newsstand } from '@openedx/paragon/icons';
+import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
@@ -21,8 +20,9 @@ import TitleLink from '@src/course-outline/card-header/TitleLink';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { useClipboard } from '@src/generic/clipboard';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
-import { XBlock } from '@src/data/types';
+import type { XBlock } from '@src/data/types';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -98,7 +98,7 @@ const UnitCard = ({
       downstreamBlockId: id,
       upstreamBlockId: upstreamInfo.upstreamRef,
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
-      isVertical: true,
+      isContainer: true,
     };
   }, [upstreamInfo]);
 
@@ -109,8 +109,10 @@ const UnitCard = ({
   // add actions to control display of move up & down menu buton.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !subsection.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !subsection.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !subsection.upstreamInfo?.upstreamRef;
 
   const parentInfo = {
     graded: subsection.graded,
@@ -160,9 +162,7 @@ const UnitCard = ({
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
-      prefixIcon={!!unit.upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} size="sm" className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
     />
   );
 
@@ -193,16 +193,24 @@ const UnitCard = ({
     return null;
   }
 
-  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+  const isDraggable = (
+    actions.draggable
+      && (actions.allowMoveUp || actions.allowMoveDown)
+      && !subsection.upstreamInfo?.upstreamRef
+  );
 
   return (
     <>
       <SortableItem
         id={id}
-        category={category}
         key={id}
+        data={{
+          category,
+          status: unitStatus,
+          displayName,
+        }}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={subsection.actions.childAddable}
         componentStyle={{
           background: '#fdfdfd',
           ...borderStyle,

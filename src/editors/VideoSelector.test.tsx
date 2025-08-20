@@ -2,7 +2,7 @@ import React from 'react';
 import * as reactRedux from 'react-redux';
 import * as hooks from './hooks';
 import VideoSelector from './VideoSelector';
-import editorRender from './editorTestRender';
+import { editorRender } from './editorTestRender';
 import { initializeMocks, screen } from '../testUtils';
 
 const defaultProps = {
