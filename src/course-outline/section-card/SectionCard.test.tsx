@@ -36,8 +36,8 @@ const subsection = {
     children: [{
       id: unit.id,
     }],
-  },
-} as XBlock;
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
+} satisfies Partial<XBlock> as XBlock;
 
 const section = {
   id: '123',
@@ -63,13 +63,14 @@ const section = {
         }],
       },
     }],
-  },
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:section:1',
     versionSynced: 1,
+    errorMessage: null,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const onEditSectionSubmit = jest.fn();
 

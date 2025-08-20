@@ -31,7 +31,7 @@ const section = {
     deletable: true,
     duplicable: true,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const subsection = {
   id: '12',
@@ -45,7 +45,7 @@ const subsection = {
     deletable: true,
     duplicable: true,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const unit = {
   id: '123',
@@ -65,8 +65,9 @@ const unit = {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:unit:1',
     versionSynced: 1,
+    errorMessage: null,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const renderComponent = (props?: object) => render(
   <UnitCard

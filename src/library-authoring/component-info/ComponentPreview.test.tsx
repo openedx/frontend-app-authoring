@@ -39,7 +39,7 @@ describe('<ComponentPreview />', () => {
   it('renders a preview of the component', async () => {
     initializeMocks();
     render();
-    const iframe = (await screen.findByTitle('Preview')) as HTMLIFrameElement;
+    const iframe = (await screen.findByTitle<HTMLIFrameElement>('Preview'));
     expect(iframe.src).toEqual(`http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/`);
   });
 
