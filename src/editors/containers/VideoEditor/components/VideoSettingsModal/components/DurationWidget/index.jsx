@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Col, Form } from '@openedx/paragon';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import { keyStore } from '../../../../../../utils';
@@ -21,9 +21,8 @@ const DurationWidget = ({
   // redux
   duration,
   updateField,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const {
     unsavedDuration,
     onBlur,
@@ -88,8 +87,6 @@ DurationWidget.propTypes = {
   // redux
   duration: PropTypes.objectOf(PropTypes.number).isRequired,
   updateField: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -101,4 +98,4 @@ export const mapDispatchToProps = {
 };
 
 export const DurationWidgetInternal = DurationWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(DurationWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(DurationWidget);
