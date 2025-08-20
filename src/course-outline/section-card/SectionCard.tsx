@@ -4,9 +4,8 @@ import {
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Bubble, Button, Icon, StandardModal, useToggle,
+  Bubble, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { Newsstand } from '@openedx/paragon/icons';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -23,7 +22,8 @@ import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { XBlock } from '@src/data/types';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
+import type { XBlock } from '@src/data/types';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -123,6 +123,7 @@ const SectionCard = ({
     highlights,
     actions: sectionActions,
     isHeaderVisible = true,
+    upstreamInfo,
   } = section;
 
   useEffect(() => {
@@ -225,9 +226,7 @@ const SectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!section.upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
     />
   );
 
@@ -237,9 +236,13 @@ const SectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
+        data={{
+          category,
+          displayName,
+          status: sectionStatus,
+          childAddable: actions.childAddable,
+        }}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
         componentStyle={{
           padding: '1.75rem',
           ...borderStyle,

@@ -22,7 +22,7 @@ export interface LibraryChangesMessageData {
   downstreamBlockId: string,
   upstreamBlockId: string,
   upstreamBlockVersionSynced: number,
-  isVertical: boolean,
+  isContainer: boolean,
 }
 
 export interface PreviewLibraryXBlockChangesProps {
@@ -60,7 +60,7 @@ export const PreviewLibraryXBlockChanges = ({
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isVertical}
+        isContainer={blockData.isContainer}
       />
     );
   }, [blockData]);
@@ -85,8 +85,8 @@ export const PreviewLibraryXBlockChanges = ({
   }, [blockData]);
 
   const defaultTitle = intl.formatMessage(
-    blockData.isVertical
-      ? messages.defaultUnitTitle
+    blockData.isContainer
+      ? messages.defaultContainerTitle
       : messages.defaultComponentTitle,
   );
   const title = blockData.displayName

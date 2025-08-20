@@ -1,7 +1,9 @@
 /* eslint-disable prefer-destructuring */
 import React from 'react';
+
+import * as problemConstants from '@src/editors/data/constants/problem';
+import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '@src/editors/data/constants/problem';
 import * as hooks from './hooks';
-import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '../../../../data/constants/problem';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
 jest.mock('react', () => ({
@@ -64,6 +66,26 @@ describe('SelectTypeModal hooks', () => {
         rawMarkdown: ProblemTypes[mockSelected].markdownTemplate,
       });
       expect(mocksetBlockTitle).toHaveBeenCalledWith(ProblemTypes[mockSelected].title);
+    });
+    test('onSelect sets localized advanced problem title when formatMessage is provided', () => {
+      const mockSetBlockTitle2 = jest.fn();
+      const mockUpdateField2 = jest.fn();
+      const mockFormatMessage2 = (msg) => `localized-${msg.id || msg.defaultMessage || msg}`;
+      const mockSelected2 = 'circuitschematic';
+      jest.spyOn(problemConstants, 'getAdvanceProblems').mockImplementation((fmt) => ({
+        circuitschematic: { title: fmt({ id: 'problem.circuitschematic.title' }) },
+      }));
+      hooks.onSelect({
+        selected: mockSelected2,
+        updateField: mockUpdateField2,
+        setBlockTitle: mockSetBlockTitle2,
+        formatMessage: mockFormatMessage2,
+      })();
+      expect(mockSetBlockTitle2).toHaveBeenCalledWith('localized-problem.circuitschematic.title');
+      expect(mockUpdateField2).toHaveBeenCalledWith({
+        problemType: ProblemTypeKeys.ADVANCED,
+        rawOLX: AdvanceProblems[mockSelected2].template,
+      });
     });
   });
 

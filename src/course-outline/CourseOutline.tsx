@@ -36,7 +36,11 @@ import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
-import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
+import {
+  getCurrentItem,
+  getProctoredExamsFlag,
+  getTimedExamsFlag,
+} from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
@@ -167,6 +171,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
   const deleteCategory = COURSE_BLOCK_NAMES[currentItemData.category]?.name.toLowerCase();
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
+  const enableTimedExams = useSelector(getTimedExamsFlag);
 
   /**
    * Move section to new index
@@ -505,6 +510,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
           onConfigureSubmit={handleConfigureItemSubmit}
           currentItemData={currentItemData}
           enableProctoredExams={enableProctoredExams}
+          enableTimedExams={enableTimedExams}
           isSelfPaced={statusBarData.isSelfPaced}
         />
         <DeleteModal

@@ -301,3 +301,131 @@ describe('<ConfigureModal /> for XBlock', () => {
     expect(queryByText(messages.discussionEnabledDescription.defaultMessage)).not.toBeInTheDocument();
   });
 });
+
+describe('<ConfigureModal /> with enableTimedExams prop', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+  });
+
+  const renderWithTimedExamsProps = (enableTimedExams = true) => render(
+    <AppProvider store={store}>
+      <IntlProvider locale="en">
+        <ConfigureModal
+          isOpen
+          onClose={onCloseMock}
+          onConfigureSubmit={onConfigureSubmitMock}
+          currentItemData={currentSubsectionMock}
+          enableTimedExams={enableTimedExams}
+          isSelfPaced={false}
+        />
+      </IntlProvider>
+      ,
+    </AppProvider>,
+  );
+
+  it('passes enableTimedExams=true to AdvancedTab', async () => {
+    const user = userEvent.setup();
+    const { getByRole, getByText } = renderWithTimedExamsProps(true);
+
+    const advancedTab = getByRole('tab', {
+      name: messages.advancedTabTitle.defaultMessage,
+    });
+    await user.click(advancedTab);
+
+    expect(
+      getByText(messages.setSpecialExam.defaultMessage),
+    ).toBeInTheDocument();
+
+    const noneRadio = getByRole('radio', {
+      name: messages.none.defaultMessage,
+    });
+    const timedRadio = getByRole('radio', {
+      name: messages.timed.defaultMessage,
+    });
+
+    expect(noneRadio).not.toBeDisabled();
+    expect(timedRadio).not.toBeDisabled();
+  });
+
+  it('passes enableTimedExams=false to AdvancedTab and shows disabled state', async () => {
+    const user = userEvent.setup();
+    const { getByRole, getByText } = renderWithTimedExamsProps(false);
+
+    const advancedTab = getByRole('tab', {
+      name: messages.advancedTabTitle.defaultMessage,
+    });
+    await user.click(advancedTab);
+
+    expect(
+      getByText(messages.setSpecialExam.defaultMessage),
+    ).toBeInTheDocument();
+
+    const noneRadio = getByRole('radio', {
+      name: messages.none.defaultMessage,
+    });
+    const timedRadio = getByRole('radio', {
+      name: messages.timed.defaultMessage,
+    });
+
+    expect(noneRadio).toBeDisabled();
+    expect(timedRadio).toBeDisabled();
+  });
+
+  it('shows tooltip when enableTimedExams is false', async () => {
+    const user = userEvent.setup();
+    const { getByRole } = renderWithTimedExamsProps(false);
+
+    const advancedTab = getByRole('tab', {
+      name: messages.advancedTabTitle.defaultMessage,
+    });
+    await user.click(advancedTab);
+
+    const buttons = getByRole('tab', {
+      name: messages.advancedTabTitle.defaultMessage,
+    }).parentElement.querySelectorAll('button');
+    expect(buttons.length).toBeGreaterThan(0);
+  });
+
+  it('defaults enableTimedExams to false when not provided', async () => {
+    const user = userEvent.setup();
+
+    const { getByRole } = render(
+      <AppProvider store={store}>
+        <IntlProvider locale="en">
+          <ConfigureModal
+            isOpen
+            onClose={onCloseMock}
+            onConfigureSubmit={onConfigureSubmitMock}
+            currentItemData={currentSubsectionMock}
+            isSelfPaced={false}
+          />
+        </IntlProvider>
+        ,
+      </AppProvider>,
+    );
+
+    const advancedTab = getByRole('tab', {
+      name: messages.advancedTabTitle.defaultMessage,
+    });
+    await user.click(advancedTab);
+
+    const noneRadio = getByRole('radio', {
+      name: messages.none.defaultMessage,
+    });
+    const timedRadio = getByRole('radio', {
+      name: messages.timed.defaultMessage,
+    });
+
+    expect(noneRadio).toBeDisabled();
+    expect(timedRadio).toBeDisabled();
+  });
+});

@@ -4,8 +4,7 @@ import React, {
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, StandardModal, useToggle } from '@openedx/paragon';
-import { Newsstand } from '@openedx/paragon/icons';
+import { StandardModal, useToggle } from '@openedx/paragon';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -22,9 +21,10 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
+import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
-import { XBlock } from '@src/data/types';
+import type { XBlock } from '@src/data/types';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -105,6 +105,7 @@ const SubsectionCard = ({
     isHeaderVisible = true,
     enableCopyPasteUnits = false,
     proctoringExamConfigurationLink,
+    upstreamInfo,
   } = subsection;
 
   // re-create actions object for customizations
@@ -112,8 +113,10 @@ const SubsectionCard = ({
   // add actions to control display of move up & down menu button.
   const moveUpDetails = getPossibleMoves(index, -1);
   const moveDownDetails = getPossibleMoves(index, 1);
-  actions.allowMoveUp = !isEmpty(moveUpDetails);
-  actions.allowMoveDown = !isEmpty(moveDownDetails);
+  actions.allowMoveUp = !isEmpty(moveUpDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.allowMoveDown = !isEmpty(moveDownDetails) && !section.upstreamInfo?.upstreamRef;
+  actions.deletable = actions.deletable && !section.upstreamInfo?.upstreamRef;
+  actions.duplicable = actions.duplicable && !section.upstreamInfo?.upstreamRef;
 
   // Expand the subsection if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -171,9 +174,7 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={!!subsection.upstreamInfo?.upstreamRef && (
-        <Icon src={Newsstand} className="mr-1" />
-      )}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
     />
   );
 
@@ -218,6 +219,7 @@ const SubsectionCard = ({
     actions.draggable
       && (actions.allowMoveUp || actions.allowMoveDown)
       && !(isHeaderVisible === false)
+      && !section.upstreamInfo?.upstreamRef
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
@@ -234,10 +236,15 @@ const SubsectionCard = ({
     <>
       <SortableItem
         id={id}
-        category={category}
+        data={{
+          category,
+          displayName,
+          childAddable: actions.childAddable,
+          status: subsectionStatus,
+        }}
         key={id}
         isDraggable={isDraggable}
-        isDroppable={actions.childAddable}
+        isDroppable={actions.childAddable || section.actions.childAddable}
         componentStyle={{
           background: '#f8f7f6',
           ...borderStyle,
