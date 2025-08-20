@@ -61,6 +61,16 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.menu.delete',
     defaultMessage: 'Delete',
   },
+  menuUnlink: {
+    id: 'course-authoring.course-outline.card.menu.unlink',
+    defaultMessage: 'Unlink from Library',
+    description: 'Unlink an item from the library',
+  },
+  menuUnlinkDisabledTooltip: {
+    id: 'course-authoring.course-outline.card.menu.unlink.disabled-tooltip',
+    defaultMessage: 'Only the highest level library reference can be unlinked.',
+    description: 'Tooltip for disabled unlink option',
+  },
   menuCopy: {
     id: 'course-authoring.course-outline.card.menu.copy',
     defaultMessage: 'Copy to clipboard',
