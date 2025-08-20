@@ -1,56 +1,63 @@
 import React from 'react';
-import { render, screen, initializeMocks } from '@src/testUtils';
-import { HandoutWidgetInternal as HandoutWidget } from '.';
-
-jest.mock('@src/editors/data/redux', () => ({
-  actions: {
-    video: {
-      updateField: jest.fn().mockName('actions.video.updateField'),
-    },
-  },
-  selectors: {
-    video: {
-      getHandoutDownloadUrl: jest.fn(args => ({ getHandoutDownloadUrl: args })).mockName('selectors.video.getHandoutDownloadUrl'),
-      handout: jest.fn(state => ({ handout: state })),
-    },
-    app: {
-      isLibrary: jest.fn(args => ({ isLibrary: args })),
-    },
-    requests: {
-      isFailed: jest.fn(args => ({ isFailed: args })),
-    },
-  },
-}));
+import { screen, initializeMocks } from '@src/testUtils';
+import editorRender from '../../../../../../editorTestRender';
+import { RequestKeys } from '../../../../../../data/constants/requests';
+import HandoutWidget from '.';
 
 describe('HandoutWidget', () => {
-  const props = {
-    isLibrary: false,
-    handout: '',
-    isUploadError: false,
-    getHandoutDownloadUrl: jest.fn().mockName('args.getHandoutDownloadUrl'),
-    updateField: jest.fn().mockName('args.updateField'),
+  const initialState = {
+    app: {
+      isLibrary: false,
+    },
+    video: {
+      handout: '',
+      getHandoutDownloadUrl: jest.fn(() => 'mock-download-url'), // mock function
+    },
+    requests: {
+      [RequestKeys.uploadAsset]: {
+        status: 'failed', // or 'FAILED' for error case
+      },
+    },
   };
 
+  beforeEach(() => {
+    initializeMocks({ initialState });
+    jest.clearAllMocks();
+  });
+
   describe('renders', () => {
-    beforeEach(() => {
-      initializeMocks();
-    });
-    test('renders as expected with default props', () => {
-      render(<HandoutWidget {...props} />);
+    test('renders as expected with default Redux state', () => {
+      editorRender(<HandoutWidget />, { initialState });
       expect(screen.getByText('Handout')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Upload Handout' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Handout' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Collapse' })).toBeInTheDocument();
     });
-    test('renders as expected with isLibrary true', () => {
-      const { container } = render(<HandoutWidget {...props} isLibrary />);
-      const reduxWrapper = container.firstChild;
-      expect(reduxWrapper?.textContent).toBe('');
+
+    test('does not render when isLibrary is true', () => {
+      initializeMocks({
+        initialState: {
+          ...initialState,
+          app: { isLibrary: true, learningContextId: 'lib-v1:abc123', blockId: 'lb:xyz' },
+        },
+      });
+      editorRender(<HandoutWidget />, {
+        initialState: {
+          ...initialState,
+          app: { isLibrary: true, learningContextId: 'lib-v1:abc123', blockId: 'lb:xyz' },
+        },
+      });
       expect(screen.queryByText('Handout')).not.toBeInTheDocument();
     });
-    test('renders as expected with handout', () => {
-      const handoutUrl = 'sOMeUrl ';
-      render(<HandoutWidget {...props} handout={handoutUrl} />);
+
+    test('renders correctly with a handout URL', () => {
+      const handoutUrl = '  some-url.pdf  ';
+      editorRender(<HandoutWidget />, {
+        initialState: {
+          ...initialState,
+          video: { handout: handoutUrl },
+        },
+      });
       expect(screen.getByText('Handout')).toBeInTheDocument();
       expect(screen.getByText(handoutUrl.trim())).toBeInTheDocument();
     });

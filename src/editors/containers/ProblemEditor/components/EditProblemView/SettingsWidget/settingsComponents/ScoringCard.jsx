@@ -1,7 +1,7 @@
 import React from 'react';
 import isNil from 'lodash/isNil';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 import { selectors } from '../../../../../../data/redux';
@@ -13,12 +13,14 @@ const ScoringCard = ({
   scoring,
   defaultValue,
   updateSettings,
-  // redux
-  studioEndpointUrl,
-  learningContextId,
-  isLibrary,
 }) => {
   const intl = useIntl();
+
+  // Redux state
+  const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+
   const {
     handleUnlimitedChange,
     handleMaxAttemptChange,
@@ -92,27 +94,19 @@ const ScoringCard = ({
 };
 
 ScoringCard.propTypes = {
-  // eslint-disable-next-line
-  scoring: PropTypes.any.isRequired,
+  scoring: PropTypes.shape({
+    weight: PropTypes.number.isRequired,
+    attempts: PropTypes.shape({
+      number: PropTypes.number,
+      unlimited: PropTypes.bool.isRequired,
+    }).isRequired,
+  }).isRequired,
   updateSettings: PropTypes.func.isRequired,
   defaultValue: PropTypes.number,
-  // redux
-  studioEndpointUrl: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string,
-  isLibrary: PropTypes.bool.isRequired,
 };
 
 ScoringCard.defaultProps = {
-  learningContextId: null,
   defaultValue: null,
 };
 
-export const mapStateToProps = (state) => ({
-  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
-  learningContextId: selectors.app.learningContextId(state),
-  isLibrary: selectors.app.isLibrary(state),
-});
-
-export const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ScoringCard);
+export default ScoringCard;

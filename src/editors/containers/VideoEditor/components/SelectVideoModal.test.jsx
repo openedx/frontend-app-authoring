@@ -5,12 +5,36 @@ import {
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import * as reactRedux from 'react-redux';
 import { SelectVideoModal, useVideoList, useOnSelectClick } from './SelectVideoModal';
 import messages from './messages';
 
+import { thunkActions } from '../../../data/redux';
+
+// Mock fetchVideos thunk
+jest.mock('../../../data/redux', () => ({
+  thunkActions: {
+    app: {
+      fetchVideos: jest.fn(({ onSuccess }) => () => {
+        onSuccess([
+          { externalUrl: 'video1.mp4' },
+          { externalUrl: 'video2.mp4' },
+        ]);
+      }),
+    },
+  },
+}));
+
+// Mock useDispatch
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: jest.fn(),
+}));
+
 describe('SelectVideoModal', () => {
-  const mockStore = configureStore([]);
-  const mockFetchVideos = jest.fn();
+  const middlewares = [thunk];
+  const mockStore = configureStore(middlewares);
   const mockSetSelection = jest.fn();
   const mockClose = jest.fn();
   let store;
@@ -18,9 +42,11 @@ describe('SelectVideoModal', () => {
   beforeEach(() => {
     store = mockStore({});
     jest.clearAllMocks();
+    const mockDispatch = jest.fn((thunkFn) => thunkFn(() => {}, () => ({})));
+    reactRedux.useDispatch.mockReturnValue(mockDispatch);
   });
 
-  it('renders the modal with the correct title', () => {
+  it('renders the modal with the correct title', async () => {
     render(
       <Provider store={store}>
         <IntlProvider locale="en" messages={messages}>
@@ -28,7 +54,6 @@ describe('SelectVideoModal', () => {
             isOpen
             close={mockClose}
             setSelection={mockSetSelection}
-            fetchVideos={mockFetchVideos}
           />
         </IntlProvider>
       </Provider>,
@@ -45,7 +70,6 @@ describe('SelectVideoModal', () => {
             isOpen
             close={mockClose}
             setSelection={mockSetSelection}
-            fetchVideos={mockFetchVideos}
           />
         </IntlProvider>
       </Provider>,
@@ -55,13 +79,7 @@ describe('SelectVideoModal', () => {
     expect(mockClose).toHaveBeenCalled();
   });
 
-  it('renders a div for each video in the videos array', () => {
-    const videos = [
-      { externalUrl: 'video1.mp4' },
-      { externalUrl: 'video2.mp4' },
-    ];
-    const fetchVideos = jest.fn(({ onSuccess }) => onSuccess(videos));
-
+  it('renders a div for each video in the videos array', async () => {
     render(
       <Provider store={store}>
         <IntlProvider locale="en" messages={messages}>
@@ -69,15 +87,14 @@ describe('SelectVideoModal', () => {
             isOpen
             close={jest.fn()}
             setSelection={jest.fn()}
-            fetchVideos={fetchVideos}
           />
         </IntlProvider>
       </Provider>,
     );
 
-    // Assert that a div is rendered for each video
-    videos.forEach((video) => {
-      expect(screen.getByText(video.externalUrl)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('video1.mp4')).toBeInTheDocument();
+      expect(screen.getByText('video2.mp4')).toBeInTheDocument();
     });
   });
 });
@@ -85,9 +102,12 @@ describe('SelectVideoModal', () => {
 describe('SelectVideoModal hooks', () => {
   describe('useVideoList', () => {
     it('fetches videos and sets them in state', async () => {
+      const mockDispatch = jest.fn((thunkFn) => thunkFn(() => {}, () => ({})));
+      reactRedux.useDispatch.mockReturnValue(mockDispatch);
+
       // eslint-disable-next-line react/prop-types
-      const TestComponent = ({ fetchVideos }) => {
-        const videos = useVideoList({ fetchVideos });
+      const TestComponent = () => {
+        const videos = useVideoList();
         return (
           <div data-testid="videos">
             {videos ? videos.map((v) => v.externalUrl).join(', ') : 'Loading'}
@@ -95,19 +115,18 @@ describe('SelectVideoModal hooks', () => {
         );
       };
 
-      const videos = [
-        { externalUrl: 'video1.mp4' },
-        { externalUrl: 'video2.mp4' },
-      ];
-      const fetchVideos = jest.fn(({ onSuccess }) => {
-        onSuccess(videos);
+      const mockStore = configureStore([thunk]);
+      render(
+        <Provider store={mockStore({})}>
+          <TestComponent />
+        </Provider>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('videos').textContent).toBe('video1.mp4, video2.mp4');
       });
 
-      render(<TestComponent fetchVideos={fetchVideos} />);
-
-      await waitFor(() => expect(screen.getByTestId('videos').textContent).toBe(videos.map((v) => v.externalUrl).join(', ')));
-
-      expect(fetchVideos).toHaveBeenCalled();
+      expect(thunkActions.app.fetchVideos).toHaveBeenCalled();
     });
   });
 
