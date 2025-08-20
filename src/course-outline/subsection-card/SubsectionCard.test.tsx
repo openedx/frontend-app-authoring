@@ -28,6 +28,9 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({
     pathname: mockPathname,
   }),
+  useParams: () => ({
+    courseId: '5',
+  }),
 }));
 
 jest.mock('react-redux', () => ({

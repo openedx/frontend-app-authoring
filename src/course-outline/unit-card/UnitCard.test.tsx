@@ -18,6 +18,13 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({
+    courseId: '5',
+  }),
+}));
+
 const section = {
   id: '1',
   displayName: 'Section Name',

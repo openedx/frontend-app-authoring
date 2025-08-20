@@ -22,6 +22,9 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({
     pathname: mockPathname,
   }),
+  useParams: () => ({
+    courseId: '5',
+  }),
 }));
 
 const unit = {
