@@ -7,7 +7,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
@@ -30,7 +30,6 @@ interface UnitCardProps {
   unit: XBlock;
   subsection: XBlock;
   section: XBlock;
-  courseId: string;
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
@@ -53,7 +52,6 @@ const UnitCard = ({
   unit,
   subsection,
   section,
-  courseId,
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
@@ -78,6 +76,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
+  const { courseId } = useParams();
   const queryClient = useQueryClient();
 
   const {
@@ -160,8 +159,10 @@ const UnitCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
-    invalidateLinksQuery(queryClient, courseId);
-  }, [dispatch, section]);
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, queryClient, courseId]);
 
   const titleComponent = (
     <TitleLink

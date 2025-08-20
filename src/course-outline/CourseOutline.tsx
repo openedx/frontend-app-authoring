@@ -363,7 +363,6 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                   <SectionCard
                                     key={section.id}
                                     section={section}
-                                    courseId={courseId}
                                     index={sectionIndex}
                                     canMoveItem={canMoveSection(sections)}
                                     isSelfPaced={statusBarData.isSelfPaced}
@@ -389,7 +388,6 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                       {section.childInfo.children.map((subsection, subsectionIndex) => (
                                         <SubsectionCard
                                           key={subsection.id}
-                                          courseId={courseId}
                                           section={section}
                                           subsection={subsection}
                                           index={subsectionIndex}
@@ -425,7 +423,6 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                                 unit={unit}
                                                 subsection={subsection}
                                                 section={section}
-                                                courseId={courseId}
                                                 isSelfPaced={statusBarData.isSelfPaced}
                                                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                                 index={unitIndex}

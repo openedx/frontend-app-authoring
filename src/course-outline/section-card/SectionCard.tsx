@@ -6,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Bubble, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -32,7 +32,6 @@ import messages from './messages';
 
 interface SectionCardProps {
   section: XBlock,
-  courseId: string,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
   children: ReactNode,
@@ -54,7 +53,6 @@ interface SectionCardProps {
 
 const SectionCard = ({
   section,
-  courseId,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
@@ -85,6 +83,7 @@ const SectionCard = ({
     openAddLibrarySubsectionModal,
     closeAddLibrarySubsectionModal,
   ] = useToggle(false);
+  const { courseId } = useParams();
   const queryClient = useQueryClient();
 
   // Expand the section if a search result should be shown/scrolled to
@@ -172,8 +171,10 @@ const SectionCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
-    invalidateLinksQuery(queryClient, courseId);
-  }, [dispatch, section]);
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, courseId, queryClient]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };

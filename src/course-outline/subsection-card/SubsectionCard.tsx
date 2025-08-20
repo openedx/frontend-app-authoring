@@ -2,7 +2,7 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StandardModal, useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -33,7 +33,6 @@ import messages from './messages';
 
 interface SubsectionCardProps {
   section: XBlock,
-  courseId: string,
   subsection: XBlock,
   children: ReactNode
   isSectionsExpanded: boolean,
@@ -64,7 +63,6 @@ interface SubsectionCardProps {
 
 const SubsectionCard = ({
   section,
-  courseId,
   subsection,
   isSectionsExpanded,
   isSelfPaced,
@@ -100,6 +98,7 @@ const SubsectionCard = ({
     openAddLibraryUnitModal,
     closeAddLibraryUnitModal,
   ] = useToggle(false);
+  const { courseId } = useParams();
   const queryClient = useQueryClient();
 
   const {
@@ -171,8 +170,10 @@ const SubsectionCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
-    invalidateLinksQuery(queryClient, courseId);
-  }, [dispatch, section]);
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, queryClient, courseId]);
 
   const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
