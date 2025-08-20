@@ -1,5 +1,6 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as hooks from './hooks';
 import { acceptedImgKeys } from './utils';
 import SelectionModal from '../../SelectionModal';
@@ -13,13 +14,23 @@ const SelectImageModal = ({
   setSelection,
   clearSelection,
   images,
-  // redux
-  isLoaded,
-  isFetchError,
-  isUploadError,
-  isLibrary,
-  imageCount,
 }) => {
+  // Redux state using useSelector
+  const isLoaded = useSelector((state) => selectors.requests.isFinished(
+    state,
+    { requestKey: RequestKeys.fetchImages },
+  ));
+  const isFetchError = useSelector((state) => selectors.requests.isFailed(
+    state,
+    { requestKey: RequestKeys.fetchImages },
+  ));
+  const isUploadError = useSelector((state) => selectors.requests.isFailed(
+    state,
+    { requestKey: RequestKeys.uploadAsset },
+  ));
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const imageCount = useSelector((state) => state.app.imageCount);
+
   const {
     galleryError,
     inputError,
@@ -70,23 +81,7 @@ SelectImageModal.propTypes = {
   setSelection: PropTypes.func.isRequired,
   clearSelection: PropTypes.func.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // redux
-  isLoaded: PropTypes.bool.isRequired,
-  isFetchError: PropTypes.bool.isRequired,
-  isUploadError: PropTypes.bool.isRequired,
-  imageCount: PropTypes.number.isRequired,
-  isLibrary: PropTypes.bool,
 };
 
-export const mapStateToProps = (state) => ({
-  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchImages }),
-  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchImages }),
-  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
-  isLibrary: selectors.app.isLibrary(state),
-  imageCount: state.app.imageCount,
-});
-
-export const mapDispatchToProps = {};
-
-export const SelectImageModalInternal = SelectImageModal; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(SelectImageModal);
+export const SelectImageModalInternal = SelectImageModal; // For testing
+export default SelectImageModal;
