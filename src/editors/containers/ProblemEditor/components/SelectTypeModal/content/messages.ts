@@ -17,10 +17,104 @@ const messages = defineMessages({
     defaultMessage: 'Go back',
     description: 'Return to the previous menu that shows basic problem types',
   },
-  advanceProblemTypeLabel: {
-    id: 'authoring.problemEditor.advanceProblem.problemType.label',
-    defaultMessage: '{problemType}',
-    description: 'Label for advance problem type radio select',
+
+  // Direct problem type message pattern - replacing redundant advanceProblemTypeLabel
+  'problemType.blankadvanced.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.blank.title',
+    defaultMessage: 'Blank problem',
+    description: 'Title for blank advanced problem type',
+  },
+  'problemType.circuitschematic.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.circuitschematic.title',
+    defaultMessage: 'Circuit schematic builder',
+    description: 'Title for circuit schematic builder advanced problem type',
+  },
+  'problemType.jsinputresponse.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.jsinput.title',
+    defaultMessage: 'Custom JavaScript display and grading',
+    description: 'Title for custom JavaScript display and grading advanced problem type',
+  },
+  'problemType.customgrader.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.customgrader.title',
+    defaultMessage: 'Custom Python-evaluated input',
+    description: 'Title for custom Python-evaluated input advanced problem type',
+  },
+  'problemType.imageresponse.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.image.title',
+    defaultMessage: 'Image mapped input',
+    description: 'Title for image mapped input advanced problem type',
+  },
+  'problemType.formularesponse.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.formula.title',
+    defaultMessage: 'Math expression input',
+    description: 'Title for math expression input advanced problem type',
+  },
+  'problemType.problemwithhint.title': {
+    id: 'authoring.problemeditor.advancedproblemtype.problemwithhint.title',
+    defaultMessage: 'Problem with adaptive hint',
+    description: 'Title for problem with adaptive hint advanced problem type',
+  },
+
+  // Basic Problem Type Messages by Key
+  'problemType.multiplechoiceresponse.title': {
+    id: 'authoring.problemeditor.problemtype.singleselect.title',
+    defaultMessage: 'Single select',
+    description: 'Title for single select problem type',
+  },
+  'problemType.multiplechoiceresponse.description': {
+    id: 'authoring.problemeditor.problemtype.singleselect.description',
+    defaultMessage: 'Learners must select the correct answer from a list of possible options.',
+    description: 'Preview description for single select problem type',
+  },
+  'problemType.choiceresponse.title': {
+    id: 'authoring.problemeditor.problemtype.multiselect.title',
+    defaultMessage: 'Multi-select',
+    description: 'Title for multi-select problem type',
+  },
+  'problemType.choiceresponse.description': {
+    id: 'authoring.problemeditor.problemtype.multiselect.description',
+    defaultMessage: 'Learners must select all correct answers from a list of possible options.',
+    description: 'Preview description for multi-select problem type',
+  },
+  'problemType.optionresponse.title': {
+    id: 'authoring.problemeditor.problemtype.dropdown.title',
+    defaultMessage: 'Dropdown',
+    description: 'Title for dropdown problem type',
+  },
+  'problemType.optionresponse.description': {
+    id: 'authoring.problemeditor.problemtype.dropdown.description',
+    defaultMessage: 'Learners must select the correct answer from a list of possible options',
+    description: 'Preview description for dropdown problem type',
+  },
+  'problemType.numericalresponse.title': {
+    id: 'authoring.problemeditor.problemtype.numeric.title',
+    defaultMessage: 'Numerical input',
+    description: 'Title for numerical input problem type',
+  },
+  'problemType.numericalresponse.description': {
+    id: 'authoring.problemeditor.problemtype.numeric.description',
+    defaultMessage: 'Specify one or more correct numeric answers, submitted in a response field.',
+    description: 'Preview description for numerical input problem type',
+  },
+  'problemType.stringresponse.title': {
+    id: 'authoring.problemeditor.problemtype.textinput.title',
+    defaultMessage: 'Text input',
+    description: 'Title for text input problem type',
+  },
+  'problemType.stringresponse.description': {
+    id: 'authoring.problemeditor.problemtype.textinput.description',
+    defaultMessage: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
+    description: 'Preview description for text input problem type',
+  },
+  'problemType.advanced.title': {
+    id: 'authoring.problemeditor.problemtype.advanced.title',
+    defaultMessage: 'Advanced Problem',
+    description: 'Title for advanced problem type',
+  },
+  'problemType.advanced.description': {
+    id: 'authoring.problemeditor.problemtype.advanced.description',
+    defaultMessage: 'An Advanced Problem Type',
+    description: 'Description for advanced problem type',
   },
   problemSupportStatus: {
     id: 'authoring.problemEditor.advanceProblem.supportStatus',
@@ -41,9 +135,14 @@ const messages = defineMessages({
         in the future. They are not recommened for use in courses due to non-compliance with one
         or more of the base requirements, such as testing, accessibility, internationalization,
         and documentation.}
-      other { } 
+      other { }
     }`,
     description: 'Message for support status tooltip',
+  },
+  problemTextInPreviewTitle: {
+    id: 'authoring.problemEditor.preview.problemTextInPreviewTitle',
+    defaultMessage: 'problem',
+    description: 'Problem text in title for the problem preview column',
   },
   previewTitle: {
     id: 'authoring.problemEditor.preview.title',

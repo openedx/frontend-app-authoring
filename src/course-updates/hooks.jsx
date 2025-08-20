@@ -26,7 +26,7 @@ const useCourseUpdates = ({ courseId }) => {
 
   const courseUpdates = useSelector(getCourseUpdates);
   const courseHandouts = useSelector(getCourseHandouts);
-
+  /* istanbul ignore next */
   const courseUpdatesInitialValues = requestType === REQUEST_TYPES.edit_handouts
     ? courseHandouts
     : currentUpdate;
@@ -82,7 +82,6 @@ const useCourseUpdates = ({ courseId }) => {
 
   const handleDeleteUpdateSubmit = () => {
     const { id } = currentUpdate;
-
     dispatch(deleteCourseUpdateQuery(courseId, id));
     setCurrentUpdate(initialUpdate);
     closeDeleteModal();

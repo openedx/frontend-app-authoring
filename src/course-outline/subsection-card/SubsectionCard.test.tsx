@@ -86,6 +86,12 @@ const section: XBlock = {
       id: subsection.id,
     }],
   },
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 } as XBlock;
 
 const onEditSubectionSubmit = jest.fn();
@@ -204,6 +210,30 @@ describe('<SubsectionCard />', () => {
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'New unit' })).not.toBeInTheDocument();
+  });
+
+  it('hides move, duplicate & delete options if parent was imported from library', async () => {
+    renderComponent({
+      section: {
+        ...section,
+        upstreamInfo: {
+          readyToSync: true,
+          upstreamRef: 'lct:org1:lib1:section:1',
+          versionSynced: 1,
+        },
+      },
+    });
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
+    expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
+    expect(
+      await within(element).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      await within(element).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('renders live status', async () => {

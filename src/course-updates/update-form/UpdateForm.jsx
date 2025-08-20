@@ -81,6 +81,7 @@ const UpdateForm = ({
                     showPopperArrow={false}
                     onChange={(value) => {
                       if (!isValidDate(value)) {
+                        /* istanbul ignore next */
                         return;
                       }
                       setFieldValue('date', value);

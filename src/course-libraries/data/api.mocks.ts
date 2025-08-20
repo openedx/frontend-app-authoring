@@ -1,19 +1,15 @@
 /* istanbul ignore file */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
+import * as libApi from '@src/library-authoring/data/api';
+import { createAxiosError } from '@src/testUtils';
+
 import mockLinksResult from '../__mocks__/publishableEntityLinks.json';
 import mockSummaryResult from '../__mocks__/linkCourseSummary.json';
 import mockLinkDetailsFromIndex from '../__mocks__/linkDetailsFromIndex.json';
 import mockLibBlockMetadata from '../__mocks__/libBlockMetadata.json';
-import { createAxiosError } from '../../testUtils';
 import * as api from './api';
-import * as libApi from '../../library-authoring/data/api';
 
-/**
- * Mock for `getEntityLinks()`
- *
- * This mock returns a fixed response for the downstreamContextKey.
- */
 export async function mockGetEntityLinks(
   downstreamContextKey?: string,
   readyToSync?: boolean,
@@ -61,7 +57,7 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
-        path: api.getEntityLinksByDownstreamContextUrl(),
+        path: api.getEntityLinksSummaryByDownstreamContextUrl(courseId),
       });
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyLoading:
       return new Promise(() => {});

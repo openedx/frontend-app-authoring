@@ -390,7 +390,7 @@ describe('<CourseUpdates />', () => {
       expect(getByText(messages.savingHandoutsErrorDescription.defaultMessage));
     });
 
-    it.only('should trigger handleUpdatesSubmit when submitting the form', async () => {
+    it('should trigger handleUpdatesSubmit when submitting the form', async () => {
       const { getByRole, getByText } = render(<RootWrapper />);
 
       // Open form

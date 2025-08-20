@@ -1,17 +1,18 @@
 import React from 'react';
 
 import { Row, Stack } from '@openedx/paragon';
-import ProblemTypeSelect from './content/ProblemTypeSelect';
-import Preview from './content/Preview';
-import AdvanceTypeSelect from './content/AdvanceTypeSelect';
-import SelectTypeWrapper from './SelectTypeWrapper';
-import * as hooks from './hooks';
+
 import {
   AdvancedProblemType,
   isAdvancedProblemType,
   ProblemType,
   ProblemTypeKeys,
-} from '../../../../data/constants/problem';
+} from '@src/editors/data/constants/problem';
+import ProblemTypeSelect from './content/ProblemTypeSelect';
+import Preview from './content/Preview';
+import AdvanceTypeSelect from './content/AdvanceTypeSelect';
+import SelectTypeWrapper from './SelectTypeWrapper';
+import * as hooks from './hooks';
 
 interface Props {
   onClose: (() => void) | null;

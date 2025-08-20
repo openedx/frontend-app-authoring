@@ -1,9 +1,11 @@
 import React from 'react';
-import { screen, initializeMocks } from '../../../testUtils';
-import editorRender from '../../editorTestRender';
-import { initializeStore } from '../../data/redux';
+import { screen, initializeMocks } from '@src/testUtils';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { thunkActions } from '@src/editors/data/redux';
+
 import ProblemEditor from './index';
 import messages from './messages';
+
 // Mock child components for easy selection
 jest.mock('./components/SelectTypeModal', () => function mockSelectTypeModal(props: any) {
   return <div>SelectTypeModal {props.onClose && 'withOnClose'}</div>;
@@ -11,18 +13,10 @@ jest.mock('./components/SelectTypeModal', () => function mockSelectTypeModal(pro
 jest.mock('./components/EditProblemView', () => function mockEditProblemView(props: any) {
   return <div>EditProblemView {props.onClose && 'withOnClose'} {props.returnFunction && 'withReturnFunction'}</div>;
 });
-
-jest.mock('../../data/redux', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../data/redux'),
-  thunkActions: {
-    ...jest.requireActual('../../data/redux').thunkActions,
-    problem: {
-      ...jest.requireActual('../../data/redux').thunkActions.problem,
-      initializeProblem: jest.fn(() => () => Promise.resolve()),
-    },
-  },
-}));
+// Mock the initializeProblem method:
+jest.spyOn(thunkActions.problem, 'initializeProblem').mockImplementation(
+  () => () => Promise.resolve(),
+);
 
 describe('ProblemEditor', () => {
   const baseProps = {
@@ -31,76 +25,67 @@ describe('ProblemEditor', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    initializeMocks();
   });
 
   it('renders Spinner when blockFinished is false', () => {
-    const initialState = {
-      app: { shouldCreateBlock: false },
-      problem: { problemType: 'standard' },
+    const initialState: PartialEditorState = {
+      app: {
+        blockId: 'problem1',
+        blockType: 'problem',
+      },
+      problem: { problemType: 'multiplechoiceresponse' },
       requests: {
-        fetchBlock: { status: 'completed' },
-        fetchAdvancedSettings: { status: 'pending' },
-
+        fetchBlock: { status: 'pending' },
+        fetchAdvancedSettings: { status: 'completed' },
       },
     };
-    initializeMocks({
-      initializeStore,
-      initialState,
-    });
 
-    const { container } = editorRender(<ProblemEditor {...baseProps} />, { initialState });
-    const spinner = container.querySelector('.pgn__spinner');
-    expect(spinner).toBeInTheDocument();
-    expect(spinner).toHaveAttribute('screenreadertext', 'Loading Problem Editor');
+    editorRender(<ProblemEditor {...baseProps} />, { initialState });
+    const spinnerText = screen.getByText('Loading Problem Editor');
+    expect(spinnerText.parentElement).toHaveClass('pgn__spinner');
   });
 
   it('renders Spinner when advancedSettingsFinished is false', () => {
-    const initialState = {
-      app: { shouldCreateBlock: false },
+    const initialState: PartialEditorState = {
+      app: {
+        blockId: 'problem1',
+        blockType: 'problem',
+      },
       problem: { problemType: null },
       requests: {
         fetchBlock: { status: 'pending' },
         fetchAdvancedSettings: { status: 'completed' },
       },
     };
-    initializeMocks({
-      initializeStore,
-      initialState,
-    });
 
-    const { container } = editorRender(<ProblemEditor {...baseProps} />, { initialState });
-    const spinner = container.querySelector('.pgn__spinner');
-    expect(spinner).toBeInTheDocument();
-    expect(spinner).toHaveAttribute('screenreadertext', 'Loading Problem Editor');
+    editorRender(<ProblemEditor {...baseProps} />, { initialState });
+    const spinnerText = screen.getByText('Loading Problem Editor');
+    expect(spinnerText.parentElement).toHaveClass('pgn__spinner');
   });
 
   it('renders block failed message when blockFailed is true', () => {
-    const initialState = {
+    const initialState: PartialEditorState = {
       app: {
-        blockId: '',
-        blockType: true,
+        blockId: 'problem1',
+        blockType: 'problem',
       },
-      problem: { problemType: 'standard' },
+      problem: { problemType: 'multiplechoiceresponse' },
       requests: {
         fetchBlock: { status: 'failed' },
         fetchAdvancedSettings: { status: 'completed' },
       },
     };
 
-    initializeMocks({
-      initializeStore,
-      initialState,
-    });
     editorRender(<ProblemEditor {...baseProps} />, { initialState });
     expect(screen.getByText(messages.blockFailed.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders SelectTypeModal when problemType is null', () => {
-    const initialState = {
+    const initialState: PartialEditorState = {
       app: {
-        blockId: '',
-        blockType: true,
+        blockId: 'problem1',
+        blockType: 'problem',
       },
       problem: { problemType: null },
       requests: {
@@ -109,19 +94,15 @@ describe('ProblemEditor', () => {
 
       },
     };
-    initializeMocks({
-      initializeStore,
-      initialState,
-    });
     editorRender(<ProblemEditor {...baseProps} />, { initialState });
     expect(screen.getByText(/SelectTypeModal/)).toBeInTheDocument();
   });
 
   it('renders EditProblemView when problemType is not null', () => {
-    const initialState = {
+    const initialState: PartialEditorState = {
       app: {
-        blockId: '',
-        blockType: true,
+        blockId: 'problem1',
+        blockType: 'problem',
       },
       problem: { problemType: 'advanced' },
       requests: {
@@ -130,10 +111,6 @@ describe('ProblemEditor', () => {
       },
 
     };
-    initializeMocks({
-      initializeStore,
-      initialState,
-    });
 
     editorRender(<ProblemEditor {...baseProps} />, { initialState });
     expect(screen.getByText(/EditProblemView/)).toBeInTheDocument();

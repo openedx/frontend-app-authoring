@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Button, Truncate } from '@openedx/paragon';
+import { Button } from '@openedx/paragon';
 
 interface TitleLinkProps {
   title: string;
@@ -22,7 +22,9 @@ const TitleLink = ({
     to={titleLink}
   >
     {prefixIcon}
-    <Truncate.Deprecated lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate.Deprecated>
+    <span className="truncate-1-line">
+      {title}
+    </span>
   </Button>
 );
 
