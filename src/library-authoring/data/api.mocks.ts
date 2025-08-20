@@ -516,6 +516,13 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.subsectionId:
     case mockGetContainerMetadata.subsectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.subsectionData);
+    case mockGetContainerMetadata.unitIdPublished:
+    case mockGetContainerMetadata.sectionIdPublished:
+    case mockGetContainerMetadata.subsectionIdPublished:
+      return Promise.resolve({
+        ...mockGetContainerMetadata.containerData,
+        hasUnpublishedChanges: false,
+      });
     default:
       if (containerId.startsWith('lct:org1:Demo_course_generated:')) {
         const lastPart = containerId.split(':').pop();
@@ -533,8 +540,11 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
 }
 mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.unitIdEmpty = 'lct:org:lib:unit:test-unit-empty';
+mockGetContainerMetadata.unitIdPublished = 'lct:org:lib:unit:test-unit-published';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
+mockGetContainerMetadata.sectionIdPublished = 'lct:org:lib:section:test-section-published';
 mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.subsectionIdPublished = 'lb:org1:Demo_course:subsection:subsection-published';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
 mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
 mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
@@ -652,6 +662,86 @@ mockGetContainerChildren.childTemplate = {
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerChildren.applyMock = () => {
   jest.spyOn(api, 'getLibraryContainerChildren').mockImplementation(mockGetContainerChildren);
+};
+
+/**
+ * Mock for `getLibraryContainerHierarchy()`
+ *
+ * This mock returns a fixed response for the given container ID.
+ */
+export async function mockGetContainerHierarchy(containerId: string): Promise<api.ContainerHierarchyData> {
+  const getChildren = (childId: string, childCount: number) => {
+    let blockType = 'html';
+    let name = 'text';
+    let typeNamespace = 'lb';
+    if (childId.includes('unit')) {
+      blockType = 'unit';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('subsection')) {
+      blockType = 'subsection';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('section')) {
+      blockType = 'section';
+      name = blockType;
+      typeNamespace = 'lct';
+    }
+
+    let numChildren = childCount;
+    if (
+      // The selected container only shows itself, no other items.
+      childId === containerId
+      || [
+        mockGetContainerHierarchy.unitIdOneChild,
+        mockGetContainerHierarchy.subsectionIdOneChild,
+        mockGetContainerHierarchy.sectionIdOneChild,
+      ].includes(containerId)
+    ) {
+      numChildren = 1;
+    } else if ([
+      mockGetContainerMetadata.unitIdEmpty,
+      mockGetContainerMetadata.sectionIdEmpty,
+      mockGetContainerMetadata.subsectionIdEmpty,
+    ].includes(containerId)) {
+      numChildren = 0;
+    }
+    return Array(numChildren).fill(mockGetContainerChildren.childTemplate).map(
+      (child, idx) => (
+        {
+          ...child,
+          id: (
+            childId === containerId
+              ? childId
+              // Generate a unique ID when multiple child blocks
+              : `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`
+          ),
+          displayName: `${name} block ${idx}`,
+          publishedDisplayName: `${name} block published ${idx}`,
+          hasUnpublishedChanges: true,
+        }
+      ),
+    );
+  };
+
+  return Promise.resolve(
+    {
+      objectKey: containerId,
+      sections: getChildren(mockGetContainerMetadata.sectionId, 2),
+      subsections: getChildren(mockGetContainerMetadata.subsectionId, 3),
+      units: getChildren(mockGetContainerMetadata.unitId, 4),
+      components: getChildren('lb:org1:Demo_course_generated:text:text-0', 5),
+    },
+  );
+}
+
+mockGetContainerHierarchy.unitIdOneChild = 'lct:org:lib:unit:test-unit-one';
+mockGetContainerHierarchy.sectionIdOneChild = 'lct:org:lib:section:test-section-one';
+mockGetContainerHierarchy.subsectionIdOneChild = 'lb:org1:Demo_course:subsection:subsection-one';
+
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerHierarchy.applyMock = () => {
+  jest.spyOn(api, 'getLibraryContainerHierarchy').mockImplementation(mockGetContainerHierarchy);
 };
 
 /**

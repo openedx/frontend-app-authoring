@@ -79,6 +79,10 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.container(containerId),
     'children',
   ],
+  containerHierarchy: (containerId: string) => [
+    ...libraryAuthoringQueryKeys.container(containerId),
+    'hierarchy',
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -727,6 +731,17 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 );
 
 /**
+ * Get the metadata and hierarchy for a container in a library
+ */
+export const useContainerHierarchy = (containerId?: string) => (
+  useQuery({
+    enabled: !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId!),
+    queryFn: () => api.getLibraryContainerHierarchy(containerId!),
+  })
+);
+
+/**
  * If you work with `useContentFromSearchIndex`, you can use this
  * function to get the query key, usually to invalidate the query.
  */
@@ -771,9 +786,18 @@ export const useAddItemsToContainer = (containerId?: string) => {
       // container list.
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
 
       const containerType = getBlockType(containerId);
+      if (['subsection', 'section'].includes(containerType)) {
+        // If the container is a subsection or section, we invalidate the
+        // children query to update the hierarchy.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
+        });
+      }
+
       if (containerType === 'section') {
         // We invalidate the search query of the each itemId if the container is a section.
         // This because the subsection page calls this query individually.
@@ -833,13 +857,13 @@ export const useUpdateContainerChildren = (containerId?: string) => {
 export const useRemoveContainerChildren = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (usageKeys: string[]) => {
+    mutationFn: async (itemIds: string[]) => {
       if (!containerId) {
         return undefined;
       }
-      return api.removeLibraryContainerChildren(containerId, usageKeys);
+      return api.removeLibraryContainerChildren(containerId, itemIds);
     },
-    onSettled: () => {
+    onSettled: (_data, _error, variables) => {
       if (!containerId) {
         return;
       }
@@ -848,6 +872,15 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+
+      const containerType = getBlockType(containerId);
+      if (['subsection', 'section'].includes(containerType)) {
+        // If the container is a subsection or section, we invalidate the
+        // children query to update the hierarchy.
+        variables.forEach((itemId) => {
+          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
+        });
+      }
     },
   });
 };
@@ -865,6 +898,7 @@ export const usePublishContainer = (containerId: string) => {
       // The child components/xblocks could and even the container itself could appear in many different collections
       // or other containers, so it's best to just invalidate everything.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibraryContent(libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
       queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });

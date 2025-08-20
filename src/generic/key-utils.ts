@@ -70,4 +70,9 @@ export enum ContainerType {
   Chapter = 'chapter',
   Sequential = 'sequential',
   Vertical = 'vertical',
+  /**
+   * Components are not strictly a container type, but we add this here for simplicity when rendering the container
+   * hierarchy.
+   */
+  Components = 'components',
 }
