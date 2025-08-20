@@ -68,7 +68,7 @@ export default {
   rerunCreatorStatus: true,
   showNewLibraryButton: true,
   showNewLibraryV2Button: true,
-  splitStudioHome: false,
+  // splitStudioHome: false,
   studioName: 'Studio',
   studioShortName: 'Studio',
   studioRequestEmail: 'request@email.com',

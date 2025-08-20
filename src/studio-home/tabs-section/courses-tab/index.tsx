@@ -69,7 +69,7 @@ const CoursesTab: React.FC<Props> = ({
     COURSE_CREATOR_STATES.denied,
     COURSE_CREATOR_STATES.pending,
     COURSE_CREATOR_STATES.unrequested,
-  ].includes(courseCreatorStatus);
+  ].includes(courseCreatorStatus as any);
   const locationValue = location.search ?? '';
 
   const handlePageSelected = (page) => {
@@ -191,7 +191,7 @@ const CoursesTab: React.FC<Props> = ({
         )}
         {showCollapsible && (
           <CollapsibleStateWithAction
-            state={courseCreatorStatus}
+            state={courseCreatorStatus!}
             className="mt-3"
           />
         )}

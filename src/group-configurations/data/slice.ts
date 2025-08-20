@@ -9,7 +9,7 @@ const slice = createSlice({
     savingStatus: '',
     errorMessage: '',
     loadingStatus: RequestStatus.IN_PROGRESS,
-    groupConfigurations: {},
+    groupConfigurations: {} as Record<string, any>,
   },
   reducers: {
     fetchGroupConfigurations: (state, { payload }) => {

@@ -33,7 +33,7 @@ export function fetchGroupConfigurationsQuery(courseId) {
       dispatch(fetchGroupConfigurations({ groupConfigurations }));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response && error.response.status === 403) {
+      if ((error as any).response && (error as any).response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));

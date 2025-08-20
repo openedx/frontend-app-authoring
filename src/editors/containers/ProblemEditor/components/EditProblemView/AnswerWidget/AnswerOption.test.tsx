@@ -6,23 +6,6 @@ import { selectors } from '../../../../../data/redux';
 
 const { problem } = selectors;
 
-const initialState = {
-  problem: {
-    problemType: 'multiplechoiceresponse', // No problem type selected by default
-    // ... other problem-related state
-  },
-  app: {
-    images: {}, // No images loaded by default; use {} if it's an object keyed by IDs, or [] if it's a list
-    isLibrary: false, // Default to false; not in library context initially
-    learningContextId: 'course+org+run', // No context ID by default
-    blockId: 'block-id', // No block ID initially
-    // ... other app-related state
-  },
-  // ... any other top-level state slices
-};
-
-export default initialState;
-
 jest.mock('../../../../../data/redux', () => ({
   __esModule: true,
   default: jest.fn(),
@@ -86,7 +69,7 @@ describe('AnswerOption', () => {
       isFeedbackVisible: false,
       toggleFeedback: jest.fn(),
     });
-    initializeMocks({ initialState });
+    initializeMocks();
   });
 
   test('renders correct option with feedback', () => {

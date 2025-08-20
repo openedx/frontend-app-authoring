@@ -3,9 +3,9 @@ import React from 'react';
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import {
   render, screen, fireEvent, initializeMocks,
-} from '../../../../../../testUtils';
+} from '@src/testUtils';
+import { actions } from '@src/editors/data/redux';
 import AnswersContainer from './AnswersContainer';
-import { actions } from '../../../../../data/redux';
 
 const { useAnswerContainer } = require('./hooks');
 
@@ -14,12 +14,6 @@ const answers = [
   { id: 'a1', isAnswerRange: false },
   { id: 'a2', isAnswerRange: false },
 ];
-
-const initialState = {
-  problem: {
-    answers,
-  },
-};
 
 // Mock actions module
 jest.mock('../../../../../data/redux', () => ({
@@ -57,7 +51,7 @@ describe('AnswersContainer', () => {
   };
 
   beforeEach(() => {
-    initializeMocks({ initialState });
+    initializeMocks();
     jest.clearAllMocks();
   });
 
