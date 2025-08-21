@@ -17,8 +17,8 @@ import { ToastContext } from '@src/generic/toast-context';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useContainer, useContainerHierarchy, usePublishContainer } from '../data/apiHooks';
-import ContainerHierarchy from './ContainerHierarchy';
 import messages from './messages';
+import { ContainerHierarchy } from '../hierarchy/ContainerHierarchy';
 
 type ContainerPublisherProps = {
   close: () => void;

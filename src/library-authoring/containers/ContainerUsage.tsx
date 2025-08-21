@@ -1,6 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import ContainerHierarchy from './ContainerHierarchy';
+import { ContainerHierarchy } from '../hierarchy/ContainerHierarchy';
 
 const ContainerUsage = () => {
   const intl = useIntl();
