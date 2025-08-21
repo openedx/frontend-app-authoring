@@ -224,7 +224,7 @@ describe('Videos page', () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         const addThumbnailButton = screen.queryByTestId('video-thumbnail-mOckID5');
 
-        expect(addThumbnailButton).toBeNull();
+        expect(addThumbnailButton).toBeVisible();
       });
       describe('with videos with backend status in_progress', () => {
         it('should render video with in progress status', async () => {
