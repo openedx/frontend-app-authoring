@@ -100,7 +100,7 @@ const section: XBlock = {
 
 const onEditSubectionSubmit = jest.fn();
 
-const renderComponent = (props?: object, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SubsectionCard
     section={section}
     subsection={subsection}
@@ -125,7 +125,7 @@ const renderComponent = (props?: object, entry = '/') => render(
     <span>children</span>
   </SubsectionCard>,
   {
-    path: '/',
+    path: '/course/:courseId',
     params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
@@ -281,7 +281,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('check extended subsection when URL "show" param in subsection', async () => {
-    renderComponent(undefined, `?show=${unit.id}`);
+    renderComponent(undefined, `/course/:courseId?show=${unit.id}`);
 
     const cardUnits = await screen.findByTestId('subsection-card__units');
     const newUnitButton = await screen.findByRole('button', { name: 'New unit' });
@@ -291,7 +291,7 @@ describe('<SubsectionCard />', () => {
 
   it('check not extended subsection when URL "show" param not in subsection', async () => {
     const randomId = 'random-id';
-    renderComponent(undefined, `?show=${randomId}`);
+    renderComponent(undefined, `/course/:courseId?show=${randomId}`);
 
     const cardUnits = screen.queryByTestId('subsection-card__units');
     const newUnitButton = screen.queryByRole('button', { name: 'New unit' });

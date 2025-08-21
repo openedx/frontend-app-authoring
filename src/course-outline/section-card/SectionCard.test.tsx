@@ -76,7 +76,7 @@ const section = {
 
 const onEditSectionSubmit = jest.fn();
 
-const renderComponent = (props?: object, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SectionCard
     section={section}
     index={1}
@@ -100,7 +100,7 @@ const renderComponent = (props?: object, entry = '/') => render(
     <span>children</span>
   </SectionCard>,
   {
-    path: '/',
+    path: '/course/:courseId',
     params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
@@ -185,7 +185,7 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${subsection.id}`);
+    renderComponent(collapsedSections, `/course/:courseId?show=${subsection.id}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -197,7 +197,7 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${unit.id}`);
+    renderComponent(collapsedSections, `/course/:courseId?show=${unit.id}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -210,7 +210,7 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${randomId}`);
+    renderComponent(collapsedSections, `/course/:courseId?show=${randomId}`);
 
     const cardSubsections = screen.queryByTestId('section-card__subsections');
     const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
