@@ -27,7 +27,7 @@ import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
-import { invalidateLinksQuery } from '@src/course-libraries/utils';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 
 interface SectionCardProps {

@@ -1,4 +1,5 @@
 import {
+  type QueryClient,
   useQuery,
 } from '@tanstack/react-query';
 import { getEntityLinksSummaryByDownstreamContext, getEntityLinks } from './api';
@@ -70,3 +71,12 @@ export const useEntityLinksSummaryByDownstreamContext = (courseId?: string) => (
     enabled: courseId !== undefined,
   })
 );
+
+/**
+ * Ivalidates the downstream links query for a course
+ */
+export const invalidateLinksQuery = (queryClient: QueryClient, courseId: string) => {
+  queryClient.invalidateQueries({
+    queryKey: courseLibrariesQueryKeys.courseLibraries(courseId),
+  });
+};

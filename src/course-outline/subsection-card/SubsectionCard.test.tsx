@@ -7,7 +7,6 @@ import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 
 let store;
-const mockPathname = '/foo-bar';
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = jest.fn();
 
@@ -20,16 +19,6 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
-  }),
-}));
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-  useParams: () => ({
-    courseId: '5',
   }),
 }));
 
@@ -137,6 +126,7 @@ const renderComponent = (props?: object, entry = '/') => render(
   </SubsectionCard>,
   {
     path: '/',
+    params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },

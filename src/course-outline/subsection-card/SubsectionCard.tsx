@@ -28,7 +28,7 @@ import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
-import { invalidateLinksQuery } from '@src/course-libraries/utils';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 
 interface SubsectionCardProps {

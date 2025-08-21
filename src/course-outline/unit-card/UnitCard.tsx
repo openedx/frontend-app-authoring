@@ -23,8 +23,8 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
-import { invalidateLinksQuery } from '@src/course-libraries/utils';
 
 interface UnitCardProps {
   unit: XBlock;

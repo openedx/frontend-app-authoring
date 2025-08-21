@@ -4,7 +4,6 @@ import {
 import { XBlock } from '@src/data/types';
 import SectionCard from './SectionCard';
 
-const mockPathname = '/foo-bar';
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
@@ -14,16 +13,6 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
-  }),
-}));
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-  useParams: () => ({
-    courseId: '5',
   }),
 }));
 
@@ -112,6 +101,7 @@ const renderComponent = (props?: object, entry = '/') => render(
   </SectionCard>,
   {
     path: '/',
+    params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },
