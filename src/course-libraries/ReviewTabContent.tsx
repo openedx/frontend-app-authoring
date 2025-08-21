@@ -19,7 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
-import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
+import { invalidateLinksQuery, useEntityLinks } from './data/apiHooks';
 import {
   SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
 } from '../search-manager';
@@ -189,7 +189,7 @@ const ItemReviewList = ({
 
   const reloadLinks = useCallback((usageKey: string) => {
     const courseKey = outOfSyncItemsByKey[usageKey].downstreamContextKey;
-    queryClient.invalidateQueries({ queryKey: courseLibrariesQueryKeys.courseLibraries(courseKey) });
+    invalidateLinksQuery(queryClient, courseKey);
   }, [outOfSyncItemsByKey]);
 
   const postChange = (accept: boolean) => {

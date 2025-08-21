@@ -92,6 +92,10 @@ const renderComponent = (props?: object) => render(
     }}
     {...props}
   />,
+  {
+    path: '/course/:courseId',
+    params: { courseId: '5' },
+  },
 );
 
 describe('<UnitCard />', () => {

@@ -7,7 +7,8 @@ import {
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
@@ -22,6 +23,7 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 
 interface UnitCardProps {
@@ -74,6 +76,8 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
+  const { courseId } = useParams();
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -155,7 +159,10 @@ const UnitCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
-  }, [dispatch, section]);
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, queryClient, courseId]);
 
   const titleComponent = (
     <TitleLink

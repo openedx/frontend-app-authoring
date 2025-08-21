@@ -1,13 +1,14 @@
 import {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Bubble, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
 import { RequestStatus } from '@src/data/constants';
@@ -16,14 +17,17 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -79,6 +83,8 @@ const SectionCard = ({
     openAddLibrarySubsectionModal,
     closeAddLibrarySubsectionModal,
   ] = useToggle(false);
+  const { courseId } = useParams();
+  const queryClient = useQueryClient();
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -107,6 +113,7 @@ const SectionCard = ({
   };
   const [isExpanded, setIsExpanded] = useState(containsSearchResult() || isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'section';
 
   useEffect(() => {
@@ -125,6 +132,19 @@ const SectionCard = ({
     isHeaderVisible = true,
     upstreamInfo,
   } = section;
+
+  const blockSyncData = useMemo(() => {
+    if (!upstreamInfo?.readyToSync) {
+      return undefined;
+    }
+    return {
+      displayName,
+      downstreamBlockId: id,
+      upstreamBlockId: upstreamInfo.upstreamRef,
+      upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isContainer: true,
+    };
+  }, [upstreamInfo]);
 
   useEffect(() => {
     if (activeId === id && isExpanded) {
@@ -148,6 +168,13 @@ const SectionCard = ({
     // if it contains the result, in order to scroll to it
     setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
+
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, courseId, queryClient]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };
@@ -267,6 +294,7 @@ const SectionCard = ({
                 onClickDelete={onOpenDeleteModal}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
+                onClickSync={openSyncModal}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -275,6 +303,7 @@ const SectionCard = ({
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}
+                readyToSync={upstreamInfo?.readyToSync}
               />
             )}
             <div className="section-card__content" data-testid="section-card__content">
@@ -330,6 +359,14 @@ const SectionCard = ({
           visibleTabs={[ContentType.subsections]}
         />
       </StandardModal>
+      {blockSyncData && (
+        <PreviewLibraryXBlockChanges
+          blockData={blockSyncData}
+          isModalOpen={isSyncModalOpen}
+          closeModal={closeSyncModal}
+          postChange={handleOnPostChangeSync}
+        />
+      )}
     </>
   );
 };

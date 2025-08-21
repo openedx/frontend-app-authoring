@@ -1,10 +1,11 @@
 import React, {
-  useContext, useEffect, useState, useRef, useCallback, ReactNode,
+  useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StandardModal, useToggle } from '@openedx/paragon';
+import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
@@ -16,6 +17,7 @@ import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '@src/generic/clipboard';
 import TitleButton from '@src/course-outline/card-header/TitleButton';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
@@ -24,7 +26,9 @@ import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
+import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -86,6 +90,7 @@ const SubsectionCard = ({
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const [
@@ -93,6 +98,8 @@ const SubsectionCard = ({
     openAddLibraryUnitModal,
     closeAddLibraryUnitModal,
   ] = useToggle(false);
+  const { courseId } = useParams();
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -107,6 +114,19 @@ const SubsectionCard = ({
     proctoringExamConfigurationLink,
     upstreamInfo,
   } = subsection;
+
+  const blockSyncData = useMemo(() => {
+    if (!upstreamInfo?.readyToSync) {
+      return undefined;
+    }
+    return {
+      displayName,
+      downstreamBlockId: id,
+      upstreamBlockId: upstreamInfo.upstreamRef,
+      upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isContainer: true,
+    };
+  }, [upstreamInfo]);
 
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
@@ -147,6 +167,13 @@ const SubsectionCard = ({
     dispatch(setCurrentSubsection(subsection));
     dispatch(setCurrentItem(subsection));
   };
+
+  const handleOnPostChangeSync = useCallback(() => {
+    dispatch(fetchCourseSectionQuery([section.id]));
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, queryClient, courseId]);
 
   const handleEditSubmit = (titleValue: string) => {
     if (displayName !== titleValue) {
@@ -269,6 +296,7 @@ const SubsectionCard = ({
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
+                onClickSync={openSyncModal}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -280,6 +308,7 @@ const SubsectionCard = ({
                 proctoringExamConfigurationLink={proctoringExamConfigurationLink}
                 isSequential
                 extraActionsComponent={extraActionsComponent}
+                readyToSync={upstreamInfo?.readyToSync}
               />
               <div className="subsection-card__content item-children" data-testid="subsection-card__content">
                 <XBlockStatus
@@ -332,6 +361,14 @@ const SubsectionCard = ({
           visibleTabs={[ContentType.units]}
         />
       </StandardModal>
+      {blockSyncData && (
+        <PreviewLibraryXBlockChanges
+          blockData={blockSyncData}
+          isModalOpen={isSyncModalOpen}
+          closeModal={closeSyncModal}
+          postChange={handleOnPostChangeSync}
+        />
+      )}
     </>
   );
 };
