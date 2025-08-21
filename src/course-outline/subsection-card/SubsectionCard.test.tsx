@@ -1,20 +1,24 @@
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
-  act, fireEvent, initializeMocks, render, screen, within,
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 
 let store;
-const mockPathname = '/foo-bar';
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
+const mockUseAcceptLibraryBlockChanges = jest.fn();
+const mockUseIgnoreLibraryBlockChanges = jest.fn();
+
+jest.mock('@src/course-unit/data/apiHooks', () => ({
+  useAcceptLibraryBlockChanges: () => ({
+    mutateAsync: mockUseAcceptLibraryBlockChanges,
+  }),
+  useIgnoreLibraryBlockChanges: () => ({
+    mutateAsync: mockUseIgnoreLibraryBlockChanges,
   }),
 }));
 
@@ -66,13 +70,14 @@ const subsection: XBlock = {
     children: [{
       id: unit.id,
     }],
-  },
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:subsection:1',
     versionSynced: 1,
+    errorMessage: null,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const section: XBlock = {
   id: '123',
@@ -85,18 +90,18 @@ const section: XBlock = {
     children: [{
       id: subsection.id,
     }],
-  },
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   actions: {
     draggable: true,
     childAddable: true,
     deletable: true,
     duplicable: true,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const onEditSubectionSubmit = jest.fn();
 
-const renderComponent = (props?: object, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SubsectionCard
     section={section}
     subsection={subsection}
@@ -121,7 +126,8 @@ const renderComponent = (props?: object, entry = '/') => render(
     <span>children</span>
   </SubsectionCard>,
   {
-    path: '/',
+    path: '/course/:courseId',
+    params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },
@@ -276,7 +282,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('check extended subsection when URL "show" param in subsection', async () => {
-    renderComponent(undefined, `?show=${unit.id}`);
+    renderComponent(undefined, `/course/:courseId?show=${unit.id}`);
 
     const cardUnits = await screen.findByTestId('subsection-card__units');
     const newUnitButton = await screen.findByRole('button', { name: 'New unit' });
@@ -286,7 +292,7 @@ describe('<SubsectionCard />', () => {
 
   it('check not extended subsection when URL "show" param not in subsection', async () => {
     const randomId = 'random-id';
-    renderComponent(undefined, `?show=${randomId}`);
+    renderComponent(undefined, `/course/:courseId?show=${randomId}`);
 
     const cardUnits = screen.queryByTestId('subsection-card__units');
     const newUnitButton = screen.queryByRole('button', { name: 'New unit' });
@@ -319,5 +325,52 @@ describe('<SubsectionCard />', () => {
       category: 'vertical',
       libraryContentKey: containerKey,
     });
+  });
+
+  it('should sync subsection changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
+    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+
+    // Click on accept changes
+    const acceptChangesButton = screen.getByText(/accept changes/i);
+    fireEvent.click(acceptChangesButton);
+
+    await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should decline sync subsection changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
+    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+
+    // Click on ignore changes
+    const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
+    fireEvent.click(ignoreChangesButton);
+
+    // Should open the confirmation modal
+    expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
+
+    // Click on ignore button
+    const ignoreButton = screen.getByRole('button', { name: /ignore/i });
+    fireEvent.click(ignoreButton);
+
+    await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
   });
 });
