@@ -1,10 +1,10 @@
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import { handleResponseErrors } from '../../generic/saving-error-alert';
+} from '@src/generic/processing-notification/data/slice';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import {
   getGroupConfigurations,
   createContentGroup,
