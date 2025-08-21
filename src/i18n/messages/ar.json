@@ -1,4 +1,21 @@
 {
+    "calendarTitle": "التقويم",
+    "searchPlaceholder": "ابحث عن الأحداث...",
+    "all": "جميع الأحداث",
+    "meeting": "الاجتماعات",
+    "work": "العمل",
+    "month": "شهر",
+    "week": "أسبوع",
+    "day": "يوم",
+    "list": "قائمة",
+    "prev": "السابق",
+    "next": "التالي",
+    "today": "اليوم",
+    "calendar.error.eventsLoad": "فشل تحميل الأحداث. حاول مرة أخرى لاحقًا.",
+    "calendar.error.eventNavigation": "فشل الانتقال إلى تاريخ الحدث.",
+    "calendar.error.navigation": "فشل التنقل في التقويم.",
+    "calendar.error.viewChange": "فشل تغيير عرض التقويم.",
+    "calendar.error.close": "إغلاق",
     "authoring.alert.error.connection": "واجهنا خطأ تقنيًا أثناء تحميل هذه الصفحة. قد تكون هذه مشكلة عارضة، لذا يرجى المحاولة مجددًا خلال بضع دقائق. إن استمرت المشكلة فيرجى الذهاب إلى {support_link} للحصول على المساعدة.",
     "authoring.alert.support.text": "صفحة الدعم",
     "course-authoring.import.page.title": "{العنوان} | {اسم الدورة} | {siteName}",
@@ -1820,7 +1837,6 @@
     "authoring.editorfooter.savebutton.ariaLabel": "حفظ التغييرات والعودة إلى سياق التعلم",
     "authoring.videoEditor.spinnerScreenReaderText": "جارٍ التحميل",
     "authoring.videoEditor.replaceVideoButtonLabel": "استبدال الفيديو",
-
     "sidebar.dashboard.title": "لوحة التحكم",
     "sidebar.create-new-course.title": "إنشاء دورة جديدة",
     "sidebar.my-courses.title": "دوراتي",
@@ -1831,6 +1847,5 @@
     "sidebar.titan-ai.title": "مساعد ذكاء صناعي",
     "sidebar.shared-resources.title": "الموارد المشتركة",
     "sidebar.taxonomies.title": "التصنيفات",
-
     "dashboard.page.title": "لوحة التحكم"
 }

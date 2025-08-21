@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -6,27 +6,25 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import allLocales from "@fullcalendar/core/locales-all";
 import { useCalendarContext } from "../context/CalendarContext";
-import { useTranslation } from "react-i18next";
+import { getLocale } from "@edx/frontend-platform/i18n";
 
 const CalendarView = () => {
-  const { filteredEvents, calendarRef, setCurrentDateTitle } = useCalendarContext();
-  const { i18n } = useTranslation();
-
-
+  const { filteredEvents, setCurrentDateTitle, currentDate, currentView } = useCalendarContext();
 
   return (
     <div className="calendar-container">
       <FullCalendar
-        ref={calendarRef}
+        key={`${currentView}-${currentDate.getTime()}`}
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={false}                
+        initialView={currentView}
+        headerToolbar={false}
         events={filteredEvents}
         locales={allLocales}
-        locale={i18n.language}
-        height="75vh"
+        locale={getLocale()}
+        height="100vh"
         selectable={true}
         datesSet={(arg) => setCurrentDateTitle(arg.view.title)}
+        initialDate={currentDate}
       />
     </div>
   );

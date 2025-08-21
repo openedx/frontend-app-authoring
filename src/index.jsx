@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
 /* eslint-disable linebreak-style */
-import "./calendar/assets/styles/main.scss";
-
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
@@ -16,8 +14,6 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
-
-import "./calendar/i18n/i18n";
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
