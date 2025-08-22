@@ -66,6 +66,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.courseUpdatesHeader',
     defaultMessage: 'Course updates',
   },
+  updateLinkError: {
+    id: 'course-authoring.course-optimizer.updateLinkError',
+    defaultMessage: 'Link couldn\'t be updated.',
+  },
+  updateLinksError: {
+    id: 'course-authoring.course-optimizer.updateLinksError',
+    defaultMessage: 'Some links couldn\'t be updated.',
+  },
 });
 
 export default messages;

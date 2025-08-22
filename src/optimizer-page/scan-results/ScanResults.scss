@@ -105,6 +105,10 @@
     text-decoration: none;
   }
 
+  a.broken-link {
+    text-wrap: auto;
+  }
+
   .links-container {
     display: flex;
     gap: 1.5rem;
@@ -242,6 +246,7 @@
   height: 10px;
   align-self: center;
   color: #8F8F8F;
+  margin: 0 8px;
 }
 
 .scan-results-active-filters-container {
@@ -335,7 +340,9 @@
   margin: 0;
 }
 
-.scan-course-btn:focus::before {
+.scan-course-btn:focus::before,
+.update-all-course-btn:focus::before,
+.update-link-btn:focus::before {
   border: none !important;
 }
 
@@ -356,4 +363,10 @@
 .icon-container {
   margin-left: auto;
   margin-right: 10px;
+}
+
+.updated-link-text {
+  font-weight: 500;
+  font-size: 18px;
+  gap: 8px;
 }

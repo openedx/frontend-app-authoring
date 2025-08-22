@@ -207,9 +207,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
       });
     });
 
@@ -229,9 +229,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
+        expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
       });
     });
 
@@ -252,9 +252,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
       // Click the manual links checkbox again to clear the filter
@@ -262,9 +262,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that all links are displayed after clearing the filter
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 
@@ -287,9 +287,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
       });
     });
 
@@ -313,9 +313,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 
@@ -337,9 +337,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that both links are displayed
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
       // Click on the "Broken" chip to remove the broken filter (should leave only manual)
@@ -348,9 +348,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that only manual links are displayed
       await waitFor(() => {
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
       // Click the "Clear filters" button
@@ -359,9 +359,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that all links are displayed after clearing filters
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 

@@ -3,6 +3,7 @@ import {
   useState,
   useMemo,
   FC,
+  useCallback,
 } from 'react';
 import {
   Card,
@@ -10,19 +11,26 @@ import {
   Button,
   useCheckboxSetValues,
   useToggle,
+  StatefulButton,
+  Spinner,
 } from '@openedx/paragon';
 import {
   ArrowDropDown,
   CloseSmall,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useDispatch } from 'react-redux';
 import messages from './messages';
 import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import { LinkCheckResult } from '../types';
-import { countBrokenLinks } from '../utils';
+import { countBrokenLinks, isDataEmpty } from '../utils';
 import FilterModal from './filterModal';
 import { useWaffleFlags } from '../../data/apiHooks';
+import {
+  updateAllPreviousRunLinks, updateSinglePreviousRunLink, fetchRerunLinkUpdateStatus,
+} from '../data/thunks';
+import { STATEFUL_BUTTON_STATES } from '../../constants';
 
 const InfoCard: FC<{ text: string }> = ({ text }) => (
   <Card className="mt-4">
@@ -37,22 +45,18 @@ const InfoCard: FC<{ text: string }> = ({ text }) => (
 
 interface Props {
   data: LinkCheckResult | null;
+  courseId: string;
+  onErrorStateChange?: (errorMessage: string | null) => void;
 }
 
-const isDataEmpty = (data: LinkCheckResult | null): boolean => {
-  if (!data) {
-    return true;
-  }
-  const { sections, courseUpdates, customPages } = data;
-  return (!sections || sections.length === 0)
-    && (!courseUpdates || courseUpdates.length === 0)
-    && (!customPages || customPages.length === 0);
-};
-
-const ScanResults: FC<Props> = ({ data }) => {
+const ScanResults: FC<Props> = ({ data, courseId, onErrorStateChange }) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags();
+  const dispatch = useDispatch();
   const [isOpen, open, close] = useToggle(false);
+  const [updatedLinkIds, setUpdatedLinkIds] = useState<string[]>([]);
+  const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
+  const [, setUpdateAllCompleted] = useState(false);
   const initialFilters = {
     brokenLinks: false,
     lockedLinks: false,
@@ -172,9 +176,194 @@ const ScanResults: FC<Props> = ({ data }) => {
     setPrevRunOpenStates(allSections ? allSections.map(() => false) : []);
   }, [allSections]);
 
+  // Reset update all completion state when data changes (new scan results)
+  useEffect(() => {
+    setUpdateAllCompleted(false);
+  }, [data]);
+
+  // Helper function to determine content type based on section context
+  const getContentType = useCallback((sectionId: string): string => {
+    if (sectionId === 'course-updates') { return 'course_updates'; }
+    if (sectionId === 'custom-pages') { return 'custom_pages'; }
+    return 'sections'; // Default for regular course sections
+  }, []);
+
+  // Get update all button state
+  const getUpdateAllButtonState = () => {
+    if (isUpdateAllInProgress) {
+      return STATEFUL_BUTTON_STATES.pending;
+    }
+    return STATEFUL_BUTTON_STATES.default;
+  };
+
+  // Disable the button if all links have been successfully updated
+  const areAllLinksUpdated = useMemo(() => {
+    if (!hasPreviousRunLinks) { return false; }
+
+    const checkBlockUpdated = (block) => {
+      const noPreviousLinks = !block.previousRunLinks?.length;
+      const allUpdated = block.previousRunLinks?.every(({ isUpdated }) => isUpdated) ?? true;
+      return noPreviousLinks || allUpdated;
+    };
+
+    const checkUnitUpdated = (unit) => unit.blocks.every(checkBlockUpdated);
+    const checkSubsectionUpdated = (subsection) => subsection.units.every(checkUnitUpdated);
+    const checkSectionUpdated = (section) => section.subsections.every(checkSubsectionUpdated);
+
+    const allLinksUpdatedInAPI = allSections.every(checkSectionUpdated);
+
+    if (allLinksUpdatedInAPI) { return true; }
+
+    const allPreviousRunLinks: string[] = [];
+    allSections.forEach(section => {
+      section.subsections.forEach(subsection => {
+        subsection.units.forEach(unit => {
+          unit.blocks.forEach(block => {
+            if (block.previousRunLinks) {
+              block.previousRunLinks.forEach(({ originalLink }) => {
+                allPreviousRunLinks.push(`${block.id}:${originalLink}`);
+              });
+            }
+          });
+        });
+      });
+    });
+
+    const hasLinks = allPreviousRunLinks.length > 0;
+    const allTrackedAsUpdated = allPreviousRunLinks.every(linkId => updatedLinkIds.includes(linkId));
+    return hasLinks && allTrackedAsUpdated;
+  }, [allSections, hasPreviousRunLinks, updatedLinkIds]);
+
+  // Handler for updating a single previous run link
+  const handleUpdateLink = useCallback(async (link: string, blockId: string, sectionId?: string): Promise<boolean> => {
+    try {
+      const contentType = getContentType(sectionId || '');
+      await dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
+      const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
+
+      if (updateStatusResponse && updateStatusResponse.status === 'Succeeded') {
+        // Check if this specific link was successfully updated
+        const isUpdated = updateStatusResponse.results && updateStatusResponse.results.some(
+          (result: any) => result.id === blockId && result.success === true,
+        );
+
+        if (isUpdated) {
+          // Use a unique identifier to track updated links for UI updates
+          const uniqueId = `${blockId}:${link}`;
+          setUpdatedLinkIds(prev => [...prev.filter(id => id !== uniqueId), uniqueId]);
+          if (onErrorStateChange) {
+            onErrorStateChange(null);
+          }
+          return true;
+        }
+        if (onErrorStateChange) {
+          onErrorStateChange(intl.formatMessage(messages.updateLinkError));
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return false;
+      }
+    } catch (error) {
+      if (onErrorStateChange) {
+        onErrorStateChange(intl.formatMessage(messages.updateLinkError));
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return false;
+    }
+    return false;
+  }, [dispatch, courseId, getContentType, intl, onErrorStateChange]);
+
+  // Handler for updating ALL previous run links across the entire course
+  const handleUpdateAllCourseLinks = useCallback(async (): Promise<boolean> => {
+    setIsUpdateAllInProgress(true);
+    setUpdateAllCompleted(false);
+
+    try {
+      await dispatch(updateAllPreviousRunLinks(courseId));
+      const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
+
+      if (updateStatusResponse && updateStatusResponse.results) {
+        const failedUpdates = updateStatusResponse.results.filter((result: any) => !result.success);
+
+        if (failedUpdates.length > 0) {
+          if (onErrorStateChange) {
+            onErrorStateChange(intl.formatMessage(messages.updateLinksError));
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Reflect successful link updates in the UI
+          const successfulUpdates = updateStatusResponse.results.filter((result: any) => result.success);
+          const successfulLinkIds: string[] = [];
+          allSections.forEach(section => {
+            section.subsections.forEach(subsection => {
+              subsection.units.forEach(unit => {
+                unit.blocks.forEach(block => {
+                  if (block.previousRunLinks && successfulUpdates.some(result => result.id === block.id)) {
+                    block.previousRunLinks.forEach(({ originalLink }) => {
+                      successfulLinkIds.push(`${block.id}:${originalLink}`);
+                    });
+                  }
+                });
+              });
+            });
+          });
+          setUpdatedLinkIds(prev => {
+            const combined = [...prev, ...successfulLinkIds];
+            return combined.filter((item, index) => combined.indexOf(item) === index);
+          });
+
+          setIsUpdateAllInProgress(false);
+          setUpdateAllCompleted(false);
+          return false;
+        }
+        if (onErrorStateChange) {
+          onErrorStateChange(null);
+        }
+        return true;
+      }
+      const allLinkIds: string[] = [];
+      allSections.forEach(section => {
+        section.subsections.forEach(subsection => {
+          subsection.units.forEach(unit => {
+            unit.blocks.forEach(block => {
+              if (block.previousRunLinks) {
+                block.previousRunLinks.forEach(({ originalLink }) => {
+                  allLinkIds.push(`${block.id}:${originalLink}`);
+                });
+              }
+            });
+          });
+        });
+      });
+      setUpdatedLinkIds(prev => {
+        const combined = [...prev, ...allLinkIds];
+        return combined.filter((item, index) => combined.indexOf(item) === index);
+      });
+
+      setIsUpdateAllInProgress(false);
+      setUpdateAllCompleted(true);
+      if (onErrorStateChange) {
+        onErrorStateChange(null);
+      }
+      return true;
+    } catch (error) {
+      if (onErrorStateChange) {
+        onErrorStateChange(intl.formatMessage(messages.updateLinksError));
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsUpdateAllInProgress(false);
+      setUpdateAllCompleted(false);
+      return false;
+    }
+  }, [dispatch, courseId, allSections, intl, onErrorStateChange]);
+
+  if (!data) {
+    return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
+  }
+
   if (isDataEmpty(data)) {
     return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
   }
+
   const handleToggle = (index: number) => {
     setOpenStates(prev => prev.map((isOpened, i) => (i === index ? !isOpened : isOpened)));
   };
@@ -186,6 +375,7 @@ const ScanResults: FC<Props> = ({ data }) => {
     { name: intl.formatMessage(messages.manualLabel), value: 'externalForbiddenLinks' },
     { name: intl.formatMessage(messages.lockedLabel), value: 'lockedLinks' },
   ];
+
   // Only show sections that have at least one unit with a visible link (not just previousRunLinks)
   const shouldSectionRender = (sectionIndex: number): boolean => {
     const section = allSections[sectionIndex];
@@ -287,7 +477,10 @@ const ScanResults: FC<Props> = ({ data }) => {
                   setFilters(updatedFilters);
                 }}
               >
-                {filterOptions.find(option => option.value === filter)?.name}
+                {(() => {
+                  const foundOption = filterOptions.filter(option => option.value === filter)[0];
+                  return foundOption ? foundOption.name : filter;
+                })()}
               </Chip>
             ))}
           </span>
@@ -368,7 +561,7 @@ const ScanResults: FC<Props> = ({ data }) => {
                       if (hasVisibleBlock) {
                         return (
                           <div className="unit" key={unit.id}>
-                            <BrokenLinkTable unit={unit} filters={filters} />
+                            <BrokenLinkTable unit={unit} filters={filters} updatedLinks={[]} />
                           </div>
                         );
                       }
@@ -413,8 +606,29 @@ const ScanResults: FC<Props> = ({ data }) => {
         return (
           <div className="scan-results">
             <div className="scan-header-second-title-container px-3">
-              <header className="sub-header-content">
+              <header className="sub-header-content d-flex justify-content-between align-items-center">
                 <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+                <StatefulButton
+                  className="px-4 rounded-0 update-all-course-btn"
+                  labels={{
+                    default: 'Update all',
+                    pending: 'Update all',
+                  }}
+                  icons={{
+                    default: '',
+                    pending: <Spinner
+                      animation="border"
+                      size="sm"
+                      className="mr-2 spinner-icon"
+                    />,
+                  }}
+                  state={getUpdateAllButtonState()}
+                  onClick={handleUpdateAllCourseLinks}
+                  disabled={areAllLinksUpdated}
+                  disabledStates={['pending']}
+                  variant="primary"
+                  data-testid="update-all-course"
+                />
               </header>
             </div>
             {filteredSections.map((section, index) => (
@@ -434,7 +648,13 @@ const ScanResults: FC<Props> = ({ data }) => {
                   <>
                     {subsection.units.map((unit) => (
                       <div className="unit">
-                        <BrokenLinkTable unit={unit} linkType="previous" />
+                        <BrokenLinkTable
+                          unit={unit}
+                          linkType="previous"
+                          onUpdateLink={handleUpdateLink}
+                          sectionId={section.id}
+                          updatedLinks={updatedLinkIds}
+                        />
                       </div>
                     ))}
                   </>

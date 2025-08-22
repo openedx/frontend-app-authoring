@@ -1,9 +1,10 @@
 import {
-  Card, Icon, DataTable,
+  Card, Icon, DataTable, Button,
 } from '@openedx/paragon';
 import {
   ArrowForwardIos,
   LinkOff,
+  Check,
 } from '@openedx/paragon/icons';
 import { FC } from 'react';
 import { Filters, Unit } from '../types';
@@ -61,26 +62,62 @@ const iconsMap = {
 };
 
 const LinksCol: FC<{
-  block: { url: string, displayName: string },
+  block: { url: string, displayName: string, id?: string },
   href: string,
   linkType?: string,
-  showIcon?: boolean
+  showIcon?: boolean,
+  showUpdateButton?: boolean,
+  isUpdated?: boolean,
+  onUpdate?: (link: string, blockId: string, sectionId?: string) => void,
+  sectionId?: string,
+  originalLink?: string // Used for update operations when href is different from original
 }> = ({
-  block, href, linkType, showIcon = true,
+  block,
+  href,
+  linkType,
+  showIcon = true,
+  showUpdateButton = false,
+  isUpdated = false,
+  onUpdate,
+  sectionId,
+  originalLink,
 }) => (
-  <span className="links-container">
-    <GoToBlock block={{ url: block.url, displayName: block.displayName || 'Go to block' }} />
-    <Icon className="arrow-forward-ios" src={ArrowForwardIos} />
-    <BrokenLinkHref href={href} />
-    {showIcon && linkType && iconsMap[linkType] && (
-      <div className="icon-container">
+  <span
+    className="links-container d-flex align-items-center justify-content-between w-100"
+  >
+    <div className="d-flex align-items-center flex-grow-1">
+      <GoToBlock block={{ url: block.url, displayName: block.displayName || 'Go to block' }} />
+      <Icon className="arrow-forward-ios" src={ArrowForwardIos} />
+      <BrokenLinkHref href={href} />
+    </div>
+    <div className="d-flex align-items-center gap-2">
+      {showIcon && linkType && iconsMap[linkType] && (
         <CustomIcon
           icon={iconsMap[linkType].icon}
           message1={iconsMap[linkType].message1}
           message2={iconsMap[linkType].message2}
         />
-      </div>
-    )}
+      )}
+      {showUpdateButton && (
+        isUpdated ? (
+          <span
+            className="updated-link-text d-flex align-items-center text-success"
+          >
+            Updated
+            <Icon src={Check} className="text-success" />
+          </span>
+        ) : (
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => onUpdate && onUpdate(originalLink || href, block.id || block.url, sectionId)}
+            className="px-4 rounded-0 update-link-btn"
+          >
+            Update
+          </Button>
+        )
+      )}
+    </div>
   </span>
 );
 
@@ -88,6 +125,9 @@ interface BrokenLinkTableProps {
   unit: Unit;
   filters?: Filters;
   linkType?: 'broken' | 'previous';
+  onUpdateLink?: (link: string, blockId: string, sectionId?: string) => Promise<boolean>;
+  sectionId?: string;
+  updatedLinks?: string[];
 }
 
 type TableData = {
@@ -98,6 +138,9 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
   filters,
   linkType = 'broken',
+  onUpdateLink,
+  sectionId,
+  updatedLinks = [],
 }) => {
   const brokenLinkList = unit.blocks.reduce(
     (
@@ -105,17 +148,32 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
       block,
     ) => {
       if (linkType === 'previous') {
-        // Handle previous run links (no filtering, no icons)
+        // Handle previous run links (no filtering, no icons, but with update buttons)
         if (block.previousRunLinks && block.previousRunLinks.length > 0) {
-          const blockPreviousRunLinks = block.previousRunLinks.map((link) => ({
-            Links: (
-              <LinksCol
-                block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
-                href={link}
-                showIcon={false}
-              />
-            ),
-          }));
+          const blockPreviousRunLinks = block.previousRunLinks.map(({
+            originalLink,
+            isUpdated: isUpdatedFromAPI,
+            updatedLink,
+          }) => {
+            const isUpdatedFromClientState = updatedLinks ? updatedLinks.indexOf(`${block.id}:${originalLink}`) !== -1 : false;
+            const isUpdated = isUpdatedFromAPI || isUpdatedFromClientState;
+            const displayLink = isUpdated && updatedLink ? updatedLink : originalLink;
+
+            return {
+              Links: (
+                <LinksCol
+                  block={{ url: block.url, displayName: block.displayName || 'Go to block', id: block.id }}
+                  href={displayLink}
+                  showIcon={false}
+                  showUpdateButton
+                  isUpdated={isUpdated}
+                  onUpdate={onUpdateLink}
+                  sectionId={sectionId}
+                  originalLink={originalLink}
+                />
+              ),
+            };
+          });
           acc.push(...blockPreviousRunLinks);
         }
         return acc;
