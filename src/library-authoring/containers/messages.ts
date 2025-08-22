@@ -1,16 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  draftChipText: {
-    id: 'course-authoring.library-authoring.container-component.draft-chip.text',
-    defaultMessage: 'Draft',
-    description: 'Chip in children in section and subsection page that is shown when children has unpublished changes',
-  },
-  publishedChipText: {
-    id: 'course-authoring.library-authoring.container-component.published-chip.text',
-    defaultMessage: 'Published',
-    description: 'Text shown when a unit/section/subsection is published.',
-  },
   openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
@@ -35,11 +25,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container-sidebar.manage-tab.collections.title',
     defaultMessage: 'Collections ({count})',
     description: 'Title for collections section in manage tab',
-  },
-  publishContainerButton: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-button',
-    defaultMessage: 'Publish Changes {publishStatus}',
-    description: 'Button text to initiate publish the unit/subsection/section, showing current publish status',
   },
   usageTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.usage-tab.title',
