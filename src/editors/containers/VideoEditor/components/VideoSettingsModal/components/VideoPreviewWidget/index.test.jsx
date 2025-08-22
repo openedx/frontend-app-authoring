@@ -54,7 +54,7 @@ describe('VideoPreviewWidget', () => {
           thumbnail=""
         />,
       );
-      
+
       const hyperlink = screen.getByRole('link');
       expect(hyperlink).toBeInTheDocument();
       expect(hyperlink).toHaveAttribute('href', 'https://example.com/video.mp4');
@@ -72,7 +72,7 @@ describe('VideoPreviewWidget', () => {
           thumbnail=""
         />,
       );
-      
+
       const hyperlink = screen.queryByRole('link');
       expect(hyperlink).not.toBeInTheDocument();
     });
@@ -87,7 +87,7 @@ describe('VideoPreviewWidget', () => {
           thumbnail=""
         />,
       );
-      
+
       const hyperlink = screen.getByRole('link');
       expect(hyperlink).toBeInTheDocument();
       expect(hyperlink).toHaveAttribute('href', 'https://youtu.be/dQw4w9WgXcQ');
