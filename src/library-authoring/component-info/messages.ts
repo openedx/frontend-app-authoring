@@ -76,11 +76,6 @@ const messages = defineMessages({
     defaultMessage: 'Edit component',
     description: 'Title for edit component button',
   },
-  publishComponentButtonTitle: {
-    id: 'course-authoring.library-authoring.component.publish.title',
-    defaultMessage: 'Publish component',
-    description: 'Title for publish component button',
-  },
   previewTabTitle: {
     id: 'course-authoring.library-authoring.component.preview-tab.title',
     defaultMessage: 'Preview',

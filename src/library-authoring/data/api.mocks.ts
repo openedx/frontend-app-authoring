@@ -380,7 +380,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   publishedBy: null,
   lastDraftCreated: null,
   lastDraftCreatedBy: null,
-  hasUnpublishedChanges: false,
+  hasUnpublishedChanges: true,
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
