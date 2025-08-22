@@ -106,6 +106,7 @@ export const xblockQueryKeys = {
    * introspecting the usage keys.
    */
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
+  componentHierarchy: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'hierarchy'],
 };
 
 /**
@@ -434,6 +435,15 @@ export const usePublishComponent = (usageKey: string) => {
     },
   });
 };
+
+/** Get the full hierarchy of the given component */
+export const useLibraryBlockHierarchy = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.componentHierarchy(usageKey),
+    queryFn: () => api.getBlockHierarchy(usageKey),
+    enabled: !!usageKey,
+  })
+);
 
 /** Get the list of assets (static files) attached to a library component */
 export const useXBlockAssets = (usageKey: string) => (

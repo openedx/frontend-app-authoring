@@ -32,6 +32,7 @@ export const isCollectionInfoTab = (tab: string): tab is CollectionInfoTab => (
 export const COMPONENT_INFO_TABS = {
   Preview: 'preview',
   Manage: 'manage',
+  Usage: 'usage',
   Details: 'details',
 } as const;
 export type ComponentInfoTab = typeof COMPONENT_INFO_TABS[keyof typeof COMPONENT_INFO_TABS];
