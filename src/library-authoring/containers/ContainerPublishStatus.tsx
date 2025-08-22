@@ -13,7 +13,7 @@ import Loading from '@src/generic/Loading';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
 import { useContainer } from '../data/apiHooks';
-import { ContainerPublisher } from '../hierarchy/ContainerPublisher';
+import { ContainerPublisher } from './ContainerPublisher';
 
 type ContainerPublishStatusProps = {
   containerId: string;

@@ -48,16 +48,6 @@ const messages = defineMessages({
       + 'the count when there is more than one.'
     ),
   },
-  publishContainerSuccess: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-success',
-    defaultMessage: 'All changes published',
-    description: 'Popup text after publishing an item',
-  },
-  publishContainerFailed: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-failure',
-    defaultMessage: 'Failed to publish changes',
-    description: 'Popup text seen if publishing an item fails',
-  },
   publishSectionWithChildrenWarning: {
     id: 'course-authoring.library-authoring.section-sidebar.hierarchy-publisher.publish-warning',
     defaultMessage: (
@@ -114,19 +104,37 @@ const messages = defineMessages({
     description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   publishConfirmHeading: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-confirm-heading',
+    id: 'course-authoring.library-authoring.item-sidebar.hierarchy-publisher.publish-confirm-heading',
     defaultMessage: 'Confirm Publish',
     description: 'Header text shown while confirming publish of a unit/subsection/section',
   },
   publishCancel: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-cancel',
+    id: 'course-authoring.library-authoring.item-sidebar.hierarchy-publisher.publish-cancel',
     defaultMessage: 'Cancel',
     description: 'Button text shown to cancel publish of a unit/subsection/section',
   },
   publishConfirm: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-confirm-button',
+    id: 'course-authoring.library-authoring.item-sidebar.hierarchy-publisher.publish-confirm-button',
     defaultMessage: 'Publish',
     description: 'Button text shown to confirm publish of a unit/subsection/section',
+  },
+  empty: {
+    id: 'course-authoring.library-authoring.item-sidebar.hierarchy-publisher.empty',
+    defaultMessage: 'No child',
+    description: 'Message when the item has no children',
+  },
+  publishComponentWarning: {
+    id: 'course-authoring.library-authoring.component-sidebar.hierarchy-publisher.publish-empty-warning',
+    defaultMessage: 'This component will be <highlight>published</highlight>.',
+    description: 'Content details shown before publishing an empty unit',
+  },
+  publishComponentsWithParentWarning: {
+    id: 'course-authoring.library-authoring.component-sidebar.hierarchy-publisher.publish-parent-warning',
+    defaultMessage: (
+      'Its {parentCount, plural, one {parent unit} other {parent units}}'
+      + ' will be <highlight>draft</highlight>.'
+    ),
+    description: 'Parent details shown before publishing a component that has one or more parent units',
   },
 });
 

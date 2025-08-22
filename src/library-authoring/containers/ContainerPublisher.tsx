@@ -5,8 +5,8 @@ import { ToastContext } from '@src/generic/toast-context';
 import Loading from '@src/generic/Loading';
 
 import { useContainerHierarchy, usePublishContainer } from '../data/apiHooks';
-import { ItemHierarchyPublisher } from './ItemHierarchyPublisher';
 import messages from './messages';
+import { ItemHierarchyPublisher } from '../hierarchy/ItemHierarchyPublisher';
 
 type ContainerPublisherProps = {
   containerId: string;

@@ -13,6 +13,7 @@ import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { ContainerHierarchy } from './ContainerHierarchy';
 import messages from './messages';
 import { ItemHierarchyData } from '../data/api';
+import { ComponentHierarchy } from './ComponentHierarchy';
 
 type ItemHierarchyPublisherProps = {
   itemId: string;
@@ -29,6 +30,7 @@ export const ItemHierarchyPublisher = ({
 }: ItemHierarchyPublisherProps) => {
   const intl = useIntl();
   const itemType = getBlockType(itemId);
+  let isComponent = false;
 
   const highlight = (...chunks: ReactNode[]) => <strong>{chunks}</strong>;
   const childWarningMessage = () => {
@@ -47,10 +49,17 @@ export const ItemHierarchyPublisher = ({
         childMessage = messages.publishSubsectionWithChildrenWarning;
         noChildMessage = messages.publishSubsectionWarning;
         break;
-      default: // ContainerType.Unit
+      case ContainerType.Unit:
         childCount = hierarchy.components.length;
         childMessage = messages.publishUnitWithChildrenWarning;
         noChildMessage = messages.publishUnitWarning;
+        break;
+      default: // The item is a component
+        isComponent = true;
+        childCount = 0;
+        childMessage = messages.empty; // Never used
+        noChildMessage = messages.publishComponentWarning;
+        break;
     }
     return intl.formatMessage(
       childCount ? childMessage : noChildMessage,
@@ -66,6 +75,9 @@ export const ItemHierarchyPublisher = ({
     let parentMessage: MessageDescriptor;
 
     switch (itemType) {
+      case ContainerType.Section:
+        // Section has no parents
+        return undefined;
       case ContainerType.Subsection:
         parentMessage = messages.publishSubsectionWithParentWarning;
         parentCount = hierarchy.sections.length;
@@ -74,8 +86,9 @@ export const ItemHierarchyPublisher = ({
         parentMessage = messages.publishUnitWithParentWarning;
         parentCount = hierarchy.subsections.length;
         break;
-      default: // ContainerType.Section has no parents
-        return undefined;
+      default: // The item is a component
+        parentMessage = messages.publishComponentsWithParentWarning;
+        parentCount = hierarchy.units.length;
     }
     return intl.formatMessage(parentMessage, { parentCount, highlight });
   };
@@ -86,7 +99,11 @@ export const ItemHierarchyPublisher = ({
     >
       <h4>{intl.formatMessage(messages.publishConfirmHeading)}</h4>
       <p>{childWarningMessage()} {parentWarningMessage()}</p>
-      <ContainerHierarchy showPublishStatus />
+      {isComponent ? (
+        <ComponentHierarchy showPublishStatus />
+      ) : (
+        <ContainerHierarchy showPublishStatus />
+      )}
       <ActionRow>
         <Button
           variant="outline-primary rounded-0"

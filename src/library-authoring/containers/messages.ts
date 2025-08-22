@@ -221,6 +221,16 @@ const messages = defineMessages({
     defaultMessage: 'Undo',
     description: 'Toast message to undo deletion of container',
   },
+  publishContainerSuccess: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-success',
+    defaultMessage: 'All changes published',
+    description: 'Popup text after publishing a container',
+  },
+  publishContainerFailed: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-failure',
+    defaultMessage: 'Failed to publish changes',
+    description: 'Popup text seen if publishing a container fails',
+  },
 });
 
 export default messages;
