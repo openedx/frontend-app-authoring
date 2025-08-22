@@ -126,10 +126,14 @@ The following are requirements for this feature to function correctly:
 Configuration
 -------------
 
-In additional to the standard settings, the following local configuration items are required:
+In addition to the standard settings, the following local configuration items are required:
 
 * ``LEARNING_BASE_URL``: points to Learning MFE; necessary so that the `View Live` button works
 * ``ENABLE_PROGRESS_GRAPH_SETTINGS``: allow enabling or disabling the learner progress graph course-wide
+
+In addition to the standard settings, the following local configuration items are optional:
+
+* ``OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB``: specifies a positive (non-zero) integer representing a value in MegaBytes, used to override the maxSize attribute when uploading textbooks. For more information and examples of usage, please see `OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB <docs/how_tos/OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB.rst>`_ in the how_tos docs.
 
 Feature Description
 -------------------
@@ -211,6 +215,14 @@ Feature: Files & Uploads
 .. image:: ./docs/readme-images/feature-files-uploads.png
 
 In Studio, the "Files & Uploads" page for each enabled course will now be served by this frontend, instead of the UI built into edx-platform. This page allows managing static asset files like PDFs, images, etc. used for the course.
+
+Configuration
+-------------
+
+In addition to the standard settings, the following local configuration items are optional:
+
+* ``OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB``: specifies a positive (non-zero) integer representing a value in MegaBytes, used to override the maxSize attribute when uploading files. For more information and examples of usage, please see `OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB <docs/how_tos/OVERRIDE_UPLOAD_FILE_MAX_SIZE_IN_MB.rst>`_ in the how_tos docs.
+
 
 Feature: Course Updates
 ==========================
