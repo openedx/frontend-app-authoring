@@ -91,6 +91,11 @@ const messages = defineMessages({
     defaultMessage: 'Manage',
     description: 'Title for manage tab',
   },
+  usageTabTitle: {
+    id: 'course-authoring.library-authoring.component.usage-tab.title',
+    defaultMessage: 'Usage',
+    description: 'Title for manage tab',
+  },
   manageTabTagsTitle: {
     id: 'course-authoring.library-authoring.component.manage-tab.tags-title',
     defaultMessage: 'Tags ({count})',
@@ -150,6 +155,11 @@ const messages = defineMessages({
     id: 'course-authoring.component-authoring.component.publish.error',
     defaultMessage: 'There was an error publishing the component.',
     description: 'Message when there is an error when publishing the component.',
+  },
+  usageTabHierarchyHeading: {
+    id: 'course-authoring.library-authoring.component-sidebar.usage-tab.hierarchy-heading',
+    defaultMessage: 'Content Hierarchy',
+    description: 'Heading for usage tab hierarchy section',
   },
 });
 

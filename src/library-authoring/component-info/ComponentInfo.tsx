@@ -12,6 +12,9 @@ import {
   CheckBoxOutlineBlank,
 } from '@openedx/paragon/icons';
 
+import { getBlockType } from '@src/generic/key-utils';
+import { ToastContext } from '@src/generic/toast-context';
+
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
@@ -26,10 +29,10 @@ import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
-import { getBlockType } from '../../generic/key-utils';
+
 import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
-import { ToastContext } from '../../generic/toast-context';
 import PublishConfirmationModal from '../components/PublishConfirmationModal';
+import { ComponentUsageTab } from './ComponentUsageTab';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -197,6 +200,7 @@ const ComponentInfo = () => {
         >
           {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
           {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
+          {renderTab(COMPONENT_INFO_TABS.Usage, <ComponentUsageTab />, intl.formatMessage(messages.usageTabTitle))}
           {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
         </Tabs>
       </Stack>
