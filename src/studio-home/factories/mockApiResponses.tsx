@@ -1,4 +1,5 @@
-import { RequestStatus } from '../../data/constants';
+import { type DeprecatedReduxState } from '@src/store';
+import { RequestStatus } from '@src/data/constants';
 
 export const courseId = 'course';
 
@@ -19,10 +20,9 @@ export const initialState = {
       currentPage: 1,
     },
   },
-};
+} satisfies Partial<DeprecatedReduxState>;
 
-export const generateGetStudioHomeDataApiResponse = () => ({
-  activeTab: 'courses',
+export const generateGetStudioHomeDataApiResponse = (): DeprecatedReduxState['studioHome']['studioHomeData'] => ({
   allowCourseReruns: true,
   allowedOrganizations: ['edx', 'org'],
   archivedCourses: [],
@@ -38,7 +38,6 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   rerunCreatorStatus: true,
   showNewLibraryButton: true,
   showNewLibraryV2Button: true,
-  splitStudioHome: false,
   studioName: 'Studio',
   studioShortName: 'Studio',
   studioRequestEmail: 'request@email.com',

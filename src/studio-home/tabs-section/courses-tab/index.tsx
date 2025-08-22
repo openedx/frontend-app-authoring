@@ -11,18 +11,18 @@ import {
 } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
-import { COURSE_CREATOR_STATES } from '../../../constants';
-import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
-import { resetStudioHomeCoursesCustomParams, updateStudioHomeCoursesCustomParams } from '../../data/slice';
-import { fetchStudioHomeData } from '../../data/thunks';
-import CardItem from '../../card-item';
-import CollapsibleStateWithAction from '../../collapsible-state-with-action';
-import ContactAdministrator from './contact-administrator';
-import CoursesFilters from './courses-filters';
-import ProcessingCourses from '../../processing-courses';
-import { LoadingSpinner } from '../../../generic/Loading';
-import AlertMessage from '../../../generic/alert-message';
+import { COURSE_CREATOR_STATES } from '@src/constants';
+import { getStudioHomeData, getStudioHomeCoursesParams } from '@src/studio-home/data/selectors';
+import { resetStudioHomeCoursesCustomParams, updateStudioHomeCoursesCustomParams } from '@src/studio-home/data/slice';
+import { fetchStudioHomeData } from '@src/studio-home/data/thunks';
+import CardItem from '@src/studio-home/card-item';
+import CollapsibleStateWithAction from '@src/studio-home/collapsible-state-with-action';
+import ProcessingCourses from '@src/studio-home/processing-courses';
+import { LoadingSpinner } from '@src/generic/Loading';
+import AlertMessage from '@src/generic/alert-message';
 import messages from '../messages';
+import CoursesFilters from './courses-filters';
+import ContactAdministrator from './contact-administrator';
 import './index.scss';
 
 interface Props {
@@ -69,7 +69,7 @@ const CoursesTab: React.FC<Props> = ({
     COURSE_CREATOR_STATES.denied,
     COURSE_CREATOR_STATES.pending,
     COURSE_CREATOR_STATES.unrequested,
-  ].includes(courseCreatorStatus);
+  ].includes(courseCreatorStatus as any);
   const locationValue = location.search ?? '';
 
   const handlePageSelected = (page) => {
@@ -191,7 +191,7 @@ const CoursesTab: React.FC<Props> = ({
         )}
         {showCollapsible && (
           <CollapsibleStateWithAction
-            state={courseCreatorStatus}
+            state={courseCreatorStatus!}
             className="mt-3"
           />
         )}
