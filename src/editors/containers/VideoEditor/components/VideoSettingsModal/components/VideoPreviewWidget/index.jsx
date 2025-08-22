@@ -47,7 +47,7 @@ export const VideoPreviewWidget = ({
           <Stack gap={1} className="justify-content-center">
             <h4 className="text-primary mb-0">{blockTitle}</h4>
             <LanguageNamesWidget transcripts={transcripts} />
-            {videoType && (
+            {videoType && videoSource && (
               <Hyperlink
                 className="text-primary x-small"
                 destination={videoSource}
