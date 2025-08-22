@@ -2,7 +2,7 @@ import { Spinner } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 interface LoadingSpinnerProps {
-  size?: string;
+  size?: 'sm';
 }
 
 export const LoadingSpinner = ({ size }: LoadingSpinnerProps) => (
