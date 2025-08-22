@@ -17,11 +17,11 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
+import { getUploadFileMaxSize } from '@src/constants';
 import FormikControl from '../../generic/FormikControl';
 import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
 import ModalDropzone from '../../generic/modal-dropzone/ModalDropzone';
 import { useModel } from '../../generic/model-store';
-import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
 import textbookFormValidationSchema from './validations';
 import messages from './messages';
 
@@ -171,7 +171,7 @@ const TextbookForm = ({
               onSavingStatus={onSavingStatus}
               invalidFileSizeMore={intl.formatMessage(
                 messages.uploadModalFileInvalidSizeText,
-                { maxSize: UPLOAD_FILE_MAX_SIZE / (1000 * 1000) },
+                { maxSize: getUploadFileMaxSize() / (1024 * 1024) },
               )}
               onSelectFile={setSelectedFile}
               previewComponent={(
@@ -180,7 +180,7 @@ const TextbookForm = ({
                   <span className="modal-preview-text">{selectedFile}</span>
                 </div>
               )}
-              maxSize={UPLOAD_FILE_MAX_SIZE}
+              maxSize={getUploadFileMaxSize()}
             />
             <PromptIfDirty dirty={dirty} />
           </>
