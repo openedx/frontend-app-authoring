@@ -48,6 +48,86 @@ const messages = defineMessages({
       + 'the count when there is more than one.'
     ),
   },
+  publishContainerSuccess: {
+    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-success',
+    defaultMessage: 'All changes published',
+    description: 'Popup text after publishing an item',
+  },
+  publishContainerFailed: {
+    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-failure',
+    defaultMessage: 'Failed to publish changes',
+    description: 'Popup text seen if publishing an item fails',
+  },
+  publishSectionWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.section-sidebar.hierarchy-publisher.publish-warning',
+    defaultMessage: (
+      'This section and the {childCount, plural, one {subsection} other {subsections}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a section that contains subsections',
+  },
+  publishSectionWarning: {
+    id: 'course-authoring.library-authoring.section-sidebar.hierarchy-publisher.publish-empty-warning',
+    defaultMessage: 'This section will be <highlight>published</highlight>.',
+    description: 'Content details shown before publishing an empty section',
+  },
+  publishSubsectionWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.hierarchy-publisher.publish-warning',
+    defaultMessage: (
+      'This subsection and the {childCount, plural, one {unit} other {units}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a subsection that contains units',
+  },
+  publishSubsectionWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.hierarchy-publisher.publish-empty-warning',
+    defaultMessage: 'This subsection will be <highlight>published</highlight>.',
+    description: 'Content details shown before publishing an empty subsection',
+  },
+  publishUnitWithChildrenWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.hierarchy-publisher.publish-warning',
+    defaultMessage: (
+      'This unit and the {childCount, plural, one {component} other {components}}'
+      + ' it contains will all be <highlight>published</highlight>.'
+    ),
+    description: 'Content details shown before publishing a unit that contains components',
+  },
+  publishUnitWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.hierarchy-publisher.publish-empty-warning',
+    defaultMessage: 'This unit will be <highlight>published</highlight>.',
+    description: 'Content details shown before publishing an empty unit',
+  },
+  publishSubsectionWithParentWarning: {
+    id: 'course-authoring.library-authoring.subsection-sidebar.hierarchy-publisher.publish-parent-warning',
+    defaultMessage: (
+      'Its {parentCount, plural, one {parent section} other {parent sections}}'
+      + ' will be <highlight>draft</highlight>.'
+    ),
+    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
+  },
+  publishUnitWithParentWarning: {
+    id: 'course-authoring.library-authoring.unit-sidebar.hierarchy-publisher.publish-parent-warning',
+    defaultMessage: (
+      'Its {parentCount, plural, one {parent subsection} other {parent subsections}}'
+      + ' will be <highlight>draft</highlight>.'
+    ),
+    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
+  },
+  publishConfirmHeading: {
+    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-confirm-heading',
+    defaultMessage: 'Confirm Publish',
+    description: 'Header text shown while confirming publish of a unit/subsection/section',
+  },
+  publishCancel: {
+    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-cancel',
+    defaultMessage: 'Cancel',
+    description: 'Button text shown to cancel publish of a unit/subsection/section',
+  },
+  publishConfirm: {
+    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-publisher.publish-confirm-button',
+    defaultMessage: 'Publish',
+    description: 'Button text shown to confirm publish of a unit/subsection/section',
+  },
 });
 
 export default messages;
