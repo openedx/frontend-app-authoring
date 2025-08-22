@@ -15,9 +15,6 @@ export interface EditorContext {
   learningContextId: string;
   /** Is the so-called "Markdown" problem editor available in this learning context? */
   isMarkdownEditorEnabledForContext: boolean;
-  // TODO - add this in a future PR:
-  // editorInitialized: boolean;
-  // setEditorInitialized: (value: boolean) => void;
 }
 
 export type EditorContextInit = {
@@ -40,20 +37,16 @@ export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & Ed
   children,
   learningContextId,
 }) => {
-  // const [editorInitialized, setEditorInitialized] = React.useState(false);
   const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
   const isMarkdownEditorEnabledForContext = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
 
   const ctx: EditorContext = React.useMemo(() => ({
     learningContextId,
     isMarkdownEditorEnabledForContext,
-    // editorInitialized,
-    // setEditorInitialized,
   }), [
     // Dependencies - make sure we update the context object if any of these values change:
     learningContextId,
     isMarkdownEditorEnabledForContext,
-    // editorInitialized,
   ]);
   return <context.Provider value={ctx}>{children}</context.Provider>;
 };
