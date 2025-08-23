@@ -10,6 +10,7 @@ const ErrorDisplay = () => {
 
   if (!error) return null;
 
+  const message = messages[error] || { id: error, defaultMessage: 'An error occurred.' };
 
   return (
     <Alert
@@ -18,7 +19,7 @@ const ErrorDisplay = () => {
       dismissible
       onClose={clearError}
     >
-      {intl.formatMessage({ id: error, defaultMessage: 'An error occurred.' })}
+      {intl && intl.formatMessage ? intl.formatMessage(message) : message.defaultMessage}
     </Alert>
   );
 };

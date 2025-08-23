@@ -14,6 +14,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
+
       h2 {
         margin: 0;
         color: var(--text-primary);
@@ -46,17 +47,9 @@
     button {
       padding: 6px 10px;
       border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
-      cursor: pointer;
-      font-weight: 500;
-      transition: all .12s ease-in-out;
-      &:hover {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-      }
     }
 
-   
+
     select.view-select {
       padding: 6px 10px;
       border-radius: 6px;
@@ -65,21 +58,25 @@
       cursor: pointer;
     }
 
-   
+
     .search-input {
       padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
+      border-radius: 25px;
+      border: 1px solid var(--primary-light);
       width: 220px;
+
+      &:hover {
+        outline: none;
+        border-color: var(--primary);
+      }
 
       &:focus {
         outline: none;
-        box-shadow: 0 0 0 3px var(--primary-hover);
         border-color: var(--primary);
       }
     }
 
-  
+
     .filter-container {
       display: flex;
       align-items: center;
@@ -97,19 +94,22 @@
 
         button {
           padding: 6px 10px;
-          background: var(--bg-surface);
-          color: var(--text-primary);
-          border: 1px solid var(--primary);
           border-radius: 6px;
-          &:hover{
-            background: var(--primary);
-            color: var(--text-white);
-          }
         }
       }
     }
   }
 
+  .nav-button {
+    border: 1px solid var(--primary);
+    background-color: var(--text-white);
+    color: var(--primary);
+  }
+
+  .nav-button:hover {
+    background: var(--primary);
+    color: var(--text-white);
+  }
 
   .calendar-container {
     background: var(--bg-surface);
@@ -117,7 +117,8 @@
     border-radius: 8px;
     padding: 8px;
   }
-  .fc-col-header-cell-cushion{
+
+  .fc-col-header-cell-cushion {
     color: var(--text-primary);
   }
 }
@@ -150,6 +151,7 @@
     color: var(--danger);
     cursor: pointer;
     border-radius: 4px;
+
     &:hover {
       background: var(--danger);
       color: var(--text-white);

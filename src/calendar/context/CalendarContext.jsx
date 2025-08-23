@@ -1,35 +1,40 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import eventsData from "../data/events.json";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { getLocale } from '@edx/frontend-platform/i18n';
+import eventsData from '../data/events.json';
 
 const CalendarContext = createContext();
 
+export const useCalendarContext = () => useContext(CalendarContext);
+
 export const CalendarProvider = ({ children }) => {
   const [events, setEvents] = useState([]);
-  const [filterType, setFilterType] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentEventIndex, setCurrentEventIndex] = useState(0);
-  const [currentDateTitle, setCurrentDateTitle] = useState("");
+  const [currentDateTitle, setCurrentDateTitle] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentView, setCurrentView] = useState("dayGridMonth");
+  const [currentView, setCurrentView] = useState('dayGridMonth');
   const [error, setError] = useState(null);
+  const locale = getLocale();
 
   useEffect(() => {
     if (!Array.isArray(eventsData)) {
-      setError("calendar.error.eventsLoad");
+      setError('calendar.error.eventsLoad');
       return;
     }
     setEvents(eventsData);
     setFilteredEvents(eventsData);
-    setError(null); 
+    setError(null);
   }, []);
 
   useEffect(() => {
     let result = [...events];
-    if (filterType && filterType !== "all") {
+    if (filterType && filterType !== 'all') {
       result = result.filter((ev) => ev.type === filterType);
     }
-    if (searchQuery && searchQuery.trim() !== "") {
+    if (searchQuery && searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(
         (ev) =>
@@ -39,7 +44,7 @@ export const CalendarProvider = ({ children }) => {
     }
     setFilteredEvents(result);
     setCurrentEventIndex(0);
-    setError(null); 
+    setError(null);
   }, [events, filterType, searchQuery]);
 
   useEffect(() => {
@@ -49,76 +54,55 @@ export const CalendarProvider = ({ children }) => {
         const eventDate = new Date(ev.start);
         if (!isNaN(eventDate.getTime())) {
           setCurrentDate(eventDate);
-          setError(null); 
+          setError(null);
         } else {
-          setError("calendar.error.eventNavigation");
+          setError('calendar.error.eventNavigation');
         }
       }
     }
   }, [filteredEvents, currentEventIndex]);
 
-  const prev = () => setCurrentDate((prevDate) => {
+  const adjustDate = (prevDate, direction) => {
     const d = new Date(prevDate);
     if (isNaN(d.getTime())) {
-      setError("calendar.error.navigation");
+      setError('calendar.error.navigation');
       return prevDate;
     }
     switch (currentView) {
-      case "dayGridMonth":
-        d.setMonth(d.getMonth() - 1);
+      case 'dayGridMonth':
+        d.setMonth(d.getMonth() + direction);
         break;
-      case "timeGridWeek":
-      case "listWeek":
-        d.setDate(d.getDate() - 7);
+      case 'timeGridWeek':
+      case 'listWeek':
+        d.setDate(d.getDate() + direction * 7);
         break;
-      case "timeGridDay":
-        d.setDate(d.getDate() - 1);
-        break;
-      default:
-        setError("calendar.error.navigation");
-        return prevDate;
-    }
-    setError(null); 
-    return d;
-  });
-
-  const next = () => setCurrentDate((prevDate) => {
-    const d = new Date(prevDate);
-    if (isNaN(d.getTime())) {
-      setError("calendar.error.navigation");
-      return prevDate;
-    }
-    switch (currentView) {
-      case "dayGridMonth":
-        d.setMonth(d.getMonth() + 1);
-        break;
-      case "timeGridWeek":
-      case "listWeek":
-        d.setDate(d.getDate() + 7);
-        break;
-      case "timeGridDay":
-        d.setDate(d.getDate() + 1);
+      case 'timeGridDay':
+        d.setDate(d.getDate() + direction);
         break;
       default:
-        setError("calendar.error.navigation");
+        setError('calendar.error.navigation');
         return prevDate;
     }
     setError(null);
     return d;
-  });
+  };
+
+  const prev = () => setCurrentDate((prevDate) => adjustDate(prevDate, -1));
+
+  const next = () => setCurrentDate((prevDate) => adjustDate(prevDate, 1));
 
   const today = () => {
     setCurrentDate(new Date());
-    setError(null); 
+    setError(null);
   };
 
   const changeView = (view) => {
-    if (["dayGridMonth", "timeGridWeek", "timeGridDay", "listWeek"].includes(view)) {
+    if (['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek'].includes(view)) {
       setCurrentView(view);
-      setCurrentDateTitle("");
-      setError(null); 
+      setCurrentDateTitle('');
+      setError(null);
     } else {
-      setError("calendar.error.viewChange");
+      setError('calendar.error.viewChange');
     }
   };
 
@@ -129,21 +113,21 @@ export const CalendarProvider = ({ children }) => {
 
   const searchEvents = (query) => {
     setSearchQuery(query);
-    setError(null); 
+    setError(null);
   };
 
   const nextEvent = () => {
     setCurrentEventIndex((prev) =>
       filteredEvents.length ? (prev + 1) % filteredEvents.length : 0
     );
-    setError(null); 
+    setError(null);
   };
 
   const prevEvent = () => {
     setCurrentEventIndex((prev) =>
       filteredEvents.length ? (prev - 1 + filteredEvents.length) % filteredEvents.length : 0
     );
-    setError(null); 
+    setError(null);
   };
 
   const clearError = () => {
@@ -172,6 +156,7 @@ export const CalendarProvider = ({ children }) => {
         nextEvent,
         prevEvent,
         clearError,
+        locale,
       }}
     >
       {children}
@@ -179,4 +164,6 @@ export const CalendarProvider = ({ children }) => {
   );
 };
 
-export const useCalendarContext = () => useContext(CalendarContext);
+CalendarProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

@@ -1,12 +1,12 @@
-import React from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import listPlugin from "@fullcalendar/list";
-import interactionPlugin from "@fullcalendar/interaction";
-import allLocales from "@fullcalendar/core/locales-all";
-import { useCalendarContext } from "../context/CalendarContext";
-import { getLocale } from "@edx/frontend-platform/i18n";
+import React from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
+import { useCalendarContext } from '../context/CalendarContext';
+import { getLocale } from '@edx/frontend-platform/i18n';
 
 const CalendarView = () => {
   const { filteredEvents, setCurrentDateTitle, currentDate, currentView } = useCalendarContext();
@@ -21,7 +21,7 @@ const CalendarView = () => {
         events={filteredEvents}
         locales={allLocales}
         locale={getLocale()}
-        height="100vh"
+        height="auto"
         selectable={true}
         datesSet={(arg) => setCurrentDateTitle(arg.view.title)}
         initialDate={currentDate}
