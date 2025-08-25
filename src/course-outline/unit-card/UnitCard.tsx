@@ -35,6 +35,7 @@ interface UnitCardProps {
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus: string;
   onOpenDeleteModal: () => void;
+  onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
   getTitleLink: (locator: string) => string;
   index: number;
@@ -61,6 +62,7 @@ const UnitCard = ({
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
+  onOpenUnlinkModal,
   onDuplicateSubmit,
   getTitleLink,
   onOrderChange,
@@ -238,6 +240,7 @@ const UnitCard = ({
             onClickConfigure={onOpenConfigureModal}
             onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
+            onClickUnlink={onOpenUnlinkModal}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}

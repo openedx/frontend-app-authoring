@@ -27,6 +27,20 @@ export function getLibraryId(usageKey: string): string {
   throw new Error(`Invalid usageKey: ${usageKey}`);
 }
 
+/**
+ * Given a usage key like `block-v1:org:course:html:id`, get the course key
+ */
+export function getCourseKey(usageKey: string): string {
+  const [prefix] = usageKey?.split('@') || [];
+  const [blockType, courseInfo] = prefix?.split(':') || [];
+  const [org, course, run] = courseInfo?.split('+') || [];
+
+  if (blockType === 'block-v1' && org && course && run) {
+    return `course-v1:${org}+${course}+${run}`;
+  }
+  throw new Error(`Invalid usageKey: ${usageKey}`);
+}
+
 /** Check if this is a course key */
 export function isCourseKey(learningContextKey: string | undefined | null): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('course-v1:');

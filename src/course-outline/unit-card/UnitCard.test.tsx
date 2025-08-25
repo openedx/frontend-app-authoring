@@ -79,6 +79,7 @@ const renderComponent = (props?: object) => render(
     onOrderChange={jest.fn()}
     onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     savingStatus=""
     onEditSubmit={jest.fn()}

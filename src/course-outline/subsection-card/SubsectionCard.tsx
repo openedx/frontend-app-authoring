@@ -42,6 +42,7 @@ interface SubsectionCardProps {
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus: string,
   onOpenDeleteModal: () => void,
+  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   onNewUnitSubmit: (subsectionId: string) => void,
   onAddUnitFromLibrary: (options: {
@@ -74,6 +75,7 @@ const SubsectionCard = ({
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
+  onOpenUnlinkModal,
   onDuplicateSubmit,
   onNewUnitSubmit,
   onAddUnitFromLibrary,
@@ -293,6 +295,7 @@ const SubsectionCard = ({
                 onClickPublish={onOpenPublishModal}
                 onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
+                onClickUnlink={onOpenUnlinkModal}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}

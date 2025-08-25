@@ -41,6 +41,7 @@ interface SectionCardProps {
   onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus: string,
   onOpenDeleteModal: () => void,
+  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   isSectionsExpanded: boolean,
   onNewSubsectionSubmit: (id: string) => void,
@@ -64,6 +65,7 @@ const SectionCard = ({
   onEditSectionSubmit,
   savingStatus,
   onOpenDeleteModal,
+  onOpenUnlinkModal,
   onDuplicateSubmit,
   isSectionsExpanded,
   onNewSubsectionSubmit,
@@ -292,6 +294,7 @@ const SectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
+                onClickUnlink={onOpenUnlinkModal}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}

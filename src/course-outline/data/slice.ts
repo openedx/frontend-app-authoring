@@ -40,6 +40,7 @@ const initialState = {
   currentItem: {},
   actions: {
     deletable: true,
+    unlinkable: false,
     draggable: true,
     childAddable: true,
     duplicable: true,

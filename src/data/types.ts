@@ -33,6 +33,7 @@ export interface XBlockActions {
   draggable: boolean;
   childAddable: boolean;
   duplicable: boolean;
+  unlinkable?: boolean;
   allowMoveDown?: boolean;
   allowMoveUp?: boolean;
 }

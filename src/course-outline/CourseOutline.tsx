@@ -27,6 +27,7 @@ import ProcessingNotification from '@src/generic/processing-notification';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
+import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
@@ -90,13 +91,16 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     isPublishModalOpen,
     isConfigureModalOpen,
     isDeleteModalOpen,
+    isUnlinkModalOpen,
     closeHighlightsModal,
     closePublishModal,
     handleConfigureModalClose,
     closeDeleteModal,
+    closeUnlinkModal,
     openPublishModal,
     openConfigureModal,
     openDeleteModal,
+    openUnlinkModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
@@ -111,6 +115,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
     handlePublishItemSubmit,
     handleEditSubmit,
     handleDeleteItemSubmit,
+    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
@@ -168,7 +173,9 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
   } = useSelector(getProcessingNotification);
 
   const currentItemData = useSelector(getCurrentItem);
-  const deleteCategory = COURSE_BLOCK_NAMES[currentItemData.category]?.name.toLowerCase();
+
+  const itemCategory = currentItemData?.category;
+  const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
   const enableTimedExams = useSelector(getTimedExamsFlag);
@@ -372,6 +379,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                     onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
+                                    onOpenUnlinkModal={openUnlinkModal}
                                     onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
@@ -403,6 +411,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                           savingStatus={savingStatus}
                                           onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
+                                          onOpenUnlinkModal={openUnlinkModal}
                                           onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
@@ -438,6 +447,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                                                 onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
+                                                onOpenUnlinkModal={openUnlinkModal}
                                                 onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                 getTitleLink={getUnitUrl}
@@ -514,10 +524,17 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
           isSelfPaced={statusBarData.isSelfPaced}
         />
         <DeleteModal
-          category={deleteCategory}
+          category={itemCategoryName}
           isOpen={isDeleteModalOpen}
           close={closeDeleteModal}
           onDeleteSubmit={handleDeleteItemSubmit}
+        />
+        <UnlinkModal
+          displayName={currentItemData?.displayName}
+          category={itemCategory}
+          isOpen={isUnlinkModalOpen}
+          close={closeUnlinkModal}
+          onUnlinkSubmit={handleUnlinkItemSubmit}
         />
         <StandardModal
           title={intl.formatMessage(messages.sectionPickerModalTitle)}
