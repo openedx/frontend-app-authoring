@@ -247,7 +247,7 @@ const UnitCard = ({
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
-            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
+            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}
@@ -260,6 +260,7 @@ const UnitCard = ({
             parentInfo={parentInfo}
             extraActionsComponent={extraActionsComponent}
             readyToSync={upstreamInfo?.readyToSync}
+            readOnly={readOnly}
           />
           <div className="unit-card__content item-children" data-testid="unit-card__content">
             <XBlockStatus
