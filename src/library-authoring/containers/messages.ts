@@ -122,7 +122,7 @@ const messages = defineMessages({
     description: 'Title text for the warning displayed before deleting a Subsection',
   },
   deleteSubsectionCourseMessaage: {
-    id: 'course-authoring.library-authoring.subsection.delete-parent-message',
+    id: 'course-authoring.library-authoring.subsection.delete-course-message',
     defaultMessage: 'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a subsection',
   },
