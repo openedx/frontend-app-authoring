@@ -51,7 +51,7 @@ const VideoThumbnail = ({
 
   return (
     <div className="video-thumbnail row justify-content-center align-itmes-center">
-      {allowThumbnailUpload && showThumbnail && <div className="thumbnail-overlay" />}
+      {allowThumbnailUpload && <div className="thumbnail-overlay" />}
       {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
         <>
           <div className="border rounded">
@@ -81,6 +81,16 @@ const VideoThumbnail = ({
             style={imageSize}
           >
             <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
+          </div>
+          <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={fileInputControl.click}
+              tabIndex={0}
+            >
+              {addThumbnailMessage}
+            </Button>
           </div>
           <div className="status-badge">
             {!isUploaded && (
