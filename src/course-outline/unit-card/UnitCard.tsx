@@ -33,7 +33,7 @@ interface UnitCardProps {
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus: RequestStatusType;
+  savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
   onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;

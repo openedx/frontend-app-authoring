@@ -24,11 +24,11 @@ import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 
 interface CardHeaderProps {
   title: string;
