@@ -28,11 +28,7 @@ const GalleryCard = ({
     >
       <div className="card-div d-flex flex-row flex-nowrap align-items-center">
         <div
-          className="position-relative"
-          style={{
-            width: '200px',
-            height: '100px',
-          }}
+          className="row justify-content-center align-itmes-center p-2"
         >
           {(thumbnailError && thumbnailFallback) ? (
             <div style={{ width: '200px', height: '100px' }}>
@@ -40,7 +36,7 @@ const GalleryCard = ({
             </div>
           ) : (
             <Image
-              style={{ border: 'none', width: '200px', height: '100px' }}
+              className="selection-modal-image-thumbnail"
               src={asset.externalUrl}
               onError={thumbnailFallback && (() => setThumbnailError(true))}
             />
