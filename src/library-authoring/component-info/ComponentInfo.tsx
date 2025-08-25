@@ -11,9 +11,7 @@ import {
   CheckBoxIcon,
   CheckBoxOutlineBlank,
 } from '@openedx/paragon/icons';
-
 import { getBlockType } from '@src/generic/key-utils';
-import { ToastContext } from '@src/generic/toast-context';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -29,12 +27,10 @@ import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
-
-import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
-import PublishConfirmationModal from '../components/PublishConfirmationModal';
+import { useLibraryBlockMetadata } from '../data/apiHooks';
 import { ComponentUsageTab } from './ComponentUsageTab';
 import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
-import { ComponentPublisherInfo } from './ComponentPublisherInfo';
+import { ComponentPublisher } from './ComponentPublisher';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -106,28 +102,20 @@ const AddComponentWidget = () => {
 const ComponentActions = ({
   componentId,
   hasUnpublishedChanges,
-  openPublishConfirmation,
 }: {
   componentId: string,
   hasUnpublishedChanges: boolean,
-  openPublishConfirmation: () => void,
 }) => {
   const intl = useIntl();
   const { openComponentEditor } = useLibraryContext();
-  const [isPublisherInfoOpen, openPublisherInfo, closePublisherInfo] = useToggle(false);
+  const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
   const canEdit = canEditComponent(componentId);
 
-  const handleOpenPublishConfirmation = React.useCallback(() => {
-    closePublisherInfo();
-    openPublishConfirmation();
-  }, []);
-
-  if (isPublisherInfoOpen) {
+  if (isPublisherOpen) {
     return (
-      <ComponentPublisherInfo
-        handleClose={closePublisherInfo}
+      <ComponentPublisher
+        handleClose={closePublisher}
         componentId={componentId}
-        handlePublish={handleOpenPublishConfirmation}
       />
     );
   }
@@ -137,20 +125,24 @@ const ComponentActions = ({
       <Button
         {...(canEdit ? { onClick: () => openComponentEditor(componentId) } : { disabled: true })}
         variant="outline-primary"
-        className="m-1 text-nowrap flex-grow-2"
+        className="m-1 text-nowrap flex-grow-1"
       >
         {intl.formatMessage(messages.editComponentButtonTitle)}
       </Button>
       <div className="flex-grow-1">
         {!hasUnpublishedChanges ? (
-          <PublishedChip />
+          <div className="m-1">
+            <PublishedChip />
+          </div>
         ) : (
           <PublishDraftButton
-            onClick={openPublisherInfo}
+            onClick={openPublisher}
           />
         )}
       </div>
-      <ComponentMenu usageKey={componentId} />
+      <div className="mt-2">
+        <ComponentMenu usageKey={componentId} />
+      </div>
     </div>
   );
 };
@@ -167,11 +159,6 @@ const ComponentInfo = () => {
     hiddenTabs,
     resetSidebarAction,
   } = useSidebarContext();
-  const [
-    isPublishConfirmationOpen,
-    openPublishConfirmation,
-    closePublishConfirmation,
-  ] = useToggle(false);
 
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
@@ -190,21 +177,8 @@ const ComponentInfo = () => {
     throw new Error('usageKey is required');
   }
 
-  const publishComponent = usePublishComponent(componentId);
   const { data: componentMetadata } = useLibraryBlockMetadata(componentId);
   const hasUnpublishedChanges = componentMetadata?.hasUnpublishedChanges || false;
-
-  const { showToast } = React.useContext(ToastContext);
-
-  const publish = React.useCallback(() => {
-    closePublishConfirmation();
-    publishComponent.mutateAsync()
-      .then(() => {
-        showToast(intl.formatMessage(messages.publishSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.publishErrorMsg));
-      });
-  }, [publishComponent, showToast, intl]);
 
   // TODO: refactor sidebar Tabs to handle rendering and disabledTabs in one place.
   const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
@@ -220,38 +194,27 @@ const ComponentInfo = () => {
   }, [hiddenTabs, defaultTab.component]);
 
   return (
-    <>
-      <Stack>
-        {!readOnly && (
-          <ComponentActions
-            componentId={componentId}
-            hasUnpublishedChanges={hasUnpublishedChanges}
-            openPublishConfirmation={openPublishConfirmation}
-          />
-        )}
-        <AddComponentWidget />
-        <Tabs
-          variant="tabs"
-          className="my-3 d-flex justify-content-around"
-          defaultActiveKey={defaultTab.component}
-          activeKey={tab}
-          onSelect={handleTabChange}
-        >
-          {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
-          {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
-          {renderTab(COMPONENT_INFO_TABS.Usage, <ComponentUsageTab />, intl.formatMessage(messages.usageTabTitle))}
-          {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
-        </Tabs>
-      </Stack>
-      <PublishConfirmationModal
-        isOpen={isPublishConfirmationOpen}
-        onClose={closePublishConfirmation}
-        onConfirm={publish}
-        displayName={componentMetadata?.displayName || ''}
-        usageKey={componentId}
-        showDownstreams={!!componentMetadata?.lastPublished}
-      />
-    </>
+    <Stack>
+      {!readOnly && (
+        <ComponentActions
+          componentId={componentId}
+          hasUnpublishedChanges={hasUnpublishedChanges}
+        />
+      )}
+      <AddComponentWidget />
+      <Tabs
+        variant="tabs"
+        className="my-3 d-flex justify-content-around"
+        defaultActiveKey={defaultTab.component}
+        activeKey={tab}
+        onSelect={handleTabChange}
+      >
+        {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Usage, <ComponentUsageTab />, intl.formatMessage(messages.usageTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
+      </Tabs>
+    </Stack>
   );
 };
 
