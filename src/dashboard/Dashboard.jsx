@@ -154,7 +154,7 @@ const Dashboard = () => {
           setAllWidgets(sortedWidgets);
         } else {
           // Real API endpoints
-          const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+          const baseUrl = `${process.env.LMS_BASE_URL}/titaned/api/v1/instructor-dashboard`;
           const client = getAuthenticatedHttpClient();
           // Fetch all in parallel, but handle errors for each
           const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.allSettled([
@@ -360,7 +360,7 @@ const Dashboard = () => {
         setIsModalOpen(false);
       } else {
         // Real API endpoint
-        const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+        const baseUrl = `${process.env.LMS_BASE_URL}/titaned/api/v1/instructor-dashboard`;
         const client = getAuthenticatedHttpClient();
         const response = await client.post(`${baseUrl}/widgets/filter`, updatedWidgets);
         if (response.status !== 200 && response.status !== 201) {

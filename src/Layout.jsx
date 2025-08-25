@@ -43,7 +43,7 @@ import messages from './messages';
 
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
-  const response = await getAuthenticatedHttpClient().get('https://staging.titaned.com/titaned/api/v1/menu-config/');
+  const response = await getAuthenticatedHttpClient().get(`${process.env.LMS_BASE_URL}/titaned/api/v1/menu-config/`);
 
   if (response.status !== 200) {
     throw new Error('Failed to fetch Navigation Items');
@@ -409,7 +409,7 @@ const Layout = () => {
       <SidebarProvider>
         <div className="header-container">
           <MainHeader
-            logoUrl="/titanEd_logo.png"
+            logoUrl={config.LOGO_URL}
             // menuAlignment={headerData.menu.align}
             // menuList={headerData.menu.menuList}
             // loginSignupButtons={headerData.menu.loginSignupButtons}
