@@ -1,4 +1,9 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  screen,
+  render as defaultRender,
+  waitFor,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { UnlinkModal } from './UnlinkModal';
@@ -7,7 +12,7 @@ import messages from './messages';
 const onUnlinkSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
-const renderComponent = () => render(
+const renderforContainer = () => defaultRender(
   <IntlProvider locale="en">
     <UnlinkModal
       isOpen
@@ -19,23 +24,46 @@ const renderComponent = () => render(
   </IntlProvider>,
 );
 
-describe('<UnlinkModal />', () => {
-  it('render UnlinkModal component correctly', () => {
-    const { getByText, getByRole } = renderComponent();
+const renderforComponent = () => defaultRender(
+  <IntlProvider locale="en">
+    <UnlinkModal
+      isOpen
+      close={closeMock}
+      category="component"
+      onDeleteSubmit={onUnlinkSubmitMock}
+    />
+  </IntlProvider>,
+);
 
-    expect(getByText('Unlink Introduction to Testing?')).toBeInTheDocument();
-    expect(getByText(/are you sure you want to unlink this library Section reference/i)).toBeInTheDocument();
+describe('<UnlinkModal />', () => {
+  it('render UnlinkModal component correctly for containers', () => {
+    renderforContainer();
+
+    expect(screen.getByText('Unlink Introduction to Testing?')).toBeInTheDocument();
+    expect(screen.getByText(/are you sure you want to unlink this library Section reference/i)).toBeInTheDocument();
     expect(
-      getByText(/subsections contained in this Section will remain linked to their library versions./i),
+      screen.getByText(/subsections contained in this Section will remain linked to their library versions./i),
     ).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.unlinkButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.unlinkButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render UnlinkModal component correctly for components', () => {
+    renderforComponent();
+
+    expect(screen.getByText('Unlink this component?')).toBeInTheDocument();
+    expect(screen.getByText(/are you sure you want to unlink this library Component reference/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/will remain linked to their library versions./i),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.unlinkButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls onDeleteSubmit function when the "Unlink" button is clicked', async () => {
-    const { getByRole } = renderComponent();
+    renderforContainer();
 
-    const okButton = getByRole('button', { name: messages.unlinkButton.defaultMessage });
+    const okButton = screen.getByRole('button', { name: messages.unlinkButton.defaultMessage });
     fireEvent.click(okButton);
     waitFor(() => {
       expect(onUnlinkSubmitMock).toHaveBeenCalledTimes(1);
@@ -43,9 +71,9 @@ describe('<UnlinkModal />', () => {
   });
 
   it('calls the close function when the "Cancel" button is clicked', async () => {
-    const { getByRole } = renderComponent();
+    renderforContainer();
 
-    const cancelButton = getByRole('button', { name: messages.cancelButton.defaultMessage });
+    const cancelButton = screen.getByRole('button', { name: messages.cancelButton.defaultMessage });
     fireEvent.click(cancelButton);
     expect(closeMock).toHaveBeenCalledTimes(1);
   });

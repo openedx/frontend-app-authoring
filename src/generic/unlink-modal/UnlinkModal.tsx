@@ -11,13 +11,21 @@ import LoadingButton from '../loading-button';
 
 const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 
-interface UnlinkModalProps {
+type UnlinkModalPropsContainer = {
   displayName?: string;
   category?: string;
+};
+
+type UnlinkModalPropsComponent = {
+  displayName?: undefined;
+  category: 'component';
+};
+
+type UnlinkModalProps = {
   isOpen: boolean;
   close: () => void;
   onUnlinkSubmit: () => void | Promise<void>,
-}
+} & (UnlinkModalPropsContainer | UnlinkModalPropsComponent);
 
 export const UnlinkModal = ({
   displayName,
@@ -27,20 +35,28 @@ export const UnlinkModal = ({
   onUnlinkSubmit,
 }: UnlinkModalProps) => {
   const intl = useIntl();
-  if (!category || !displayName) {
-    // On the first render, the initial values for `category` and `name` might be undefined.
+  if (!category) {
+    // On the first render, the initial value for `category` might be undefined.
     return null;
   }
 
+  const isComponent = category === 'component' as const;
+
   const categoryName = intl.formatMessage(messages[`${category}Name` as keyof typeof messages]);
-  const childrenCategoryName = intl.formatMessage(messages[`${category}ChildrenName` as keyof typeof messages]);
-  const modalTitle = intl.formatMessage(messages.title, { displayName });
+  const childrenCategoryName = !isComponent
+    ? intl.formatMessage(messages[`${category}ChildrenName` as keyof typeof messages])
+    : undefined;
+  const modalTitle = !isComponent
+    ? intl.formatMessage(messages.title, { displayName })
+    : intl.formatMessage(messages.titleComponent);
   const modalDescription = intl.formatMessage(messages.description, {
     categoryName,
-    childrenCategoryName,
     b: BoldText,
-    br: <br />,
   });
+  const modalDescriptionChildren = !isComponent ? intl.formatMessage(messages.descriptionChildren, {
+    categoryName,
+    childrenCategoryName,
+  }) : null;
 
   return (
     <AlertModal
@@ -73,7 +89,10 @@ export const UnlinkModal = ({
         </ActionRow>
       )}
     >
-      <div>{modalDescription}</div>
+      <div>
+        {modalDescription}
+        {modalDescriptionChildren}
+      </div>
     </AlertModal>
   );
 };

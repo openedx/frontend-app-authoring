@@ -6,12 +6,22 @@ const messages = defineMessages({
     defaultMessage: 'Unlink {displayName}?',
     description: 'Title for the unlink confirmation modal',
   },
+  titleComponent: {
+    id: 'course-authoring.course-outline.unlink-modal.title-component',
+    defaultMessage: 'Unlink this component?',
+    description: 'Title for the unlink confirmation modal when the item is a component',
+  },
   description: {
     id: 'course-authoring.course-outline.unlink-modal.description',
     defaultMessage: 'Are you sure you want to unlink this library {categoryName} reference?'
-      + ' Unlinked blocks cannot be synced. <b>Unlinking is permanent.</b>{br}'
-      + '{childrenCategoryName} contained in this {categoryName} will remain linked to their library versions.',
+      + ' Unlinked blocks cannot be synced. <b>Unlinking is permanent.</b>',
     description: 'Description text in the unlink confirmation modal',
+  },
+  descriptionChildren: {
+    id: 'course-authoring.course-outline.unlink-modal.description-children',
+    defaultMessage: '{childrenCategoryName} contained in this {categoryName} will remain linked to '
+      + 'their library versions.',
+    description: 'Description text in the unlink confirmation modal when the item has children',
   },
   unlinkButton: {
     id: 'course-authoring.course-outline.unlink-modal.button.unlink',
@@ -39,6 +49,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.unlink-modal.vertical-name',
     defaultMessage: 'Unit',
     description: 'Used to refer to a vertical in the course outline',
+  },
+  componentName: {
+    id: 'course-authoring.course-outline.unlink-modal.component-name',
+    defaultMessage: 'Component',
+    description: 'Used to refer to a component in the course outline',
   },
   chapterChildrenName: {
     id: 'course-authoring.course-outline.unlink-modal.chapter-children-name',

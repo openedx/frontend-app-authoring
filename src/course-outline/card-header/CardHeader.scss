@@ -41,6 +41,7 @@
   .allow-hover-on-disabled {
     &.disabled {
       pointer-events: auto;
+      cursor: default;
     }
   }
 }
