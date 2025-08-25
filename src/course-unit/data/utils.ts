@@ -1,7 +1,5 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
-import type { XBlock } from '@src/data/types';
-
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { PUBLISH_TYPES } from '../constants';
 
