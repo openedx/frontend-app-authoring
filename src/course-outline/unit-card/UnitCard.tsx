@@ -13,7 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus } from '@src/data/constants';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import { isUnitReadOnly } from '@src/course-unit/data/utils';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
@@ -33,7 +33,7 @@ interface UnitCardProps {
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus: string;
+  savingStatus: RequestStatusType;
   onOpenDeleteModal: () => void;
   onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
@@ -247,7 +247,7 @@ const UnitCard = ({
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
-            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+            savingStatus={savingStatus}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

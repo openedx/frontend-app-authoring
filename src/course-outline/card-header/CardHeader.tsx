@@ -28,6 +28,7 @@ import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 
 interface CardHeaderProps {
   title: string;
@@ -41,7 +42,6 @@ interface CardHeaderProps {
   isFormOpen: boolean;
   onEditSubmit: (titleValue: string) => void;
   closeForm: () => void;
-  isDisabledEditField: boolean;
   onClickDelete: () => void;
   onClickUnlink: () => void;
   onClickDuplicate: () => void;
@@ -70,6 +70,7 @@ interface CardHeaderProps {
   onClickSync?: () => void;
   readyToSync?: boolean;
   readOnly?: boolean;
+  savingStatus?: RequestStatusType;
 }
 
 const CardHeader = ({
@@ -84,7 +85,6 @@ const CardHeader = ({
   isFormOpen,
   onEditSubmit,
   closeForm,
-  isDisabledEditField,
   onClickDelete,
   onClickUnlink,
   onClickDuplicate,
@@ -105,6 +105,7 @@ const CardHeader = ({
   onClickSync,
   readyToSync,
   readOnly,
+  savingStatus,
 }: CardHeaderProps) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -121,6 +122,7 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
+  const isSaving = savingStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -174,7 +176,7 @@ const CardHeader = ({
                   onEditSubmit(titleValue);
                 }
               }}
-              disabled={isDisabledEditField}
+              disabled={isSaving}
             />
           </Form.Group>
         ) : (
@@ -188,7 +190,7 @@ const CardHeader = ({
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
-              disabled={isDisabledEditField}
+              disabled={isSaving}
             />
           </>
         )}
@@ -240,7 +242,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={readOnly}
+                disabled={readOnly || isSaving}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -248,7 +250,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                  disabled={readOnly}
+                  disabled={readOnly || isSaving}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}
