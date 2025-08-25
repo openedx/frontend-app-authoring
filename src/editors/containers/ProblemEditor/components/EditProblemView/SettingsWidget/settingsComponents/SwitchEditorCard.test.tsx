@@ -1,58 +1,77 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks, fireEvent,
-} from '@src/testUtils';
-import { SwitchEditorCardInternal as SwitchEditorCard, mapDispatchToProps } from './SwitchEditorCard';
-import { thunkActions } from '../../../../../../data/redux';
+import { screen, initializeMocks, within } from '@src/testUtils';
+import userEvent from '@testing-library/user-event';
+import { editorRender } from '@src/editors/editorTestRender';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { thunkActions } from '@src/editors/data/redux';
+import SwitchEditorCard from './SwitchEditorCard';
 
-describe('SwitchEditorCard', () => {
-  const mockSwitchEditor = jest.fn().mockName('switchEditor');
+const switchEditorSpy = jest.spyOn(thunkActions.problem, 'switchEditor');
+
+describe('SwitchEditorCard - markdown', () => {
   const baseProps = {
-    switchEditor: mockSwitchEditor,
     problemType: 'stringresponse',
     editorType: 'markdown',
-    isMarkdownEditorEnabled: false,
   };
 
   beforeEach(() => {
     initializeMocks();
   });
 
-  test('renders SwitchEditorCard', () => {
-    render(<SwitchEditorCard {...baseProps} />);
+  test('renders SwitchEditorCard', async () => {
+    // Markdown Editor support is on for this course:
+    mockWaffleFlags({ useReactMarkdownEditor: true });
+    // The markdown editor is not currently active (default)
+
+    editorRender(<SwitchEditorCard {...baseProps} />);
+    const user = userEvent.setup();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
     expect(switchButton).toBeInTheDocument();
-    fireEvent.click(switchButton);
+    await user.click(switchButton);
+    // A confirmation dialog is shown:
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  test('calls switchEditor function when confirm button is clicked', () => {
-    render(<SwitchEditorCard {...baseProps} />);
+  test('calls switchEditor function when confirm button is clicked', async () => {
+    // Markdown Editor support is on for this course:
+    mockWaffleFlags({ useReactMarkdownEditor: true });
+    // The markdown editor is not currently active (default)
+
+    editorRender(<SwitchEditorCard {...baseProps} />);
+    const user = userEvent.setup();
     const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
     expect(switchButton).toBeInTheDocument();
-    fireEvent.click(switchButton);
-    const confirmButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
+    await user.click(switchButton);
+
+    const modal = screen.getByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: 'Switch to markdown editor' });
     expect(confirmButton).toBeInTheDocument();
-    fireEvent.click(confirmButton);
-    expect(mockSwitchEditor).toHaveBeenCalledWith('markdown');
+    expect(switchEditorSpy).not.toHaveBeenCalled();
+    await user.click(confirmButton);
+    expect(switchEditorSpy).toHaveBeenCalledWith('markdown');
+    // Markdown editor would now be active.
   });
 
   test('renders nothing for advanced problemType', () => {
-    const { container } = render(<SwitchEditorCard {...baseProps} problemType="advanced" />);
+    const { container } = editorRender(<SwitchEditorCard {...baseProps} problemType="advanced" />);
     const reduxWrapper = (container.firstChild as HTMLElement | null);
     expect(reduxWrapper?.innerHTML).toBe('');
   });
 
-  test('snapshot: SwitchEditorCard returns null when editor is Markdown', () => {
-    const { container } = render(<SwitchEditorCard {...baseProps} editorType="markdown" isMarkdownEditorEnabled />);
-    const reduxWrapper = (container.firstChild as HTMLElement | null);
-    expect(reduxWrapper?.innerHTML).toBe('');
-  });
+  test('returns null when editor is already Markdown', () => {
+    // Markdown Editor support is on for this course:
+    mockWaffleFlags({ useReactMarkdownEditor: true });
+    // The markdown editor *IS* currently active (default)
 
-  describe('mapDispatchToProps', () => {
-    test('updateField from actions.problem.updateField', () => {
-      expect(mapDispatchToProps.switchEditor).toEqual(thunkActions.problem.switchEditor);
+    const { container } = editorRender(<SwitchEditorCard {...baseProps} />, {
+      initialState: {
+        problem: {
+          isMarkdownEditorEnabled: true,
+        },
+      },
     });
+    const reduxWrapper = (container.firstChild as HTMLElement | null);
+    expect(reduxWrapper?.innerHTML).toBe('');
   });
 });
