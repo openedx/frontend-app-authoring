@@ -15,8 +15,14 @@ import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
 import CourseOptimizerPage, { pollLinkCheckDuringScan } from './CourseOptimizerPage';
 import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
-import { mockApiResponse, mockApiResponseForNoResultFound } from './mocks/mockApiResponse';
+import {
+  mockApiResponse,
+  mockApiResponseForNoResultFound,
+  mockApiResponseWithPreviousRunLinks,
+  mockApiResponseEmpty,
+} from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
+import { useWaffleFlags } from '../data/apiHooks';
 
 let store;
 let axiosMock;
@@ -26,6 +32,19 @@ const courseName = 'About Node JS';
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
     name: courseName,
+  }),
+}));
+
+// Mock the waffle flags hook
+jest.mock('../data/apiHooks', () => ({
+  useWaffleFlags: jest.fn(() => ({
+    enableCourseOptimizerCheckPrevRunLinks: false,
+  })),
+}));
+
+jest.mock('../generic/model-store', () => ({
+  useModel: jest.fn().mockReturnValue({
+    name: 'About Node JS',
   }),
 }));
 
@@ -155,7 +174,7 @@ describe('CourseOptimizerPage', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
       await waitFor(() => {
-        expect(getByText(scanResultsMessages.noBrokenLinksCard.defaultMessage)).toBeInTheDocument();
+        expect(getByText(scanResultsMessages.noDataCard.defaultMessage)).toBeInTheDocument();
       });
     });
 
@@ -180,7 +199,7 @@ describe('CourseOptimizerPage', () => {
       } = await setupOptimizerPage();
       // Check if the modal is opened
       expect(getByText('Locked')).toBeInTheDocument();
-      // Select the broken links checkbox
+      // Select the locked links checkbox
       fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
 
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
@@ -188,9 +207,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
       });
     });
 
@@ -205,15 +224,14 @@ describe('CourseOptimizerPage', () => {
       expect(getByText('Broken')).toBeInTheDocument();
       // Select the broken links checkbox
       fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
-
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
       expect(collapsibleTrigger).toBeInTheDocument();
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
+        expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
       });
     });
 
@@ -234,9 +252,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
       // Click the manual links checkbox again to clear the filter
@@ -244,9 +262,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that all links are displayed after clearing the filter
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 
@@ -269,9 +287,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
       });
     });
 
@@ -295,9 +313,9 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(collapsibleTrigger);
 
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 
@@ -317,22 +335,22 @@ describe('CourseOptimizerPage', () => {
       expect(collapsibleTrigger).toBeInTheDocument();
       fireEvent.click(collapsibleTrigger);
 
-      // Assert that all links are displayed
+      // Assert that both links are displayed
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
-      // Click on the "Broken" chip to filter the results
+      // Click on the "Broken" chip to remove the broken filter (should leave only manual)
       const brokenChip = getByTestId('chip-brokenLinks');
       fireEvent.click(brokenChip);
 
       // Assert that only manual links are displayed
       await waitFor(() => {
-        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
       });
 
       // Click the "Clear filters" button
@@ -341,9 +359,9 @@ describe('CourseOptimizerPage', () => {
 
       // Assert that all links are displayed after clearing filters
       await waitFor(() => {
-        expect(getByText('Test Broken Links')).toBeInTheDocument();
-        expect(getByText('Test Manual Links')).toBeInTheDocument();
-        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
+        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
+        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
       });
     });
 
@@ -359,6 +377,88 @@ describe('CourseOptimizerPage', () => {
 
       await waitFor(() => {
         expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    it('should always show no scan data message when data is empty', async () => {
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseEmpty);
+      const { getByText } = render(<OptimizerPage />);
+
+      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+
+      await waitFor(() => {
+        expect(getByText(scanResultsMessages.noDataCard.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    describe('Previous Run Links Feature', () => {
+      beforeEach(() => {
+        // Enable the waffle flag for previous run links
+        useWaffleFlags.mockReturnValue({
+          enableCourseOptimizerCheckPrevRunLinks: true,
+        });
+      });
+
+      afterEach(() => {
+        // Reset to default (disabled)
+        useWaffleFlags.mockReturnValue({
+          enableCourseOptimizerCheckPrevRunLinks: false,
+        });
+      });
+
+      it('should show previous run links section when waffle flag is enabled and links exist', async () => {
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
+        const { getByText } = render(<OptimizerPage />);
+
+        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+
+        await waitFor(() => {
+          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+        });
+      });
+
+      it('should show no results found for previous run links when flag is enabled but no links exist', async () => {
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
+        const { getByText, getAllByText } = render(<OptimizerPage />);
+
+        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+
+        await waitFor(() => {
+          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+          // Should show "No results found" for previous run section
+          const noResultsElements = getAllByText(scanResultsMessages.noResultsFound.defaultMessage);
+          expect(noResultsElements.length).toBeGreaterThan(0);
+        });
+      });
+
+      it('should not show previous run links section when waffle flag is disabled', async () => {
+        // Disable the flag
+        useWaffleFlags.mockReturnValue({
+          enableCourseOptimizerCheckPrevRunLinks: false,
+        });
+
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
+        const { getByText, queryByText } = render(<OptimizerPage />);
+
+        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+
+        await waitFor(() => {
+          expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
+        });
+      });
+
+      it('should handle previous run links in course updates and custom pages', async () => {
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
+        const { getByText, container } = render(<OptimizerPage />);
+
+        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+
+        await waitFor(() => {
+          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+
+          const prevRunSections = container.querySelectorAll('.scan-results');
+          expect(prevRunSections.length).toBeGreaterThan(1);
+        });
       });
     });
   });

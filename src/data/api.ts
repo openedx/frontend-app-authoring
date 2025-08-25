@@ -32,6 +32,7 @@ export async function getCourseDetail(courseId: string, username: string) {
  */
 export const waffleFlagDefaults = {
   enableCourseOptimizer: false,
+  enableCourseOptimizerCheckPrevRunLinks: false,
   useNewHomePage: true,
   useNewCustomPages: true,
   useNewScheduleDetailsPage: true,

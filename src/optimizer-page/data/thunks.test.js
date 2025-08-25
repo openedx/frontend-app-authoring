@@ -1,4 +1,10 @@
-import { startLinkCheck, fetchLinkCheckStatus } from './thunks';
+import {
+  startLinkCheck,
+  fetchLinkCheckStatus,
+  updateAllPreviousRunLinks,
+  updateSinglePreviousRunLink,
+  fetchRerunLinkUpdateStatus,
+} from './thunks';
 import * as api from './api';
 import { LINK_CHECK_STATUSES } from './constants';
 import { RequestStatus } from '../../data/constants';
@@ -188,6 +194,420 @@ describe('fetchLinkCheckStatus thunk', () => {
         payload: expect.anything(),
         type: 'courseOptimizer/updateLinkCheckResult',
       });
+    });
+  });
+});
+
+describe('updateAllPreviousRunLinks', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+  let mockPostRerunLinkUpdateAll;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPostRerunLinkUpdateAll = jest.spyOn(api, 'postRerunLinkUpdateAll').mockResolvedValue({
+      success: true,
+    });
+  });
+
+  describe('successful request', () => {
+    it('should dispatch success actions when updating all previous run links', async () => {
+      await updateAllPreviousRunLinks(courseId)(dispatch, getState);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.PENDING },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.SUCCESSFUL },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(mockPostRerunLinkUpdateAll).toHaveBeenCalledWith(courseId);
+    });
+  });
+
+  describe('failed request', () => {
+    it('should dispatch failed action when update fails', async () => {
+      mockPostRerunLinkUpdateAll.mockRejectedValue(new Error('API error'));
+
+      try {
+        await updateAllPreviousRunLinks(courseId)(dispatch, getState);
+      } catch (error) {
+        // Expected to throw
+      }
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.PENDING },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.FAILED },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+    });
+  });
+});
+
+describe('updateSinglePreviousRunLink', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+  const linkUrl = 'https://old.example.com/link';
+  const blockId = 'block-id-123';
+  const contentType = 'sections';
+  let mockPostRerunLinkUpdateSingle;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPostRerunLinkUpdateSingle = jest.spyOn(api, 'postRerunLinkUpdateSingle').mockResolvedValue({
+      success: true,
+    });
+  });
+
+  describe('successful request', () => {
+    it('should dispatch success actions when updating a single previous run link', async () => {
+      await updateSinglePreviousRunLink(courseId, linkUrl, blockId, contentType)(dispatch, getState);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.PENDING },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.SUCCESSFUL },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(mockPostRerunLinkUpdateSingle).toHaveBeenCalledWith(courseId, linkUrl, blockId, contentType);
+    });
+  });
+
+  describe('failed request', () => {
+    it('should dispatch failed action when update fails', async () => {
+      mockPostRerunLinkUpdateSingle.mockRejectedValue(new Error('API error'));
+
+      try {
+        await updateSinglePreviousRunLink(courseId, linkUrl, blockId, contentType)(dispatch, getState);
+      } catch (error) {
+        // Expected to throw
+      }
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.PENDING },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.FAILED },
+        type: 'courseOptimizer/updateSavingStatus',
+      });
+    });
+  });
+});
+
+// Add tests for fetchRerunLinkUpdateStatus which is missing
+describe('fetchRerunLinkUpdateStatus', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+  let mockGetRerunLinkUpdateStatus;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetRerunLinkUpdateStatus = jest.spyOn(api, 'getRerunLinkUpdateStatus').mockResolvedValue({
+      updateStatus: 'Succeeded',
+    });
+  });
+
+  describe('successful request', () => {
+    it('should dispatch success actions when fetching update status', async () => {
+      const result = await fetchRerunLinkUpdateStatus(courseId)(dispatch, getState);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.IN_PROGRESS },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.SUCCESSFUL },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+
+      expect(mockGetRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId);
+      expect(result.updateStatus).toBe('Succeeded');
+    });
+  });
+
+  describe('failed request', () => {
+    it('should dispatch failed action when fetch fails', async () => {
+      mockGetRerunLinkUpdateStatus.mockRejectedValue(new Error('API error'));
+
+      try {
+        await fetchRerunLinkUpdateStatus(courseId)(dispatch, getState);
+      } catch (error) {
+        // Expected to throw
+      }
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.IN_PROGRESS },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.FAILED },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+    });
+
+    it('should handle 403 unauthorized errors', async () => {
+      mockGetRerunLinkUpdateStatus.mockRejectedValue({ response: { status: 403 } });
+
+      try {
+        await fetchRerunLinkUpdateStatus(courseId)(dispatch, getState);
+      } catch (error) {
+        // Expected to throw
+      }
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.IN_PROGRESS },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.FAILED },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+    });
+  });
+});
+
+// Add more edge cases for existing thunks
+describe('startLinkCheck additional edge cases', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle specific HTTP error codes', async () => {
+    jest.spyOn(api, 'postLinkCheck').mockRejectedValue({
+      response: { status: 403, data: { error: 'Forbidden' } },
+    });
+
+    await startLinkCheck(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
+    });
+  });
+
+  it('should handle network errors', async () => {
+    jest.spyOn(api, 'postLinkCheck').mockRejectedValue(new Error('Network Error'));
+
+    await startLinkCheck(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
+    });
+  });
+
+  it('should reset error state before starting scan', async () => {
+    jest.spyOn(api, 'postLinkCheck').mockResolvedValue({
+      linkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS,
+    });
+
+    await startLinkCheck(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { msg: null, unitUrl: null },
+      type: 'courseOptimizer/updateError',
+    });
+  });
+});
+
+describe('fetchLinkCheckStatus additional edge cases', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle link check status of null', async () => {
+    jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+      linkCheckStatus: null,
+      linkCheckOutput: [],
+      linkCheckCreatedAt: '2024-01-01T00:00:00Z',
+    });
+
+    await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { msg: 'Link Check Failed' },
+      type: 'courseOptimizer/updateError',
+    });
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: true,
+      type: 'courseOptimizer/updateIsErrorModalOpen',
+    });
+  });
+
+  it('should handle undefined link check status', async () => {
+    jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+      linkCheckStatus: undefined,
+      linkCheckOutput: [],
+      linkCheckCreatedAt: '2024-01-01T00:00:00Z',
+    });
+
+    await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { msg: 'Link Check Failed' },
+      type: 'courseOptimizer/updateError',
+    });
+  });
+
+  it('should handle link check succeeded with no output', async () => {
+    jest.spyOn(api, 'getLinkCheckStatus').mockResolvedValue({
+      linkCheckStatus: LINK_CHECK_STATUSES.SUCCEEDED,
+      linkCheckOutput: null,
+      linkCheckCreatedAt: '2024-01-01T00:00:00Z',
+    });
+
+    await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: [],
+      type: 'courseOptimizer/updateLinkCheckResult',
+    });
+  });
+
+  it('should handle 404 errors', async () => {
+    jest.spyOn(api, 'getLinkCheckStatus').mockRejectedValue({ response: { status: 404 } });
+
+    await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateLoadingStatus',
+    });
+  });
+
+  it('should handle 500 errors', async () => {
+    jest.spyOn(api, 'getLinkCheckStatus').mockRejectedValue({ response: { status: 500 } });
+
+    await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateLoadingStatus',
+    });
+  });
+});
+
+describe('updateAllPreviousRunLinks additional edge cases', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should handle HTTP 403 errors', async () => {
+    jest.spyOn(api, 'postRerunLinkUpdateAll').mockRejectedValue({
+      response: { status: 403, data: { error: 'Forbidden' } },
+    });
+
+    try {
+      await updateAllPreviousRunLinks(courseId)(dispatch, getState);
+    } catch (error) {
+      // Expected to throw
+    }
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
+    });
+  });
+
+  it('should handle timeout errors', async () => {
+    jest.spyOn(api, 'postRerunLinkUpdateAll').mockRejectedValue(new Error('timeout'));
+
+    try {
+      await updateAllPreviousRunLinks(courseId)(dispatch, getState);
+    } catch (error) {
+      // Expected to throw
+    }
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
+    });
+  });
+});
+
+describe('updateSinglePreviousRunLink additional edge cases', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+  const linkUrl = 'https://old.example.com/link';
+  const blockId = 'block-id-123';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should use default contentType when not provided', async () => {
+    const mockPostRerunLinkUpdateSingle = jest.spyOn(api, 'postRerunLinkUpdateSingle').mockResolvedValue({
+      success: true,
+    });
+
+    await updateSinglePreviousRunLink(courseId, linkUrl, blockId)(dispatch, getState);
+
+    expect(mockPostRerunLinkUpdateSingle).toHaveBeenCalledWith(courseId, linkUrl, blockId, 'course_updates');
+  });
+
+  it('should handle HTTP 400 errors', async () => {
+    jest.spyOn(api, 'postRerunLinkUpdateSingle').mockRejectedValue({
+      response: { status: 400, data: { error: 'Bad Request' } },
+    });
+
+    try {
+      await updateSinglePreviousRunLink(courseId, linkUrl, blockId, 'sections')(dispatch, getState);
+    } catch (error) {
+      // Expected to throw
+    }
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
+    });
+  });
+
+  it('should handle malformed URLs gracefully', async () => {
+    const malformedUrl = 'not-a-valid-url';
+    jest.spyOn(api, 'postRerunLinkUpdateSingle').mockRejectedValue(new Error('Invalid URL'));
+
+    try {
+      await updateSinglePreviousRunLink(courseId, malformedUrl, blockId, 'sections')(dispatch, getState);
+    } catch (error) {
+      // Expected to throw
+    }
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { status: RequestStatus.FAILED },
+      type: 'courseOptimizer/updateSavingStatus',
     });
   });
 });

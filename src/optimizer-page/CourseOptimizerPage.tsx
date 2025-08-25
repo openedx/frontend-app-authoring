@@ -5,14 +5,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Container, Layout, Button, Card,
+  Badge, Container, Layout, Card, Spinner, StatefulButton,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import SubHeader from '../generic/sub-header/SubHeader';
+import AlertMessage from '../generic/alert-message';
 import { RequestFailureStatuses } from '../data/constants';
+import { STATEFUL_BUTTON_STATES } from '../constants';
 import messages from './messages';
 import {
   getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getSavingStatus, getLinkCheckResult,
@@ -53,16 +54,20 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const linkCheckResult = useSelector(getLinkCheckResult);
   const lastScannedAt = useSelector(getLastScannedAt);
   const { msg: errorMessage } = useSelector(getError);
-  const isShowExportButton = !linkCheckInProgress || errorMessage;
   const isLoadingDenied = (RequestFailureStatuses as string[]).includes(loadingStatus);
-  const isSavingDenied = (RequestFailureStatuses as string[]).includes(savingStatus);
   const interval = useRef<number | undefined>(undefined);
   const courseDetails = useModel('courseDetails', courseId);
   const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
   const [showStepper, setShowStepper] = useState(false);
-
+  const [scanResultsError, setScanResultsError] = useState<string | null>(null);
+  const isSavingDenied = (RequestFailureStatuses as string[]).includes(savingStatus) && !errorMessage;
   const intl = useIntl();
-
+  const getScanButtonState = () => {
+    if (linkCheckInProgress && !errorMessage) {
+      return STATEFUL_BUTTON_STATES.pending;
+    }
+    return STATEFUL_BUTTON_STATES.default;
+  };
   const courseStepperSteps = [
     {
       title: intl.formatMessage(messages.preparingStepTitle),
@@ -133,6 +138,17 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
           })}
         </title>
       </Helmet>
+      {scanResultsError && (
+        <AlertMessage
+          variant="danger"
+          title=""
+          description={scanResultsError}
+          dismissible
+          show={!!scanResultsError}
+          onClose={() => setScanResultsError(null)}
+          className="mt-3"
+        />
+      )}
       <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
           <Layout
@@ -144,51 +160,65 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
           >
             <Layout.Element>
               <article>
-                <SubHeader
-                  hideBorder
-                  title={
-                    (
-                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                        {intl.formatMessage(messages.headingTitle)}
-                        <Badge variant="primary" className="ml-2" style={{ fontSize: 'large' }}>{intl.formatMessage(messages.new)}</Badge>
-                      </span>
-                    )
-                  }
-                  subtitle={intl.formatMessage(messages.headingSubtitle)}
-                />
-                <Card>
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 p-3">
+                  <div>
+                    <p className="small text-muted mb-1">Tools</p>
+                    <div className="d-flex align-items-center">
+                      <h1 className="h2 mb-0 mr-3">{intl.formatMessage(messages.headingTitle)}</h1>
+                      <Badge variant="dark" className="ml-2">{intl.formatMessage(messages.new)}</Badge>
+                    </div>
+                  </div>
+                  <StatefulButton
+                    className="px-4 rounded-0 scan-course-btn"
+                    labels={{
+                      default: intl.formatMessage(messages.buttonTitle),
+                      pending: intl.formatMessage(messages.buttonTitle),
+                    }}
+                    icons={{
+                      default: '',
+                      pending: <Spinner
+                        animation="border"
+                        size="sm"
+                        className="mr-2 spinner-icon"
+                      />,
+                    }}
+                    state={getScanButtonState()}
+                    onClick={() => dispatch(startLinkCheck(courseId))}
+                    disabled={!!(linkCheckInProgress) && !errorMessage}
+                    variant="primary"
+                    data-testid="scan-course"
+                  />
+                </div>
+                <Card className="scan-card">
+                  <p className="px-3 py-1 small">{intl.formatMessage(messages.description)}</p>
+                  <hr />
+                  {showStepper && (
+                    <Card.Section className="px-3 py-1">
+                      <CourseStepper
+                        // @ts-ignore
+                        steps={courseStepperSteps}
+                        // @ts-ignore
+                        activeKey={currentStage}
+                        hasError={currentStage === 1 && !!errorMessage}
+                        errorMessage={errorMessage}
+                      />
+                    </Card.Section>
+                  )}
                   <Card.Header
                     className="scan-header h3 px-3 text-black mb-2"
-                    title={intl.formatMessage(messages.card1Title)}
+                    title={intl.formatMessage(messages.scanHeader)}
                   />
-                  <p className="px-3 py-1 small ">{intl.formatMessage(messages.description)}</p>
-                  {isShowExportButton && (
                   <Card.Section className="px-3 py-1">
-                    <Button
-                      size="md"
-                      block
-                      className="mb-3"
-                      onClick={() => dispatch(startLinkCheck(courseId))}
-                    >
-                      {intl.formatMessage(messages.buttonTitle)}
-                    </Button>
                     <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                   </Card.Section>
-                  )}
-                  {showStepper && (
-                  <Card.Section className="px-3 py-1">
-                    <CourseStepper
-                      // @ts-ignore
-                      steps={courseStepperSteps}
-                      // @ts-ignore
-                      activeKey={currentStage}
-                      hasError={currentStage === 1 && !!errorMessage}
-                      errorMessage={errorMessage}
-                    />
-                  </Card.Section>
-                  )}
                 </Card>
-                {(linkCheckPresent && linkCheckResult) && <ScanResults data={linkCheckResult} />}
+                {linkCheckPresent && linkCheckResult && (
+                  <ScanResults
+                    data={linkCheckResult}
+                    courseId={courseId}
+                    onErrorStateChange={setScanResultsError}
+                  />
+                )}
               </article>
             </Layout.Element>
           </Layout>
