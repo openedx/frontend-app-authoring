@@ -17,8 +17,8 @@ export const PublishDraftButton = ({
 
   return (
     <Button
-      variant="outline-primary rounded-0 status-button draft-status font-weight-bold"
-      className="m-1 flex-grow-1"
+      variant="outline-primary w-100 rounded-0 status-button draft-status font-weight-bold"
+      className="m-1"
       disabled={readOnly}
       onClick={onClick}
     >
