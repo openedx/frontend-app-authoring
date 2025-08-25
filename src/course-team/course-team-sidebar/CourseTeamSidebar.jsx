@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
+import { Icon, MailtoLink } from '@openedx/paragon';
+import { InfoOutline } from '@openedx/paragon/icons';
 import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
 
 const CourseTeamSideBar = ({ courseId, isOwnershipHint, isShowInitialSidebar }) => {
   const intl = useIntl();
+  const courseTeamSupportEmail = process.env.COURSE_TEAM_SUPPORT_EMAIL;
 
   return (
     <div
@@ -30,6 +32,29 @@ const CourseTeamSideBar = ({ courseId, isOwnershipHint, isShowInitialSidebar }) 
         <p className="help-sidebar-about-descriptions">
           {intl.formatMessage(messages.sidebarAbout_3)}
         </p>
+        {courseTeamSupportEmail && (
+          <>
+            <p className="help-sidebar-other-title">
+              <sub>
+                <Icon
+                  src={InfoOutline}
+                  className="d-inline-block mr-2"
+                  style={{ height: 21, width: 21 }}
+                />
+              </sub>
+              {intl.formatMessage(messages.helpInfoSidebarTitle)}
+            </p>
+            <p className="help-sidebar-about-descriptions">
+              {intl.formatMessage(messages.helpInfoDescription, {
+                email_address: (
+                  <MailtoLink to={courseTeamSupportEmail}>
+                    {courseTeamSupportEmail}
+                  </MailtoLink>
+                ),
+              })}
+            </p>
+          </>
+        )}
       </HelpSidebar>
       {isOwnershipHint && (
         <>
