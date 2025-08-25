@@ -91,3 +91,17 @@ export const updateXBlockBlockIdToId = (data: object): object => {
 
   return updatedData;
 };
+
+/**
+ * Returns whether the given Unit should be read-only.
+ *
+ * Units sourced from libraries are read-only (temporary, for Teak).
+ *
+ * @param unit - uses the 'upstreamInfo' object if found.
+ * @returns True if readOnly, False if editable.
+ */
+export const isUnitReadOnly = ({ upstreamInfo }: XBlock): boolean => (
+  !!upstreamInfo
+  && !!upstreamInfo.upstreamRef
+  && upstreamInfo.upstreamRef.startsWith('lct:')
+);

@@ -14,6 +14,7 @@ import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutli
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { RequestStatus } from '@src/data/constants';
+import { isUnitReadOnly } from '@src/course-unit/data/utils';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -106,6 +107,8 @@ const UnitCard = ({
       isContainer: true,
     };
   }, [upstreamInfo]);
+
+  const readOnly = isUnitReadOnly(unit);
 
   // re-create actions object for customizations
   const actions = { ...unitActions };
@@ -244,7 +247,7 @@ const UnitCard = ({
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
-            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}
