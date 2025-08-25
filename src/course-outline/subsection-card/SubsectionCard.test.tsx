@@ -114,7 +114,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onNewUnitSubmit={jest.fn()}
     onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
     isCustomRelativeDatesActive={false}
-    savingStatus=""
     onEditSubmit={onEditSubectionSubmit}
     onDuplicateSubmit={jest.fn()}
     onOpenConfigureModal={jest.fn()}
