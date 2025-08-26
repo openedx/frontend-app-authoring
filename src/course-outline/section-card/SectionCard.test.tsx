@@ -230,7 +230,7 @@ describe('<SectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -250,7 +250,7 @@ describe('<SectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

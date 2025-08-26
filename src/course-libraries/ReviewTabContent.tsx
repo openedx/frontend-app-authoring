@@ -172,7 +172,7 @@ const ItemReviewList = ({
       downstreamBlockId: info.usageKey,
       upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
       upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
-      isContainer: info.blockType === 'vertical' || info.blockType === 'sequencial' || info.blockType === 'chapter',
+      isContainer: info.blockType === 'vertical' || info.blockType === 'sequential' || info.blockType === 'chapter',
     });
   }, [outOfSyncItemsByKey]);
 
