@@ -43,7 +43,7 @@ import messages from './messages';
 
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
-  const response = await getAuthenticatedHttpClient().get(`${process.env.LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+  const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
 
   if (response.status !== 200) {
     throw new Error('Failed to fetch Navigation Items');
@@ -65,6 +65,7 @@ const Layout = () => {
     logoutUrl: LOGOUT_URL,
     isAdmin: userIsAdmin,
   });
+  console.log('config', config);
 
   const intl = useIntl();
 

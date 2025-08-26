@@ -30,6 +30,7 @@ import {
   Face3,
 } from '@openedx/paragon/icons';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
 import './PSCourseForm.scss';
 import IntroductionVideo from '../../schedule-and-details/introducing-section/introduction-video';
@@ -97,7 +98,7 @@ const PSCourseForm = ({
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
-        const response = await getAuthenticatedHttpClient().get(`${process.env.LMS_BASE_URL}/organizations`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/organizations`);
         console.log('allowedOrganizations response', response);
         // Transform the response to match the expected format
         const organizations = response.data || [];
@@ -289,7 +290,7 @@ const PSCourseForm = ({
       setShowErrorModal(false); // Hide any previous error modals
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
-      const response = await getAuthenticatedHttpClient().post(`${process.env.LMS_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
+      const response = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to create course. Please try again.');
