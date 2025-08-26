@@ -178,7 +178,6 @@ const CardHeader = ({
             {titleComponent}
             <IconButtonWithTooltip
               className="item-card-button-icon"
-              variant={isDisabledEditField ? 'light' : 'primary'}
               data-testid={`${namePrefix}-edit-button`}
               alt={intl.formatMessage(messages.altButtonEdit)}
               tooltipContent={<div>{intl.formatMessage(messages.altButtonEdit)}</div>}
