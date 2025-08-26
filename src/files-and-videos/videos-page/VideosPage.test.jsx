@@ -220,11 +220,11 @@ describe('Videos page', () => {
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
-      it('should render thumbnail upload button', async () => {
+      it('should no render thumbnail upload button', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         const addThumbnailButton = screen.queryByTestId('video-thumbnail-mOckID5');
 
-        expect(addThumbnailButton).toBeVisible();
+        expect(addThumbnailButton).toBeNull();
       });
       describe('with videos with backend status in_progress', () => {
         it('should render video with in progress status', async () => {
