@@ -160,7 +160,7 @@ const Dashboard = () => {
           const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.allSettled([
             client.get(`${baseUrl}/metrics`),
             client.get(`${baseUrl}/widgets`),
-            client.get(`${baseUrl}/titan-ai-suggestions`),
+            client.get(`${baseUrl}/ai-suggestions`),
             client.get(`${baseUrl}/todo-list`),
           ]);
 
