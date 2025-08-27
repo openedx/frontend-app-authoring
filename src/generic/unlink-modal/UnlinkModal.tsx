@@ -90,8 +90,8 @@ export const UnlinkModal = ({
       )}
     >
       <div>
-        {modalDescription}
-        {modalDescriptionChildren}
+        <p className="mt-2">{modalDescription}</p>
+        <p>{modalDescriptionChildren}</p>
       </div>
     </AlertModal>
   );
