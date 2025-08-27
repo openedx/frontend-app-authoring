@@ -179,8 +179,8 @@ const CardHeader = ({
             <IconButtonWithTooltip
               className="item-card-button-icon"
               data-testid={`${namePrefix}-edit-button`}
-              alt={intl.formatMessage(messages.altButtonEdit)}
-              tooltipContent={<div>{intl.formatMessage(messages.altButtonEdit)}</div>}
+              alt={intl.formatMessage(messages.altButtonRename)}
+              tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
