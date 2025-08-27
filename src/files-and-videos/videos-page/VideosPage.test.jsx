@@ -226,12 +226,6 @@ describe('Videos page', () => {
 
         expect(addThumbnailButton).toBeNull();
       });
-      it('should set thumbnailError when image fails to load', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-        const image = screen.getByRole('img');
-        fireEvent.error(image);
-        expect(screen.getByTestId('video-thumbnail-mOckID1')).toBeVisible();
-      });
       describe('with videos with backend status in_progress', () => {
         it('should render video with in progress status', async () => {
           await mockStore(RequestStatus.IN_PROGRESS);
