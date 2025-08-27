@@ -144,12 +144,12 @@ const CardHeader = ({
               )}
               data-testid={`${namePrefix}-edit-button`}
               alt={intl.formatMessage(
-                isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonEdit,
+                isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonRename,
               )}
               tooltipContent={(
                 <div>
                   {intl.formatMessage(
-                    isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonEdit,
+                    isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonRename,
                   )}
                 </div>
               )}

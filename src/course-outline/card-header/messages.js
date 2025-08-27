@@ -29,9 +29,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.status-badge.draft-unpublished-changes',
     defaultMessage: 'Draft (Unpublished changes)',
   },
-  altButtonEdit: {
+  altButtonRename: {
     id: 'course-authoring.course-outline.card.button.edit.alt',
-    defaultMessage: 'Edit',
+    defaultMessage: 'Rename',
   },
   menuPublish: {
     id: 'course-authoring.course-outline.card.menu.publish',
