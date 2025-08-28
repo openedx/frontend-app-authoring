@@ -67,7 +67,6 @@ interface CardHeaderProps {
   extraActionsComponent?: ReactNode,
   onClickSync?: () => void;
   readyToSync?: boolean;
-  readOnly?: boolean;
   savingStatus?: RequestStatusType;
 }
 
@@ -101,7 +100,6 @@ const CardHeader = ({
   extraActionsComponent,
   onClickSync,
   readyToSync,
-  readOnly,
   savingStatus,
 }: CardHeaderProps) => {
   const intl = useIntl();
@@ -238,7 +236,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={readOnly || isSaving}
+                disabled={isSaving}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -246,7 +244,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                  disabled={readOnly || isSaving}
+                  disabled={isSaving}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}
