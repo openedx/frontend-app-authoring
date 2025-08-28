@@ -29,9 +29,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.status-badge.draft-unpublished-changes',
     defaultMessage: 'Draft (Unpublished changes)',
   },
-  altButtonEdit: {
+  altButtonRename: {
     id: 'course-authoring.course-outline.card.button.edit.alt',
-    defaultMessage: 'Edit',
+    defaultMessage: 'Rename',
   },
   menuPublish: {
     id: 'course-authoring.course-outline.card.menu.publish',
@@ -81,6 +81,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.button.sync.alt',
     defaultMessage: 'Update available - click to sync',
     description: 'Alt text for the sync icon button.',
+  },
+  cannotEditTooltip: {
+    id: 'course-authoring.course-outline.card.button.edit.disable.tooltip',
+    defaultMessage: 'This object was added from a library, so it cannot be edited.',
+    description: 'Tooltip text of button when the object was added from a library.',
   },
 });
 

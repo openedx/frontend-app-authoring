@@ -17,7 +17,7 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import {
-  Cached, CheckCircle, Launch, Loop,
+  Cached, CheckCircle, Launch, Loop, Info,
 } from '@openedx/paragon/icons';
 
 import sumBy from 'lodash/sumBy';
@@ -33,6 +33,7 @@ import { useStudioHome } from '../studio-home/hooks';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
+import AlertMessage from '../generic/alert-message';
 
 interface Props {
   courseId: string;
@@ -198,6 +199,12 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
           onReview={onAlertReview}
           showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
           setShowAlert={setShowReviewAlert}
+        />
+        { /* TODO: Remove this alert after implement container in this page */}
+        <AlertMessage
+          title={intl.formatMessage(messages.unitsUpdatesWarning)}
+          icon={Info}
+          variant="info"
         />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}

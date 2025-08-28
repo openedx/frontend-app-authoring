@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -10,6 +11,7 @@ import {
   Hyperlink,
   Icon,
   IconButton,
+  IconButtonWithTooltip,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -133,19 +135,24 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
-            {readyToSync && (
-              <IconButton
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-sync-button`}
-                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-                iconAs={SyncIcon}
-                onClick={onClickSync}
-              />
-            )}
-            <IconButton
-              className="item-card-button-icon"
+            <IconButtonWithTooltip
+              className={classNames(
+                'item-card-button-icon',
+                {
+                  'item-card-button-icon-disabled': isDisabledEditField,
+                },
+              )}
               data-testid={`${namePrefix}-edit-button`}
-              alt={intl.formatMessage(messages.altButtonEdit)}
+              alt={intl.formatMessage(
+                isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonRename,
+              )}
+              tooltipContent={(
+                <div>
+                  {intl.formatMessage(
+                    isDisabledEditField ? messages.cannotEditTooltip : messages.altButtonRename,
+                  )}
+                </div>
+              )}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
@@ -161,6 +168,15 @@ const CardHeader = ({
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
+          {readyToSync && (
+            <IconButtonWithTooltip
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              onClick={onClickSync}
+            />
+          )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
