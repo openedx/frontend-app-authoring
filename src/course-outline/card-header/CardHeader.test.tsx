@@ -278,6 +278,12 @@ describe('<CardHeader />', () => {
 
   it('calls onClickUnlink when item is clicked', async () => {
     renderComponent();
+
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+    const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
+    await act(async () => fireEvent.click(unlinkMenuItem));
+    expect(onClickUnlinkMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onClickDuplicate when item is clicked', async () => {
