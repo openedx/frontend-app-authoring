@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   previewNotAvailable: {
     id: 'course-authoring.library-authoring.component-comparison.preview-not-available',
-    defaultMessage: 'Preview not available',
+    defaultMessage: 'Preview not available for container changes at this time',
     description: 'Message shown when preview is not available.',
   },
 });
