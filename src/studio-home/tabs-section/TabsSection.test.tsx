@@ -429,5 +429,39 @@ describe('<TabsSection />', () => {
         tabMessages.librariesTabErrorMessage.defaultMessage,
       )).toBeVisible();
     });
+
+    [true, false].forEach((isMigrated) => {
+      it(`should render v2 libraries migration alert when the libraries have isMigrated=${isMigrated}`, async () => {
+        const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map(
+          library => ({
+            ...library,
+            isMigrated,
+          }),
+        );
+        const user = userEvent.setup();
+        await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeLibrariesApiResponse());
+        await axiosMock.onGet(libraryApiLink).reply(200, { libraries });
+        render();
+        await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+        const librariesTab = await screen.findByRole('tab', { name: librariesBetaTabTitle });
+        await user.click(librariesTab);
+
+        expect(librariesTab).toHaveClass('active');
+
+        screen.logTestingPlaygroundURL();
+        expect(await screen.findByText(/welcome to the new content libraries/i)).toBeVisible();
+
+        const migrationPendingText = /legacy libraries can be migrated using the migration tool/i;
+
+        if (isMigrated) {
+          expect(screen.queryByText(migrationPendingText)).not.toBeInTheDocument();
+          expect(screen.queryByRole('button', { name: 'Review Legacy Libraries' })).not.toBeInTheDocument();
+        } else {
+          expect(screen.getByText(migrationPendingText)).toBeVisible();
+          expect(screen.getByRole('button', { name: 'Review Legacy Libraries' })).toBeVisible();
+        }
+      });
+    });
   });
 });
