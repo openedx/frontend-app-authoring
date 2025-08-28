@@ -10,6 +10,7 @@ import {
   Hyperlink,
   Icon,
   IconButton,
+  IconButtonWithTooltip,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -42,6 +43,7 @@ interface CardHeaderProps {
   closeForm: () => void;
   isDisabledEditField: boolean;
   onClickDelete: () => void;
+  onClickUnlink: () => void;
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
@@ -83,6 +85,7 @@ const CardHeader = ({
   closeForm,
   isDisabledEditField,
   onClickDelete,
+  onClickUnlink,
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
@@ -175,19 +178,11 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
-            {readyToSync && (
-              <IconButton
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-sync-button`}
-                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-                iconAs={SyncIcon}
-                onClick={onClickSync}
-              />
-            )}
-            <IconButton
+            <IconButtonWithTooltip
               className="item-card-button-icon"
               data-testid={`${namePrefix}-edit-button`}
-              alt={intl.formatMessage(messages.altButtonEdit)}
+              alt={intl.formatMessage(messages.altButtonRename)}
+              tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
@@ -203,6 +198,15 @@ const CardHeader = ({
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
+          {readyToSync && (
+            <IconButtonWithTooltip
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              onClick={onClickSync}
+            />
+          )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
@@ -280,9 +284,20 @@ const CardHeader = ({
                   </Dropdown.Item>
                 </>
               )}
+              {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
+              {(actions.unlinkable ?? null) !== null && (
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                  onClick={onClickUnlink}
+                  disabled={!actions.unlinkable}
+                  className="allow-hover-on-disabled"
+                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+                >
+                  {intl.formatMessage(messages.menuUnlink)}
+                </Dropdown.Item>
+              )}
               {actions.deletable && (
                 <Dropdown.Item
-                  className="border-top border-light"
                   data-testid={`${namePrefix}-card-header__menu-delete-button`}
                   onClick={onClickDelete}
                 >

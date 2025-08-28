@@ -1,14 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { type RequestStatusType } from './constants';
 
 export const LOADED = 'LOADED';
 
 const slice = createSlice({
   name: 'courseDetail',
   initialState: {
-    courseId: null,
-    status: null,
-    canChangeProvider: null,
+    courseId: null as string | null,
+    status: null as RequestStatusType | null,
+    canChangeProviders: null as null | boolean,
   },
   reducers: {
     updateStatus: (state, { payload }) => {

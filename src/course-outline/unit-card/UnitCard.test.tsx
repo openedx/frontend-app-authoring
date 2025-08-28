@@ -79,6 +79,7 @@ const renderComponent = (props?: object) => render(
     onOrderChange={jest.fn()}
     onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     savingStatus=""
     onEditSubmit={jest.fn()}
@@ -198,7 +199,7 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -218,7 +219,7 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

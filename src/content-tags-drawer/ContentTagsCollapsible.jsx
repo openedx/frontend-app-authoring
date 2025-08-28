@@ -112,7 +112,6 @@ const CustomLoadingIndicator = () => {
   return (
     <Spinner
       animation="border"
-      size="xl"
       screenReaderText={intl.formatMessage(messages.loadingMessage)}
     />
   );

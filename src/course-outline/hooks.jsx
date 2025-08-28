@@ -8,6 +8,8 @@ import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { RequestStatus } from '@src/data/constants';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   addSection,
@@ -102,6 +104,7 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
   const [
     isAddLibrarySectionModalOpen,
     openAddLibrarySectionModal,
@@ -265,6 +268,19 @@ const useCourseOutline = ({ courseId }) => {
     closeDeleteModal();
   };
 
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
+  const handleUnlinkItemSubmit = async () => {
+    // istanbul ignore if: this should never happen
+    if (!currentItem.id) {
+      return;
+    }
+
+    await unlinkDownstream(currentItem.id);
+    dispatch(fetchCourseOutlineIndexQuery(courseId));
+    closeUnlinkModal();
+  };
+
   const handleDuplicateSectionSubmit = () => {
     dispatch(duplicateSectionQuery(currentSection.id, courseStructure.id));
   };
@@ -382,7 +398,11 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeDeleteModal,
     openDeleteModal,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    openUnlinkModal,
     handleDeleteItemSubmit,
+    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,

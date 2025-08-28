@@ -1,10 +1,10 @@
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import { handleResponseErrors } from '../../generic/saving-error-alert';
+} from '@src/generic/processing-notification/data/slice';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import {
   getGroupConfigurations,
   createContentGroup,
@@ -33,7 +33,7 @@ export function fetchGroupConfigurationsQuery(courseId) {
       dispatch(fetchGroupConfigurations({ groupConfigurations }));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response && error.response.status === 403) {
+      if ((error as any).response && (error as any).response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));

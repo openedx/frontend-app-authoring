@@ -63,6 +63,7 @@ describe('groupConfigurations slice', () => {
   it('should delete an experiment configuration with deleteExperimentConfigurationSuccess', () => {
     const initialStateWithExperiment = {
       savingStatus: '',
+      errorMessage: '',
       loadingStatus: RequestStatus.IN_PROGRESS,
       groupConfigurations: {
         allGroupConfigurations: [],

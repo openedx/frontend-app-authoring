@@ -43,7 +43,7 @@ export const COURSE_CREATOR_STATES = {
   granted: 'granted',
   denied: 'denied',
   disallowedForThisSite: 'disallowed_for_this_site',
-};
+} as const;
 
 export const DECODED_ROUTES = {
   COURSE_UNIT: [

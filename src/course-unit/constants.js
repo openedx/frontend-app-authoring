@@ -52,6 +52,7 @@ export const messageTypes = {
   manageXBlockAccess: 'manageXBlockAccess',
   completeManageXBlockAccess: 'completeManageXBlockAccess',
   deleteXBlock: 'deleteXBlock',
+  unlinkXBlock: 'unlinkXBlock',
   completeXBlockDeleting: 'completeXBlockDeleting',
   duplicateXBlock: 'duplicateXBlock',
   completeXBlockDuplicating: 'completeXBlockDuplicating',

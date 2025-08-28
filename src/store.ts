@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Reducer } from '@reduxjs/toolkit';
 
 // FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
 // If this app + the plugin were using React-query, there'd be no issues.
@@ -30,8 +30,43 @@ import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
 
-export default function initializeStore(preloadedState = undefined) {
-  return configureStore({
+type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
+
+/**
+ * @deprecated The global Redux state for Authoring MFE, excluding editors.
+ *   TODO: refactor each part to use React Context and React Query instead.
+ */
+export interface DeprecatedReduxState {
+  courseDetail: InferState<typeof courseDetailReducer>;
+  customPages: Record<string, any>;
+  discussions: Record<string, any>;
+  assets: Record<string, any>;
+  pagesAndResources: Record<string, any>;
+  scheduleAndDetails: Record<string, any>;
+  advancedSettings: Record<string, any>;
+  studioHome: InferState<typeof studioHomeReducer>;
+  models: Record<string, any>;
+  live: Record<string, any>;
+  courseTeam: Record<string, any>;
+  courseUpdates: Record<string, any>;
+  processingNotification: Record<string, any>;
+  helpUrls: Record<string, any>;
+  courseExport: Record<string, any>;
+  courseOptimizer: Record<string, any>;
+  generic: Record<string, any>;
+  courseImport: Record<string, any>;
+  videos: Record<string, any>;
+  courseOutline: Record<string, any>;
+  courseUnit: Record<string, any>;
+  courseChecklist: Record<string, any>;
+  accessibilityPage: Record<string, any>;
+  certificates: Record<string, any>;
+  groupConfigurations: InferState<typeof groupConfigurationsReducer>;
+  textbooks: Record<string, any>;
+}
+
+export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
+  return configureStore<DeprecatedReduxState>({
     reducer: {
       courseDetail: courseDetailReducer,
       customPages: customPagesReducer,
