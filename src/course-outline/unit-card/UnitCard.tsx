@@ -14,7 +14,6 @@ import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutli
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
-import { isUnitReadOnly } from '@src/course-unit/data/utils';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -107,8 +106,6 @@ const UnitCard = ({
       isContainer: true,
     };
   }, [upstreamInfo]);
-
-  const readOnly = isUnitReadOnly(unit);
 
   // re-create actions object for customizations
   const actions = { ...unitActions };
@@ -260,7 +257,6 @@ const UnitCard = ({
             parentInfo={parentInfo}
             extraActionsComponent={extraActionsComponent}
             readyToSync={upstreamInfo?.readyToSync}
-            readOnly={readOnly}
           />
           <div className="unit-card__content item-children" data-testid="unit-card__content">
             <XBlockStatus
