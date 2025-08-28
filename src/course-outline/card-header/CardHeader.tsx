@@ -43,6 +43,7 @@ interface CardHeaderProps {
   closeForm: () => void;
   isDisabledEditField: boolean;
   onClickDelete: () => void;
+  onClickUnlink: () => void;
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
@@ -84,6 +85,7 @@ const CardHeader = ({
   closeForm,
   isDisabledEditField,
   onClickDelete,
+  onClickUnlink,
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
@@ -282,9 +284,20 @@ const CardHeader = ({
                   </Dropdown.Item>
                 </>
               )}
+              {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
+              {(actions.unlinkable ?? null) !== null && (
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                  onClick={onClickUnlink}
+                  disabled={!actions.unlinkable}
+                  className="allow-hover-on-disabled"
+                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+                >
+                  {intl.formatMessage(messages.menuUnlink)}
+                </Dropdown.Item>
+              )}
               {actions.deletable && (
                 <Dropdown.Item
-                  className="border-top border-light"
                   data-testid={`${namePrefix}-card-header__menu-delete-button`}
                   onClick={onClickDelete}
                 >

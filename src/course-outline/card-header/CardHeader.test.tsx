@@ -13,6 +13,7 @@ const onClickMenuButtonMock = jest.fn();
 const onClickPublishMock = jest.fn();
 const onClickEditMock = jest.fn();
 const onClickDeleteMock = jest.fn();
+const onClickUnlinkMock = jest.fn();
 const onClickDuplicateMock = jest.fn();
 const onClickConfigureMock = jest.fn();
 const onClickMoveUpMock = jest.fn();
@@ -39,6 +40,7 @@ const cardHeaderProps = {
   closeForm: closeFormMock,
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
+  onClickUnlink: onClickUnlinkMock,
   onClickDuplicate: onClickDuplicateMock,
   onClickConfigure: onClickConfigureMock,
   onClickMoveUp: onClickMoveUpMock,
@@ -50,6 +52,7 @@ const cardHeaderProps = {
     childAddable: true,
     deletable: true,
     duplicable: true,
+    unlinkable: true,
   },
 };
 
@@ -273,6 +276,16 @@ describe('<CardHeader />', () => {
     expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
   });
 
+  it('calls onClickUnlink when item is clicked', async () => {
+    renderComponent();
+
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+    const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
+    await act(async () => fireEvent.click(unlinkMenuItem));
+    expect(onClickUnlinkMock).toHaveBeenCalledTimes(1);
+  });
+
   it('calls onClickDuplicate when item is clicked', async () => {
     renderComponent();
 
@@ -376,5 +389,55 @@ describe('<CardHeader />', () => {
     fireEvent.click(syncButton);
 
     expect(mockClickSync).toHaveBeenCalled();
+  });
+
+  [null, undefined].forEach((unlinkable) => (
+    it(`should not render unlink button if unlinkable action is ${unlinkable}`, async () => {
+      renderComponent({
+        ...cardHeaderProps,
+        actions: {
+          ...cardHeaderProps.actions,
+          unlinkable,
+        },
+      });
+
+      const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+      fireEvent.click(menuButton);
+
+      expect(screen.queryByText(messages.menuUnlink.defaultMessage)).not.toBeInTheDocument();
+    })
+  ));
+
+  it('should render unlink button disabled if unlinkable action is False', async () => {
+    renderComponent({
+      ...cardHeaderProps,
+      actions: {
+        ...cardHeaderProps.actions,
+        unlinkable: false,
+      },
+    });
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
+    expect(unlinkMenuItem).toBeInTheDocument();
+    expect(unlinkMenuItem).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('should render unlink button disabled if unlinkable action is False', async () => {
+    renderComponent({
+      ...cardHeaderProps,
+      actions: {
+        ...cardHeaderProps.actions,
+        unlinkable: true,
+      },
+    });
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
+    fireEvent.click(unlinkMenuItem);
+    await act(async () => fireEvent.click(unlinkMenuItem));
+    expect(onClickUnlinkMock).toHaveBeenCalled();
   });
 });
