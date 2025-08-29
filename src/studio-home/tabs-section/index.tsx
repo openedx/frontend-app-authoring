@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMemo, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Badge,
@@ -17,7 +17,6 @@ import LibrariesTab from './libraries-tab';
 import LibrariesV2Tab from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
-import { fetchLibraryData } from '../data/thunks';
 
 const TabsSection = ({
   showNewCourseContainer,
@@ -26,7 +25,6 @@ const TabsSection = ({
   librariesV1Enabled,
   librariesV2Enabled,
 }) => {
-  const dispatch = useDispatch();
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -37,8 +35,9 @@ const TabsSection = ({
     archived: 'archived',
     taxonomies: 'taxonomies',
   } as const;
+  type TabKeyType = keyof typeof TABS_LIST;
 
-  const initTabKeyState = (pname) => {
+  const initTabKeyState = (pname: string) => {
     if (pname.includes('/libraries-v1')) {
       return TABS_LIST.legacyLibraries;
     }
@@ -53,30 +52,19 @@ const TabsSection = ({
     return TABS_LIST.courses;
   };
 
-  const [tabKey, setTabKey] = useState(initTabKeyState(pathname));
+  const [tabKey, setTabKey] = useState<TabKeyType>(initTabKeyState(pathname));
 
   // This is needed to handle navigating using the back/forward buttons in the browser
   useEffect(() => {
-    // Handle special case when navigating directly to /libraries-v1
-    // we need to call dispatch to fetch library data
-    if (pathname.includes('/libraries-v1')) {
-      dispatch(fetchLibraryData());
-    }
     setTabKey(initTabKeyState(pathname));
   }, [pathname]);
 
-  const {
-    courses, libraries,
-    numPages, coursesCount,
-  } = useSelector(getStudioHomeData);
+  const { courses, numPages, coursesCount } = useSelector(getStudioHomeData);
   const {
     courseLoadingStatus,
-    libraryLoadingStatus,
   } = useSelector(getLoadingStatuses);
   const isLoadingCourses = courseLoadingStatus === RequestStatus.IN_PROGRESS;
   const isFailedCoursesPage = courseLoadingStatus === RequestStatus.FAILED;
-  const isLoadingLibraries = libraryLoadingStatus === RequestStatus.IN_PROGRESS;
-  const isFailedLibrariesPage = libraryLoadingStatus === RequestStatus.FAILED;
 
   // Controlling the visibility of tabs when using conditional rendering is necessary for
   // the correct operation of iterating over child elements inside the Paragon Tabs component.
@@ -129,11 +117,7 @@ const TabsSection = ({
               : messages.librariesTabTitle,
           )}
         >
-          <LibrariesTab
-            libraries={libraries}
-            isLoading={isLoadingLibraries}
-            isFailed={isFailedLibrariesPage}
-          />
+          <LibrariesTab />
         </Tab>,
       );
     }
@@ -149,13 +133,12 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
+  }, [showNewCourseContainer, isLoadingCourses]);
 
-  const handleSelectTab = (tab) => {
+  const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {
       navigate('/home');
     } else if (tab === TABS_LIST.legacyLibraries) {
-      dispatch(fetchLibraryData());
       navigate('/libraries-v1');
     } else if (tab === TABS_LIST.libraries) {
       navigate('/libraries');

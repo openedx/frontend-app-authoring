@@ -1,34 +1,20 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Row } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 
-import AlertMessage from '@src/generic/alert-message';
-import { LoadingSpinner } from '@src/generic/Loading';
+import { LoadingSpinner } from '../../../generic/Loading';
 import CardItem from '../../card-item';
 import { sortAlphabeticallyArray } from '../utils';
+import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
+import { useLibrariesV1Data } from '../../data/apiHooks';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 
-interface LibrariesTabProps {
-  libraries: {
-    displayName: string;
-    libraryKey: string;
-    number: string;
-    org: string;
-    url: string;
-  }[];
-  isLoading: boolean;
-  isFailed: boolean;
-}
-
-const LibrariesTab = ({
-  libraries,
-  isLoading,
-  isFailed,
-}: LibrariesTabProps) => {
+const LibrariesTab = () => {
   const intl = useIntl();
+  const { isLoading, data, isError } = useLibrariesV1Data();
+
   if (isLoading) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
@@ -37,7 +23,7 @@ const LibrariesTab = ({
     );
   }
   return (
-    isFailed ? (
+    isError ? (
       <AlertMessage
         variant="danger"
         description={(
