@@ -4,9 +4,16 @@ import {
   LINK_CHECK_IN_PROGRESS_STATUSES,
   LINK_CHECK_STATUSES,
   SCAN_STAGES,
+  RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES,
 } from './constants';
 
-import { postLinkCheck, getLinkCheckStatus } from './api';
+import {
+  getLinkCheckStatus,
+  getRerunLinkUpdateStatus,
+  postLinkCheck,
+  postRerunLinkUpdateAll,
+  postRerunLinkUpdateSingle,
+} from './api';
 import {
   updateLinkCheckInProgress,
   updateLinkCheckResult,
@@ -16,6 +23,8 @@ import {
   updateLoadingStatus,
   updateSavingStatus,
   updateLastScannedAt,
+  updateRerunLinkUpdateInProgress,
+  updateRerunLinkUpdateResult,
 } from './slice';
 
 export function startLinkCheck(courseId: string) {
@@ -81,6 +90,59 @@ export function fetchLinkCheckStatus(courseId) {
         );
       }
       return false;
+    }
+  };
+}
+
+export function updateAllPreviousRunLinks(courseId: string) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(updateRerunLinkUpdateInProgress(true));
+    try {
+      const response = await postRerunLinkUpdateAll(courseId);
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      return response;
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateRerunLinkUpdateInProgress(false));
+      throw error;
+    }
+  };
+}
+
+export function updateSinglePreviousRunLink(courseId: string, linkUrl: string, blockId: string, contentType: string = 'course_updates') {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    try {
+      const response = await postRerunLinkUpdateSingle(courseId, linkUrl, blockId, contentType);
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      return response;
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      throw error;
+    }
+  };
+}
+
+export function fetchRerunLinkUpdateStatus(courseId: string) {
+  return async (dispatch) => {
+    dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    try {
+      const response = await getRerunLinkUpdateStatus(courseId);
+      dispatch(updateRerunLinkUpdateResult(response));
+
+      if (response.status && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(response.status)) {
+        dispatch(updateRerunLinkUpdateInProgress(true));
+      } else {
+        dispatch(updateRerunLinkUpdateInProgress(false));
+      }
+
+      dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+      return response;
+    } catch (error) {
+      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateRerunLinkUpdateInProgress(false));
+      throw error;
     }
   };
 }

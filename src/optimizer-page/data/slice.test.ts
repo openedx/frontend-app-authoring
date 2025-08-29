@@ -14,6 +14,8 @@ import {
   reset,
   updateLoadingStatus,
   updateSavingStatus,
+  updateRerunLinkUpdateInProgress,
+  updateRerunLinkUpdateResult,
 } from './slice';
 
 describe('courseOptimizer slice', () => {
@@ -34,6 +36,8 @@ describe('courseOptimizer slice', () => {
       successDate: null,
       isErrorModalOpen: false,
       loadingStatus: '',
+      rerunLinkUpdateInProgress: null,
+      rerunLinkUpdateResult: null,
       savingStatus: '',
     });
   });
@@ -95,6 +99,8 @@ describe('courseOptimizer slice', () => {
       successDate: null,
       isErrorModalOpen: false,
       loadingStatus: '',
+      rerunLinkUpdateInProgress: null,
+      rerunLinkUpdateResult: null,
       savingStatus: '',
     });
   });
@@ -107,5 +113,16 @@ describe('courseOptimizer slice', () => {
   it('should handle updateSavingStatus', () => {
     store.dispatch(updateSavingStatus({ status: 'saving' }));
     expect(store.getState().savingStatus).toBe('saving');
+  });
+
+  it('should handle updateRerunLinkUpdateInProgress', () => {
+    store.dispatch(updateRerunLinkUpdateInProgress(true));
+    expect(store.getState().rerunLinkUpdateInProgress).toBe(true);
+  });
+
+  it('should handle updateRerunLinkUpdateResult', () => {
+    const linkResult = { valid: true };
+    store.dispatch(updateRerunLinkUpdateResult(linkResult));
+    expect(store.getState().rerunLinkUpdateResult).toEqual(linkResult);
   });
 });

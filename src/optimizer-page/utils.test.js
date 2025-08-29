@@ -1,5 +1,5 @@
 import { mockApiResponse } from './mocks/mockApiResponse';
-import { countBrokenLinks } from './utils';
+import { countBrokenLinks, isDataEmpty } from './utils';
 
 describe('countBrokenLinks', () => {
   it('should return the count of broken links', () => {
@@ -64,5 +64,43 @@ describe('countBrokenLinks', () => {
         externalForbiddenLinksCounts: [],
       },
     );
+  });
+});
+
+describe('isDataEmpty', () => {
+  it('should return true when data is null', () => {
+    expect(isDataEmpty(null)).toBe(true);
+  });
+
+  it('should return false when courseUpdates contains previousRunLinks', () => {
+    const data = {
+      courseUpdates: [
+        {
+          brokenLinks: [],
+          lockedLinks: [],
+          externalForbiddenLinks: [],
+          previousRunLinks: [{ originalLink: 'https://prev.link' }],
+        },
+      ],
+      sections: [],
+      customPages: [],
+    };
+    expect(isDataEmpty(data)).toBe(false);
+  });
+
+  it('should return false when customPages contains previousRunLinks', () => {
+    const data = {
+      customPages: [
+        {
+          brokenLinks: [],
+          lockedLinks: [],
+          externalForbiddenLinks: [],
+          previousRunLinks: [{ originalLink: 'https://prev.link' }],
+        },
+      ],
+      sections: [],
+      courseUpdates: [],
+    };
+    expect(isDataEmpty(data)).toBe(false);
   });
 });
