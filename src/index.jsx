@@ -14,6 +14,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
+
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 // import { loadThemeStyles } from 'utils/themeService';
@@ -48,6 +49,7 @@ import 'titaned-lib/dist/index.css';
 import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
+import  Calendar  from './calendar/pages/CalendarPage';
 
 const queryClient = new QueryClient();
 
@@ -80,6 +82,7 @@ const App = () => {
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/component-picker" element={<ComponentPicker />} />
+        <Route path="/calendar" element={<Calendar />} />
         <Route
           path="/component-picker/multiple"
           element={<ComponentPicker componentPickerMode="multiple" />}

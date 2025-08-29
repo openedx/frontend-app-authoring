@@ -1,4 +1,21 @@
 {
+    "calendarTitle": "कैलेंडर",
+    "searchPlaceholder": "ईवेंट खोजें...",
+    "all": "सभी ईवेंट",
+    "meeting": "मीटिंग",
+    "work": "काम",
+    "month": "माह",
+    "week": "सप्ताह",
+    "day": "दिन",
+    "list": "सूची",
+    "prev": "पिछला",
+    "next": "अगला",
+    "today": "आज",
+    "calendar.error.eventsLoad": "घटनाएँ लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+    "calendar.error.eventNavigation": "घटना की तारीख पर जाने में विफल।",
+    "calendar.error.navigation": "कैलेंडर नेविगेशन में विफल।",
+    "calendar.error.viewChange": "कैलेंडर दृश्य बदलने में विफल।",
+    "calendar.error.close": "बंद करें",
     "authoring.alert.error.connection": "इस पृष्ठ को लोड करते समय हमें एक तकनीकी त्रुटि का सामना करना पड़ा। यह एक अस्थायी समस्या हो सकती है, इसलिए कृपया कुछ मिनटों में पुनः प्रयास करें। यदि समस्या बनी रहती है, तो कृपया सहायता के लिए {supportLink} पर जाएँ।",
     "authoring.alert.support.text": "समर्थनकारी पृष्ठ",
     "course-authoring.import.page.title": "{headingTitle} | {courseName} | {siteName}",
@@ -1820,7 +1837,6 @@
     "authoring.editorfooter.savebutton.ariaLabel": "परिवर्तनों को सहेजें और शिक्षण संदर्भ में वापस लौटें",
     "authoring.videoEditor.spinnerScreenReaderText": "लोड हो रहा है",
     "authoring.videoEditor.replaceVideoButtonLabel": "वीडियो प्रतिस्थापित करें",
-
     "sidebar.dashboard.title": "डैशबोर्ड",
     "sidebar.create-new-course.title": "नया कोर्स बनाएं",
     "sidebar.my-courses.title": "मेरे कोर्स",
@@ -1831,6 +1847,5 @@
     "sidebar.titan-ai.title": "टाइटन एआई असिस्टेंट",
     "sidebar.shared-resources.title": "सामान्य संसाधन",
     "sidebar.taxonomies.title": "टैक्सोनोमीज",
-
     "dashboard.page.title": "डैशबोर्ड"
 }
