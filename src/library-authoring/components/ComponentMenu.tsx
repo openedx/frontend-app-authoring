@@ -121,6 +121,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         as={IconButton}
         src={MoreVert}
         iconAs={Icon}
+        size="sm"
         variant="primary"
         alt={intl.formatMessage(messages.componentCardMenuAlt)}
         data-testid="component-card-menu-toggle"

@@ -4,14 +4,11 @@ import { Container, Icon, Stack } from '@openedx/paragon';
 import { ArrowDownward, Check, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { getItemIcon } from '@src/generic/block-type-utils';
-import Loading from '@src/generic/Loading';
 import { ContainerType } from '@src/generic/key-utils';
-import type { ContainerHierarchyMember } from '../data/api';
-import { useContainerHierarchy } from '../data/apiHooks';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import type { ItemHierarchyData, ItemHierarchyMember } from '../data/api';
 import messages from './messages';
 
-const ContainerHierarchyRow = ({
+const HierarchyRow = ({
   containerType,
   text,
   selected,
@@ -69,44 +66,25 @@ const ContainerHierarchyRow = ({
   </Stack>
 );
 
-const ContainerHierarchy = ({
+export const ItemHierarchy = ({
+  hierarchyData,
+  itemId,
   showPublishStatus = false,
 }: {
+  hierarchyData: ItemHierarchyData,
+  itemId: string,
   showPublishStatus?: boolean,
 }) => {
   const intl = useIntl();
-  const { sidebarItemInfo } = useSidebarContext();
-  const containerId = sidebarItemInfo?.id;
-
-  // istanbul ignore if: this should never happen
-  if (!containerId) {
-    throw new Error('containerId is required');
-  }
-
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useContainerHierarchy(containerId);
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  // istanbul ignore if: this should never happen
-  if (isError) {
-    return null;
-  }
-
   const {
     sections,
     subsections,
     units,
     components,
-  } = data;
+  } = hierarchyData;
 
   // Returns a message describing the publish status of the given hierarchy row.
-  const publishMessage = (contents: ContainerHierarchyMember[]) => {
+  const publishMessage = (contents: ItemHierarchyMember[]) => {
     // If we're not showing publish status, then we don't need a publish message
     if (!showPublishStatus) {
       return undefined;
@@ -121,9 +99,9 @@ const ContainerHierarchy = ({
     return messages.publishedChipText;
   };
 
-  // Returns True if any of the items in the list match the currently selected container.
-  const selected = (contents: ContainerHierarchyMember[]): boolean => (
-    contents.some((item) => item.id === containerId)
+  // Returns True if any of the items in the list match the currently selected item.
+  const selected = (contents: ItemHierarchyMember[]): boolean => (
+    contents.some((item) => item.id === itemId)
   );
 
   // Use the "selected" status to determine the selected row.
@@ -141,7 +119,7 @@ const ContainerHierarchy = ({
   return (
     <Stack className="content-hierarchy">
       {showSections && (
-        <ContainerHierarchyRow
+        <HierarchyRow
           containerType={ContainerType.Section}
           text={intl.formatMessage(
             messages.hierarchySections,
@@ -157,7 +135,7 @@ const ContainerHierarchy = ({
         />
       )}
       {showSubsections && (
-        <ContainerHierarchyRow
+        <HierarchyRow
           containerType={ContainerType.Subsection}
           text={intl.formatMessage(
             messages.hierarchySubsections,
@@ -173,7 +151,7 @@ const ContainerHierarchy = ({
         />
       )}
       {showUnits && (
-        <ContainerHierarchyRow
+        <HierarchyRow
           containerType={ContainerType.Unit}
           text={intl.formatMessage(
             messages.hierarchyUnits,
@@ -189,7 +167,7 @@ const ContainerHierarchy = ({
         />
       )}
       {showComponents && (
-        <ContainerHierarchyRow
+        <HierarchyRow
           containerType={ContainerType.Components}
           text={intl.formatMessage(
             messages.hierarchyComponents,
@@ -207,5 +185,3 @@ const ContainerHierarchy = ({
     </Stack>
   );
 };
-
-export default ContainerHierarchy;

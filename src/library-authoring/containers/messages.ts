@@ -1,21 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  draftChipText: {
-    id: 'course-authoring.library-authoring.container-component.draft-chip.text',
-    defaultMessage: 'Draft',
-    description: 'Chip in children in section and subsection page that is shown when children has unpublished changes',
-  },
-  publishedChipText: {
-    id: 'course-authoring.library-authoring.container-component.published-chip.text',
-    defaultMessage: 'Published',
-    description: 'Text shown when a unit/section/subsection is published.',
-  },
-  willPublishChipText: {
-    id: 'course-authoring.library-authoring.container-component.will-publish-chip.text',
-    defaultMessage: 'Will Publish',
-    description: 'Text shown when a component/unit/section/subsection will be published when confirmed.',
-  },
   openButton: {
     id: 'course-authoring.library-authoring.container-sidebar.open-button',
     defaultMessage: 'Open',
@@ -41,11 +26,6 @@ const messages = defineMessages({
     defaultMessage: 'Collections ({count})',
     description: 'Title for collections section in manage tab',
   },
-  publishContainerButton: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-button',
-    defaultMessage: 'Publish Changes {publishStatus}',
-    description: 'Button text to initiate publish the unit/subsection/section, showing current publish status',
-  },
   usageTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.usage-tab.title',
     defaultMessage: 'Usage',
@@ -55,118 +35,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container-sidebar.usage-tab.hierarchy-heading',
     defaultMessage: 'Content Hierarchy',
     description: 'Heading for usage tab hierarchy section',
-  },
-  hierarchySections: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-sections',
-    defaultMessage: '{count, plural, one {{displayName}} other {{count} Sections}}',
-    description: (
-      'Text used for the section part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
-  },
-  hierarchySubsections: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-subsections',
-    defaultMessage: '{count, plural, one {{displayName}} other {{count} Subsections}}',
-    description: (
-      'Text used for the subsection part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
-  },
-  hierarchyUnits: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-units',
-    defaultMessage: '{count, plural, one {{displayName}} other {{count} Units}}',
-    description: (
-      'Text used for the unit part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
-  },
-  hierarchyComponents: {
-    id: 'course-authoring.library-authoring.container-sidebar.hierarchy-components',
-    defaultMessage: '{count, plural, one {{displayName}} other {{count} Components}}',
-    description: (
-      'Text used for the components part of the hierarchy: show the displayName when there is one, or '
-      + 'the count when there is more than one.'
-    ),
-  },
-  publishContainerConfirmHeading: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-confirm-heading',
-    defaultMessage: 'Confirm Publish',
-    description: 'Header text shown while confirming publish of a unit/subsection/section',
-  },
-  publishContainerConfirm: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-confirm-button',
-    defaultMessage: 'Publish',
-    description: 'Button text shown to confirm publish of a unit/subsection/section',
-  },
-  publishContainerCancel: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-cancel',
-    defaultMessage: 'Cancel',
-    description: 'Button text shown to cancel publish of a unit/subsection/section',
-  },
-  publishContainerSuccess: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-success',
-    defaultMessage: 'All changes published',
-    description: 'Popup text after publishing a unit/subsection/section',
-  },
-  publishContainerFailed: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-failure',
-    defaultMessage: 'Failed to publish changes',
-    description: 'Popup text seen if publishing a unit/subsection/section fails',
-  },
-  publishSectionWarning: {
-    id: 'course-authoring.library-authoring.section-sidebar.publish-empty-warning',
-    defaultMessage: 'This section will be <highlight>published</highlight>.',
-    description: 'Content details shown before publishing an empty section',
-  },
-  publishSectionWithChildrenWarning: {
-    id: 'course-authoring.library-authoring.section-sidebar.publish-warning',
-    defaultMessage: (
-      'This section and the {childCount, plural, one {subsection} other {subsections}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
-    description: 'Content details shown before publishing a section that contains subsections',
-  },
-  publishSubsectionWarning: {
-    id: 'course-authoring.library-authoring.subsection-sidebar.publish-empty-warning',
-    defaultMessage: 'This subsection will be <highlight>published</highlight>.',
-    description: 'Content details shown before publishing an empty subsection',
-  },
-  publishSubsectionWithChildrenWarning: {
-    id: 'course-authoring.library-authoring.subsection-sidebar.publish-warning',
-    defaultMessage: (
-      'This subsection and the {childCount, plural, one {unit} other {units}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
-    description: 'Content details shown before publishing a subsection that contains units',
-  },
-  publishSubsectionWithParentWarning: {
-    id: 'course-authoring.library-authoring.subsection-sidebar.publish-parent-warning',
-    defaultMessage: (
-      'Its {parentCount, plural, one {parent section} other {parent sections}}'
-      + ' will be <highlight>draft</highlight>.'
-    ),
-    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
-  },
-  publishUnitWarning: {
-    id: 'course-authoring.library-authoring.unit-sidebar.publish-empty-warning',
-    defaultMessage: 'This unit will be <highlight>published</highlight>.',
-    description: 'Content details shown before publishing an empty unit',
-  },
-  publishUnitWithChildrenWarning: {
-    id: 'course-authoring.library-authoring.unit-sidebar.publish-warning',
-    defaultMessage: (
-      'This unit and the {childCount, plural, one {component} other {components}}'
-      + ' it contains will all be <highlight>published</highlight>.'
-    ),
-    description: 'Content details shown before publishing a unit that contains components',
-  },
-  publishUnitWithParentWarning: {
-    id: 'course-authoring.library-authoring.unit-sidebar.publish-parent-warning',
-    defaultMessage: (
-      'Its {parentCount, plural, one {parent subsection} other {parent subsections}}'
-      + ' will be <highlight>draft</highlight>.'
-    ),
-    description: 'Parent details shown before publishing a unit that has one or more parent subsections',
   },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',
@@ -337,6 +205,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container.undo-delete-container-toast-button',
     defaultMessage: 'Undo',
     description: 'Toast message to undo deletion of container',
+  },
+  publishContainerSuccess: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-success',
+    defaultMessage: 'All changes published',
+    description: 'Popup text after publishing a container',
+  },
+  publishContainerFailed: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-failure',
+    defaultMessage: 'Failed to publish changes',
+    description: 'Popup text seen if publishing a container fails',
   },
 });
 

@@ -52,3 +52,20 @@
     }
   }
 }
+
+.status-box {
+  border: 2px solid;
+  border-radius: 4px;
+
+  &.draft-status {
+    @extend %draft-status;
+  }
+
+  &.published-status {
+    @extend %published-status;
+  }
+
+  .container-name {
+    width: 200px;
+  }
+}
