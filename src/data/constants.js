@@ -57,3 +57,6 @@ export const VisibilityTypes = /** @type {const} */ ({
 export const TOTAL_LENGTH_KEY = 'total-length';
 
 export const MAX_TOTAL_LENGTH = 65;
+
+export const SUPPORTED_ICON_CLASSES = ['apple', 'facebook', 'fa-google', 'fa-microsoft', 'fas fa-users', 'fas fa-chart-bar', 'fas fa-tachometer-alt', 'fas fa-clock'];
+

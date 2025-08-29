@@ -118,7 +118,11 @@
     "uuid": "^3.4.0",
     "xmlchecker": "^0.1.0",
     "yup": "0.31.1",
-    "copy-webpack-plugin": "^11.0.0"
+    "copy-webpack-plugin": "^11.0.0",
+    "@fortawesome/fontawesome-svg-core": "6.6.0",
+    "@fortawesome/free-brands-svg-icons": "6.6.0",
+    "@fortawesome/free-solid-svg-icons": "6.6.0",
+    "@fortawesome/react-fontawesome": "0.2.2"
   },
   "devDependencies": {
     "@edx/react-unit-test-utils": "3.0.0",

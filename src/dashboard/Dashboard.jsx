@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -31,11 +31,9 @@ import { CSS } from '@dnd-kit/utilities';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import { AppContext } from '@edx/frontend-platform/react';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
-
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
   const {
@@ -129,7 +127,6 @@ const Dashboard = () => {
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
 
-
   const intl = useIntl();
 
   const sensors = useSensors(
@@ -166,7 +163,7 @@ const Dashboard = () => {
             client.get(`${baseUrl}/todo-list`),
           ]);
 
-          const metrics = metricsRes.status === 'fulfilled' ? metricsRes.value.data : {};
+          const metrics = metricsRes.status === 'fulfilled' ? metricsRes.value.data : [];
           const widgets = widgetsRes.status === 'fulfilled' ? widgetsRes.value.data : [];
           const titanAISuggestions = aiRes.status === 'fulfilled' ? aiRes.value.data : [];
           const todoList = todoRes.status === 'fulfilled' ? todoRes.value.data : [];
@@ -399,30 +396,15 @@ const Dashboard = () => {
         {/* Top Metric Cards */}
         <div className="dashboard-header">{intl.formatMessage(messages.dashboardPageTitle)}</div>
         <div className="metrics-container">
-          <MetricCard
-            icon={MenuBook}
-            value={dashboardData.metrics.courses}
-            label="Courses"
-            type="courses"
-          />
-          <MetricCard
-            icon={Groups}
-            value={dashboardData.metrics.students}
-            label="Students"
-            type="students"
-          />
-          <MetricCard
-            icon={Assessment}
-            value={dashboardData.metrics.enrollments}
-            label="Enrollments"
-            type="enrollments"
-          />
-          <MetricCard
-            icon={LibraryBooks}
-            value={dashboardData.metrics.submissions}
-            label="Submissions"
-            type="submissions"
-          />
+          {dashboardData.metrics && dashboardData.metrics.map((metric, index) => (
+            <MetricCard
+              key={metric.id}
+              icon={metric.icon}
+              value={metric.value}
+              label={metric.label}
+              index={index}
+            />
+          ))}
         </div>
 
         {/* Overview Section */}

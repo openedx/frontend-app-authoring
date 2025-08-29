@@ -47,8 +47,11 @@ import Layout from './Layout';
 import 'titaned-lib/dist/index.css';
 import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
+import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 
 const queryClient = new QueryClient();
+
+registerFontAwesomeIcons();
 
 const App = () => {
   useEffect(() => {

@@ -1,11 +1,31 @@
 {
   "dashboard": {
-    "metrics": {
-      "courses": 12,
-      "students": 1500,
-      "enrollments": 2500,
-      "submissions": 1800
-    },
+    "metrics": [
+      {
+        "id": 5,
+        "label": "Active Learners",
+        "value": 0,
+        "icon": "fas fa-users"
+      },
+      {
+        "id": 8,
+        "label": "Total Courses",
+        "value": 11,
+        "icon": "fas fa-chart-bar"
+      },
+      {
+        "id": 9,
+        "label": "Certificate",
+        "value": 1,
+        "icon": "fas fa-tachometer-alt"
+      },
+      {
+        "id": 10,
+        "label": "Enrollments",
+        "value": 0,
+        "icon": "fas fa-clock"
+      }
+    ],
     "titanAISuggestions": [
       "Consider adding more interactive elements to engage students",
       "Review course completion rates and identify areas for improvement",
