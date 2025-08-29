@@ -331,8 +331,8 @@ describe('library api hooks', () => {
     // 2. containerChildren
     // 3. containerHierarchy
     // 4 & 5. subsections
-    // 6 & 7. subsections hierarchy
-    expect(spy).toHaveBeenCalledTimes(7);
+    // 6 all hierarchies
+    expect(spy).toHaveBeenCalledTimes(6);
   });
 
   describe('publishContainer', () => {
