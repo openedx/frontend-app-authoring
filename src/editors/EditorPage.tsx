@@ -38,7 +38,7 @@ const EditorPage: React.FC<Props> = ({
         studioEndpointUrl,
       }}
     >
-      <EditorContextProvider fullScreen={fullScreen} learningContextId={courseId}>
+      <EditorContextProvider fullScreen={false} learningContextId={courseId}>
         <Editor
           {...{
             onClose,

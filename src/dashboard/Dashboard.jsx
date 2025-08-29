@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -31,6 +31,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
+import { AppContext } from '@edx/frontend-platform/react';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
@@ -128,6 +129,7 @@ const Dashboard = () => {
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
 
+
   const intl = useIntl();
 
   const sensors = useSensors(
@@ -154,13 +156,13 @@ const Dashboard = () => {
           setAllWidgets(sortedWidgets);
         } else {
           // Real API endpoints
-          const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+          const baseUrl = `${getConfig().LMS_BASE_URL}/titaned/api/v1/instructor-dashboard`;
           const client = getAuthenticatedHttpClient();
           // Fetch all in parallel, but handle errors for each
           const [metricsRes, widgetsRes, aiRes, todoRes] = await Promise.allSettled([
             client.get(`${baseUrl}/metrics`),
             client.get(`${baseUrl}/widgets`),
-            client.get(`${baseUrl}/titan-ai-suggestions`),
+            client.get(`${baseUrl}/ai-suggestions`),
             client.get(`${baseUrl}/todo-list`),
           ]);
 
@@ -360,7 +362,7 @@ const Dashboard = () => {
         setIsModalOpen(false);
       } else {
         // Real API endpoint
-        const baseUrl = 'https://staging.titaned.com/titaned/api/v1/instructor-dashboard';
+        const baseUrl = `${getConfig().LMS_BASE_URL}/titaned/api/v1/instructor-dashboard`;
         const client = getAuthenticatedHttpClient();
         const response = await client.post(`${baseUrl}/widgets/filter`, updatedWidgets);
         if (response.status !== 200 && response.status !== 201) {
