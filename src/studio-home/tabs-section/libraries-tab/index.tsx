@@ -37,7 +37,7 @@ const LibrariesTab = () => {
           <MigrateLegacyLibrariesAlert />
           <div className="courses-tab">
             {sortAlphabeticallyArray(data.libraries).map(({
-              displayName, org, number, url,
+              displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey
             }) => (
                 <CardItem
                   key={`${org}+${number}`}
@@ -46,6 +46,10 @@ const LibrariesTab = () => {
                   org={org}
                   number={number}
                   url={url}
+                  isMigrated={isMigrated}
+                  migratedToKey={migratedToKey}
+                  migratedToTitle={migratedToTitle}
+                  migratedToCollectionKey={migratedToCollectionKey}
                 />
               ))}
           </div>
