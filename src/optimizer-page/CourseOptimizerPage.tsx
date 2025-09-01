@@ -196,11 +196,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
       <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
           <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
+            lg={[{ span: 12 }, { span: 0 }]}
           >
             <Layout.Element>
               <article>

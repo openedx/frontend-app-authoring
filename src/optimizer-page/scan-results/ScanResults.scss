@@ -57,6 +57,7 @@
           td {
             padding: 16px 0;
             border-top: none !important;
+            overflow: auto;
 
             a {
               color: var(--info-500, #00688D);
@@ -118,12 +119,17 @@
 
   .broken-link-container {
     max-width: calc(100% - 150px);
+  }
+
+  .broken-link-container a {
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-grow: 1;
-    word-break: break-all;
-    overflow-wrap: anywhere;
-    white-space: break-spaces;
+    white-space: nowrap;
+  }
+
+  .links-container > div:first-child {
+    max-width: 95%;
   }
 
   .locked-links-checkbox {
