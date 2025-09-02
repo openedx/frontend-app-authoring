@@ -331,6 +331,17 @@ describe('<TabsSection />', () => {
       expect(
         await screen.findByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`),
       ).toBeVisible();
+
+      // Migration info should be displayed
+      const migratedContent = generateGetStudioHomeLibrariesApiResponse().libraries[1];
+      expect(await screen.findByText(migratedContent.displayName)).toBeVisible();
+      const newTitleElement = await screen.findAllByText(migratedContent.migratedToTitle!);
+      expect(newTitleElement[0]).toBeVisible();
+      expect(newTitleElement[0]).toHaveAttribute('href', `/library/${migratedContent.migratedToKey}`);
+      expect(newTitleElement[1]).toHaveAttribute(
+        'href',
+        `/library/${migratedContent.migratedToKey}/collection/${migratedContent.migratedToCollectionKey}`,
+      );
     });
 
     it('should switch to Libraries tab and render specific v2 library details ("v2 only" mode)', async () => {
