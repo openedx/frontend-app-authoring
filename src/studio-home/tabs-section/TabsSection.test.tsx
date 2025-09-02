@@ -3,6 +3,16 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { userEvent } from '@testing-library/user-event';
+import { executeThunk } from '@src/utils';
+import { mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
+import contentLibrariesListV2 from '@src/library-authoring/__mocks__/contentLibrariesListV2';
+import {
+  initializeMocks,
+  render as baseRender,
+  fireEvent,
+  screen,
+  act,
+} from '@src/testUtils';
 import messages from '../messages';
 import tabMessages from './messages';
 import TabsSection from '.';
@@ -13,17 +23,7 @@ import {
   generateGetStudioHomeLibrariesApiResponse,
 } from '../factories/mockApiResponses';
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
-import { executeThunk } from '../../utils';
 import { fetchStudioHomeData } from '../data/thunks';
-import { mockGetContentLibraryV2List } from '../../library-authoring/data/api.mocks';
-import contentLibrariesListV2 from '../../library-authoring/__mocks__/contentLibrariesListV2';
-import {
-  initializeMocks,
-  render as baseRender,
-  fireEvent,
-  screen,
-  act,
-} from '../../testUtils';
 
 const { studioShortName } = studioHomeMock;
 

@@ -11,12 +11,12 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import { RequestStatus } from '@src/data/constants';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
 import LibrariesV2Tab from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
-import { RequestStatus } from '../../data/constants';
 
 const TabsSection = ({
   showNewCourseContainer,
