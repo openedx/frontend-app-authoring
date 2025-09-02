@@ -35,6 +35,7 @@ import { ContentType } from './library-authoring/routes';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+import { LegacyLibMigrationPage } from './legacy-libraries-migration/LegacyLibMigrationPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ const App = () => {
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
+        <Route path="/libraries-v1/migrate" element={<LegacyLibMigrationPage />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
