@@ -146,8 +146,8 @@ export function editCourseUnitVisibilityAndData(
           if (callback) {
             callback();
           }
-          const courseUnit = await getCourseUnitData(blockId);
-          dispatch(fetchCourseItemSuccess(courseUnit));
+          const courseSectionVerticalData = await getCourseSectionVerticalData(blockId);
+          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
