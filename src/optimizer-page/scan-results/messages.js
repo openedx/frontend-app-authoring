@@ -74,6 +74,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.updateLinksError',
     defaultMessage: 'Some links couldn\'t be updated.',
   },
+  updateButton: {
+    id: 'course-authoring.scanResults.updateButton',
+    defaultMessage: 'Update',
+  },
+  updated: {
+    id: 'course-authoring.scanResults.updated',
+    defaultMessage: 'Updated',
+  },
 });
 
 export default messages;

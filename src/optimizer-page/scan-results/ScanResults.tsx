@@ -196,38 +196,27 @@ const ScanResults: FC<Props> = ({
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
 
-      const blocksWithResults = new Set();
-      if (response.results && Array.isArray(response.results)) {
+      const typeToSection: Record<string, string> = {
+        course_updates: 'course-updates',
+        custom_pages: 'custom-pages',
+      };
+
+      const blocksWithResults = new Set<string>();
+
+      const addBlocksWithPrevLinks = (sectionId: string) => {
+        const section = allSections.find(s => s.id === sectionId);
+        if (!section) { return; }
+        section.subsections.forEach(sub => sub.units.forEach(unit => unit.blocks.forEach(b => {
+          if (b.previousRunLinks?.length) { blocksWithResults.add(b.id); }
+        })));
+      };
+
+      if (Array.isArray(response.results)) {
         response.results.forEach((result) => {
-          if (result.type === 'course_updates') {
-            allSections.forEach(section => {
-              if (section.id === 'course-updates') {
-                section.subsections.forEach(subsection => {
-                  subsection.units.forEach(unit => {
-                    unit.blocks.forEach(block => {
-                      if (block.previousRunLinks && block.previousRunLinks.length > 0) {
-                        blocksWithResults.add(block.id);
-                      }
-                    });
-                  });
-                });
-              }
-            });
-          } else if (result.type === 'custom_pages') {
-            allSections.forEach(section => {
-              if (section.id === 'custom-pages') {
-                section.subsections.forEach(subsection => {
-                  subsection.units.forEach(unit => {
-                    unit.blocks.forEach(block => {
-                      if (block.previousRunLinks && block.previousRunLinks.length > 0) {
-                        blocksWithResults.add(block.id);
-                      }
-                    });
-                  });
-                });
-              }
-            });
-          } else {
+          const sectionId = typeToSection[result.type];
+          if (sectionId) {
+            addBlocksWithPrevLinks(sectionId);
+          } else if (result.id) {
             blocksWithResults.add(result.id);
           }
         });

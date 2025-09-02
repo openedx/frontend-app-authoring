@@ -1,6 +1,7 @@
 import {
   Card, Icon, DataTable, StatefulButton, Spinner,
 } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ArrowForwardIos,
   LinkOff,
@@ -12,7 +13,9 @@ import messages from './messages';
 import CustomIcon from './CustomIcon';
 import lockedIcon from './lockedIcon';
 import ManualIcon from './manualIcon';
-import { STATEFUL_BUTTON_STATES } from '../../constants';
+import {
+  STATEFUL_BUTTON_STATES, BROKEN, LOCKED, MANUAL,
+} from '../../constants';
 
 const BrokenLinkHref: FC<{ href: string }> = ({ href }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -29,7 +32,7 @@ const BrokenLinkHref: FC<{ href: string }> = ({ href }) => {
   );
 };
 
-const GoToBlock: FC<{ block: { url: string, displayName: string } }> = ({ block }) => {
+const GoToBlock: FC<{ block: { url: string, displayName?: string } }> = ({ block }) => {
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     window.open(block.url, '_blank');
@@ -87,6 +90,7 @@ const LinksCol: FC<{
   updatedLinkMap,
   updatedLinkInProgress,
 }) => {
+  const intl = useIntl();
   const handleUpdate = () => {
     if (onUpdate) {
       onUpdate(originalLink || href, block.id || block.url, sectionId);
@@ -119,13 +123,16 @@ const LinksCol: FC<{
             <span
               className="updated-link-text d-flex align-items-center text-success"
             >
-              Updated
+              {intl.formatMessage(messages.updated)}
               <Icon src={Check} className="text-success" />
             </span>
           ) : (
             <StatefulButton
               className="px-4 rounded-0 update-link-btn"
-              labels={{ default: 'Update', pending: 'Update' }}
+              labels={{
+                default: intl.formatMessage(messages.updateButton),
+                pending: intl.formatMessage(messages.updateButton),
+              }}
               icons={{ default: '', pending: <Spinner animation="border" size="sm" className="mr-2 spinner-icon" /> }}
               state={isUpdating ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
               onClick={handleUpdate}
@@ -160,7 +167,7 @@ type TableData = {
 const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   unit,
   filters,
-  linkType = 'broken',
+  linkType = BROKEN,
   onUpdateLink,
   sectionId,
   updatedLinks = [],
@@ -225,7 +232,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
             <LinksCol
               block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
               href={link}
-              linkType="broken"
+              linkType={BROKEN}
             />
           ),
         }));
@@ -241,7 +248,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
             <LinksCol
               block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
               href={link}
-              linkType="locked"
+              linkType={LOCKED}
             />
           ),
         }));
@@ -258,7 +265,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
             <LinksCol
               block={{ url: block.url, displayName: block.displayName || 'Go to block' }}
               href={link}
-              linkType="manual"
+              linkType={MANUAL}
             />
           ),
         }));

@@ -107,3 +107,9 @@ export const iframeMessageTypes = {
   xblockEvent: 'xblock-event',
   xblockScroll: 'xblock-scroll',
 };
+
+export const BROKEN = 'broken';
+
+export const LOCKED = 'locked';
+
+export const MANUAL = 'manual';

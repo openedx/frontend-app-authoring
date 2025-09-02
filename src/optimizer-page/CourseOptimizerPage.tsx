@@ -13,6 +13,7 @@ import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import AlertMessage from '../generic/alert-message';
 import { RequestFailureStatuses } from '../data/constants';
+import { RERUN_LINK_UPDATE_STATUSES } from './data/constants';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import messages from './messages';
 import {
@@ -45,7 +46,8 @@ export function pollRerunLinkUpdateDuringUpdate(
   courseId: string,
 ) {
   const shouldPoll = rerunLinkUpdateInProgress === true
-    || (rerunLinkUpdateResult && rerunLinkUpdateResult.status && rerunLinkUpdateResult.status !== 'Succeeded');
+    || (rerunLinkUpdateResult && rerunLinkUpdateResult.status
+      && rerunLinkUpdateResult.status !== RERUN_LINK_UPDATE_STATUSES.SUCCEEDED);
 
   if (shouldPoll) {
     clearInterval(interval.current as number | undefined);

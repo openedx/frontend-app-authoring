@@ -129,7 +129,7 @@
   }
 
   .links-container > div:first-child {
-    max-width: 95%;
+    max-width: 85%;
   }
 
   .locked-links-checkbox {
@@ -373,4 +373,8 @@
   font-weight: 500;
   font-size: 18px;
   gap: 8px;
+}
+
+.update-link-btn:focus::before {
+  display: none;
 }
