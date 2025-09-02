@@ -82,12 +82,13 @@ const MyCourses = () => {
   const updatedCourses: Course[] = courses.map(course => {
     const courseDetail = courseDetails.find(detail => detail.courseId === course.courseKey);
     const defaultImageName = 'images_course_image.jpg';
+    const defaultImageName2 = 'pencils.jpg';
     if (courseDetail) {
       const imageUri = courseDetail.media.courseImage.uri;
       const imageUrl = `${getConfig().STUDIO_BASE_URL}${imageUri}`;
       return {
         ...course,
-        courseImage: imageUri.includes(defaultImageName) ? null : imageUrl,
+        courseImage: imageUri.includes(defaultImageName) || imageUri.includes(defaultImageName2) ? null : imageUrl,
       };
     }
     return {
@@ -193,6 +194,7 @@ const MyCourses = () => {
                   iconBefore={Add}
                   size="sm"
                   data-testid="new-course-button"
+                  onClick={() => navigate('/new-course')}
                 >
                   Create Course
                 </Button>

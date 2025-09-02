@@ -98,7 +98,7 @@ const PSCourseForm = ({
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
-        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/organizations`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/organizations`);
         console.log('allowedOrganizations response', response);
         // Transform the response to match the expected format
         const organizations = response.data || [];
@@ -290,7 +290,7 @@ const PSCourseForm = ({
       setShowErrorModal(false); // Hide any previous error modals
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
-      const response = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
+      const response = await getAuthenticatedHttpClient().post(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to create course. Please try again.');
