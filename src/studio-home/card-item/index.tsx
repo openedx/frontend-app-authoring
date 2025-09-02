@@ -196,6 +196,7 @@ const CardItem: React.FC<Props> = ({
               <MakeLinkOrSpan
                 when={!readOnlyItem}
                 to={collectionLink()}
+                className="text-info-500"
               >
                 {migratedToTitle}
               </MakeLinkOrSpan>
