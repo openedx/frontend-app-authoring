@@ -12,11 +12,11 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
 
-import { useWaffleFlags } from '../../data/apiHooks';
-import { COURSE_CREATOR_STATES } from '../../constants';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { COURSE_CREATOR_STATES } from '@src/constants';
+import { parseLibraryKey } from '@src/generic/key-utils';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
-import { parseLibraryKey } from '../../generic/key-utils';
 
 interface BaseProps {
   displayName: string;

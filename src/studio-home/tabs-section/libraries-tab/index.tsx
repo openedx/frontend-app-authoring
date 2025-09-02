@@ -3,12 +3,12 @@ import { Icon, Row } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 
-import { LoadingSpinner } from '../../../generic/Loading';
-import CardItem from '../../card-item';
-import { sortAlphabeticallyArray } from '../utils';
-import AlertMessage from '../../../generic/alert-message';
+import { LoadingSpinner } from '@src/generic/Loading';
+import AlertMessage from '@src/generic/alert-message';
+import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
+import CardItem from '@src/studio-home/card-item';
 import messages from '../messages';
-import { useLibrariesV1Data } from '../../data/apiHooks';
+import { sortAlphabeticallyArray } from '../utils';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 
 const LibrariesTab = () => {
