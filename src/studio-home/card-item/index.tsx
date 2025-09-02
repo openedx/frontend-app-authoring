@@ -43,31 +43,32 @@ type Props = BaseProps & (
   { url: string, path?: never }
 );
 
-const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => {
-  return (
-    <Stack direction="horizontal" gap={2}>
-      <span>{from}</span>
-      {to &&
+const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
+  <Stack direction="horizontal" gap={2}>
+    <span>{from}</span>
+    {to
+        && (
         <>
           <Icon src={ArrowForward} size="xs" className="mb-1" />
           <span>{to}</span>
         </>
-      }
-    </Stack>
-  );
-}
+        )}
+  </Stack>
+);
 
-const MakeLinkOrSpan = ({ when, to, children, className }: {
+const MakeLinkOrSpan = ({
+  when, to, children, className,
+}: {
   when: boolean,
   to: string,
   children: React.ReactNode;
   className?: string,
 }) => {
   if (when) {
-    return <Link className={className} to={to}>{children}</Link>
+    return <Link className={className} to={to}>{children}</Link>;
   }
   return <span className={className}>{children}</span>;
-}
+};
 
 /**
  * A card on the Studio home page that represents a Course or a Library
@@ -117,33 +118,31 @@ const CardItem: React.FC<Props> = ({
           from={subtitle}
           to={<>{migratedToKeyObj.org} / {migratedToKeyObj.lib}</>}
         />
-      )
+      );
     }
     return subtitle;
   }, [isLibraries, org, number, run, migratedToKey, isMigrated]);
 
   const collectionLink = () => {
-    let url = `/library/${migratedToKey}`
+    let libUrl = `/library/${migratedToKey}`;
     if (migratedToCollectionKey) {
-
-      url = url + `/collection/${migratedToCollectionKey}`;
+      libUrl += `/collection/${migratedToCollectionKey}`;
     }
-    return url
-  }
+    return libUrl;
+  };
 
-  const getTitle = useCallback(() => {
-    return (
-      <PrevToNextName
-        from={(
-          <MakeLinkOrSpan
-            when={!readOnlyItem}
-            to={destinationUrl}
-            className="card-item-title"
-          >
-            {title}
-          </MakeLinkOrSpan>
+  const getTitle = useCallback(() => (
+    <PrevToNextName
+      from={(
+        <MakeLinkOrSpan
+          when={!readOnlyItem}
+          to={destinationUrl}
+          className="card-item-title"
+        >
+          {title}
+        </MakeLinkOrSpan>
         )}
-        to={
+      to={
           isMigrated && migratedToTitle && (
             <MakeLinkOrSpan
               when={!readOnlyItem}
@@ -154,9 +153,8 @@ const CardItem: React.FC<Props> = ({
             </MakeLinkOrSpan>
           )
         }
-      />
-    );
-  }, [readOnlyItem, isMigrated, destinationUrl, migratedToTitle, title]);
+    />
+  ), [readOnlyItem, isMigrated, destinationUrl, migratedToTitle, title]);
 
   return (
     <Card className="card-item">
@@ -188,7 +186,8 @@ const CardItem: React.FC<Props> = ({
         </Dropdown>
         )}
       />
-      {isMigrated && migratedToKey &&
+      {isMigrated && migratedToKey
+        && (
         <Card.Status className="bg-white pt-0 text-gray-500">
           <Stack direction="horizontal" gap={2}>
             <Icon src={AccessTime} size="sm" className="mb-1" />
@@ -203,7 +202,7 @@ const CardItem: React.FC<Props> = ({
             </b>
           </Stack>
         </Card.Status>
-      }
+        )}
     </Card>
   );
 };

@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { userEvent } from '@testing-library/user-event';
 import messages from '../messages';
 import tabMessages from './messages';
 import TabsSection from '.';
@@ -13,7 +14,7 @@ import {
 } from '../factories/mockApiResponses';
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
 import { executeThunk } from '../../utils';
-import { fetchLibraryData, fetchStudioHomeData } from '../data/thunks';
+import { fetchStudioHomeData } from '../data/thunks';
 import { mockGetContentLibraryV2List } from '../../library-authoring/data/api.mocks';
 import contentLibrariesListV2 from '../../library-authoring/__mocks__/contentLibrariesListV2';
 import {
@@ -21,6 +22,8 @@ import {
   render as baseRender,
   fireEvent,
   screen,
+  act,
+  waitFor,
 } from '../../testUtils';
 
 const { studioShortName } = studioHomeMock;
@@ -197,7 +200,7 @@ describe('<TabsSection />', () => {
       expect(pagination).not.toBeInTheDocument();
     });
 
-    it('should set the url path to "/home" when switching away then back to courses tab', async () => {
+    it('should set the url path to home when switching away then back to courses tab', async () => {
       const data = generateGetStudioCoursesApiResponseV2();
       data.results.courses = [];
       render();
@@ -211,7 +214,6 @@ describe('<TabsSection />', () => {
 
       // switch to libraries tab
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
-      await executeThunk(fetchLibraryData(), store.dispatch);
       const librariesTab = screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
       fireEvent.click(librariesTab);
 
@@ -270,19 +272,21 @@ describe('<TabsSection />', () => {
     });
     it('should switch to Legacy Libraries tab and render specific v1 library details', async () => {
       render();
+      const user = userEvent.setup();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-      await executeThunk(fetchLibraryData(), store.dispatch);
+      await act(async () => executeThunk(fetchStudioHomeData(), store.dispatch));
 
       const librariesTab = await screen.findByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
-      fireEvent.click(librariesTab);
+      await user.click(librariesTab);
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(studioHomeMock.libraries[0].displayName)).toBeVisible();
+      waitFor(async () => expect(await screen.findByText(studioHomeMock.libraries[0].displayName)).toBeVisible());
 
-      expect(screen.getByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`)).toBeVisible();
+      waitFor(async () => expect(
+        await screen.findByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`),
+      ).toBeVisible());
     });
 
     it('should switch to Libraries tab and render specific v2 library details', async () => {
@@ -308,24 +312,26 @@ describe('<TabsSection />', () => {
       )).toBeVisible();
     });
 
-    it('should switch to Libraries tab and render specific v1 library details ("v1 only" mode)', async () => {
+    it('should switch to Libraries tab and render specific v1 library details - v1 only mode', async () => {
       render({ librariesV2Enabled: false });
+      const user = userEvent.setup();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-      await executeThunk(fetchLibraryData(), store.dispatch);
+      await act(async () => executeThunk(fetchStudioHomeData(), store.dispatch));
 
       // Libraries v2 tab should not be shown
       expect(screen.queryByRole('tab', { name: librariesBetaTabTitle })).toBeNull();
 
       const librariesTab = await screen.findByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage });
-      fireEvent.click(librariesTab);
+      await user.click(librariesTab);
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(studioHomeMock.libraries[0].displayName)).toBeVisible();
+      waitFor(async () => expect(await screen.findByText(studioHomeMock.libraries[0].displayName)).toBeVisible());
 
-      expect(screen.getByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`)).toBeVisible();
+      waitFor(async () => expect(
+        await screen.findByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`),
+      ).toBeVisible());
     });
 
     it('should switch to Libraries tab and render specific v2 library details ("v2 only" mode)', async () => {
@@ -387,7 +393,6 @@ describe('<TabsSection />', () => {
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(404);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
-      await executeThunk(fetchLibraryData(), store.dispatch);
 
       const librariesTab = await screen.findByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
       fireEvent.click(librariesTab);
@@ -400,17 +405,18 @@ describe('<TabsSection />', () => {
     it('should render v2 libraries fetch failure alert', async () => {
       mockGetContentLibraryV2List.applyMockError();
       render();
+      const user = userEvent.setup();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      await act(async () => executeThunk(fetchStudioHomeData(), store.dispatch));
 
       const librariesTab = await screen.findByRole('tab', { name: librariesBetaTabTitle });
-      fireEvent.click(librariesTab);
+      await user.click(librariesTab);
 
       expect(librariesTab).toHaveClass('active');
 
-      expect(await screen.findByText(
+      waitFor(async () => expect(await screen.findByText(
         tabMessages.librariesTabErrorMessage.defaultMessage,
-      )).toBeVisible();
+      )).toBeVisible());
     });
   });
 });
