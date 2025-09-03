@@ -2285,3 +2285,15 @@
 .alert {
   margin-bottom: 6px;
 }
+
+.instructors-list {
+  .form-row {
+  display: block !important;
+  margin-left: 0 !important;
+  }
+
+  .pgn__dropzone {
+    height: auto !important;
+    padding: 1rem !important;
+  }
+}
