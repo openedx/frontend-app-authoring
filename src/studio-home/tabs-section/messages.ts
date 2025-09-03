@@ -106,6 +106,21 @@ const messages = defineMessages({
     defaultMessage: 'Review Legacy Libraries',
     description: 'Label for the button to review legacy libraries',
   },
+  librariesV1TabMigrationFilterLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.label',
+    description: 'Label text for migration filter in legacy libraries tab',
+    defaultMessage: 'Any Migration Status',
+  },
+  librariesV1TabMigrationFilterMigratedLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.item.migrated.label',
+    description: 'Label text for migrated migration filter menu item in legacy libraries tab',
+    defaultMessage: 'Migrated',
+  },
+  librariesV1TabMigrationFilterUnmigratedLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.item.unmigrated.label',
+    description: 'Label text for unmigrated migration filter menu item in legacy libraries tab',
+    defaultMessage: 'Unmigrated',
+  },
 });
 
 export default messages;

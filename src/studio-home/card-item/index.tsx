@@ -30,7 +30,7 @@ interface BaseProps {
   isMigrated?: boolean;
   migratedToKey?: string;
   migratedToTitle?: string;
-  migratedToCollectionKey?: string;
+  migratedToCollectionKey?: string | null;
 }
 
 type Props = BaseProps & (
