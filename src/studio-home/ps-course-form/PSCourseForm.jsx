@@ -213,6 +213,7 @@ const PSCourseForm = ({
 
     setTouched(prev => ({ ...prev, [field]: true }));
 
+    // Validate the specific field
     const fieldErrors = validateForm();
     if (fieldErrors[field]) {
       setErrors(prev => ({
@@ -230,7 +231,22 @@ const PSCourseForm = ({
 
   const handleBlur = (field) => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    validateForm();
+    // validateForm();
+    /* Custom error messages */
+    const fieldErrors = validateForm();
+    if (fieldErrors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: fieldErrors[field],
+      }));
+    } else {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+    /* Custom error messages */
   };
 
   const transformFormDataToApiPayload = (formData) => {
@@ -465,8 +481,36 @@ const PSCourseForm = ({
 
   const validateForm = () => {
     const newErrors = {};
+
+    /* Custom error messages */
+    // Validate Title field
+    if (!editedValues.title || !editedValues.title.trim()) {
+      newErrors.title = 'Title is required.';
+    }
+    // Validate shortDescription field
+    if (!editedValues.shortDescription || !editedValues.shortDescription.trim()) {
+      newErrors.shortDescription = 'Short Description is required.';
+    }
+    // Validate Organization field
+    if (!editedValues.organization || !editedValues.organization.trim()) {
+      newErrors.organization = 'Organization is required.';
+    }
+    // Validate Course Number field
+    if (!editedValues.courseNumber || !editedValues.courseNumber.trim()) {
+      newErrors.courseNumber = 'Course Number is required.';
+    }
+    // Validate Course Run field
+    if (!editedValues.courseRun || !editedValues.courseRun.trim()) {
+      newErrors.courseRun = 'Course Run is required.';
+    }
+    // Validate Course start date field
+    if (!editedValues.startDate) {
+      newErrors.startDate = 'Course start date is required.';
+    }
+    /* Custom error messages */
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   const handleCancel = () => {
