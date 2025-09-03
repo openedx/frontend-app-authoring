@@ -28,40 +28,11 @@ const validateScheduleAndDetails = (courseDetails, canShowCertificateAvailableDa
     certificateAvailableDate,
     entranceExamMinimumScorePct,
     certificatesDisplayBehavior,
-    /* Custom error messages in PSCourseForm */
-    shortDescription,
-    title,
-    organization,
-    courseNumber,
-    courseRun,
-  /* Custom error messages in PSCourseForm */
   } = courseDetails;
 
   if (!startDate) {
     errors.startDate = intl.formatMessage(messages.errorMessage7);
   }
-
-  /* Custom error messages in PSCourseForm */
-  if (!title || !title.trim()) {
-    errors.title = 'Title is required.';
-  }
-
-  if (!shortDescription || !shortDescription.trim()) {
-    errors.shortDescription = 'Short Description is required.';
-  }
-
-  if (!organization || !organization.trim()) {
-    errors.organization = 'Organization is required.';
-  }
-
-  if (!courseNumber || !courseNumber.trim()) {
-    errors.courseNumber = 'Course Number is required.';
-  }
-
-  if (!courseRun || !courseRun.trim()) {
-    errors.courseRun = 'Course Run is required.';
-  }
-  /* Custom error messages in PSCourseForm */
 
   if (isDateBeforeOrEqual(certificateAvailableDate, endDate) && canShowCertificateAvailableDate) {
     errors.certificateAvailableDate = intl.formatMessage(messages.errorMessage6);
