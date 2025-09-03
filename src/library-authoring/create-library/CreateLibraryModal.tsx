@@ -1,0 +1,41 @@
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { ModalDialog } from '@openedx/paragon';
+
+import messages from './messages';
+import { CreateLibrary } from './CreateLibrary';
+
+interface CreateLibraryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  handlePostCreate?: ((libraryId: string) => void) | null,
+}
+
+export const CreateLibraryModal = ({
+  isOpen,
+  onClose,
+  handlePostCreate,
+}: CreateLibraryModalProps) => {
+  const intl = useIntl();
+  return (
+    <ModalDialog
+      title={intl.formatMessage(messages.createLibrary)}
+      isOpen={isOpen}
+      onClose={onClose}
+      hasCloseButton
+      isOverflowVisible={false}
+    >
+      <ModalDialog.Header>
+        <ModalDialog.Title>
+          {intl.formatMessage(messages.createLibrary)}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        <CreateLibrary
+          handleCancel={onClose}
+          handlePostCreate={handlePostCreate}
+          showInModal
+        />
+      </ModalDialog.Body>
+    </ModalDialog>
+  );
+};

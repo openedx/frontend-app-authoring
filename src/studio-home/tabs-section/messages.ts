@@ -106,6 +106,11 @@ const messages = defineMessages({
     defaultMessage: 'Review Legacy Libraries',
     description: 'Label for the button to review legacy libraries',
   },
+  createLibraryButton: {
+    id: 'studio-home.legacy-libraries.migrate.create-button',
+    defaultMessage: 'Create New Library',
+    description: 'Label for the button to create a new library in the library list view.',
+  },
 });
 
 export default messages;

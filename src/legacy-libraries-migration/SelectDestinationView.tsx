@@ -21,6 +21,7 @@ export const SelectDestinationView = ({
       <LibrariesV2List
         selectedLibraryId={destinationId}
         handleSelect={setDestinationId}
+        showCreateLibrary
       />
     </Container>
   );

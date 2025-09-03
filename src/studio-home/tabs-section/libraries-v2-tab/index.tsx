@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Icon,
   Row,
@@ -6,11 +6,13 @@ import {
   Alert,
   Button,
   Form,
+  Stack,
+  useToggle,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Error } from '@openedx/paragon/icons';
+import { Add, Error } from '@openedx/paragon/icons';
 
-import { useContentLibraryV2List } from '@src/library-authoring';
+import { CreateLibraryModal, useContentLibraryV2List } from '@src/library-authoring';
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import type { LibrariesV2Response } from '@src/library-authoring/data/api';
@@ -71,16 +73,19 @@ const CardList: React.FC<CardListProps> = ({
 interface Props {
   selectedLibraryId?: string | null;
   handleSelect?: ((libraryId: string) => void) | null;
+  showCreateLibrary?: boolean;
 }
 
 const LibrariesV2List: React.FC<Props> = ({
   selectedLibraryId = null,
   handleSelect = null,
+  showCreateLibrary = false,
 }) => {
   const intl = useIntl();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterParams, setFilterParams] = useState({});
+  const [isCreateLibraryOpen, openCreateLibrary, closeCreateLibrary] = useToggle(false);
 
   const isFiltered = Object.keys(filterParams).length > 0;
   const inSelectMode = handleSelect !== null;
@@ -93,6 +98,13 @@ const LibrariesV2List: React.FC<Props> = ({
     setFilterParams({});
     setCurrentPage(1);
   };
+
+  const handlePostCreateLibrary = useCallback((libraryId: string) => {
+    if (handleSelect) {
+      handleSelect(libraryId);
+      closeCreateLibrary();
+    }
+  }, [handleSelect, closeCreateLibrary]);
 
   const {
     data,
@@ -124,13 +136,25 @@ const LibrariesV2List: React.FC<Props> = ({
     ) : (
       <div className="courses-tab-container">
         <div className="d-flex flex-row justify-content-between my-4">
-          <LibrariesV2Filters
-            isLoading={isLoading}
-            isFiltered={isFiltered}
-            filterParams={filterParams}
-            setFilterParams={setFilterParams}
-            setCurrentPage={setCurrentPage}
-          />
+          <Stack direction="horizontal">
+            {showCreateLibrary && (
+              <Button
+                variant="outline-primary"
+                onClick={openCreateLibrary}
+                iconBefore={Add}
+                className="mr-3"
+              >
+                {intl.formatMessage(messages.createLibraryButton)}
+              </Button>
+            )}
+            <LibrariesV2Filters
+              isLoading={isLoading}
+              isFiltered={isFiltered}
+              filterParams={filterParams}
+              setFilterParams={setFilterParams}
+              setCurrentPage={setCurrentPage}
+            />
+          </Stack>
           {!isLoading && !isError
           && (
             <p>
@@ -180,6 +204,11 @@ const LibrariesV2List: React.FC<Props> = ({
             />
           )
         }
+        <CreateLibraryModal
+          isOpen={isCreateLibraryOpen}
+          onClose={closeCreateLibrary}
+          handlePostCreate={handlePostCreateLibrary}
+        />
       </div>
     )
   );
