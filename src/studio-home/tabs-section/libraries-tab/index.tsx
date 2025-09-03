@@ -38,6 +38,16 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     [Filter.unmigrated]: intl.formatMessage(messages.librariesV1TabMigrationFilterUnmigratedLabel),
   };
 
+  let label = intl.formatMessage(messages.librariesV1TabMigrationFilterLabel);
+  // Set appliedFilters to empty list to indicate clear state
+  let appliedFilters: { label: string }[] = [];
+  if (filters.length === 1) {
+    // Update label to display selected filter item, i.e., Migrated or Unmigrated
+    label = filterLabels[filters[0]];
+    // Only update appliedFilters if a single option is selected else show clear state.
+    appliedFilters = filters.map(filter => ({ label: filterLabels[filter] }));
+  }
+
   const toggleFilter = useCallback((filter: Filter) => {
     setFilters((oldList: Filter[]) => {
       if (oldList.includes(filter)) {
@@ -51,7 +61,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     });
   }, [setFilters]);
 
-  const menuItems = () => BaseFilterState.map((item) => (
+  const menuItems = useCallback(() => BaseFilterState.map((item) => (
     <MenuItem
       key={item}
       as={Form.Checkbox}
@@ -60,21 +70,15 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     >
       {filterLabels[item]}
     </MenuItem>
-  ));
+  )), [toggleFilter, BaseFilterState]);
 
-  let label = intl.formatMessage(messages.librariesV1TabMigrationFilterLabel);
-  let appliedFilters: { label: string }[] = [];
-  if (filters.length === 1) {
-    label = filterLabels[filters[0]];
-    appliedFilters = filters.map(filter => ({ label: filterLabels[filter] }));
-  }
   return (
     <SearchFilterWidget
       appliedFilters={appliedFilters}
       label={label}
-      clearFilter={() => setFilters(BaseFilterState)}
+      clearFilter={() => setFilters(BaseFilterState)}  // On clear select both migrated and unmigrated options.
       icon={FilterList}
-      skipUpdateLabel
+      skipLabelUpdate
     >
       <Form.Group className="mb-0">
         <Form.CheckboxSet
@@ -99,10 +103,11 @@ const LibrariesTab = () => {
 
   let filteredData = findInValues(data?.libraries, search || '') || [];
   if (migrationFilter.length === 1) {
+    // filter results by migrated status
     filteredData = filteredData.filter((obj) => obj.isMigrated === (migrationFilter[0] === Filter.migrated));
   }
-  const perPage = 15;
-  const totalPages = Math.ceil(filteredData.length / perPage); // 15 items per page
+  const perPage = 10;
+  const totalPages = Math.ceil(filteredData.length / perPage);
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   if (isLoading) {
@@ -112,44 +117,46 @@ const LibrariesTab = () => {
       </Row>
     );
   }
+
+  if (isError) {
+    <AlertMessage
+      variant="danger"
+      description={(
+        <Row className="m-0 align-items-center">
+          <Icon src={Error} className="text-danger-500 mr-1" />
+          <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
+        </Row>
+      )}
+    />
+  }
+
   return (
-    isError ? (
-      <AlertMessage
-        variant="danger"
-        description={(
-          <Row className="m-0 align-items-center">
-            <Icon src={Error} className="text-danger-500 mr-1" />
-            <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
-          </Row>
-        )}
-      />
-    ) : (
-      <>
-        <MigrateLegacyLibrariesAlert />
-        <div className="courses-tab">
-          <ActionRow className="my-3">
-            <SearchField
-              onSubmit={() => {}}
-              onChange={setSearch}
-              value={search}
-              className="mr-4"
-              placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
-            />
-            <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
-            <ActionRow.Spacer />
-            {!isLoading && !isError
-              && (
-                <>
-                  {intl.formatMessage(messages.coursesPaginationInfo, {
-                    length: currentPageData?.length,
-                    total: data.libraries.length,
-                  })}
-                </>
-              )}
-          </ActionRow>
-          {currentPageData?.map(({
-            displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
-          }) => (
+    <>
+      <MigrateLegacyLibrariesAlert />
+      <div className="courses-tab">
+        <ActionRow className="my-3">
+          <SearchField
+            onSubmit={() => {}}
+            onChange={setSearch}
+            value={search}
+            className="mr-4"
+            placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
+          />
+          <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
+          <ActionRow.Spacer />
+          {!isLoading && !isError
+            && (
+              <>
+                {intl.formatMessage(messages.coursesPaginationInfo, {
+                  length: currentPageData?.length,
+                  total: data.libraries.length,
+                })}
+              </>
+            )}
+        </ActionRow>
+        {currentPageData?.map(({
+          displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
+        }) => (
             <CardItem
               key={`${org}+${number}`}
               isLibraries
@@ -163,22 +170,21 @@ const LibrariesTab = () => {
               migratedToCollectionKey={migratedToCollectionKey}
             />
           ))}
-          {
-            totalPages > 1
-              && (
-                <Pagination
-                  className="d-flex justify-content-center"
-                  paginationLabel="pagination navigation"
-                  pageCount={totalPages}
-                  currentPage={currentPage}
-                  onPageSelect={setCurrentPage}
-                />
-              )
-          }
-        </div>
-      </>
-    )
-  );
+        {
+          totalPages > 1
+            && (
+              <Pagination
+                className="d-flex justify-content-center"
+                paginationLabel="pagination navigation"
+                pageCount={totalPages}
+                currentPage={currentPage}
+                onPageSelect={setCurrentPage}
+              />
+            )
+        }
+      </div>
+    </>
+  )
 };
 
 export default LibrariesTab;

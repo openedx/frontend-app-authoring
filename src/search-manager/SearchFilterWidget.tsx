@@ -12,7 +12,7 @@ import messages from './messages';
 
 /**
  * A button that represents a filter on the search.
- * If the filter is active, the button displays the currently applied values.
+ * If the filter is active and skipLabelUpdate is not true, the button displays the currently applied values.
  * So when no filter is active it may look like:
  *  [ Type ▼ ]
  * Or when a filter is active and limited to two values, it may look like:
@@ -27,7 +27,7 @@ const SearchFilterWidget: React.FC<{
   children: React.ReactNode;
   clearFilter: () => void,
   icon: React.ComponentType;
-  skipUpdateLabel?: boolean;
+  skipLabelUpdate?: boolean;
 }> = ({ appliedFilters, ...props }) => {
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
@@ -50,8 +50,8 @@ const SearchFilterWidget: React.FC<{
           iconAfter={ArrowDropDown}
         >
           {props.label}
-          {!props.skipUpdateLabel && appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
-          {!props.skipUpdateLabel && appliedFilters.length > 1 ? (
+          {!props.skipLabelUpdate && appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
+          {!props.skipLabelUpdate && appliedFilters.length > 1 ? (
             <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></>
           ) : null}
         </Button>
