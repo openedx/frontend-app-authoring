@@ -27,6 +27,7 @@ const SearchFilterWidget: React.FC<{
   children: React.ReactNode;
   clearFilter: () => void,
   icon: React.ComponentType;
+  skipUpdateLabel?: boolean;
 }> = ({ appliedFilters, ...props }) => {
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
@@ -49,8 +50,10 @@ const SearchFilterWidget: React.FC<{
           iconAfter={ArrowDropDown}
         >
           {props.label}
-          {appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
-          {appliedFilters.length > 1 ? <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></> : null}
+          {!props.skipUpdateLabel && appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
+          {!props.skipUpdateLabel && appliedFilters.length > 1 ? (
+            <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></>
+          ) : null}
         </Button>
       </div>
       <ModalPopup
