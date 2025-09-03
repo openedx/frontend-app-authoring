@@ -30,7 +30,7 @@ import GroupConfigurations from './group-configurations';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import { LmsBook } from '@openedx/paragon/icons';
 
-const MobileCourseNavigation = ({ items, courseId }) => {
+const MobileCourseNavigation = ({ items }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -65,36 +65,58 @@ MobileCourseNavigation.propTypes = {
 
 const CoursePageLayout = ({
   children, courseId, courseName, sidebarItems,
-}) => (
-  <>
-    <div className="ca-breadcrumb-bg">
-      <div className="ca-breadcrumb-container">
-        <div className="ca-breadcrumb">
-          <span className="ca-breadcrumb-icon">
-            <LmsBook className="custom-icon" />
-            My Courses
-          </span>
-          <span className="ca-breadcrumb-divider">/</span>
-          <span className="ca-breadcrumb-current">{courseName || 'Loading...'}</span>
-        </div>
-        <div className="ca-title">
-          {courseName || 'Loading...'}
+}) => {
+  const navigate = useNavigate();
+
+  const handleMyCoursesClick = () => {
+    navigate('/my-courses');
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleMyCoursesClick();
+    }
+  };
+
+  return (
+    <>
+      <div className="ca-breadcrumb-bg">
+        <div className="ca-breadcrumb-container">
+          <div className="ca-breadcrumb">
+            <span
+              className="ca-breadcrumb-icon ca-breadcrumb-link"
+              onClick={handleMyCoursesClick}
+              onKeyDown={handleKeyDown}
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
+              <LmsBook className="custom-icon" />
+              My Courses
+            </span>
+            <span className="ca-breadcrumb-divider">/</span>
+            <span className="ca-breadcrumb-current">{courseName || 'Loading...'}</span>
+          </div>
+          <div className="ca-title">
+            {courseName || 'Loading...'}
+          </div>
         </div>
       </div>
-    </div>
-    <div className="ca-main-layout">
-      <MobileCourseNavigation items={sidebarItems} courseId={courseId} />
-      <div className="ca-sidebar">
-        <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId, sidebarItems }} />
+      <div className="ca-main-layout">
+        <MobileCourseNavigation items={sidebarItems} />
+        <div className="ca-sidebar">
+          <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId, sidebarItems }} />
+        </div>
+        <main className="ca-main-content">
+          <Suspense>
+            {children}
+          </Suspense>
+        </main>
       </div>
-      <main className="ca-main-content">
-        <Suspense>
-          {children}
-        </Suspense>
-      </main>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 CoursePageLayout.propTypes = {
   children: PropTypes.node.isRequired,
