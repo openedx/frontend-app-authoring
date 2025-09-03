@@ -32,7 +32,7 @@ const { default: FilesPageNew } = await import('./src/files-and-videos/files-pag
 const { default: GalleryCardNew } = await import('./src/files-and-videos/generic/table-components/GalleryCardNew');
 
 const { default: PagesAndResourcesNew } = await import('./src/pages-and-resources/PagesAndResourcesNew');
-const { default: TextbooksNew } = await import('./src/textbooks/TextbooksNew');
+const { default: CustomTextbooks } = await import('./src/textbooks/CustomTextbooks');
 const { default: CustomPagesNew } = await import('./src/custom-pages/CustomPagesNew');
 const { default: EditorPage } = await import('./src/editors/EditorPage');
 const { default: ImportSidebarNew } = await import('./src/import-page/import-sidebar/ImportSidebarNew');
@@ -807,7 +807,7 @@ config.pluginSlots = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                    <TextbooksNew {...props} />
+                    <CustomTextbooks {...props} />
                 },
             },
         ],

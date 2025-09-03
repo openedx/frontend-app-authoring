@@ -15,7 +15,7 @@ import TextbookForm from './textbook-form/TextbookForm';
 import { getTextbookFormInitialValues } from './utils';
 import messages from './messages';
 
-const TextbooksNew = ({ courseId,
+const CustomTextbooks = ({ courseId,
   textbooks,
   isLoading,
   isTextbookFormOpen,
@@ -91,8 +91,8 @@ const TextbooksNew = ({ courseId,
   );
 };
 
-TextbooksNew.propTypes = {
+CustomTextbooks.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default TextbooksNew;
+export default CustomTextbooks;

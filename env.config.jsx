@@ -32,7 +32,7 @@ import ChecklistItemComment from './src/course-checklist/ChecklistSection/Checkl
 import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
 import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
 import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
-import TextbooksNew from './src/textbooks/TextbooksNew';
+import CustomTextbooks from './src/textbooks/CustomTextbooks';
 import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
 import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
@@ -807,7 +807,7 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => 
-                        <TextbooksNew {...props} />
+                        <CustomTextbooks {...props} />
                     },
                 },
             ],
