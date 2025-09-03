@@ -69,7 +69,7 @@ export const MigrationStepsViewer = ({ currentStep }: { currentStep: MigrationSt
   };
 
   return (
-    <Container className="d-flex justify-content-center migration-steps-viewer">
+    <Container className="d-flex justify-content-center migration-steps-viewer mt-4 mb-4">
       {buildStep('select-libraries')}
       <hr className="ml-3 mr-3" style={{ width: '80px' }} />
       {buildStep('select-destination')}

@@ -61,6 +61,14 @@ const messages = defineMessages({
     defaultMessage: 'Exit',
     description: 'Text for the button to confirm exit the migration.',
   },
+  selectDestinationAlert: {
+    id: 'legacy-libraries-migration.select-destination.alert.text',
+    defaultMessage: 'All content from the'
+      + ' {count, plural, one {{count} legacy library} other {{count} legacy libraries}} you selected will'
+      + ' be migrated to this new library, organized into collections. Any legacy libraries that are used in'
+      + ' problem banks will maintain their link with migrated content the first time they are migrated.',
+    description: 'Alert text in the select destination step of the legacy libraries migration page.',
+  },
 });
 
 export default messages;

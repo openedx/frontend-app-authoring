@@ -60,4 +60,21 @@ describe('<LegacyLibMigrationPage />', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/libraries-v1');
     });
   });
+
+  it('should select a library destination', async () => {
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+
+    // TODO Missing select legacy libraries
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    nextButton.click();
+
+    // Should show alert of SelectDestinationView
+    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+
+    // The next button is disabled
+    expect(nextButton).toBeDisabled();
+
+    // TODO select library destination
+  });
 });

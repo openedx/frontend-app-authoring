@@ -70,6 +70,7 @@ export const LegacyLibMigrationPage = () => {
   const intl = useIntl();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-libraries');
   const [isExitModalOpen, openExitModal, closeExitModal] = useToggle(false);
+  const [destinationLibraryId, setDestination] = useState<string>();
 
   const handleNext = useCallback(() => {
     switch (currentStep) {
@@ -93,6 +94,7 @@ export const LegacyLibMigrationPage = () => {
         openExitModal();
         break;
       case 'select-destination':
+        setDestination(undefined);
         setCurrentStep('select-libraries');
         break;
       case 'confirmation-view':
@@ -102,6 +104,21 @@ export const LegacyLibMigrationPage = () => {
         break;
     }
   }, [currentStep, setCurrentStep]);
+
+  const isNextDisabled = useCallback(() => {
+    switch (currentStep) {
+      case 'select-libraries':
+        // TODO
+        return false;
+      case 'select-destination':
+        return destinationLibraryId === undefined;
+      case 'confirmation-view':
+        // TODO
+        return false;
+      default:
+        return true;
+    }
+  }, [currentStep, destinationLibraryId]);
 
   return (
     <>
@@ -123,7 +140,7 @@ export const LegacyLibMigrationPage = () => {
                 <SelectLegacyLibraryView />
               </Stepper.Step>
               <Stepper.Step eventKey="select-destination" title="Select Destination">
-                <SelectDestinationView />
+                <SelectDestinationView destinationId={destinationLibraryId} setDestinationId={setDestination} />
               </Stepper.Step>
               <Stepper.Step eventKey="confirmation-view" title="Confirmation">
                 <ConfirmatiobView />
@@ -135,7 +152,7 @@ export const LegacyLibMigrationPage = () => {
                   ? intl.formatMessage(messages.cancel)
                   : intl.formatMessage(messages.back)}
               </Button>
-              <Button onClick={handleNext}>
+              <Button onClick={handleNext} disabled={isNextDisabled()}>
                 {currentStep === 'confirmation-view'
                   ? intl.formatMessage(messages.confirm)
                   : intl.formatMessage(messages.next)}
