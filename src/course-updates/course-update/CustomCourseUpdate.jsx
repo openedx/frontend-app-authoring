@@ -11,7 +11,7 @@ import {
 import { isDateForUpdateValid } from './utils';
 import messages from './messages';
 
-const CourseUpdateNew = ({
+const CustomCourseUpdate = ({
   dateForUpdate,
   contentForUpdate,
   onEdit,
@@ -75,7 +75,7 @@ const CourseUpdateNew = ({
   );
 };
 
-CourseUpdateNew.propTypes = {
+CustomCourseUpdate.propTypes = {
   dateForUpdate: PropTypes.string.isRequired,
   contentForUpdate: PropTypes.string.isRequired,
   onEdit: PropTypes.func.isRequired,
@@ -83,4 +83,4 @@ CourseUpdateNew.propTypes = {
   isDisabledButtons: PropTypes.bool.isRequired,
 };
 
-export default CourseUpdateNew;
+export default CustomCourseUpdate;

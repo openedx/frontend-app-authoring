@@ -20,7 +20,7 @@ import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
 
-const PagesAndResourcesNew = ({ courseId, intl }) => {
+const CustomPagesAndResources = ({ courseId, intl }) => {
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -111,9 +111,9 @@ const PagesAndResourcesNew = ({ courseId, intl }) => {
   );
 };
 
-PagesAndResourcesNew.propTypes = {
+CustomPagesAndResources.propTypes = {
   courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(PagesAndResourcesNew);
+export default injectIntl(CustomPagesAndResources);

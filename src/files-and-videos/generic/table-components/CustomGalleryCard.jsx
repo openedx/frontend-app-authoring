@@ -11,7 +11,7 @@ import { ClosedCaption } from '@openedx/paragon/icons';
 import FileMenu from '../FileMenu';
 import FileThumbnail from '../ThumbnailPreview';
 
-const GalleryCardNew = ({
+const CustomGalleryCard = ({
   className,
   original,
   handleBulkDownload,
@@ -108,10 +108,10 @@ const GalleryCardNew = ({
   );
 };
 
-GalleryCardNew.defaultProps = {
+CustomGalleryCard.defaultProps = {
   className: null,
 };
-GalleryCardNew.propTypes = {
+CustomGalleryCard.propTypes = {
   className: PropTypes.string,
   original: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
@@ -133,4 +133,4 @@ GalleryCardNew.propTypes = {
   fileType: PropTypes.string.isRequired,
 };
 
-export default GalleryCardNew;
+export default CustomGalleryCard;

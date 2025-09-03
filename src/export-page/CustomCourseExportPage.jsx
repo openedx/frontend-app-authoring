@@ -26,7 +26,7 @@ import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
 
-const CourseExportPageNew = ({ intl, courseId }) => {
+const CustomCourseExportPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
   const exportTriggered = useSelector(getExportTriggered);
   const courseDetails = useModel('courseDetails', courseId);
@@ -119,11 +119,11 @@ const CourseExportPageNew = ({ intl, courseId }) => {
   );
 };
 
-CourseExportPageNew.propTypes = {
+CustomCourseExportPage.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-CourseExportPageNew.defaultProps = {};
+CustomCourseExportPage.defaultProps = {};
 
-export default injectIntl(CourseExportPageNew);
+export default injectIntl(CustomCourseExportPage);

@@ -35,7 +35,7 @@ import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 
-const CourseUpdatesNew = ({ courseId }) => {
+const CustomCourseUpdates = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [activeTab, setActiveTab] = useState('updates');
@@ -314,8 +314,8 @@ const CourseUpdatesNew = ({ courseId }) => {
   );
 };
 
-CourseUpdatesNew.propTypes = {
+CustomCourseUpdates.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default CourseUpdatesNew;
+export default CustomCourseUpdates;

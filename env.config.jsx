@@ -20,23 +20,23 @@ import FormSwitchGroup from './src/generic/FormSwitchGroup';
 import StatusBarContent from './src/course-outline/status-bar/StatusBarContent'
 import CustomStatusBar from './src/course-outline/status-bar/CustomStatusBar';
 import SubHeader from './src/generic/sub-header/SubHeader';
-import CourseUpdatesNew from './src/course-updates/CourseUpdatesNew';
-import CourseExportPageNew from './src/export-page/CourseExportPageNew'
+import CustomCourseUpdates from './src/course-updates/CustomCourseUpdates';
+import CustomCourseExportPage from './src/export-page/CustomCourseExportPage'
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import WarningMessage from './src/generic/warning-message/WarningMessage';
 import SettingCard from './src/advanced-settings/setting-card/SettingCard';
-import ExportSidebarNew from '/src/export-page/export-sidebar/ExportSidebarNew';
+import CustomExportSidebar from '/src/export-page/export-sidebar/CustomExportSidebar';
 import CourseChecklistCustom from './src/plugins-components/CourseChecklistCustom';
 import ChecklistItemBody from './src/course-checklist/ChecklistSection/ChecklistItemBody';
 import ChecklistItemComment from './src/course-checklist/ChecklistSection/ChecklistItemComment';
-import FilesPageNew from './src/files-and-videos/files-page/FilesPageNew';
-import GalleryCardNew from './src/files-and-videos/generic/table-components/GalleryCardNew';
-import PagesAndResourcesNew from './src/pages-and-resources/PagesAndResourcesNew';
+import CustomFilesPage from './src/files-and-videos/files-page/CustomFilesPage';
+import CustomGalleryCard from './src/files-and-videos/generic/table-components/CustomGalleryCard';
+import CustomPagesAndResources from './src/pages-and-resources/CustomPagesAndResources';
 import CustomTextbooks from './src/textbooks/CustomTextbooks';
 import CustomPagesNew from './src/custom-pages/CustomPagesNew';
 import EditorPage from './src/editors/EditorPage';
-import ImportSidebarNew from '/src/import-page/import-sidebar/ImportSidebarNew';
-import CourseUpdateNew from './src/course-updates/course-update/CourseUpdateNew';
+import CustomImportSidebar from '/src/import-page/import-sidebar/CustomImportSidebar';
+import CustomCourseUpdate from './src/course-updates/course-update/CustomCourseUpdate';
 import CourseRerunForm from './src/course-rerun/course-rerun-form';
 import CourseRerunSideBar from './src/course-rerun/course-rerun-sidebar';
 
@@ -678,7 +678,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                        <CourseUpdatesNew courseId={props.courseId}/>
+                        <CustomCourseUpdates courseId={props.courseId}/>
                     },
                 },
             ],
@@ -692,7 +692,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                        <CourseExportPageNew courseId={props.courseId}/>
+                        <CustomCourseExportPage courseId={props.courseId}/>
                     },
                 },
             ],
@@ -742,7 +742,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                        <ExportSidebarNew />
+                        <CustomExportSidebar />
                     },
                 },
             ],
@@ -756,7 +756,7 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => 
-                            <FilesPageNew courseId={props.courseId} />
+                            <CustomFilesPage courseId={props.courseId} />
                     },
                 },
             ],
@@ -770,7 +770,7 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => (
-                            <GalleryCardNew
+                            <CustomGalleryCard
                                 original={props.original}
                                 handleBulkDownload={props.handleBulkDownload}
                                 handleLockFile={props.handleLockFile}
@@ -793,7 +793,7 @@ const config = {
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => 
-                        <PagesAndResourcesNew courseId={props.courseId} />
+                        <CustomPagesAndResources courseId={props.courseId} />
                     },
                 },
             ],
@@ -835,7 +835,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) =>
-                        <ImportSidebarNew />
+                        <CustomImportSidebar />
                     },
                 },
             ],
@@ -849,7 +849,7 @@ const config = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) =>
-                        <CourseUpdateNew  {...props}/>
+                        <CustomCourseUpdate  {...props}/>
                     },
                 },]},
         group_configurations_hide_plugin_slot: {

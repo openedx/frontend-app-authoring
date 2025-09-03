@@ -33,7 +33,7 @@ import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
 import FileValidationModal from './FileValidationModal';
 
-const FilesPageNew = ({
+const CustomFilesPage = ({
   courseId,
   // injected
   intl,
@@ -221,10 +221,10 @@ const FilesPageNew = ({
   );
 };
 
-FilesPageNew.propTypes = {
+CustomFilesPage.propTypes = {
   courseId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(FilesPageNew);
+export default injectIntl(CustomFilesPage);

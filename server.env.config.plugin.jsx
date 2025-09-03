@@ -20,23 +20,23 @@ const { default: FormSwitchGroup } = await import('./src/generic/FormSwitchGroup
 const { default: StatusBarContent } = await import('./src/course-outline/status-bar/StatusBarContent');
 const { default: CustomStatusBar } = await import('./src/course-outline/status-bar/CustomStatusBar');
 const { default: SubHeader } = await import('./src/generic/sub-header/SubHeader');
-const { default: CourseExportPageNew } = await import('./src/export-page/CourseExportPageNew');
+const { default: CustomCourseExportPage } = await import('./src/export-page/CustomCourseExportPage');
 const { default: FormattedMessage } = await import('@edx/frontend-platform/i18n');
 const { default: WarningMessage } = await import('./src/generic/warning-message/WarningMessage');
 const { default: SettingCard } = await import('./src/advanced-settings/setting-card/SettingCard');
-const { default: ExportSidebarNew } = await import('./src/export-page/export-sidebar/ExportSidebarNew');
+const { default: CustomExportSidebar } = await import('./src/export-page/export-sidebar/CustomExportSidebar');
 const { default: CourseChecklistCustom } = await import('./src/plugins-components/CourseChecklistCustom');
 const { default: ChecklistItemBody } = await import('./src/course-checklist/ChecklistSection/ChecklistItemBody');
 const { default: ChecklistItemComment } = await import('./src/course-checklist/ChecklistSection/ChecklistItemComment');
-const { default: FilesPageNew } = await import('./src/files-and-videos/files-page/FilesPageNew');
-const { default: GalleryCardNew } = await import('./src/files-and-videos/generic/table-components/GalleryCardNew');
+const { default: CustomFilesPage } = await import('./src/files-and-videos/files-page/CustomFilesPage');
+const { default: CustomGalleryCard } = await import('./src/files-and-videos/generic/table-components/CustomGalleryCard');
 
-const { default: PagesAndResourcesNew } = await import('./src/pages-and-resources/PagesAndResourcesNew');
+const { default: CustomPagesAndResources } = await import('./src/pages-and-resources/CustomPagesAndResources');
 const { default: CustomTextbooks } = await import('./src/textbooks/CustomTextbooks');
 const { default: CustomPagesNew } = await import('./src/custom-pages/CustomPagesNew');
 const { default: EditorPage } = await import('./src/editors/EditorPage');
-const { default: ImportSidebarNew } = await import('./src/import-page/import-sidebar/ImportSidebarNew');
-const { default: CourseUpdateNew } = await import('./src/course-updates/course-update/CourseUpdateNew');
+const { default: CustomImportSidebar } = await import('./src/import-page/import-sidebar/CustomImportSidebar');
+const { default: CustomCourseUpdate } = await import('./src/course-updates/course-update/CustomCourseUpdate');
 const { default: CourseRerunForm } = await import('./src/course-rerun/course-rerun-form');
 const { default: CourseRerunSideBar } = await import('./src/course-rerun/course-rerun-sidebar');
 
@@ -46,7 +46,7 @@ const { default: CustomLibraryAuthoringPage } = await import('./src/library-auth
 const { default: CustomLibraryCollectionPage } = await import('./src/library-authoring/collections/CustomLibraryCollectionPage');
 const { default: CustomTaxonomyListPage } = await import('./src/taxonomy/CustomTaxonomyListPage');
 const { default: CustomTaxonomyDetailPage } = await import('./src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage');
-const { default: CourseUpdatesNew } = await import('./src/course-updates/CourseUpdatesNew');
+const { default: CustomCourseUpdates } = await import('./src/course-updates/CustomCourseUpdates');
 
 
 {% raw %}
@@ -678,7 +678,7 @@ config.pluginSlots = {
                 type: DIRECT_PLUGIN,
                 priority: 1,
                 RenderWidget: (props) => 
-                    <CourseUpdatesNew courseId={props.courseId}/>
+                    <CustomCourseUpdates courseId={props.courseId}/>
                 },
             },
         ],
@@ -692,7 +692,7 @@ config.pluginSlots = {
                 type: DIRECT_PLUGIN,
                 priority: 1,
                 RenderWidget: (props) => 
-                    <CourseExportPageNew courseId={props.courseId}/>
+                    <CustomCourseExportPage courseId={props.courseId}/>
                 },
             },
         ],
@@ -742,7 +742,7 @@ config.pluginSlots = {
                 type: DIRECT_PLUGIN,
                 priority: 1,
                 RenderWidget: (props) => 
-                    <ExportSidebarNew />
+                    <CustomExportSidebar />
                 },
             },
         ],
@@ -756,7 +756,7 @@ config.pluginSlots = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                        <FilesPageNew courseId={props.courseId} />
+                        <CustomFilesPage courseId={props.courseId} />
                 },
             },
         ],
@@ -770,7 +770,7 @@ config.pluginSlots = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => (
-                        <GalleryCardNew
+                        <CustomGalleryCard
                             original={props.original}
                             handleBulkDownload={props.handleBulkDownload}
                             handleLockFile={props.handleLockFile}
@@ -793,7 +793,7 @@ config.pluginSlots = {
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => 
-                    <PagesAndResourcesNew courseId={props.courseId} />
+                    <CustomPagesAndResources courseId={props.courseId} />
                 },
             },
         ],
@@ -835,7 +835,7 @@ config.pluginSlots = {
                 type: DIRECT_PLUGIN,
                 priority: 1,
                 RenderWidget: (props) =>
-                    <ImportSidebarNew />
+                    <CustomImportSidebar />
                 },
             },
         ],
@@ -849,7 +849,7 @@ config.pluginSlots = {
                 type: DIRECT_PLUGIN,
                 priority: 1,
                 RenderWidget: (props) =>
-                    <CourseUpdateNew  {...props}/>
+                    <CustomCourseUpdate  {...props}/>
                 },
             },]},
     group_configurations_hide_plugin_slot: {
