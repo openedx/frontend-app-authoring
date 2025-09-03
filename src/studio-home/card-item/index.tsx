@@ -16,6 +16,51 @@ import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
+interface CardTitleProps {
+  readOnlyItem: boolean;
+  inSelectMode: boolean;
+  destinationUrl: string;
+  hasDisplayName: string;
+  displayName: string;
+  itemId?: string | null;
+}
+
+const CardTitle: React.FC<CardTitleProps> = ({
+  readOnlyItem,
+  inSelectMode,
+  destinationUrl,
+  hasDisplayName,
+  displayName,
+  itemId,
+}) => {
+  if (!readOnlyItem && !inSelectMode) {
+    return (
+      <Link
+        className="card-item-title"
+        to={destinationUrl}
+      >
+        {hasDisplayName}
+      </Link>
+    );
+  }
+  if (inSelectMode) {
+    return (
+      <Form.Radio className="mt-1 ml-1" value={itemId} name={`select-card-item-${itemId}`}>
+        <span
+          className="card-item-title"
+          style={{ marginTop: '-0.2rem' }}
+        >
+          {displayName}
+        </span>
+      </Form.Radio>
+    );
+  }
+
+  return (
+    <span className="card-item-title">{displayName}</span>
+  );
+};
+
 interface BaseProps {
   displayName: string;
   org: string;
@@ -80,26 +125,15 @@ const CardItem: React.FC<Props> = ({
     <Card className="card-item">
       <Card.Header
         size="sm"
-        title={(!readOnlyItem && !inSelectMode) ? (
-          <Link
-            className="card-item-title"
-            to={destinationUrl}
-          >
-            {hasDisplayName}
-          </Link>
-        ) : (
-          inSelectMode ? (
-            <Form.Radio className="mt-1 ml-1" value={itemId} name={`select-card-item-${itemId}`}>
-              <span
-                className="card-item-title"
-                style={{ marginTop: '-0.2rem' }}
-              >
-                {displayName}
-              </span>
-            </Form.Radio>
-          ) : (
-            <span className="card-item-title">{displayName}</span>
-          )
+        title={(
+          <CardTitle
+            readOnlyItem={readOnlyItem}
+            inSelectMode={inSelectMode}
+            destinationUrl={destinationUrl}
+            hasDisplayName={hasDisplayName}
+            displayName={displayName}
+            itemId={itemId}
+          />
         )}
         subtitle={subtitle}
         actions={showActions && (
