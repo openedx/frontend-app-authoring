@@ -403,7 +403,7 @@ const CustomScheduleAndDetails = (props) => {
     <>
       <Container size="xl" className="custom-schedule-details px-4">
         <div size="xl" className="schedule-and-details">
-          <div className="alert-container mb-4">
+          <div className="alert-container mb-4 schedule-alert-msg">
             <AlertMessage
               show={showSuccessfulAlert && !isQueryPending && hasAttemptedSave}
               variant="success"
