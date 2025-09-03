@@ -233,7 +233,6 @@
   border-radius: 12px;
   border: solid 1px #e5e6e6;
   background-color: #f2f5ff;
-  height: 10rem;
 }
 
 .updates-container {
@@ -241,7 +240,10 @@
   border-radius: 12px !important;
   border: solid 1px #e5e6e6 !important;
   box-shadow: none;
-  height: 10rem;
+
+  .pgn__action-row-spacer {
+    height: 10rem;
+  }
 
   .p-4\.5 {
     padding: 1rem !important;
