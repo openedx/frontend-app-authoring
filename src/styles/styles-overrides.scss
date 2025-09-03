@@ -1173,7 +1173,8 @@
 }
 
 .alert-toast {
-  width: auto !important;
+  width: 75.6% !important;
+  padding-left: 28px;
 }
 
 .certificates {
@@ -2163,6 +2164,7 @@
 
 .custom-schedule-details {
   margin-top: -1.5rem;
+  padding-left: 1.2rem !important;
 
   .pgn__card .pgn__card-header .pgn__card-header-content {
     margin-top: 1rem !important;
@@ -2214,12 +2216,6 @@
   .pacing-section .pgn__form-group .pgn__form-control-set {
     padding-left: 0rem;
     padding-top: 0rem;
-  }
-
-  .schedule-and-details {
-    .alert-toast {
-      width: 70% !important;
-    }
   }
 }
 
@@ -2284,4 +2280,8 @@
 
 .configure-modal__body {
   height: 24rem;
+}
+
+.alert {
+  margin-bottom: 6px;
 }

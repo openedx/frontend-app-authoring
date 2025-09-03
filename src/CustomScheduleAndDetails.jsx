@@ -2,11 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-console */
 import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
+  useState, useEffect, useRef, useCallback, useMemo,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -43,7 +39,9 @@ import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
 import { validateImageFile } from './utils/imageValidation';
 
 const getImageUrl = (imageObj) => {
-  if (!imageObj) { return ''; }
+  if (!imageObj) {
+    return '';
+  }
   if (typeof imageObj === 'string') {
     if (imageObj.startsWith('/asset-v1:')) {
       const baseUrl = getConfig().LMS_BASE_URL;
@@ -60,7 +58,9 @@ const getImageUrl = (imageObj) => {
     }
     return imageObj;
   }
-  if (imageObj.uri_absolute) { return imageObj.uri_absolute; }
+  if (imageObj.uri_absolute) {
+    return imageObj.uri_absolute;
+  }
   if (imageObj.uri) {
     if (imageObj.uri.startsWith('/asset-v1:')) {
       const baseUrl = getConfig().LMS_BASE_URL;
@@ -81,7 +81,9 @@ const getImageUrl = (imageObj) => {
 };
 
 const validateImage = async (file) => {
-  if (!file) { return { isValid: false, error: 'No file selected.' }; }
+  if (!file) {
+    return { isValid: false, error: 'No file selected.' };
+  }
 
   try {
     const result = await validateImageFile(file);
@@ -96,7 +98,9 @@ const validateImage = async (file) => {
 };
 
 const parseYoutubeId = (src) => {
-  if (!src) { return null; }
+  if (!src) {
+    return null;
+  }
   const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
   const match = src.match(youtubeRegex);
   if (!match) {
@@ -112,11 +116,14 @@ const CustomScheduleAndDetails = (props) => {
   const courseDetails = useSelector(getCourseDetails);
   const savingStatus = useSelector(getSavingStatus);
   const [touched, setTouched] = useState({});
-  const initialValues = useMemo(() => ({
-    ...courseDetails,
-    courseImageAssetPath: courseDetails?.courseImageAssetPath || '',
-    bannerImageAssetPath: courseDetails?.bannerImageAssetPath || '',
-  }), [courseDetails]);
+  const initialValues = useMemo(
+    () => ({
+      ...courseDetails,
+      courseImageAssetPath: courseDetails?.courseImageAssetPath || '',
+      bannerImageAssetPath: courseDetails?.bannerImageAssetPath || '',
+    }),
+    [courseDetails],
+  );
 
   const {
     errorFields,
@@ -151,137 +158,155 @@ const CustomScheduleAndDetails = (props) => {
   const prevCardImageUrl = useRef(editedValues?.courseImageAssetPath);
   const prevBannerImageUrl = useRef(editedValues?.bannerImageAssetPath);
 
-  const validateField = useCallback((value, field) => {
-    if (!touched[field]) {
-      return null;
-    }
-
-    const fieldErrors = validateScheduleAndDetails(
-      { ...editedValues, [field]: value },
-      courseSettings?.canShowCertificateAvailableDateField,
-      intl,
-    );
-    return fieldErrors[field];
-  }, [editedValues, courseSettings, intl, touched]);
-
-  const handleFieldChange = useCallback((value, field) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    let processedValue = value;
-    if (field === 'introVideo' && value) {
-      const youtubeId = parseYoutubeId(value);
-      if (youtubeId) {
-        processedValue = youtubeId;
+  const validateField = useCallback(
+    (value, field) => {
+      if (!touched[field]) {
+        return null;
       }
-    }
 
-    const hasChanged = processedValue !== initialValues[field];
+      const fieldErrors = validateScheduleAndDetails(
+        { ...editedValues, [field]: value },
+        courseSettings?.canShowCertificateAvailableDateField,
+        intl,
+      );
+      return fieldErrors[field];
+    },
+    [editedValues, courseSettings, intl, touched],
+  );
 
-    if (hasChanged) {
-      handleValuesChange(processedValue, field);
-      setHasUnsavedChanges(true);
-      setShowSaveChangesPrompt(true);
-    } else {
-      setHasUnsavedChanges(false);
-      setShowSaveChangesPrompt(false);
-    }
-
-    const fieldError = validateField(processedValue, field);
-    if (fieldError) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: fieldError,
-      }));
-    } else {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  }, [handleValuesChange, validateField, initialValues]);
-
-  const handleImageUpload = useCallback(async (field, event) => {
-    const file = event.target.files[0];
-    if (!file) { return; }
-
-    const validation = await validateImage(file);
-    if (!validation.isValid) {
-      const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-      setImageErrors(prev => ({
-        ...prev,
-        [errorField]: validation.error,
-      }));
-      return;
-    }
-
-    setIsImageUploading(true);
-    setImageErrors({});
-    setUploadProgress(0);
-
-    if (field === 'courseImageAssetPath') { setCardImageFile(file); }
-    if (field === 'bannerImageAssetPath') { setBannerImageFile(file); }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await uploadAssets(courseId, formData, (progress) => {
-        setUploadProgress(progress);
-      });
-
-      const asset = response?.asset;
-      if (asset) {
-        const imageUrl = asset.url || asset.uri;
-        if (imageUrl) {
-          const processedUrl = getImageUrl(imageUrl);
-          const imageName = file.name;
-
-          if (field === 'bannerImageAssetPath') {
-            setBannerImagePreview(processedUrl);
-            setBannerImageFile(null);
-            handleValuesChange(imageUrl, 'bannerImageAssetPath');
-            handleValuesChange(imageName, 'bannerImageName');
-          } else if (field === 'courseImageAssetPath') {
-            setCardImagePreview(processedUrl);
-            setCardImageFile(null);
-            handleValuesChange(imageUrl, 'courseImageAssetPath');
-            handleValuesChange(imageName, 'courseImageName');
-          }
+  const handleFieldChange = useCallback(
+    (value, field) => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      let processedValue = value;
+      if (field === 'introVideo' && value) {
+        const youtubeId = parseYoutubeId(value);
+        if (youtubeId) {
+          processedValue = youtubeId;
         }
       }
-    } catch (error) {
-      console.error('Image upload failed', error);
-      const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-      setImageErrors(prev => ({
-        ...prev,
-        [errorField]: 'Failed to upload image. Please try again.',
-      }));
-    } finally {
-      setIsImageUploading(false);
+
+      const hasChanged = processedValue !== initialValues[field];
+
+      if (hasChanged) {
+        handleValuesChange(processedValue, field);
+        setHasUnsavedChanges(true);
+        setShowSaveChangesPrompt(true);
+      } else {
+        setHasUnsavedChanges(false);
+        setShowSaveChangesPrompt(false);
+      }
+
+      const fieldError = validateField(processedValue, field);
+      if (fieldError) {
+        setErrors((prev) => ({
+          ...prev,
+          [field]: fieldError,
+        }));
+      } else {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+    },
+    [handleValuesChange, validateField, initialValues],
+  );
+
+  const handleImageUpload = useCallback(
+    async (field, event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      const validation = await validateImage(file);
+      if (!validation.isValid) {
+        const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+        setImageErrors((prev) => ({
+          ...prev,
+          [errorField]: validation.error,
+        }));
+        return;
+      }
+
+      setIsImageUploading(true);
+      setImageErrors({});
       setUploadProgress(0);
-    }
-  }, [courseId, handleValuesChange]);
 
-  const handleRemoveImage = useCallback((field) => {
-    const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
-    setImageErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[errorField];
-      return newErrors;
-    });
+      if (field === 'courseImageAssetPath') {
+        setCardImageFile(file);
+      }
+      if (field === 'bannerImageAssetPath') {
+        setBannerImageFile(file);
+      }
 
-    if (field === 'courseImageAssetPath') {
-      setCardImageFile(null);
-      setCardImagePreview('');
-      handleValuesChange('', 'courseImageAssetPath');
-      handleValuesChange('', 'courseImageName');
-    } else if (field === 'bannerImageAssetPath') {
-      setBannerImageFile(null);
-      setBannerImagePreview('');
-      handleValuesChange('', 'bannerImageAssetPath');
-      handleValuesChange('', 'bannerImageName');
-    }
-  }, [handleValuesChange]);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await uploadAssets(courseId, formData, (progress) => {
+          setUploadProgress(progress);
+        });
+
+        const asset = response?.asset;
+        if (asset) {
+          const imageUrl = asset.url || asset.uri;
+          if (imageUrl) {
+            const processedUrl = getImageUrl(imageUrl);
+            const imageName = file.name;
+
+            if (field === 'bannerImageAssetPath') {
+              setBannerImagePreview(processedUrl);
+              setBannerImageFile(null);
+              handleValuesChange(imageUrl, 'bannerImageAssetPath');
+              handleValuesChange(imageName, 'bannerImageName');
+            } else if (field === 'courseImageAssetPath') {
+              setCardImagePreview(processedUrl);
+              setCardImageFile(null);
+              handleValuesChange(imageUrl, 'courseImageAssetPath');
+              handleValuesChange(imageName, 'courseImageName');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Image upload failed', error);
+        const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+        setImageErrors((prev) => ({
+          ...prev,
+          [errorField]: 'Failed to upload image. Please try again.',
+        }));
+      } finally {
+        setIsImageUploading(false);
+        setUploadProgress(0);
+      }
+    },
+    [courseId, handleValuesChange],
+  );
+
+  const handleRemoveImage = useCallback(
+    (field) => {
+      const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
+      setImageErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[errorField];
+        return newErrors;
+      });
+
+      if (field === 'courseImageAssetPath') {
+        setCardImageFile(null);
+        setCardImagePreview('');
+        handleValuesChange('', 'courseImageAssetPath');
+        handleValuesChange('', 'courseImageName');
+      } else if (field === 'bannerImageAssetPath') {
+        setBannerImageFile(null);
+        setBannerImagePreview('');
+        handleValuesChange('', 'bannerImageAssetPath');
+        handleValuesChange('', 'bannerImageName');
+      }
+    },
+    [handleValuesChange],
+  );
 
   useEffect(() => {
     if (editedValues?.courseImageAssetPath) {
@@ -297,8 +322,8 @@ const CustomScheduleAndDetails = (props) => {
   useEffect(() => {
     if (
       cardImageFile
-            && editedValues?.courseImageAssetPath
-            && editedValues.courseImageAssetPath !== prevCardImageUrl.current
+      && editedValues?.courseImageAssetPath
+      && editedValues.courseImageAssetPath !== prevCardImageUrl.current
     ) {
       setCardImageFile(null);
     }
@@ -308,8 +333,8 @@ const CustomScheduleAndDetails = (props) => {
   useEffect(() => {
     if (
       bannerImageFile
-            && editedValues?.bannerImageAssetPath
-            && editedValues.bannerImageAssetPath !== prevBannerImageUrl.current
+      && editedValues?.bannerImageAssetPath
+      && editedValues.bannerImageAssetPath !== prevBannerImageUrl.current
     ) {
       setBannerImageFile(null);
     }
@@ -328,14 +353,16 @@ const CustomScheduleAndDetails = (props) => {
 
   const requiredFieldsPresent = Boolean(
     editedValues?.shortDescription
-        && editedValues?.description
-        && editedValues?.startDate
-        && editedValues?.endDate
-        && editedValues?.language,
+      && editedValues?.description
+      && editedValues?.startDate
+      && editedValues?.endDate
+      && editedValues?.language,
   );
 
   const hasErrors = !!Object.keys(errorFields || {}).length;
-  const hasImageErrors = Object.values(imageErrors).some(error => error !== '');
+  const hasImageErrors = Object.values(imageErrors).some(
+    (error) => error !== '',
+  );
 
   const updateValuesButtonState = {
     labels: {
@@ -373,126 +400,142 @@ const CustomScheduleAndDetails = (props) => {
   }, [showSuccessfulAlert, isQueryPending, hasAttemptedSave]);
 
   return (
-    <div className="custom-schedule-details">
-      <Container size="xl" className="schedule-and-details px-4">
-        <div className="alert-container mb-4">
-          <AlertMessage
-            show={showSuccessfulAlert && !isQueryPending && hasAttemptedSave}
-            variant="success"
-            icon={CheckCircleIcon}
-            title={intl.formatMessage(messages.alertSuccess)}
-            className="success-alert"
-            dismissible={false}
-            aria-hidden="true"
-            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
-          />
-        </div>
-        <Row className="mb-4">
-          <Col xs={12}>
-            <Form className="schedule-detail-form">
-              <PSCourseForm
-                hideGeneralTab
-                hideTitleField
-                hideCreateNewCourseButton
-                onImageUpload={handleImageUpload}
-                onBannerImageUpload={handleImageUpload}
-                onRemoveImage={handleRemoveImage}
-                showSaveChangesPrompt={showSaveChangesPrompt}
+    <>
+      <Container size="xl" className="custom-schedule-details px-4">
+        <div size="xl" className="schedule-and-details">
+          <div className="alert-container mb-4">
+            <AlertMessage
+              show={showSuccessfulAlert && !isQueryPending && hasAttemptedSave}
+              variant="success"
+              icon={CheckCircleIcon}
+              title={intl.formatMessage(messages.alertSuccess)}
+              className="success-alert"
+              dismissible={false}
+              aria-hidden="true"
+              aria-labelledby={intl.formatMessage(
+                messages.alertSuccessAriaLabelledby,
+              )}
+              aria-describedby={intl.formatMessage(
+                messages.alertSuccessAriaDescribedby,
+              )}
+            />
+          </div>
+          <Form className="schedule-detail-form">
+            <PSCourseForm
+              hideGeneralTab
+              hideTitleField
+              hideCreateNewCourseButton
+              onImageUpload={handleImageUpload}
+              onBannerImageUpload={handleImageUpload}
+              onRemoveImage={handleRemoveImage}
+              showSaveChangesPrompt={showSaveChangesPrompt}
+              onFieldChange={handleFieldChange}
+              cardImagePreview={cardImagePreview}
+              bannerImagePreview={bannerImagePreview}
+              hasCardImage={Boolean(cardImagePreview || cardImageFile)}
+              hasBannerImage={Boolean(
+                bannerImagePreview || bannerImageFile,
+              )}
+              cardImageFile={cardImageFile}
+              bannerImageFile={bannerImageFile}
+              isImageUploading={isImageUploading}
+              uploadProgress={uploadProgress}
+              imageErrors={imageErrors}
+              editedValues={editedValues}
+              handleValuesChange={handleValuesChange}
+              intl={intl}
+              messages={messages}
+              touched={touched}
+              onFieldBlur={(field) => setTouched((prev) => ({ ...prev, [field]: true }))}
+              allowedImageTypes={
+                    props.allowedImageTypes || ['image/jpeg', 'image/png']
+                  }
+              scheduleSettings
+            >
+              <h2 className="title-class">Schedule & Details</h2>
+              <hr
+                style={{
+                  border: 'none',
+                  borderTop: '1px solid #e5e6e6',
+                  margin: '0rem -1rem 1rem -1rem',
+                }}
+              />
+              <BasicSection
+                org={editedValues?.org}
+                courseNumber={editedValues?.courseId}
+                run={editedValues?.run}
+                lmsLinkForAboutPage={courseSettings?.lmsLinkForAboutPage}
+                marketingEnabled={courseSettings?.marketingEnabled}
+                courseDisplayName={courseSettings?.courseDisplayName}
+                platformName={courseSettings?.platformName}
                 onFieldChange={handleFieldChange}
-                cardImagePreview={cardImagePreview}
-                bannerImagePreview={bannerImagePreview}
-                hasCardImage={Boolean(cardImagePreview || cardImageFile)}
-                hasBannerImage={Boolean(bannerImagePreview || bannerImageFile)}
-                cardImageFile={cardImageFile}
-                bannerImageFile={bannerImageFile}
-                isImageUploading={isImageUploading}
-                uploadProgress={uploadProgress}
-                imageErrors={imageErrors}
-                editedValues={editedValues}
-                handleValuesChange={handleValuesChange}
                 intl={intl}
                 messages={messages}
-                touched={touched}
-                onFieldBlur={(field) => setTouched(prev => ({ ...prev, [field]: true }))}
-                allowedImageTypes={props.allowedImageTypes || ['image/jpeg', 'image/png']}
-                scheduleSettings
-              >
-                <h2 className="title-class">Schedule & Details</h2>
-                <hr style={{ border: 'none', borderTop: '1px solid #e5e6e6', margin: '0rem -1rem 1rem -1rem' }} />
-                <BasicSection
-                  org={editedValues?.org}
-                  courseNumber={editedValues?.courseId}
-                  run={editedValues?.run}
-                  lmsLinkForAboutPage={courseSettings?.lmsLinkForAboutPage}
-                  marketingEnabled={courseSettings?.marketingEnabled}
-                  courseDisplayName={courseSettings?.courseDisplayName}
-                  platformName={courseSettings?.platformName}
-                  onFieldChange={handleFieldChange}
-                  intl={intl}
-                  messages={messages}
-                />
-                <PacingSection
-                  selfPaced={editedValues?.selfPaced}
-                  startDate={editedValues?.startDate}
-                  onChange={handleFieldChange}
-                  intl={intl}
-                  messages={messages}
-                />
-              </PSCourseForm>
-            </Form>
-            <div className="alert-toast">
-              {!isEditableState && (
-                <InternetConnectionAlert
-                  isFailed={savingStatus === RequestStatus.FAILED}
-                  isQueryPending={isQueryPending}
-                  onQueryProcessing={handleQueryProcessing}
-                  onInternetConnectionFailed={handleInternetConnectionFailed}
-                />
-              )}
-              <AlertMessage
-                show={showModifiedAlert}
-                aria-labelledby={intl.formatMessage(messages.alertWarningAriaLabelledby)}
-                aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
-                role="dialog"
-                actions={[
-                  !isQueryPending && (
-                    <Button
-                      key="cancel-button"
-                      variant="tertiary"
-                      onClick={handleCancelChanges}
-                    >
-                      {intl.formatMessage(messages.buttonCancelText)}
-                    </Button>
-                  ),
-                  <StatefulButton
-                    key="save-button"
-                    onClick={handleSaveChanges}
-                    disabled={
-                                            hasErrors
-                                            || requiredFieldsPresent
-                                            || !isEditableState
-                                            || isImageUploading
-                                            || hasImageErrors
-                                        }
-                    state={
-                                            isQueryPending
-                                              ? STATEFUL_BUTTON_STATES.pending
-                                              : STATEFUL_BUTTON_STATES.default
-                                        }
-                    {...updateValuesButtonState}
-                  />,
-                ].filter(Boolean)}
-                variant="warning"
-                icon={WarningIcon}
-                title={intl.formatMessage(messages.alertWarning)}
-                description={intl.formatMessage(messages.alertWarningDescriptions)}
               />
-            </div>
-          </Col>
-        </Row>
+              <PacingSection
+                selfPaced={editedValues?.selfPaced}
+                startDate={editedValues?.startDate}
+                onChange={handleFieldChange}
+                intl={intl}
+                messages={messages}
+              />
+            </PSCourseForm>
+          </Form>
+        </div>
       </Container>
-    </div>
+      <div className="alert-toast">
+        {!isEditableState && (
+          <InternetConnectionAlert
+            isFailed={savingStatus === RequestStatus.FAILED}
+            isQueryPending={isQueryPending}
+            onQueryProcessing={handleQueryProcessing}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+          />
+        )}
+        <AlertMessage
+          show={showModifiedAlert}
+          aria-labelledby={intl.formatMessage(
+            messages.alertWarningAriaLabelledby,
+          )}
+          aria-describedby={intl.formatMessage(
+            messages.alertWarningAriaDescribedby,
+          )}
+          role="dialog"
+          actions={[
+            !isQueryPending && (
+              <Button
+                key="cancel-button"
+                variant="tertiary"
+                onClick={handleCancelChanges}
+              >
+                {intl.formatMessage(messages.buttonCancelText)}
+              </Button>
+            ),
+            <StatefulButton
+              key="save-button"
+              onClick={handleSaveChanges}
+              disabled={
+                hasErrors
+                || requiredFieldsPresent
+                || !isEditableState
+                || isImageUploading
+                || hasImageErrors
+              }
+              state={
+                isQueryPending
+                  ? STATEFUL_BUTTON_STATES.pending
+                  : STATEFUL_BUTTON_STATES.default
+              }
+              {...updateValuesButtonState}
+            />,
+          ].filter(Boolean)}
+          variant="warning"
+          icon={WarningIcon}
+          title={intl.formatMessage(messages.alertWarning)}
+          description={intl.formatMessage(messages.alertWarningDescriptions)}
+        />
+      </div>
+    </>
   );
 };
 
