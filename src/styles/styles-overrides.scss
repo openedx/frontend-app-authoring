@@ -2273,3 +2273,7 @@
     color: #C32D3A !important;
     font-size: 87.5% !important;
 }
+
+.pgn__form-checkbox-input:checked, .pgn__form-radio-input:checked {
+  background-color: white !important;
+}
