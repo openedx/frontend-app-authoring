@@ -103,6 +103,15 @@ export const generateGetStudioHomeLibrariesApiResponse = () => ({
       migratedToCollectionKey: 'imported-content',
       migratedToCollectionTitle: 'Imported content',
     },
+    {
+      displayName: 'MBA 1',
+      libraryKey: 'library-v1:MBA+1234',
+      url: '/library/library-v1:MBA+1234',
+      org: 'Cambridge',
+      number: '1234',
+      canEdit: true,
+      isMigrated: false,
+    },
   ],
 });
 

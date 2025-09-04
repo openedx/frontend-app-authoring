@@ -12,6 +12,7 @@ import {
   fireEvent,
   screen,
   act,
+  within,
 } from '@src/testUtils';
 import messages from '../messages';
 import tabMessages from './messages';
@@ -269,7 +270,7 @@ describe('<TabsSection />', () => {
     beforeEach(async () => {
       await axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
     });
-    it('should switch to Legacy Libraries tab and render specific v1 library details', async () => {
+    it('should switch to Legacy Libraries tab and render - search and filter should work as expected', async () => {
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
       render();
@@ -280,12 +281,57 @@ describe('<TabsSection />', () => {
       await user.click(librariesTab);
 
       expect(librariesTab).toHaveClass('active');
+      const panel = await screen.findByRole('tabpanel', { hidden: false });
 
       expect(await screen.findByText(studioHomeMock.libraries[0].displayName)).toBeVisible();
 
       expect(
         await screen.findByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`),
       ).toBeVisible();
+
+      // Migration info should be displayed
+      const migratedContent = generateGetStudioHomeLibrariesApiResponse().libraries[1];
+      expect(await screen.findByText(migratedContent.displayName)).toBeVisible();
+      const newTitleElement = await screen.findAllByText(migratedContent.migratedToTitle!);
+      expect(newTitleElement[0]).toBeVisible();
+      expect(newTitleElement[0]).toHaveAttribute('href', `/library/${migratedContent.migratedToKey}`);
+      expect(newTitleElement[1]).toHaveAttribute(
+        'href',
+        `/library/${migratedContent.migratedToKey}/collection/${migratedContent.migratedToCollectionKey}`,
+      );
+
+      // Check total count display
+      expect(await within(panel).findByText('Showing 3 of 3')).toBeInTheDocument();
+
+      // Test search functionality
+      const searchField = await within(panel).findByPlaceholderText('Search');
+
+      fireEvent.change(searchField, { target: { value: 'Legacy' } });
+      // Should only show 1 result i.e. migratedContent.displayName
+      expect(await within(panel).findByText('Showing 1 of 3')).toBeInTheDocument();
+      expect(await within(panel).findByText(migratedContent.displayName)).toBeVisible();
+      // Should not show other items.
+      expect(within(panel).queryByText(
+        generateGetStudioHomeLibrariesApiResponse().libraries[0].displayName,
+      )).not.toBeInTheDocument();
+      // reset search
+      fireEvent.change(searchField, { target: { value: '' } });
+
+      // Test migration filter
+      const filter = await within(panel).findByRole('button', { name: 'Any Migration Status' });
+      await user.click(filter);
+      const migratedOption = await within(panel).findByRole('checkbox', { name: 'Migrated' });
+      // This should uncheck Migrated option as all options are selected by default
+      await user.click(migratedOption);
+      // Should only show 2 result i.e. unmigrated libraries
+      expect(await within(panel).findByText('Showing 2 of 3')).toBeInTheDocument();
+      const unmigratedOption = await within(panel).findByRole('checkbox', { name: 'Unmigrated' });
+      // Un-checking both options should reset the state to both checked.
+      await user.click(unmigratedOption);
+      expect(migratedOption).toBeChecked();
+      expect(unmigratedOption).toBeChecked();
+      // Should only show all 3 results
+      expect(await within(panel).findByText('Showing 3 of 3')).toBeInTheDocument();
     });
 
     it('should switch to Libraries tab and render specific v2 library details', async () => {
@@ -331,17 +377,6 @@ describe('<TabsSection />', () => {
       expect(
         await screen.findByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`),
       ).toBeVisible();
-
-      // Migration info should be displayed
-      const migratedContent = generateGetStudioHomeLibrariesApiResponse().libraries[1];
-      expect(await screen.findByText(migratedContent.displayName)).toBeVisible();
-      const newTitleElement = await screen.findAllByText(migratedContent.migratedToTitle!);
-      expect(newTitleElement[0]).toBeVisible();
-      expect(newTitleElement[0]).toHaveAttribute('href', `/library/${migratedContent.migratedToKey}`);
-      expect(newTitleElement[1]).toHaveAttribute(
-        'href',
-        `/library/${migratedContent.migratedToKey}/collection/${migratedContent.migratedToCollectionKey}`,
-      );
     });
 
     it('should switch to Libraries tab and render specific v2 library details ("v2 only" mode)', async () => {
@@ -402,10 +437,11 @@ describe('<TabsSection />', () => {
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(404);
       render();
+      const user = userEvent.setup();
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const librariesTab = await screen.findByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
-      fireEvent.click(librariesTab);
+      await user.click(librariesTab);
 
       expect(librariesTab).toHaveClass('active');
 

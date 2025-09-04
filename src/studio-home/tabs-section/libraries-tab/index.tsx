@@ -15,7 +15,7 @@ import SearchFilterWidget from '../../../search-manager/SearchFilterWidget';
 
 function findInValues<T extends {}>(arr: T[] | undefined, value: string) {
   return arr?.filter(o => Object.entries(o).some(entry => String(entry[1]).toLowerCase().includes(
-    String(value).toLowerCase().trim()
+    String(value).toLowerCase().trim(),
   )));
 }
 
@@ -76,7 +76,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     <SearchFilterWidget
       appliedFilters={appliedFilters}
       label={label}
-      clearFilter={() => setFilters(BaseFilterState)}  // On clear select both migrated and unmigrated options.
+      clearFilter={() => setFilters(BaseFilterState)} // On clear select both migrated and unmigrated options.
       icon={FilterList}
       skipLabelUpdate
     >
@@ -119,15 +119,17 @@ const LibrariesTab = () => {
   }
 
   if (isError) {
-    <AlertMessage
-      variant="danger"
-      description={(
-        <Row className="m-0 align-items-center">
-          <Icon src={Error} className="text-danger-500 mr-1" />
-          <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
-        </Row>
-      )}
-    />
+    return (
+      <AlertMessage
+        variant="danger"
+        description={(
+          <Row className="m-0 align-items-center">
+            <Icon src={Error} className="text-danger-500 mr-1" />
+            <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
+          </Row>
+        )}
+      />
+    );
   }
 
   return (
@@ -157,19 +159,19 @@ const LibrariesTab = () => {
         {currentPageData?.map(({
           displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
         }) => (
-            <CardItem
-              key={`${org}+${number}`}
-              isLibraries
-              displayName={displayName}
-              org={org}
-              number={number}
-              url={url}
-              isMigrated={isMigrated}
-              migratedToKey={migratedToKey}
-              migratedToTitle={migratedToTitle}
-              migratedToCollectionKey={migratedToCollectionKey}
-            />
-          ))}
+          <CardItem
+            key={`${org}+${number}`}
+            isLibraries
+            displayName={displayName}
+            org={org}
+            number={number}
+            url={url}
+            isMigrated={isMigrated}
+            migratedToKey={migratedToKey}
+            migratedToTitle={migratedToTitle}
+            migratedToCollectionKey={migratedToCollectionKey}
+          />
+        ))}
         {
           totalPages > 1
             && (
@@ -184,7 +186,7 @@ const LibrariesTab = () => {
         }
       </div>
     </>
-  )
+  );
 };
 
 export default LibrariesTab;
