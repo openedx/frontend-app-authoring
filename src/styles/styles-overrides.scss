@@ -2316,3 +2316,11 @@
     margin-inline-end: 0;
   }
 }
+
+.pgn__form-control-decorator {
+  height: calc(1.3333em + 1.125rem + -3px);
+}
+
+.pgn__form-control-decorator .btn-icon:hover {
+  background-color: var(--primary-light) !important;
+}
