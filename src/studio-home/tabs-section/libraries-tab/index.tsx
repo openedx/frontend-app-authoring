@@ -10,9 +10,9 @@ import AlertMessage from '@src/generic/alert-message';
 import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
 import CardItem from '@src/studio-home/card-item';
 import { useCallback, useState } from 'react';
+import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
 import messages from '../messages';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
-import SearchFilterWidget from '../../../search-manager/SearchFilterWidget';
 
 function findInValues<T extends {}>(arr: T[] | undefined, value: string) {
   return arr?.filter(o => Object.entries(o).some(entry => String(entry[1]).toLowerCase().includes(
