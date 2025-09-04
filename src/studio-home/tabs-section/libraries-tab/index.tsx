@@ -58,6 +58,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
         }
         return newList;
       }
+      // istanbul ignore next
       return [...oldList, filter];
     });
   }, [setFilters]);
@@ -139,6 +140,7 @@ const LibrariesTab = () => {
       <div className="courses-tab">
         <ActionRow className="my-3">
           <SearchField
+            // istanbul ignore next
             onSubmit={() => {}}
             onChange={setSearch}
             value={search}

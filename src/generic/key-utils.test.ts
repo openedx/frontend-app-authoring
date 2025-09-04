@@ -6,6 +6,7 @@ import {
   isLibraryKey,
   isLibraryV1Key,
   normalizeContainerType,
+  parseLibraryKey,
 } from './key-utils';
 
 describe('component utils', () => {
@@ -65,6 +66,30 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${input}'`, () => {
         expect(isLibraryKey(input)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('parseLibraryKey', () => {
+    for (const [input, expected] of [
+      ['lib:org:lib', { org: 'org', lib: 'lib' }],
+      ['lib:OpenCraftX:ALPHA', { org: 'OpenCraftX', lib: 'ALPHA' }],
+    ] as const) {
+      it(`returns '${JSON.stringify(expected)}' for learning context key '${input}'`, () => {
+        expect(parseLibraryKey(input)).toStrictEqual(expected);
+      });
+    }
+
+    for (const input of [
+      '',
+      undefined,
+      null,
+      'not a key',
+      'lb:foo',
+      'lb:org:lib:html:id',
+    ]) {
+      it(`throws an exception for library key '${input}'`, () => {
+        expect(() => parseLibraryKey(input as any)).toThrow(`Invalid libraryKey: ${input}`);
       });
     }
   });
