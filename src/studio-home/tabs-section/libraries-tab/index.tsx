@@ -16,7 +16,7 @@ import SearchFilterWidget from '../../../search-manager/SearchFilterWidget';
 
 function findInValues<T extends {}>(arr: T[] | undefined, value: string) {
   return arr?.filter(o => Object.entries(o).some(entry => String(entry[1]).toLowerCase().includes(
-    String(value).toLowerCase().trim()
+    String(value).toLowerCase().trim(),
   )));
 }
 
@@ -77,7 +77,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
     <SearchFilterWidget
       appliedFilters={appliedFilters}
       label={label}
-      clearFilter={() => setFilters(BaseFilterState)}  // On clear select both migrated and unmigrated options.
+      clearFilter={() => setFilters(BaseFilterState)} // On clear select both migrated and unmigrated options.
       icon={FilterList}
       skipLabelUpdate
     >
@@ -120,19 +120,7 @@ const LibrariesTab = () => {
   }
 
   if (isError) {
-    <AlertMessage
-      variant="danger"
-      description={(
-        <Row className="m-0 align-items-center">
-          <Icon src={Error} className="text-danger-500 mr-1" />
-          <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
-        </Row>
-      )}
-    />
-  }
-
-  return (
-    isError ? (
+    return (
       <AlertMessage
         variant="danger"
         description={(
@@ -142,46 +130,49 @@ const LibrariesTab = () => {
           </Row>
         )}
       />
-    ) : (
-      <>
-        {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
-        <div className="courses-tab">
-          <ActionRow className="my-3">
-            <SearchField
-              onSubmit={() => {}}
-              onChange={setSearch}
-              value={search}
-              className="mr-4"
-              placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
-            />
-            <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
-            <ActionRow.Spacer />
-            {!isLoading && !isError
-              && (
-                <>
-                  {intl.formatMessage(messages.coursesPaginationInfo, {
-                    length: currentPageData?.length || 0,
-                    total: data?.libraries.length || 0,
-                  })}
-                </>
-              )}
-          </ActionRow>
-          {currentPageData?.map(({
-            displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
-          }) => (
-            <CardItem
-              key={`${org}+${number}`}
-              isLibraries
-              displayName={displayName}
-              org={org}
-              number={number}
-              url={url}
-              isMigrated={isMigrated}
-              migratedToKey={migratedToKey}
-              migratedToTitle={migratedToTitle}
-              migratedToCollectionKey={migratedToCollectionKey}
-            />
-          ))}
+    );
+  }
+
+  return (
+    <>
+      <MigrateLegacyLibrariesAlert />
+      <div className="courses-tab">
+        <ActionRow className="my-3">
+          <SearchField
+            onSubmit={() => {}}
+            onChange={setSearch}
+            value={search}
+            className="mr-4"
+            placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
+          />
+          <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
+          <ActionRow.Spacer />
+          {!isLoading && !isError
+            && (
+              <>
+                {intl.formatMessage(messages.coursesPaginationInfo, {
+                  length: currentPageData?.length,
+                  total: data.libraries.length,
+                })}
+              </>
+            )}
+        </ActionRow>
+        {currentPageData?.map(({
+          displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
+        }) => (
+          <CardItem
+            key={`${org}+${number}`}
+            isLibraries
+            displayName={displayName}
+            org={org}
+            number={number}
+            url={url}
+            isMigrated={isMigrated}
+            migratedToKey={migratedToKey}
+            migratedToTitle={migratedToTitle}
+            migratedToCollectionKey={migratedToCollectionKey}
+          />
+        ))}
         {
           totalPages > 1
             && (
@@ -196,7 +187,7 @@ const LibrariesTab = () => {
         }
       </div>
     </>
-  )
+  );
 };
 
 export default LibrariesTab;
