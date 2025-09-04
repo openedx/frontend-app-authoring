@@ -31,6 +31,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
+import customStarsIcon from '../assets/icons/custom-stars.svg';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
@@ -530,12 +531,26 @@ const Dashboard = () => {
       {/* Sidebar */}
       <div className="dashboard-sidebar">
         <Card className="sidebar-card">
-          <h4 className="card-header">Titan AI suggestion</h4>
+          <h4 className="card-header" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            Titan AI suggestion
+            <img
+              src={customStarsIcon}
+              alt="Custom Stars"
+              style={{ width: '20px', height: '20px' }}
+            />
+          </h4>
           <Card.Section className="card-section temp-flow">
             {aiSuggestions.length > 0 ? (
               <div className="card-list ai-suggestion-list">
                 {aiSuggestions.map((suggestion) => (
-                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`}>{suggestion}</div>
+                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`} style={{ position: 'relative' }}>
+                    {suggestion}
+                    <img
+                      src={customStarsIcon}
+                      alt="Custom Stars"
+                      className="ai-suggestions-icon"
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
