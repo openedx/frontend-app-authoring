@@ -451,8 +451,8 @@ export const usePublishComponent = (usageKey: string) => {
 
 /** Get the full hierarchy of the given library item (component/container) */
 export const useLibraryItemHierarchy = (key: string) => {
-  let queryKey;
-  let queryFn;
+  let queryKey: (string | undefined)[];
+  let queryFn: () => Promise<api.ItemHierarchyData>;
   if (key.startsWith('lb:')) {
     queryKey = xblockQueryKeys.componentHierarchy(key);
     queryFn = () => api.getBlockHierarchy(key);
