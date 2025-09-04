@@ -2324,3 +2324,11 @@
 .pgn__form-control-decorator .btn-icon:hover {
   background-color: var(--primary-light) !important;
 }
+
+.btn-icon.btn-icon-primary-active, .btn-icon:focus {
+  color: white !important;
+}
+
+.btn-icon.btn-icon-primary-active.focus, .btn-icon.btn-icon-primary-active:focus {
+  background-color: var(--primary-light) !important;
+}
