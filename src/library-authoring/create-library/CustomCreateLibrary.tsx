@@ -94,7 +94,7 @@ const CustomCreateLibrary = ({
           />
           <ActionRow className="justify-content-start mt-3 bottom-button-container">
             <Button
-              variant="outline-primary"
+              variant="tertiary"
               onClick={handleOnClickCancel}
             >
               {formatMessage(messages.cancelCreateLibraryButton)}
