@@ -1,11 +1,10 @@
 import { useCallback, useContext } from 'react';
 
-import Loading from '@src/generic/Loading';
 import { ToastContext } from '@src/generic/toast-context';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { useLibraryBlockHierarchy, usePublishComponent } from '../data/apiHooks';
+import { usePublishComponent } from '../data/apiHooks';
 import { ItemHierarchyPublisher } from '../hierarchy/ItemHierarchyPublisher';
 
 type ComponentPublisherProps = {
@@ -18,11 +17,6 @@ export const ComponentPublisher = ({
   handleClose,
 }: ComponentPublisherProps) => {
   const intl = useIntl();
-  const {
-    data: hierarchy,
-    isLoading,
-    isError,
-  } = useLibraryBlockHierarchy(componentId);
   const publishComponent = usePublishComponent(componentId);
   const { showToast } = useContext(ToastContext);
 
@@ -36,19 +30,9 @@ export const ComponentPublisher = ({
     handleClose();
   }, [publishComponent, showToast, intl]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  // istanbul ignore if: this should never happen
-  if (isError) {
-    return null;
-  }
-
   return (
     <ItemHierarchyPublisher
       itemId={componentId}
-      hierarchy={hierarchy}
       handleClose={handleClose}
       handlePublish={handlePublish}
     />

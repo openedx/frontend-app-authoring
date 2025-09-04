@@ -9,28 +9,40 @@ import {
 
 import LoadingButton from '@src/generic/loading-button';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
+import Loading from '@src/generic/Loading';
 
-import { ContainerHierarchy } from './ContainerHierarchy';
 import messages from './messages';
-import { ItemHierarchyData } from '../data/api';
-import { ComponentHierarchy } from './ComponentHierarchy';
+import { ItemHierarchy } from './ItemHierarchy';
+import { useLibraryItemHierarchy } from '../data/apiHooks';
 
 type ItemHierarchyPublisherProps = {
   itemId: string;
-  hierarchy: ItemHierarchyData;
   handleClose: () => void;
   handlePublish: () => void;
 };
 
 export const ItemHierarchyPublisher = ({
   itemId,
-  hierarchy,
   handleClose,
   handlePublish,
 }: ItemHierarchyPublisherProps) => {
   const intl = useIntl();
   const itemType = getBlockType(itemId);
-  let isComponent = false;
+
+  const {
+    data: hierarchy,
+    isLoading,
+    isError,
+  } = useLibraryItemHierarchy(itemId);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // istanbul ignore if: this should never happen
+  if (isError) {
+    return null;
+  }
 
   const highlight = (...chunks: ReactNode[]) => <strong>{chunks}</strong>;
   const childWarningMessage = () => {
@@ -55,7 +67,6 @@ export const ItemHierarchyPublisher = ({
         noChildMessage = messages.publishUnitWarning;
         break;
       default: // The item is a component
-        isComponent = true;
         childCount = 0;
         childMessage = messages.empty; // Never used
         noChildMessage = messages.publishComponentWarning;
@@ -99,11 +110,7 @@ export const ItemHierarchyPublisher = ({
     >
       <h4>{intl.formatMessage(messages.publishConfirmHeading)}</h4>
       <p>{childWarningMessage()} {parentWarningMessage()}</p>
-      {isComponent ? (
-        <ComponentHierarchy showPublishStatus />
-      ) : (
-        <ContainerHierarchy showPublishStatus />
-      )}
+      <ItemHierarchy showPublishStatus />
       <ActionRow>
         <Button
           variant="outline-primary rounded-0"

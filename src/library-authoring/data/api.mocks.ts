@@ -543,10 +543,10 @@ mockGetContainerMetadata.unitIdEmpty = 'lct:org:lib:unit:test-unit-empty';
 mockGetContainerMetadata.unitIdPublished = 'lct:org:lib:unit:test-unit-published';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
 mockGetContainerMetadata.sectionIdPublished = 'lct:org:lib:section:test-section-published';
-mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
-mockGetContainerMetadata.subsectionIdPublished = 'lb:org1:Demo_course:subsection:subsection-published';
+mockGetContainerMetadata.subsectionId = 'lct:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.subsectionIdPublished = 'lct:org1:Demo_course:subsection:subsection-published';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
-mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
+mockGetContainerMetadata.subsectionIdEmpty = 'lct:org1:Demo_course:subsection:subsection-empty';
 mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
 mockGetContainerMetadata.subsectionIdError = 'lct:org:lib:section:section_error';
@@ -789,7 +789,7 @@ export async function mockGetContainerHierarchy(containerId: string): Promise<ap
 
 mockGetContainerHierarchy.unitIdOneChild = 'lct:org:lib:unit:test-unit-one';
 mockGetContainerHierarchy.sectionIdOneChild = 'lct:org:lib:section:test-section-one';
-mockGetContainerHierarchy.subsectionIdOneChild = 'lb:org1:Demo_course:subsection:subsection-one';
+mockGetContainerHierarchy.subsectionIdOneChild = 'lct:org1:Demo_course:subsection:subsection-one';
 
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerHierarchy.applyMock = () => {

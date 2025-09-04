@@ -1,6 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { ContainerHierarchy } from '../hierarchy/ContainerHierarchy';
+import { ItemHierarchy } from '../hierarchy/ItemHierarchy';
 
 const ContainerUsage = () => {
   const intl = useIntl();
@@ -8,7 +8,7 @@ const ContainerUsage = () => {
   return (
     <>
       <h4>{intl.formatMessage(messages.usageTabHierarchyHeading)}</h4>
-      <ContainerHierarchy />
+      <ItemHierarchy />
     </>
   );
 };

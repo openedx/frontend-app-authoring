@@ -1,12 +1,17 @@
 import type { MessageDescriptor } from 'react-intl';
+import classNames from 'classnames';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Container, Icon, Stack } from '@openedx/paragon';
 import { ArrowDownward, Check, Description } from '@openedx/paragon/icons';
-import classNames from 'classnames';
+
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { ContainerType } from '@src/generic/key-utils';
-import type { ItemHierarchyData, ItemHierarchyMember } from '../data/api';
+import Loading from '@src/generic/Loading';
+
+import type { ItemHierarchyMember } from '../data/api';
 import messages from './messages';
+import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryItemHierarchy } from '../data/apiHooks';
 
 const HierarchyRow = ({
   containerType,
@@ -67,21 +72,40 @@ const HierarchyRow = ({
 );
 
 export const ItemHierarchy = ({
-  hierarchyData,
-  itemId,
   showPublishStatus = false,
 }: {
-  hierarchyData: ItemHierarchyData,
-  itemId: string,
   showPublishStatus?: boolean,
 }) => {
   const intl = useIntl();
+  const { sidebarItemInfo } = useSidebarContext();
+  const itemId = sidebarItemInfo?.id;
+
+  // istanbul ignore if: this should never happen
+  if (!itemId) {
+    throw new Error('itemId is required');
+  }
+
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useLibraryItemHierarchy(itemId);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // istanbul ignore if: this should never happen
+  if (isError) {
+    return null;
+  }
+
   const {
     sections,
     subsections,
     units,
     components,
-  } = hierarchyData;
+  } = data;
 
   // Returns a message describing the publish status of the given hierarchy row.
   const publishMessage = (contents: ItemHierarchyMember[]) => {

@@ -449,14 +449,23 @@ export const usePublishComponent = (usageKey: string) => {
   });
 };
 
-/** Get the full hierarchy of the given component */
-export const useLibraryBlockHierarchy = (usageKey: string) => (
-  useQuery({
-    queryKey: xblockQueryKeys.componentHierarchy(usageKey),
-    queryFn: () => api.getBlockHierarchy(usageKey),
-    enabled: !!usageKey,
-  })
-);
+/** Get the full hierarchy of the given library item (component/container) */
+export const useLibraryItemHierarchy = (key: string) => {
+  let queryKey;
+  let queryFn;
+  if (key.startsWith('lb:')) {
+    queryKey = xblockQueryKeys.componentHierarchy(key);
+    queryFn = () => api.getBlockHierarchy(key);
+  } else {
+    queryKey = libraryAuthoringQueryKeys.containerHierarchy(key!);
+    queryFn = () => api.getLibraryContainerHierarchy(key!);
+  }
+  return useQuery({
+    queryKey,
+    queryFn,
+    enabled: !!key,
+  });
+};
 
 /** Get the list of assets (static files) attached to a library component */
 export const useXBlockAssets = (usageKey: string) => (
@@ -750,17 +759,6 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
       }
       return replaceEqualDeep(oldData, newData);
     },
-  })
-);
-
-/**
- * Get the metadata and hierarchy for a container in a library
- */
-export const useContainerHierarchy = (containerId?: string) => (
-  useQuery({
-    enabled: !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId!),
-    queryFn: () => api.getLibraryContainerHierarchy(containerId!),
   })
 );
 
