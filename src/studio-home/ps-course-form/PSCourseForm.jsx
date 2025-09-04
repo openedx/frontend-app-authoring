@@ -572,7 +572,7 @@ const PSCourseForm = ({
                   </div>
                   <div className="title-section">
                     {!hideTitleField && (
-                    <Form.Group>
+                    <Form.Group className="mb-2">
                       <Form.Label><>Title <span className="required-asterisk">*</span></></Form.Label>
                       <Form.Control
                         type="text"
