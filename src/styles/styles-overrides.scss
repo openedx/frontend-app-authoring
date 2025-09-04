@@ -2326,6 +2326,7 @@
 }
 
 .btn-icon.btn-icon-primary-active, .btn-icon:focus {
+  background-color: var(--primary) !important;
   color: white !important;
 }
 
