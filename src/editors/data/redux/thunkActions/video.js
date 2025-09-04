@@ -41,6 +41,7 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
 
   const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
   let studioView = state.app.studioView?.data?.html;
+
   if (state.app.blockId.startsWith('lb:')) {
     studioView = state.app.studioView?.data?.content;
   }

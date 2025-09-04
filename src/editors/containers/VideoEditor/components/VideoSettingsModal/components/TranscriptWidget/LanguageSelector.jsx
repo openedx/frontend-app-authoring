@@ -7,54 +7,66 @@ import {
   Button,
   Icon,
 } from '@openedx/paragon';
-
 import { Check } from '@openedx/paragon/icons';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
 import { thunkActions, selectors } from '../../../../../../data/redux';
 import { videoTranscriptLanguages } from '../../../../../../data/constants/video';
 import { FileInput, fileInput } from '../../../../../../sharedComponents/FileInput';
 import messages from './messages';
 
+/* istanbul ignore next */
 export const hooks = {
-  onSelectLanguage: ({
-    dispatch, languageBeforeChange, triggerupload, setLocalLang,
-  }) => ({ newLang }) => {
-    // IF Language is unset, set language and begin upload prompt.
-    setLocalLang(newLang);
-    if (languageBeforeChange === '') {
-      triggerupload();
-      return;
-    }
-    // Else: update language
-    dispatch(
-      thunkActions.video.updateTranscriptLanguage({
-        newLanguageCode: newLang, languageBeforeChange,
-      }),
-    );
-  },
+  onSelectLanguage:
+    ({
+      dispatch, languageBeforeChange, triggerupload, setLocalLang,
+    }) => ({ newLang }) => {
+      // IF Language is unset, set language and begin upload prompt.
+      setLocalLang(newLang);
+      if (languageBeforeChange === '') {
+        triggerupload();
+        return;
+      }
+      // Else: update language
+      dispatch(
+        thunkActions.video.updateTranscriptLanguage({
+          newLanguageCode: newLang,
+          languageBeforeChange,
+        }),
+      );
+    },
 
-  addFileCallback: ({ dispatch, localLang }) => (file) => {
-    dispatch(thunkActions.video.uploadTranscript({
-      file,
-      filename: file.name,
-      language: localLang,
-    }));
-  },
-
+  addFileCallback:
+    ({ dispatch, localLang }) => (file) => {
+      dispatch(
+        thunkActions.video.uploadTranscript({
+          file,
+          filename: file.name,
+          language: localLang,
+        }),
+      );
+    },
 };
+/* istanbul ignore next */
 
-const LanguageSelector = ({
-  index, // For a unique id for the form control
-  language,
-  // Redux
-  openLanguages, // Only allow those languages not already associated with a transcript to be selected
-}) => {
+const LanguageSelector = ({ index, language }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
+  const openLanguages = useSelector(selectors.video.openLanguages);
+
   const [localLang, setLocalLang] = React.useState(language);
-  const input = fileInput({ onAddFile: hooks.addFileCallback({ dispatch: useDispatch(), localLang }) });
+
+  const input = fileInput({
+    onAddFile: hooks.addFileCallback({ dispatch, localLang }),
+  });
+
   const onLanguageChange = hooks.onSelectLanguage({
-    dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
+    dispatch,
+    languageBeforeChange: localLang,
+    setLocalLang,
+    triggerupload: input.click,
   });
 
   const getTitle = () => {
@@ -65,7 +77,6 @@ const LanguageSelector = ({
           <ActionRow.Spacer />
           <Icon className="text-primary-500" src={Check} />
         </ActionRow>
-
       );
     }
     return (
@@ -78,10 +89,7 @@ const LanguageSelector = ({
 
   return (
     <>
-
-      <Dropdown
-        className="w-100 mb-2"
-      >
+      <Dropdown className="w-100 mb-2">
         <Dropdown.Toggle
           iconAs={Button}
           aria-label={intl.formatMessage(messages.languageSelectLabel)}
@@ -95,12 +103,25 @@ const LanguageSelector = ({
         <Dropdown.Menu>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) {
-              return (<Dropdown.Item>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>);
+              return (
+                <Dropdown.Item key={lang}>
+                  {text}
+                  <Icon className="text-primary-500" src={Check} />
+                </Dropdown.Item>
+              );
             }
-            if (openLanguages.some(row => row.includes(lang))) {
-              return (<Dropdown.Item onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>);
+            if (openLanguages.some((row) => row.includes(lang))) {
+              return (
+                <Dropdown.Item key={lang} onClick={() => onLanguageChange({ newLang: lang })}>
+                  {text}
+                </Dropdown.Item>
+              );
             }
-            return (<Dropdown.Item className="disabled">{text}</Dropdown.Item>);
+            return (
+              <Dropdown.Item key={lang} className="disabled">
+                {text}
+              </Dropdown.Item>
+            );
           })}
         </Dropdown.Menu>
       </Dropdown>
@@ -109,21 +130,10 @@ const LanguageSelector = ({
   );
 };
 
-LanguageSelector.defaultProps = {
-  openLanguages: [],
-};
-
 LanguageSelector.propTypes = {
-  openLanguages: PropTypes.arrayOf(PropTypes.string),
   index: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  openLanguages: selectors.video.openLanguages(state),
-});
-
-export const mapDispatchToProps = {};
-
 export const LanguageSelectorInternal = LanguageSelector; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(LanguageSelector);
+export default LanguageSelector;

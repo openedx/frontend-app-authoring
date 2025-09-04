@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -29,15 +29,12 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import ImportTranscriptCard from './ImportTranscriptCard';
 import Transcript from './Transcript';
 import { ErrorContext } from '../../../../hooks';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './index';
 
 export const hooks = {
   updateErrors: ({ isUploadError, isDeleteError }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [error, setError] = React.useContext(ErrorContext).transcripts;
     if (isUploadError) {
       setError({ ...error, uploadError: messages.uploadTranscriptError.defaultMessage });
@@ -67,7 +64,6 @@ export const hooks = {
     return false;
   },
   onAddNewTranscript: ({ transcripts, updateField }) => {
-    // keep blank lang code for now, will be updated once lang is selected.
     if (!transcripts) {
       updateField({ transcripts: [''] });
       return;
@@ -80,25 +76,35 @@ export const hooks = {
 /**
  * Collapsible Form widget controlling video transcripts
  */
-const TranscriptWidget = ({
-  // redux
-  transcripts,
-  selectedVideoTranscriptUrls,
-  allowTranscriptDownloads,
-  showTranscriptByDefault,
-  allowTranscriptImport,
-  updateField,
-  isUploadError,
-  isDeleteError,
-}) => {
+const TranscriptWidget = () => {
   const intl = useIntl();
+  const dispatch = useDispatch();
   const [error] = React.useContext(ErrorContext).transcripts;
   const [showImportCard, setShowImportCard] = React.useState(true);
-  const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
-  const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+
+  // 🔽 Replace mapStateToProps
+  const transcripts = useSelector(selectors.video.transcripts);
+  const selectedVideoTranscriptUrls = useSelector(selectors.video.selectedVideoTranscriptUrls);
+  const allowTranscriptDownloads = useSelector(selectors.video.allowTranscriptDownloads);
+  const showTranscriptByDefault = useSelector(selectors.video.showTranscriptByDefault);
+  const allowTranscriptImport = useSelector(selectors.video.allowTranscriptImport);
+  const isUploadError = useSelector((state) => selectors.requests.isFailed(
+    state,
+    { requestKey: RequestKeys.uploadTranscript },
+  ));
+  const isDeleteError = useSelector((state) => selectors.requests.isFailed(
+    state,
+    { requestKey: RequestKeys.deleteTranscript },
+  ));
   const isLibrary = useSelector(selectors.app.isLibrary);
   const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock);
-  const dispatch = useDispatch();
+
+  // 🔽 Replace mapDispatchToProps
+  const updateField = (stateUpdate) => dispatch(actions.video.updateField(stateUpdate));
+
+  const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
+  const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+
   if (isLibrary) {
     dispatch(thunkActions.video.updateTranscriptHandlerUrl());
   }
@@ -130,16 +136,10 @@ const TranscriptWidget = ({
       subtitle={fullTextLanguages}
       title={intl.formatMessage(messages.title)}
     >
-      <ErrorAlert
-        hideHeading
-        isError={isUploadError}
-      >
+      <ErrorAlert hideHeading isError={isUploadError}>
         <FormattedMessage {...messages.uploadTranscriptError} />
       </ErrorAlert>
-      <ErrorAlert
-        hideHeading
-        isError={isDeleteError}
-      >
+      <ErrorAlert hideHeading isError={isDeleteError}>
         <FormattedMessage {...messages.deleteTranscriptError} />
       </ErrorAlert>
       <Stack gap={3}>
@@ -147,6 +147,7 @@ const TranscriptWidget = ({
           <Form.Group className="border-primary-100 border-bottom">
             {transcripts.map((language, index) => (
               <Transcript
+                key={language || index}
                 language={language}
                 transcriptUrl={selectedVideoTranscriptUrls[language]}
                 index={index}
@@ -212,30 +213,17 @@ const TranscriptWidget = ({
 TranscriptWidget.defaultProps = {
   selectedVideoTranscriptUrls: {},
 };
+
 TranscriptWidget.propTypes = {
-  // redux
-  transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  transcripts: PropTypes.arrayOf(PropTypes.string),
   selectedVideoTranscriptUrls: PropTypes.shape(),
-  allowTranscriptDownloads: PropTypes.bool.isRequired,
-  showTranscriptByDefault: PropTypes.bool.isRequired,
-  allowTranscriptImport: PropTypes.bool.isRequired,
-  updateField: PropTypes.func.isRequired,
-  isUploadError: PropTypes.bool.isRequired,
-  isDeleteError: PropTypes.bool.isRequired,
+  allowTranscriptDownloads: PropTypes.bool,
+  showTranscriptByDefault: PropTypes.bool,
+  allowTranscriptImport: PropTypes.bool,
+  updateField: PropTypes.func,
+  isUploadError: PropTypes.bool,
+  isDeleteError: PropTypes.bool,
 };
-export const mapStateToProps = (state) => ({
-  transcripts: selectors.video.transcripts(state),
-  selectedVideoTranscriptUrls: selectors.video.selectedVideoTranscriptUrls(state),
-  allowTranscriptDownloads: selectors.video.allowTranscriptDownloads(state),
-  showTranscriptByDefault: selectors.video.showTranscriptByDefault(state),
-  allowTranscriptImport: selectors.video.allowTranscriptImport(state),
-  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadTranscript }),
-  isDeleteError: selectors.requests.isFailed(state, { requestKey: RequestKeys.deleteTranscript }),
-});
 
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
-});
-
-export const TranscriptWidgetInternal = TranscriptWidget; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(TranscriptWidget);
+export const TranscriptWidgetInternal = TranscriptWidget;
+export default TranscriptWidget;

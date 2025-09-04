@@ -1,10 +1,9 @@
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Collapsible, Image, Stack, Hyperlink,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';// ✅ adjust import path depending on your setup
 import { selectors } from '../../../../../../data/redux';
 import thumbnailMessages from '../ThumbnailWidget/messages';
 import hooks from './hooks';
@@ -12,15 +11,18 @@ import LanguageNamesWidget from './LanguageNamesWidget';
 import videoThumbnail from '../../../../../../data/images/videoThumbnail.svg';
 
 // Exporting to test this component separately
-export const VideoPreviewWidget = ({
-  thumbnail,
-  videoSource,
-  transcripts,
-  blockTitle,
-}) => {
+export const VideoPreviewWidget = () => {
   const intl = useIntl();
+
+  const transcripts = useSelector(selectors.video.transcripts);
+  const videoSource = useSelector(selectors.video.videoSource);
+  const thumbnail = useSelector(selectors.video.thumbnail);
+  const blockTitle = useSelector(selectors.app.blockTitle);
+
   const imgRef = React.useRef();
+
   const videoType = intl.formatMessage(hooks.getVideoType(videoSource));
+
   const thumbnailImage = thumbnail || videoThumbnail;
 
   return (
@@ -64,18 +66,4 @@ export const VideoPreviewWidget = ({
   );
 };
 
-VideoPreviewWidget.propTypes = {
-  videoSource: PropTypes.string.isRequired,
-  thumbnail: PropTypes.string.isRequired,
-  transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  blockTitle: PropTypes.string.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  transcripts: selectors.video.transcripts(state),
-  videoSource: selectors.video.videoSource(state),
-  thumbnail: selectors.video.thumbnail(state),
-  blockTitle: selectors.app.blockTitle(state),
-});
-
-export default connect(mapStateToProps)(VideoPreviewWidget);
+export default VideoPreviewWidget;

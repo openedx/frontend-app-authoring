@@ -1,8 +1,12 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '@src/testUtils';
-import { thunkActions, selectors } from '../../../../../../data/redux';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { thunkActions } from '../../../../../../data/redux';
+import { initialState as editorInitialState } from '../../../../../../data/redux/video/reducer';
 
 import * as componentModule from './TranscriptActionMenu';
 
@@ -12,26 +16,25 @@ jest.mock('react-redux', () => {
   const dispatchFn = jest.fn().mockName('mockUseDispatch');
   return {
     ...jest.requireActual('react-redux'),
-    dispatch: dispatchFn,
     useDispatch: jest.fn(() => dispatchFn),
   };
 });
 
-jest.mock('../../../../../../data/redux', () => ({
-  thunkActions: {
-    video: {
-      deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
-      replaceTranscript: jest.fn((args) => ({ replaceTranscript: args })).mockName('thunkActions.video.replaceTranscript'),
-      downloadTranscript: jest.fn().mockName('thunkActions.video.downloadTranscript'),
+jest.mock('../../../../../../data/redux', () => {
+  const actual = jest.requireActual('../../../../../../data/redux');
+  return {
+    ...actual, // keep initializeStore, selectors, etc.
+    thunkActions: {
+      ...actual.thunkActions,
+      video: {
+        ...actual.thunkActions.video,
+        deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
+        replaceTranscript: jest.fn((args) => ({ replaceTranscript: args })).mockName('thunkActions.video.replaceTranscript'),
+        downloadTranscript: jest.fn().mockName('thunkActions.video.downloadTranscript'),
+      },
     },
-  },
-  selectors: {
-    video: {
-      getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName('selectors.video.getTranscriptDownloadUrl'),
-      buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName('selectors.video.buildTranscriptUrl'),
-    },
-  },
-}));
+  };
+});
 
 jest.mock('../../../../../../sharedComponents/FileInput', () => ({
   FileInput: 'FileInput',
@@ -62,12 +65,10 @@ describe('TranscriptActionMenu', () => {
   describe('renders', () => {
     const props = {
       index: 1,
-      language: 'lAnG',
+      language: 'en',
       launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
-      // redux
-      getTranscriptDownloadUrl: jest.fn().mockName('selectors.video.getTranscriptDownloadUrl'),
-      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl').mockImplementation((url) => url.transcriptUrl),
     };
+
     beforeEach(() => {
       initializeMocks();
     });
@@ -76,34 +77,38 @@ describe('TranscriptActionMenu', () => {
       jest.clearAllMocks();
     });
 
+    const makeInitialState = (overrides: PartialEditorState = {}): PartialEditorState => ({
+      ...editorInitialState,
+      app: {
+        ...editorInitialState.app,
+        studioEndpointUrl: '', // ✅ ensure defined
+        blockId: 'block-v1:Test+TST101+2025+type@video+block@12345', // ✅ ensure defined
+        ...(overrides.app ?? {}),
+      },
+      video: {
+        ...editorInitialState.video,
+        transcripts: [], // ✅ avoids selector openLanguages issues
+        ...(overrides.video ?? {}),
+      },
+      ...overrides,
+    });
+
     test('renders as expected with default props', () => {
-      render(<TranscriptActionMenu {...props} />);
+      editorRender(<TranscriptActionMenu {...props} />, {
+        initialState: makeInitialState(),
+      });
       expect(screen.getByRole('button', { name: 'Actions dropdown' })).toBeInTheDocument();
     });
 
-    test('snapshots: renders as expected with transcriptUrl props', () => {
-      render(<TranscriptActionMenu {...props} transcriptUrl="url" />);
+    test('renders with transcriptUrl and creates proper download link', () => {
+      editorRender(<TranscriptActionMenu {...props} transcriptUrl="url" />, {
+        initialState: makeInitialState(),
+      });
       const actionsDropdown = screen.getByRole('button', { name: 'Actions dropdown' });
-      expect(actionsDropdown).toBeInTheDocument();
       fireEvent.click(actionsDropdown);
       const downloadOption = screen.getByRole('link', { name: 'Download' });
       expect(downloadOption).toBeInTheDocument();
       expect(downloadOption).toHaveAttribute('href', 'url');
-    });
-  });
-
-  describe('mapStateToProps', () => {
-    // type set to any to prevent warning on not matchig expected type on the selectors
-    const testState: any = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('getTranscriptDownloadUrl from video.getTranscriptDownloadUrl', () => {
-      expect(
-        componentModule.mapStateToProps(testState).getTranscriptDownloadUrl,
-      ).toEqual(selectors.video.getTranscriptDownloadUrl(testState));
-    });
-  });
-  describe('mapDispatchToProps', () => {
-    test('deleteTranscript from thunkActions.video.deleteTranscript', () => {
-      expect(componentModule.mapDispatchToProps.downloadTranscript).toEqual(thunkActions.video.downloadTranscript);
     });
   });
 });

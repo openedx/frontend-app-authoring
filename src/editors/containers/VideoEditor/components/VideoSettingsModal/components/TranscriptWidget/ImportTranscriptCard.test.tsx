@@ -2,27 +2,22 @@ import React from 'react';
 import {
   render, screen, fireEvent, initializeMocks,
 } from '@src/testUtils';
+import * as ReactRedux from 'react-redux';
 import { ImportTranscriptCardInternal as ImportTranscriptCard } from './ImportTranscriptCard';
 
-jest.mock('../../../../../../data/redux', () => ({
-  thunkActions: {
-    video: {
-      importTranscript: jest.fn().mockName('thunkActions.video.importTranscript'),
-    },
-  },
-}));
+const mockDispatch = jest.fn();
 
 describe('ImportTranscriptCard (RTL)', () => {
   const mockSetOpen = jest.fn();
-  const mockImportTranscript = jest.fn();
 
   beforeEach(() => {
+    jest.spyOn(ReactRedux, 'useDispatch').mockReturnValue(mockDispatch);
     initializeMocks();
   });
 
   it('renders header, message, and button', () => {
     render(
-      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+      <ImportTranscriptCard setOpen={mockSetOpen} />,
     );
     expect(screen.getByText('Import transcript from YouTube?')).toBeInTheDocument();
     expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
@@ -31,7 +26,7 @@ describe('ImportTranscriptCard (RTL)', () => {
 
   it('calls setOpen(false) when close IconButton is clicked', () => {
     const { container } = render(
-      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+      <ImportTranscriptCard setOpen={mockSetOpen} />,
     );
     const closeButton = container.querySelector('.btn-icon-primary');
     expect(closeButton).toBeInTheDocument();
@@ -41,10 +36,10 @@ describe('ImportTranscriptCard (RTL)', () => {
 
   it('calls importTranscript when import button is clicked', () => {
     render(
-      <ImportTranscriptCard setOpen={mockSetOpen} importTranscript={mockImportTranscript} />,
+      <ImportTranscriptCard setOpen={mockSetOpen} />,
     );
     const importBtn = screen.getByRole('button', { name: 'Import Transcript' });
     fireEvent.click(importBtn);
-    expect(mockImportTranscript).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function)); // dispatched thunk
   });
 });
