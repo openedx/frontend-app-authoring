@@ -2310,3 +2310,9 @@
   width: 16px;
   height: 18px;
 }
+
+@media (min-width: 576px) {
+  .pgn__form-control-decorator-group {
+    margin-inline-end: 0;
+  }
+}

@@ -12,9 +12,11 @@ const IntroductionVideo = ({ intl, introVideo, onChange }) => {
 
   return (
     <Form.Group className="form-group-custom">
-      <Form.Label>
-        {intl.formatMessage(messages.courseIntroductionVideoLabel)}
-      </Form.Label>
+      <div className="mb-2">
+        <Form.Label>
+          {intl.formatMessage(messages.courseIntroductionVideoLabel)}
+        </Form.Label>
+      </div>
       <Card>
         <Card.Body className="embed-video-container">
           <div className="introduction-video">
