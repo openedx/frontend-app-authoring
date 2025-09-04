@@ -320,17 +320,30 @@ describe('<TabsSection />', () => {
       // Test migration filter
       const filter = await within(panel).findByRole('button', { name: 'Any Migration Status' });
       await user.click(filter);
-      const migratedOption = await within(panel).findByRole('checkbox', { name: 'Migrated' });
+      let migratedOption = await within(panel).findByRole('checkbox', { name: 'Migrated' });
       // This should uncheck Migrated option as all options are selected by default
       await user.click(migratedOption);
       // Should only show 2 result i.e. unmigrated libraries
       expect(await within(panel).findByText('Showing 2 of 3')).toBeInTheDocument();
+      // test clearing filter
+      const clearFilter = await within(panel).findByRole('button', { name: 'Clear Filter' });
+      await user.click(clearFilter);
+      // Should show all 3 results
+      expect(await within(panel).findByText('Showing 3 of 3')).toBeInTheDocument();
+      // Open the filter again
+      await user.click(filter);
+      // Reload migratedOption as clearing and opening the filter again creates a new modal
+      migratedOption = await within(panel).findByRole('checkbox', { name: 'Migrated' });
       const unmigratedOption = await within(panel).findByRole('checkbox', { name: 'Unmigrated' });
-      // Un-checking both options should reset the state to both checked.
-      await user.click(unmigratedOption);
+      // both options should be selected by default - even after clearing
       expect(migratedOption).toBeChecked();
       expect(unmigratedOption).toBeChecked();
-      // Should only show all 3 results
+      // Un-checking both options should reset the state to both checked.
+      await user.click(unmigratedOption);
+      await user.click(migratedOption);
+      expect(migratedOption).toBeChecked();
+      expect(unmigratedOption).toBeChecked();
+      // Should show all 3 results
       expect(await within(panel).findByText('Showing 3 of 3')).toBeInTheDocument();
     });
 
