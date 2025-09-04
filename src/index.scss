@@ -115,9 +115,9 @@ mark {
   overflow-x: hidden;
   height: calc(100vh - 0px);
 
-  @media (max-height: 690px) {
-    height: calc(100vh - 5rem);
-  }
+  // @media (max-height: 690px) {
+  //   height: calc(100vh - 5rem);
+  // }
 }
 
 /* Styles for the sidebar scrollbar */

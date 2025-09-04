@@ -687,6 +687,17 @@
       max-width: 25%;
     }
   }
+
+  .btn-icon.btn-icon-primary-active,
+  .btn-icon:focus {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+  
+  .btn-icon.btn-icon-primary-active.focus,
+  .btn-icon.btn-icon-primary-active:focus {
+    background-color: var(--primary-light) !important;
+  }
 }
 
 .ted-card {
@@ -2325,11 +2336,3 @@
   background-color: var(--primary-light) !important;
 }
 
-.btn-icon.btn-icon-primary-active, .btn-icon:focus {
-  background-color: var(--primary) !important;
-  color: white !important;
-}
-
-.btn-icon.btn-icon-primary-active.focus, .btn-icon.btn-icon-primary-active:focus {
-  background-color: var(--primary-light) !important;
-}
