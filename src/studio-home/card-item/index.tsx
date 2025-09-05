@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Card,
   Dropdown,
+  Form,
   IconButton,
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
@@ -15,6 +16,51 @@ import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
+interface CardTitleProps {
+  readOnlyItem: boolean;
+  inSelectMode: boolean;
+  destinationUrl: string;
+  hasDisplayName: string;
+  displayName: string;
+  itemId?: string | null;
+}
+
+const CardTitle: React.FC<CardTitleProps> = ({
+  readOnlyItem,
+  inSelectMode,
+  destinationUrl,
+  hasDisplayName,
+  displayName,
+  itemId,
+}) => {
+  if (!readOnlyItem && !inSelectMode) {
+    return (
+      <Link
+        className="card-item-title"
+        to={destinationUrl}
+      >
+        {hasDisplayName}
+      </Link>
+    );
+  }
+  if (inSelectMode) {
+    return (
+      <Form.Radio className="mt-1 ml-1" value={itemId} name={`select-card-item-${itemId}`}>
+        <span
+          className="card-item-title"
+          style={{ marginTop: '-0.2rem' }}
+        >
+          {displayName}
+        </span>
+      </Form.Radio>
+    );
+  }
+
+  return (
+    <span className="card-item-title">{displayName}</span>
+  );
+};
+
 interface BaseProps {
   displayName: string;
   org: string;
@@ -24,6 +70,8 @@ interface BaseProps {
   rerunLink?: string | null;
   courseKey?: string;
   isLibraries?: boolean;
+  inSelectMode?: boolean;
+  itemId?: string | null;
 }
 type Props = BaseProps & (
   /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
@@ -47,6 +95,8 @@ const CardItem: React.FC<Props> = ({
   run = '',
   isLibraries = false,
   courseKey = '',
+  inSelectMode = false,
+  itemId = '',
   path,
   url,
 }) => {
@@ -75,15 +125,15 @@ const CardItem: React.FC<Props> = ({
     <Card className="card-item">
       <Card.Header
         size="sm"
-        title={!readOnlyItem ? (
-          <Link
-            className="card-item-title"
-            to={destinationUrl}
-          >
-            {hasDisplayName}
-          </Link>
-        ) : (
-          <span className="card-item-title">{displayName}</span>
+        title={(
+          <CardTitle
+            readOnlyItem={readOnlyItem}
+            inSelectMode={inSelectMode}
+            destinationUrl={destinationUrl}
+            hasDisplayName={hasDisplayName}
+            displayName={displayName}
+            itemId={itemId}
+          />
         )}
         subtitle={subtitle}
         actions={showActions && (

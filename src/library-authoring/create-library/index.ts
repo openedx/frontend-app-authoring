@@ -1,1 +1,2 @@
-export { default as CreateLibrary } from './CreateLibrary';
+export { CreateLibrary } from './CreateLibrary';
+export { CreateLibraryModal } from './CreateLibraryModal';
