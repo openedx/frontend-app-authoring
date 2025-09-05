@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import {
   Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+  Outlet,
 } from 'react-router-dom';
 import {
   QueryClient,
