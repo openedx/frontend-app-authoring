@@ -7,7 +7,6 @@ import {
   ModalDialog,
 } from '@openedx/paragon';
 import {
-  MenuBook, Groups, LibraryBooks, Assessment,
   DragIndicator,
   FilterList,
   RadioButtonUnchecked,
@@ -349,7 +348,7 @@ const Dashboard = () => {
           },
           body: JSON.stringify({
             ...dashboardData,
-            widgets: updatedWidgets,
+            widgets: updatedWidgets.filter(widget => widget.id !== 'left-placeholder' && widget.id !== 'right-placeholder'),
           }),
         });
         if (!response.ok) {
@@ -362,7 +361,7 @@ const Dashboard = () => {
         // Real API endpoint
         const baseUrl = `${getConfig().LMS_BASE_URL}/titaned/api/v1/instructor-dashboard`;
         const client = getAuthenticatedHttpClient();
-        const response = await client.post(`${baseUrl}/widgets/filter`, updatedWidgets);
+        const response = await client.post(`${baseUrl}/widgets/filter`, updatedWidgets.filter(widget => widget.id !== 'left-placeholder' && widget.id !== 'right-placeholder'));
         if (response.status !== 200 && response.status !== 201) {
           throw new Error('Failed to update dashboard widgets');
         }
