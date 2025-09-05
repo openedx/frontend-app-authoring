@@ -969,12 +969,12 @@
   .course-stepper {
     display: flex !important;
     justify-content: space-between !important;
-    padding-bottom: 3rem !important;
+    padding: 0 1rem !important;
 
     .course-stepper__step-icon .course-stepper__icon-line {
       display: block;
       height: 4px;
-      width: 100%;
+      width: 150%;
       background: var(--primary) !important;
       border-radius: 2px;
       margin-left: 3rem;
@@ -983,6 +983,11 @@
 
     .course-stepper__step {
       flex-direction: column !important;
+      padding-right: 5rem !important;
+
+      .course-stepper__step-info {
+        margin-left: 0 !important;
+      }
     }
 
     .course-stepper__step:not(:last-child) {
@@ -1001,7 +1006,6 @@
     }
 
     margin-top: 1rem;
-    padding-bottom: 4rem;
     // padding: 16px 16px 24px 15px !important;
     border-radius: 12px !important;
     background-color: #f4f7ff !important;
@@ -2211,7 +2215,7 @@
   }
 
   .section-card__subsections .extend-margin .subsection-card .btn-icon-primary {
-    color: var(--text-primary) !important;
+    // color: var(--text-primary) !important;
   }
 
   .item-card-header .btn-icon-primary {

@@ -47,6 +47,9 @@ import CustomLibraryAuthoringPage from './src/library-authoring/CustomLibraryAut
 import CustomLibraryCollectionPage from './src/library-authoring/collections/CustomLibraryCollectionPage';
 import CustomTaxonomyListPage from './src/taxonomy/CustomTaxonomyListPage';
 import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage';
+import FileSection from './src/import-page/file-section/FileSection';
+import ImportStepper from './src/import-page/import-stepper/ImportStepper';
+
 // Load environment variables from .env file
 const config = {
     ...process.env,
@@ -887,29 +890,28 @@ const config = {
                 }
             ],
         },
-        // edit_modal_plugin_slot: {
-        //     plugins: [
-        //         {
-        //             op: PLUGIN_OPERATIONS.Insert,
-        //             widget: {
-        //                 id: "custom_pages",
-        //                 type: DIRECT_PLUGIN,
-        //                 priority: 1,
-        //                 RenderWidget: (props) => 
-        //                 <div className='edit-modal'>
-        //                     <EditorPage
-        //                     courseId={courseId}
-        //                     blockType="html"
-        //                     blockId={pageId}
-        //                     studioEndpointUrl={getConfig().STUDIO_BASE_URL}
-        //                     lmsEndpointUrl={getConfig().LMS_BASE_URL}
-        //                     returnFunction={onClose}
-        //                     />
-        //                 </div>
-        //             },
-        //         },
-        //     ],
-        // },
+        course_import_plugin_slot: {
+            plugins: [
+                {
+                    op: PLUGIN_OPERATIONS.Insert,
+                    widget: {
+                        id: "course_import_plugin_slot",
+                        type: DIRECT_PLUGIN,
+                        priority: 1,
+                        RenderWidget: (props) => 
+                        <>
+                            <span className="pages_bar" />
+                            <div className="import-stepper-area">
+                                <FileSection courseId={props.courseId} />
+                                    <div className="import-stepper">
+                                        {props.importTriggered && <ImportStepper courseId={props.courseId} />}
+                                    </div>
+                            </div>  
+                        </>
+                    },
+                },
+            ],
+        },
     }
 };
 
