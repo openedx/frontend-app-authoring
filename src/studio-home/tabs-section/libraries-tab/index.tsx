@@ -1,33 +1,19 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Row } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
-import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
-import CardItem from '../../card-item';
-import { sortAlphabeticallyArray } from '../utils';
+import AlertMessage from '@src/generic/alert-message';
+import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
+import CardItem from '@src/studio-home/card-item';
 import messages from '../messages';
+import { sortAlphabeticallyArray } from '../utils';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 
-interface LibrariesTabProps {
-  libraries: {
-    displayName: string;
-    libraryKey: string;
-    number: string;
-    org: string;
-    url: string;
-  }[];
-  isLoading: boolean;
-  isFailed: boolean;
-}
-
-const LibrariesTab = ({
-  libraries,
-  isLoading,
-  isFailed,
-}: LibrariesTabProps) => {
+const LibrariesTab = () => {
   const intl = useIntl();
+  const { isLoading, data, isError } = useLibrariesV1Data();
+
   if (isLoading) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
@@ -36,7 +22,7 @@ const LibrariesTab = ({
     );
   }
   return (
-    isFailed ? (
+    isError ? (
       <AlertMessage
         variant="danger"
         description={(
@@ -50,8 +36,8 @@ const LibrariesTab = ({
       <>
         <MigrateLegacyLibrariesAlert />
         <div className="courses-tab">
-          {sortAlphabeticallyArray(libraries).map(({
-            displayName, org, number, url,
+          {sortAlphabeticallyArray(data.libraries).map(({
+            displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
           }) => (
             <CardItem
               key={`${org}+${number}`}
@@ -60,6 +46,10 @@ const LibrariesTab = ({
               org={org}
               number={number}
               url={url}
+              isMigrated={isMigrated}
+              migratedToKey={migratedToKey}
+              migratedToTitle={migratedToTitle}
+              migratedToCollectionKey={migratedToCollectionKey}
             />
           ))}
         </div>
