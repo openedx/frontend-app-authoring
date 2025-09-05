@@ -49,7 +49,7 @@ const AnswerOption = ({
     ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
     : undefined;
 
-  const validateAnswerTitle = (value) => {
+  const validateAnswerRange = (value) => {
     const cleanedValue = value.replace(/^\s+|\s+$/g, '');
     return !cleanedValue.length || answerRangeFormatRegex.test(cleanedValue);
   };
@@ -83,7 +83,7 @@ const AnswerOption = ({
       );
     }
     // Return Answer Range View
-    const isValidValue = validateAnswerTitle(answer.title);
+    const isValidValue = validateAnswerRange(answer.title);
     return (
       <Form.Group isInvalid={!isValidValue}>
         <Form.Control
