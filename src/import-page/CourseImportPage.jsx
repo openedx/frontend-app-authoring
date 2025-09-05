@@ -74,18 +74,16 @@ const CourseImportPage = ({ intl, courseId }) => {
                 <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <p className="small">{intl.formatMessage(messages.description3)}</p>
 
-                <span className="pages_bar" />
-                <div className="import-stepper-area">
+                <PluginSlot id="course_import_plugin_slot" pluginProps={{ courseId, importTriggered }}>
                   <FileSection courseId={courseId} />
-                  <div className="import-stepper">
-                    {importTriggered && <ImportStepper courseId={courseId} />}
-                  </div>
-                </div>
+                  {importTriggered && <ImportStepper courseId={courseId} />}
+                </PluginSlot>
+
               </article>
             </Layout.Element>
             <Layout.Element>
               <PluginSlot id="import_sidebar_plugin_slot" pluginProps={{ courseId }}>
-              <ImportSidebar courseId={courseId} />
+                <ImportSidebar courseId={courseId} />
               </PluginSlot>
             </Layout.Element>
           </Layout>
