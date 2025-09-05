@@ -19,78 +19,6 @@ import { parseLibraryKey } from '@src/generic/key-utils';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
-interface CardTitleProps {
-  readOnlyItem: boolean;
-  inSelectMode: boolean;
-  destinationUrl: string;
-  hasDisplayName: string;
-  displayName: string;
-  itemId?: string | null;
-}
-
-const CardTitle: React.FC<CardTitleProps> = ({
-  readOnlyItem,
-  inSelectMode,
-  destinationUrl,
-  hasDisplayName,
-  displayName,
-  itemId,
-}) => {
-  if (!readOnlyItem && !inSelectMode) {
-    return (
-      <Link
-        className="card-item-title"
-        to={destinationUrl}
-      >
-        {hasDisplayName}
-      </Link>
-    );
-  }
-  if (inSelectMode) {
-    return (
-      <Form.Radio className="mt-1 ml-1" value={itemId} name={`select-card-item-${itemId}`}>
-        <span
-          className="card-item-title"
-          style={{ marginTop: '-0.2rem' }}
-        >
-          {displayName}
-        </span>
-      </Form.Radio>
-    );
-  }
-
-  return (
-    <span className="card-item-title">{displayName}</span>
-  );
-};
-
-interface BaseProps {
-  displayName: string;
-  org: string;
-  number: string;
-  run?: string;
-  lmsLink?: string | null;
-  rerunLink?: string | null;
-  courseKey?: string;
-  isLibraries?: boolean;
-  isMigrated?: boolean;
-  migratedToKey?: string;
-  migratedToTitle?: string;
-  migratedToCollectionKey?: string | null;
-  inSelectMode?: boolean;
-  itemId?: string | null;
-}
-
-type Props = BaseProps & (
-  /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
-  { path: string, url?: never } |
-  /**
-   * If we might be redirecting to the legacy Studio view, this is the URL to redirect to.
-   * URLs starting with '/' are assumed to be relative to the legacy Studio root.
-   */
-  { url: string, path?: never }
-);
-
 const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
   <Stack direction="horizontal" gap={2}>
     <span>{from}</span>
@@ -118,6 +46,105 @@ const MakeLinkOrSpan = ({
   return <span className={className}>{children}</span>;
 };
 
+interface CardTitleProps {
+  readOnlyItem: boolean;
+  selectMode?: 'single' | 'multiple' | null;
+  destinationUrl: string;
+  title: string;
+  itemId?: string | null;
+  isMigrated?: boolean;
+  migratedToKey?: string;
+  migratedToTitle?: string;
+}
+
+const CardTitle: React.FC<CardTitleProps> = ({
+  readOnlyItem,
+  selectMode,
+  destinationUrl,
+  title,
+  itemId,
+  isMigrated,
+  migratedToTitle,
+  migratedToKey,
+}) => {
+  const getTitle = useCallback(() => (
+    <div style={{ marginTop: selectMode ? '-3px' : '' }}>
+      <PrevToNextName
+        from={(
+          <MakeLinkOrSpan
+            when={!readOnlyItem}
+            to={destinationUrl}
+            className="card-item-title"
+          >
+            {title}
+          </MakeLinkOrSpan>
+          )}
+        to={
+            isMigrated && migratedToTitle && (
+              <MakeLinkOrSpan
+                when={!readOnlyItem}
+                to={`/library/${migratedToKey}`}
+                className="card-item-title"
+              >
+                {migratedToTitle}
+              </MakeLinkOrSpan>
+            )
+          }
+      />
+    </div>
+  ), [
+    readOnlyItem,
+    isMigrated,
+    destinationUrl,
+    migratedToTitle,
+    title,
+    selectMode,
+  ]);
+
+  if (selectMode) {
+    if (selectMode === 'single') {
+      return (
+        <Form.Radio
+          className="mt-1 ml-1"
+          value={itemId}
+          name={`select-card-item-${itemId}`}
+          style={{ marginBottom: '-20px' }}
+        >
+          {getTitle()}
+        </Form.Radio>
+      );
+    }
+  }
+  return getTitle();
+};
+
+interface BaseProps {
+  displayName: string;
+  org: string;
+  number: string;
+  run?: string;
+  lmsLink?: string | null;
+  rerunLink?: string | null;
+  courseKey?: string;
+  isLibraries?: boolean;
+  isMigrated?: boolean;
+  migratedToKey?: string;
+  migratedToTitle?: string;
+  migratedToCollectionKey?: string | null;
+  selectMode?: 'single' | 'multiple' | null;
+  itemId?: string | null;
+}
+
+type Props = BaseProps & (
+  /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
+  { path: string, url?: never } |
+  /**
+   * If we might be redirecting to the legacy Studio view, this is the URL to redirect to.
+   * URLs starting with '/' are assumed to be relative to the legacy Studio root.
+   */
+  { url: string, path?: never }
+);
+
 /**
  * A card on the Studio home page that represents a Course or a Library
  */
@@ -130,7 +157,7 @@ const CardItem: React.FC<Props> = ({
   run = '',
   isLibraries = false,
   courseKey = '',
-  inSelectMode = false,
+  selectMode,
   itemId = '',
   path,
   url,
@@ -181,36 +208,22 @@ const CardItem: React.FC<Props> = ({
     return libUrl;
   };
 
-  const getTitle = useCallback(() => (
-    <PrevToNextName
-      from={(
-        <MakeLinkOrSpan
-          when={!readOnlyItem}
-          to={destinationUrl}
-          className="card-item-title"
-        >
-          {title}
-        </MakeLinkOrSpan>
-        )}
-      to={
-          isMigrated && migratedToTitle && (
-            <MakeLinkOrSpan
-              when={!readOnlyItem}
-              to={`/library/${migratedToKey}`}
-              className="card-item-title"
-            >
-              {migratedToTitle}
-            </MakeLinkOrSpan>
-          )
-        }
-    />
-  ), [readOnlyItem, isMigrated, destinationUrl, migratedToTitle, title]);
-
   return (
     <Card className="card-item">
       <Card.Header
         size="sm"
-        title={getTitle()}
+        title={(
+          <CardTitle
+            readOnlyItem={readOnlyItem}
+            selectMode={selectMode}
+            destinationUrl={destinationUrl}
+            title={title}
+            itemId={itemId}
+            isMigrated={isMigrated}
+            migratedToTitle={migratedToTitle}
+            migratedToKey={migratedToKey}
+          />
+        )}
         subtitle={getSubtitle()}
         actions={showActions && (
         <Dropdown>
