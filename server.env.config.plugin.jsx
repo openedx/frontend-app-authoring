@@ -71,6 +71,8 @@ const { default: CustomLibraryCollectionPage } = await import('./src/library-aut
 const { default: CustomTaxonomyListPage } = await import('./src/taxonomy/CustomTaxonomyListPage');
 const { default: CustomTaxonomyDetailPage } = await import('./src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage');
 
+const { default: FileSection } = await import('./src/import-page/file-section/FileSection');
+const { default: ImportStepper } = await import('./src/import-page/import-stepper/ImportStepper');
 
 {% raw %}
 config.pluginSlots = {
@@ -910,29 +912,28 @@ config.pluginSlots = {
             }
         ],
     },
-    // edit_modal_plugin_slot: {
-    //     plugins: [
-    //         {
-    //             op: PLUGIN_OPERATIONS.Insert,
-    //             widget: {
-    //                 id: "custom_pages",
-    //                 type: DIRECT_PLUGIN,
-    //                 priority: 1,
-    //                 RenderWidget: (props) => 
-    //                 <div className='edit-modal'>
-    //                     <EditorPage
-    //                     courseId={courseId}
-    //                     blockType="html"
-    //                     blockId={pageId}
-    //                     studioEndpointUrl={getConfig().STUDIO_BASE_URL}
-    //                     lmsEndpointUrl={getConfig().LMS_BASE_URL}
-    //                     returnFunction={onClose}
-    //                     />
-    //                 </div>
-    //             },
-    //         },
-    //     ],
-    // },
+    course_import_plugin_slot: {
+        plugins: [
+            {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: "course_import_plugin_slot",
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: (props) => 
+                        <>
+                            <span className="pages_bar" />
+                            <div className="import-stepper-area">
+                                <FileSection courseId={props.courseId} />
+                                <div className="import-stepper">
+                                    {props.importTriggered && <ImportStepper courseId={props.courseId} />}
+                                </div>
+                            </div>  
+                        </>
+                    },
+            },
+        ],
+    },
 }
 
 console.log(FormattedMessage, "FormattedMessage");
