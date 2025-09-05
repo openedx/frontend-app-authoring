@@ -3,5 +3,26 @@
   // in the org select menu is too thick
   .pgn__menu-item:focus {
     font-weight: bold;
+    background-color: var(--primary) !important;
+    color: var(--text-white) !important;
+  }
+
+  .pgn__menu-item {
+    width: 12rem !important;
+
+    :hover {
+      background-color: var(--primary-light) !important;
+      color: var(--primary) !important;
+    }
+
+    :active {
+      background-color: var(--primary) !important;
+      color: var(--text-white) !important;
+    }
+  }
+
+  .pgn__menu .pgn__menu-item:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
   }
 }

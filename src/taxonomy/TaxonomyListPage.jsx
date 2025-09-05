@@ -100,7 +100,7 @@ const OrganizationFilterSelector = ({
   const selectOptions = [
     <MenuItem
       key="all-orgs-taxonomies"
-      className="x-small"
+      // className="x-small"
       iconAfter={() => isOrgSelected(ALL_TAXONOMIES)}
       onClick={() => setSelectedOrgFilter(ALL_TAXONOMIES)}
     >
@@ -110,7 +110,7 @@ const OrganizationFilterSelector = ({
     </MenuItem>,
     <MenuItem
       key="unassigned-taxonomies"
-      className="x-small"
+      // className="x-small"
       iconAfter={() => isOrgSelected(UNASSIGNED)}
       onClick={() => setSelectedOrgFilter(UNASSIGNED)}
     >
@@ -123,7 +123,7 @@ const OrganizationFilterSelector = ({
       selectOptions.push(
         <MenuItem
           key={`${org}-taxonomies`}
-          className="x-small"
+          // className="x-small"
           iconAfter={() => isOrgSelected(org)}
           onClick={() => setSelectedOrgFilter(org)}
         >
@@ -135,7 +135,7 @@ const OrganizationFilterSelector = ({
 
   return (
     <SelectMenu
-      className="flex-d x-small taxonomy-orgs-filter-selector"
+      className="flex-d taxonomy-orgs-filter-selector"
       variant="tertiary"
       defaultMessage={intl.formatMessage(messages.orgInputSelectDefaultValue)}
       data-testid="taxonomy-orgs-filter-selector"

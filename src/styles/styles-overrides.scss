@@ -1491,7 +1491,7 @@
   @include card-style1;
   padding: 1rem;
   margin-left: 1rem !important;
-  width: 99% !important;
+  width: 97% !important;
   margin-right: 1rem !important;
   max-width: 100% !important;
   margin-top: 1.5rem !important;
@@ -1808,6 +1808,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    padding: 0 1rem;
 
     .custom-taxonomy-list-page-header-actions {
       display: flex;
@@ -1935,6 +1936,14 @@
     // .custom-taxonomy-detail-page-header-title-actions {
     //   margin-right: -1rem;
     // }
+
+
+    .custom-taxonomy-detail-page-header-title-actions {
+      .btn-primary:focus {
+        color: var(--text-white) !important;
+        background-color: var(--primary) !important;
+      }
+    }
   }
 
   .custom-taxonomy-detail-page-content {
@@ -2007,6 +2016,7 @@
 
           .pgn__card-header-content {
             margin-top: 1rem !important;
+            overflow-y: hidden !important;
 
             .pgn__card-header-title-md {
               @include section-title-style1;

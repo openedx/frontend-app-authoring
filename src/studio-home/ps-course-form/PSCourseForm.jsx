@@ -317,7 +317,7 @@ const PSCourseForm = ({
 
       // Redirect to /home after 2 seconds
       setTimeout(() => {
-        navigate('/home');
+        navigate('/my-courses');
       }, 2000);
 
       if (typeof onSubmit === 'function') {
@@ -519,6 +519,7 @@ const PSCourseForm = ({
     }
     setTouched({});
     setErrors({});
+    navigate('/my-courses');
   };
 
   const handleLearningOutcomesChange = (learningInfo, field) => {
