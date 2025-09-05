@@ -82,7 +82,7 @@ export const ConfirmationView = ({
     {legacyLibraries.map((legacyLib) => (
       <ConfirmationCard
         legacyLib={legacyLib}
-        destinationName={destination?.title}
+        destinationName={destination?.title ?? ''}
       />
     ))}
   </Container>

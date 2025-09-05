@@ -39,35 +39,47 @@ const CardList: React.FC<CardListProps> = ({
   handleClearFilters,
 }) => {
   const intl = useIntl();
-  return (
-    hasV2Libraries
-      ? data!.results.map(({
-        id, org, slug, title,
-      }) => (
-        <CardItem
-          key={`${org}+${slug}`}
-          isLibraries
-          displayName={title}
-          org={org}
-          number={slug}
-          path={`/library/${id}`}
-          inSelectMode={inSelectMode}
-          itemId={id}
-        />
-      )) : isFiltered && !isLoading && (
-        <Alert className="mt-4">
-          <Alert.Heading>
-            {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
-          </Alert.Heading>
-          <p>
-            {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
-          </p>
-          <Button variant="primary" onClick={handleClearFilters}>
-            {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
-          </Button>
-        </Alert>
-      )
-  );
+
+  if (hasV2Libraries) {
+    return (
+      <>
+        {
+          data!.results.map(({
+            id, org, slug, title,
+          }) => (
+            <CardItem
+              key={`${org}+${slug}`}
+              isLibraries
+              displayName={title}
+              org={org}
+              number={slug}
+              path={`/library/${id}`}
+              inSelectMode={inSelectMode}
+              itemId={id}
+            />
+          ))
+        }
+      </>
+    );
+  }
+
+  // Empty alert
+  if (isFiltered && !isLoading) {
+    return (
+      <Alert className="mt-4">
+        <Alert.Heading>
+          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
+        </Alert.Heading>
+        <p>
+          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
+        </p>
+        <Button variant="primary" onClick={handleClearFilters}>
+          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+        </Button>
+      </Alert>
+    );
+  }
+  return null;
 };
 
 interface Props {
