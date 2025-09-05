@@ -9,6 +9,15 @@ type PublishDraftButtonProps = {
   onClick: () => void;
 };
 
+/**
+ * PublishDraftButton renders a button that triggers the publishing action
+ * for a draft component/container.
+ *
+ * The button is disabled when the library is in read-only mode.
+ * It displays a localized label along with the draft status.
+ *
+ * @param onClick - Callback invoked when the button is clicked.
+ */
 export const PublishDraftButton = ({
   onClick,
 }: PublishDraftButtonProps) => {

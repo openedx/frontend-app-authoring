@@ -12,6 +12,12 @@ type ContainerPublisherProps = {
   handleClose: () => void;
 };
 
+/**
+ * ContainerPublisher handles the publishing flow for a given container.
+ *
+ * @param containerId - The unique identifier of the container.
+ * @param handleClose - Function to handle close the publisher.
+ */
 export const ContainerPublisher = ({
   containerId,
   handleClose,

@@ -12,6 +12,12 @@ type ComponentPublisherProps = {
   handleClose: () => void;
 };
 
+/**
+ * ComponentPublisher handles the publishing flow for a given component.
+ *
+ * @param componentId - The unique identifier of the component.
+ * @param handleClose - Function to handle close the publisher.
+ */
 export const ComponentPublisher = ({
   componentId,
   handleClose,
