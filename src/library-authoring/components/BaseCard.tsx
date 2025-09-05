@@ -48,11 +48,23 @@ const BaseCard = ({
   const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
 
+  /**
+   * Checks if the click event originated from an element with the stop-event-propagation class.
+   * If so, return without further processing.
+   */
+  const onCardClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target && target.closest('div.stop-event-propagation')) {
+      return;
+    }
+    onSelect(e);
+  };
+
   return (
     <Container className="library-item-card selected">
       <Card
         isClickable
-        onClick={onSelect}
+        onClick={onCardClick}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
             onSelect();
@@ -65,12 +77,13 @@ const BaseCard = ({
           title={
             <Icon src={itemIcon} className="library-item-header-icon" />
           }
-          actions={
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
-            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-            jsx-a11y/no-static-element-interactions */
-            <div onClick={(e) => e.stopPropagation()}>{actions}</div>
-          }
+          actions={(
+            <div
+              // Prevent card being clicked when actions menu are clicked
+              className="stop-event-propagation"
+            >{actions}
+            </div>
+          )}
         />
         <Card.Body className="w-100">
           <Card.Section>
