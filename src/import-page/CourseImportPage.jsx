@@ -75,8 +75,12 @@ const CourseImportPage = ({ intl, courseId }) => {
                 <p className="small">{intl.formatMessage(messages.description3)}</p>
 
                 <span className="pages_bar" />
-                <FileSection courseId={courseId} />
-                {importTriggered && <ImportStepper courseId={courseId} />}
+                <div className="import-stepper-area">
+                  <FileSection courseId={courseId} />
+                  <div className="import-stepper">
+                    {importTriggered && <ImportStepper courseId={courseId} />}
+                  </div>
+                </div>
               </article>
             </Layout.Element>
             <Layout.Element>

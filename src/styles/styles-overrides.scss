@@ -324,7 +324,7 @@
   .card-content {
     margin-right: 1rem;
 
-    @media (min-width: 1600px ) {
+    @media (min-width: 1600px) {
       margin-right: 1.5rem;
     }
   }
@@ -337,7 +337,7 @@
     width: 1px;
     background-color: #e5e6e6;
 
-    @media (max-width: 414px ) {
+    @media (max-width: 414px) {
       display: none;
     }
   }
@@ -349,11 +349,11 @@
     background-color: #e5e6e6;
     margin: 1rem -1rem 1rem -6px;
 
-    @media (max-width: 414px ) {
+    @media (max-width: 414px) {
       display: none;
     }
 
-    @media (min-width: 1600px ) {
+    @media (min-width: 1600px) {
       margin: 1rem -1rem 1rem -22px;
     }
 
@@ -455,14 +455,15 @@
           display: block;
           height: 4px;
           width: 100%;
-          background: #2cc84d;
+          background: var(--primary) !important;
           margin-left: 3rem;
           margin-right: 8px;
           border-radius: 2px;
         }
 
         & svg {
-          color: #2cc84d;
+          // color: #2cc84d;
+          color: var(--primary) !important;
         }
       }
     }
@@ -473,7 +474,7 @@
   }
 
   .course-stepper .course-stepper__step .course-stepper__step-title {
-    color: #2cc84d !important;
+    color: var(--primary) !important;
     width: min-content;
   }
 
@@ -693,7 +694,7 @@
     background-color: var(--primary) !important;
     color: white !important;
   }
-  
+
   .btn-icon.btn-icon-primary-active.focus,
   .btn-icon.btn-icon-primary-active:focus {
     background-color: var(--primary-light) !important;
@@ -959,6 +960,65 @@
     background-color: #ced4da;
     margin: 2rem -1rem 0rem -1rem;
   }
+
+  .course-stepper .course-stepper__step.done svg,
+  .course-stepper .course-stepper__step.done .course-stepper__step-title {
+    color: var(--primary) !important;
+  }
+
+  .course-stepper {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding-bottom: 3rem !important;
+
+    .course-stepper__step-icon .course-stepper__icon-line {
+      display: block;
+      height: 4px;
+      width: 100%;
+      background: var(--primary) !important;
+      border-radius: 2px;
+      margin-left: 3rem;
+      margin-right: 8px;
+    }
+
+    .course-stepper__step {
+      flex-direction: column !important;
+    }
+
+    .course-stepper__step:not(:last-child) {
+      border-bottom: transparent !important;
+    }
+
+    .course-stepper__step-description {
+      display: none;
+    }
+  }
+
+  .import-stepper-area {
+
+    .pgn__card .pgn__card-header .pgn__card-header-content {
+      margin-top: 1rem !important;
+    }
+
+    margin-top: 1rem;
+    padding-bottom: 4rem;
+    // padding: 16px 16px 24px 15px !important;
+    border-radius: 12px !important;
+    background-color: #f4f7ff !important;
+
+    .card {
+      background-color: #f4f7ff !important;
+    }
+
+    .import-stepper {
+      padding: 0 2rem 1rem 1rem !important;
+
+      .btn {
+        margin-left: 0 !important;
+      }
+    }
+  }
+
 }
 
 // K styles end
@@ -2069,8 +2129,8 @@
 
   .configuration-card .pgn__action-row .btn-tertiary {
     border-radius: 6px;
-    border: solid 1px #616061 !important;
-    color: #222121 !important;
+    // border: solid 1px #616061 !important;
+    color: var(--primary) !important;
   }
 }
 
@@ -2264,10 +2324,12 @@
 .customFooterTextAlign {
   text-align: center;
 }
+
 .create-new-course-form .row:first-child {
   margin-left: 0px;
   margin-right: 0px;
 }
+
 // .scrollable-sidebar-content {
 //   overflow-y: auto;
 //   height: 100%;
@@ -2278,15 +2340,17 @@
     min-width: 12.7rem !important;
   }
 }
+
 // N Styles End
 
 
 .pgn__form-text-invalid {
-    color: #C32D3A !important;
-    font-size: 87.5% !important;
+  color: #C32D3A !important;
+  font-size: 87.5% !important;
 }
 
-.pgn__form-checkbox-input:checked, .pgn__form-radio-input:checked {
+.pgn__form-checkbox-input:checked,
+.pgn__form-radio-input:checked {
   background-color: white !important;
 }
 
@@ -2304,8 +2368,8 @@
 
 .instructors-list {
   .form-row {
-  display: block !important;
-  margin-left: 0 !important;
+    display: block !important;
+    margin-left: 0 !important;
   }
 
   .pgn__dropzone {
@@ -2336,3 +2400,6 @@
   background-color: var(--primary-light) !important;
 }
 
+.text-success-500 {
+  color: var(--primary) !important;
+}
