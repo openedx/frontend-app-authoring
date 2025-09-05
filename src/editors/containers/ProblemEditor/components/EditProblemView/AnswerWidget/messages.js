@@ -77,6 +77,11 @@ const messages = defineMessages({
     defaultMessage: 'Enter min and max values separated by a comma. Use a bracket to include the number next to it in the range, or a parenthesis to exclude the number. For example, to identify the correct answers as 5, 6, or 7, but not 8, specify [5,8).',
     description: 'Helper text describing usage of answer ranges',
   },
+  answerRangeErrorText: {
+    id: 'authoring.answerwidget.answer.answerRangeErrorText',
+    defaultMessage: 'Error: Invalid range format. Use brackets or parentheses with values separated by a comma.',
+    description: 'Error text describing wrong format of answer ranges',
+  },
 });
 
 export default messages;
