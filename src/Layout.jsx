@@ -27,6 +27,8 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import messages from './messages';
+import { useContentSearchConnection } from './search-manager/data/apiHooks';
+import { SearchContextProvider } from './search-manager';
 
 // Icon mapping for API icon names
 // const iconMap = {
@@ -314,7 +316,8 @@ const Layout = () => {
   //   { label: intl.formatMessage(messages.sidebarClassPlannerTitle), path: '/class-planner', icon: <Analytics /> },
   //   { label: intl.formatMessage(messages.sidebarInsightsReportsTitle), path: '/reports', icon: <Lightbulb /> },
   //   { label: intl.formatMessage(messages.sidebarTitanAITitle), path: '/ai-assistant', icon: <Assistant /> },
-  //   { label: intl.formatMessage(messages.sidebarSharedResourcesTitle), path: '/shared-resources', icon: <FolderShared /> },
+  //   { label: intl.formatMessage(messages.sidebarSharedResourcesTitle),
+  //     path: '/shared-resources', icon: <FolderShared /> },
   //   { label: intl.formatMessage(messages.sidebarTaxonomiesTitle), path: '/taxonomies', icon: <Assignment /> },
   // ];
 
@@ -404,55 +407,82 @@ const Layout = () => {
     window.location.href = `/authoring${cleanPath}`;
   };
 
+  const { client, indexName } = useContentSearchConnection();
+
+  const meiliSearchConfig = {
+    host: client?.config?.host,
+    apiKey: client?.config?.apiKey,
+    indexName,
+    client, // 🔑 This is the key addition - pass the complete client
+  };
+  console.log('meiliSearchConfig', meiliSearchConfig);
+  console.log('client', client);
+
+  // Don't render SearchContextProvider if MeiliSearch is not ready
+  if (!client || !indexName) {
+    console.log('MeiliSearch not ready, rendering without SearchContextProvider');
+    return (
+      <div className="app-container">
+        <div>Loading MeiliSearch configuration...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-container">
-      {/* <p>This is header</p> */}
-      <SidebarProvider>
-        <div className="header-container">
-          <MainHeader
-            logoUrl={config.LOGO_URL}
-            // menuAlignment={headerData.menu.align}
-            // menuList={headerData.menu.menuList}
-            // loginSignupButtons={headerData.menu.loginSignupButtons}
-            authenticatedUser={authenticatedUser}
-            userMenuItems={userMenuItems}
-            onLanguageChange={handleLanguageChange}
-            getBaseUrl={() => '/authoring'}
-            headerButtons={headerButtons}
-          />
-        </div>
-        {/* Sidebar and Main Content */}
-        <div className="content-wrapper">
-          <div className="sidebar-container">
-            {loadingSidebar ? (
-              <div>Loading menu...</div>
-            ) : (
-              <Sidebar
-                buttons={sidebarItems}
-                onNavigate={handleNavigate}
-                presentPath={presentPath}
-              />
-            )}
-          </div>
-          <div className="main-content">
-            <div className="page-content">
-              <Outlet />
-            </div>
-          </div>
-        </div>
-        {/* <div>
-          <div className="footer-container">
-            <Footer
-              contactInfo={contactInfo}
-              quickLinks={quickLinks}
-              exploreLinks={exploreLinks}
-              logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
-              copyrights="Copyright © 2025 All Rights Reserved by TitanEd"
+    <SearchContextProvider>
+      <div className="app-container">
+        {/* <p>This is header</p> */}
+        <SidebarProvider>
+          <div className="header-container">
+            <MainHeader
+              logoUrl={config.LOGO_URL}
+              // menuAlignment={headerData.menu.align}
+              // menuList={headerData.menu.menuList}
+              // loginSignupButtons={headerData.menu.loginSignupButtons}
+              authenticatedUser={authenticatedUser}
+              userMenuItems={userMenuItems}
+              onLanguageChange={handleLanguageChange}
+              getBaseUrl={() => '/authoring'}
+              headerButtons={headerButtons}
+              meiliSearchConfig={meiliSearchConfig}
+              // onSearchResults={(results) => {
+              //   console.log('Search results:', results);
+              // }}
             />
           </div>
-        </div> */}
-      </SidebarProvider>
-    </div>
+          {/* Sidebar and Main Content */}
+          <div className="content-wrapper">
+            <div className="sidebar-container">
+              {loadingSidebar ? (
+                <div>Loading menu...</div>
+              ) : (
+                <Sidebar
+                  buttons={sidebarItems}
+                  onNavigate={handleNavigate}
+                  presentPath={presentPath}
+                />
+              )}
+            </div>
+            <div className="main-content">
+              <div className="page-content">
+                <Outlet />
+              </div>
+            </div>
+          </div>
+          {/* <div>
+            <div className="footer-container">
+              <Footer
+                contactInfo={contactInfo}
+                quickLinks={quickLinks}
+                exploreLinks={exploreLinks}
+                logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
+                copyrights="Copyright © 2025 All Rights Reserved by TitanEd"
+              />
+            </div>
+          </div> */}
+        </SidebarProvider>
+      </div>
+    </SearchContextProvider>
   );
 };
 export default Layout;
