@@ -57,6 +57,29 @@ export const responseKeys = [
   'choicetextresponse',
 ];
 
+/**
+ * Regular expression to validate numeric answer ranges in OLX format.
+ * Matches ranges in the form of (min, max) or [min, max] where:
+ * - min and max are numbers (integers or decimals)
+ * - Whitespace around numbers and comma is optional
+ * - Parentheses () indicate exclusive bounds
+ * - Square brackets [] indicate inclusive bounds
+ *
+ * @example
+ * // Valid patterns:
+ * (1, 5)    // Numbers 2, 3, 4
+ * [1, 5]    // Numbers 1, 2, 3, 4, 5
+ * (1.5, 5.5) // Decimal numbers between 1.5 and 5.5
+ * [0, 100]  // Numbers 0 through 100 (inclusive)
+ * ( 0 , 1 ) // With spaces
+ *
+ * @example
+ * // Invalid patterns:
+ * (5, 1)    // Min > Max
+ * (1, )     // Missing max value
+ * [1 5]     // Missing comma
+ * {1, 5}    // Invalid brackets
+ */
 export const answerRangeFormatRegex = /^[([]\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*[)\]]$/m;
 
 export const stripNonTextTags = ({ input, tag }) => {
