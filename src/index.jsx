@@ -73,7 +73,7 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route element={!oldUI ? <Layout /> : <></>}>
+      <Route element={!oldUI ? <Layout /> : <Outlet />}>
         <Route path="/home" element={!oldUI ? <Dashboard /> : <StudioHome />} />
         {/* <Route path="/home" element={<StudioHome />} /> */}
         <Route path="/widgets-create" element={<CreateWidgets />} />
