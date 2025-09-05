@@ -45,8 +45,8 @@ import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 // import './styles/global-overrides.scss';
-import 'titaned-lib/dist/index.css';
-import './styles/styles-overrides.scss';
+// import 'titaned-lib/dist/index.css';
+// import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import  Calendar  from './calendar/pages/CalendarPage';
@@ -56,6 +56,7 @@ const queryClient = new QueryClient();
 registerFontAwesomeIcons();
 
 const App = () => {
+  const oldUI = localStorage.getItem('oldUI');
   useEffect(() => {
     if (process.env.HOTJAR_APP_ID) {
       try {
@@ -72,8 +73,8 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route element={<Layout />}>
-        <Route path="/home" element={<Dashboard />} />
+      <Route element={!oldUI ? <Layout /> : <></>}>
+        <Route path="/home" element={!oldUI ? <Dashboard /> : <StudioHome />} />
         {/* <Route path="/home" element={<StudioHome />} /> */}
         <Route path="/widgets-create" element={<CreateWidgets />} />
         <Route path="/my-courses" element={<MyCourses />} />

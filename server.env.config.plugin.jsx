@@ -75,6 +75,16 @@ const { default: FileSection } = await import('./src/import-page/file-section/Fi
 const { default: ImportStepper } = await import('./src/import-page/import-stepper/ImportStepper');
 
 {% raw %}
+
+const oldUI = localStorage.getItem('oldUI');
+if (oldUI) {
+    config.pluginSlots = {
+        
+    }
+} else {
+    await import('titaned-lib/dist/index.css');
+    await import('./styles/styles-overrides.scss');
+import './styles/styles-overrides.scss';
 config.pluginSlots = {
     header_plugin_slot: {
         plugins: [
@@ -934,6 +944,7 @@ config.pluginSlots = {
             },
         ],
     },
+}
 }
 
 console.log(FormattedMessage, "FormattedMessage");
