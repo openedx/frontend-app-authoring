@@ -69,6 +69,19 @@ const messages = defineMessages({
       + ' problem banks will maintain their link with migrated content the first time they are migrated.',
     description: 'Alert text in the select destination step of the legacy libraries migration page.',
   },
+  confirmationViewAlert: {
+    id: 'legacy-libraries-migration.select-destination.alert.text',
+    defaultMessage: 'These {count, plural, one {{count} legacy library} other {{count} legacy libraries}}'
+      + ' will be migrated to <b>{libraryName}</b> and organized as collections. Any legacy libraries that are used in'
+      + ' problem banks will maintain their link with migrated content the first time they are migrated.',
+    description: 'Alert text in the confirmation step of the legacy libraries migration page.',
+  },
+  previouslyMigratedAlert: {
+    id: 'legacy-libraries-migration.confirmation-step.card.previously-migrated.text',
+    defaultMessage: 'Previously migrated library. Any problem bank links were already'
+    + ' moved will be migrated to <b>{libraryName}</b>',
+    description: 'Alert text when the legacy library is already migrated.',
+  },
 });
 
 export default messages;

@@ -15,7 +15,7 @@ import { Add, Error } from '@openedx/paragon/icons';
 import { CreateLibraryModal, useContentLibraryV2List } from '@src/library-authoring';
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
-import type { LibrariesV2Response } from '@src/library-authoring/data/api';
+import type { ContentLibrary, LibrariesV2Response } from '@src/library-authoring/data/api';
 
 import CardItem from '../../card-item';
 import messages from '../messages';
@@ -72,7 +72,7 @@ const CardList: React.FC<CardListProps> = ({
 
 interface Props {
   selectedLibraryId?: string | null;
-  handleSelect?: ((libraryId: string) => void) | null;
+  handleSelect?: ((library: ContentLibrary) => void) | null;
   showCreateLibrary?: boolean;
 }
 
@@ -99,18 +99,34 @@ const LibrariesV2List: React.FC<Props> = ({
     setCurrentPage(1);
   };
 
-  const handlePostCreateLibrary = useCallback((libraryId: string) => {
-    if (handleSelect) {
-      handleSelect(libraryId);
-      closeCreateLibrary();
-    }
-  }, [handleSelect, closeCreateLibrary]);
-
   const {
     data,
     isLoading,
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
+
+  const findLibrary = useCallback((libraryId: string) => {
+    if (data) {
+      return data.results.find((library) => library.id === libraryId);
+    }
+    return undefined;
+  }, [data]);
+
+  const handlePostCreateLibrary = useCallback((library: ContentLibrary) => {
+    if (handleSelect) {
+      handleSelect(library);
+      closeCreateLibrary();
+    }
+  }, [handleSelect, closeCreateLibrary]);
+
+  const handleOnChangeRadioSet = useCallback((libraryId: string) => {
+    if (handleSelect) {
+      const library = findLibrary(libraryId);
+      if (library) {
+        handleSelect(library);
+      }
+    }
+  }, [findLibrary, handleSelect]);
 
   if (isLoading && !isFiltered) {
     return (
@@ -170,7 +186,7 @@ const LibrariesV2List: React.FC<Props> = ({
           <Form.RadioSet
             name="select-libraries-v2-list"
             value={selectedLibraryId}
-            onChange={(e) => handleSelect?.(e.target.value)}
+            onChange={(e) => handleOnChangeRadioSet(e.target.value)}
           >
             <CardList
               hasV2Libraries={hasV2Libraries}

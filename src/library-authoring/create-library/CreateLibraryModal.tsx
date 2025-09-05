@@ -3,11 +3,12 @@ import { ModalDialog } from '@openedx/paragon';
 
 import messages from './messages';
 import { CreateLibrary } from './CreateLibrary';
+import type { ContentLibrary } from '../data/api';
 
 interface CreateLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  handlePostCreate?: ((libraryId: string) => void) | null,
+  handlePostCreate?: ((library: ContentLibrary) => void) | null,
 }
 
 export const CreateLibraryModal = ({

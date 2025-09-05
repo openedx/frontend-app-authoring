@@ -1,0 +1,13 @@
+.legacy-library-migration-page {
+  .confirmation-view {
+    .pgn__card-header-content {
+      margin-top: calc(var(--pgn-spacing-spacer-base)) !important;;
+    }
+  }
+
+  .migration-steps-viewer {
+    hr {
+      width: 80px;
+    }
+  }
+}

@@ -23,6 +23,7 @@ import AlertError from '@src/generic/alert-error';
 
 import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
+import type { ContentLibrary } from '../data/api';
 
 export const CreateLibrary = ({
   showInModal = false,
@@ -31,7 +32,7 @@ export const CreateLibrary = ({
 }: {
   showInModal?: boolean,
   handleCancel?: (() => void) | null,
-  handlePostCreate?: ((libraryId: string) => void) | null,
+  handlePostCreate?: ((library: ContentLibrary) => void) | null,
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ export const CreateLibrary = ({
 
   if (data) {
     if (handlePostCreate) {
-      handlePostCreate(data.id);
+      handlePostCreate(data);
     } else {
       navigate(`/library/${data.id}`);
     }

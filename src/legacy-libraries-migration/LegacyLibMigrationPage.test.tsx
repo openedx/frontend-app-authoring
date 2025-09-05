@@ -105,7 +105,7 @@ describe('<LegacyLibMigrationPage />', () => {
     const user = userEvent.setup();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
-      id: 'library-id',
+      id: 'lib:SampleTaxonomyOrg1:TL1',
     });
 
     renderPage();
@@ -155,5 +155,39 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(axiosMock.history.post[0].data).toBe(
       '{"description":"","title":"Test Library Name","org":"org1","slug":"test_library_slug"}',
     );
+
+    // The library should be checked
+    expect(screen.getByRole('radio', { name: /test library 1/i })).toBeChecked();
+  });
+
+  it('should confirm migration', async () => {
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+
+    // TODO Missing select legacy libraries
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    nextButton.click();
+
+    // Should show alert of SelectDestinationView
+    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    const radioButton = screen.getByRole('radio', { name: /test library 1/i });
+    radioButton.click();
+
+    nextButton.click();
+
+    // Should show alert of ConfirmationView
+    expect(await screen.findByText(/these 4 legacy libraries will be migrated to/i)).toBeInTheDocument();
+    // TODO update with legacy libraries names
+    expect(screen.getByText('Legacy Lib 1')).toBeInTheDocument();
+    expect(screen.getByText('Legacy Lib 3')).toBeInTheDocument();
+    expect(screen.getByText(
+      /Previously migrated library. Any problem bank links were already moved will be migrated to/i,
+    )).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: /confirm/i });
+    confirmButton.click();
+
+    // TODO: expect call migrate API
   });
 });
