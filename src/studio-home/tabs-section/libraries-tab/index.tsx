@@ -14,9 +14,9 @@ import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
 import messages from '../messages';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 
-function findInValues<T extends {}>(arr: T[] | undefined, value: string) {
-  return arr?.filter(o => Object.entries(o).some(entry => String(entry[1]).toLowerCase().includes(
-    String(value).toLowerCase().trim(),
+function findInValues<T extends {}>(arr: T[] | undefined, searchValue: string) {
+  return arr?.filter(o => Object.values(o).some(value => String(value).toLowerCase().includes(
+    String(searchValue).toLowerCase().trim(),
   )));
 }
 
