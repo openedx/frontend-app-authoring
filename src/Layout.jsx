@@ -175,6 +175,12 @@ const Layout = () => {
               icon: <ParagonIcons.Assignment />,
               isVisible: true, // Always visible
             },
+            {
+              label: 'Switch to Old View',
+              path: 'switch-to-old-view',
+              icon: '',
+              isVisible: true,
+            },
           ];
 
           // Filter visible items and remove the isVisible property
@@ -255,12 +261,6 @@ const Layout = () => {
             label: intl.formatMessage(messages.sidebarTaxonomiesTitle),
             path: '/taxonomies',
             icon: <ParagonIcons.Assignment />,
-            isVisible: true,
-          },
-          {
-            label: 'Switch to Old View',
-            path: 'switch-to-old-view',
-            icon: '',
             isVisible: true,
           },
         ];
