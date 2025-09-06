@@ -257,6 +257,12 @@ const Layout = () => {
             icon: <ParagonIcons.Assignment />,
             isVisible: true,
           },
+          {
+            label: 'Switch to Old View',
+            path: 'switch-to-old-view',
+            icon: '',
+            isVisible: true,
+          },
         ];
 
         // Filter visible items and remove the isVisible property
@@ -288,6 +294,10 @@ const Layout = () => {
   }, []);
 
   const handleNavigate = (path) => {
+    if (path === 'switch-to-old-view') {
+      localStorage.setItem('oldUI', 'true');
+      window.location.href = '/home';
+    }
     navigate(path);
   };
 
