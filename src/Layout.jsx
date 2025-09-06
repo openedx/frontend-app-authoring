@@ -297,8 +297,9 @@ const Layout = () => {
     if (path === 'switch-to-old-view') {
       localStorage.setItem('oldUI', 'true');
       window.location.href = '/home';
+    } else {
+      navigate(path);
     }
-    navigate(path);
   };
 
   // useEffect(() => {
