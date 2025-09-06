@@ -86,6 +86,7 @@ const Layout = () => {
   ]);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
   const [headerButtons, setHeaderButtons] = useState({});
+  const [languageSelectorList, setLanguageSelectorList] = useState([]);
 
   // const DefaultIcon = ParagonIcons.Home;
 
@@ -199,6 +200,10 @@ const Layout = () => {
           };
 
           setHeaderButtons(headerButtonsConfig);
+
+          if (menuConfig.enabled_languages) {
+            setLanguageSelectorList(menuConfig.enabled_languages);
+          }
         }
       } catch (error) {
         // Fallback to always-visible items when API fails
@@ -281,6 +286,8 @@ const Layout = () => {
         };
 
         setHeaderButtons(fallbackHeaderButtonsConfig);
+
+        setLanguageSelectorList([]);
       } finally {
         setLoadingSidebar(false);
       }
@@ -456,6 +463,7 @@ const Layout = () => {
               getBaseUrl={() => '/authoring'}
               headerButtons={headerButtons}
               meiliSearchConfig={meiliSearchConfig}
+              languageSelectorList={languageSelectorList}
               // onSearchResults={(results) => {
               //   console.log('Search results:', results);
               // }}
