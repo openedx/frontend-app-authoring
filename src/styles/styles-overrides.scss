@@ -1,7 +1,7 @@
 @import "./global-overrides";
 
 body {
-  overflow: hidden;
+  overflow: hidden !important;
 }
 // Mobile screen responsiveness
 @media (max-width: 414px) {
