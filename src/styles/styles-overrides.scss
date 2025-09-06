@@ -1,5 +1,8 @@
 @import "./global-overrides";
 
+body {
+  overflow: hidden;
+}
 // Mobile screen responsiveness
 @media (max-width: 414px) {
   .ca-sidebar {

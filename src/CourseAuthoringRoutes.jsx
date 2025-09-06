@@ -78,9 +78,10 @@ const CoursePageLayout = ({
       handleMyCoursesClick();
     }
   };
-
+  const oldUI = localStorage.getItem('oldUI');
   return (
     <>
+      {!oldUI && 
       <div className="ca-breadcrumb-bg">
         <div className="ca-breadcrumb-container">
           <div className="ca-breadcrumb">
@@ -102,7 +103,7 @@ const CoursePageLayout = ({
             {courseName || 'Loading...'}
           </div>
         </div>
-      </div>
+      </div>}
       <div className="ca-main-layout">
         <MobileCourseNavigation items={sidebarItems} />
         <div className="ca-sidebar">
