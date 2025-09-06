@@ -46,8 +46,8 @@ import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 // import './styles/global-overrides.scss';
-// import 'titaned-lib/dist/index.css';
-// import './styles/styles-overrides.scss';
+import 'titaned-lib/dist/index.css';
+import './styles/styles-overrides.scss';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import  Calendar  from './calendar/pages/CalendarPage';
