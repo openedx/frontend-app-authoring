@@ -296,7 +296,7 @@ const Layout = () => {
   const handleNavigate = (path) => {
     if (path === 'switch-to-old-view') {
       localStorage.setItem('oldUI', 'true');
-      window.location.href = '/home';
+      window.location.href = '/authoring/home';
     } else {
       navigate(path);
     }
