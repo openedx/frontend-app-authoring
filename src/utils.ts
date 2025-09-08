@@ -6,6 +6,8 @@ import { snakeCase } from 'lodash/string';
 import moment from 'moment';
 import { getConfig, getPath } from '@edx/frontend-platform';
 
+import type { Dispatch, AnyAction } from 'redux';
+import type { TypeOfShape } from 'yup/lib/object';
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
@@ -14,13 +16,11 @@ import {
   hasValidDateFormat, hasValidTimeFormat, decodeDateTime, endOfDayTime, startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
-import { Dispatch, AnyAction } from 'redux';
-import { TypeOfShape } from 'yup/lib/object';
 
 export const executeThunk = async (
-  thunk: (dispatch: any, state?: any) => Promise<void>,
+  thunk: (dispatch: any, state?: any) => Promise<any>,
   dispatch: Dispatch<AnyAction>,
-  getState?: any
+  getState?: any,
 ) => {
   await thunk(dispatch, getState);
   await new Promise(setImmediate);
@@ -193,7 +193,9 @@ export function setupYupExtensions() {
         return true;
       }
       const isDuplicate = this.parent.filter((topic: TypeOfShape<any>) => topic !== discussionTopic)
-        .some((topic: { [x: string]: string; }) => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
+        .some((
+          topic: { [x: string]: string; },
+        ) => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
 
       if (isDuplicate) {
         throw this.createError({
@@ -337,7 +339,7 @@ export const useRunOnNextRender = (callback: () => void) => {
 export const skipIfUnwantedTarget = (
   e: React.MouseEvent,
   onClick: (e: React.MouseEvent) => void,
-  selector?: string
+  selector?: string,
 ) => {
   const target = e.target as HTMLElement;
   if (target && target.closest(selector || '.stop-event-propagation')) {

@@ -7,12 +7,12 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
 import ComponentCount from '@src/generic/component-count';
 import TagCount from '@src/generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
 import { skipIfUnwantedTarget } from '@src/utils';
+import messages from './messages';
 
 type BaseCardProps = {
   itemType: string;

@@ -9,7 +9,7 @@ export const PagesAndResourcesContext = React.createContext<PagesAndResourcesCon
 interface PagesAndResourcesProviderProps {
   courseId: string;
   children: React.ReactNode,
-};
+}
 
 const PagesAndResourcesProvider = ({ courseId, children }: PagesAndResourcesProviderProps) => {
   const contextValue = useMemo(() => ({

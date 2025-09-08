@@ -17,6 +17,8 @@ import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
 import Loading from '@src/generic/Loading';
 import TagCount from '@src/generic/tag-count';
+import { ToastContext } from '@src/generic/toast-context';
+import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
@@ -28,9 +30,7 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { ToastContext } from '@src/generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -182,7 +182,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={(e: React.MouseEvent) => skipIfUnwantedTarget(e, (e) => handleComponentSelection(e.detail))}
+        onClick={(e) => skipIfUnwantedTarget(e, (event) => handleComponentSelection(event.detail))}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleComponentSelection(e.detail);
