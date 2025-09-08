@@ -50,10 +50,12 @@ import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxon
 import FileSection from './src/import-page/file-section/FileSection';
 import ImportStepper from './src/import-page/import-stepper/ImportStepper';
 
-// Load environment variables from .env file
-const config = {
-    ...process.env,
-    pluginSlots: {
+const getPluginSlots = () => {
+    if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
+        return {};
+    }
+    
+    return {
         header_plugin_slot: {
             plugins: [
                 {
@@ -912,6 +914,14 @@ const config = {
                 },
             ],
         },
+    };
+};
+
+// Load environment variables from .env file
+const config = {
+    ...process.env,
+    get pluginSlots() {
+        return getPluginSlots();
     }
 };
 
