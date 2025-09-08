@@ -51,7 +51,7 @@ const VideoThumbnail = ({
 
   return (
     <div className="video-thumbnail row justify-content-center align-itmes-center">
-      {allowThumbnailUpload && <div className="thumbnail-overlay" />}
+      {allowThumbnailUpload && isUploaded && <div className="thumbnail-overlay" />}
       {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
         <>
           <div className="border rounded">
