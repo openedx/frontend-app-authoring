@@ -34,6 +34,14 @@ import customStarsIcon from '../assets/icons/custom-stars.svg';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
+import { CalendarProvider } from '../calendar/context/CalendarContext';
+import FullCalendar from '@fullcalendar/react';
+import { useCalendarContext } from '../calendar/context/CalendarContext';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
+import NavigationButton from '../calendar/components/NavigationButton';
+import { getLocale } from '@edx/frontend-platform/i18n';
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
   const {
@@ -390,6 +398,41 @@ const Dashboard = () => {
   const isLeftColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'left');
   const isRightColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'right');
 
+  const CalendarContent = () => {
+    const intl = useIntl();
+
+    const { filteredEvents, prev, next, today,currentDate } = useCalendarContext();
+    const responsiveView ="listWeek";
+
+    return (
+      <>
+        <h4 className="card-header">Calendar</h4>
+        <div className="calendar-card">
+          <div className="calendar-nav">
+            <NavigationButton type="prev" onClick={prev} />
+            <NavigationButton type="today" onClick={today} />
+            <NavigationButton type="next" onClick={next} />
+          </div>
+          <div className="calendar-view">
+            <FullCalendar
+              key={`${responsiveView}-${currentDate.getTime()}`}
+              plugins={[listPlugin, interactionPlugin]}
+              initialView={responsiveView}
+              headerToolbar={false}
+              events={filteredEvents}
+              locales={allLocales}
+              locale={getLocale()}
+              height="auto"
+              selectable={true}
+              initialDate={currentDate}
+            />
+          </div>
+        </div>
+      </>
+    );
+  };
+
+
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-main-content">
@@ -583,6 +626,13 @@ const Dashboard = () => {
             )}
           </Card.Section>
         </Card>
+
+        <Card className="sidebar-card">
+          <CalendarProvider>
+            <CalendarContent />
+          </CalendarProvider>
+        </Card>
+
       </div>
     </div>
   );

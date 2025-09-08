@@ -248,6 +248,23 @@
       grid-column: auto !important;
     }
   }
+  .calendar-card {
+    height: auto; 
+    min-height: 20rem;
+  }
+
+  .calendar-nav {
+    padding: 0.4rem 0.8rem; 
+  }
+
+  .nav-button {
+    padding: 3px 6px; 
+    font-size: 0.7rem; 
+  }
+
+  .calendar-view .fc-list-event {
+    font-size: 0.85rem; 
+  }
 }
 
 @media (max-width: 900px) {
@@ -444,4 +461,69 @@
     border: none;
     background: transparent;
   }
+}
+
+
+.calendar-card {
+  height: 100%; 
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 0.5rem; 
+  padding: 0.8rem 1rem; 
+  justify-content: left; 
+  align-items: center;
+  background-color: var(--bg-surface);  
+}
+
+.nav-button {
+  border: 1px solid var(--primary); 
+  background-color: var(--text-white); 
+  color: var(--primary); 
+  padding: 4px 8px; 
+  border-radius: 4px; 
+  font-size: 0.75rem; 
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background: var(--primary);
+    color: var(--text-white); 
+  }
+}
+
+.calendar-view {
+  margin: 0 1rem 0.8rem 1rem;
+  overflow-y: auto; 
+  scrollbar-width: thin; 
+}
+
+.calendar-view .fc {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-view .fc-list {
+  font-size: 0.75rem; 
+  color: var(--text-light);
+}
+
+.fc-list-day-text{
+  text-decoration: none;
+  color: var(--text-light);
+}
+.fc-list-day-side-text{
+  text-decoration: none;
+  color: var(--text-light);
+}
+.fc .fc-list-table td {
+    padding: 8px 4px;
 }
