@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
@@ -328,4 +328,20 @@ export const useRunOnNextRender = (callback: () => void) => {
   }, [scheduled]);
 
   return () => setScheduled(true);
+};
+
+/**
+ * Checks if the click event originated from an element with the stop-event-propagation class.
+ * If so, return without further processing.
+ */
+export const skipIfUnwantedTarget = (
+  e: React.MouseEvent,
+  onClick: (e: React.MouseEvent) => void,
+  selector?: string
+) => {
+  const target = e.target as HTMLElement;
+  if (target && target.closest(selector || '.stop-event-propagation')) {
+    return;
+  }
+  onClick(e);
 };

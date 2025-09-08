@@ -8,10 +8,11 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import ComponentCount from '../../generic/component-count';
-import TagCount from '../../generic/tag-count';
-import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import ComponentCount from '@src/generic/component-count';
+import TagCount from '@src/generic/tag-count';
+import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
+import { skipIfUnwantedTarget } from '@src/utils';
 
 type BaseCardProps = {
   itemType: string;
@@ -48,23 +49,11 @@ const BaseCard = ({
   const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
 
-  /**
-   * Checks if the click event originated from an element with the stop-event-propagation class.
-   * If so, return without further processing.
-   */
-  const onCardClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target && target.closest('div.stop-event-propagation')) {
-      return;
-    }
-    onSelect(e);
-  };
-
   return (
     <Container className="library-item-card selected">
       <Card
         isClickable
-        onClick={onCardClick}
+        onClick={(e: React.MouseEvent) => skipIfUnwantedTarget(e, onSelect)}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
             onSelect();
