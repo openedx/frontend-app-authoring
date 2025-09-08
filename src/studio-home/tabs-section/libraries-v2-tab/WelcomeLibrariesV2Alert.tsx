@@ -1,4 +1,4 @@
-import { Alert, Button } from '@openedx/paragon';
+import { Alert, Button, Hyperlink } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
@@ -6,9 +6,13 @@ import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
 import messages from '../messages';
 
 const libraryDocsLink = (
-  <Alert.Link href="https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html">
+  <Hyperlink
+    target="_blank"
+    showLaunchIcon={false}
+    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html"
+  >
     <FormattedMessage {...messages.alertLibrariesDocLinkText} />
-  </Alert.Link>
+  </Hyperlink>
 );
 
 export const MigrateLegacyLibrariesAlert = () => {
@@ -22,23 +26,23 @@ export const MigrateLegacyLibrariesAlert = () => {
   const hasPendingV1Migrations = data.libraries.some(library => !library.isMigrated);
   return (
     <Alert variant="info">
-      {hasPendingV1Migrations && (
-        <Alert.Heading>
-          <FormattedMessage {...messages.alertTitle} />
-        </Alert.Heading>
-      )}
       {hasPendingV1Migrations ? (
-        <div className="row">
-          <div className="col-8">
-            <FormattedMessage {...messages.alertDescriptionV2} values={{ link: libraryDocsLink }} />
-            <FormattedMessage {...messages.alertDescriptionV2MigrationPending} />
+        <>
+          <Alert.Heading>
+            <FormattedMessage {...messages.alertTitle} />
+          </Alert.Heading>
+          <div className="row">
+            <div className="col-8">
+              <FormattedMessage {...messages.alertDescriptionV2} values={{ link: libraryDocsLink }} />
+              <FormattedMessage {...messages.alertDescriptionV2MigrationPending} />
+            </div>
+            <div className="col-4 d-flex justify-content-center align-items-start">
+              <Button>
+                <FormattedMessage {...messages.alertReviewButton} />
+              </Button>
+            </div>
           </div>
-          <div className="col-4 d-flex justify-content-center align-items-start">
-            <Button>
-              <FormattedMessage {...messages.alertReviewButton} />
-            </Button>
-          </div>
-        </div>
+        </>
       ) : (
         <FormattedMessage {...messages.alertDescriptionV2} values={{ link: libraryDocsLink }} />
       )}
