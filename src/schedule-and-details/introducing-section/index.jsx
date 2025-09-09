@@ -111,7 +111,7 @@ const IntroducingSection = ({
           <Form.Group className="form-group-custom">
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
             <WysiwygEditor
-              initialValue={overview}
+              value={overview}
               onChange={(value) => onChange(value, 'overview')}
             />
             <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
@@ -120,7 +120,7 @@ const IntroducingSection = ({
             <Form.Group className="form-group-custom">
               <Form.Label>{intl.formatMessage(messages.courseAboutSidebarLabel)}</Form.Label>
               <WysiwygEditor
-                initialValue={aboutSidebarHtml}
+                value={aboutSidebarHtml}
                 onChange={(value) => onChange(value, 'aboutSidebarHtml')}
               />
               <Form.Control.Feedback>{aboutSidebarHelpText}</Form.Control.Feedback>
