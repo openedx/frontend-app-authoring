@@ -4,3 +4,18 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.inplace-text-editor-with-edit-input {
+  width: 100%;
+}
+
+.inplace-text-editor-with-edit-input:focus-within {
+  &.inplace-text-editor-with-edit-input {
+    // this selector ensures only when THIS input is focused
+  }
+
+  :has(&) {
+    width: 100%;
+  }
+}
+
