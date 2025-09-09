@@ -72,7 +72,7 @@ const CardTitle: React.FC<CardTitleProps> = ({
       <PrevToNextName
         from={(
           <MakeLinkOrSpan
-            when={!readOnlyItem}
+            when={!readOnlyItem && !selectMode}
             to={destinationUrl}
             className="card-item-title"
           >
@@ -82,7 +82,7 @@ const CardTitle: React.FC<CardTitleProps> = ({
         to={
             isMigrated && migratedToTitle && (
               <MakeLinkOrSpan
-                when={!readOnlyItem}
+                when={!readOnlyItem && !selectMode}
                 to={`/library/${migratedToKey}`}
                 className="card-item-title"
               >
@@ -114,6 +114,15 @@ const CardTitle: React.FC<CardTitleProps> = ({
         </Form.Radio>
       );
     }
+    // Multiple
+    return (
+      <Form.Checkbox
+        className="mt-1 ml-1"
+        value={itemId}
+      >
+        {getTitle()}
+      </Form.Checkbox>
+    );
   }
   return getTitle();
 };

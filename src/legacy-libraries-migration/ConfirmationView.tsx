@@ -13,13 +13,14 @@ import {
 } from '@openedx/paragon/icons';
 
 import type { ContentLibrary } from '@src/library-authoring/data/api';
+import { LibraryV1Data } from '@src/studio-home/data/api';
 
 import messages from './messages';
 
 const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 
 interface ConfirmationCardProps {
-  legacyLib: any;
+  legacyLib: LibraryV1Data;
   destinationName: string;
 }
 
@@ -27,12 +28,12 @@ const ConfirmationCard = ({
   legacyLib,
   destinationName,
 }: ConfirmationCardProps) => (
-  <Card className="mb-3">
+  <Card className="mb-3.5">
     <Card.Header
       title={(
         <Stack className="h4" direction="horizontal">
           <Icon className="mr-1" src={Folder} />
-          <span>{legacyLib.title}</span>
+          <span>{legacyLib.displayName}</span>
         </Stack>
       )}
       subtitle={(
@@ -42,14 +43,14 @@ const ConfirmationCard = ({
         </Stack>
       )}
     />
-    {legacyLib.migratedIn && (
+    {legacyLib.isMigrated && (
       <Stack className="ml-3.5 mt-1 mb-2 text-gray-500" direction="horizontal">
         <Icon className="mr-1.5" src={AccessTime} />
         <span className="x-small">
           <FormattedMessage
             {...messages.previouslyMigratedAlert}
             values={{
-              libraryName: legacyLib.migratedIn,
+              libraryName: legacyLib.migratedToTitle,
               b: BoldText,
             }}
           />
@@ -61,7 +62,7 @@ const ConfirmationCard = ({
 
 interface ConfirmationViewProps {
   destination: ContentLibrary | undefined;
-  legacyLibraries: any[];
+  legacyLibraries: LibraryV1Data[];
 }
 
 export const ConfirmationView = ({

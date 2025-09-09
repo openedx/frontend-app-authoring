@@ -15,7 +15,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RequestStatus } from '@src/data/constants';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
-import LibrariesTab from './libraries-tab';
+import LibrariesList from './libraries-tab';
 import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
 
@@ -133,7 +133,7 @@ const TabsSection = ({
               : messages.librariesTabTitle,
           )}
         >
-          <LibrariesTab />
+          <LibrariesList />
         </Tab>,
       );
     }

@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
@@ -9,10 +10,51 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
 import CardItem from '@src/studio-home/card-item';
-import { useCallback, useState } from 'react';
 import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
+import type { LibraryV1Data } from '@src/studio-home/data/api';
+
 import messages from '../messages';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
+
+const CardList = ({
+  data,
+  inSelectMode,
+}: {
+  data: LibraryV1Data[],
+  inSelectMode: boolean,
+}) => (
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  <>
+    {
+      data?.map(({
+        displayName,
+        org,
+        number,
+        url,
+        isMigrated,
+        migratedToKey,
+        migratedToTitle,
+        migratedToCollectionKey,
+        libraryKey,
+      }) => (
+        <CardItem
+          key={`${org}+${number}`}
+          isLibraries
+          displayName={displayName}
+          org={org}
+          number={number}
+          url={url}
+          itemId={libraryKey}
+          selectMode={inSelectMode ? 'multiple' : null}
+          isMigrated={isMigrated}
+          migratedToKey={migratedToKey}
+          migratedToTitle={migratedToTitle}
+          migratedToCollectionKey={migratedToCollectionKey}
+        />
+      ))
+    }
+  </>
+);
 
 function findInValues<T extends {}>(arr: T[] | undefined, searchValue: string) {
   return arr?.filter(o => Object.values(o).some(value => String(value).toLowerCase().includes(
@@ -96,7 +138,17 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
   );
 };
 
-const LibrariesTab = () => {
+interface LibrariesListProps {
+  selectedIds?: string[] | null;
+  handleCheck?: ((library: LibraryV1Data, action: 'add' | 'remove') => void) | null;
+  hideMigationAlert?: boolean;
+}
+
+const LibrariesList = ({
+  selectedIds = null,
+  handleCheck = null,
+  hideMigationAlert = false,
+}: LibrariesListProps) => {
   const intl = useIntl();
   const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -111,6 +163,21 @@ const LibrariesTab = () => {
   const perPage = 10;
   const totalPages = Math.ceil(filteredData.length / perPage);
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
+  const inSelectMode = handleCheck !== null;
+
+  const handleChangeCheckboxSet = useCallback((event) => {
+    if (handleCheck) {
+      const libraryId = event.target.value;
+      const library = currentPageData.find((item) => item.libraryKey === libraryId);
+      if (library) {
+        if (event.target.checked) {
+          handleCheck(library, 'add');
+        } else {
+          handleCheck(library, 'remove');
+        }
+      }
+    }
+  }, [handleCheck, currentPageData]);
 
   if (isPending) {
     return (
@@ -136,7 +203,7 @@ const LibrariesTab = () => {
 
   return (
     <>
-      {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
+      {!hideMigationAlert && getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
           <SearchField
@@ -159,22 +226,23 @@ const LibrariesTab = () => {
               </>
             )}
         </ActionRow>
-        {currentPageData?.map(({
-          displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
-        }) => (
-          <CardItem
-            key={`${org}+${number}`}
-            isLibraries
-            displayName={displayName}
-            org={org}
-            number={number}
-            url={url}
-            isMigrated={isMigrated}
-            migratedToKey={migratedToKey}
-            migratedToTitle={migratedToTitle}
-            migratedToCollectionKey={migratedToCollectionKey}
+        {inSelectMode ? (
+          <Form.CheckboxSet
+            name="libraries-list-checkboxset"
+            onChange={handleChangeCheckboxSet}
+            value={selectedIds}
+          >
+            <CardList
+              data={currentPageData}
+              inSelectMode={inSelectMode}
+            />
+          </Form.CheckboxSet>
+        ) : (
+          <CardList
+            data={currentPageData}
+            inSelectMode={inSelectMode}
           />
-        ))}
+        )}
         {
           totalPages > 1
             && (
@@ -192,4 +260,4 @@ const LibrariesTab = () => {
   );
 };
 
-export default LibrariesTab;
+export default LibrariesList;

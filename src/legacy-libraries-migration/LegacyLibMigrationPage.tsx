@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,9 +15,10 @@ import {
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import type { ContentLibrary } from '@src/library-authoring/data/api';
+import type { LibraryV1Data } from '@src/studio-home/data/api';
+import LibrariesList from '@src/studio-home/tabs-section/libraries-tab';
 
 import messages from './messages';
-import { SelectLegacyLibraryView } from './SelectLegacyLibraryView';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
 import { MigrationStepsViewer } from './MigrationStepsViewer';
@@ -72,6 +73,7 @@ export const LegacyLibMigrationPage = () => {
   const intl = useIntl();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-libraries');
   const [isExitModalOpen, openExitModal, closeExitModal] = useToggle(false);
+  const [legacyLibraries, setLegacyLibraries] = useState<LibraryV1Data[]>([]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
 
@@ -112,8 +114,7 @@ export const LegacyLibMigrationPage = () => {
   const isNextDisabled = useCallback(() => {
     switch (currentStep) {
       case 'select-libraries':
-        // TODO
-        return false;
+        return legacyLibraries.length === 0;
       case 'select-destination':
         return destinationLibrary === undefined;
       case 'confirmation-view':
@@ -121,74 +122,79 @@ export const LegacyLibMigrationPage = () => {
       default:
         return true;
     }
-  }, [currentStep, destinationLibrary]);
+  }, [legacyLibraries, currentStep, destinationLibrary]);
 
-  // TODO Set this after implement SelectLegacyLibraryView
-  const legacyLibCount = 1;
-  const legacyLibs = [
-    { title: 'Legacy Lib 1', migratedIn: undefined },
-    { title: 'Legacy Lib 2', migratedIn: undefined },
-    { title: 'Legacy Lib 3', migratedIn: 'Lib1 Large' },
-    { title: 'Legacy Lib 4', migratedIn: undefined },
-  ];
+  const handleUpdateLegacyLibraries = useCallback((library: LibraryV1Data, action: 'add' | 'remove') => {
+    if (action === 'add') {
+      setLegacyLibraries([...legacyLibraries, library]);
+    } else {
+      setLegacyLibraries(legacyLibraries.filter(item => item.libraryKey !== library.libraryKey));
+    }
+  }, [legacyLibraries, setLegacyLibraries]);
+
+  const legacyLibrariesIds = useMemo(() => legacyLibraries.map(item => item.libraryKey), [legacyLibraries]);
 
   return (
     <>
-      <div className="d-flex legacy-library-migration-page">
-        <div className="flex-grow-1">
-          <Helmet>
-            <title>
-              {intl.formatMessage(messages.siteTitle)}
-            </title>
-          </Helmet>
-          <Header isHiddenMainMenu />
-          <Container className="px-6 mt-5 mb-5">
+      <div className="legacy-library-migration-page">
+        <Helmet>
+          <title>
+            {intl.formatMessage(messages.siteTitle)}
+          </title>
+        </Helmet>
+        <Header isHiddenMainMenu />
+        <Container className="migration-container d-flex flex-column px-6 mt-5 mb-5">
+          <div className="migration-content">
             <SubHeader
               title={intl.formatMessage(messages.siteTitle)}
             />
             <MigrationStepsViewer currentStep={currentStep} />
             <Stepper activeKey={currentStep}>
               <Stepper.Step eventKey="select-libraries" title="Select Legacy Libraries">
-                <SelectLegacyLibraryView />
+                <LibrariesList
+                  selectedIds={legacyLibrariesIds}
+                  handleCheck={handleUpdateLegacyLibraries}
+                  hideMigationAlert
+                />
               </Stepper.Step>
               <Stepper.Step eventKey="select-destination" title="Select Destination">
                 <SelectDestinationView
                   destinationId={destinationLibrary?.id}
                   setDestinationId={setDestination}
-                  legacyLibCount={legacyLibCount}
+                  legacyLibCount={legacyLibraries.length}
                 />
               </Stepper.Step>
               <Stepper.Step eventKey="confirmation-view" title="Confirmation">
                 <ConfirmationView
                   destination={destinationLibrary}
-                  legacyLibraries={legacyLibs}
+                  legacyLibraries={legacyLibraries}
                 />
               </Stepper.Step>
             </Stepper>
-            <div className="d-flex justify-content-between">
-              <Button variant="outline-primary" onClick={handleBack}>
-                {currentStep === 'select-libraries'
-                  ? intl.formatMessage(messages.cancel)
-                  : intl.formatMessage(messages.back)}
+          </div>
+          <div className="content-buttons d-flex justify-content-between">
+            <Button variant="outline-primary" onClick={handleBack}>
+              {currentStep === 'select-libraries'
+                ? intl.formatMessage(messages.cancel)
+                : intl.formatMessage(messages.back)}
+            </Button>
+            {currentStep !== 'confirmation-view' ? (
+              <Button onClick={handleNext} disabled={isNextDisabled()}>
+                {intl.formatMessage(messages.next)}
               </Button>
-              {currentStep !== 'confirmation-view' ? (
-                <Button onClick={handleNext} disabled={isNextDisabled()}>
-                  {intl.formatMessage(messages.next)}
-                </Button>
-              ) : (
-                <StatefulButton
-                  state={confirmationButtonState}
-                  disabledStates={['pending']}
-                  labels={{
-                    default: intl.formatMessage(messages.confirm),
-                    pending: intl.formatMessage(messages.confirm),
-                  }}
-                  onClick={handleNext}
-                />
-              )}
-            </div>
-          </Container>
-        </div>
+            ) : (
+              <StatefulButton
+                state={confirmationButtonState}
+                disabledStates={['pending']}
+                labels={{
+                  default: intl.formatMessage(messages.confirm),
+                  pending: intl.formatMessage(messages.confirm),
+                }}
+                onClick={handleNext}
+              />
+            )}
+          </div>
+        </Container>
       </div>
       <ExitModal
         isExitModalOpen={isExitModalOpen}

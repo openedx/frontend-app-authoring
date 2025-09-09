@@ -117,13 +117,6 @@ const LibrariesV2List: React.FC<Props> = ({
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
 
-  const findLibrary = useCallback((libraryId: string) => {
-    if (data) {
-      return data.results.find((library) => library.id === libraryId);
-    }
-    return undefined;
-  }, [data]);
-
   const handlePostCreateLibrary = useCallback((library: ContentLibrary) => {
     if (handleSelect) {
       handleSelect(library);
@@ -132,13 +125,13 @@ const LibrariesV2List: React.FC<Props> = ({
   }, [handleSelect, closeCreateLibrary]);
 
   const handleOnChangeRadioSet = useCallback((libraryId: string) => {
-    if (handleSelect) {
-      const library = findLibrary(libraryId);
+    if (handleSelect && data) {
+      const library = data.results.find((item) => item.id === libraryId);
       if (library) {
         handleSelect(library);
       }
     }
-  }, [findLibrary, handleSelect]);
+  }, [data, handleSelect]);
 
   if (isLoading && !isFiltered) {
     return (

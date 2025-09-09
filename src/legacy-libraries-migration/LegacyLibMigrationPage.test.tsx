@@ -9,6 +9,7 @@ import {
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
+import { mockGetStudioHomeLibraries } from '@src/studio-home/data/api.mocks';
 import { getContentLibraryV2CreateApiUrl } from '@src/library-authoring/create-library/data/api';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 
@@ -17,6 +18,7 @@ import { LegacyLibMigrationPage } from './LegacyLibMigrationPage';
 const path = '/libraries-v1/migrate/*';
 let axiosMock: MockAdapter;
 
+mockGetStudioHomeLibraries.applyMock();
 mockGetContentLibraryV2List.applyMock();
 
 const mockNavigate = jest.fn();
@@ -79,11 +81,46 @@ describe('<LegacyLibMigrationPage />', () => {
     });
   });
 
-  it('should select a library destination', async () => {
+  it('should select legacy libraries', async () => {
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
 
-    // TODO Missing select legacy libraries
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    // The next button is disabled
+    expect(nextButton).toBeDisabled();
+
+    expect(screen.getByText('MBA')).toBeInTheDocument();
+    expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
+    expect(screen.getByText('MBA 1')).toBeInTheDocument();
+
+    screen.logTestingPlaygroundURL();
+
+    const library1 = screen.getByRole('checkbox', { name: 'MBA' });
+    const library2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
+
+    expect(library1).not.toBeChecked();
+    expect(library2).not.toBeChecked();
+
+    library1.click();
+
+    expect(library1).toBeChecked();
+    expect(library2).not.toBeChecked();
+    expect(nextButton).not.toBeDisabled();
+
+    library2.click();
+    expect(library1).toBeChecked();
+    expect(library2).toBeChecked();
+    expect(nextButton).not.toBeDisabled();
+  });
+
+  it('should select a library destination', async () => {
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
+    legacyLibrary.click();
+
     const nextButton = screen.getByRole('button', { name: /next/i });
     nextButton.click();
 
@@ -110,8 +147,11 @@ describe('<LegacyLibMigrationPage />', () => {
 
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
 
-    // TODO Missing select legacy libraries
+    const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
+    legacyLibrary.click();
+
     const nextButton = screen.getByRole('button', { name: /next/i });
     nextButton.click();
 
@@ -163,8 +203,16 @@ describe('<LegacyLibMigrationPage />', () => {
   it('should confirm migration', async () => {
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
 
-    // TODO Missing select legacy libraries
+    const legacyLibrary1 = screen.getByRole('checkbox', { name: 'MBA' });
+    const legacyLibrary2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
+    const legacyLibrary3 = screen.getByRole('checkbox', { name: 'MBA 1' });
+
+    legacyLibrary1.click();
+    legacyLibrary2.click();
+    legacyLibrary3.click();
+
     const nextButton = screen.getByRole('button', { name: /next/i });
     nextButton.click();
 
@@ -177,10 +225,10 @@ describe('<LegacyLibMigrationPage />', () => {
     nextButton.click();
 
     // Should show alert of ConfirmationView
-    expect(await screen.findByText(/these 4 legacy libraries will be migrated to/i)).toBeInTheDocument();
-    // TODO update with legacy libraries names
-    expect(screen.getByText('Legacy Lib 1')).toBeInTheDocument();
-    expect(screen.getByText('Legacy Lib 3')).toBeInTheDocument();
+    expect(await screen.findByText(/these 3 legacy libraries will be migrated to/i)).toBeInTheDocument();
+    expect(screen.getByText('MBA')).toBeInTheDocument();
+    expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
+    expect(screen.getByText('MBA 1')).toBeInTheDocument();
     expect(screen.getByText(
       /Previously migrated library. Any problem bank links were already moved will be migrated to/i,
     )).toBeInTheDocument();

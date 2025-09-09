@@ -1,5 +1,6 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Alert, Container } from '@openedx/paragon';
+
 import LibrariesV2List from '@src/studio-home/tabs-section/libraries-v2-tab';
 import type { ContentLibrary } from '@src/library-authoring/data/api';
 
@@ -15,19 +16,18 @@ export const SelectDestinationView = ({
   destinationId,
   setDestinationId,
   legacyLibCount,
-}: SelectDestinationViewProps) => {
-  const intl = useIntl();
-
-  return (
-    <Container>
-      <Alert variant="info">
-        {intl.formatMessage(messages.selectDestinationAlert, { count: legacyLibCount })}
-      </Alert>
-      <LibrariesV2List
-        selectedLibraryId={destinationId}
-        handleSelect={setDestinationId}
-        showCreateLibrary
+}: SelectDestinationViewProps) => (
+  <Container>
+    <Alert variant="info">
+      <FormattedMessage
+        {...messages.selectDestinationAlert}
+        values={{ count: legacyLibCount }}
       />
-    </Container>
-  );
-};
+    </Alert>
+    <LibrariesV2List
+      selectedLibraryId={destinationId}
+      handleSelect={setDestinationId}
+      showCreateLibrary
+    />
+  </Container>
+);
