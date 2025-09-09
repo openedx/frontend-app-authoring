@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import {
   Button, Container, Icon, Pagination, Row,
 } from '@openedx/paragon';
@@ -11,6 +11,7 @@ import { Add, Error } from '@openedx/paragon/icons';
 import messages from 'studio-home/tabs-section/messages';
 // import CourseFilter from './course-filter/CourseFilter';
 import { getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { useMyCourses } from './hooks';
 import { getCourseDetail, getMyCoursesParams } from './data/selectors';
 import { fetchMyCoursesData } from './data/thunks';
@@ -39,6 +40,7 @@ const MyCourses = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const courseDetails = useSelector(getCourseDetail);
+  const [isReRunEnabled, setIsReRunEnabled] = useState(false);
 
   const myCoursesParams = useSelector(getMyCoursesParams);
   const { currentPage, isFiltered } = myCoursesParams;
@@ -72,6 +74,33 @@ const MyCourses = () => {
 
   const isNotFilteringCourses = !isFiltered && !isLoadingCourses;
   const hasCourses = courses?.length > 0;
+
+  useEffect(() => {
+    const fetchNavigationItems = async () => {
+      try {
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+        // const response = await getAuthenticatedHttpClient().get(
+        //   'https://staging.titaned.com/titaned/api/v1/menu-config/',
+        // );
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch Navigation Items');
+        }
+        return response.data;
+      } catch (error) {
+        console.warn('Failed to fetch navigation items, using defaults:', error);
+        return {
+          allow_course_reruns: false,
+        };
+      }
+    };
+
+    fetchNavigationItems().then((data) => {
+      setIsReRunEnabled(data?.allow_course_reruns || false);
+    }).catch((error) => {
+      console.error('Error in fetchNavigationItems:', error);
+      setIsReRunEnabled(false);
+    });
+  }, []);
 
   useEffect(() => {
     courses.forEach(course => {
@@ -131,6 +160,7 @@ const MyCourses = () => {
               onViewLive={() => window.open(course.lmsLink ?? '#', '_blank')}
               onEditCourse={() => navigate(course.url ?? '#')}
               onReRun={() => navigate(course.rerunLink ?? '#')}
+              isReRunEnabled={isReRunEnabled}
             />
           </div>
         ))}

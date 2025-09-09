@@ -352,11 +352,7 @@ const CustomScheduleAndDetails = (props) => {
   }, [courseId, dispatch, editedValues]);
 
   const requiredFieldsPresent = Boolean(
-    editedValues?.shortDescription
-      && editedValues?.description
-      && editedValues?.startDate
-      && editedValues?.endDate
-      && editedValues?.language,
+    editedValues?.startDate && editedValues?.shortDescription
   );
 
   const hasErrors = !!Object.keys(errorFields || {}).length;
@@ -385,17 +381,24 @@ const CustomScheduleAndDetails = (props) => {
 
   useEffect(() => {
     if (showSuccessfulAlert && !isQueryPending && hasAttemptedSave) {
-      window.scrollTo(0, 0);
+      // Small delay to ensure the alert is rendered
       setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          const alertElement = document.querySelector('.alert-container');
-          if (alertElement) {
-            alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 100);
-      }, 300);
+        // Find the scrollable container (.main-content)
+        const scrollContainer = document.querySelector('.main-content');
+        if (scrollContainer) {
+          // Scroll the container to top
+          scrollContainer.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          // Fallback to window scroll
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   }, [showSuccessfulAlert, isQueryPending, hasAttemptedSave]);
 
@@ -516,7 +519,7 @@ const CustomScheduleAndDetails = (props) => {
               onClick={handleSaveChanges}
               disabled={
                 hasErrors
-                || requiredFieldsPresent
+                || !requiredFieldsPresent
                 || !isEditableState
                 || isImageUploading
                 || hasImageErrors

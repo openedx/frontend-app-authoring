@@ -198,6 +198,14 @@ const PSCourseForm = ({
     }
   }, [imageErrors, onImageValidationErrorChange]);
 
+  // Validate form when editedValues change (e.g., when form loads with existing data)
+  useEffect(() => {
+    if (editedValues && Object.keys(editedValues).length > 0) {
+      const fieldErrors = validateForm();
+      setErrors(fieldErrors);
+    }
+  }, [editedValues]);
+
   const handleInputChange = (field, value) => {
     const hasChanged = value !== editedValues[field];
 
@@ -213,20 +221,50 @@ const PSCourseForm = ({
 
     setTouched(prev => ({ ...prev, [field]: true }));
 
-    // Validate the specific field
+    // Validate the specific field and related fields
     const fieldErrors = validateForm();
-    if (fieldErrors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: fieldErrors[field],
-      }));
-    } else {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
+    
+    // If start date changes, also validate end date
+    if (field === 'startDate' && editedValues.endDate) {
+      const startDate = new Date(value);
+      const endDate = new Date(editedValues.endDate);
+      
+      if (endDate < startDate) {
+        fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete fieldErrors.endDate;
+      }
     }
+    
+    // If end date changes, validate against start date
+    if (field === 'endDate' && editedValues.startDate) {
+      const startDate = new Date(editedValues.startDate);
+      const endDate = new Date(value);
+      
+      if (endDate < startDate) {
+        fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete fieldErrors.endDate;
+      }
+    }
+    
+    // Update errors for the changed field and any related fields
+    Object.keys(fieldErrors).forEach(errorField => {
+      if (fieldErrors[errorField]) {
+        setErrors(prev => ({
+          ...prev,
+          [errorField]: fieldErrors[errorField],
+        }));
+      } else {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[errorField];
+          return newErrors;
+        });
+      }
+    });
   };
 
   const handleBlur = (field) => {
@@ -506,6 +544,22 @@ const PSCourseForm = ({
     // Validate Course start date field
     if (!editedValues.startDate) {
       newErrors.startDate = 'Course start date is required.';
+    }
+    
+    // Validate that end date is not earlier than start date (only if both dates are provided)
+    if (editedValues.startDate && editedValues.endDate) {
+      const startDate = new Date(editedValues.startDate);
+      const endDate = new Date(editedValues.endDate);
+      
+      if (endDate < startDate) {
+        newErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete newErrors.endDate;
+      }
+    } else {
+      // Clear endDate error if one of the dates is missing
+      delete newErrors.endDate;
     }
     /* Custom error messages */
     setErrors(newErrors);
@@ -854,13 +908,13 @@ const PSCourseForm = ({
                                             value={editedValues.endDate || ''}
                                             label={null}
                                             helpText="Enter the date when your course will end"
-                                            isInvalid={!!errors.endDate && touched.endDate}
+                                            isInvalid={!!errors.endDate}
                                             controlName="end-date"
                                             onChange={(value) => handleInputChange('endDate', value)}
                                             onBlur={() => handleBlur('endDate')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.endDate && touched.endDate && (
+                                          {errors.endDate && (
                                           <Form.Text className="text-danger">
                                             {errors.endDate}
                                           </Form.Text>
@@ -1247,11 +1301,7 @@ const PSCourseForm = ({
                       type="submit"
                       disabled={
             isSubmitting
-            || !editedValues.shortDescription?.trim()
-            || !editedValues.organization
-            || !editedValues.courseNumber?.trim()
-            || !editedValues.courseRun?.trim()
-            || !editedValues.startDate
+            || Object.keys(errors).length > 0
             || !!imageErrors.cardImage
             || !!imageErrors.bannerImage
         }

@@ -126,6 +126,8 @@ const Dashboard = () => {
   const [tempSelectedWidgets, setTempSelectedWidgets] = useState([]);
   const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
   const [allWidgets, setAllWidgets] = useState([]);
+  const [isAISuggestionsEnabled, setIsAISuggestionsEnabled] = useState(false);
+  const [isTodoListEnabled, setIsTodoListEnabled] = useState(false);
 
   const intl = useIntl();
 
@@ -376,6 +378,38 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchNavigationItems = async () => {
+      try {
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+        // const response = await getAuthenticatedHttpClient().get(
+        //   'https://staging.titaned.com/titaned/api/v1/menu-config/'
+        // );
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch Navigation Items');
+        }
+        return response.data;
+      } catch (error) {
+        console.warn('Failed to fetch navigation items, using defaults:', error);
+        // Return default values when API fails
+        return {
+          assistant_is_enabled: false,
+          todo_list_is_enabled: false,
+        };
+      }
+    };
+
+    fetchNavigationItems().then((data) => {
+      setIsAISuggestionsEnabled(data?.assistant_is_enabled || false);
+      setIsTodoListEnabled(data?.todo_list_is_enabled || false);
+    }).catch((error) => {
+      console.error('Error in fetchNavigationItems:', error);
+      // Set default values on error
+      setIsAISuggestionsEnabled(false);
+      setIsTodoListEnabled(false);
+    });
+  }, []);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -528,7 +562,8 @@ const Dashboard = () => {
       </ModalDialog>
 
       {/* Sidebar */}
-      <div className="dashboard-sidebar">
+      <div className={ !isAISuggestionsEnabled && !isTodoListEnabled ? 'dashboard-sidebar-no-display' : 'dashboard-sidebar'}>
+        { isAISuggestionsEnabled && (
         <Card className="sidebar-card">
           <h4 className="card-header" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             Titan AI suggestion
@@ -542,7 +577,7 @@ const Dashboard = () => {
             {aiSuggestions.length > 0 ? (
               <div className="card-list ai-suggestion-list">
                 {aiSuggestions.map((suggestion) => (
-                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`} style={{ position: 'relative' }}>
+                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`} style={{position: 'relative'}}>
                     {suggestion}
                     <img
                       src={customStarsIcon}
@@ -557,7 +592,8 @@ const Dashboard = () => {
             )}
           </Card.Section>
         </Card>
-
+        )}
+        { isTodoListEnabled && (
         <Card className="sidebar-card">
           <h4 className="card-header">Todo List</h4>
           <Card.Section className="card-section temp-flow">
@@ -583,6 +619,8 @@ const Dashboard = () => {
             )}
           </Card.Section>
         </Card>
+        )}
+
       </div>
     </div>
   );

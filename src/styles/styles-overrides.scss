@@ -2420,3 +2420,11 @@ body {
 .text-success-500 {
   color: var(--primary) !important;
 }
+
+.pgn__modal-body-content {
+  .pgn__form-group .pgn__form-label {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+  }
+}
