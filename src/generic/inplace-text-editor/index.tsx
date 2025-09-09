@@ -78,6 +78,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
     <Stack
       direction="horizontal"
       gap={1}
+      className="inplace-text-editor-with-edit-input"
     >
       {inputIsActive
         ? (
