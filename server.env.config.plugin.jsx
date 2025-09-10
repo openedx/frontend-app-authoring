@@ -76,16 +76,12 @@ const { default: ImportStepper } = await import('./src/import-page/import-steppe
 
 {% raw %}
 
-const oldUI = localStorage.getItem('oldUI');
-if (oldUI) {
-    config.pluginSlots = {
-        
+const getPluginSlots = () => {
+    if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
+        return {};
     }
-} else {
-    await import('titaned-lib/dist/index.css');
-    await import('./styles/styles-overrides.scss');
-import './styles/styles-overrides.scss';
-config.pluginSlots = {
+    
+    return {
     header_plugin_slot: {
         plugins: [
             {
@@ -944,13 +940,18 @@ config.pluginSlots = {
             },
         ],
     },
-}
-}
+};
 
-console.log(FormattedMessage, "FormattedMessage");
-console.log(WarningMessage, "WarningMessage");
-console.log(SubHeader, "SubHeader");
+// Load environment variables from .env file
+const config = {
+    ...process.env,
+    get pluginSlots() {
+        return getPluginSlots();
+    }
+};
+
 {% endraw %}
+
 
          """
      )
