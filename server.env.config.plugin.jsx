@@ -24,9 +24,8 @@ hooks.Filters.ENV_PATCHES.add_item(
          "mfe-env-config-runtime-definitions-authoring",
          """
         // This file contains configuration for plugins and environment variables.
-        
         const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
-const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
+        const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
 const { default: messages } = await import('./src/schedule-and-details/messages');
 const { Settings, DragHandle, SettingsApplications } = await import('@openedx/paragon/icons');
 const {
@@ -926,7 +925,7 @@ const getPluginSlots = () => {
                     id: "course_import_plugin_slot",
                     type: DIRECT_PLUGIN,
                     priority: 1,
-                    RenderWidget: (props) => (
+                    RenderWidget: (props) => 
                         <>
                             <span className="pages_bar" />
                             <div className="import-stepper-area">
@@ -936,11 +935,11 @@ const getPluginSlots = () => {
                                 </div>
                             </div>  
                         </>
-                    ),
+                    },
             },
         ],
     },
-};
+}; };
 
 // Load environment variables from .env file
 const config = {
