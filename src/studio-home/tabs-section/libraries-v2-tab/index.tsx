@@ -9,12 +9,13 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Error } from '@openedx/paragon/icons';
 
-import { useContentLibraryV2List } from '../../../library-authoring';
-import { LoadingSpinner } from '../../../generic/Loading';
-import AlertMessage from '../../../generic/alert-message';
+import { useContentLibraryV2List } from '@src/library-authoring';
+import { LoadingSpinner } from '@src/generic/Loading';
+import AlertMessage from '@src/generic/alert-message';
 import CardItem from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
+import { MigrateLegacyLibrariesAlert } from './WelcomeLibrariesV2Alert';
 
 type Props = Record<never, never>;
 
@@ -51,21 +52,9 @@ const LibrariesV2Tab: React.FC<Props> = () => {
 
   const hasV2Libraries = !isLoading && !isError && ((data!.results.length || 0) > 0);
 
-  // TODO: update this link when tutorial is ready.
-  const librariesTutorialLink = (
-    <Alert.Link href="https://docs.openedx.org">
-      {intl.formatMessage(messages.librariesV2TabBetaTutorialLinkText)}
-    </Alert.Link>
-  );
-
   return (
     <>
-      <Alert variant="info">
-        {intl.formatMessage(
-          messages.librariesV2TabBetaText,
-          { link: librariesTutorialLink },
-        )}
-      </Alert>
+      <MigrateLegacyLibrariesAlert />
 
       {isError ? (
         <AlertMessage
