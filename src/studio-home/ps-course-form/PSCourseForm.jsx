@@ -430,7 +430,7 @@ const PSCourseForm = ({
     const error = imageErrors?.[errorField];
 
     return (
-      <Form.Group className="mb-4">
+      <Form.Group className="mb-4 custom-image-upload-section-ps-form">
         <div className="d-flex align-items-center mb-2">
           <Form.Label className="mb-0">{label}</Form.Label>
         </div>

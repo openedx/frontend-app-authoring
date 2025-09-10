@@ -352,10 +352,17 @@ const CustomScheduleAndDetails = (props) => {
   }, [courseId, dispatch, editedValues]);
 
   const requiredFieldsPresent = Boolean(
-    editedValues?.startDate && editedValues?.shortDescription
+    editedValues?.startDate && editedValues?.shortDescription,
   );
 
-  const hasErrors = !!Object.keys(errorFields || {}).length;
+  // Check for errors, but ignore enrollmentEnd errors if endDate is valid
+  const hasEndDateError = !!(errorFields?.endDate || errors?.endDate);
+  const hasEnrollmentEndError = !!(errorFields?.enrollmentEnd || errors?.enrollmentEnd);
+  const otherErrors = Object.keys(errorFields || {}).filter(key => key !== 'enrollmentEnd').length > 0
+    || Object.keys(errors || {}).filter(key => key !== 'enrollmentEnd').length > 0;
+
+  // Only consider enrollmentEnd error if endDate also has an error
+  const hasErrors = otherErrors || hasEndDateError || (hasEnrollmentEndError && hasEndDateError);
   const hasImageErrors = Object.values(imageErrors).some(
     (error) => error !== '',
   );
@@ -401,6 +408,14 @@ const CustomScheduleAndDetails = (props) => {
       }, 100);
     }
   }, [showSuccessfulAlert, isQueryPending, hasAttemptedSave]);
+
+  // console.log('errors', errors);
+  console.log('errorFields', errorFields);
+  console.log('hasErrors', hasErrors);
+  console.log('hasImageErrors', hasImageErrors);
+  console.log('requiredFieldsPresent', requiredFieldsPresent);
+  console.log('isEditableState', isEditableState);
+  console.log('isImageUploading', isImageUploading);
 
   return (
     <>

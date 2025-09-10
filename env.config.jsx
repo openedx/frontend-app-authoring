@@ -49,6 +49,7 @@ import CustomTaxonomyListPage from './src/taxonomy/CustomTaxonomyListPage';
 import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxonomyDetailPage';
 import FileSection from './src/import-page/file-section/FileSection';
 import ImportStepper from './src/import-page/import-stepper/ImportStepper';
+import CustomAdvancedSettingsHeader from './src/advanced-settings/CustomAdvancedSettingsHeader';
 
 const getPluginSlots = () => {
     if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
@@ -290,44 +291,11 @@ const getPluginSlots = () => {
                 {
                     op: PLUGIN_OPERATIONS.Insert,
                     widget: {
-                        id: "my-custom-advanced-settings-content",
+                        id: "advanced_settings_header_plugin_slot",
                         type: DIRECT_PLUGIN,
                         priority: 1,
                         RenderWidget: (props) => (
-                            <div className="advanced-settings-custom-header">
-                                <div className="advanced-settings-custom-sub-header">
-                                    <div className="advanced-settings-custom-sub-header-title">
-                                        <SubHeader
-                                            title={props.headerTitle}
-                                            contentTitle={props.headerContentTitle}
-                                        />
-                                    </div>
-
-                                    <div className="custom-setting-items-deprecated-setting">
-                                        <Button
-                                            variant={'outline-primary'}
-                                            onClick={() => props.onClick()}
-                                            size="sm"
-                                        >
-                                            <FormattedMessage
-                                                id="course-authoring.advanced-settings.deprecated.button.text"
-                                                defaultMessage="{visibility} deprecated settings"
-                                                values={{
-                                                    visibility:
-                                                        props.showDeprecated ? props.hideDeprecatedMessage
-                                                            : props.showDeprecatedMessage,
-                                                }}
-                                            />
-                                        </Button>
-                                    </div>
-                                </div>
-                                
-                                <hr className="customHr" />
-
-                                <div className="warning-message-container">
-                                    <WarningMessage message="Do not modify these policies unless you are familiar with their purpose." />
-                                </div>
-                            </div>
+                            <CustomAdvancedSettingsHeader {...props} />
                         ),
                     },
                 }
