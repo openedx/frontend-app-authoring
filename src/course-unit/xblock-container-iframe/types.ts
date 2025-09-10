@@ -1,16 +1,4 @@
-export interface GroupTypes {
-  id: number;
-  name: string;
-  selected: boolean;
-  deleted: boolean;
-}
-
-export interface UserPartitionTypes {
-  id: number;
-  name: string;
-  scheme: string;
-  groups: Array<GroupTypes>;
-}
+import { UserPartitionInfoTypes, UserPartitionTypes, XBlockPrereqs } from '@src/data/types';
 
 export interface XBlockActionsTypes {
   canCopy: boolean;
@@ -45,31 +33,11 @@ export interface XBlockContainerIframeProps {
   unitXBlockActions: {
     handleDelete: (XBlockId: string | null) => void;
     handleDuplicate: (XBlockId: string | null) => void;
+    handleUnlink: (XBlockId: string | null) => void;
   };
   courseVerticalChildren: Array<XBlockTypes>;
   handleConfigureSubmit: (XBlockId: string, ...args: any[]) => void;
 }
-
-export type UserPartitionInfoTypes = {
-  selectablePartitions: Array<{
-    groups: Array<{
-      deleted: boolean;
-      id: number;
-      name: string;
-      selected: boolean;
-    }>;
-    id: number;
-    name: string;
-    scheme: string;
-  }>;
-  selectedPartitionIndex: number;
-  selectedGroupsLabel: string;
-};
-
-export type PrereqTypes = {
-  blockDisplayName: string;
-  blockUsageKey: string;
-};
 
 export type AccessManagedXBlockDataTypes = {
   id: string;
@@ -88,7 +56,7 @@ export type AccessManagedXBlockDataTypes = {
   userPartitionInfo?: UserPartitionInfoTypes;
   ancestorHasStaffLock?: boolean;
   isPrereq?: boolean;
-  prereqs?: PrereqTypes[];
+  prereqs?: XBlockPrereqs[];
   prereq?: number;
   prereqMinScore?: number;
   prereqMinCompletion?: number;

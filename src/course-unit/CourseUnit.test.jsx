@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, render, waitFor, within, screen,
+  act, fireEvent, render, waitFor, within, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -14,6 +14,13 @@ import {
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
+
+import { IFRAME_FEATURE_POLICY } from '@src/constants';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
+import { getClipboardUrl } from '@src/generic/data/api';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 
 import {
   getCourseSectionVerticalApiUrl,
@@ -42,8 +49,6 @@ import {
 } from './__mocks__';
 import { clipboardUnit } from '../__mocks__';
 import { executeThunk } from '../utils';
-import { IFRAME_FEATURE_POLICY } from '../constants';
-import pasteComponentMessages from '../generic/clipboard/paste-component/messages';
 import pasteNotificationsMessages from './clipboard/paste-notification/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
@@ -51,18 +56,15 @@ import { extractCourseUnitId } from './sidebar/utils';
 import CourseUnit from './CourseUnit';
 
 import tagsDrawerMessages from '../content-tags-drawer/messages';
-import { getClipboardUrl } from '../generic/data/api';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 import addComponentMessages from './add-component/messages';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
-import { IframeProvider } from '../generic/hooks/context/iFrameContext';
 import moveModalMessages from './move-modal/messages';
 import xblockContainerIframeMessages from './xblock-container-iframe/messages';
 import headerNavigationsMessages from './header-navigations/messages';
 import sidebarMessages from './sidebar/messages';
 import messages from './messages';
-import { mockWaffleFlags } from '../data/apiHooks.mock';
 
 let axiosMock;
 let store;
@@ -465,6 +467,35 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  it('checks if the xblock unlink is called when the corresponding unlink button is clicked', async () => {
+    render(<RootWrapper />);
+    const usageId = courseVerticalChildrenMock.children[0].block_id;
+    axiosMock
+      .onDelete(getDownstreamApiUrl(usageId))
+      .reply(200);
+
+    await waitFor(() => {
+      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(iframe).toBeInTheDocument();
+    });
+
+    simulatePostMessageEvent(messageTypes.unlinkXBlock, {
+      usageId,
+    });
+    expect(await screen.findByText(/Unlink this component?/i)).toBeInTheDocument();
+
+    const dialog = await screen.findByRole('dialog');
+    // Find the Unlink button
+    const unlinkButton = await within(dialog).findByRole('button', { name: /confirm unlink/i });
+    expect(unlinkButton).toBeInTheDocument();
+    fireEvent.click(unlinkButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(usageId));
+  });
+
   it('checks if xblock is a duplicate when the corresponding duplicate button is clicked and if the sidebar status is updated', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
@@ -790,6 +821,28 @@ describe('<CourseUnit />', () => {
     expect(mockedUsedNavigate).toHaveBeenCalled();
     expect(mockedUsedNavigate)
       .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, { replace: true });
+  });
+
+  it('Show or hide new unit button based on parent sequence childAddable action', async () => {
+    render(<RootWrapper />);
+    // The new unit button should be visible when childAddable is true
+    await screen.findByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage });
+
+    const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+    // Set childAddable to false for sequence i.e. current units parent.
+    set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].actions.childAddable', false);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...updatedCourseSectionVerticalData,
+      });
+    render(<RootWrapper />);
+    // to wait for loading
+    screen.findByTestId('unit-header-title');
+    // The new unit button should not be visible when childAddable is false
+    expect(
+      screen.queryByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage }),
+    ).not.toBeInTheDocument();
   });
 
   it('the sequence unit is updated after changing the unit header', async () => {

@@ -1,9 +1,10 @@
 import React from 'react';
+
+import { ProblemTypeKeys, AdvanceProblems } from '@src/editors/data/constants/problem';
 import {
   render, screen, fireEvent, initializeMocks,
 } from '../../../../../../testUtils';
 import AdvanceTypeSelect from './AdvanceTypeSelect';
-import { ProblemTypeKeys, AdvanceProblems } from '../../../../../data/constants/problem';
 
 describe('AdvanceTypeSelect', () => {
   const setSelected = jest.fn();

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Button,
@@ -18,9 +18,8 @@ const SortAndFilterModal = ({
   isSortOpen,
   closeSort,
   handleSort,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const {
     state, setAllFilters, columns, gotoPage,
   } = useContext(DataTableContext);
@@ -178,8 +177,6 @@ SortAndFilterModal.propTypes = {
   handleSort: PropTypes.func.isRequired,
   isSortOpen: PropTypes.bool.isRequired,
   closeSort: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(SortAndFilterModal);
+export default SortAndFilterModal;

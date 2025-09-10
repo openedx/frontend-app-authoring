@@ -13,6 +13,7 @@ import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
@@ -22,14 +23,15 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
+import ContainerUsage from './ContainerUsage';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
 import messages from './messages';
-import { useContainer, usePublishContainer } from '../data/apiHooks';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { ToastContext } from '../../generic/toast-context';
+import { useContainer } from '../data/apiHooks';
 import ContainerDeleter from './ContainerDeleter';
+import { ContainerPublisher } from './ContainerPublisher';
+import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
 
 type ContainerPreviewProps = {
   containerId: string,
@@ -75,12 +77,70 @@ const ContainerPreview = ({ containerId } : ContainerPreviewProps) => {
   return <LibraryContainerChildren containerKey={containerId} readOnly />;
 };
 
+const ContainerActions = ({
+  containerId,
+  containerType,
+  hasUnpublishedChanges,
+}: {
+  containerId: string,
+  containerType: string,
+  hasUnpublishedChanges: boolean,
+}) => {
+  const intl = useIntl();
+  const { libraryId } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
+  const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
+
+  const showOpenButton = !componentPickerMode && !(
+    insideUnit || insideSubsection || insideSection
+  );
+
+  if (isPublisherOpen) {
+    return (
+      <ContainerPublisher
+        handleClose={closePublisher}
+        containerId={containerId}
+      />
+    );
+  }
+
+  return (
+    <div className="d-flex flex-wrap">
+      {showOpenButton && (
+        <Button
+          variant="outline-primary"
+          className="m-1 text-nowrap flex-grow-1"
+          as={Link}
+          to={`/library/${libraryId}/${containerType}/${containerId}`}
+        >
+          {intl.formatMessage(messages.openButton)}
+        </Button>
+      )}
+      {!componentPickerMode && (
+        !hasUnpublishedChanges ? (
+          <div className="m-1 flex-grow-1">
+            <PublishedChip />
+          </div>
+        ) : (
+          <div className="flex-grow-1">
+            <PublishDraftButton
+              onClick={openPublisher}
+            />
+          </div>
+        )
+      )}
+      {showOpenButton && (
+        <div className="mt-1">
+          <ContainerMenu containerId={containerId} />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ContainerInfo = () => {
   const intl = useIntl();
-
-  const { libraryId, readOnly } = useLibraryContext();
-  const { componentPickerMode } = useComponentPickerContext();
-  const { showToast } = React.useContext(ToastContext);
   const {
     defaultTab,
     hiddenTabs,
@@ -89,21 +149,14 @@ const ContainerInfo = () => {
     sidebarItemInfo,
     resetSidebarAction,
   } = useSidebarContext();
-  const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
-
   const containerId = sidebarItemInfo?.id;
   const containerType = containerId ? getBlockType(containerId) : undefined;
   const { data: container } = useContainer(containerId);
-  const publishContainer = usePublishContainer(containerId!);
 
   const defaultContainerTab = defaultTab.container;
   const tab: ContainerInfoTab = (
     sidebarTab && isContainerInfoTab(sidebarTab)
   ) ? sidebarTab : defaultContainerTab;
-
-  const showOpenButton = !componentPickerMode && !(
-    insideUnit || insideSubsection || insideSection
-  );
 
   /* istanbul ignore next */
   const handleTabChange = (newTab: ContainerInfoTab) => {
@@ -123,46 +176,17 @@ const ContainerInfo = () => {
     );
   }, [hiddenTabs, defaultContainerTab, containerId]);
 
-  const handlePublish = useCallback(async () => {
-    try {
-      await publishContainer.mutateAsync();
-      showToast(intl.formatMessage(messages.publishContainerSuccess));
-    } catch (error) {
-      showToast(intl.formatMessage(messages.publishContainerFailed));
-    }
-  }, [publishContainer]);
-
   if (!container || !containerId || !containerType) {
     return null;
   }
 
   return (
     <Stack>
-      <div className="d-flex flex-wrap">
-        {showOpenButton && (
-          <Button
-            variant="outline-primary"
-            className="m-1 text-nowrap flex-grow-1"
-            as={Link}
-            to={`/library/${libraryId}/${containerType}/${containerId}`}
-          >
-            {intl.formatMessage(messages.openButton)}
-          </Button>
-        )}
-        {!componentPickerMode && !readOnly && (
-          <Button
-            variant="outline-primary"
-            className="m-1 text-nowrap flex-grow-1"
-            disabled={!container.hasUnpublishedChanges || publishContainer.isLoading}
-            onClick={handlePublish}
-          >
-            {intl.formatMessage(messages.publishContainerButton)}
-          </Button>
-        )}
-        {showOpenButton && (
-          <ContainerMenu containerId={containerId} />
-        )}
-      </div>
+      <ContainerActions
+        containerId={containerId}
+        containerType={containerType}
+        hasUnpublishedChanges={container.hasUnpublishedChanges}
+      />
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
@@ -179,6 +203,11 @@ const ContainerInfo = () => {
           CONTAINER_INFO_TABS.Manage,
           intl.formatMessage(messages.manageTabTitle),
           <ContainerOrganize />,
+        )}
+        {renderTab(
+          CONTAINER_INFO_TABS.Usage,
+          intl.formatMessage(messages.usageTabTitle),
+          <ContainerUsage />,
         )}
         {renderTab(
           CONTAINER_INFO_TABS.Settings,

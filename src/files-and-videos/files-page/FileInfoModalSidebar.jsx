@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  injectIntl,
-  FormattedMessage,
-  FormattedDate,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Stack,
   IconButton,
   ActionRow,
   Icon,
-  Truncate,
   IconButtonWithTooltip,
   CheckboxControl,
 } from '@openedx/paragon';
@@ -20,13 +14,13 @@ import { ContentCopy, InfoOutline } from '@openedx/paragon/icons';
 
 import { getFileSizeToClosestByte } from '../../utils';
 import messages from './messages';
+import './FileInfoModalSidebar.scss';
 
 const FileInfoModalSidebar = ({
   asset,
   handleLockedAsset,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [lockedState, setLockedState] = useState(asset?.locked);
   const handleLock = (e) => {
     const locked = e.target.checked;
@@ -34,7 +28,6 @@ const FileInfoModalSidebar = ({
     handleLockedAsset(asset?.id, locked);
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
-
   return (
     <Stack>
       <div className="font-weight-bold">
@@ -56,10 +49,11 @@ const FileInfoModalSidebar = ({
         <FormattedMessage {...messages.studioUrlTitle} />
       </div>
       <ActionRow>
-        <div style={{ wordBreak: 'break-word' }}>
-          <Truncate.Deprecated lines={1}>
-            {asset?.portableUrl}
-          </Truncate.Deprecated>
+        <div
+          className="files-page-url-truncate"
+          style={{ wordBreak: 'break-word' }}
+        >
+          {asset?.portableUrl}
         </div>
         <ActionRow.Spacer />
         <IconButton
@@ -73,10 +67,8 @@ const FileInfoModalSidebar = ({
         <FormattedMessage {...messages.webUrlTitle} />
       </div>
       <ActionRow>
-        <div style={{ wordBreak: 'break-word' }}>
-          <Truncate lines={1}>
-            {asset?.externalUrl}
-          </Truncate>
+        <div className="files-page-url-truncate" style={{ wordBreak: 'break-word' }}>
+          {asset?.externalUrl}
         </div>
         <ActionRow.Spacer />
         <IconButton
@@ -123,8 +115,6 @@ FileInfoModalSidebar.propTypes = {
     usageLocations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FileInfoModalSidebar);
+export default FileInfoModalSidebar;

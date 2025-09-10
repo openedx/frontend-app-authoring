@@ -13,6 +13,8 @@ export interface CourseOptimizerState {
   isErrorModalOpen: boolean;
   loadingStatus: string;
   savingStatus: string;
+  rerunLinkUpdateInProgress: boolean | null;
+  rerunLinkUpdateResult: any | null;
 }
 
 export type RootState = {
@@ -32,6 +34,8 @@ const initialState: CourseOptimizerState = {
   isErrorModalOpen: false,
   loadingStatus: '',
   savingStatus: '',
+  rerunLinkUpdateInProgress: null,
+  rerunLinkUpdateResult: null,
 };
 
 const slice = createSlice({
@@ -69,6 +73,12 @@ const slice = createSlice({
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
     },
+    updateRerunLinkUpdateInProgress: (state, { payload }) => {
+      state.rerunLinkUpdateInProgress = payload;
+    },
+    updateRerunLinkUpdateResult: (state, { payload }) => {
+      state.rerunLinkUpdateResult = payload;
+    },
   },
 });
 
@@ -84,6 +94,8 @@ export const {
   reset,
   updateLoadingStatus,
   updateSavingStatus,
+  updateRerunLinkUpdateInProgress,
+  updateRerunLinkUpdateResult,
 } = slice.actions;
 
 export const {

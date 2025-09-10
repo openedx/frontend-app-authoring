@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Form, TransitionReplace, Hyperlink, Alert,
 } from '@openedx/paragon';
@@ -12,7 +12,8 @@ import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import { OpenedXConfigFormContext } from '../openedx/OpenedXConfigFormProvider';
 
-const DivisionByGroupFields = ({ intl }) => {
+const DivisionByGroupFields = () => {
+  const intl = useIntl();
   const { validDiscussionTopics } = useContext(OpenedXConfigFormContext);
   const {
     handleChange,
@@ -142,8 +143,4 @@ const DivisionByGroupFields = ({ intl }) => {
   );
 };
 
-DivisionByGroupFields.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(DivisionByGroupFields);
+export default DivisionByGroupFields;

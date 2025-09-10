@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
   ActionRow,
@@ -20,9 +20,8 @@ const DeleteConfirmationModal = ({
   handleBulkDelete,
   selectedRows,
   fileType,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const { clearSelection } = useContext(DataTableContext);
 
   const handleConfirmDeletion = () => {
@@ -133,8 +132,6 @@ DeleteConfirmationModal.propTypes = {
   closeDeleteConfirmation: PropTypes.func.isRequired,
   handleBulkDelete: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(DeleteConfirmationModal);
+export default DeleteConfirmationModal;

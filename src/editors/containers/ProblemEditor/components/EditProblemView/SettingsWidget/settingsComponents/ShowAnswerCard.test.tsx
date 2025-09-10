@@ -2,7 +2,6 @@ import React from 'react';
 import {
   render, screen, initializeMocks,
 } from '@src/testUtils';
-import { formatMessage } from '@src/editors/testUtils';
 import { selectors } from '../../../../../../data/redux';
 import { ShowAnswerCardInternal as ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
 import * as hooks from '../hooks';
@@ -25,15 +24,12 @@ describe('ShowAnswerCard', () => {
     on: 'after_attempts',
     afterAttempts: 5,
     updateSettings: jest.fn().mockName('args.updateSettings'),
-    intl: { formatMessage },
   };
 
   const props = {
     showAnswer,
     defaultValue: 'finished',
     updateSettings: jest.fn(),
-    // injected
-    intl: { formatMessage },
     // redux
     studioEndpointUrl: 'SoMEeNDpOinT',
     learningContextId: 'sOMEcouRseId',

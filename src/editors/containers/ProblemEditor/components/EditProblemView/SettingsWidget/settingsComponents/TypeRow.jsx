@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Check } from '@openedx/paragon/icons';
 import { typeRowHooks } from '../hooks';
 
@@ -19,6 +20,8 @@ const TypeRow = ({
   updateField,
   updateAnswer,
 }) => {
+  const intl = useIntl();
+
   const { onClick } = typeRowHooks({
     answers,
     blockTitle,
@@ -28,6 +31,7 @@ const TypeRow = ({
     typeKey,
     updateField,
     updateAnswer,
+    formatMessage: intl.formatMessage,
   });
 
   return (

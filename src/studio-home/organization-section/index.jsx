@@ -3,14 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button, Form, FormLabel } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import TypeaheadDropdown from '../../editors/sharedComponents/TypeaheadDropdown';
 import { getOrganizations } from '../../generic/data/selectors';
 import { fetchOrganizationsQuery } from '../../generic/data/thunks';
 import messages from '../messages';
 
-const OrganizationSection = ({ intl }) => {
+const OrganizationSection = () => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,8 +71,4 @@ const OrganizationSection = ({ intl }) => {
   );
 };
 
-OrganizationSection.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(OrganizationSection);
+export default OrganizationSection;

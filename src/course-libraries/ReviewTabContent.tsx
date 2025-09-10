@@ -19,7 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
-import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
+import { invalidateLinksQuery, useEntityLinks } from './data/apiHooks';
 import {
   SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
 } from '../search-manager';
@@ -41,23 +41,39 @@ interface Props {
   courseId: string;
 }
 
-interface BlockCardProps {
+interface ItemCardProps {
   info: ContentHit;
+  itemType: 'component' | 'container';
   actions?: React.ReactNode;
   libraryName?: string;
 }
 
-const BlockCard: React.FC<BlockCardProps> = ({ info, actions, libraryName }) => {
+const ItemCard: React.FC<ItemCardProps> = ({
+  info,
+  itemType,
+  actions,
+  libraryName,
+}) => {
   const intl = useIntl();
-  const componentIcon = getItemIcon(info.blockType);
+  const itemIcon = getItemIcon(info.blockType);
   const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
 
-  const getBlockLink = useCallback(() => {
+  const getItemLink = useCallback(() => {
     let key = info.usageKey;
     if (breadcrumbs?.length > 1) {
       key = breadcrumbs[breadcrumbs.length - 1].usageKey || key;
     }
-    return `${getConfig().STUDIO_BASE_URL}/container/${key}`;
+
+    if (itemType === 'component') {
+      return `${getConfig().STUDIO_BASE_URL}/container/${key}`;
+    }
+    if (itemType === 'container') {
+      const encodedKey = encodeURIComponent(key);
+      return `${getConfig().STUDIO_BASE_URL}/course/${info.contextKey}?show=${encodedKey}`;
+    }
+
+    // istanbul ignore next
+    return '';
   }, [info]);
 
   return (
@@ -71,7 +87,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, libraryName }) => 
         <Stack direction="horizontal" gap={2}>
           <Stack direction="vertical" gap={1}>
             <Stack direction="horizontal" gap={1} className="micro text-gray-500">
-              <Icon src={componentIcon} size="xs" />
+              <Icon src={itemIcon} size="xs" />
               <BlockTypeLabel blockType={info.blockType} />
             </Stack>
             <Stack direction="horizontal" className="small" gap={1}>
@@ -87,14 +103,20 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, libraryName }) => 
                 </Stack>
               )}
               {intl.formatMessage(messages.breadcrumbLabel)}
-              <Hyperlink showLaunchIcon={false} destination={getBlockLink()} target="_blank">
-                <Breadcrumb
-                  className="micro text-gray-700 border-bottom"
-                  ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
-                  links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
-                  spacer={<span className="custom-spacer">/</span>}
-                  linkAs="span"
-                />
+              <Hyperlink showLaunchIcon={false} destination={getItemLink()} target="_blank">
+                {info.blockType === 'chapter' ? (
+                  <div className="micro text-gray-700 border-bottom">
+                    {intl.formatMessage(messages.viewSectionInCourseLabel)}
+                  </div>
+                ) : (
+                  <Breadcrumb
+                    className="micro text-gray-700 border-bottom"
+                    ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
+                    links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
+                    spacer={<span className="custom-spacer">/</span>}
+                    linkAs="span"
+                  />
+                )}
               </Hyperlink>
             </Stack>
           </Stack>
@@ -105,16 +127,21 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, libraryName }) => 
   );
 };
 
-const ComponentReviewList = ({
-  outOfSyncComponents,
+const ItemReviewList = ({
+  outOfSyncItems,
 }: {
-  outOfSyncComponents: PublishableEntityLink[];
+  outOfSyncItems: PublishableEntityLink[];
 }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+  // Toggle preview changes modal
+  const [isPreviewModalOpen, openPreviewModal, closePreviewModal] = useToggle(false);
+  const acceptChangesMutation = useAcceptLibraryBlockChanges();
+  const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
+
   const {
     hits,
     isLoading: isIndexDataLoading,
@@ -133,32 +160,27 @@ const ComponentReviewList = ({
     true,
   );
 
-  const outOfSyncComponentsByKey = useMemo(
-    () => keyBy(outOfSyncComponents, 'downstreamUsageKey'),
-    [outOfSyncComponents],
+  const outOfSyncItemsByKey = useMemo(
+    () => keyBy(outOfSyncItems, 'downstreamUsageKey'),
+    [outOfSyncItems],
   );
   const queryClient = useQueryClient();
-
-  // Toggle preview changes modal
-  const [isModalOpen, openModal, closeModal] = useToggle(false);
-  const acceptChangesMutation = useAcceptLibraryBlockChanges();
-  const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
   const setSelectedBlockData = useCallback((info: ContentHit) => {
     setBlockData({
       displayName: info.displayName,
       downstreamBlockId: info.usageKey,
-      upstreamBlockId: outOfSyncComponentsByKey[info.usageKey].upstreamUsageKey,
-      upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].versionSynced,
-      isVertical: info.blockType === 'vertical',
+      upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
+      upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
+      isContainer: info.blockType === 'vertical' || info.blockType === 'sequential' || info.blockType === 'chapter',
     });
-  }, [outOfSyncComponentsByKey]);
+  }, [outOfSyncItemsByKey]);
 
   // Show preview changes on review
   const onReview = useCallback((info: ContentHit) => {
     setSelectedBlockData(info);
-    openModal();
-  }, [setSelectedBlockData, openModal]);
+    openPreviewModal();
+  }, [setSelectedBlockData, openPreviewModal]);
 
   const onIgnoreClick = useCallback((info: ContentHit) => {
     setSelectedBlockData(info);
@@ -166,9 +188,9 @@ const ComponentReviewList = ({
   }, [setSelectedBlockData, openConfirmModal]);
 
   const reloadLinks = useCallback((usageKey: string) => {
-    const courseKey = outOfSyncComponentsByKey[usageKey].downstreamContextKey;
-    queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
-  }, [outOfSyncComponentsByKey]);
+    const courseKey = outOfSyncItemsByKey[usageKey].downstreamContextKey;
+    invalidateLinksQuery(queryClient, courseKey);
+  }, [outOfSyncItemsByKey]);
 
   const postChange = (accept: boolean) => {
     // istanbul ignore if: this should never happen
@@ -232,10 +254,11 @@ const ComponentReviewList = ({
   return (
     <>
       {downstreamInfo?.map((info) => (
-        <BlockCard
+        <ItemCard
           key={info.usageKey}
           info={info}
-          libraryName={outOfSyncComponentsByKey[info.usageKey]?.upstreamContextTitle}
+          itemType={outOfSyncItemsByKey[info.usageKey]?.upstreamType}
+          libraryName={outOfSyncItemsByKey[info.usageKey]?.upstreamContextTitle}
           actions={(
             <ActionRow>
               <Button
@@ -269,8 +292,8 @@ const ComponentReviewList = ({
       {blockData && (
         <PreviewLibraryXBlockChanges
           blockData={blockData}
-          isModalOpen={isModalOpen}
-          closeModal={closeModal}
+          isModalOpen={isPreviewModalOpen}
+          closeModal={closePreviewModal}
           postChange={postChange}
         />
       )}
@@ -290,15 +313,19 @@ const ComponentReviewList = ({
 const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
   const {
-    data: outOfSyncComponents,
-    isLoading: isSyncComponentsLoading,
+    data: outOfSyncItems,
+    isLoading: isSyncItemsLoading,
     isError,
     error,
-  } = useEntityLinks({ courseId, readyToSync: true });
+  } = useEntityLinks({
+    courseId,
+    readyToSync: true,
+    useTopLevelParents: true,
+  });
 
   const downstreamKeys = useMemo(
-    () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
-    [outOfSyncComponents],
+    () => outOfSyncItems?.map(link => link.downstreamUsageKey),
+    [outOfSyncItems],
   );
 
   const disableSortOptions = [
@@ -308,7 +335,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     SearchSortOption.RECENTLY_PUBLISHED,
   ];
 
-  if (isSyncComponentsLoading) {
+  if (isSyncItemsLoading) {
     return <Loading />;
   }
 
@@ -329,8 +356,8 @@ const ReviewTabContent = ({ courseId }: Props) => {
         <SearchSortWidget disableOptions={disableSortOptions} />
         <ActionRow.Spacer />
       </ActionRow>
-      <ComponentReviewList
-        outOfSyncComponents={outOfSyncComponents}
+      <ItemReviewList
+        outOfSyncItems={outOfSyncItems}
       />
     </SearchContextProvider>
   );

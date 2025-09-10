@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
 import { TRANSCRIPT_FAILURE_STATUSES } from '../../../videos-page/data/constants';
@@ -34,4 +34,4 @@ TranscriptColumn.propTypes = {
   }.isRequired,
 };
 
-export default injectIntl(TranscriptColumn);
+export default TranscriptColumn;

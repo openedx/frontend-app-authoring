@@ -16,6 +16,7 @@ import {
   Folder,
   ViewCarousel,
   ViewDay,
+  Widgets,
   WidthWide,
 } from '@openedx/paragon/icons';
 import NewsstandIcon from '../NewsstandIcon';
@@ -43,6 +44,7 @@ export const UNIT_TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   chapter: ViewCarousel,
   problem: EditIcon,
   lock: LockIcon,
+  multiple: Widgets,
 };
 
 export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
@@ -65,6 +67,7 @@ export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   subsection: UNIT_TYPE_ICONS_MAP.sequential,
   chapter: UNIT_TYPE_ICONS_MAP.chapter,
   section: UNIT_TYPE_ICONS_MAP.chapter,
+  components: UNIT_TYPE_ICONS_MAP.multiple,
   collection: Folder,
   libraryContent: Folder,
   paste: ContentPasteIcon,

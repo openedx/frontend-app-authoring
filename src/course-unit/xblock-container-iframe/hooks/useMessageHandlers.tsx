@@ -20,6 +20,7 @@ export const useMessageHandlers = ({
   setIframeOffset,
   handleDeleteXBlock,
   handleDuplicateXBlock,
+  handleUnlinkXBlock,
   handleScrollToXBlock,
   handleManageXBlockAccess,
   handleShowLegacyEditXBlockModal,
@@ -36,6 +37,7 @@ export const useMessageHandlers = ({
   return useMemo(() => ({
     [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
     [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
+    [messageTypes.unlinkXBlock]: ({ usageId }) => handleUnlinkXBlock(usageId),
     [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => handleEditXBlock(blockType, usageId),
     [messageTypes.duplicateXBlock]: ({ usageId }) => handleDuplicateXBlock(usageId),
     [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
@@ -62,6 +64,7 @@ export const useMessageHandlers = ({
   }), [
     courseId,
     handleDeleteXBlock,
+    handleUnlinkXBlock,
     handleDuplicateXBlock,
     handleManageXBlockAccess,
     handleScrollToXBlock,

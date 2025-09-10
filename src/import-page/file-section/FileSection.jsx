@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Dropzone } from '@openedx/paragon';
@@ -14,7 +11,8 @@ import {
 import messages from './messages';
 import { handleProcessUpload } from '../data/thunks';
 
-const FileSection = ({ intl, courseId }) => {
+const FileSection = ({ courseId }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const importTriggered = useSelector(getImportTriggered);
   const currentStage = useSelector(getCurrentStage);
@@ -52,8 +50,7 @@ const FileSection = ({ intl, courseId }) => {
 };
 
 FileSection.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(FileSection);
+export default FileSection;

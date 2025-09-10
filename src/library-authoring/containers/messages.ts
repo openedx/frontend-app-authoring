@@ -26,20 +26,15 @@ const messages = defineMessages({
     defaultMessage: 'Collections ({count})',
     description: 'Title for collections section in manage tab',
   },
-  publishContainerButton: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-button',
-    defaultMessage: 'Publish',
-    description: 'Button text to publish the unit/subsection/section',
+  usageTabTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.usage-tab.title',
+    defaultMessage: 'Usage',
+    description: 'Title for usage tab',
   },
-  publishContainerSuccess: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-success',
-    defaultMessage: 'All changes published',
-    description: 'Popup text after publishing a unit/subsection/section',
-  },
-  publishContainerFailed: {
-    id: 'course-authoring.library-authoring.container-sidebar.publish-failure',
-    defaultMessage: 'Failed to publish changes',
-    description: 'Popup text seen if publishing a unit/subsection/section fails',
+  usageTabHierarchyHeading: {
+    id: 'course-authoring.library-authoring.container-sidebar.usage-tab.hierarchy-heading',
+    defaultMessage: 'Content Hierarchy',
+    description: 'Heading for usage tab hierarchy section',
   },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',
@@ -210,6 +205,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.container.undo-delete-container-toast-button',
     defaultMessage: 'Undo',
     description: 'Toast message to undo deletion of container',
+  },
+  publishContainerSuccess: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-success',
+    defaultMessage: 'All changes published',
+    description: 'Popup text after publishing a container',
+  },
+  publishContainerFailed: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.publish-failure',
+    defaultMessage: 'Failed to publish changes',
+    description: 'Popup text seen if publishing a container fails',
   },
 });
 

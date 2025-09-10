@@ -8,6 +8,7 @@ export interface Unit {
     brokenLinks: string[];
     lockedLinks: string[];
     externalForbiddenLinks: string[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
   }[];
 }
 
@@ -25,6 +26,24 @@ export interface Section {
 
 export interface LinkCheckResult {
   sections: Section[];
+  courseUpdates?: {
+    id: string;
+    displayName: string;
+    url: string;
+    brokenLinks: string[];
+    lockedLinks: string[];
+    externalForbiddenLinks: string[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
+  }[];
+  customPages?: {
+    id: string;
+    displayName: string;
+    url: string;
+    brokenLinks: string[];
+    lockedLinks: string[];
+    externalForbiddenLinks: string[];
+    previousRunLinks: { originalLink: string; isUpdated: boolean; updatedLink?: string }[];
+  }[];
 }
 
 export interface Filters {

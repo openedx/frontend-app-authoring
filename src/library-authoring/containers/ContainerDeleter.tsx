@@ -3,15 +3,16 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Error, Warning, School } from '@openedx/paragon/icons';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import { ContainerType } from '@src/generic/key-utils';
+import { ContainerHit } from '@src/search-manager';
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+import { LoadingSpinner } from '@src/generic/Loading';
+
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { ToastContext } from '../../generic/toast-context';
 import { useContentFromSearchIndex, useDeleteContainer, useRestoreContainer } from '../data/apiHooks';
 import messages from './messages';
-import { ContainerType } from '../../generic/key-utils';
-import { ContainerHit } from '../../search-manager';
-import { useContainerEntityLinks } from '../../course-libraries/data/apiHooks';
-import { LoadingSpinner } from '../../generic/Loading';
 
 type ContainerDeleterProps = {
   isOpen: boolean,
@@ -37,7 +38,7 @@ const ContainerDeleter = ({
   const {
     data: dataDownstreamLinks,
     isLoading: linksIsLoading,
-  } = useContainerEntityLinks({ upstreamContainerKey: containerId });
+  } = useEntityLinks({ upstreamKey: containerId, contentType: 'containers' });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const messageMap = useMemo(() => {
