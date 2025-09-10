@@ -24,8 +24,9 @@ hooks.Filters.ENV_PATCHES.add_item(
          "mfe-env-config-runtime-definitions-authoring",
          """
         // This file contains configuration for plugins and environment variables.
+        
+        const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
 const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
-const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
 const { default: messages } = await import('./src/schedule-and-details/messages');
 const { Settings, DragHandle, SettingsApplications } = await import('@openedx/paragon/icons');
 const {
@@ -108,16 +109,15 @@ const getPluginSlots = () => {
             },
         ],
     },
-    course_sidebar_plugin_slot: { // Use the standard plugin structure
+    course_sidebar_plugin_slot: {
         plugins: [
             {
-                op: PLUGIN_OPERATIONS.Insert, // Operation to insert the widget
+                op: PLUGIN_OPERATIONS.Insert,
                 widget: {
                     id: 'course-nav-bar',
                     type: DIRECT_PLUGIN,
                     priority: 1,
-                    // Accept and forward all props for dynamic support
-                    RenderWidget: (props) => <CourseNavigationSidebar {...props} />,
+                    RenderWidget: (props) => (<CourseNavigationSidebar {...props} />),
                 },
             },
         ],
@@ -926,7 +926,7 @@ const getPluginSlots = () => {
                     id: "course_import_plugin_slot",
                     type: DIRECT_PLUGIN,
                     priority: 1,
-                    RenderWidget: (props) => 
+                    RenderWidget: (props) => (
                         <>
                             <span className="pages_bar" />
                             <div className="import-stepper-area">
@@ -936,7 +936,7 @@ const getPluginSlots = () => {
                                 </div>
                             </div>  
                         </>
-                    },
+                    ),
             },
         ],
     },
