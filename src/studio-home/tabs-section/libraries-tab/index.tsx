@@ -2,6 +2,7 @@ import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Row } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
@@ -48,7 +49,7 @@ const LibrariesTab = ({
       />
     ) : (
       <>
-        <MigrateLegacyLibrariesAlert />
+        {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
         <div className="courses-tab">
           {sortAlphabeticallyArray(libraries).map(({
             displayName, org, number, url,
