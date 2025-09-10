@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
+  Alert,
   Badge,
   Stack,
   Tab,
@@ -14,7 +15,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
-import LibrariesV2Tab from './libraries-v2-tab/index';
+import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
@@ -101,6 +102,13 @@ const TabsSection = ({
       </Tab>,
     );
 
+    // TODO: update this link when tutorial is ready.
+    const librariesTutorialLink = (
+      <Alert.Link href="https://docs.openedx.org">
+        {intl.formatMessage(messages.librariesV2TabBetaTutorialLinkText)}
+      </Alert.Link>
+    );
+
     if (librariesV2Enabled) {
       tabs.push(
         <Tab
@@ -113,7 +121,15 @@ const TabsSection = ({
             </Stack>
           )}
         >
-          <LibrariesV2Tab />
+          <div>
+            <Alert variant="info">
+              {intl.formatMessage(
+                messages.librariesV2TabBetaText,
+                { link: librariesTutorialLink },
+              )}
+            </Alert>
+            <LibrariesV2List />
+          </div>
         </Tab>,
       );
     }
