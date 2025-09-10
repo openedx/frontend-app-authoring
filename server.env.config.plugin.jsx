@@ -942,12 +942,7 @@ const getPluginSlots = () => {
 }; };
 
 // Load environment variables from .env file
-const config = {
-    ...process.env,
-    get pluginSlots() {
-        return getPluginSlots();
-    }
-};
+config.pluginSlots = getPluginSlots();
 
 {% endraw %}
 
