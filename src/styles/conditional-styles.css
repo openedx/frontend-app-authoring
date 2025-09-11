@@ -1,0 +1,10 @@
+/* Conditional styles - only apply in new UI */
+
+/* Simple class-based UI mode switching */
+.old-ui {
+  /* Old UI mode - no custom styles loaded */
+}
+
+.new-ui {
+  /* New UI mode - custom styles dynamically loaded */
+}

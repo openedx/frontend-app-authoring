@@ -352,14 +352,17 @@ const CustomScheduleAndDetails = (props) => {
   }, [courseId, dispatch, editedValues]);
 
   const requiredFieldsPresent = Boolean(
-    editedValues?.shortDescription
-      && editedValues?.description
-      && editedValues?.startDate
-      && editedValues?.endDate
-      && editedValues?.language,
+    editedValues?.startDate && editedValues?.shortDescription,
   );
 
-  const hasErrors = !!Object.keys(errorFields || {}).length;
+  // Check for errors, but ignore enrollmentEnd errors if endDate is valid
+  const hasEndDateError = !!(errorFields?.endDate || errors?.endDate);
+  const hasEnrollmentEndError = !!(errorFields?.enrollmentEnd || errors?.enrollmentEnd);
+  const otherErrors = Object.keys(errorFields || {}).filter(key => key !== 'enrollmentEnd').length > 0
+    || Object.keys(errors || {}).filter(key => key !== 'enrollmentEnd').length > 0;
+
+  // Only consider enrollmentEnd error if endDate also has an error
+  const hasErrors = otherErrors || hasEndDateError || (hasEnrollmentEndError && hasEndDateError);
   const hasImageErrors = Object.values(imageErrors).some(
     (error) => error !== '',
   );
@@ -385,19 +388,34 @@ const CustomScheduleAndDetails = (props) => {
 
   useEffect(() => {
     if (showSuccessfulAlert && !isQueryPending && hasAttemptedSave) {
-      window.scrollTo(0, 0);
+      // Small delay to ensure the alert is rendered
       setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          const alertElement = document.querySelector('.alert-container');
-          if (alertElement) {
-            alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 100);
-      }, 300);
+        // Find the scrollable container (.main-content)
+        const scrollContainer = document.querySelector('.main-content');
+        if (scrollContainer) {
+          // Scroll the container to top
+          scrollContainer.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          // Fallback to window scroll
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   }, [showSuccessfulAlert, isQueryPending, hasAttemptedSave]);
+
+  // console.log('errors', errors);
+  console.log('errorFields', errorFields);
+  console.log('hasErrors', hasErrors);
+  console.log('hasImageErrors', hasImageErrors);
+  console.log('requiredFieldsPresent', requiredFieldsPresent);
+  console.log('isEditableState', isEditableState);
+  console.log('isImageUploading', isImageUploading);
 
   return (
     <>
@@ -516,7 +534,7 @@ const CustomScheduleAndDetails = (props) => {
               onClick={handleSaveChanges}
               disabled={
                 hasErrors
-                || requiredFieldsPresent
+                || !requiredFieldsPresent
                 || !isEditableState
                 || isImageUploading
                 || hasImageErrors

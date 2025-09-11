@@ -4,16 +4,16 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import {
   Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+  Outlet,
 } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -45,19 +45,38 @@ import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
 // import './styles/global-overrides.scss';
-import 'titaned-lib/dist/index.css';
-import './styles/styles-overrides.scss';
+
+// Import conditional styles CSS only
+import './styles/conditional-styles.css';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
+
 import  Calendar  from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
+
+// Load styles only for new UI
+const loadStylesForNewUI = () => {
+  const isOldUI = localStorage.getItem('oldUI') === 'true';
+  document.body.className = isOldUI ? 'old-ui' : 'new-ui';
+
+  if (!isOldUI) {
+    import('titaned-lib/dist/index.css');
+    import('./styles/styles-overrides.scss');
+  }
+};
 
 const queryClient = new QueryClient();
 
 registerFontAwesomeIcons();
 
 const App = () => {
+  const [oldUI, setOldUI] = useState(() => localStorage.getItem('oldUI'));
+  console.log('oldUI in Index', oldUI);
+
   useEffect(() => {
+    // Load styles based on UI mode
+    loadStylesForNewUI();
+
     if (process.env.HOTJAR_APP_ID) {
       try {
         initializeHotjar({
@@ -69,12 +88,34 @@ const App = () => {
         logError(error);
       }
     }
+  }, [oldUI]); // Add oldUI as dependency
+
+  // Listen for storage changes to detect oldUI changes
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'oldUI') {
+        setOldUI(e.newValue);
+      }
+    };
+
+    // Listen for custom events that might be triggered when UI mode changes
+    const handleUIModeChange = () => {
+      setOldUI(localStorage.getItem('oldUI'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('uiModeChanged', handleUIModeChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('uiModeChanged', handleUIModeChange);
+    };
   }, []);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route element={<Layout />}>
-        <Route path="/home" element={<Dashboard />} />
+      <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
+        <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
         {/* <Route path="/home" element={<StudioHome />} /> */}
         <Route path="/widgets-create" element={<CreateWidgets />} />
         <Route path="/my-courses" element={<MyCourses />} />

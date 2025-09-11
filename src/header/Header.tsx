@@ -82,6 +82,31 @@ const Header = ({
           onClose={closeSearchModal}
         />
       )}
+      <button
+        onClick={() => {
+          localStorage.setItem('oldUI', 'false');
+          window.dispatchEvent(new CustomEvent('uiModeChanged'));
+          window.location.reload();
+        }}
+        style={{
+          position: 'fixed',
+          top: '0.4rem',
+          borderRadius: '12px',
+          right: '20rem',
+          zIndex: 9999,
+          backgroundColor: '#1E90FF',
+          color: 'white',
+          padding: '10px',
+          textAlign: 'center',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          width: 'fit-content',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        Switch to New UI
+      </button>
     </>
   );
 };

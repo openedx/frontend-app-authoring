@@ -45,13 +45,36 @@ import { SearchContextProvider } from './search-manager';
 
 // API to fetch sidebar items
 const fetchNavigationItems = async () => {
-  const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+  try {
+    const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+    // const response = await getAuthenticatedHttpClient().get(
+    //   'https://staging.titaned.com/titaned/api/v1/menu-config/'
+    // );
 
-  if (response.status !== 200) {
-    throw new Error('Failed to fetch Navigation Items');
+    // https://staging.titaned.com
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch Navigation Items');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.warn('Failed to fetch navigation items, using defaults:', error);
+    // Return default values when API fails
+    return {
+      allow_to_create_new_course: false,
+      show_class_planner: false,
+      show_insights_and_reports: false,
+      assistant_is_enabled: false,
+      resources_is_enabled: false,
+      enable_search_in_header: false,
+      enabled_re_sync: false,
+      enable_switch_to_learner: false,
+      enable_help_center: false,
+      language_selector_is_enabled: false,
+      notification_is_enabled: false,
+      enabled_languages: [],
+    };
   }
-
-  return response.data;
 };
 
 const Layout = () => {
@@ -86,6 +109,8 @@ const Layout = () => {
   ]);
   const [loadingSidebar, setLoadingSidebar] = useState(true);
   const [headerButtons, setHeaderButtons] = useState({});
+  const [languageSelectorList, setLanguageSelectorList] = useState([]);
+  const [isSearchEnabled, setIsSearchEnabled] = useState(false);
 
   // const DefaultIcon = ParagonIcons.Home;
 
@@ -111,6 +136,8 @@ const Layout = () => {
     const fetchMenu = async () => {
       try {
         const menuConfig = await fetchNavigationItems();
+
+        setIsSearchEnabled(menuConfig.enable_search_in_header);
 
         if (isMounted && menuConfig) {
           // Define all sidebar items with their visibility conditions
@@ -143,7 +170,7 @@ const Layout = () => {
               label: intl.formatMessage(messages.sidebarCalendarTitle),
               path: '/calendar',
               icon: <ParagonIcons.Calendar />,
-              isVisible: true, // Always visible
+              isVisible: menuConfig.enable_calendar || false,
             },
             {
               label: intl.formatMessage(messages.sidebarClassPlannerTitle),
@@ -181,6 +208,12 @@ const Layout = () => {
               icon: <ParagonIcons.Assignment />,
               isVisible: menuConfig.enable_assignments || false, 
             },
+            {
+              label: 'Switch to Old View',
+              path: 'switch-to-old-view',
+              icon: <ParagonIcons.FolderShared />,
+              isVisible: true,
+            },
           ];
 
           // Filter visible items and remove the isVisible property
@@ -191,14 +224,18 @@ const Layout = () => {
           setSidebarItems(visibleSidebarItems);
 
           const headerButtonsConfig = {
-            reSync: true,
-            contextSwitcher: true,
-            help: true,
+            reSync: menuConfig.enabled_re_sync || false,
+            contextSwitcher: menuConfig.enable_switch_to_learner || false,
+            help: menuConfig.enable_help_center || false,
             translation: menuConfig.language_selector_is_enabled || false,
             notification: menuConfig.notification_is_enabled || false,
           };
 
           setHeaderButtons(headerButtonsConfig);
+
+          if (menuConfig.enabled_languages) {
+            setLanguageSelectorList(menuConfig.enabled_languages);
+          }
         }
       } catch (error) {
         // Fallback to always-visible items when API fails
@@ -287,6 +324,8 @@ const Layout = () => {
         };
 
         setHeaderButtons(fallbackHeaderButtonsConfig);
+
+        setLanguageSelectorList([]);
       } finally {
         setLoadingSidebar(false);
       }
@@ -300,7 +339,12 @@ const Layout = () => {
   }, []);
 
   const handleNavigate = (path) => {
-    navigate(path);
+    if (path === 'switch-to-old-view') {
+      localStorage.setItem('oldUI', 'true');
+      window.location.href = '/authoring/home';
+    } else {
+      navigate(path);
+    }
   };
 
   // useEffect(() => {
@@ -430,8 +474,9 @@ const Layout = () => {
   console.log('meiliSearchConfig', meiliSearchConfig);
   console.log('client', client);
 
-  // Don't render SearchContextProvider if MeiliSearch is not ready
-  if (!client || !indexName) {
+
+  // Don't render SearchContextProvider if MeiliSearch is not ready and search is enabled
+  if (isSearchEnabled && (!client || !indexName)) {
     console.log('MeiliSearch not ready, rendering without SearchContextProvider');
     return (
       <div className="app-container">
@@ -440,61 +485,68 @@ const Layout = () => {
     );
   }
 
-  return (
-    <SearchContextProvider>
-      <div className="app-container">
-        {/* <p>This is header</p> */}
-        <SidebarProvider>
-          <div className="header-container">
-            <MainHeader
-              logoUrl={config.LOGO_URL}
-              // menuAlignment={headerData.menu.align}
-              // menuList={headerData.menu.menuList}
-              // loginSignupButtons={headerData.menu.loginSignupButtons}
-              authenticatedUser={authenticatedUser}
-              userMenuItems={userMenuItems}
-              onLanguageChange={handleLanguageChange}
-              getBaseUrl={() => '/authoring'}
-              headerButtons={headerButtons}
-              meiliSearchConfig={meiliSearchConfig}
-              // onSearchResults={(results) => {
-              //   console.log('Search results:', results);
-              // }}
+  const renderContent = () => (
+    <div className="app-container">
+      {/* <p>This is header</p> */}
+      <SidebarProvider>
+        <div className="header-container">
+          <MainHeader
+            logoUrl={config.LOGO_URL}
+            // menuAlignment={headerData.menu.align}
+            // menuList={headerData.menu.menuList}
+            // loginSignupButtons={headerData.menu.loginSignupButtons}
+            authenticatedUser={authenticatedUser}
+            userMenuItems={userMenuItems}
+            onLanguageChange={handleLanguageChange}
+            getBaseUrl={() => '/authoring'}
+            headerButtons={headerButtons}
+            meiliSearchConfig={isSearchEnabled ? meiliSearchConfig : null}
+            languageSelectorList={languageSelectorList}
+            // onSearchResults={(results) => {
+            //   console.log('Search results:', results);
+            // }}
+          />
+        </div>
+        {/* Sidebar and Main Content */}
+        <div className="content-wrapper">
+          <div className="sidebar-container">
+            {loadingSidebar ? (
+              <div>Loading menu...</div>
+            ) : (
+              <Sidebar
+                buttons={sidebarItems}
+                onNavigate={handleNavigate}
+                presentPath={presentPath}
+              />
+            )}
+          </div>
+          <div className="main-content">
+            <div className="page-content">
+              <Outlet />
+            </div>
+          </div>
+        </div>
+        {/* <div>
+          <div className="footer-container">
+            <Footer
+              contactInfo={contactInfo}
+              quickLinks={quickLinks}
+              exploreLinks={exploreLinks}
+              logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
+              copyrights="Copyright © 2025 All Rights Reserved by TitanEd"
             />
           </div>
-          {/* Sidebar and Main Content */}
-          <div className="content-wrapper">
-            <div className="sidebar-container">
-              {loadingSidebar ? (
-                <div>Loading menu...</div>
-              ) : (
-                <Sidebar
-                  buttons={sidebarItems}
-                  onNavigate={handleNavigate}
-                  presentPath={presentPath}
-                />
-              )}
-            </div>
-            <div className="main-content">
-              <div className="page-content">
-                <Outlet />
-              </div>
-            </div>
-          </div>
-          {/* <div>
-            <div className="footer-container">
-              <Footer
-                contactInfo={contactInfo}
-                quickLinks={quickLinks}
-                exploreLinks={exploreLinks}
-                logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
-                copyrights="Copyright © 2025 All Rights Reserved by TitanEd"
-              />
-            </div>
-          </div> */}
-        </SidebarProvider>
-      </div>
+        </div> */}
+      </SidebarProvider>
+    </div>
+  );
+
+  return isSearchEnabled ? (
+    <SearchContextProvider>
+      {renderContent()}
     </SearchContextProvider>
+  ) : (
+    renderContent()
   );
 };
 export default Layout;

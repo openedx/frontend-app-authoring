@@ -14,7 +14,7 @@ const CustomTaxonomyListPage = ({
   taxonomyListData,
   isLoaded,
 }) => (
-  <div className="custom-taxonomy-list-page-container">
+  <Container className="custom-taxonomy-list-page-container">
     <Helmet>
       <title>{getPageHeadTitle('', intl.formatMessage(messages.headerTitle))}</title>
     </Helmet>
@@ -26,7 +26,7 @@ const CustomTaxonomyListPage = ({
       </div>
     </div>
     <div className="custom-taxonomy-list-page-content">
-      <Container className="custom-taxonomy-list-page-content-container">
+      <div className="custom-taxonomy-list-page-content-container">
         {isLoaded && taxonomyListData && (
           <DataTable
             disableElevation
@@ -71,9 +71,9 @@ const CustomTaxonomyListPage = ({
             />
           </Container>
         )}
-      </Container>
+      </div>
     </div>
-  </div>
+  </Container>
 );
 
 export default CustomTaxonomyListPage;
