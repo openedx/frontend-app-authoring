@@ -319,8 +319,8 @@ const PSCourseForm = ({
       self_paced: formData.coursePacing === 'self',
       effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
-      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
-      entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '',
+      entrance_exam_enabled: formData.isEntranceExamsEnabled ? 'true' : 'false',
+      entrance_exam_minimum_score_pct: formData.entranceExamMinimumScorePct?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
       amount: formData.pricingModel === 'paid' ? formData.price : '',
@@ -1092,11 +1092,11 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={editedValues.requireEntranceExam !== undefined ? !!editedValues.requireEntranceExam : !!courseSettings.isEntranceExamsEnabled}
-                                    onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
+                                    checked={!!courseSettings.isEntranceExamsEnabled}
+                                    onChange={(e) => handleInputChange('isEntranceExamsEnabled', e.target.checked)}
                                   />
                                 </div>
-                                {editedValues.requireEntranceExam && (
+                                {courseSettings.isEntranceExamsEnabled && (
                                 <div className="entrance-exam-content p-1">
                                   <div className="form-group-custom">
                                     <Form.Label>Grade requirements</Form.Label>
@@ -1106,9 +1106,9 @@ const PSCourseForm = ({
                                         min={0}
                                         max={100}
                                         className=""
-                                        value={editedValues.entranceExamGradeRequired || 50}
-                                        onChange={(e) => handleInputChange('entranceExamGradeRequired', e.target.value)}
-                                        onBlur={() => handleBlur('entranceExamGradeRequired')}
+                                        value={editedValues.entranceExamMinimumScorePct || 40}
+                                        onChange={(e) => handleInputChange('entranceExamMinimumScorePct', e.target.value)}
+                                        onBlur={() => handleBlur('entranceExamMinimumScorePct')}
                                       />
                                       <span className="pgn__form-control-trailing">%</span>
                                     </div>
