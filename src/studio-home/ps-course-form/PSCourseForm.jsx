@@ -319,7 +319,7 @@ const PSCourseForm = ({
       self_paced: formData.coursePacing === 'self',
       effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
-      entrance_exam_enabled: formData.isEntranceExamsEnabled ? 'true' : 'false',
+      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
       entrance_exam_minimum_score_pct: formData.entranceExamMinimumScorePct?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
@@ -1092,11 +1092,11 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={!!courseSettings.isEntranceExamsEnabled}
-                                    onChange={(e) => handleInputChange('isEntranceExamsEnabled', e.target.checked)}
+                                    checked={editedValues.requireEntranceExam !== undefined ? !!editedValues.requireEntranceExam : !!courseSettings.isEntranceExamsEnabled}
+                                    onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
                                   />
                                 </div>
-                                {courseSettings.isEntranceExamsEnabled && (
+                                {(editedValues.requireEntranceExam || (editedValues.requireEntranceExam === undefined && courseSettings.isEntranceExamsEnabled)) && (
                                 <div className="entrance-exam-content p-1">
                                   <div className="form-group-custom">
                                     <Form.Label>Grade requirements</Form.Label>

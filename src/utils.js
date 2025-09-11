@@ -101,15 +101,15 @@ export function parseArrayOrObjectValues(obj) {
  * @returns {string} - the correct internal route path
  */
 export const createCorrectInternalRoute = (checkPath) => {
-  let basePath = getPath(getConfig().PUBLIC_PATH);
+  // let basePath = getPath(getConfig().PUBLIC_PATH);
 
-  if (basePath.endsWith('/')) {
-    basePath = basePath.slice(0, -1);
-  }
+  // if (basePath.endsWith('/')) {
+  //   basePath = basePath.slice(0, -1);
+  // }
 
-  if (!checkPath.startsWith(basePath)) {
-    return `${basePath}${checkPath}`;
-  }
+  // if (!checkPath.startsWith(basePath)) {
+  //   return `${basePath}${checkPath}`;
+  // }
 
   return checkPath;
 };
