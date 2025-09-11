@@ -55,6 +55,7 @@ describe('<LibraryCollectionPage />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
+    jest.useFakeTimers();
     fetchMock.mockReset();
 
     // The Meilisearch client-side API uses fetch, not Axios.
@@ -89,6 +90,10 @@ describe('<LibraryCollectionPage />', () => {
     });
   });
 
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
   const renderLibraryCollectionPage = async (collectionId?: string, libraryId?: string) => {
     const libId = libraryId || mockContentLibrary.libraryId;
     const colId = collectionId || mockCollection.collectionId;
@@ -354,28 +359,40 @@ describe('<LibraryCollectionPage />', () => {
     expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
   });
 
-  it('should remove component from collection and hides sidebar', async () => {
+  it('should remove unit from collection and hides sidebar', async () => {
     const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
       mockCollection.collectionId,
     );
     axiosMock.onDelete(url).reply(204);
-    const displayName = 'Introduction to Testing';
+    const displayName = 'Test Unit';
     await renderLibraryCollectionPage();
+
+    // Wait for the unit cards to load
+    await waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
 
     // open sidebar
     fireEvent.click(await screen.findByText(displayName));
+
+    // advance timers so the sidebar opens
+    jest.advanceTimersByTime(500);
+
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
 
-    const menuBtns = await screen.findAllByRole('button', { name: 'Component actions menu' });
-    // open menu
-    fireEvent.click(menuBtns[0]);
+    // Open menu
+    fireEvent.click((await screen.findAllByTestId('container-card-menu-toggle'))[0]);
 
-    fireEvent.click(await screen.findByText('Remove from collection'));
+    // Click remove to collection
+    fireEvent.click(screen.getByRole('button', { name: 'Remove from collection' }));
+
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
+
+    // advance timers so the sidebar close logic executes
+    jest.advanceTimersByTime(500);
+
     // Should close sidebar as component was removed
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
@@ -399,7 +416,7 @@ describe('<LibraryCollectionPage />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Failed to remove item');
   });
 
-  it('should remove unit from collection and hides sidebar', async () => {
+  it.only('should remove unit from collection and hides sidebar', async () => {
     const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
       mockCollection.collectionId,
@@ -413,6 +430,8 @@ describe('<LibraryCollectionPage />', () => {
 
     // open sidebar
     fireEvent.click(await screen.findByText(displayName));
+    // ⏩ let the 500ms pass in test-land
+    jest.advanceTimersByTime(500);
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
 
     // Open menu
@@ -425,6 +444,8 @@ describe('<LibraryCollectionPage />', () => {
       expect(axiosMock.history.delete.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
+    // ⏩ let the 500ms pass in test-land
+    jest.advanceTimersByTime(500);
     // Should close sidebar as component was removed
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });

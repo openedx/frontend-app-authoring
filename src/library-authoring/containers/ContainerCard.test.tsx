@@ -251,6 +251,27 @@ describe('<ContainerCard />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Failed to delete unit');
   });
 
+  it('should clear click timer on unmount to avoid running sidebar open after unmount', () => {
+    jest.useFakeTimers();
+    const container = getContainerHitSample();
+    const { unmount } = render(<ContainerCard hit={container} />);
+
+    // Single click -> starts the setTimeout
+    fireEvent.click(screen.getByText('unit Display Formated Name'));
+
+    // Unmount before the timeout fires
+    unmount();
+
+    // Fast-forward timers
+    jest.advanceTimersByTime(500);
+
+    // Expect nothing got called after unmount
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockShowToast).not.toHaveBeenCalled();
+
+    jest.useRealTimers();
+  });
+
   it('should render no child blocks in unit card preview', async () => {
     render(<ContainerCard hit={getContainerHitSample()} />);
 
