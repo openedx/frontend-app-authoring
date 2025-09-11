@@ -79,10 +79,15 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.container(containerId),
     'children',
   ],
-  containerHierarchy: (containerId: string) => [
-    ...libraryAuthoringQueryKeys.container(containerId),
-    'hierarchy',
-  ],
+  containerHierarchy: (containerId?: string) => {
+    if (containerId) {
+      return [
+        'hierarchy',
+        ...libraryAuthoringQueryKeys.container(containerId),
+      ];
+    }
+    return ['hierarchy'];
+  },
 };
 
 export const xblockQueryKeys = {
@@ -106,6 +111,15 @@ export const xblockQueryKeys = {
    * introspecting the usage keys.
    */
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
+  componentHierarchy: (usageKey?: string) => {
+    if (usageKey) {
+      return [
+        'hierarchy',
+        ...xblockQueryKeys.xblock(usageKey),
+      ];
+    }
+    return ['hierarchy'];
+  },
 };
 
 /**
@@ -435,6 +449,24 @@ export const usePublishComponent = (usageKey: string) => {
   });
 };
 
+/** Get the full hierarchy of the given library item (component/container) */
+export const useLibraryItemHierarchy = (key: string) => {
+  let queryKey: (string | undefined)[];
+  let queryFn: () => Promise<api.ItemHierarchyData>;
+  if (key.startsWith('lb:')) {
+    queryKey = xblockQueryKeys.componentHierarchy(key);
+    queryFn = () => api.getBlockHierarchy(key);
+  } else {
+    queryKey = libraryAuthoringQueryKeys.containerHierarchy(key!);
+    queryFn = () => api.getLibraryContainerHierarchy(key!);
+  }
+  return useQuery({
+    queryKey,
+    queryFn,
+    enabled: !!key,
+  });
+};
+
 /** Get the list of assets (static files) attached to a library component */
 export const useXBlockAssets = (usageKey: string) => (
   useQuery({
@@ -731,17 +763,6 @@ export const useContainerChildren = (containerId?: string, published: boolean = 
 );
 
 /**
- * Get the metadata and hierarchy for a container in a library
- */
-export const useContainerHierarchy = (containerId?: string) => (
-  useQuery({
-    enabled: !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId!),
-    queryFn: () => api.getLibraryContainerHierarchy(containerId!),
-  })
-);
-
-/**
  * If you work with `useContentFromSearchIndex`, you can use this
  * function to get the query key, usually to invalidate the query.
  */
@@ -786,18 +807,14 @@ export const useAddItemsToContainer = (containerId?: string) => {
       // container list.
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
 
-      const containerType = getBlockType(containerId);
-      if (['subsection', 'section'].includes(containerType)) {
-        // If the container is a subsection or section, we invalidate the
-        // children query to update the hierarchy.
-        variables.forEach((itemId) => {
-          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
-        });
-      }
+      // Invalidate all hierarchies to update grandparents and grandchildren
+      // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
 
+      const containerType = getBlockType(containerId);
       if (containerType === 'section') {
         // We invalidate the search query of the each itemId if the container is a section.
         // This because the subsection page calls this query individually.
@@ -863,7 +880,7 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       }
       return api.removeLibraryContainerChildren(containerId, itemIds);
     },
-    onSettled: (_data, _error, variables) => {
+    onSettled: () => {
       if (!containerId) {
         return;
       }
@@ -873,14 +890,10 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
 
-      const containerType = getBlockType(containerId);
-      if (['subsection', 'section'].includes(containerType)) {
-        // If the container is a subsection or section, we invalidate the
-        // children query to update the hierarchy.
-        variables.forEach((itemId) => {
-          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(itemId) });
-        });
-      }
+      // Invalidate all hierarchies to update grandparents and grandchildren
+      // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
     },
   });
 };

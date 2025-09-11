@@ -7,16 +7,18 @@ import classNames from 'classnames';
 import {
   useCallback, useContext, useEffect, useState,
 } from 'react';
-import { blockTypes } from '../../editors/data/constants/app';
-import DraggableList, { SortableItem } from '../../generic/DraggableList';
+import { blockTypes } from '@src/editors/data/constants/app';
+import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 
-import ErrorAlert from '../../generic/alert-error';
-import { getItemIcon } from '../../generic/block-type-utils';
-import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
-import Loading from '../../generic/Loading';
-import TagCount from '../../generic/tag-count';
+import ErrorAlert from '@src/generic/alert-error';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
+import Loading from '@src/generic/Loading';
+import TagCount from '@src/generic/tag-count';
+import { ToastContext } from '@src/generic/toast-context';
+import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
@@ -28,9 +30,7 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { useRunOnNextRender } from '../../utils';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -91,9 +91,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       <Stack
         direction="horizontal"
         gap={2}
-        className="font-weight-bold"
-        // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="font-weight-bold stop-event-propagation"
       >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
@@ -106,8 +104,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       <Stack
         direction="horizontal"
         gap={3}
-        // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         {!showOnlyPublished && block.hasUnpublishedChanges && (
           <Badge
@@ -185,7 +182,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={(e) => handleComponentSelection(e.detail)}
+        onClick={(e) => skipIfUnwantedTarget(e, (event) => handleComponentSelection(event.detail))}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleComponentSelection(e.detail);

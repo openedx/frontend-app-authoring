@@ -7,11 +7,12 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import ComponentCount from '@src/generic/component-count';
+import TagCount from '@src/generic/tag-count';
+import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
+import { skipIfUnwantedTarget } from '@src/utils';
 import messages from './messages';
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import ComponentCount from '../../generic/component-count';
-import TagCount from '../../generic/tag-count';
-import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseCardProps = {
   itemType: string;
@@ -52,7 +53,7 @@ const BaseCard = ({
     <Container className="library-item-card selected">
       <Card
         isClickable
-        onClick={onSelect}
+        onClick={(e: React.MouseEvent) => skipIfUnwantedTarget(e, onSelect)}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
             onSelect();
@@ -65,12 +66,13 @@ const BaseCard = ({
           title={
             <Icon src={itemIcon} className="library-item-header-icon" />
           }
-          actions={
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
-            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-            jsx-a11y/no-static-element-interactions */
-            <div onClick={(e) => e.stopPropagation()}>{actions}</div>
-          }
+          actions={(
+            <div
+              // Prevent card being clicked when actions menu are clicked
+              className="stop-event-propagation"
+            >{actions}
+            </div>
+          )}
         />
         <Card.Body className="w-100">
           <Card.Section>

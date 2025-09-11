@@ -16,6 +16,11 @@ export const messages = defineMessages({
     defaultMessage: 'Failed to update children order',
     description: 'Toast message displayed when reordering of children items in container fails',
   },
+  draftChipText: {
+    id: 'course-authoring.library-authoring.container-component.draft-chip.text',
+    defaultMessage: 'Draft',
+    description: 'Chip in children in section and subsection page that is shown when children has unpublished changes',
+  },
 });
 
 export const sectionMessages = defineMessages({

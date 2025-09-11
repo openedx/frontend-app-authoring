@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
@@ -6,6 +6,8 @@ import { snakeCase } from 'lodash/string';
 import moment from 'moment';
 import { getConfig, getPath } from '@edx/frontend-platform';
 
+import type { Dispatch, AnyAction } from 'redux';
+import type { TypeOfShape } from 'yup/lib/object';
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
@@ -15,7 +17,11 @@ import {
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
 
-export const executeThunk = async (thunk, dispatch, getState) => {
+export const executeThunk = async (
+  thunk: (dispatch: any, state?: any) => Promise<any>,
+  dispatch: Dispatch<AnyAction>,
+  getState?: any,
+) => {
   await thunk(dispatch, getState);
   await new Promise(setImmediate);
 };
@@ -28,7 +34,7 @@ export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
 }
 
-export function convertObjectToSnakeCase(obj, unpacked = false) {
+export function convertObjectToSnakeCase(obj: Object, unpacked = false) {
   return Object.keys(obj).reduce((snakeCaseObj, key) => {
     const snakeCaseKey = snakeCase(key);
     const value = unpacked ? obj[key] : { value: obj[key] };
@@ -39,7 +45,7 @@ export function convertObjectToSnakeCase(obj, unpacked = false) {
   }, {});
 }
 
-export function deepConvertingKeysToCamelCase(obj) {
+export function deepConvertingKeysToCamelCase(obj: any[] | Object | null) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
@@ -50,13 +56,13 @@ export function deepConvertingKeysToCamelCase(obj) {
 
   const camelCaseObj = {};
   Object.keys(obj).forEach((key) => {
-    const camelCaseKey = key.replace(/_([a-z])/g, (match, p1) => p1.toUpperCase());
+    const camelCaseKey = key.replace(/_([a-z])/g, (_, p1) => p1.toUpperCase());
     camelCaseObj[camelCaseKey] = deepConvertingKeysToCamelCase(obj[key]);
   });
   return camelCaseObj;
 }
 
-export function deepConvertingKeysToSnakeCase(obj) {
+export function deepConvertingKeysToSnakeCase(obj: any[] | Object | null) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
@@ -73,11 +79,11 @@ export function deepConvertingKeysToSnakeCase(obj) {
   return snakeCaseObj;
 }
 
-export function transformKeysToCamelCase(obj) {
-  return obj.key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+export function transformKeysToCamelCase(obj: { key: any; }) {
+  return obj.key.replace(/_([a-z])/g, (_: any, letter: string) => letter.toUpperCase());
 }
 
-export function parseArrayOrObjectValues(obj) {
+export function parseArrayOrObjectValues(obj: { [s: string]: string; } | ArrayLike<string>) {
   const result = {};
 
   Object.entries(obj).forEach(([key, value]) => {
@@ -97,10 +103,8 @@ export function parseArrayOrObjectValues(obj) {
 
 /**
  * Create a correct inner path depend on config PUBLIC_PATH.
- * @param {string} checkPath - the internal route path that is validated
- * @returns {string} - the correct internal route path
  */
-export const createCorrectInternalRoute = (checkPath) => {
+export const createCorrectInternalRoute = (checkPath: string): string => {
   let basePath = getPath(getConfig().PUBLIC_PATH);
 
   if (basePath.endsWith('/')) {
@@ -114,7 +118,7 @@ export const createCorrectInternalRoute = (checkPath) => {
   return checkPath;
 };
 
-export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
+export function getPagePath(courseId: string | undefined, isMfePageEnabled: string, urlParameter: string) {
   if (isMfePageEnabled === 'true') {
     if (urlParameter === 'tabs') {
       return `/course/${courseId}/pages-and-resources`;
@@ -124,7 +128,7 @@ export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
-export function useAppSetting(settingName) {
+export function useAppSetting(settingName: string) {
   const dispatch = useDispatch();
   const { courseId } = useContext(PagesAndResourcesContext);
   const settingValue = useSelector(getCourseAppSettingValue(settingName));
@@ -138,14 +142,18 @@ export function useAppSetting(settingName) {
     }
   }, [courseId]);
 
-  const saveSetting = async (value) => dispatch(updateCourseAppSetting(courseId, settingName, value));
+  const saveSetting = async (value: any) => dispatch(updateCourseAppSetting(courseId, settingName, value));
   return [settingValue, saveSetting];
 }
 
-export const getLabelById = (options, id) => {
+export const getLabelById = (options: any[], id: any) => {
   const foundOption = options.find((option) => option.id === id);
   return foundOption ? foundOption.label : '';
 };
+
+interface YupTestContextExtended {
+  originalValue?: unknown;
+}
 
 /**
  * Adds additional validation methods to Yup.
@@ -156,9 +164,9 @@ export function setupYupExtensions() {
   // Credit: https://github.com/jquense/yup/issues/345#issuecomment-717400071
   Yup.addMethod(Yup.array, 'uniqueProperty', function uniqueProperty(property, message) {
     return this.test('unique', '', function testUniqueness(list) {
-      const errors = [];
+      const errors: Yup.ValidationError[] = [];
 
-      list.forEach((item, index) => {
+      list?.forEach((item, index) => {
         const propertyValue = item[property];
 
         if (propertyValue && list.filter(entry => entry[property] === propertyValue).length > 1) {
@@ -184,13 +192,15 @@ export function setupYupExtensions() {
       if (!discussionTopic || !discussionTopic[propertyName]) {
         return true;
       }
-      const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
-        .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
+      const isDuplicate = this.parent.filter((topic: TypeOfShape<any>) => topic !== discussionTopic)
+        .some((
+          topic: { [x: string]: string; },
+        ) => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
 
       if (isDuplicate) {
         throw this.createError({
           path: `${this.path}.${propertyName}`,
-          error: message,
+          message,
         });
       }
       return true;
@@ -212,7 +222,7 @@ export function setupYupExtensions() {
 
       const startDateTime = decodeDateTime(this.parent.startDate, startOfDayTime(this.parent.startTime));
       const endDateTime = decodeDateTime(this.parent.endDate, endOfDayTime(this.parent.endTime));
-      let isInvalidStartDateTime;
+      let isInvalidStartDateTime: boolean = false;
 
       if (type === 'date') {
         isInvalidStartDateTime = startDateTime.isAfter(endDateTime);
@@ -223,7 +233,7 @@ export function setupYupExtensions() {
       if (isInvalidStartDateTime) {
         throw this.createError({
           path: `${this.path}`,
-          error: message,
+          message,
         });
       }
       return true;
@@ -232,21 +242,22 @@ export function setupYupExtensions() {
 
   Yup.addMethod(Yup.string, 'checkFormat', function checkFormat(message, type) {
     return this.test('isValidFormat', message, function isValidFormat() {
-      if (!this.originalValue) {
+      const { originalValue } = this as Yup.TestContext & YupTestContextExtended;
+      if (!originalValue) {
         return true;
       }
-      let isValid;
+      let isValid: boolean = false;
 
       if (type === 'date') {
-        isValid = hasValidDateFormat(this.originalValue);
+        isValid = hasValidDateFormat(originalValue);
       } else if (type === 'time') {
-        isValid = hasValidTimeFormat(this.originalValue);
+        isValid = hasValidTimeFormat(originalValue);
       }
 
       if (!isValid) {
         throw this.createError({
           path: `${this.path}`,
-          error: message,
+          message,
         });
       }
       return true;
@@ -254,7 +265,7 @@ export function setupYupExtensions() {
   });
 }
 
-export const convertToDateFromString = (dateStr) => {
+export const convertToDateFromString = (dateStr: string) => {
   /**
    * Convert UTC to local time for react-datepicker
    * Note: react-datepicker has a bug where it only interacts with local time
@@ -265,12 +276,12 @@ export const convertToDateFromString = (dateStr) => {
     return '';
   }
 
-  const stripTimeZone = (stringValue) => stringValue.substring(0, 19);
+  const stripTimeZone = (stringValue: string) => stringValue.substring(0, 19);
 
   return moment(stripTimeZone(String(dateStr))).toDate();
 };
 
-export const convertToStringFromDate = (date) => {
+export const convertToStringFromDate = (date: moment.MomentInput) => {
   /**
    * Convert local time to UTC from react-datepicker
    * Note: react-datepicker has a bug where it only interacts with local time
@@ -284,13 +295,13 @@ export const convertToStringFromDate = (date) => {
   return moment(date).format(DATE_TIME_FORMAT);
 };
 
-export const isValidDate = (date) => {
+export const isValidDate = (date: moment.MomentInput) => {
   const formattedValue = convertToStringFromDate(date).split('T')[0];
 
   return Boolean(formattedValue.length <= 10);
 };
 
-export const getFileSizeToClosestByte = (fileSize) => {
+export const getFileSizeToClosestByte = (fileSize: any) => {
   let divides = 0;
   let size = fileSize;
   while (size > 1000 && divides < 4) {
@@ -306,7 +317,7 @@ export const getFileSizeToClosestByte = (fileSize) => {
 * A generic hook to run callback on next render cycle.
 * @param {} callback - Callback function that needs to be run later
 */
-export const useRunOnNextRender = (callback) => {
+export const useRunOnNextRender = (callback: () => void) => {
   const [scheduled, setScheduled] = useState(false);
 
   useEffect(() => {
@@ -319,4 +330,20 @@ export const useRunOnNextRender = (callback) => {
   }, [scheduled]);
 
   return () => setScheduled(true);
+};
+
+/**
+ * Checks if the click event originated from an element with the stop-event-propagation class.
+ * If so, return without further processing.
+ */
+export const skipIfUnwantedTarget = (
+  e: React.MouseEvent,
+  onClick: (e: React.MouseEvent) => void,
+  selector?: string,
+) => {
+  const target = e.target as HTMLElement;
+  if (target && target.closest(selector || '.stop-event-propagation')) {
+    return;
+  }
+  onClick(e);
 };
