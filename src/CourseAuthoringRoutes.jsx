@@ -81,10 +81,10 @@ const CoursePageLayout = ({
       handleMyCoursesClick();
     }
   };
-  const oldUI = localStorage.getItem('oldUI');
+  // const oldUI = localStorage.getItem('oldUI');
   return (
     <>
-      {!oldUI
+      {localStorage.getItem('oldUI') === 'false'
       && (
       <div className="ca-breadcrumb-bg">
         <div className="ca-breadcrumb-container">

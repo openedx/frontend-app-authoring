@@ -143,6 +143,8 @@ const CustomScheduleAndDetails = (props) => {
     initialValues,
   );
 
+  console.log('courseSettings', courseSettings);
+
   const [cardImageFile, setCardImageFile] = useState(null);
   const [bannerImageFile, setBannerImageFile] = useState(null);
   const [cardImagePreview, setCardImagePreview] = useState('');
@@ -157,6 +159,7 @@ const CustomScheduleAndDetails = (props) => {
 
   const prevCardImageUrl = useRef(editedValues?.courseImageAssetPath);
   const prevBannerImageUrl = useRef(editedValues?.bannerImageAssetPath);
+
 
   const validateField = useCallback(
     (value, field) => {
@@ -461,6 +464,7 @@ const CustomScheduleAndDetails = (props) => {
               imageErrors={imageErrors}
               editedValues={editedValues}
               handleValuesChange={handleValuesChange}
+              courseSettings={courseSettings}
               intl={intl}
               messages={messages}
               touched={touched}
@@ -469,6 +473,7 @@ const CustomScheduleAndDetails = (props) => {
                     props.allowedImageTypes || ['image/jpeg', 'image/png']
                   }
               scheduleSettings
+              possiblePreRequisiteCourses={courseSettings.possiblePreRequisiteCourses}
             >
               <h2 className="title-class">Schedule & Details</h2>
               <hr

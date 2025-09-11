@@ -90,6 +90,7 @@ const PSCourseForm = ({
   onImageValidationErrorChange,
   onResetForm,
   scheduleSettings = false,
+  courseSettings,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -125,9 +126,9 @@ const PSCourseForm = ({
     startTime: null,
     endDate: null,
     endTime: null,
-    enrollmentStartDate: null,
+    enrollmentStart: null,
     enrollmentStartTime: null,
-    enrollmentEndDate: null,
+    enrollmentEnd: null,
     enrollmentEndTime: null,
     pricingModel: 'free',
     price: '',
@@ -301,8 +302,8 @@ const PSCourseForm = ({
       run: formData.courseRun || '',
       start_date: formatDate(formData.startDate),
       end_date: formatDate(formData.endDate),
-      enrollment_start: formatDate(formData.enrollmentStartDate),
-      enrollment_end: formatDate(formData.enrollmentEndDate),
+      enrollment_start: formatDate(formData.enrollmentStart),
+      enrollment_end: formatDate(formData.enrollmentEnd),
       title: formData.title || '',
       description: formData.description || '',
       short_description: formData.shortDescription || '',
@@ -316,7 +317,7 @@ const PSCourseForm = ({
       video_thumbnail_image_name: formData.cardImage?.name || '',
       video_thumbnail_image_asset_path: formData.cardImageAssetPath || '',
       self_paced: formData.coursePacing === 'self',
-      effort: formData.hoursOfEffort || 'None',
+      effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
       entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
       entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '',
@@ -952,18 +953,18 @@ const PSCourseForm = ({
                                           </Form.Label>
                                           <DatepickerControl
                                             type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentStartDate || ''}
+                                            value={editedValues.enrollmentStart || ''}
                                             label={null}
                                             helpText="Enter the date when enrollment will start"
-                                            isInvalid={!!errors.enrollmentStartDate && touched.enrollmentStartDate}
+                                            isInvalid={!!errors.enrollmentStart && touched.enrollmentStart}
                                             controlName="enrollment-start-date"
-                                            onChange={(value) => handleInputChange('enrollmentStartDate', value)}
-                                            onBlur={() => handleBlur('enrollmentStartDate')}
+                                            onChange={(value) => handleInputChange('enrollmentStart', value)}
+                                            onBlur={() => handleBlur('enrollmentStart')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.enrollmentStartDate && touched.enrollmentStartDate && (
+                                          {errors.enrollmentStart && touched.enrollmentStart && (
                                           <Form.Text className="text-danger">
-                                            {errors.enrollmentStartDate}
+                                            {errors.enrollmentStart}
                                           </Form.Text>
                                           )}
                                         </div>
@@ -996,18 +997,18 @@ const PSCourseForm = ({
                                           <Form.Label>Enrollment end date</Form.Label>
                                           <DatepickerControl
                                             type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentEndDate || ''}
+                                            value={editedValues.enrollmentEnd || ''}
                                             label={null}
                                             helpText="Enter the date when enrollment will end"
-                                            isInvalid={!!errors.enrollmentEndDate && touched.enrollmentEndDate}
+                                            isInvalid={!!errors.enrollmentEnd && touched.enrollmentEnd}
                                             controlName="enrollment-end-date"
-                                            onChange={(value) => handleInputChange('enrollmentEndDate', value)}
-                                            onBlur={() => handleBlur('enrollmentEndDate')}
+                                            onChange={(value) => handleInputChange('enrollmentEnd', value)}
+                                            onBlur={() => handleBlur('enrollmentEnd')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.enrollmentEndDate && touched.enrollmentEndDate && (
+                                          {errors.enrollmentEnd && touched.enrollmentEnd && (
                                           <Form.Text className="text-danger">
-                                            {errors.enrollmentEndDate}
+                                            {errors.enrollmentEnd}
                                           </Form.Text>
                                           )}
                                         </div>
@@ -1046,11 +1047,11 @@ const PSCourseForm = ({
                                   <Form.Label>Hours of effort per week</Form.Label>
                                   <Form.Control
                                     type="text"
-                                    name="hoursOfEffort"
-                                    value={editedValues.hoursOfEffort || ''}
-                                    onChange={(e) => handleInputChange('hoursOfEffort', e.target.value)}
-                                    onBlur={() => handleBlur('hoursOfEffort')}
-                                    isInvalid={!!errors.hoursOfEffort && touched.hoursOfEffort}
+                                    name="effort"
+                                    value={editedValues.effort || ''}
+                                    onChange={(e) => handleInputChange('effort', e.target.value)}
+                                    onBlur={() => handleBlur('effort')}
+                                    isInvalid={!!errors.effort && touched.effort}
                                   />
                                   <Form.Text>Time spent on all course work</Form.Text>
                                 </Form.Group>
@@ -1091,7 +1092,7 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={!!editedValues.requireEntranceExam}
+                                    checked={editedValues.requireEntranceExam !== undefined ? !!editedValues.requireEntranceExam : !!courseSettings.isEntranceExamsEnabled}
                                     onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
                                   />
                                 </div>
@@ -1352,6 +1353,7 @@ PSCourseForm.propTypes = {
   onImageValidationErrorChange: PropTypes.func,
   onResetForm: PropTypes.func,
   scheduleSettings: PropTypes.bool,
+  courseSettings: PropTypes.object,
 };
 
 PSCourseForm.defaultProps = {
@@ -1375,6 +1377,7 @@ PSCourseForm.defaultProps = {
   onImageValidationErrorChange: () => { },
   onResetForm: () => { },
   scheduleSettings: false,
+  courseSettings: {},
 };
 
 export default PSCourseForm;

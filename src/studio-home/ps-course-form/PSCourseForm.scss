@@ -599,9 +599,12 @@
     resize: none;
 }
 
-.pgn__form-text-default {
-    font-size: 12px !important;
+.ps-course-form {
+    .pgn__form-text-default {
+        font-size: 12px !important;
+    }
 }
+
 
 .pgn__form-group {
     margin-bottom: 0px !important;
