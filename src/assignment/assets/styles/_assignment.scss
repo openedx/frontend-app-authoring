@@ -97,14 +97,19 @@
       color: var(--primary);
     }
   }
+
+  .pgn__form-control-decorator-group {
+    .pgn__form-control-decorator {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // margin-top: 4px;
+    }
+  }
 }
 
-.pgn__form-control-decorator {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 .date-filter {
   position: relative;
@@ -247,14 +252,14 @@ select {
   }
 
   .date-filter {
-    position: relative; 
+    position: relative;
 
     .date-filter-panel {
       width: 260px;
       position: absolute;
       top: 100%;
       right: 0;
-      left: auto; 
+      left: auto;
     }
   }
 
@@ -289,14 +294,14 @@ select {
   }
 
   .date-filter {
-    position: relative; 
+    position: relative;
 
     .date-filter-panel {
       width: 260px;
       position: absolute;
       top: 100%;
       right: 0;
-      left: auto; 
+      left: auto;
     }
   }
 
@@ -311,9 +316,10 @@ select {
     padding: 4px;
     font-size: 12px;
   }
-  .pagination-row{
+
+  .pagination-row {
     .btn {
-    font-size: 12px;
+      font-size: 12px;
     }
   }
 }
