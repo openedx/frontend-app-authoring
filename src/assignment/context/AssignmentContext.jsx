@@ -1,6 +1,3 @@
-// 
-
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { fetchAssignments } from '../data/assignmentService';
