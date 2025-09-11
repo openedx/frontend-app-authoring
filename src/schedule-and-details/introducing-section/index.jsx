@@ -69,6 +69,9 @@ const IntroducingSection = ({
     />
   );
 
+  const [initialOverview] = React.useState(overview);
+  const [initialSidebar] = React.useState(aboutSidebarHtml);
+
   return (
     <section className="section-container introducing-section">
       {aboutPageEditable && (
@@ -111,6 +114,7 @@ const IntroducingSection = ({
           <Form.Group className="form-group-custom">
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
             <WysiwygEditor
+              initialValue={initialOverview}
               value={overview}
               onChange={(value) => onChange(value, 'overview')}
             />
@@ -120,6 +124,7 @@ const IntroducingSection = ({
             <Form.Group className="form-group-custom">
               <Form.Label>{intl.formatMessage(messages.courseAboutSidebarLabel)}</Form.Label>
               <WysiwygEditor
+                initialValue={initialSidebar}
                 value={aboutSidebarHtml}
                 onChange={(value) => onChange(value, 'aboutSidebarHtml')}
               />
