@@ -81,7 +81,6 @@ const renderComponent = (props?: object) => render(
     onOpenDeleteModal={jest.fn()}
     onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    savingStatus=""
     onEditSubmit={jest.fn()}
     onDuplicateSubmit={jest.fn()}
     getTitleLink={(id) => `/some/${id}`}

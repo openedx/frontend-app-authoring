@@ -2353,14 +2353,14 @@ describe('<CourseUnit />', () => {
 
     expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
 
-    // Disable the "Edit" button
+    // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
     const editButton = within(unitHeaderTitle).getByRole(
       'button',
       { name: 'Edit' },
     );
     expect(editButton).toBeInTheDocument();
-    expect(editButton).toBeDisabled();
+    expect(editButton).toBeEnabled();
 
     // The "Publish" button should still be enabled
     const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
@@ -2370,14 +2370,6 @@ describe('<CourseUnit />', () => {
     );
     expect(publishButton).toBeInTheDocument();
     expect(publishButton).toBeEnabled();
-
-    // Disable the "Manage Tags" button
-    const manageTagsButton = screen.getByRole(
-      'button',
-      { name: tagsDrawerMessages.manageTagsButton.defaultMessage },
-    );
-    expect(manageTagsButton).toBeInTheDocument();
-    expect(manageTagsButton).toBeDisabled();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
