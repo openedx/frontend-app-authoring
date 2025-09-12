@@ -1,4 +1,6 @@
-import { ReactNode, useCallback, useContext } from 'react';
+import {
+  ReactNode, useCallback, useContext, useRef, useEffect,
+} from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -25,6 +27,8 @@ import ContainerRemover from './ContainerRemover';
 import { useRunOnNextRender } from '../../utils';
 import BaseCard from '../components/BaseCard';
 import AddComponentWidget from '../components/AddComponentWidget';
+
+const DOUBLE_CLICK_DELAY = 500; // ms
 
 type ContainerMenuProps = {
   containerKey: string;
@@ -247,6 +251,8 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const {
     blockType: itemType,
     formatted,
@@ -269,18 +275,33 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
 
   const { navigateTo } = useLibraryRoutes();
 
-  const selectContainer = useCallback((e?: React.MouseEvent) => {
-    const doubleClicked = (e?.detail || 0) > 1;
-    if (componentPickerMode) {
-      // In component picker mode, we want to open the sidebar
-      // without changing the URL
-      openContainerInfoSidebar(containerKey);
-    } else if (!doubleClicked) {
-      openItemSidebar(containerKey, SidebarBodyItemId.ContainerInfo);
-    } else {
-      navigateTo({ containerId: containerKey });
+  const selectContainer = useCallback(
+    () => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+
+        navigateTo({ containerId: containerKey });
+      } else {
+        clickTimerRef.current = setTimeout(() => {
+          clickTimerRef.current = null;
+
+          if (componentPickerMode) {
+            openContainerInfoSidebar(containerKey);
+          } else {
+            openItemSidebar(containerKey, SidebarBodyItemId.ContainerInfo);
+          }
+        }, DOUBLE_CLICK_DELAY);
+      }
+    },
+    [containerKey, componentPickerMode, openContainerInfoSidebar, openItemSidebar, navigateTo],
+  );
+
+  useEffect(() => () => {
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
     }
-  }, [containerKey, openContainerInfoSidebar, openItemSidebar, navigateTo]);
+  }, []);
 
   return (
     <BaseCard
