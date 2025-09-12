@@ -170,7 +170,7 @@ const Layout = () => {
               label: intl.formatMessage(messages.sidebarCalendarTitle),
               path: '/calendar',
               icon: <ParagonIcons.Calendar />,
-              isVisible: menuConfig.enable_calendar || false,
+              isVisible: true,   //menuConfig.enable_calendar || false,
             },
             {
               label: intl.formatMessage(messages.sidebarClassPlannerTitle),
