@@ -319,7 +319,7 @@ const PSCourseForm = ({
       self_paced: formData.coursePacing === 'self',
       effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
-      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
+      entrance_exam_enabled: formData.entranceExamEnabled || 'false',
       entrance_exam_minimum_score_pct: formData.entranceExamMinimumScorePct?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
@@ -346,6 +346,7 @@ const PSCourseForm = ({
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
       const response = await getAuthenticatedHttpClient().post(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
+      // const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to create course. Please try again.');
@@ -537,10 +538,14 @@ const PSCourseForm = ({
     // Validate Course Number field
     if (!editedValues.courseNumber || !editedValues.courseNumber.trim()) {
       newErrors.courseNumber = 'Course Number is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseNumber.trim())) {
+      newErrors.courseNumber = 'Course Number can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course Run field
     if (!editedValues.courseRun || !editedValues.courseRun.trim()) {
       newErrors.courseRun = 'Course Run is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseRun.trim())) {
+      newErrors.courseRun = 'Course Run can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course start date field
     if (!editedValues.startDate) {
@@ -1092,11 +1097,11 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={editedValues.requireEntranceExam !== undefined ? !!editedValues.requireEntranceExam : !!courseSettings.isEntranceExamsEnabled}
-                                    onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
+                                    checked={editedValues.entranceExamEnabled === 'true'}
+                                    onChange={(e) => handleInputChange('entranceExamEnabled', e.target.checked ? 'true' : 'false')}
                                   />
                                 </div>
-                                {(editedValues.requireEntranceExam || (editedValues.requireEntranceExam === undefined && courseSettings.isEntranceExamsEnabled)) && (
+                                {editedValues.entranceExamEnabled === 'true' && (
                                 <div className="entrance-exam-content p-1">
                                   <div className="form-group-custom">
                                     <Form.Label>Grade requirements</Form.Label>
