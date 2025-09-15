@@ -92,85 +92,52 @@
         }
       },
       {
-        "id": "overview-widget-2",
+        "id": 3,
+        "title": "Enrollments vs. Completions by Course",
         "type": "chart",
-        "order": 4,
         "position": "right",
         "enabled": true,
-        "title": "Overview 2",
+        "order": 3,
         "content": {
-          "chartType": "bar",
-          "referenceLabels": [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
-          ],
+          "chartType": "horizontalbar",
           "data": [
             {
-              "label": "Course 1",
+              "label": "Completed",
               "value": [
+                0,
+                0,
                 1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12
+                0,
+                0,
+                0,
+                1
               ]
             },
             {
-              "label": "Course 2",
+              "label": "Enrollments",
               "value": [
                 2,
                 4,
-                6,
-                8,
-                10,
-                12,
-                14,
-                16,
-                18,
-                20,
-                22,
-                24
-              ]
-            },
-            {
-              "label": "Course 3",
-              "value": [
                 3,
-                6,
-                9,
-                12,
-                15,
-                18,
-                21,
-                24,
-                27,
-                30,
-                33,
+                4,
+                3,
+                2,
                 36
               ]
             }
           ],
           "colors": [
             "#A5D8FF",
-            "#2196f3",
-            "#673ab7"
+            "#2196f3"
+          ],
+          "referenceLabels": [
+            "Reducing Time to Market with Effective Simulation and Validation",
+            "Mastering the Modern Machine: A Comprehensive Guide to Computer Science",
+            "Finance and Investment in Climate and Development Projects",
+            "利用协同设计与并行工程",
+            "Introduction to Climate Change and Sustainable Development",
+            "Bachelor of Laws",
+            "Leadership and Management in the Climate Sector"
           ]
         }
       },
