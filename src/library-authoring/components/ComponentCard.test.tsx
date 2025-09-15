@@ -118,6 +118,29 @@ describe('<ComponentCard />', () => {
     });
   });
 
+  it('should open component editor immediately on double click', async () => {
+    jest.useFakeTimers(); // ✅ enable fake timers
+
+    initializeMocks();
+    render();
+
+    const card = await screen.findByText('Text Display Formated Name');
+
+    // First click starts the timeout
+    fireEvent.click(card);
+    // Second click cancels timeout + opens editor immediately
+    fireEvent.click(card);
+
+    // ⏩ No need to runAllTimers, double click bypasses the timer
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: `/library/${libraryId}/${contentHit.usageKey}`,
+      search: '',
+    });
+
+    jest.useRealTimers(); // ✅ restore timers
+  });
+
   it('should select component on clicking edit menu option', async () => {
     initializeMocks();
     render();
