@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable consistent-return */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-no-useless-fragment */
@@ -251,6 +252,32 @@ const PSCourseForm = ({
       }
     }
     
+    // If start date changes, validate against enrollment start date
+    if (field === 'startDate' && editedValues.enrollmentStart) {
+      const startDate = new Date(value);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+    
+    // If enrollment start date changes, validate against start date
+    if (field === 'enrollmentStart' && editedValues.startDate) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(value);
+      
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+    
     // Update errors for the changed field and any related fields
     Object.keys(fieldErrors).forEach(errorField => {
       if (fieldErrors[errorField]) {
@@ -352,13 +379,29 @@ const PSCourseForm = ({
         throw new Error('Failed to create course. Please try again.');
       }
 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-      setShowSuccessAlert(true); // Show success alert
+      // Handle success response with new API format
+      const responseData = response.data;
+      if (responseData && responseData.success && responseData.url) {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
 
-      // Redirect to /home after 2 seconds
-      setTimeout(() => {
-        navigate('/my-courses');
-      }, 2000);
+        // Navigate to the course URL from the API response
+        setTimeout(() => {
+          // Remove leading slash if present and construct full URL
+          const courseUrl = responseData.url.startsWith('/') ? responseData.url.substring(1) : responseData.url;
+          const fullCourseUrl = `${getConfig().STUDIO_BASE_URL}/${courseUrl}`;
+          window.location.href = fullCourseUrl;
+        }, 2000);
+      } else {
+        // Fallback to old behavior if response format is different
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
+
+        // Redirect to /my-courses after 2 seconds
+        setTimeout(() => {
+          navigate('/my-courses');
+        }, 2000);
+      }
 
       if (typeof onSubmit === 'function') {
         onSubmit(editedValues);
@@ -370,14 +413,28 @@ const PSCourseForm = ({
       let errorMsg = 'Failed to create course. Please try again.';
       if (error.response) {
         // Server responded with error status
-        if (error.response.status === 401) {
+        if (error.response.status === 400 || error.response.status === 403 || error.response.status === 500) {
+          // For 400, 403, and 500, prioritize backend error message
+          if (error.response.data && error.response.data.message) {
+            errorMsg = error.response.data.message;
+          } else if (error.response.data && error.response.data.error) {
+            errorMsg = error.response.data.error;
+          } else if (error.response.data && typeof error.response.data === 'string') {
+            errorMsg = error.response.data;
+          } else {
+            // Fallback to default messages if no backend message
+            if (error.response.status === 400) {
+              errorMsg = 'Bad request. Please check your inputs.';
+            } else if (error.response.status === 403) {
+              errorMsg = 'You do not have permission to create courses.';
+            } else if (error.response.status === 500) {
+              errorMsg = 'Server error. Please try again later.';
+            }
+          }
+        } else if (error.response.status === 401) {
           errorMsg = 'Authentication failed. Please log in again.';
-        } else if (error.response.status === 403) {
-          errorMsg = 'You do not have permission to create courses.';
         } else if (error.response.status === 422) {
           errorMsg = 'Invalid course data. Please check your inputs.';
-        } else if (error.response.status >= 500) {
-          errorMsg = 'Server error. Please try again later.';
         } else if (error.response.data && error.response.data.message) {
           errorMsg = error.response.data.message;
         }
@@ -566,6 +623,19 @@ const PSCourseForm = ({
     } else {
       // Clear endDate error if one of the dates is missing
       delete newErrors.endDate;
+    }
+
+    // Validate that course start date is later than enrollment start date (only if both dates are provided)
+    if (editedValues.startDate && editedValues.enrollmentStart) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      
+      if (startDate <= enrollmentStartDate) {
+        newErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete newErrors.startDate;
+      }
     }
     /* Custom error messages */
     setErrors(newErrors);
