@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Warning } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
@@ -11,14 +12,12 @@ import { useContainer, useRemoveContainerChildren } from '../data/apiHooks';
 import messages from '../components/messages';
 
 type ContainerRemoverProps = {
-  isOpen: boolean,
   close: () => void,
   containerKey: string,
   displayName: string,
 };
 
 const ContainerRemover = ({
-  isOpen,
   close,
   containerKey,
   displayName,
@@ -32,7 +31,7 @@ const ContainerRemover = ({
   const { showToast } = useContext(ToastContext);
 
   const removeContainerMutation = useRemoveContainerChildren(containerId);
-  const { data: container } = useContainer(containerId);
+  const { data: container, isLoading } = useContainer(containerId);
   const itemType = getBlockType(containerKey);
 
   const removeWarningTitle = intl.formatMessage(messages.removeContainerWarningTitle, {
@@ -40,10 +39,9 @@ const ContainerRemover = ({
   });
 
   const removeText = intl.formatMessage(messages.removeContainerConfirm, {
-    containerName: <b>{capitalize(itemType)} {displayName}</b>,
+    containerName: <b>{displayName}</b>,
     containerType: capitalize(itemType),
-    parentContainerType: capitalize(container?.containerType),
-    parentContainerName: container?.displayName,
+    parentContainerName: <b>{container?.displayName}</b>,
   });
 
   const removeSuccess = intl.formatMessage(messages.removeComponentFromContainerSuccess);
@@ -72,18 +70,23 @@ const ContainerRemover = ({
     close,
   ]);
 
+  // istanbul ignore if: loading state
+  if (isLoading) {
+    // Only render when data is ready
+    return null;
+  }
+
   return (
     <DeleteModal
-      isOpen={isOpen}
+      isOpen
       close={close}
       title={removeWarningTitle}
+      variant="warning"
+      icon={Warning}
       description={removeText}
       onDeleteSubmit={onRemove}
       buttonVariant="primary"
-      cancelButtonVariant="tertiary"
-      btnLabel={intl.formatMessage(messages.removeContainerButton, {
-        containerName: itemType.charAt(0).toUpperCase() + itemType.slice(1),
-      })}
+      btnLabel={intl.formatMessage(messages.removeContainerButton)}
     />
   );
 };

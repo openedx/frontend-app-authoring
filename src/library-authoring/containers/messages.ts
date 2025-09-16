@@ -101,7 +101,7 @@ const messages = defineMessages({
     defaultMessage: 'Delete Section',
     description: 'Title text for the warning displayed before deleting a Section',
   },
-  deleteSectionCourseMessaage: {
+  deleteSectionCourseMessage: {
     id: 'course-authoring.library-authoring.section.delete-parent-message',
     defaultMessage: 'This section is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a section',
@@ -121,7 +121,7 @@ const messages = defineMessages({
     defaultMessage: 'Delete Subsection',
     description: 'Title text for the warning displayed before deleting a Subsection',
   },
-  deleteSubsectionCourseMessaage: {
+  deleteSubsectionCourseMessage: {
     id: 'course-authoring.library-authoring.subsection.delete-course-message',
     defaultMessage: 'This subsection is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a subsection',
@@ -146,10 +146,10 @@ const messages = defineMessages({
     defaultMessage: 'This unit is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'Course usage details shown before deleting a unit',
   },
-  deleteUnitConfirm: {
-    id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
-    defaultMessage: 'Delete {unitName}? {message}',
-    description: 'Confirmation text to display before deleting a unit',
+  deleteContainerConfirm: {
+    id: 'course-authoring.library-authoring.container.delete-confirmation-text',
+    defaultMessage: 'Are you sure you want to permanently delete {containerName}? This cannot be undone and will remove it from your library. {message}',
+    description: 'Confirmation text to display before deleting a container',
   },
   deleteUnitSuccess: {
     id: 'course-authoring.library-authoring.unit.delete.success',

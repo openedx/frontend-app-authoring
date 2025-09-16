@@ -1,48 +1,37 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import { School, Warning, Info } from '@openedx/paragon/icons';
+import { School, Delete, Info } from '@openedx/paragon/icons';
 
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import { type ContentHit } from '@src/search-manager';
 import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   useContentFromSearchIndex,
   useDeleteLibraryBlock,
-  useLibraryBlockMetadata,
   useRestoreLibraryBlock,
 } from '../data/apiHooks';
 import messages from './messages';
-import { ToastContext } from '../../generic/toast-context';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import { type ContentHit } from '../../search-manager';
-
-/**
- * Helper component to load and display the name of the block.
- *
- * This needs to be a separate component so that we only query the metadata of
- * the block when needed (when this is displayed), not on every card shown in
- * the search results.
- */
-const BlockName = (props: { usageKey: string }) => {
-  const { data: blockMetadata } = useLibraryBlockMetadata(props.usageKey);
-
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{blockMetadata?.displayName}</> ?? <FormattedMessage {...messages.deleteComponentNamePlaceholder} />;
-};
 
 interface Props {
   usageKey: string;
-  /** If true, show a confirmation modal that asks the user if they want to delete this component. */
-  isConfirmingDelete: boolean;
-  cancelDelete: () => void;
+  close: () => void;
 }
 
-const ComponentDeleter = ({ usageKey, ...props }: Props) => {
+const ComponentDeleter = ({ usageKey, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
+  const { containerId: currentUnitId } = useLibraryContext();
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
+  const { data: dataDownstreamLinks, isLoading: isLoadingLinks } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
+  const downstreamCount = dataDownstreamLinks?.length ?? 0;
+
   const restoreComponent = useCallback(async () => {
     try {
       await restoreComponentMutation.mutateAsync({ usageKey });
@@ -62,40 +51,40 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
         onClick: restoreComponent,
       },
     );
-    props.cancelDelete();
+    close();
     // Close the sidebar if it's still open showing the deleted component:
     if (usageKey === sidebarComponentUsageKey) {
       closeLibrarySidebar();
     }
   }, [usageKey, sidebarComponentUsageKey, closeLibrarySidebar]);
 
-  const { hits } = useContentFromSearchIndex([usageKey]);
+  const { hits, isLoading } = useContentFromSearchIndex([usageKey]);
   const componentHit = (hits as ContentHit[])?.[0];
 
-  if (!props.isConfirmingDelete) {
+  // istanbul ignore if: loading state
+  if (isLoading || isLoadingLinks) {
+    // Only render the modal after loading
     return null;
   }
 
-  let unitsMessage;
-  const unitsLength = componentHit?.units?.displayName?.length ?? 0;
-  if (unitsLength === 1) {
-    unitsMessage = componentHit?.units?.displayName?.[0];
-  } else if (unitsLength > 1) {
-    unitsMessage = `${unitsLength} units`;
+  const currentUnitIndex = componentHit?.units?.key?.findIndex((id) => id === currentUnitId);
+  const otherUnits = componentHit?.units?.displayName?.filter(
+    (_, index) => index !== currentUnitIndex,
+  );
+  let unitsMessage: string | undefined;
+  const otherUnitsLength = otherUnits?.length ?? 0;
+  if (otherUnitsLength === 1) {
+    unitsMessage = otherUnits?.[0];
+  } else if (otherUnitsLength > 1) {
+    unitsMessage = `${otherUnitsLength} Units`;
   }
 
   const deleteText = intl.formatMessage(messages.deleteComponentConfirm, {
-    componentName: <b><BlockName usageKey={usageKey} /></b>,
+    componentName: <b>{componentHit?.displayName}</b>,
     message: (
-      <>
-        <div className="d-flex mt-2">
-          <Icon className="mr-2" src={School} />
-          {unitsMessage
-            ? intl.formatMessage(messages.deleteComponentConfirmCourseSmall)
-            : intl.formatMessage(messages.deleteComponentConfirmCourse)}
-        </div>
+      <div className="text-danger-900">
         {unitsMessage && (
-          <div className="d-flex mt-3 small text-danger-900">
+          <div className="d-flex align-items-center mt-2">
             <Icon className="mr-2 mt-2" src={Info} />
             <div>
               <FormattedMessage
@@ -107,17 +96,28 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
             </div>
           </div>
         )}
-      </>
+        {(downstreamCount || 0) > 0 && (
+          <div className="d-flex align-items-center mt-2">
+            <Icon className="mr-2" src={School} />
+            <span>
+              {intl.formatMessage(messages.deleteComponentConfirmCourse, {
+                courseCount: downstreamCount,
+                courseCountText: <b>{downstreamCount}</b>,
+              })}
+            </span>
+          </div>
+        )}
+      </div>
     ),
   });
 
   return (
     <DeleteModal
       isOpen
-      close={props.cancelDelete}
-      variant="warning"
+      close={close}
+      variant="danger"
       title={intl.formatMessage(messages.deleteComponentWarningTitle)}
-      icon={Warning}
+      icon={Delete}
       description={deleteText}
       onDeleteSubmit={doDelete}
     />
