@@ -191,6 +191,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.show-assessment-results-past-due-description',
     defaultMessage: 'Learners do not see whether their answer to assessments were correct or incorrect, nor the score received, until after the due date for the subsection has passed. If the subsection does not have a due date, learners always see their scores when they submit answers to assessments.',
   },
+  neverShowAssessmentResultsButIncludeGrade: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-but-include-grade',
+    defaultMessage: 'Never show assessment results, but include in grade calculations',
+  },
+  neverShowAssessmentResultsButIncludeGradeDescription: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-but-include-grade-description',
+    defaultMessage: 'Learners never see whether their answers to assessments are correct or incorrect, nor the score received. However, the scores they receive on assessments are included in their overall course grade.',
+  },
   setSpecialExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.set-special-exam',
     defaultMessage: 'Set as a special exam',
