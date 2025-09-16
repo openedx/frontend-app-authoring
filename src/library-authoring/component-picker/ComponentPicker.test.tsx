@@ -221,46 +221,6 @@ describe('<ComponentPicker />', () => {
     }, '*');
   });
 
-  it('should pick component inside a collection using the sidebar', async () => {
-    render(<ComponentPicker />);
-
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
-    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    // Wait for the content library to load
-    await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
-
-    // Click on the collection card to open the sidebar
-    fireEvent.click(screen.queryAllByText('Collection 1')[0]);
-
-    const sidebar = await screen.findByTestId('library-sidebar');
-
-    // Mock the collection search result
-    mockSearchResult(mockCollectionResult);
-
-    // Click the add component from the component card
-    fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
-
-    // Wait for the collection  to load
-    await screen.findByText(/Back to Library/i);
-    await screen.findByText('Introduction to Testing');
-
-    // Click on the collection card to open the sidebar
-    fireEvent.click(screen.getByText('Introduction to Testing'));
-
-    const collectionSidebar = await screen.findByTestId('library-sidebar');
-
-    // Click the add component from the collection sidebar
-    fireEvent.click(within(collectionSidebar).getByRole('button', { name: 'Add to Course' }));
-
-    expect(postMessageSpy).toHaveBeenCalledWith({
-      usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-      type: 'pickerComponentSelected',
-      category: 'html',
-    }, '*');
-  });
-
   it('should return to library selection', async () => {
     render(<ComponentPicker />);
 
@@ -426,5 +386,71 @@ describe('<ComponentPicker />', () => {
     // because there are many components with that text on the screen, but that's not the important thing.
     expect(screen.getByText(/modified since publish/i)).toBeInTheDocument();
     expect(screen.queryByText(/never published/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('<ComponentPicker /> with collection', () => {
+  beforeEach(() => {
+    initializeMocks();
+    postMessageSpy = jest.spyOn(window.parent, 'postMessage');
+
+    mockSearchResult({ ...mockResult });
+  });
+
+  it('should pick component inside a collection using the sidebar', async () => {
+    jest.useFakeTimers(); // ✅ enable fake timers
+
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the collection card to open the sidebar
+    const collections = await screen.findAllByText('Collection 1'); // ✅ wait until it renders
+    fireEvent.click(collections[0]);
+
+    // ⏩ let the 500ms single-click timer finish
+    jest.advanceTimersByTime(500);
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+
+    // Mock the collection search result
+    mockSearchResult(mockCollectionResult);
+
+    // Click the add component from the component card
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
+
+    // ⏩ advance timers again in case sidebar open uses timeout
+    jest.advanceTimersByTime(500);
+
+    // Wait for the collection to load
+    await screen.findByText(/Back to Library/i);
+    await screen.findByText('Introduction to Testing');
+
+    // Click on the collection card to open the sidebar
+    fireEvent.click(screen.getByText('Introduction to Testing'));
+
+    // ⏩ advance timers again for delayed sidebar open
+    jest.advanceTimersByTime(500);
+
+    const collectionSidebar = await screen.findByTestId('library-sidebar');
+
+    // Click the add component from the collection sidebar
+    fireEvent.click(within(collectionSidebar).getByRole('button', { name: 'Add to Course' }));
+
+    expect(postMessageSpy).toHaveBeenCalledWith(
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'pickerComponentSelected',
+        category: 'html',
+      },
+      '*',
+    );
+
+    jest.useRealTimers(); // ✅ restore real timers
   });
 });

@@ -355,29 +355,47 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should remove component from collection and hides sidebar', async () => {
+    jest.useFakeTimers(); // ✅ isolate fake timers for this test
+
     const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
       mockCollection.collectionId,
     );
     axiosMock.onDelete(url).reply(204);
+
     const displayName = 'Introduction to Testing';
     await renderLibraryCollectionPage();
 
     // open sidebar
     fireEvent.click(await screen.findByText(displayName));
+
+    // ⏩ let the delayed sidebar open run
+    jest.advanceTimersByTime(500);
+
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
 
-    const menuBtns = await screen.findAllByRole('button', { name: 'Component actions menu' });
+    const menuBtns = await screen.findAllByRole('button', {
+      name: 'Component actions menu',
+    });
+
     // open menu
     fireEvent.click(menuBtns[0]);
 
+    // click remove
     fireEvent.click(await screen.findByText('Remove from collection'));
+
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
     });
+
     expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
-    // Should close sidebar as component was removed
+
+    // ⏩ let the delayed sidebar close run
+    jest.advanceTimersByTime(500);
+
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+
+    jest.useRealTimers(); // ✅ restore for other tests
   });
 
   it('should show error when remove component from collection', async () => {

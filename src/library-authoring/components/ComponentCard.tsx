@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   ActionRow,
 } from '@openedx/paragon';
@@ -15,10 +15,14 @@ type ComponentCardProps = {
   hit: ContentHit,
 };
 
+const DOUBLE_CLICK_DELAY = 500; // ms
+
 const ComponentCard = ({ hit }: ComponentCardProps) => {
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished, openComponentEditor } = useLibraryContext();
   const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
+
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     blockType,
@@ -34,15 +38,27 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const selectComponent = useCallback(() => {
-    if (!componentPickerMode) {
-      openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    } else {
-      // In component picker mode, we want to open the sidebar
-      // without changing the URL
-      openComponentInfoSidebar(usageKey);
-    }
-  }, [usageKey, openItemSidebar, openComponentInfoSidebar, componentPickerMode]);
+  const selectComponent = useCallback(
+    () => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+        clickTimerRef.current = null;
+        openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
+        openComponentEditor(usageKey);
+      } else {
+        clickTimerRef.current = setTimeout(() => {
+          clickTimerRef.current = null;
+
+          if (componentPickerMode) {
+            openComponentInfoSidebar(usageKey);
+          } else {
+            openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
+          }
+        }, DOUBLE_CLICK_DELAY);
+      }
+    },
+    [usageKey, openItemSidebar, openComponentInfoSidebar, componentPickerMode],
+  );
 
   const selected = sidebarItemInfo?.type === SidebarBodyItemId.ComponentInfo
     && sidebarItemInfo.id === usageKey;

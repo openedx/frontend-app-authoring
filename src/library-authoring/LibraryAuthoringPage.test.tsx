@@ -510,31 +510,6 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should preserve the tab while switching from a component to a collection', async () => {
-    await renderLibraryPage();
-
-    // Click on the first collection
-    fireEvent.click((await screen.findByText('Collection 1')));
-
-    // Click on the Details tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Details' }));
-
-    // Change to a component
-    fireEvent.click((await screen.findAllByText('Introduction to Testing'))[0]);
-
-    // Check that the Details tab is still selected
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
-
-    // Click on the Previews tab
-    fireEvent.click(screen.getByRole('tab', { name: 'Preview' }));
-
-    // Switch back to the collection
-    fireEvent.click((await screen.findByText('Collection 1')));
-
-    // The Details (default) tab should be selected because the collection does not have a Preview tab
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
-  });
-
   const problemTypes = {
     'Multiple Choice': 'choiceresponse',
     Checkboxes: 'multiplechoiceresponse',
@@ -1061,5 +1036,86 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This page cannot be shown: Libraries v2 are disabled.',
     );
+  });
+});
+
+describe('<LibraryAuthoringPage />', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  beforeEach(async () => {
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+    // The Meilisearch client-side API uses fetch, not Axios.
+    fetchMock.mockReset();
+    fetchMock.post(searchEndpoint, (_url, req) => {
+      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const query = requestData?.queries[0]?.q ?? '';
+      // We have to replace the query (search keywords) in the mock results with the actual query,
+      // because otherwise Instantsearch will update the UI and change the query,
+      // leading to unexpected results in the test cases.
+      const newMockResult = { ...mockResult };
+      newMockResult.results[0].query = query;
+      // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
+      // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      return newMockResult;
+    });
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  it('should preserve the tab while switching from a component to a collection', async () => {
+    jest.useFakeTimers(); // ✅ enable fake timers for this test only
+
+    render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
+
+    // Ensure the search endpoint is called:
+    // Call 1: To fetch searchable/filterable/sortable library data
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+
+    // Click on the first collection
+    fireEvent.click(await screen.findByText('Collection 1'));
+
+    // ⏩ let sidebar open
+    jest.advanceTimersByTime(500);
+
+    // Click on the Details tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Details' }));
+
+    // Change to a component
+    fireEvent.click((await screen.findAllByText('Introduction to Testing'))[0]);
+
+    // ⏩ let sidebar switch to component
+    jest.advanceTimersByTime(500);
+
+    // Check that the Details tab is still selected
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    // Click on the Preview tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Preview' }));
+
+    // Switch back to the collection
+    fireEvent.click(await screen.findByText('Collection 1'));
+
+    // ⏩ let sidebar switch back to collection
+    jest.advanceTimersByTime(500);
+
+    // The Details (default) tab should be selected because the collection does not have a Preview tab
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    jest.useRealTimers(); // ✅ restore for other tests
   });
 });
