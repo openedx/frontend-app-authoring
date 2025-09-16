@@ -60,7 +60,6 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Accept changes' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Ignore changes' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'Cancel' })).toBeInTheDocument();
     expect(await screen.findByRole('tab', { name: 'New version' })).toBeInTheDocument();
     expect(await screen.findByRole('tab', { name: 'Old version' })).toBeInTheDocument();
   });

@@ -18,6 +18,7 @@ interface LibraryBlockProps {
   scrolling?: string;
   minHeight?: string;
   scrollIntoView?: boolean;
+  showTitle?: boolean;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -36,6 +37,7 @@ export const LibraryBlock = ({
   minHeight,
   scrolling = 'no',
   scrollIntoView = false,
+  showTitle = false,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -43,8 +45,16 @@ export const LibraryBlock = ({
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const intl = useIntl();
-  const queryStr = version ? `?version=${version}` : '';
-  const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
+
+  const params = new URLSearchParams();
+  if (version) {
+    params.set('version', version.toString());
+  }
+  if (showTitle) {
+    params.set('show_title', 'true');
+  }
+
+  const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/?${params.toString()}`;
   const { iframeHeight } = useIframeBehavior({
     id: usageKey,
     iframeUrl,

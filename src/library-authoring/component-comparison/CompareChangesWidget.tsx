@@ -21,6 +21,7 @@ interface Props {
   oldVersion?: VersionSpec;
   newVersion?: VersionSpec;
   isContainer?: boolean;
+  showTitle?: boolean;
 }
 
 /**
@@ -36,6 +37,7 @@ const CompareChangesWidget = ({
   oldVersion = 'published',
   newVersion = 'draft',
   isContainer = false,
+  showTitle = false,
 }: Props) => {
   const intl = useIntl();
 
@@ -50,6 +52,7 @@ const CompareChangesWidget = ({
                   usageKey={usageKey}
                   version={oldVersion}
                   minHeight="50vh"
+                  showTitle={showTitle}
                 />
               </IframeProvider>
             )}
@@ -63,6 +66,7 @@ const CompareChangesWidget = ({
                   usageKey={usageKey}
                   version={newVersion}
                   minHeight="50vh"
+                  showTitle={showTitle}
                 />
               </IframeProvider>
             )}
