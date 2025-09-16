@@ -320,3 +320,7 @@ export const useRunOnNextRender = (callback) => {
 
   return () => setScheduled(true);
 };
+
+export const capitalizeString = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+export const convertFromSnakeCaseToTitleCase = (string) => string.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());

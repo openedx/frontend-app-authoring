@@ -16,7 +16,7 @@ import AppLayout from 'shared/Components/Common/Layouts/AppLayout';
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
-import { StudentsPage } from './students-page/index.ts';
+import { StudentsPage } from './students-page/index';
 import { CoursesPage } from './courses-page/index';
 
 import '@fontsource/plus-jakarta-sans/400.css';
@@ -33,7 +33,8 @@ import {
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
-import { StudioHome } from './studio-home';
+import StudioHome from './studio-home/StudioHome';
+import { Home } from './home';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
@@ -69,9 +70,9 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<AppLayout />}>
-        <Route path="/home" element={<StudioHome />} />
-        <Route path="/libraries" element={<StudioHome />} />
-        <Route path="/libraries-v1" element={<StudioHome />} />
+        <Route path="/home" element={<Home />} />
+        {/* <Route path="/libraries" element={<StudioHome />} />
+        <Route path="/libraries-v1" element={<StudioHome />} /> */}
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
 

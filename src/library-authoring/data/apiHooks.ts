@@ -28,6 +28,12 @@ export const libraryQueryPredicate = (query: Query, libraryId: string): boolean 
   return query.queryKey[0] === 'content_search' && extraFilter?.includes(`context_key = "${libraryId}"`);
 };
 
+export const materialQueryKeys = {
+  all: ['material'],
+  /** Base key for data specific to a material */
+  featuredContentMaterial: () => [...materialQueryKeys.all, 'featuredContentMaterial'],
+};
+
 export const libraryAuthoringQueryKeys = {
   all: ['contentLibrary'],
   /**
@@ -208,6 +214,14 @@ export const useContentLibraryV2List = (customParams: api.GetLibrariesV2CustomPa
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
     queryFn: () => api.getContentLibraryV2List(customParams),
+    keepPreviousData: true,
+  })
+);
+
+export const useContentMaterialList = (customParams: api.GetMaterialListCustomParams) => (
+  useQuery({
+    queryKey: materialQueryKeys.featuredContentMaterial(),
+    queryFn: () => api.getContentMaterialList(customParams),
     keepPreviousData: true,
   })
 );

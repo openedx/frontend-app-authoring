@@ -51,6 +51,12 @@ export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibrary
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
 
 /**
+ * Get the URL for content material list API.
+ */
+// TODO: Update this URL when the API is ready
+export const getContentMaterialListApiUrl = () => `${getApiBaseUrl()}/api/materials/`;
+
+/**
  * Get the URL for commit/revert changes in library.
  */
 export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
@@ -225,6 +231,21 @@ export interface GetLibrariesV2CustomParams {
   search?: string,
 }
 
+export interface GetMaterialListCustomParams {
+  /* (optional) Library type, default `complex` */
+  type?: string,
+  /* (optional) Page number of results */
+  page?: number,
+  /* (optional) The number of results on each page, default `50` */
+  pageSize?: number,
+  /* (optional) Whether pagination is supported, default `true` */
+  pagination?: boolean,
+  /* (optional) Library field to order results by. Prefix with '-' for descending */
+  order?: string,
+  /* (optional) Search query to filter v2 Libraries by */
+  search?: string,
+}
+
 export type LibraryAssetResponse = {
   path: string,
   size: number,
@@ -359,6 +380,16 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
   const customParamsFormated = snakeCaseObject(customParamsDefaults);
   const { data } = await getAuthenticatedHttpClient()
     .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
+  return camelCaseObject(data);
+}
+
+/**
+ * Get a list of content materials.
+ */
+// TODO: Add type for the response
+export async function getContentMaterialList(customParams: GetMaterialListCustomParams): Promise<any> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getContentMaterialListApiUrl(), { params: customParams });
   return camelCaseObject(data);
 }
 
