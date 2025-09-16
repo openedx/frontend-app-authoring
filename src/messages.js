@@ -10,6 +10,36 @@ const messages = defineMessages({
     id: 'authoring.alert.support.text',
     defaultMessage: 'Support Page',
   },
+  profile: {
+    id: 'learning.navigation.profile.label',
+    defaultMessage: 'Profile',
+    description: 'The accessible label for profile navigation',
+  },
+  logOut: {
+    id: 'learning.navigation.logOut.label',
+    defaultMessage: 'Log out',
+    description: 'The accessible label for log out navigation',
+  },
+  home: {
+    id: 'learning.navigation.home.label',
+    defaultMessage: 'Home',
+    description: 'The accessible label for home navigation',
+  },
+  courses: {
+    id: 'learning.navigation.courses.label',
+    defaultMessage: 'Courses',
+    description: 'The accessible label for courses navigation',
+  },
+  students: {
+    id: 'learning.navigation.students.label',
+    defaultMessage: 'Students',
+    description: 'The accessible label for students navigation',
+  },
+  library: {
+    id: 'learning.navigation.library.label',
+    defaultMessage: 'Library',
+    description: 'The accessible label for library navigation',
+  },
 });
 
 export default messages;

@@ -33,6 +33,20 @@
 @import "group-configurations/GroupConfigurations";
 @import "optimizer-page/scan-results/ScanResults";
 
+@tailwind utilities;
+@tailwind base;
+@tailwind components;
+
+/* Force Plus Jakarta Sans to be the default font family */
+body, html {
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
+}
+
+/* Ensure Tailwind font utilities use Plus Jakarta Sans */
+.tw-font-sans {
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
+}
+
 // To apply the glow effect to the selected Section/Subsection, in the Course Outline
 div.row:has(> div > div.highlight) {
   animation: 5s glow;

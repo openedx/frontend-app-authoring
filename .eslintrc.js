@@ -14,6 +14,8 @@ module.exports = createConfig(
       'no-restricted-exports': 'off',
       // There is no reason to disallow this syntax anymore; we don't use regenerator-runtime in new browsers
       'no-restricted-syntax': 'off',
+      'no-use-before-define': 'off',
+      '@typescript-eslint/no-use-before-define': 'off',
     },
     settings: {
       // Import URLs should be resolved using aliases

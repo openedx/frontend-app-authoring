@@ -9,13 +9,11 @@ import {
 } from '@openedx/paragon';
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
-import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
@@ -168,8 +166,7 @@ const StudioHome = () => {
 
   return (
     <>
-      <Header isHiddenMainMenu />
-      <Container size="xl" className="p-4 mt-3">
+      <Container size="xl" className="">
         <section className="mb-4">
           <article className="studio-home-sub-header">
             <section>
@@ -188,7 +185,6 @@ const StudioHome = () => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
-      <StudioFooterSlot />
     </>
   );
 };

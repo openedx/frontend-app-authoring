@@ -26,7 +26,7 @@ temp/babel-plugin-react-intl
 .env.private
 
 # Messages .json files fetched by atlas
-src/i18n/messages/
+# src/i18n/messages/
 
 # environment js config
 env.config.jsx

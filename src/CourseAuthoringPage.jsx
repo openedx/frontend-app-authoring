@@ -5,8 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useLocation,
 } from 'react-router-dom';
-import { StudioFooterSlot } from '@edx/frontend-component-footer';
-import Header from './header';
 import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
@@ -14,7 +12,6 @@ import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { fetchOnlyStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
-import Loading from './generic/Loading';
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
@@ -55,18 +52,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? !isEditor && <Loading />
-        : (!isEditor && (
-          <Header
-            number={courseNumber}
-            org={courseOrg}
-            title={courseTitle}
-            contextId={courseId}
-          />
-        )
-        )}
       {children}
-      {!inProgress && !isEditor && <StudioFooterSlot />}
     </div>
   );
 };
