@@ -34,7 +34,7 @@ const WidgetCard = ({
 
       const commonOptions = {
         chart: {
-          type: content.chartType === 'donut' ? 'donut' : content.chartType,
+          type: content.chartType === 'donut' ? 'donut' : (content.chartType === 'horizontalbar' ? 'bar' : content.chartType),
           height: 300,
           zoom: {
             enabled: false,
@@ -61,7 +61,7 @@ const WidgetCard = ({
         colors: solidColors,
       };
 
-      if (content.chartType === 'bar' || content.chartType === 'line' || content.chartType === 'area') {
+      if (content.chartType === 'bar' || content.chartType === 'horizontalbar' || content.chartType === 'line' || content.chartType === 'area') {
         const series = content.data.map(item => ({
           name: item.label,
           data: item.value,
@@ -95,10 +95,10 @@ const WidgetCard = ({
             stops: [0, 90, 100],
           };
         }
-        if (content.chartType === 'bar') {
+        if (content.chartType === 'bar'|| content.chartType === 'horizontalbar') {
           options.plotOptions = {
             bar: {
-              horizontal: false,
+              horizontal: content.chartType === 'horizontalbar',
               columnWidth: '100%',
             },
           };
@@ -198,7 +198,7 @@ const WidgetCard = ({
         )} */}
         {type === 'chart' && content && content.data && (
           <div className="chart-widget-container">
-            {(content.chartType === 'pie' || content.chartType === 'donut' || content.chartType === 'bar' || content.chartType === 'line' || content.chartType === 'area') && (
+            {(content.chartType === 'pie' || content.chartType === 'donut' || content.chartType === 'bar' || content.chartType === 'horizontalbar' || content.chartType === 'line' || content.chartType === 'area') && (
               <ReactApexChart
                 options={{
                   ...chartOptions,
@@ -312,7 +312,7 @@ WidgetCard.propTypes = {
   content: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
-      chartType: PropTypes.oneOf(['pie', 'donut', 'bar', 'line', 'area']),
+      chartType: PropTypes.oneOf(['pie', 'donut', 'bar', 'horizontalbar', 'line', 'area']),
       referenceLabels: PropTypes.arrayOf(PropTypes.string),
       data: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string,

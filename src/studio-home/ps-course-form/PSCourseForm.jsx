@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable consistent-return */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-no-useless-fragment */
@@ -47,6 +48,7 @@ import LicenseIcons from '../../schedule-and-details/license-section/license-ico
 import licenseMessages from '../../schedule-and-details/license-section/messages';
 import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
 import AlertMessage from '../../generic/alert-message';
+import CertificateDisplayRow from '../../schedule-and-details/schedule-section/certificate-display-row/CertificateDisplayRow';
 import ModalNotification from '../../generic/modal-notification';
 import LearningOutcomesSection from '../../schedule-and-details/learning-outcomes-section';
 import InstructorsSection from '../../schedule-and-details/instructors-section';
@@ -251,6 +253,32 @@ const PSCourseForm = ({
       }
     }
     
+    // If start date changes, validate against enrollment start date
+    if (field === 'startDate' && editedValues.enrollmentStart) {
+      const startDate = new Date(value);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+    
+    // If enrollment start date changes, validate against start date
+    if (field === 'enrollmentStart' && editedValues.startDate) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(value);
+      
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+    
     // Update errors for the changed field and any related fields
     Object.keys(fieldErrors).forEach(errorField => {
       if (fieldErrors[errorField]) {
@@ -266,6 +294,10 @@ const PSCourseForm = ({
         });
       }
     });
+  };
+
+  const handleCertificateChange = (value, field) => {
+    handleInputChange(field, value);
   };
 
   const handleBlur = (field) => {
@@ -319,7 +351,7 @@ const PSCourseForm = ({
       self_paced: formData.coursePacing === 'self',
       effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
-      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
+      entrance_exam_enabled: formData.entranceExamEnabled || 'false',
       entrance_exam_minimum_score_pct: formData.entranceExamMinimumScorePct?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
@@ -346,18 +378,35 @@ const PSCourseForm = ({
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
       const response = await getAuthenticatedHttpClient().post(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
+      // const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to create course. Please try again.');
       }
 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-      setShowSuccessAlert(true); // Show success alert
+      // Handle success response with new API format
+      const responseData = response.data;
+      if (responseData && responseData.success && responseData.url) {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
 
-      // Redirect to /home after 2 seconds
-      setTimeout(() => {
-        navigate('/my-courses');
-      }, 2000);
+        // Navigate to the course URL from the API response
+        setTimeout(() => {
+          // Remove leading slash if present and construct full URL
+          const courseUrl = responseData.url.startsWith('/') ? responseData.url.substring(1) : responseData.url;
+          const fullCourseUrl = `${getConfig().STUDIO_BASE_URL}/${courseUrl}`;
+          window.location.href = fullCourseUrl;
+        }, 2000);
+      } else {
+        // Fallback to old behavior if response format is different
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
+
+        // Redirect to /my-courses after 2 seconds
+        setTimeout(() => {
+          navigate('/my-courses');
+        }, 2000);
+      }
 
       if (typeof onSubmit === 'function') {
         onSubmit(editedValues);
@@ -369,14 +418,28 @@ const PSCourseForm = ({
       let errorMsg = 'Failed to create course. Please try again.';
       if (error.response) {
         // Server responded with error status
-        if (error.response.status === 401) {
+        if (error.response.status === 400 || error.response.status === 403 || error.response.status === 500) {
+          // For 400, 403, and 500, prioritize backend error message
+          if (error.response.data && error.response.data.message) {
+            errorMsg = error.response.data.message;
+          } else if (error.response.data && error.response.data.error) {
+            errorMsg = error.response.data.error;
+          } else if (error.response.data && typeof error.response.data === 'string') {
+            errorMsg = error.response.data;
+          } else {
+            // Fallback to default messages if no backend message
+            if (error.response.status === 400) {
+              errorMsg = 'Bad request. Please check your inputs.';
+            } else if (error.response.status === 403) {
+              errorMsg = 'You do not have permission to create courses.';
+            } else if (error.response.status === 500) {
+              errorMsg = 'Server error. Please try again later.';
+            }
+          }
+        } else if (error.response.status === 401) {
           errorMsg = 'Authentication failed. Please log in again.';
-        } else if (error.response.status === 403) {
-          errorMsg = 'You do not have permission to create courses.';
         } else if (error.response.status === 422) {
           errorMsg = 'Invalid course data. Please check your inputs.';
-        } else if (error.response.status >= 500) {
-          errorMsg = 'Server error. Please try again later.';
         } else if (error.response.data && error.response.data.message) {
           errorMsg = error.response.data.message;
         }
@@ -537,10 +600,14 @@ const PSCourseForm = ({
     // Validate Course Number field
     if (!editedValues.courseNumber || !editedValues.courseNumber.trim()) {
       newErrors.courseNumber = 'Course Number is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseNumber.trim())) {
+      newErrors.courseNumber = 'Course Number can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course Run field
     if (!editedValues.courseRun || !editedValues.courseRun.trim()) {
       newErrors.courseRun = 'Course Run is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseRun.trim())) {
+      newErrors.courseRun = 'Course Run can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course start date field
     if (!editedValues.startDate) {
@@ -561,6 +628,19 @@ const PSCourseForm = ({
     } else {
       // Clear endDate error if one of the dates is missing
       delete newErrors.endDate;
+    }
+
+    // Validate that course start date is later than enrollment start date (only if both dates are provided)
+    if (editedValues.startDate && editedValues.enrollmentStart) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      
+      if (startDate <= enrollmentStartDate) {
+        newErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete newErrors.startDate;
+      }
     }
     /* Custom error messages */
     setErrors(newErrors);
@@ -1033,6 +1113,15 @@ const PSCourseForm = ({
                                     </Row>
                                   </div>
                                 </li>
+                                <li className="certificate-display-row">
+                                  <CertificateDisplayRow
+                                    certificateAvailableDate={editedValues.certificateAvailableDate || ''}
+                                    availableDateErrorFeedback={errors.certificateAvailableDate || ''}
+                                    certificatesDisplayBehavior={editedValues.certificatesDisplayBehavior || ''}
+                                    displayBehaviorErrorFeedback={errors.certificatesDisplayBehavior || ''}
+                                    onChange={handleCertificateChange}
+                                  />
+                                </li>
                               </ul>
                             </div>
                           </Stack>
@@ -1092,11 +1181,11 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={editedValues.requireEntranceExam !== undefined ? !!editedValues.requireEntranceExam : !!courseSettings.isEntranceExamsEnabled}
-                                    onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
+                                    checked={editedValues.entranceExamEnabled === 'true'}
+                                    onChange={(e) => handleInputChange('entranceExamEnabled', e.target.checked ? 'true' : 'false')}
                                   />
                                 </div>
-                                {(editedValues.requireEntranceExam || (editedValues.requireEntranceExam === undefined && courseSettings.isEntranceExamsEnabled)) && (
+                                {editedValues.entranceExamEnabled === 'true' && (
                                 <div className="entrance-exam-content p-1">
                                   <div className="form-group-custom">
                                     <Form.Label>Grade requirements</Form.Label>

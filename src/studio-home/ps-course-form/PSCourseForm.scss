@@ -940,14 +940,42 @@
             .time-field {
                 max-width: 100%;
             }
-        }
 
-        .pacing-style {
-            label {
-                display: block;
-                margin-bottom: 0.5rem;
+            .certificate-display-row {
+                min-width: 100%;
+
             }
         }
+    }
+}
+
+// Add styles for certificate display row to take full width
+.certificate-display-row {
+    width: 100%;
+    grid-column: 1 / -1; // Span all columns in grid layout
+    clear: both; // Clear any floating elements
+    margin-left: 0.75rem;
+    margin-right: 0;
+    
+    .schedule-date-item-container {
+        width: 100%;
+        max-width: none;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+// Ensure the certificate row breaks out of column layout
+.schedule-date-list .certificate-display-row {
+    width: 100%;
+    flex: 1 1 100%;
+    max-width: 100%;
+}
+
+.pacing-style {
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
     }
 }
 

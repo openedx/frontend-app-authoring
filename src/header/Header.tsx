@@ -89,12 +89,12 @@ const Header = ({
           window.location.reload();
         }}
         style={{
-          position: 'fixed',
+          position: 'absolute',
           top: '0.4rem',
-          borderRadius: '12px',
+          borderRadius: '6px',
           right: '20rem',
           zIndex: 9999,
-          backgroundColor: '#1E90FF',
+          backgroundColor: 'var(--primary)',
           color: 'white',
           padding: '10px',
           textAlign: 'center',
