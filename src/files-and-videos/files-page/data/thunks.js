@@ -27,6 +27,7 @@ import {
   clearErrors,
   updateEditStatus,
   updateDuplicateFiles,
+  clearAssetIds,
 } from './slice';
 
 import { getUploadConflicts, updateFileValues } from './utils';
@@ -58,6 +59,7 @@ export function fetchAdditionalAssets(courseId, totalCount) {
 
 export function fetchAssets(courseId) {
   return async (dispatch) => {
+    dispatch(clearAssetIds());
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
