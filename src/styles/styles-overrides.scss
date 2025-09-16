@@ -1,8 +1,56 @@
-@import "./global-overrides";
+// @import "./global-overrides";
 
 body {
   overflow: hidden !important;
 }
+
+// Mixins
+@mixin card-style1 {
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+@mixin card-style2 {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+@mixin card-style3 {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+}
+
+@mixin sub-header-title-style1 {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+}
+
+@mixin section-title-style1 {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+}
+
+@mixin section-title-style2 {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+}
+
+@mixin section-title-style3 {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+}
+
 // Mobile screen responsiveness
 @media (max-width: 414px) {
   .ca-sidebar {

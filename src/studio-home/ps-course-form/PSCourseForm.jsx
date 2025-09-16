@@ -226,12 +226,12 @@ const PSCourseForm = ({
 
     // Validate the specific field and related fields
     const fieldErrors = validateForm();
-    
+
     // If start date changes, also validate end date
     if (field === 'startDate' && editedValues.endDate) {
       const startDate = new Date(value);
       const endDate = new Date(editedValues.endDate);
-      
+
       if (endDate < startDate) {
         fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
       } else {
@@ -239,12 +239,12 @@ const PSCourseForm = ({
         delete fieldErrors.endDate;
       }
     }
-    
+
     // If end date changes, validate against start date
     if (field === 'endDate' && editedValues.startDate) {
       const startDate = new Date(editedValues.startDate);
       const endDate = new Date(value);
-      
+
       if (endDate < startDate) {
         fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
       } else {
@@ -252,33 +252,127 @@ const PSCourseForm = ({
         delete fieldErrors.endDate;
       }
     }
-    
+
     // If start date changes, validate against enrollment start date
     if (field === 'startDate' && editedValues.enrollmentStart) {
       const startDate = new Date(value);
       const enrollmentStartDate = new Date(editedValues.enrollmentStart);
-      
+
       if (startDate <= enrollmentStartDate) {
         fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+        setTouched(prev => ({ ...prev, startDate: true }));
       } else {
         // Clear startDate error if dates are now valid
         delete fieldErrors.startDate;
       }
     }
-    
+
     // If enrollment start date changes, validate against start date
     if (field === 'enrollmentStart' && editedValues.startDate) {
       const startDate = new Date(editedValues.startDate);
       const enrollmentStartDate = new Date(value);
-      
+
       if (startDate <= enrollmentStartDate) {
         fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+        setTouched(prev => ({ ...prev, startDate: true }));
       } else {
         // Clear startDate error if dates are now valid
         delete fieldErrors.startDate;
       }
     }
-    
+
+    // If enrollment start date changes, validate against enrollment end date
+    if (field === 'enrollmentStart' && editedValues.enrollmentEnd) {
+      const enrollmentStartDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        fieldErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+        setTouched(prev => ({ ...prev, enrollmentStart: true }));
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear both errors if dates are now valid
+        delete fieldErrors.enrollmentStart;
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against enrollment start date
+    if (field === 'enrollmentEnd' && editedValues.enrollmentStart) {
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      const enrollmentEndDate = new Date(value);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        fieldErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+        setTouched(prev => ({ ...prev, enrollmentStart: true }));
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear both errors if dates are now valid
+        delete fieldErrors.enrollmentStart;
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against course start date
+    if (field === 'enrollmentEnd' && editedValues.startDate) {
+      const enrollmentEndDate = new Date(value);
+      const courseStartDate = new Date(editedValues.startDate);
+
+      if (enrollmentEndDate < courseStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against course end date
+    if (field === 'enrollmentEnd' && editedValues.endDate) {
+      const enrollmentEndDate = new Date(value);
+      const courseEndDate = new Date(editedValues.endDate);
+
+      if (enrollmentEndDate > courseEndDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If course start date changes, validate against enrollment end date
+    if (field === 'startDate' && editedValues.enrollmentEnd) {
+      const courseStartDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentEndDate < courseStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If course end date changes, validate against enrollment end date
+    if (field === 'endDate' && editedValues.enrollmentEnd) {
+      const courseEndDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentEndDate > courseEndDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
     // Update errors for the changed field and any related fields
     Object.keys(fieldErrors).forEach(errorField => {
       if (fieldErrors[errorField]) {
@@ -640,6 +734,48 @@ const PSCourseForm = ({
       } else {
         // Clear startDate error if dates are now valid
         delete newErrors.startDate;
+      }
+    }
+
+    // Validate that enrollment start date is not later than enrollment end date (only if both dates are provided)
+    if (editedValues.enrollmentStart && editedValues.enrollmentEnd) {
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        newErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+      } else {
+        // Clear both errors if dates are now valid
+        delete newErrors.enrollmentStart;
+        delete newErrors.enrollmentEnd;
+      }
+    }
+    
+    // Validate that enrollment end date is not earlier than course start date (only if both dates are provided)
+    if (editedValues.enrollmentEnd && editedValues.startDate) {
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+      const courseStartDate = new Date(editedValues.startDate);
+      
+      if (enrollmentEndDate < courseStartDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete newErrors.enrollmentEnd;
+      }
+    }
+    
+    // Validate that enrollment end date is not later than course end date (only if both dates are provided)
+    if (editedValues.enrollmentEnd && editedValues.endDate) {
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+      const courseEndDate = new Date(editedValues.endDate);
+      
+      if (enrollmentEndDate > courseEndDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete newErrors.enrollmentEnd;
       }
     }
     /* Custom error messages */

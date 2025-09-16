@@ -160,7 +160,6 @@ const CustomScheduleAndDetails = (props) => {
   const prevCardImageUrl = useRef(editedValues?.courseImageAssetPath);
   const prevBannerImageUrl = useRef(editedValues?.bannerImageAssetPath);
 
-
   const validateField = useCallback(
     (value, field) => {
       if (!touched[field]) {
@@ -188,15 +187,12 @@ const CustomScheduleAndDetails = (props) => {
         }
       }
 
-      const hasChanged = processedValue !== initialValues[field];
+      const hasChanged = processedValue !== editedValues[field];
 
       if (hasChanged) {
         handleValuesChange(processedValue, field);
         setHasUnsavedChanges(true);
         setShowSaveChangesPrompt(true);
-      } else {
-        setHasUnsavedChanges(false);
-        setShowSaveChangesPrompt(false);
       }
 
       const fieldError = validateField(processedValue, field);
@@ -213,7 +209,7 @@ const CustomScheduleAndDetails = (props) => {
         });
       }
     },
-    [handleValuesChange, validateField, initialValues],
+    [handleValuesChange, validateField, editedValues],
   );
 
   const handleImageUpload = useCallback(
@@ -358,17 +354,20 @@ const CustomScheduleAndDetails = (props) => {
     editedValues?.startDate && editedValues?.shortDescription,
   );
 
-  // Check for errors, but ignore enrollmentEnd errors if endDate is valid
+  // Check for all errors including enrollment end date errors
   const hasEndDateError = !!(errorFields?.endDate || errors?.endDate);
   const hasEnrollmentEndError = !!(errorFields?.enrollmentEnd || errors?.enrollmentEnd);
-  const otherErrors = Object.keys(errorFields || {}).filter(key => key !== 'enrollmentEnd').length > 0
-    || Object.keys(errors || {}).filter(key => key !== 'enrollmentEnd').length > 0;
+  const hasEnrollmentStartError = !!(errorFields?.enrollmentStart || errors?.enrollmentStart);
+  const hasStartDateError = !!(errorFields?.startDate || errors?.startDate);
 
-  // Only consider enrollmentEnd error if endDate also has an error
-  const hasErrors = otherErrors || hasEndDateError || (hasEnrollmentEndError && hasEndDateError);
+  // Count all errors - enrollment end date errors should always be considered
+  const allErrorFields = { ...errorFields, ...errors };
+  const hasErrors = Object.keys(allErrorFields).length > 0;
   const hasImageErrors = Object.values(imageErrors).some(
     (error) => error !== '',
   );
+  console.log('hasErrors', hasErrors);
+  console.log('errorFields', errorFields);
 
   const updateValuesButtonState = {
     labels: {
@@ -381,6 +380,7 @@ const CustomScheduleAndDetails = (props) => {
   const handleCancelChanges = useCallback(() => {
     handleResetValues();
     setShowSaveChangesPrompt(false);
+    setHasUnsavedChanges(false);
     setTouched({});
   }, [handleResetValues]);
 
@@ -391,6 +391,10 @@ const CustomScheduleAndDetails = (props) => {
 
   useEffect(() => {
     if (showSuccessfulAlert && !isQueryPending && hasAttemptedSave) {
+      // Reset unsaved changes when save is successful
+      setHasUnsavedChanges(false);
+      setShowSaveChangesPrompt(false);
+
       // Small delay to ensure the alert is rendered
       setTimeout(() => {
         // Find the scrollable container (.main-content)
@@ -399,13 +403,13 @@ const CustomScheduleAndDetails = (props) => {
           // Scroll the container to top
           scrollContainer.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         } else {
           // Fallback to window scroll
           window.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         }
       }, 100);
@@ -539,7 +543,7 @@ const CustomScheduleAndDetails = (props) => {
               onClick={handleSaveChanges}
               disabled={
                 hasErrors
-                || !requiredFieldsPresent
+                || !hasUnsavedChanges
                 || !isEditableState
                 || isImageUploading
                 || hasImageErrors
