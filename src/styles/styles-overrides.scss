@@ -1427,6 +1427,7 @@ body {
   @include card-style1;
   padding: 1rem;
   margin-left: 1rem !important;
+  width: 98% !important;
 
   .sub-header-title {
     @include sub-header-title-style1;

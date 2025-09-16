@@ -48,6 +48,7 @@ import LicenseIcons from '../../schedule-and-details/license-section/license-ico
 import licenseMessages from '../../schedule-and-details/license-section/messages';
 import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
 import AlertMessage from '../../generic/alert-message';
+import CertificateDisplayRow from '../../schedule-and-details/schedule-section/certificate-display-row/CertificateDisplayRow';
 import ModalNotification from '../../generic/modal-notification';
 import LearningOutcomesSection from '../../schedule-and-details/learning-outcomes-section';
 import InstructorsSection from '../../schedule-and-details/instructors-section';
@@ -293,6 +294,10 @@ const PSCourseForm = ({
         });
       }
     });
+  };
+
+  const handleCertificateChange = (value, field) => {
+    handleInputChange(field, value);
   };
 
   const handleBlur = (field) => {
@@ -1107,6 +1112,15 @@ const PSCourseForm = ({
                                       </Col>
                                     </Row>
                                   </div>
+                                </li>
+                                <li className="certificate-display-row">
+                                  <CertificateDisplayRow
+                                    certificateAvailableDate={editedValues.certificateAvailableDate || ''}
+                                    availableDateErrorFeedback={errors.certificateAvailableDate || ''}
+                                    certificatesDisplayBehavior={editedValues.certificatesDisplayBehavior || ''}
+                                    displayBehaviorErrorFeedback={errors.certificatesDisplayBehavior || ''}
+                                    onChange={handleCertificateChange}
+                                  />
                                 </li>
                               </ul>
                             </div>
