@@ -1,9 +1,18 @@
 import { ReactElement } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MODULE_PATH } from '@src/authz-module/constants';
 import TeamTable from './TeamTable';
 import { useTeamMembers } from '../data/hooks';
 import { useLibraryAuthZ } from '../context';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: () => mockNavigate,
+}));
 
 jest.mock('../data/hooks', () => ({
   useTeamMembers: jest.fn(),
@@ -16,9 +25,11 @@ jest.mock('../context', () => ({
 const customRender = (
   ui: ReactElement,
 ) => render(
-  <IntlProvider locale="en">
-    {ui}
-  </IntlProvider>,
+  <BrowserRouter>
+    <IntlProvider locale="en">
+      {ui}
+    </IntlProvider>
+  </BrowserRouter>,
 );
 
 describe('TeamTable', () => {
@@ -81,7 +92,7 @@ describe('TeamTable', () => {
     expect(screen.getByText('Viewer')).toBeInTheDocument();
   });
 
-  it('renders Edit button only for users with than can manage team members (current user can not edit themselves)', () => {
+  it('renders Edit button only for users with than can manage team members (current user can not edit themselves)', async () => {
     (useTeamMembers as jest.Mock).mockReturnValue({
       data: mockTeamMembers,
       isLoading: false,
@@ -90,8 +101,14 @@ describe('TeamTable', () => {
 
     customRender(<TeamTable />);
 
+    const editButtons = screen.queryAllByText('Edit');
     // Should not find Edit button for current user
-    expect(screen.queryAllByText('Edit')).toHaveLength(1);
+    expect(editButtons).toHaveLength(1);
+
+    await userEvent.click(editButtons[0]);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/console/authz/${MODULE_PATH.replace(':libraryId', 'lib:123')}`,
+    );
   });
 
   it('does not render Edit button if canManageTeam is false', () => {

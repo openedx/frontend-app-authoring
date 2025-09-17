@@ -17,3 +17,5 @@ export interface TableCellValue<T> {
     original: T;
   };
 }
+
+export const MODULE_PATH = '/libraries/:libraryId';

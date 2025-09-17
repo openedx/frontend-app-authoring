@@ -1,10 +1,11 @@
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   DataTable, Button, Chip, Skeleton,
 } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
-import { useMemo } from 'react';
-import { TableCellValue, TeamMember } from '@src/authz-module/constants';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { MODULE_PATH, TableCellValue, TeamMember } from '@src/authz-module/constants';
 import { useTeamMembers } from '../data/hooks';
 import { useLibraryAuthZ } from '../context';
 
@@ -43,6 +44,9 @@ const TeamTable = () => {
     data: teamMembers, isLoading,
   } = useTeamMembers(libraryId);
   const rows = teamMembers || SKELETON_ROWS;
+
+  const navigate = useNavigate();
+
   const columns = useMemo(() => [
     {
       Header: 'Name',
@@ -77,7 +81,8 @@ const TeamTable = () => {
                 iconBefore={Edit}
                 variant="link"
                 size="sm"
-                onClick={() => { }}
+                // to-do update the view with the team member view
+                onClick={() => navigate(`/console/authz/${MODULE_PATH.replace(':libraryId', libraryId)}`)}
               ><FormattedMessage
                 id="authz.libraries.team.table.action"
                 defaultMessage="Edit"
