@@ -1,30 +1,106 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Icon,
   Row,
   Pagination,
   Alert,
   Button,
+  Form,
+  Stack,
+  useToggle,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Error } from '@openedx/paragon/icons';
+import { Add, Error } from '@openedx/paragon/icons';
 
-import { useContentLibraryV2List } from '../../../library-authoring';
-import { LoadingSpinner } from '../../../generic/Loading';
-import AlertMessage from '../../../generic/alert-message';
+import { CreateLibraryModal, useContentLibraryV2List } from '@src/library-authoring';
+import { LoadingSpinner } from '@src/generic/Loading';
+import AlertMessage from '@src/generic/alert-message';
+import type { ContentLibrary, LibrariesV2Response } from '@src/library-authoring/data/api';
+
 import CardItem from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
 
-type Props = Record<never, never>;
+interface CardListProps {
+  hasV2Libraries: boolean;
+  inSelectMode: boolean;
+  isFiltered: boolean;
+  isLoading: boolean;
+  data: LibrariesV2Response;
+  handleClearFilters: () => void;
+}
 
-const LibrariesV2Tab: React.FC<Props> = () => {
+const CardList: React.FC<CardListProps> = ({
+  hasV2Libraries,
+  inSelectMode,
+  isFiltered,
+  isLoading,
+  data,
+  handleClearFilters,
+}) => {
+  const intl = useIntl();
+
+  if (hasV2Libraries) {
+    return (
+      <>
+        {
+          data!.results.map(({
+            id, org, slug, title,
+          }) => (
+            <CardItem
+              key={`${org}+${slug}`}
+              isLibraries
+              displayName={title}
+              org={org}
+              number={slug}
+              path={`/library/${id}`}
+              inSelectMode={inSelectMode}
+              itemId={id}
+            />
+          ))
+        }
+      </>
+    );
+  }
+
+  // Empty alert
+  if (isFiltered && !isLoading) {
+    return (
+      <Alert className="mt-4">
+        <Alert.Heading>
+          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
+        </Alert.Heading>
+        <p>
+          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
+        </p>
+        <Button variant="primary" onClick={handleClearFilters}>
+          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+        </Button>
+      </Alert>
+    );
+  }
+  return null;
+};
+
+interface Props {
+  selectedLibraryId?: string | null;
+  handleSelect?: ((library: ContentLibrary) => void) | null;
+  showCreateLibrary?: boolean;
+}
+
+const LibrariesV2List: React.FC<Props> = ({
+  selectedLibraryId = null,
+  handleSelect = null,
+  showCreateLibrary = false,
+}) => {
   const intl = useIntl();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filterParams, setFilterParams] = useState({});
+  const [isCreateLibraryOpen, openCreateLibrary, closeCreateLibrary] = useToggle(false);
 
   const isFiltered = Object.keys(filterParams).length > 0;
+  const inSelectMode = handleSelect !== null;
 
   const handlePageSelect = (page: number) => {
     setCurrentPage(page);
@@ -41,6 +117,29 @@ const LibrariesV2Tab: React.FC<Props> = () => {
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
 
+  const findLibrary = useCallback((libraryId: string) => {
+    if (data) {
+      return data.results.find((library) => library.id === libraryId);
+    }
+    return undefined;
+  }, [data]);
+
+  const handlePostCreateLibrary = useCallback((library: ContentLibrary) => {
+    if (handleSelect) {
+      handleSelect(library);
+      closeCreateLibrary();
+    }
+  }, [handleSelect, closeCreateLibrary]);
+
+  const handleOnChangeRadioSet = useCallback((libraryId: string) => {
+    if (handleSelect) {
+      const library = findLibrary(libraryId);
+      if (library) {
+        handleSelect(library);
+      }
+    }
+  }, [findLibrary, handleSelect]);
+
   if (isLoading && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
@@ -51,35 +150,31 @@ const LibrariesV2Tab: React.FC<Props> = () => {
 
   const hasV2Libraries = !isLoading && !isError && ((data!.results.length || 0) > 0);
 
-  // TODO: update this link when tutorial is ready.
-  const librariesTutorialLink = (
-    <Alert.Link href="https://docs.openedx.org">
-      {intl.formatMessage(messages.librariesV2TabBetaTutorialLinkText)}
-    </Alert.Link>
-  );
-
   return (
-    <>
-      <Alert variant="info">
-        {intl.formatMessage(
-          messages.librariesV2TabBetaText,
-          { link: librariesTutorialLink },
+    isError ? (
+      <AlertMessage
+        variant="danger"
+        description={(
+          <Row className="m-0 align-items-center">
+            <Icon src={Error} className="text-danger-500 mr-1" />
+            <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
+          </Row>
         )}
-      </Alert>
-
-      {isError ? (
-        <AlertMessage
-          variant="danger"
-          description={(
-            <Row className="m-0 align-items-center">
-              <Icon src={Error} className="text-danger-500 mr-1" />
-              <span>{intl.formatMessage(messages.librariesTabErrorMessage)}</span>
-            </Row>
-          )}
-        />
-      ) : (
-        <div className="courses-tab-container">
-          <div className="d-flex flex-row justify-content-between my-4">
+      />
+    ) : (
+      <div className="courses-tab-container">
+        <div className="d-flex flex-row justify-content-between my-4">
+          <Stack direction="horizontal">
+            {showCreateLibrary && (
+              <Button
+                variant="outline-primary"
+                onClick={openCreateLibrary}
+                iconBefore={Add}
+                className="mr-3"
+              >
+                {intl.formatMessage(messages.createLibraryButton)}
+              </Button>
+            )}
             <LibrariesV2Filters
               isLoading={isLoading}
               isFiltered={isFiltered}
@@ -87,59 +182,64 @@ const LibrariesV2Tab: React.FC<Props> = () => {
               setFilterParams={setFilterParams}
               setCurrentPage={setCurrentPage}
             />
-            {!isLoading && !isError
-            && (
-              <p>
-                {intl.formatMessage(messages.coursesPaginationInfo, {
-                  length: data!.results.length,
-                  total: data!.count,
-                })}
-              </p>
-            )}
-          </div>
-
-          { hasV2Libraries
-            ? data!.results.map(({
-              id, org, slug, title,
-            }) => (
-              <CardItem
-                key={`${org}+${slug}`}
-                isLibraries
-                displayName={title}
-                org={org}
-                number={slug}
-                path={`/library/${id}`}
-              />
-            )) : isFiltered && !isLoading && (
-              <Alert className="mt-4">
-                <Alert.Heading>
-                  {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
-                </Alert.Heading>
-                <p>
-                  {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
-                </p>
-                <Button variant="primary" onClick={handleClearFilters}>
-                  {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
-                </Button>
-              </Alert>
-            )}
-
-          {
-            hasV2Libraries && (data!.numPages || 0) > 1
-            && (
-              <Pagination
-                className="d-flex justify-content-center"
-                paginationLabel="pagination navigation"
-                pageCount={data!.numPages}
-                currentPage={currentPage}
-                onPageSelect={handlePageSelect}
-              />
-            )
-          }
+          </Stack>
+          {!isLoading && !isError
+          && (
+            <p>
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: data!.results.length,
+                total: data!.count,
+              })}
+            </p>
+          )}
         </div>
-      )}
-    </>
+
+        {inSelectMode ? (
+          <Form.RadioSet
+            name="select-libraries-v2-list"
+            value={selectedLibraryId}
+            onChange={(e) => handleOnChangeRadioSet(e.target.value)}
+          >
+            <CardList
+              hasV2Libraries={hasV2Libraries}
+              inSelectMode={inSelectMode}
+              isFiltered={isFiltered}
+              isLoading={isLoading}
+              data={data!}
+              handleClearFilters={handleClearFilters}
+            />
+          </Form.RadioSet>
+        ) : (
+          <CardList
+            hasV2Libraries={hasV2Libraries}
+            inSelectMode={inSelectMode}
+            isFiltered={isFiltered}
+            isLoading={isLoading}
+            data={data!}
+            handleClearFilters={handleClearFilters}
+          />
+        )}
+
+        {
+          hasV2Libraries && (data!.numPages || 0) > 1
+          && (
+            <Pagination
+              className="d-flex justify-content-center"
+              paginationLabel="pagination navigation"
+              pageCount={data!.numPages}
+              currentPage={currentPage}
+              onPageSelect={handlePageSelect}
+            />
+          )
+        }
+        <CreateLibraryModal
+          isOpen={isCreateLibraryOpen}
+          onClose={closeCreateLibrary}
+          handlePostCreate={handlePostCreateLibrary}
+        />
+      </div>
+    )
   );
 };
 
-export default LibrariesV2Tab;
+export default LibrariesV2List;
