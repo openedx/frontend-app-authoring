@@ -22,6 +22,7 @@ interface Props {
   newVersion?: VersionSpec;
   isContainer?: boolean;
   showTitle?: boolean;
+  oldUsageKey?: string | null;
 }
 
 /**
@@ -38,6 +39,7 @@ const CompareChangesWidget = ({
   newVersion = 'draft',
   isContainer = false,
   showTitle = false,
+  oldUsageKey = null,
 }: Props) => {
   const intl = useIntl();
 
@@ -49,10 +51,11 @@ const CompareChangesWidget = ({
             {isContainer ? (<PreviewNotAvailable />) : (
               <IframeProvider>
                 <LibraryBlock
-                  usageKey={usageKey}
+                  usageKey={oldUsageKey || usageKey}
                   version={oldVersion}
                   minHeight="50vh"
                   showTitle={showTitle}
+                  isBlockV1={!!oldUsageKey}
                 />
               </IframeProvider>
             )}

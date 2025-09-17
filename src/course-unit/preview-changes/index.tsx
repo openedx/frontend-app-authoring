@@ -15,8 +15,9 @@ import LoadingButton from '@src/generic/loading-button';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
-
+import type { VersionSpec } from '@src/library-authoring/LibraryBlock';
 import { getItemIcon } from '@src/generic/block-type-utils';
+
 import { messageTypes } from '../constants';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
 import messages from './messages';
@@ -97,6 +98,7 @@ export interface LibraryChangesMessageData {
   downstreamBlockId: string,
   upstreamBlockId: string,
   upstreamBlockVersionSynced: number,
+  upstreamDownstreamIsModified?: boolean,
   isContainer: boolean,
   blockType?: string | null,
 }
@@ -126,7 +128,7 @@ export const PreviewLibraryXBlockChanges = ({
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  const isTextType = blockData.blockType === 'html';
+  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.upstreamDownstreamIsModified);
 
   const getBody = useCallback(() => {
     if (!blockData) {
@@ -135,13 +137,14 @@ export const PreviewLibraryXBlockChanges = ({
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
+        oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : null}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
         isContainer={blockData.isContainer}
-        showTitle={isTextType}
+        showTitle={isTextWithLocalChanges}
       />
     );
-  }, [blockData, isTextType]);
+  }, [blockData, isTextWithLocalChanges]);
 
   const updateAndRefresh = useCallback(async (accept: boolean) => {
     // istanbul ignore if: this should never happen
@@ -222,7 +225,7 @@ export const PreviewLibraryXBlockChanges = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {isTextType ? (
+        {isTextWithLocalChanges ? (
           <AlertMessage
             show
             variant="info"
@@ -241,7 +244,7 @@ export const PreviewLibraryXBlockChanges = ({
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          {isTextType ? (
+          {isTextWithLocalChanges ? (
             <Button
               variant="tertiary"
               onClick={() => setConfirmationModalType('update')}
@@ -254,7 +257,7 @@ export const PreviewLibraryXBlockChanges = ({
               label={intl.formatMessage(messages.acceptChangesBtn)}
             />
           )}
-          {isTextType ? (
+          {isTextWithLocalChanges ? (
             <Button
               onClick={() => setConfirmationModalType('keep')}
             >
