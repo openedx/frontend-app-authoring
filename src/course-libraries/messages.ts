@@ -32,7 +32,7 @@ const messages = defineMessages({
     description: 'Tab title for review tab',
   },
   reviewTabDescriptionEmpty: {
-    id: 'course-authoring.course-libraries.tab.home.description-no-links',
+    id: 'course-authoring.course-libraries.tab.review.description-no-links',
     defaultMessage: 'All components are up to date',
     description: 'Description text for home tab',
   },

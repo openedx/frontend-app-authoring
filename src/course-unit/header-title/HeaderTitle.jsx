@@ -34,8 +34,6 @@ const HeaderTitle = ({
     COURSE_BLOCK_NAMES.component.id,
   ].includes(currentItemData.category);
 
-  const readOnly = !!currentItemData.readOnly;
-
   const onConfigureSubmit = (...arg) => {
     handleConfigureSubmit(currentItemData.id, ...arg, closeConfigureModal);
   };
@@ -82,7 +80,6 @@ const HeaderTitle = ({
           className="ml-1 flex-shrink-0"
           iconAs={EditIcon}
           onClick={handleTitleEdit}
-          disabled={readOnly}
         />
         <IconButton
           alt={intl.formatMessage(messages.altButtonSettings)}

@@ -7,6 +7,7 @@ import {
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
+import { RequestStatus } from '../../data/constants';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -232,16 +233,6 @@ describe('<CardHeader />', () => {
     });
   });
 
-  it('check is field disabled when isDisabledEditField is true', async () => {
-    renderComponent({
-      ...cardHeaderProps,
-      isFormOpen: true,
-      isDisabledEditField: true,
-    });
-
-    expect(await screen.findByTestId('subsection-edit-field')).toBeDisabled();
-  });
-
   it('check editing is enabled when isDisabledEditField is false', async () => {
     renderComponent({ ...cardHeaderProps });
 
@@ -254,8 +245,8 @@ describe('<CardHeader />', () => {
     expect(await screen.findByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
   });
 
-  it('check editing is disabled when isDisabledEditField is true', async () => {
-    renderComponent({ ...cardHeaderProps, isDisabledEditField: true });
+  it('check editing is disabled when saving is in progress', async () => {
+    renderComponent({ ...cardHeaderProps, savingStatus: RequestStatus.IN_PROGRESS });
 
     expect(await screen.findByTestId('subsection-edit-button')).toBeDisabled();
 

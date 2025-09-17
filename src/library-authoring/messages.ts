@@ -71,11 +71,6 @@ const messages = defineMessages({
     defaultMessage: 'Coming soon!',
     description: 'Temp placeholder for the collections container. This will be replaced with the actual collection list.',
   },
-  createLibrary: {
-    id: 'course-authoring.library-authoring.create-library',
-    defaultMessage: 'Create library',
-    description: 'Header for the create library form',
-  },
   createLibraryTempPlaceholder: {
     id: 'course-authoring.library-authoring.create-library-temp-placeholder',
     defaultMessage: 'This is a placeholder for the create library form. This will be replaced with the actual form.',
