@@ -11,6 +11,7 @@ import {
   CheckBoxIcon,
   CheckBoxOutlineBlank,
 } from '@openedx/paragon/icons';
+import { getBlockType } from '@src/generic/key-utils';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -26,10 +27,10 @@ import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
-import { getBlockType } from '../../generic/key-utils';
-import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
-import { ToastContext } from '../../generic/toast-context';
-import PublishConfirmationModal from '../components/PublishConfirmationModal';
+import { useLibraryBlockMetadata } from '../data/apiHooks';
+import { ComponentUsageTab } from './ComponentUsageTab';
+import { PublishDraftButton, PublishedChip } from '../generic/publish-status-buttons';
+import { ComponentPublisher } from './ComponentPublisher';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -98,10 +99,58 @@ const AddComponentWidget = () => {
   return null;
 };
 
+const ComponentActions = ({
+  componentId,
+  hasUnpublishedChanges,
+}: {
+  componentId: string,
+  hasUnpublishedChanges: boolean,
+}) => {
+  const intl = useIntl();
+  const { openComponentEditor } = useLibraryContext();
+  const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
+  const canEdit = canEditComponent(componentId);
+
+  if (isPublisherOpen) {
+    return (
+      <ComponentPublisher
+        handleClose={closePublisher}
+        componentId={componentId}
+      />
+    );
+  }
+
+  return (
+    <div className="d-flex flex-wrap">
+      <Button
+        {...(canEdit ? { onClick: () => openComponentEditor(componentId) } : { disabled: true })}
+        variant="outline-primary"
+        className="m-1 text-nowrap flex-grow-1"
+      >
+        {intl.formatMessage(messages.editComponentButtonTitle)}
+      </Button>
+      <div className="flex-grow-1">
+        {!hasUnpublishedChanges ? (
+          <div className="m-1">
+            <PublishedChip />
+          </div>
+        ) : (
+          <PublishDraftButton
+            onClick={openPublisher}
+          />
+        )}
+      </div>
+      <div className="mt-2">
+        <ComponentMenu usageKey={componentId} />
+      </div>
+    </div>
+  );
+};
+
 const ComponentInfo = () => {
   const intl = useIntl();
+  const { readOnly } = useLibraryContext();
 
-  const { readOnly, openComponentEditor } = useLibraryContext();
   const {
     sidebarTab,
     setSidebarTab,
@@ -110,11 +159,6 @@ const ComponentInfo = () => {
     hiddenTabs,
     resetSidebarAction,
   } = useSidebarContext();
-  const [
-    isPublishConfirmationOpen,
-    openPublishConfirmation,
-    closePublishConfirmation,
-  ] = useToggle(false);
 
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
@@ -127,29 +171,14 @@ const ComponentInfo = () => {
     setSidebarTab(newTab);
   };
 
-  const usageKey = sidebarItemInfo?.id;
+  const componentId = sidebarItemInfo?.id;
   // istanbul ignore if: this should never happen
-  if (!usageKey) {
+  if (!componentId) {
     throw new Error('usageKey is required');
   }
 
-  const canEdit = canEditComponent(usageKey);
-
-  const publishComponent = usePublishComponent(usageKey);
-  const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
-  // Only can be published when the component has been modified after the last published date.
-  const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
-  const { showToast } = React.useContext(ToastContext);
-
-  const publish = React.useCallback(() => {
-    closePublishConfirmation();
-    publishComponent.mutateAsync()
-      .then(() => {
-        showToast(intl.formatMessage(messages.publishSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.publishErrorMsg));
-      });
-  }, [publishComponent, showToast, intl]);
+  const { data: componentMetadata } = useLibraryBlockMetadata(componentId);
+  const hasUnpublishedChanges = componentMetadata?.hasUnpublishedChanges || false;
 
   // TODO: refactor sidebar Tabs to handle rendering and disabledTabs in one place.
   const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
@@ -165,50 +194,27 @@ const ComponentInfo = () => {
   }, [hiddenTabs, defaultTab.component]);
 
   return (
-    <>
-      <Stack>
-        {!readOnly && (
-          <div className="d-flex flex-wrap">
-            <Button
-              {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}
-              variant="outline-primary"
-              className="m-1 text-nowrap flex-grow-1"
-            >
-              {intl.formatMessage(messages.editComponentButtonTitle)}
-            </Button>
-            <Button
-              disabled={publishComponent.isLoading || !canPublish}
-              onClick={openPublishConfirmation}
-              variant="outline-primary"
-              className="m-1 text-nowrap flex-grow-1"
-            >
-              {intl.formatMessage(messages.publishComponentButtonTitle)}
-            </Button>
-            <ComponentMenu usageKey={usageKey} />
-          </div>
-        )}
-        <AddComponentWidget />
-        <Tabs
-          variant="tabs"
-          className="my-3 d-flex justify-content-around"
-          defaultActiveKey={defaultTab.component}
-          activeKey={tab}
-          onSelect={handleTabChange}
-        >
-          {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
-          {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
-          {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
-        </Tabs>
-      </Stack>
-      <PublishConfirmationModal
-        isOpen={isPublishConfirmationOpen}
-        onClose={closePublishConfirmation}
-        onConfirm={publish}
-        displayName={componentMetadata?.displayName || ''}
-        usageKey={usageKey}
-        showDownstreams={!!componentMetadata?.lastPublished}
-      />
-    </>
+    <Stack>
+      {!readOnly && (
+        <ComponentActions
+          componentId={componentId}
+          hasUnpublishedChanges={hasUnpublishedChanges}
+        />
+      )}
+      <AddComponentWidget />
+      <Tabs
+        variant="tabs"
+        className="my-3 d-flex justify-content-around"
+        defaultActiveKey={defaultTab.component}
+        activeKey={tab}
+        onSelect={handleTabChange}
+      >
+        {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Usage, <ComponentUsageTab />, intl.formatMessage(messages.usageTabTitle))}
+        {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
+      </Tabs>
+    </Stack>
   );
 };
 
