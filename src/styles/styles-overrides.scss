@@ -153,7 +153,19 @@ body {
     color: #9e9f9e;
     width: 2.5rem;
     height: 2.5rem;
+
+  // RTL styles
+    [dir="rtl"] & {
+      z-index: 10;
+      // margin-left: 1rem !important;
+    }
   }
+
+  [dir="rtl"] & {
+    gap: 2rem !important;
+  }
+  
+  
 
   .grading-scale-segments-and-ticks {
     border: none;

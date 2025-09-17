@@ -78,7 +78,7 @@ const MyCourses = () => {
   useEffect(() => {
     const fetchNavigationItems = async () => {
       try {
-        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
         // const response = await getAuthenticatedHttpClient().get(
         //   'https://staging.titaned.com/titaned/api/v1/menu-config/',
         // );
@@ -185,7 +185,7 @@ const MyCourses = () => {
       <ContactAdministrator
         hasAbilityToCreateCourse={hasAbilityToCreateNewCourse}
         showNewCourseContainer={false}
-        onClickNewCourse={() => {}}
+        onClickNewCourse={() => navigate('/new-course')}
       />
     )
   );

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import './CourseNavigationSidebar.scss';
+import messages from './messages';
 
 const Sidebar = ({ buttons, onNavigate, presentPath }) => (
   <nav className="course-sidebar-nav">
@@ -46,27 +48,28 @@ const CourseNavigationSidebar = ({ courseId: propCourseId }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const presentPath = location.pathname;
+  const intl = useIntl();
 
   // --- ADAPT sidebarItems ---
   // Map the authoring sections to the sidebar structure.
   // Use the actual routes from CourseAuthoringRoutes.jsx.
   const sidebarItems = [
-    { label: 'Course Outline', path: `/course/${courseId}` },
-    { label: 'Schedule & Details', path: `/course/${courseId}/settings/details` },
-    { label: 'Grading', path: `/course/${courseId}/settings/grading` }, // Note: path adjusted from previous nav bar
-    { label: 'Course Team', path: `/course/${courseId}/course_team` },
-    { label: 'Certificates', path: `/course/${courseId}/certificates` },
+    { label: intl.formatMessage(messages.sidebarCourseOutline), path: `/course/${courseId}` },
+    { label: intl.formatMessage(messages.sidebarScheduleDetails), path: `/course/${courseId}/settings/details` },
+    { label: intl.formatMessage(messages.sidebarGrading), path: `/course/${courseId}/settings/grading` }, // Note: path adjusted from previous nav bar
+    { label: intl.formatMessage(messages.sidebarCourseTeam), path: `/course/${courseId}/course_team` },
+    { label: intl.formatMessage(messages.sidebarCertificates), path: `/course/${courseId}/certificates` },
     // { label: 'Enrollments', path: `/course/${courseId}/enrollments`, icon: <HowToReg /> }, // Uncomment if needed
-    { label: 'Updates', path: `/course/${courseId}/course_info` }, // Map to course_info route
+    { label: intl.formatMessage(messages.sidebarUpdates), path: `/course/${courseId}/course_info` }, // Map to course_info route
     // { label: 'Attendance', path: `/course/${courseId}/attendance`, icon: <EventBusy /> }, // Uncomment if needed
     // { label: 'Fee Statistics', path: `/course/${courseId}/statistics`, icon: <QueryStats /> }, // Uncomment if needed
-    { label: 'Group Configurations', path: `/course/${courseId}/group_configurations` },
-    { label: 'Advance Settings', path: `/course/${courseId}/settings/advanced` },
-    { label: 'Import', path: `/course/${courseId}/import` },
-    { label: 'Export', path: `/course/${courseId}/export` },
-    { label: 'Checklists', path: `/course/${courseId}/checklists` },
-    { label: 'Files', path: `/course/${courseId}/assets` },
-    { label: 'Pages & Resources', path: `/course/${courseId}/pages-and-resources` },
+    { label: intl.formatMessage(messages.sidebarGroupConfigurations), path: `/course/${courseId}/group_configurations` },
+    { label: intl.formatMessage(messages.sidebarAdvancedSettings), path: `/course/${courseId}/settings/advanced` },
+    { label: intl.formatMessage(messages.sidebarImport), path: `/course/${courseId}/import` },
+    { label: intl.formatMessage(messages.sidebarExport), path: `/course/${courseId}/export` },
+    { label: intl.formatMessage(messages.sidebarChecklists), path: `/course/${courseId}/checklists` },
+    { label: intl.formatMessage(messages.sidebarFiles), path: `/course/${courseId}/assets` },
+    { label: intl.formatMessage(messages.sidebarPagesResources), path: `/course/${courseId}/pages-and-resources` },
     // Add other relevant course authoring pages here
   ];
     // --- END ADAPT ---

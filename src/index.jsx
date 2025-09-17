@@ -117,7 +117,12 @@ const App = () => {
         {/* <Route path="/home" element={<StudioHome />} /> */}
         <Route path="/widgets-create" element={<CreateWidgets />} />
         <Route path="/my-courses" element={<MyCourses />} />
-        <Route path="/libraries" element={<LibrariesV2Tab />} />
+        {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
+        {oldUI === 'true' ? (
+          <Route path="/libraries" element={<StudioHome />} />
+        ) : (
+          <Route path="/libraries" element={<LibrariesV2Tab />} />
+        )}
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />

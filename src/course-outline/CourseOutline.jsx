@@ -296,7 +296,7 @@ const CourseOutline = ({ courseId }) => {
           >
             <Layout.Element>
               <article>
-              <PluginSlot id="courseoutline_header_plugin_slot"/>
+              <PluginSlot id="courseoutline_header_plugin_slott"/>
                 <div>
                   <section className="course-outline-section custom-outline-section">
                     <PluginSlot
