@@ -4,3 +4,10 @@ export interface TeamMember {
   email: string;
   roles: string[];
 }
+
+export interface LibraryMetadata {
+  id: string;
+  org: string;
+  title: string;
+  slug: string;
+}
