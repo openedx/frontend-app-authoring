@@ -11,3 +11,9 @@ export interface LibraryMetadata {
   title: string;
   slug: string;
 }
+
+export interface TableCellValue<T> {
+  row: {
+    original: T;
+  };
+}

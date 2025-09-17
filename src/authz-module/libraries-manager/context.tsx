@@ -14,6 +14,7 @@ export type AppContextType = {
 
 type LibraryAuthZContextType = {
   canManageTeam: boolean;
+  username: string;
   libraryId: string;
   roles: string[];
   permissions: string[];
@@ -39,6 +40,7 @@ export const LibraryAuthZProvider: React.FC<AuthZProviderProps> = ({ children })
   const { data: libraryMetadata } = useLibrary(libraryId);
 
   const value = useMemo((): LibraryAuthZContextType => ({
+    username: currentUser.username,
     libraryId,
     libraryName: libraryMetadata.title,
     libraryOrg: libraryMetadata.org,
