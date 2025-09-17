@@ -32,6 +32,7 @@ import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
 import { ContentType } from './library-authoring/routes';
+import AuthModule from './authz-module/';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -106,6 +107,7 @@ const App = () => {
             />
           </>
         )}
+        <Route path="/console/authz/*" element={<AuthModule />}/>
       </Route>,
     ),
     {
