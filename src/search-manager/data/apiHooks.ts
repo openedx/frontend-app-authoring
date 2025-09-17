@@ -1,5 +1,5 @@
 import React from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
@@ -26,7 +26,7 @@ export const useContentSearchConnection = (): {
   const { data: connectionDetails, isError: hasConnectionError } = useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
-    cacheTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
+    gcTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
     staleTime: 60 * 60_000, // If cache is up to one hour old, no need to re-fetch
     refetchInterval: 60 * 60_000,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
@@ -135,7 +135,7 @@ export const useContentSearchResults = ({
       tagsFilter,
       sort,
     }),
-    queryFn: ({ pageParam = 0 }) => {
+    queryFn: ({ pageParam }) => {
       // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
@@ -157,9 +157,10 @@ export const useContentSearchResults = ({
         limit,
       });
     },
+    initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
@@ -232,7 +233,7 @@ export const useTagFilterOptions = (args: {
       return fetchAvailableTagOptions({ ...args, client, indexName });
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
@@ -257,7 +258,7 @@ export const useTagFilterOptions = (args: {
       return fetchTagsThatMatchKeyword({ ...args, client, indexName });
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
