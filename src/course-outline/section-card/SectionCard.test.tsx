@@ -88,7 +88,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onOpenDeleteModal={jest.fn()}
     onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    savingStatus=""
     onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
     isSectionsExpanded

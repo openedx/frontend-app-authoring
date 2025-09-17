@@ -41,11 +41,6 @@ const messages = defineMessages({
     defaultMessage: 'Remove from collection',
     description: 'Menu item for remove a component from collection.',
   },
-  menuRemoveFromContainer: {
-    id: 'course-authoring.library-authoring.component.menu.remove',
-    defaultMessage: 'Remove from {containerType}',
-    description: 'Menu item for remove an item from {containerType}.',
-  },
   removeComponentFromCollectionSuccess: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-success',
     defaultMessage: 'Item successfully removed',
