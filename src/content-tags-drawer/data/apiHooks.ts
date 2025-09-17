@@ -1,4 +1,3 @@
-// @ts-check
 import { useMemo } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
@@ -8,6 +7,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useParams } from 'react-router';
+import { TagData, TagListData } from '@src/taxonomy/data/types';
 import {
   getTaxonomyTagsData,
   getContentTaxonomyTagsData,
@@ -17,18 +17,16 @@ import {
 } from './api';
 import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
-
-/** @typedef {import("../../taxonomy/data/types.js").TagListData} TagListData */
-/** @typedef {import("../../taxonomy/data/types.js").TagData} TagData */
+import { UpdateTagsData } from './types';
 
 /**
  * Builds the query to get the taxonomy tags
- * @param {number} taxonomyId The id of the taxonomy to fetch tags for
- * @param {string|null} parentTag The tag whose children we're loading, if any
- * @param {string} searchTerm The term passed in to perform search on tags
- * @param {number} numPages How many pages of tags to load at this level
+ * @param taxonomyId The id of the taxonomy to fetch tags for
+ * @param parentTag The tag whose children we're loading, if any
+ * @param searchTerm The term passed in to perform search on tags
+ * @param numPages How many pages of tags to load at this level
  */
-export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, searchTerm = '') => {
+export const useTaxonomyTagsData = (taxonomyId: number, parentTag: string | null = null, numPages = 1, searchTerm = '') => {
   const queryClient = useQueryClient();
 
   const queryFn = async ({ queryKey }) => {
@@ -36,8 +34,7 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
     return getTaxonomyTagsData(taxonomyId, { parentTag: parentTag || '', searchTerm, page });
   };
 
-  /** @type {{queryKey: any[], queryFn: typeof queryFn, staleTime: number}[]} */
-  const queries = [];
+  const queries: { queryKey: any[]; queryFn: typeof queryFn; staleTime: number }[] = [];
   for (let page = 1; page <= numPages; page++) {
     queries.push(
       { queryKey: ['taxonomyTags', taxonomyId, parentTag, page, searchTerm], queryFn, staleTime: Infinity },
@@ -54,8 +51,7 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
     const preLoadedData = new Map();
 
     const newTags = dataPages.map(result => {
-      /** @type {TagData[]} */
-      const simplifiedTagsList = [];
+      const simplifiedTagsList: TagData[] = [];
 
       result.data?.results?.forEach((tag) => {
         if (tag.parentValue === parentTag) {
@@ -73,8 +69,7 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
     // Store the pre-loaded descendants into the query cache:
     preLoadedData.forEach((tags, parentValue) => {
       const queryKey = ['taxonomyTags', taxonomyId, parentValue, 1, searchTerm];
-      /** @type {TagListData} */
-      const cachedData = {
+      const cachedData: TagListData = {
         next: '',
         previous: '',
         count: tags.length,
@@ -101,9 +96,9 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
 
 /**
  * Builds the query to get the taxonomy tags applied to the content object
- * @param {string} contentId The ID of the content object to fetch the applied tags for (e.g. an XBlock usage key)
+ * @param contentId The ID of the content object to fetch the applied tags for (e.g. an XBlock usage key)
  */
-export const useContentTaxonomyTagsData = (contentId) => (
+export const useContentTaxonomyTagsData = (contentId: string) => (
   useQuery({
     queryKey: ['contentTaxonomyTags', contentId],
     queryFn: () => getContentTaxonomyTagsData(contentId),
@@ -112,10 +107,10 @@ export const useContentTaxonomyTagsData = (contentId) => (
 
 /**
  * Builds the query to get meta data about the content object
- * @param {string} contentId The id of the content object
- * @param {boolean} enabled Flag to enable/disable the query
+ * @param contentId The id of the content object
+ * @param enabled Flag to enable/disable the query
  */
-export const useContentData = (contentId, enabled) => (
+export const useContentData = (contentId: string, enabled: boolean) => (
   useQuery({
     queryKey: ['contentData', contentId],
     queryFn: enabled ? () => getContentData(contentId) : undefined,
@@ -125,24 +120,17 @@ export const useContentData = (contentId, enabled) => (
 
 /**
  * Builds the mutation to update the tags applied to the content object
- * @param {string} contentId The id of the content object to update tags for
+ * @param contentId The id of the content object to update tags for
  */
-export const useContentTaxonomyTagsUpdater = (contentId) => {
+export const useContentTaxonomyTagsUpdater = (contentId: string) => {
   const queryClient = useQueryClient();
   const unitIframe = window.frames['xblock-iframe'];
   const { containerId } = useParams();
 
   return useMutation({
-    /**
-     * @type {import("@tanstack/react-query").MutateFunction<
-     *   any,
-     *   any,
-     *   {
-     *     tagsData: Promise<import("./types.js").UpdateTagsData[]>
-     *   }
-     * >}
-     */
-    mutationFn: ({ tagsData }) => updateContentTaxonomyTags(contentId, tagsData),
+    mutationFn: ({ tagsData }: { tagsData: Promise<UpdateTagsData[]> }) => (
+      updateContentTaxonomyTags(contentId, tagsData)
+    ),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
       /// Invalidate query with pattern on course outline
@@ -157,13 +145,13 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         // Obtain library id from contentId
         const libraryId = getLibraryId(contentId);
         // Invalidate component metadata to update tags count
-        queryClient.invalidateQueries(xblockQueryKeys.componentMetadata(contentId));
+        queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(contentId) });
         // Invalidate content search to update tags count
-        queryClient.invalidateQueries(['content_search'], { predicate: (query) => libraryQueryPredicate(query, libraryId) });
+        queryClient.invalidateQueries({ queryKey: ['content_search'], predicate: (query) => libraryQueryPredicate(query, libraryId) });
         // If the tags for an item were edited from a container page (Unit, Subsection, Section),
         // invalidate children query to fetch count again.
         if (containerId) {
-          queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(containerId));
+          queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
         }
       }
     },

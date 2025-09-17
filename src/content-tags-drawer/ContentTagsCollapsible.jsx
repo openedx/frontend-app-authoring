@@ -435,8 +435,8 @@ const ContentTagsCollapsible = ({
                 onKeyDown={handleSelectOnKeyDown}
                 ref={/** @type {React.RefObject} */(selectRef)}
                 isMulti
-                isLoading={updateTags.isLoading}
-                isDisabled={updateTags.isLoading}
+                isLoading={updateTags.isPending}
+                isDisabled={updateTags.isPending}
                 name="tags-select"
                 placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
                 isSearchable

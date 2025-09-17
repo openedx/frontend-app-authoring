@@ -314,7 +314,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
   const {
     data: outOfSyncItems,
-    isLoading: isSyncItemsLoading,
+    isPending: isSyncItemsLoading,
     isError,
     error,
   } = useEntityLinks({
