@@ -177,7 +177,7 @@ export const useContentSearchResults = ({
     problemTypes: pages?.[0]?.problemTypes ?? {},
     publishStatus: pages?.[0]?.publishStatus ?? {},
     status: query.status,
-    isLoading: query.isLoading,
+    isLoading: query.isPending,
     isError: query.isError,
     error: query.error,
     isFetchingNextPage: query.isFetchingNextPage,
