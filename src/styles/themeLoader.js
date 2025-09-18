@@ -1,22 +1,32 @@
-import theme from './theme.json';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
 
-export const applyTheme = () => {
+export const applyTheme = async () => {
   try {
-    // Validate that theme is an object
-    if (!theme || typeof theme !== 'object') {
-      throw new Error('Invalid theme data: theme.json must contain a valid object');
+    const response = await getAuthenticatedHttpClient().get(
+      `${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`
+    );
+    
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch theme config');
     }
 
-    // Apply theme variables to :root
+    const themeColors = response.data.theme_colors;
+
+    
+    if (!themeColors || typeof themeColors !== 'object') {
+      throw new Error('Invalid theme_colors in API response');
+    }
+
     const root = document.documentElement;
-    Object.entries(theme).forEach(([key, value]) => {
+    Object.entries(themeColors).forEach(([key, value]) => {
       root.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
     });
-    console.log('Theme applied successfully from theme.json');
+
+    console.log('Theme applied successfully from API:', themeColors);
   } catch (error) {
-    console.error('Error applying theme:', error.message);
-    console.error('Full error:', error);
-    // Apply fallback theme if error occurs
+    console.error('Error applying theme from API:', error.message);
+
     const fallbackTheme = {
       primary: "#2B2399",
       primary_alt: "#3C32B5",
@@ -29,6 +39,7 @@ export const applyTheme = () => {
       secondary_active: "#4A5BD1",
       secondary_light: "#ECEEFF",
     };
+
     const root = document.documentElement;
     Object.entries(fallbackTheme).forEach(([key, value]) => {
       root.style.setProperty(`--${key.replace(/_/g, '-')}`, value);
