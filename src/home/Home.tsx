@@ -1,5 +1,5 @@
 import {
-  Container, Icon, Row,
+  Icon, Row,
 } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -9,7 +9,6 @@ import { capitalizeString } from '../utils';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
-import SubHeader from '../generic/sub-header/SubHeader';
 import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
@@ -82,12 +81,11 @@ const Home = () => {
       <section className="tw-h-full tw-flex tw-flex-col tw-gap-8">
         <article className="studio-home-sub-header">
           <section>
-            <SubHeader
-              hideBorder
-              title={intl.formatMessage(messages.headingTitle, {
+            <h2 className="tw-font-medium tw-text-4xl tw-leading-[44px] tw-text-gray-900 tw-tracking-[-0.72px] tw-mb-0">
+              {intl.formatMessage(messages.headingTitle, {
                 userName: capitalizeString(username) || 'Teacher',
               })}
-            />
+            </h2>
           </section>
         </article>
         {getMainBody()}

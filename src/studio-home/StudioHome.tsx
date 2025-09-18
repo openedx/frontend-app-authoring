@@ -1,21 +1,19 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import {
-  Button,
-  Container,
   Icon,
-  Layout,
   MailtoLink,
   Row,
 } from '@openedx/paragon';
-import { Add as AddIcon, Error } from '@openedx/paragon/icons';
+import { Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
+import { Plus } from '@untitledui/icons';
+import Button from 'shared/Components/Common/Button';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import SubHeader from '../generic/sub-header/SubHeader';
-import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
@@ -27,7 +25,6 @@ import AlertMessage from '../generic/alert-message';
 const StudioHome = () => {
   const intl = useIntl();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const {
@@ -43,19 +40,11 @@ const StudioHome = () => {
     hasAbilityToCreateNewCourse,
     isFiltered,
     setShowNewCourseContainer,
-    librariesV1Enabled,
-    librariesV2Enabled,
   } = useStudioHome();
-
-  const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
-  const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
 
   const {
     userIsActive,
-    studioShortName,
     studioRequestEmail,
-    showNewLibraryButton,
-    showNewLibraryV2Button,
   } = studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
@@ -74,37 +63,14 @@ const StudioHome = () => {
     if (hasAbilityToCreateNewCourse) {
       headerButtons.push(
         <Button
-          variant="outline-primary"
-          iconBefore={AddIcon}
+          className="!tw-w-auto tw-border-gray-300 "
+          variant="brand"
+          iconBefore={Plus}
           size="sm"
-          disabled={showNewCourseContainer}
+          disabled={false}
           onClick={() => setShowNewCourseContainer(true)}
-        >
-          {intl.formatMessage(messages.addNewCourseBtnText)}
-        </Button>,
-      );
-    }
-
-    if ((showNewLibraryButton && !showV2LibraryURL) || (showV2LibraryURL && showNewLibraryV2Button)) {
-      const newLibraryClick = () => {
-        if (showV2LibraryURL) {
-          navigate('/library/create');
-        } else {
-          // Studio home library for legacy libraries
-          window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
-        }
-      };
-
-      headerButtons.push(
-        <Button
-          variant="outline-primary"
-          iconBefore={AddIcon}
-          size="sm"
-          onClick={newLibraryClick}
-          data-testid="new-library-button"
-        >
-          {intl.formatMessage(messages.addNewLibraryBtnText)}
-        </Button>,
+          labels={{ default: intl.formatMessage(messages.addNewCourseBtnText) }}
+        />,
       );
     }
 
@@ -134,51 +100,35 @@ const StudioHome = () => {
       return <VerifyEmailLayout />;
     }
     return (
-      <Layout
-        lg={[{ span: 9 }, { span: 3 }]}
-        md={[{ span: 9 }, { span: 3 }]}
-        sm={[{ span: 9 }, { span: 3 }]}
-        xs={[{ span: 9 }, { span: 3 }]}
-        xl={[{ span: 9 }, { span: 3 }]}
-      >
-        <Layout.Element>
-          <section>
-            {showNewCourseContainer && (
-              <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
-            )}
-            {isShowOrganizationDropdown && <OrganizationSection />}
-            <TabsSection
-              showNewCourseContainer={showNewCourseContainer}
-              onClickNewCourse={() => setShowNewCourseContainer(true)}
-              isShowProcessing={isShowProcessing && !isFiltered}
-              isPaginationCoursesEnabled={isPaginationCoursesEnabled}
-              librariesV1Enabled={librariesV1Enabled}
-              librariesV2Enabled={librariesV2Enabled}
-            />
-          </section>
-        </Layout.Element>
-        <Layout.Element>
-          <HomeSidebar />
-        </Layout.Element>
-      </Layout>
+      <section className="tw-flex tw-flex-col tw-gap-8 tw-overflow-auto tw-flex-1 tw-min-h-0 tw-pb-8">
+        {showNewCourseContainer && (
+        <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
+        )}
+        {isShowOrganizationDropdown && <OrganizationSection />}
+        <TabsSection
+          showNewCourseContainer={showNewCourseContainer}
+          onClickNewCourse={() => setShowNewCourseContainer(true)}
+          isShowProcessing={isShowProcessing && !isFiltered}
+          isPaginationCoursesEnabled={isPaginationCoursesEnabled}
+        />
+      </section>
     );
   };
 
   return (
     <>
-      <Container size="xl" className="">
-        <section className="mb-4">
-          <article className="studio-home-sub-header">
-            <section>
-              <SubHeader
-                title={intl.formatMessage(messages.headingTitle, { studioShortName: studioShortName || 'Studio' })}
-                headerActions={headerButtons}
-              />
-            </section>
-          </article>
-          {getMainBody()}
-        </section>
-      </Container>
+      <section className="tw-h-full tw-flex tw-flex-col">
+        <article className="studio-home-sub-header">
+          <section>
+            <SubHeader
+              hideBorder
+              title={intl.formatMessage(messages.headingTitle)}
+              headerActions={headerButtons}
+            />
+          </section>
+        </article>
+        {getMainBody()}
+      </section>
       <div className="alert-toast">
         <InternetConnectionAlert
           isFailed={anyQueryIsFailed}

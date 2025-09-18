@@ -1,13 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SearchField } from '@openedx/paragon';
 import { debounce } from 'lodash';
 
+import SearchFieldWrapper from 'shared/Components/Common/SearchField';
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
 import { fetchStudioHomeData } from '../../../data/thunks';
-import { LoadingSpinner } from '../../../../generic/Loading';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 import './index.scss';
@@ -21,7 +20,6 @@ const CoursesFilters = ({
   dispatch,
   locationValue,
   onSubmitSearchField,
-  isLoading,
 }) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
@@ -65,11 +63,14 @@ const CoursesFilters = ({
       currentPage,
       ...customParams
     } = filterParamsFormat;
+
     dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat));
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...customParams }, true));
   };
 
-  const handleSearchCourses = (searchValueDebounced) => {
+  // Use ref to store the search handler that always gets current filter values
+  const searchHandlerRef = useRef();
+  searchHandlerRef.current = (searchValueDebounced) => {
     const valueFormatted = searchValueDebounced.trim();
     const filterParams = {
       search: valueFormatted.length > 0 ? valueFormatted : undefined,
@@ -93,31 +94,27 @@ const CoursesFilters = ({
     setInputSearchValue(searchValueDebounced);
   };
 
+  // Stable debounced function that calls the current search handler
   const handleSearchCoursesDebounced = useCallback(
-    debounce((value) => handleSearchCourses(value), 400),
-    [activeOnly, archivedOnly, order, inputSearchValue],
+    debounce((value) => searchHandlerRef.current(value), 400),
+    [],
   );
 
   return (
-    <div className="d-flex">
-      <div className="d-flex flex-row">
-        <SearchField
+    <div className="tw-flex tw-flex-row tw-items-center tw-justify-between tw-my-8">
+      <div className="d-flex flex-row tw-w-[384px]">
+        <SearchFieldWrapper
           onSubmit={onSubmitSearchField}
           onChange={handleSearchCoursesDebounced}
           value={cleanFilters ? '' : inputSearchValue}
-          className="mr-4"
           data-testid="input-filter-courses-search"
-          placeholder="Search"
         />
-        {isLoading && (
-          <span className="search-field-loading" data-testid="loading-search-spinner">
-            <LoadingSpinner size="sm" />
-          </span>
-        )}
       </div>
 
-      <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
-      <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+      <div className="tw-flex tw-flex-row tw-items-center tw-gap-3">
+        <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+        <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+      </div>
     </div>
   );
 };
@@ -125,14 +122,12 @@ const CoursesFilters = ({
 CoursesFilters.defaultProps = {
   locationValue: '',
   onSubmitSearchField: () => {},
-  isLoading: false,
 };
 
 CoursesFilters.propTypes = {
   dispatch: PropTypes.func.isRequired,
   locationValue: PropTypes.string,
   onSubmitSearchField: PropTypes.func,
-  isLoading: PropTypes.bool,
 };
 
 export default CoursesFilters;

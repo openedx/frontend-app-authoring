@@ -104,3 +104,21 @@ mark {
   width: 24px;
   height: 24px;
 }
+
+.pgn__searchfield .form-control {
+  border: none;
+  border-radius: 0;
+  height: auto;
+  padding: 0;
+  line-height: 24px;
+}
+
+.pgn__searchfield-form {
+  gap: 8px;
+}
+
+.btn-icon .btn-icon__icon-container .pgn__icon.btn-icon__icon {
+  width: 20px;
+  height: 20px;
+  color: #667085;
+}

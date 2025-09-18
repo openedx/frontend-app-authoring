@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Icon, Dropdown } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
+import { cn } from 'shared/lib/utils';
+import { ChevronDown } from '@untitledui/icons';
 import { getStudioHomeCoursesParams } from '../../../../data/selectors';
 
 const CoursesFilterMenu = ({
@@ -34,10 +36,21 @@ const CoursesFilterMenu = ({
         alt="dropdown-toggle-menu-items"
         id={idProp}
         variant="none"
-        className="dropdown-toggle-menu-items"
+        iconAs={ChevronDown}
+        className={cn(
+          'dropdown-toggle-menu-items',
+          'tw-bg-white tw-rounded-[100px] tw-px-[14px] tw-py-[10px] tw-gap-1',
+          'tw-border tw-border-solid tw-border-gray-300',
+          'tw-shadow-xs',
+          'tw-text-gray-700 tw-text-sm tw-font-semibold',
+          'after:tw-hidden',
+        )}
         data-testid={idProp}
       >
-        {itemMenuSelected}
+        <>
+          {itemMenuSelected}
+          <Icon src={ChevronDown} className="tw-w-5 tw-h-5" />
+        </>
       </Dropdown.Toggle>
       <Dropdown.Menu>
         {menuItems.map(({ id, name, value }) => (

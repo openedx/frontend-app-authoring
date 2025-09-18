@@ -19,7 +19,7 @@ const SubHeader = ({
       <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
     )}
     <header className="sub-header">
-      <h2 className="tw-font-medium tw-text-4xl tw-leading-[44px] tw-text-gray-900 tw-tracking-[-0.72px] tw-mb-0">
+      <h2 className="tw-font-medium tw-text-2xl tw-leading-[44px] tw-text-gray-900 tw-tracking-[-0.72px] tw-mb-0">
         <small className="sub-header-title-subtitle">{subtitle}</small>
         {title}
         {titleActions && (
@@ -29,7 +29,7 @@ const SubHeader = ({
         )}
       </h2>
       {headerActions && (
-        <ActionRow className="ml-auto flex-shrink-0 sub-header-actions">
+        <ActionRow className="ml-auto flex-shrink-0 sub-header-actions !tw-mb-0">
           {headerActions}
         </ActionRow>
       )}
