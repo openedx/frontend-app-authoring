@@ -4,9 +4,16 @@
       "outDir": "dist",
       "baseUrl": "./src",
       "paths": {
-        "@src/*": ["./*"],
-      }
+        "@src/*": ["./*"]
+      },
+      "types": ["jest", "@testing-library/jest-dom"]
     },
-    "include": ["*.js", ".eslintrc.js", "src/**/*", "plugins/**/*"],
+    "include": [
+      "*.js",
+      ".eslintrc.js",
+      "src/**/*",
+      "plugins/**/*",
+      "src/types/jest.d.ts"
+    ],
     "exclude": ["dist", "node_modules"]
 }
