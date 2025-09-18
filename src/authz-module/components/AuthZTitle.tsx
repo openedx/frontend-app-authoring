@@ -39,7 +39,7 @@ const AuthZTitle = ({
       <Col xs={12} md={4}>
         <div className="d-flex justify-content-md-end">
           {
-            actions.map(({ label, onClick }) => <Button onClick={onClick}>{label}</Button>)
+            actions.map(({ label, onClick }) => <Button key={`authz-header-action-${label}`} onClick={onClick}>{label}</Button>)
           }
         </div>
       </Col>

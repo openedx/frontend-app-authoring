@@ -48,7 +48,6 @@ export function useValidateTeamMember(libraryId: string, username: string) {
  *
  * @example
  * const { data, isLoading, isError } = useLibrary('lib:123',);
- * if (data?.roles.includes('admin')) { ... }
  *
  */
 export function useLibrary(libraryId: string) {
