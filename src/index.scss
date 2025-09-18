@@ -57,7 +57,8 @@ div.xblock-highlight {
 html,
 body {
   background-color: $light-200;
- 
+  overflow: hidden !important; /* Prevent outer scrollbar */
+  // height: 100%;
 
   .editor-page {
     background-color: $light-100;
