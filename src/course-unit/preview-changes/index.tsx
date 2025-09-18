@@ -117,7 +117,7 @@ export const PreviewLibraryXBlockChanges = ({
           {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="bg-light-300">
         {!blockData.isContainer && <AlertMessage
           show
           variant="warning"
