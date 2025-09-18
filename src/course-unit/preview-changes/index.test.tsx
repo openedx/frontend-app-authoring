@@ -1,17 +1,18 @@
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
+
 import {
   act,
   render as baseRender,
   screen,
   initializeMocks,
   waitFor,
-} from '../../testUtils';
+} from '@src/testUtils';
+import { ToastActionData } from '@src/generic/toast-context';
 
 import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
-import { ToastActionData } from '../../generic/toast-context';
 
 const usageKey = 'some-id';
 const defaultEventData: LibraryChangesMessageData = {
@@ -20,10 +21,12 @@ const defaultEventData: LibraryChangesMessageData = {
   upstreamBlockId: 'lct:org:lib1:unit:1',
   upstreamBlockVersionSynced: 1,
   isContainer: false,
+  upstreamDownstreamIsModified: false,
+  blockType: 'html',
 };
 
 const mockSendMessageToIframe = jest.fn();
-jest.mock('../../generic/hooks/context/hooks', () => ({
+jest.mock('@src/generic/hooks/context/hooks', () => ({
   useIframe: () => ({
     iframeRef: { current: { contentWindow: {} as HTMLIFrameElement } },
     setIframeRef: () => {},
@@ -120,6 +123,61 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     const ignoreBtn = await screen.findByRole('button', { name: 'Ignore changes' });
     await user.click(ignoreBtn);
     const ignoreConfirmBtn = await screen.findByRole('button', { name: 'Ignore' });
+    await user.click(ignoreConfirmBtn);
+    await waitFor(() => {
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
+        messageTypes.completeXBlockEditing,
+        { locator: usageKey },
+      );
+      expect(axiosMock.history.delete.length).toEqual(1);
+      expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
+    });
+    expect(screen.queryByText('Preview changes: Test block')).not.toBeInTheDocument();
+  });
+
+  it('should render modal of text with local changes', async () => {
+    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+
+    expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
+
+    expect(screen.getByText('This library content has local edits.')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Update to published library content' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Keep course content' })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Course content' })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Published library content' })).toBeInTheDocument();
+  });
+
+  it('update changes works', async () => {
+    const user = userEvent.setup();
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+
+    expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
+    const acceptBtn = await screen.findByRole('button', { name: 'Update to published library content' });
+    await user.click(acceptBtn);
+    const confirmBtn = await screen.findByRole('button', { name: 'Discard local edits and update' });
+    await user.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(mockSendMessageToIframe).toHaveBeenCalledWith(
+        messageTypes.completeXBlockEditing,
+        { locator: usageKey },
+      );
+      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
+    });
+    expect(screen.queryByText('Preview changes: Test block')).not.toBeInTheDocument();
+  });
+
+  it('keep changes work', async () => {
+    const user = userEvent.setup();
+    axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+
+    expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
+    const ignoreBtn = await screen.findByRole('button', { name: 'Keep course content' });
+    await user.click(ignoreBtn);
+    const ignoreConfirmBtn = (await screen.findAllByRole('button', { name: 'Keep course content' }))[0];
     await user.click(ignoreConfirmBtn);
     await waitFor(() => {
       expect(mockSendMessageToIframe).toHaveBeenCalledWith(
