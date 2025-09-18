@@ -50,7 +50,9 @@ import Layout from './Layout';
 import './styles/conditional-styles.css';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
-import Calendar from './calendar/pages/CalendarPage';
+
+import  Calendar  from './calendar/pages/CalendarPage';
+import AssignmentPage from './assignment/pages/AssignmentPage';
 
 // Load styles only for new UI
 const loadStylesForNewUI = () => {
@@ -128,6 +130,7 @@ const App = () => {
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/component-picker" element={<ComponentPicker />} />
         <Route path="/calendar" element={<Calendar />} />
+        <Route path="/assignments" element={<AssignmentPage />} />
         <Route
           path="/component-picker/multiple"
           element={<ComponentPicker componentPickerMode="multiple" />}

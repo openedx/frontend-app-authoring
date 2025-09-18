@@ -203,6 +203,12 @@ const Layout = () => {
               isVisible: true, // Always visible
             },
             {
+              label: intl.formatMessage(messages.sidebarAssignmentsTitle),
+              path: '/assignments',
+              icon: <ParagonIcons.Assignment />,
+              isVisible: menuConfig.enable_assignments || false, 
+            },
+            {
               label: 'Switch to Old View',
               path: 'switch-to-old-view',
               icon: <ParagonIcons.FolderShared />,
@@ -294,6 +300,12 @@ const Layout = () => {
             icon: <ParagonIcons.Assignment />,
             isVisible: true,
           },
+          {
+              label: intl.formatMessage(messages.sidebarAssignmentsTitle),
+              path: '/assignments',
+              icon: <ParagonIcons.Assignment />,
+              isVisible: true, 
+            },
         ];
 
         // Filter visible items and remove the isVisible property

@@ -60,6 +60,11 @@ const messages = defineMessages({
     defaultMessage: 'Taxonomies',
     description: 'Title of the taxonomies sidebar item',
   },
+  sidebarAssignmentsTitle: {
+    id: 'sidebar.Assignments.title',
+    defaultMessage: 'Assignments',
+    description: 'Title of the Assignments sidebar item',
+  },
 });
 
 export default messages;
