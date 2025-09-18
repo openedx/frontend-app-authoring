@@ -27,13 +27,19 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl, getLocale } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
+import FullCalendar from '@fullcalendar/react';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
 import customStarsIcon from '../assets/icons/custom-stars.svg';
 import WidgetCard from './components/WidgetCard';
 import MetricCard from './components/MetricCard';
 import messages from './messages';
+import { CalendarProvider, useCalendarContext } from '../calendar/context/CalendarContext';
+import NavigationButton from '../calendar/components/NavigationButton';
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
   const {
@@ -128,6 +134,7 @@ const Dashboard = () => {
   const [allWidgets, setAllWidgets] = useState([]);
   const [isAISuggestionsEnabled, setIsAISuggestionsEnabled] = useState(false);
   const [isTodoListEnabled, setIsTodoListEnabled] = useState(false);
+  const [isCalendarWidgetEnabled, setIsCalendarWidgetEnabled] = useState(false);
 
   const intl = useIntl();
 
@@ -381,7 +388,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchNavigationItems = async () => {
       try {
-        const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/menu-config/`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
         // const response = await getAuthenticatedHttpClient().get(
         //   'https://staging.titaned.com/titaned/api/v1/menu-config/'
         // );
@@ -402,11 +409,13 @@ const Dashboard = () => {
     fetchNavigationItems().then((data) => {
       setIsAISuggestionsEnabled(data?.assistant_is_enabled || false);
       setIsTodoListEnabled(data?.todo_list_is_enabled || false);
+      setIsCalendarWidgetEnabled(data?.calendar_widget_is_enabled || true);
     }).catch((error) => {
       console.error('Error in fetchNavigationItems:', error);
       // Set default values on error
       setIsAISuggestionsEnabled(false);
       setIsTodoListEnabled(false);
+      setIsCalendarWidgetEnabled(true);
     });
   }, []);
 
@@ -423,6 +432,42 @@ const Dashboard = () => {
 
   const isLeftColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'left');
   const isRightColumnEmpty = !dashboardData.widgets.some(widget => widget.enabled && widget.position === 'right');
+
+  const CalendarContent = () => {
+    const intl = useIntl();
+
+    const {
+      filteredEvents, prev, next, today, currentDate,
+    } = useCalendarContext();
+    const responsiveView = 'listWeek';
+
+    return (
+      <>
+        <h4 className="card-header">Calendar</h4>
+        <div className="calendar-card">
+          <div className="calendar-nav">
+            <NavigationButton type="prev" onClick={prev} />
+            <NavigationButton type="today" onClick={today} />
+            <NavigationButton type="next" onClick={next} />
+          </div>
+          <div className="calendar-view">
+            <FullCalendar
+              key={`${responsiveView}-${currentDate.getTime()}`}
+              plugins={[listPlugin, interactionPlugin]}
+              initialView={responsiveView}
+              headerToolbar={false}
+              events={filteredEvents}
+              locales={allLocales}
+              locale={getLocale()}
+              height="auto"
+              selectable
+              initialDate={currentDate}
+            />
+          </div>
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="dashboard-wrapper">
@@ -562,7 +607,7 @@ const Dashboard = () => {
       </ModalDialog>
 
       {/* Sidebar */}
-      <div className={ !isAISuggestionsEnabled && !isTodoListEnabled ? 'dashboard-sidebar-no-display' : 'dashboard-sidebar'}>
+      <div className={!isAISuggestionsEnabled && !isTodoListEnabled && !isCalendarWidgetEnabled ? 'dashboard-sidebar-no-display' : 'dashboard-sidebar'}>
         { isAISuggestionsEnabled && (
         <Card className="sidebar-card">
           <h4 className="card-header" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -577,7 +622,7 @@ const Dashboard = () => {
             {aiSuggestions.length > 0 ? (
               <div className="card-list ai-suggestion-list">
                 {aiSuggestions.map((suggestion) => (
-                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`} style={{position: 'relative'}}>
+                  <div className="ai-suggestion-item" key={`suggestion-${suggestion}`} style={{ position: 'relative' }}>
                     {suggestion}
                     <img
                       src={customStarsIcon}
@@ -621,6 +666,14 @@ const Dashboard = () => {
         </Card>
         )}
 
+        { isCalendarWidgetEnabled && (
+
+        <Card className="sidebar-card">
+          <CalendarProvider>
+            <CalendarContent />
+          </CalendarProvider>
+        </Card>
+        )}
       </div>
     </div>
   );
