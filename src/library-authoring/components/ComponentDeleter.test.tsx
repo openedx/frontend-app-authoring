@@ -1,18 +1,18 @@
-import type { ToastActionData } from '../../generic/toast-context';
+import type { ToastActionData } from '@src/generic/toast-context';
+import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 import {
   fireEvent,
   render,
   screen,
   initializeMocks,
   waitFor,
-} from '../../testUtils';
+} from '@src/testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import {
   mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
 } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
-import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '../../search-manager/data/api.mock';
 
 mockContentLibrary.applyMock(); // Not required, but avoids 404 errors in the logs when <LibraryProvider> loads data
 mockLibraryBlockMetadata.applyMock();

@@ -29,7 +29,7 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
-  const { data: dataDownstreamLinks, isLoading: isLoadingLinks } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
+  const { data: dataDownstreamLinks, isPending: isPendingLinks } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const restoreComponent = useCallback(async () => {
@@ -58,11 +58,11 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
     }
   }, [usageKey, sidebarComponentUsageKey, closeLibrarySidebar]);
 
-  const { hits, isLoading } = useContentFromSearchIndex([usageKey]);
+  const { hits, isPending } = useContentFromSearchIndex([usageKey]);
   const componentHit = (hits as ContentHit[])?.[0];
 
   // istanbul ignore if: loading state
-  if (isLoading || isLoadingLinks) {
+  if (isPending || isPendingLinks) {
     // Only render the modal after loading
     return null;
   }

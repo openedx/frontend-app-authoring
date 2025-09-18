@@ -1,12 +1,13 @@
 import fetchMock from 'fetch-mock-jest';
 
+import { getContentSearchConfigUrl } from '@src/search-manager/data/api';
 import {
   fireEvent,
   render,
   screen,
   initializeMocks,
-} from '../testUtils';
-import { getContentSearchConfigUrl } from '../search-manager/data/api';
+} from '@src/testUtils';
+
 import { mockContentLibrary } from './data/api.mocks';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { LibraryProvider } from './common/context/LibraryContext';
@@ -27,7 +28,7 @@ const data = {
   fetchNextPage: mockFetchNextPage,
   searchKeywords: '',
   isFiltered: false,
-  isLoading: false,
+  isPending: false,
 };
 
 const returnEmptyResult = (_url: string, req) => {
@@ -77,7 +78,7 @@ describe('<LibraryHome />', () => {
   it('should render a spinner while loading', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
-      isLoading: true,
+      isPending: true,
     });
 
     render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));

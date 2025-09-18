@@ -27,11 +27,11 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);
   const addItemToContainerMutation = useAddItemsToContainer(containerId);
-  const { data: container, isLoading: isLoadingParentContainer } = useContainer(containerId);
-  const { data: component, isLoading } = useLibraryBlockMetadata(usageKey);
+  const { data: container, isPending: isPendingParentContainer } = useContainer(containerId);
+  const { data: component, isPending } = useLibraryBlockMetadata(usageKey);
 
   // istanbul ignore if: loading state
-  if (isLoading || isLoadingParentContainer) {
+  if (isPending || isPendingParentContainer) {
     // Only show the modal when all data is ready
     return null;
   }

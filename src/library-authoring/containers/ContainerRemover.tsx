@@ -6,6 +6,7 @@ import { capitalize } from 'lodash';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { getBlockType } from '@src/generic/key-utils';
+
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useContainer, useRemoveContainerChildren } from '../data/apiHooks';
@@ -31,7 +32,7 @@ const ContainerRemover = ({
   const { showToast } = useContext(ToastContext);
 
   const removeContainerMutation = useRemoveContainerChildren(containerId);
-  const { data: container, isLoading } = useContainer(containerId);
+  const { data: container, isPending } = useContainer(containerId);
   const itemType = getBlockType(containerKey);
 
   const removeWarningTitle = intl.formatMessage(messages.removeContainerWarningTitle, {
@@ -71,7 +72,7 @@ const ContainerRemover = ({
   ]);
 
   // istanbul ignore if: loading state
-  if (isLoading) {
+  if (isPending) {
     // Only render when data is ready
     return null;
   }

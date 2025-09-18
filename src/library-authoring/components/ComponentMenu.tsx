@@ -8,11 +8,12 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
+import { ToastContext } from '@src/generic/toast-context';
+
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useClipboard } from '../../generic/clipboard';
-import { ToastContext } from '../../generic/toast-context';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';

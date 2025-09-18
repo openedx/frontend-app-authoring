@@ -46,11 +46,11 @@ const ContainerDeleter = ({
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);
-  const { hits, isLoading } = useContentFromSearchIndex([containerId]);
+  const { hits, isPending } = useContentFromSearchIndex([containerId]);
   const containerData = (hits as ContainerHit[])?.[0];
   const {
     data: dataDownstreamLinks,
-    isLoading: isLoadingLinks,
+    isPending: isPendingLinks,
   } = useEntityLinks({ upstreamKey: containerId, contentType: 'containers' });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
@@ -171,7 +171,7 @@ const ContainerDeleter = ({
   }, [sidebarItemInfo, showToast, deleteContainerMutation, messageMap]);
 
   // istanbul ignore if: loading state
-  if (isLoading || isLoadingLinks) {
+  if (isPending || isPendingLinks) {
     // Only render the modal after loading
     return null;
   }
