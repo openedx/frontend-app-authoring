@@ -3,24 +3,22 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { PUBLISH_TYPES } from '../constants';
+import { CourseContainerChildrenData, CourseOutlineData, MoveInfoData } from './types';
 import { isUnitImportedFromLib, normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
-export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
-export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
-export const getCourseOutlineInfoUrl = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
+export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/xblock/${itemId}`;
+export const getCourseSectionVerticalApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
+export const getCourseVerticalChildrenApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children`;
+export const getCourseOutlineInfoUrl = (courseId: string) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
-export const libraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
+export const libraryBlockChangesUrl = (blockId: string) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
 
 /**
  * Edit course unit display name.
- * @param {string} unitId
- * @param {string} displayName
- * @returns {Promise<Object>}
  */
-export async function editUnitDisplayName(unitId, displayName) {
+export async function editUnitDisplayName(unitId: string, displayName: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(unitId), {
       metadata: {
@@ -33,10 +31,8 @@ export async function editUnitDisplayName(unitId, displayName) {
 
 /**
  * Fetch vertical block data from the container_handler endpoint.
- * @param {string} unitId
- * @returns {Promise<Object>}
  */
-export async function getVerticalData(unitId) {
+export async function getVerticalData(unitId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseSectionVerticalApiUrl(unitId));
 
@@ -65,7 +61,15 @@ export async function createCourseXblock({
   boilerplate,
   stagedContent,
   libraryContentKey,
-}) {
+}: {
+  type: string,
+  category: string,
+  parentLocator: string,
+  displayName: string,
+  boilerplate: string,
+  stagedContent: string,
+  libraryContentKey: string,
+}): Promise<object> {
   const body = {
     type,
     boilerplate,
@@ -85,14 +89,14 @@ export async function createCourseXblock({
 /**
  * Handles the visibility and data of a course unit, such as publishing, resetting to default values,
  * and toggling visibility to students.
- * @param {string} unitId - The ID of the course unit.
- * @param {string} type - The action type (e.g., PUBLISH_TYPES.discardChanges).
- * @param {boolean} isVisible - The visibility status for students.
- * @param {boolean} groupAccess - Access group key set.
- * @param {boolean} isDiscussionEnabled - Indicates whether the discussion feature is enabled.
- * @returns {Promise<any>} A promise that resolves with the response data.
  */
-export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible, groupAccess, isDiscussionEnabled) {
+export async function handleCourseUnitVisibilityAndData(
+  unitId: string,
+  type: string,
+  isVisible: boolean,
+  groupAccess: boolean,
+  isDiscussionEnabled: boolean
+): Promise<object> {
   const body = {
     publish: groupAccess ? null : type,
     ...(type === PUBLISH_TYPES.republish ? {
@@ -111,24 +115,20 @@ export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible,
 }
 
 /**
- * Get an object containing course section vertical children data.
- * @param {string} itemId
- * @returns {Promise<Object>}
+ * Get an object containing course vertical children data.
  */
-export async function getCourseVerticalChildren(itemId) {
+export async function getCourseContainerChildren(itemId: string): Promise<CourseContainerChildrenData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseVerticalChildrenApiUrl(itemId));
   const camelCaseData = camelCaseObject(data);
 
-  return updateXBlockBlockIdToId(camelCaseData);
+  return updateXBlockBlockIdToId(camelCaseData) as CourseContainerChildrenData;
 }
 
 /**
  * Delete a unit item.
- * @param {string} itemId
- * @returns {Promise<Object>}
  */
-export async function deleteUnitItem(itemId) {
+export async function deleteUnitItem(itemId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .delete(getXBlockBaseApiUrl(itemId));
 
@@ -137,11 +137,8 @@ export async function deleteUnitItem(itemId) {
 
 /**
  * Duplicate a unit item.
- * @param {string} itemId
- * @param {string} XBlockId
- * @returns {Promise<Object>}
  */
-export async function duplicateUnitItem(itemId, XBlockId) {
+export async function duplicateUnitItem(itemId: string, XBlockId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
     .post(postXBlockBaseApiUrl(), {
       parent_locator: itemId,
@@ -152,24 +149,9 @@ export async function duplicateUnitItem(itemId, XBlockId) {
 }
 
 /**
- * @typedef {Object} courseOutline
- * @property {string} id - The unique identifier of the course.
- * @property {string} displayName - The display name of the course.
- * @property {string} category - The category of the course (e.g., "course").
- * @property {boolean} hasChildren - Whether the course has child items.
- * @property {boolean} unitLevelDiscussions - Indicates if unit-level discussions are available.
- * @property {Object} childInfo - Information about the child elements of the course.
- * @property {string} childInfo.category - The category of the child (e.g., "chapter").
- * @property {string} childInfo.display_name - The display name of the child element.
- * @property {Array<Object>} childInfo.children - List of children within the child_info (could be empty).
- */
-
-/**
  * Get an object containing course outline data.
- * @param {string} courseId - The identifier of the course.
- * @returns {Promise<courseOutline>} - The course outline data.
  */
-export async function getCourseOutlineInfo(courseId) {
+export async function getCourseOutlineInfo(courseId: string): Promise<CourseOutlineData> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseOutlineInfoUrl(courseId));
 
@@ -177,19 +159,12 @@ export async function getCourseOutlineInfo(courseId) {
 }
 
 /**
- * @typedef {Object} moveInfo
- * @property {string} moveSourceLocator - The locator of the source block being moved.
- * @property {string} parentLocator - The locator of the parent block where the source is being moved to.
- * @property {number} sourceIndex - The index position of the source block.
- */
-
-/**
  * Move a unit item to new unit.
  * @param {string} sourceLocator - The ID of the item to be moved.
  * @param {string} targetParentLocator - The ID of the XBlock associated with the item.
  * @returns {Promise<moveInfo>} - The move information.
  */
-export async function patchUnitItem(sourceLocator, targetParentLocator) {
+export async function patchUnitItem(sourceLocator: string, targetParentLocator: string): Promise<MoveInfoData> {
   const { data } = await getAuthenticatedHttpClient()
     .patch(postXBlockBaseApiUrl(), {
       parent_locator: targetParentLocator,
@@ -203,7 +178,7 @@ export async function patchUnitItem(sourceLocator, targetParentLocator) {
  * Accept the changes from upstream library block in course
  * @param {string} blockId - The ID of the item to be updated from library.
  */
-export async function acceptLibraryBlockChanges(blockId) {
+export async function acceptLibraryBlockChanges(blockId: string) {
   await getAuthenticatedHttpClient()
     .post(libraryBlockChangesUrl(blockId));
 }
@@ -212,7 +187,7 @@ export async function acceptLibraryBlockChanges(blockId) {
  * Ignore the changes from upstream library block in course
  * @param {string} blockId - The ID of the item to be updated from library.
  */
-export async function ignoreLibraryBlockChanges(blockId) {
+export async function ignoreLibraryBlockChanges(blockId: string) {
   await getAuthenticatedHttpClient()
     .delete(libraryBlockChangesUrl(blockId));
 }
