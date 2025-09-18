@@ -205,7 +205,7 @@ export async function patchUnitItem(sourceLocator, targetParentLocator) {
  */
 export async function acceptLibraryBlockChanges(blockId) {
   await getAuthenticatedHttpClient()
-    .post(libraryBlockChangesUrl(blockId));
+    .post(libraryBlockChangesUrl(blockId), { override_customizations: true });
 }
 
 /**

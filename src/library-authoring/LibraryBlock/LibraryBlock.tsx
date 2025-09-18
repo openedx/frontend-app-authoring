@@ -18,6 +18,8 @@ interface LibraryBlockProps {
   scrolling?: string;
   minHeight?: string;
   scrollIntoView?: boolean;
+  showTitle?: boolean;
+  isBlockV1?: boolean;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -36,15 +38,29 @@ export const LibraryBlock = ({
   minHeight,
   scrolling = 'no',
   scrollIntoView = false,
+  showTitle = false,
+  isBlockV1 = false,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const lmsBaseUrl = getConfig().LMS_BASE_URL;
 
   const intl = useIntl();
-  const queryStr = version ? `?version=${version}` : '';
-  const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
+
+  const params = new URLSearchParams();
+  if (version) {
+    params.set('version', version.toString());
+  }
+  if (showTitle) {
+    params.set('show_title', 'true');
+  }
+
+  // For now, always show the draft version of the Xblock v1
+  const iframeUrl = isBlockV1
+    ? `${lmsBaseUrl}/xblock/${usageKey.replace('+type@', '+branch@draft-branch+type@')}?disable_staff_debug_info=True`
+    : `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/?${params.toString()}`;
   const { iframeHeight } = useIframeBehavior({
     id: usageKey,
     iframeUrl,
