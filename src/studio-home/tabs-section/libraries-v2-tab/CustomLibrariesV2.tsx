@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import LibrariesV2Filters from './libraries-v2-filters';
 import messages from '../messages';
 import LibraryCard from './LibraryCard';
+import { useStudioHome } from '../../hooks';
 
 const CustomLibrariesV2 = ({
   isError,
@@ -29,6 +30,13 @@ const CustomLibrariesV2 = ({
   const handleNewLibrary = () => {
     navigate('/library/create');
   };
+  const {
+    studioHomeData,
+  } = useStudioHome();
+
+  const {
+    showNewLibraryV2Button,
+  } = studioHomeData;
   return (
     <div className="custom-libraries-container">
       {isError ? (
@@ -53,9 +61,11 @@ const CustomLibrariesV2 = ({
                 setFilterParams={setFilterParams}
                 setCurrentPage={setCurrentPage}
               />
+              {showNewLibraryV2Button && (
               <Button variant="primary" iconBefore={Add} size="sm" onClick={handleNewLibrary}>
                 New Library
               </Button>
+              )}
             </div>
           </div>
 

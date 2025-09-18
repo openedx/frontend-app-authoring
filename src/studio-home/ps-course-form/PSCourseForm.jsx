@@ -101,15 +101,18 @@ const PSCourseForm = ({
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
-        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/organizations`);
+        // const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/organizations`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
         console.log('allowedOrganizations response', response);
         // Transform the response to match the expected format
         const organizations = response.data || [];
-        setAllowedOrganizations(organizations);
+        setAllowedOrganizations(organizations?.allowed_organizations_for_courses);
+        setCanCreateNewOrganization(organizations?.can_create_organizations);
         console.log('allowedOrganizations', allowedOrganizations);
       } catch (error) {
         console.error('Error fetching organizations:', error);
         setAllowedOrganizations([]);
+        setCanCreateNewOrganization(false);
       }
     };
 
@@ -155,6 +158,7 @@ const PSCourseForm = ({
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [allowedOrganizations, setAllowedOrganizations] = useState([]);
+  const [canCreateNewOrganization, setCanCreateNewOrganization] = useState(false);
 
   const {
     licenseURL,
@@ -193,6 +197,8 @@ const PSCourseForm = ({
   const {
     organizations: createOrRerunOrganizations,
   } = useCreateOrRerunCourse(initialValues);
+
+  console.log('createOrRerunOrganizations', createOrRerunOrganizations);
 
   useEffect(() => {
     if (typeof onImageValidationErrorChange === 'function') {
@@ -945,7 +951,7 @@ const PSCourseForm = ({
                                   <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
                                   {createOrRerunOrganizations ? (
                                     <CustomTypeaheadDropdown
-                                      readOnly={false}
+                                      readOnly={canCreateNewOrganization}
                                       name="organization"
                                       value={editedValues.organization || ''}
                                       controlClassName={errors.organization ? 'is-invalid' : ''}
