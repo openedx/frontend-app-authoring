@@ -19,10 +19,11 @@ const PreviewNotAvailable = () => {
 interface Props {
   usageKey: string;
   oldVersion?: VersionSpec;
+  oldTitle?: string | null;
   newVersion?: VersionSpec;
   isContainer?: boolean;
-  showTitle?: boolean;
   oldUsageKey?: string | null;
+  hasLocalChanges?: boolean;
 }
 
 /**
@@ -37,31 +38,48 @@ const CompareChangesWidget = ({
   usageKey,
   oldVersion = 'published',
   newVersion = 'draft',
+  oldTitle = null,
   isContainer = false,
-  showTitle = false,
   oldUsageKey = null,
+  hasLocalChanges = false,
 }: Props) => {
   const intl = useIntl();
+
+  const oldTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.courseContentTitle)
+    : intl.formatMessage(messages.oldVersionTitle);
+  const newTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.publishedLibraryContentTitle)
+    : intl.formatMessage(messages.newVersionTitle);
 
   return (
     <div>
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-        <Tab eventKey="old" title={intl.formatMessage(messages.oldVersionTitle)}>
+        <Tab eventKey="old" title={oldTabMessage}>
           <div className="p-2 bg-white">
             {isContainer ? (<PreviewNotAvailable />) : (
-              <IframeProvider>
-                <LibraryBlock
-                  usageKey={oldUsageKey || usageKey}
-                  version={oldVersion}
-                  minHeight="50vh"
-                  showTitle={showTitle}
-                  isBlockV1={!!oldUsageKey}
-                />
-              </IframeProvider>
+              <>
+                {oldTitle && hasLocalChanges && (
+                  <div className="h3 mt-3.5">
+                    {oldTitle}
+                  </div>
+                )}
+                <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-15px' } : {}}>
+                  <IframeProvider>
+                    <LibraryBlock
+                      usageKey={oldUsageKey || usageKey}
+                      version={oldVersion}
+                      minHeight="50vh"
+                      showTitle={hasLocalChanges}
+                      isBlockV1={!!oldUsageKey}
+                    />
+                  </IframeProvider>
+                </div>
+              </>
             )}
           </div>
         </Tab>
-        <Tab eventKey="new" title={intl.formatMessage(messages.newVersionTitle)}>
+        <Tab eventKey="new" title={newTabMessage}>
           <div className="p-2 bg-white">
             {isContainer ? (<PreviewNotAvailable />) : (
               <IframeProvider>
@@ -69,7 +87,7 @@ const CompareChangesWidget = ({
                   usageKey={usageKey}
                   version={newVersion}
                   minHeight="50vh"
-                  showTitle={showTitle}
+                  showTitle={hasLocalChanges}
                 />
               </IframeProvider>
             )}

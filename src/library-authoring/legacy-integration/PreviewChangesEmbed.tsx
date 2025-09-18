@@ -33,12 +33,7 @@ const PreviewChangesEmbed = () => {
       {/* It's not necessary since this will usually be in an <iframe>,
           but it's good practice to set a title for any top level page */}
       <Helmet><title>{intl.formatMessage(messages.iframeTitlePrefix)} | {metadata?.displayName ?? ''} | {process.env.SITE_NAME}</title></Helmet>
-      <CompareChangesWidget
-        usageKey={usageKey}
-        oldVersion={oldVersion}
-        newVersion="published"
-        showTitle={metadata?.blockType === 'html'}
-      />
+      <CompareChangesWidget usageKey={usageKey} oldVersion={oldVersion} newVersion="published" />
     </>
   );
 };

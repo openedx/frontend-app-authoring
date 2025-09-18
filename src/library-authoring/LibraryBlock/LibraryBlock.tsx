@@ -59,8 +59,8 @@ export const LibraryBlock = ({
 
   // For now, always show the draft version of the Xblock v1
   const iframeUrl = isBlockV1
-   ? `${lmsBaseUrl}/xblock/${usageKey.replace('+type@', '+branch@draft-branch+type@')}?disable_staff_debug_info=True`
-   : `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/?${params.toString()}`;
+    ? `${lmsBaseUrl}/xblock/${usageKey.replace('+type@', '+branch@draft-branch+type@')}?disable_staff_debug_info=True`
+    : `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/?${params.toString()}`;
   const { iframeHeight } = useIframeBehavior({
     id: usageKey,
     iframeUrl,

@@ -15,7 +15,6 @@ import LoadingButton from '@src/generic/loading-button';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
-import type { VersionSpec } from '@src/library-authoring/LibraryBlock';
 import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { messageTypes } from '../constants';
@@ -138,10 +137,11 @@ export const PreviewLibraryXBlockChanges = ({
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : null}
+        oldTitle={isTextWithLocalChanges ? blockData.displayName : null}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
         isContainer={blockData.isContainer}
-        showTitle={isTextWithLocalChanges}
+        hasLocalChanges={isTextWithLocalChanges}
       />
     );
   }, [blockData, isTextWithLocalChanges]);
