@@ -13,7 +13,7 @@ interface Action {
   onClick: () => void;
 }
 
-export interface AuthZTitlePtops {
+export interface AuthZTitleProps {
   activeLabel: string;
   pageTitle: string;
   pageSubtitle: string | ReactNode;
@@ -23,7 +23,7 @@ export interface AuthZTitlePtops {
 
 const AuthZTitle = ({
   activeLabel, navLinks = [], pageTitle, pageSubtitle, actions = [],
-}: AuthZTitlePtops) => (
+}: AuthZTitleProps) => (
   <Container className="p-5 bg-light-100">
     <Breadcrumb
       links={navLinks}

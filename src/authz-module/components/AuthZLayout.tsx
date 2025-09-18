@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { StudioHeader } from '@edx/frontend-component-header';
-import AuthZTitle, { AuthZTitlePtops } from './AuthZTitle';
+import AuthZTitle, { AuthZTitleProps } from './AuthZTitle';
 
-interface AuthZLayoutProps extends AuthZTitlePtops {
+interface AuthZLayoutProps extends AuthZTitleProps {
   children: ReactNode;
   context: {
     id: string;

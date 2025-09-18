@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import AuthZTitle, { AuthZTitlePtops } from './AuthZTitle';
+import AuthZTitle, { AuthZTitleProps } from './AuthZTitle';
 
 describe('AuthZTitle', () => {
-  const defaultProps: AuthZTitlePtops = {
+  const defaultProps: AuthZTitleProps = {
     activeLabel: 'Current Page',
     pageTitle: 'Page Title',
     pageSubtitle: 'Page Subtitle',
