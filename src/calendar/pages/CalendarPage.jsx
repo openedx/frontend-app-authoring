@@ -1,5 +1,5 @@
 import React from 'react';
-// import '../assets/styles/_calendar.scss';
+import '../assets/styles/_calendar.scss';
 import { CalendarProvider } from '../context/CalendarContext';
 import CalendarHeader from '../components/CalendarHeader';
 import CalendarView from '../components/CalendarView';

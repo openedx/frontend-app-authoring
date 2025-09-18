@@ -167,6 +167,18 @@ const CustomStatusBar = ({
           </div>
         </StatusBarItem>
         )}
+        {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+        <StatusBarItem title="Export Tags">
+          <Hyperlink
+            className="small"
+            destination={`${config.STUDIO_BASE_URL}/course/${courseId}#export-tags`}
+            // target="_blank"
+            showLaunchIcon={false}
+          >
+            Export Tags
+          </Hyperlink>
+        </StatusBarItem>
+        )}
         {videoSharingEnabled && (
         <Form.Group
           size="sm"

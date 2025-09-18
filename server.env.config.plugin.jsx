@@ -24,8 +24,8 @@ hooks.Filters.ENV_PATCHES.add_item(
          "mfe-env-config-runtime-definitions-authoring",
          """
         // This file contains configuration for plugins and environment variables.
-const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
-const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
+        const { default: CustomScheduleAndDetails } = await import('./src/CustomScheduleAndDetails');
+        const { default: CourseNavigationSidebar } = await import('./src/shared-components/CourseNavigationSidebar');
 const { default: messages } = await import('./src/schedule-and-details/messages');
 const { Settings, DragHandle, SettingsApplications } = await import('@openedx/paragon/icons');
 const {
@@ -73,19 +73,17 @@ const { default: CustomTaxonomyDetailPage } = await import('./src/taxonomy/taxon
 
 const { default: FileSection } = await import('./src/import-page/file-section/FileSection');
 const { default: ImportStepper } = await import('./src/import-page/import-stepper/ImportStepper');
+const { default: CustomAdvancedSettingsHeader } = await import('./src/advanced-settings/CustomAdvancedSettingsHeader');
+
 
 {% raw %}
 
-const oldUI = localStorage.getItem('oldUI');
-if (oldUI) {
-    config.pluginSlots = {
-        
+const getPluginSlots = () => {
+    if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
+        return {};
     }
-} else {
-    await import('titaned-lib/dist/index.css');
-    await import('./styles/styles-overrides.scss');
-import './styles/styles-overrides.scss';
-config.pluginSlots = {
+    
+    return {
     header_plugin_slot: {
         plugins: [
             {
@@ -112,16 +110,15 @@ config.pluginSlots = {
             },
         ],
     },
-    course_sidebar_plugin_slot: { // Use the standard plugin structure
+    course_sidebar_plugin_slot: {
         plugins: [
             {
-                op: PLUGIN_OPERATIONS.Insert, // Operation to insert the widget
+                op: PLUGIN_OPERATIONS.Insert,
                 widget: {
                     id: 'course-nav-bar',
                     type: DIRECT_PLUGIN,
                     priority: 1,
-                    // Accept and forward all props for dynamic support
-                    RenderWidget: (props) => <CourseNavigationSidebar {...props} />,
+                    RenderWidget: (props) => (<CourseNavigationSidebar {...props} />),
                 },
             },
         ],
@@ -320,44 +317,11 @@ config.pluginSlots = {
             {
                 op: PLUGIN_OPERATIONS.Insert,
                 widget: {
-                    id: "my-custom-advanced-settings-content",
+                    id: "advanced_settings_header_plugin_slot",
                     type: DIRECT_PLUGIN,
                     priority: 1,
                     RenderWidget: (props) => (
-                        <div className="advanced-settings-custom-header">
-                            <div className="advanced-settings-custom-sub-header">
-                                <div className="advanced-settings-custom-sub-header-title">
-                                    <SubHeader
-                                        title={props.headerTitle}
-                                        contentTitle={props.headerContentTitle}
-                                    />
-                                </div>
-
-                                <div className="custom-setting-items-deprecated-setting">
-                                    <Button
-                                        variant={'outline-primary'}
-                                        onClick={() => props.onClick()}
-                                        size="sm"
-                                    >
-                                        <FormattedMessage
-                                            id="course-authoring.advanced-settings.deprecated.button.text"
-                                            defaultMessage="{visibility} deprecated settings"
-                                            values={{
-                                                visibility:
-                                                    props.showDeprecated ? props.hideDeprecatedMessage
-                                                        : props.showDeprecatedMessage,
-                                            }}
-                                        />
-                                    </Button>
-                                </div>
-                            </div>
-                            
-                            <hr className="customHr" />
-
-                            <div className="warning-message-container">
-                                <WarningMessage message="Do not modify these policies unless you are familiar with their purpose." />
-                            </div>
-                        </div>
+                        <CustomAdvancedSettingsHeader {...props} />
                     ),
                 },
             }
@@ -944,13 +908,13 @@ config.pluginSlots = {
             },
         ],
     },
-}
-}
+}; };
 
-console.log(FormattedMessage, "FormattedMessage");
-console.log(WarningMessage, "WarningMessage");
-console.log(SubHeader, "SubHeader");
+// Load environment variables from .env file
+config.pluginSlots = getPluginSlots();
+
 {% endraw %}
+
 
          """
      )

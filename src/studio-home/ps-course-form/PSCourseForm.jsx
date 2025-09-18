@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable consistent-return */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-no-useless-fragment */
@@ -47,6 +48,7 @@ import LicenseIcons from '../../schedule-and-details/license-section/license-ico
 import licenseMessages from '../../schedule-and-details/license-section/messages';
 import CustomTypeaheadDropdown from '../../editors/sharedComponents/CustomTypeaheadDropdown';
 import AlertMessage from '../../generic/alert-message';
+import CertificateDisplayRow from '../../schedule-and-details/schedule-section/certificate-display-row/CertificateDisplayRow';
 import ModalNotification from '../../generic/modal-notification';
 import LearningOutcomesSection from '../../schedule-and-details/learning-outcomes-section';
 import InstructorsSection from '../../schedule-and-details/instructors-section';
@@ -90,6 +92,7 @@ const PSCourseForm = ({
   onImageValidationErrorChange,
   onResetForm,
   scheduleSettings = false,
+  courseSettings,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -125,9 +128,9 @@ const PSCourseForm = ({
     startTime: null,
     endDate: null,
     endTime: null,
-    enrollmentStartDate: null,
+    enrollmentStart: null,
     enrollmentStartTime: null,
-    enrollmentEndDate: null,
+    enrollmentEnd: null,
     enrollmentEndTime: null,
     pricingModel: 'free',
     price: '',
@@ -198,6 +201,14 @@ const PSCourseForm = ({
     }
   }, [imageErrors, onImageValidationErrorChange]);
 
+  // Validate form when editedValues change (e.g., when form loads with existing data)
+  useEffect(() => {
+    if (editedValues && Object.keys(editedValues).length > 0) {
+      const fieldErrors = validateForm();
+      setErrors(fieldErrors);
+    }
+  }, [editedValues]);
+
   const handleInputChange = (field, value) => {
     const hasChanged = value !== editedValues[field];
 
@@ -213,20 +224,174 @@ const PSCourseForm = ({
 
     setTouched(prev => ({ ...prev, [field]: true }));
 
-    // Validate the specific field
+    // Validate the specific field and related fields
     const fieldErrors = validateForm();
-    if (fieldErrors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: fieldErrors[field],
-      }));
-    } else {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
+
+    // If start date changes, also validate end date
+    if (field === 'startDate' && editedValues.endDate) {
+      const startDate = new Date(value);
+      const endDate = new Date(editedValues.endDate);
+
+      if (endDate < startDate) {
+        fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete fieldErrors.endDate;
+      }
     }
+
+    // If end date changes, validate against start date
+    if (field === 'endDate' && editedValues.startDate) {
+      const startDate = new Date(editedValues.startDate);
+      const endDate = new Date(value);
+
+      if (endDate < startDate) {
+        fieldErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete fieldErrors.endDate;
+      }
+    }
+
+    // If start date changes, validate against enrollment start date
+    if (field === 'startDate' && editedValues.enrollmentStart) {
+      const startDate = new Date(value);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+        setTouched(prev => ({ ...prev, startDate: true }));
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+
+    // If enrollment start date changes, validate against start date
+    if (field === 'enrollmentStart' && editedValues.startDate) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(value);
+
+      if (startDate <= enrollmentStartDate) {
+        fieldErrors.startDate = 'Course start date must be later than the enrollment start date.';
+        setTouched(prev => ({ ...prev, startDate: true }));
+      } else {
+        // Clear startDate error if dates are now valid
+        delete fieldErrors.startDate;
+      }
+    }
+
+    // If enrollment start date changes, validate against enrollment end date
+    if (field === 'enrollmentStart' && editedValues.enrollmentEnd) {
+      const enrollmentStartDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        fieldErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+        setTouched(prev => ({ ...prev, enrollmentStart: true }));
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear both errors if dates are now valid
+        delete fieldErrors.enrollmentStart;
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against enrollment start date
+    if (field === 'enrollmentEnd' && editedValues.enrollmentStart) {
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      const enrollmentEndDate = new Date(value);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        fieldErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+        setTouched(prev => ({ ...prev, enrollmentStart: true }));
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear both errors if dates are now valid
+        delete fieldErrors.enrollmentStart;
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against course start date
+    if (field === 'enrollmentEnd' && editedValues.startDate) {
+      const enrollmentEndDate = new Date(value);
+      const courseStartDate = new Date(editedValues.startDate);
+
+      if (enrollmentEndDate < courseStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If enrollment end date changes, validate against course end date
+    if (field === 'enrollmentEnd' && editedValues.endDate) {
+      const enrollmentEndDate = new Date(value);
+      const courseEndDate = new Date(editedValues.endDate);
+
+      if (enrollmentEndDate > courseEndDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If course start date changes, validate against enrollment end date
+    if (field === 'startDate' && editedValues.enrollmentEnd) {
+      const courseStartDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentEndDate < courseStartDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // If course end date changes, validate against enrollment end date
+    if (field === 'endDate' && editedValues.enrollmentEnd) {
+      const courseEndDate = new Date(value);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentEndDate > courseEndDate) {
+        fieldErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+        setTouched(prev => ({ ...prev, enrollmentEnd: true }));
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete fieldErrors.enrollmentEnd;
+      }
+    }
+
+    // Update errors for the changed field and any related fields
+    Object.keys(fieldErrors).forEach(errorField => {
+      if (fieldErrors[errorField]) {
+        setErrors(prev => ({
+          ...prev,
+          [errorField]: fieldErrors[errorField],
+        }));
+      } else {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[errorField];
+          return newErrors;
+        });
+      }
+    });
+  };
+
+  const handleCertificateChange = (value, field) => {
+    handleInputChange(field, value);
   };
 
   const handleBlur = (field) => {
@@ -263,8 +428,8 @@ const PSCourseForm = ({
       run: formData.courseRun || '',
       start_date: formatDate(formData.startDate),
       end_date: formatDate(formData.endDate),
-      enrollment_start: formatDate(formData.enrollmentStartDate),
-      enrollment_end: formatDate(formData.enrollmentEndDate),
+      enrollment_start: formatDate(formData.enrollmentStart),
+      enrollment_end: formatDate(formData.enrollmentEnd),
       title: formData.title || '',
       description: formData.description || '',
       short_description: formData.shortDescription || '',
@@ -278,10 +443,10 @@ const PSCourseForm = ({
       video_thumbnail_image_name: formData.cardImage?.name || '',
       video_thumbnail_image_asset_path: formData.cardImageAssetPath || '',
       self_paced: formData.coursePacing === 'self',
-      effort: formData.hoursOfEffort || 'None',
+      effort: formData.effort || 'None',
       pre_requisite_courses: formData.prerequisiteCourse ? [formData.prerequisiteCourse] : [],
-      entrance_exam_enabled: formData.requireEntranceExam ? 'true' : 'false',
-      entrance_exam_minimum_score_pct: formData.entranceExamGradeRequired?.toString() || '',
+      entrance_exam_enabled: formData.entranceExamEnabled || 'false',
+      entrance_exam_minimum_score_pct: formData.entranceExamMinimumScorePct?.toString() || '',
       language: formData.language || 'en',
       price: formData.pricingModel === 'paid' ? formData.price : '',
       amount: formData.pricingModel === 'paid' ? formData.price : '',
@@ -307,18 +472,35 @@ const PSCourseForm = ({
       const apiPayload = transformFormDataToApiPayload(editedValues);
       console.log('API Payload:', apiPayload);
       const response = await getAuthenticatedHttpClient().post(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/create-course`, apiPayload);
+      // const response = await getAuthenticatedHttpClient().post('https://studio.staging.titaned.com/titaned/api/v1/create-course', apiPayload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error('Failed to create course. Please try again.');
       }
 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-      setShowSuccessAlert(true); // Show success alert
+      // Handle success response with new API format
+      const responseData = response.data;
+      if (responseData && responseData.success && responseData.url) {
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
 
-      // Redirect to /home after 2 seconds
-      setTimeout(() => {
-        navigate('/my-courses');
-      }, 2000);
+        // Navigate to the course URL from the API response
+        setTimeout(() => {
+          // Remove leading slash if present and construct full URL
+          const courseUrl = responseData.url.startsWith('/') ? responseData.url.substring(1) : responseData.url;
+          const fullCourseUrl = `${getConfig().STUDIO_BASE_URL}/${courseUrl}`;
+          window.location.href = fullCourseUrl;
+        }, 2000);
+      } else {
+        // Fallback to old behavior if response format is different
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+        setShowSuccessAlert(true); // Show success alert
+
+        // Redirect to /my-courses after 2 seconds
+        setTimeout(() => {
+          navigate('/my-courses');
+        }, 2000);
+      }
 
       if (typeof onSubmit === 'function') {
         onSubmit(editedValues);
@@ -330,14 +512,28 @@ const PSCourseForm = ({
       let errorMsg = 'Failed to create course. Please try again.';
       if (error.response) {
         // Server responded with error status
-        if (error.response.status === 401) {
+        if (error.response.status === 400 || error.response.status === 403 || error.response.status === 500) {
+          // For 400, 403, and 500, prioritize backend error message
+          if (error.response.data && error.response.data.message) {
+            errorMsg = error.response.data.message;
+          } else if (error.response.data && error.response.data.error) {
+            errorMsg = error.response.data.error;
+          } else if (error.response.data && typeof error.response.data === 'string') {
+            errorMsg = error.response.data;
+          } else {
+            // Fallback to default messages if no backend message
+            if (error.response.status === 400) {
+              errorMsg = 'Bad request. Please check your inputs.';
+            } else if (error.response.status === 403) {
+              errorMsg = 'You do not have permission to create courses.';
+            } else if (error.response.status === 500) {
+              errorMsg = 'Server error. Please try again later.';
+            }
+          }
+        } else if (error.response.status === 401) {
           errorMsg = 'Authentication failed. Please log in again.';
-        } else if (error.response.status === 403) {
-          errorMsg = 'You do not have permission to create courses.';
         } else if (error.response.status === 422) {
           errorMsg = 'Invalid course data. Please check your inputs.';
-        } else if (error.response.status >= 500) {
-          errorMsg = 'Server error. Please try again later.';
         } else if (error.response.data && error.response.data.message) {
           errorMsg = error.response.data.message;
         }
@@ -392,7 +588,7 @@ const PSCourseForm = ({
     const error = imageErrors?.[errorField];
 
     return (
-      <Form.Group className="mb-4">
+      <Form.Group className="mb-4 custom-image-upload-section-ps-form">
         <div className="d-flex align-items-center mb-2">
           <Form.Label className="mb-0">{label}</Form.Label>
         </div>
@@ -498,14 +694,89 @@ const PSCourseForm = ({
     // Validate Course Number field
     if (!editedValues.courseNumber || !editedValues.courseNumber.trim()) {
       newErrors.courseNumber = 'Course Number is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseNumber.trim())) {
+      newErrors.courseNumber = 'Course Number can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course Run field
     if (!editedValues.courseRun || !editedValues.courseRun.trim()) {
       newErrors.courseRun = 'Course Run is required.';
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(editedValues.courseRun.trim())) {
+      newErrors.courseRun = 'Course Run can only contain letters, numbers, underscores (_), and hyphens (-).';
     }
     // Validate Course start date field
     if (!editedValues.startDate) {
       newErrors.startDate = 'Course start date is required.';
+    }
+    
+    // Validate that end date is not earlier than start date (only if both dates are provided)
+    if (editedValues.startDate && editedValues.endDate) {
+      const startDate = new Date(editedValues.startDate);
+      const endDate = new Date(editedValues.endDate);
+      
+      if (endDate < startDate) {
+        newErrors.endDate = 'Course end date cannot be earlier than start date.';
+      } else {
+        // Clear endDate error if dates are now valid
+        delete newErrors.endDate;
+      }
+    } else {
+      // Clear endDate error if one of the dates is missing
+      delete newErrors.endDate;
+    }
+
+    // Validate that course start date is later than enrollment start date (only if both dates are provided)
+    if (editedValues.startDate && editedValues.enrollmentStart) {
+      const startDate = new Date(editedValues.startDate);
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      
+      if (startDate <= enrollmentStartDate) {
+        newErrors.startDate = 'Course start date must be later than the enrollment start date.';
+      } else {
+        // Clear startDate error if dates are now valid
+        delete newErrors.startDate;
+      }
+    }
+
+    // Validate that enrollment start date is not later than enrollment end date (only if both dates are provided)
+    if (editedValues.enrollmentStart && editedValues.enrollmentEnd) {
+      const enrollmentStartDate = new Date(editedValues.enrollmentStart);
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+
+      if (enrollmentStartDate > enrollmentEndDate) {
+        newErrors.enrollmentStart = 'Enrollment start date cannot be later than enrollment end date.';
+      } else if (enrollmentEndDate < enrollmentStartDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than enrollment start date.';
+      } else {
+        // Clear both errors if dates are now valid
+        delete newErrors.enrollmentStart;
+        delete newErrors.enrollmentEnd;
+      }
+    }
+    
+    // Validate that enrollment end date is not earlier than course start date (only if both dates are provided)
+    if (editedValues.enrollmentEnd && editedValues.startDate) {
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+      const courseStartDate = new Date(editedValues.startDate);
+      
+      if (enrollmentEndDate < courseStartDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete newErrors.enrollmentEnd;
+      }
+    }
+    
+    // Validate that enrollment end date is not later than course end date (only if both dates are provided)
+    if (editedValues.enrollmentEnd && editedValues.endDate) {
+      const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
+      const courseEndDate = new Date(editedValues.endDate);
+      
+      if (enrollmentEndDate > courseEndDate) {
+        newErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
+      } else {
+        // Clear enrollmentEnd error if dates are now valid
+        delete newErrors.enrollmentEnd;
+      }
     }
     /* Custom error messages */
     setErrors(newErrors);
@@ -854,13 +1125,13 @@ const PSCourseForm = ({
                                             value={editedValues.endDate || ''}
                                             label={null}
                                             helpText="Enter the date when your course will end"
-                                            isInvalid={!!errors.endDate && touched.endDate}
+                                            isInvalid={!!errors.endDate}
                                             controlName="end-date"
                                             onChange={(value) => handleInputChange('endDate', value)}
                                             onBlur={() => handleBlur('endDate')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.endDate && touched.endDate && (
+                                          {errors.endDate && (
                                           <Form.Text className="text-danger">
                                             {errors.endDate}
                                           </Form.Text>
@@ -898,18 +1169,18 @@ const PSCourseForm = ({
                                           </Form.Label>
                                           <DatepickerControl
                                             type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentStartDate || ''}
+                                            value={editedValues.enrollmentStart || ''}
                                             label={null}
                                             helpText="Enter the date when enrollment will start"
-                                            isInvalid={!!errors.enrollmentStartDate && touched.enrollmentStartDate}
+                                            isInvalid={!!errors.enrollmentStart && touched.enrollmentStart}
                                             controlName="enrollment-start-date"
-                                            onChange={(value) => handleInputChange('enrollmentStartDate', value)}
-                                            onBlur={() => handleBlur('enrollmentStartDate')}
+                                            onChange={(value) => handleInputChange('enrollmentStart', value)}
+                                            onBlur={() => handleBlur('enrollmentStart')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.enrollmentStartDate && touched.enrollmentStartDate && (
+                                          {errors.enrollmentStart && touched.enrollmentStart && (
                                           <Form.Text className="text-danger">
-                                            {errors.enrollmentStartDate}
+                                            {errors.enrollmentStart}
                                           </Form.Text>
                                           )}
                                         </div>
@@ -942,18 +1213,18 @@ const PSCourseForm = ({
                                           <Form.Label>Enrollment end date</Form.Label>
                                           <DatepickerControl
                                             type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentEndDate || ''}
+                                            value={editedValues.enrollmentEnd || ''}
                                             label={null}
                                             helpText="Enter the date when enrollment will end"
-                                            isInvalid={!!errors.enrollmentEndDate && touched.enrollmentEndDate}
+                                            isInvalid={!!errors.enrollmentEnd && touched.enrollmentEnd}
                                             controlName="enrollment-end-date"
-                                            onChange={(value) => handleInputChange('enrollmentEndDate', value)}
-                                            onBlur={() => handleBlur('enrollmentEndDate')}
+                                            onChange={(value) => handleInputChange('enrollmentEnd', value)}
+                                            onBlur={() => handleBlur('enrollmentEnd')}
                                             placeholder="MM/DD/YYYY"
                                           />
-                                          {errors.enrollmentEndDate && touched.enrollmentEndDate && (
+                                          {errors.enrollmentEnd && touched.enrollmentEnd && (
                                           <Form.Text className="text-danger">
-                                            {errors.enrollmentEndDate}
+                                            {errors.enrollmentEnd}
                                           </Form.Text>
                                           )}
                                         </div>
@@ -978,6 +1249,15 @@ const PSCourseForm = ({
                                     </Row>
                                   </div>
                                 </li>
+                                <li className="certificate-display-row">
+                                  <CertificateDisplayRow
+                                    certificateAvailableDate={editedValues.certificateAvailableDate || ''}
+                                    availableDateErrorFeedback={errors.certificateAvailableDate || ''}
+                                    certificatesDisplayBehavior={editedValues.certificatesDisplayBehavior || ''}
+                                    displayBehaviorErrorFeedback={errors.certificatesDisplayBehavior || ''}
+                                    onChange={handleCertificateChange}
+                                  />
+                                </li>
                               </ul>
                             </div>
                           </Stack>
@@ -992,11 +1272,11 @@ const PSCourseForm = ({
                                   <Form.Label>Hours of effort per week</Form.Label>
                                   <Form.Control
                                     type="text"
-                                    name="hoursOfEffort"
-                                    value={editedValues.hoursOfEffort || ''}
-                                    onChange={(e) => handleInputChange('hoursOfEffort', e.target.value)}
-                                    onBlur={() => handleBlur('hoursOfEffort')}
-                                    isInvalid={!!errors.hoursOfEffort && touched.hoursOfEffort}
+                                    name="effort"
+                                    value={editedValues.effort || ''}
+                                    onChange={(e) => handleInputChange('effort', e.target.value)}
+                                    onBlur={() => handleBlur('effort')}
+                                    isInvalid={!!errors.effort && touched.effort}
                                   />
                                   <Form.Text>Time spent on all course work</Form.Text>
                                 </Form.Group>
@@ -1037,11 +1317,11 @@ const PSCourseForm = ({
                                     type="checkbox"
                                     className="entrance-exam-checkbox"
                                     label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={!!editedValues.requireEntranceExam}
-                                    onChange={(e) => handleInputChange('requireEntranceExam', e.target.checked)}
+                                    checked={editedValues.entranceExamEnabled === 'true'}
+                                    onChange={(e) => handleInputChange('entranceExamEnabled', e.target.checked ? 'true' : 'false')}
                                   />
                                 </div>
-                                {editedValues.requireEntranceExam && (
+                                {editedValues.entranceExamEnabled === 'true' && (
                                 <div className="entrance-exam-content p-1">
                                   <div className="form-group-custom">
                                     <Form.Label>Grade requirements</Form.Label>
@@ -1051,9 +1331,9 @@ const PSCourseForm = ({
                                         min={0}
                                         max={100}
                                         className=""
-                                        value={editedValues.entranceExamGradeRequired || 50}
-                                        onChange={(e) => handleInputChange('entranceExamGradeRequired', e.target.value)}
-                                        onBlur={() => handleBlur('entranceExamGradeRequired')}
+                                        value={editedValues.entranceExamMinimumScorePct || 40}
+                                        onChange={(e) => handleInputChange('entranceExamMinimumScorePct', e.target.value)}
+                                        onBlur={() => handleBlur('entranceExamMinimumScorePct')}
                                       />
                                       <span className="pgn__form-control-trailing">%</span>
                                     </div>
@@ -1247,11 +1527,7 @@ const PSCourseForm = ({
                       type="submit"
                       disabled={
             isSubmitting
-            || !editedValues.shortDescription?.trim()
-            || !editedValues.organization
-            || !editedValues.courseNumber?.trim()
-            || !editedValues.courseRun?.trim()
-            || !editedValues.startDate
+            || Object.keys(errors).length > 0
             || !!imageErrors.cardImage
             || !!imageErrors.bannerImage
         }
@@ -1302,6 +1578,7 @@ PSCourseForm.propTypes = {
   onImageValidationErrorChange: PropTypes.func,
   onResetForm: PropTypes.func,
   scheduleSettings: PropTypes.bool,
+  courseSettings: PropTypes.object,
 };
 
 PSCourseForm.defaultProps = {
@@ -1325,6 +1602,7 @@ PSCourseForm.defaultProps = {
   onImageValidationErrorChange: () => { },
   onResetForm: () => { },
   scheduleSettings: false,
+  courseSettings: {},
 };
 
 export default PSCourseForm;

@@ -7,6 +7,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { Textbooks } from 'CourseAuthoring/textbooks';
+import { LmsBook } from '@openedx/paragon/icons';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -28,7 +29,6 @@ import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
-import { LmsBook } from '@openedx/paragon/icons';
 
 const MobileCourseNavigation = ({ items }) => {
   const navigate = useNavigate();
@@ -42,6 +42,9 @@ const MobileCourseNavigation = ({ items }) => {
     <div className="ca-mobile-nav">
       <select
         className="ca-mobile-nav-select"
+        style={{
+          display: localStorage.getItem('oldUI') === 'true' ? 'none' : 'block',
+        }}
         value={location.pathname}
         onChange={handleNavigation}
       >
@@ -78,10 +81,11 @@ const CoursePageLayout = ({
       handleMyCoursesClick();
     }
   };
-  const oldUI = localStorage.getItem('oldUI');
+  // const oldUI = localStorage.getItem('oldUI');
   return (
     <>
-      {!oldUI && 
+      {localStorage.getItem('oldUI') === 'false'
+      && (
       <div className="ca-breadcrumb-bg">
         <div className="ca-breadcrumb-container">
           <div className="ca-breadcrumb">
@@ -103,8 +107,14 @@ const CoursePageLayout = ({
             {courseName || 'Loading...'}
           </div>
         </div>
-      </div>}
-      <div className="ca-main-layout">
+      </div>
+      )}
+      <div
+        className="ca-main-layout"
+        style={{
+          marginTop: localStorage.getItem('oldUI') === 'true' ? '1rem' : 0,
+        }}
+      >
         <MobileCourseNavigation items={sidebarItems} />
         <div className="ca-sidebar">
           <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId, sidebarItems }} />

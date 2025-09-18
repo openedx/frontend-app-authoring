@@ -1,6 +1,8 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
-import { Card, Button, IconButtonWithTooltip, Icon } from '@openedx/paragon';
+import {
+  Card, Button, IconButtonWithTooltip, Icon,
+} from '@openedx/paragon';
 import './CourseCard.scss';
 import { Repeat } from '@openedx/paragon/icons';
 
@@ -11,6 +13,7 @@ type CourseCardProps = {
   onViewLive?: () => void;
   onEditCourse?: () => void;
   onReRun?: () => void;
+  isReRunEnabled?: boolean;
 };
 
 const fallbackImage = 'https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg';
@@ -22,6 +25,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
   onViewLive,
   onEditCourse,
   onReRun,
+  isReRunEnabled = false,
 }) => (
   <Card style={{ width: '19rem' }} className="course-card">
     <Card.ImageCap
@@ -36,10 +40,12 @@ const CourseCard: React.FC<CourseCardProps> = ({
       </div>
       {/* <hr /> */}
       {/* <p className="text-muted">{metadata}</p> */}
-      <div className="d-flex justify-content-between gap-2 course-card-buttons">
+      <div className={`d-flex gap-2 course-card-buttons ${isReRunEnabled ? 'justify-content-between' : 'justify-content-around course-card-buttons-without-rerun'}`}>
         <Button size="sm" variant="primary" onClick={onViewLive}>View live</Button>
         <Button size="sm" variant="outline-primary" onClick={onEditCourse}>Edit course</Button>
+        {isReRunEnabled && (
         <IconButtonWithTooltip src={Repeat} size="sm" variant="primary" iconAs={Icon} alt="Re-run" tooltipPlacement="bottom" tooltipContent="Re-run" onClick={onReRun} />
+        )}
       </div>
     </Card.Section>
   </Card>

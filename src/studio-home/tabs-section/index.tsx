@@ -177,7 +177,8 @@ const TabsSection = ({
       dispatch(fetchLibraryData());
       navigate('/libraries-v1');
     } else if (tab === TABS_LIST.libraries) {
-      navigate('/libraries');
+      // Don't navigate for libraries v2 tab - keep it within the tab structure
+      // navigate('/libraries');
     } else if (tab === TABS_LIST.taxonomies) {
       navigate('/taxonomies');
     }
