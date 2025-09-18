@@ -1873,5 +1873,18 @@
     "sidebar.titan-ai.title": "مساعد ذكاء صناعي",
     "sidebar.shared-resources.title": "الموارد المشتركة",
     "sidebar.taxonomies.title": "التصنيفات",
+    "course-navigation.sidebar.course-outline": "مخطط الدورة",
+    "course-navigation.sidebar.schedule-details": "الجدول الزمني والتفاصيل",
+    "course-navigation.sidebar.grading": "التنقيط",
+    "course-navigation.sidebar.course-team": "فريق المساق",
+    "course-navigation.sidebar.certificates": "الشهادات",
+    "course-navigation.sidebar.updates": "التحديثات",
+    "course-navigation.sidebar.group-configurations": "تكوينات المجموعة",
+    "course-navigation.sidebar.advanced-settings": "الإعدادات المتقدمة",
+    "course-navigation.sidebar.import": "الاستيراد",
+    "course-navigation.sidebar.export": "التصدير",
+    "course-navigation.sidebar.checklists": "قوائم المراجعة",
+    "course-navigation.sidebar.files": "الملفات",
+    "course-navigation.sidebar.pages-resources": "الصفحات والموارد",
     "dashboard.page.title": "لوحة التحكم"
 }

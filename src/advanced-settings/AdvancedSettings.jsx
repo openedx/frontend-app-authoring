@@ -236,7 +236,20 @@ const AdvancedSettings = ({ intl, courseId }) => {
                               isEditableState,
                               setIsEditableState,
                             }}
-                          />
+                          >
+                            <SettingCard
+                              key={settingName}
+                              settingData={settingData}
+                              name={settingName}
+                              showSaveSettingsPrompt={showSaveSettingsPrompt}
+                              saveSettingsPrompt={saveSettingsPrompt}
+                              setEdited={setEditedSettings}
+                              handleBlur={handleSettingBlur}
+                              isEditableState={isEditableState}
+                              setIsEditableState={setIsEditableState}
+                            />
+                          </PluginSlot>
+
                         );
                       })}
                     </ul>
