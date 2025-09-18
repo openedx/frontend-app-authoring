@@ -1,0 +1,19 @@
+import { Stack } from "@openedx/paragon";
+
+interface Props {
+  title: string;
+  children: React.ReactNode;
+  side: "Before" | "After";
+}
+
+const ChildrenPreview = ({ title, children, side }: Props) => {
+  return (
+    <Stack direction="vertical">
+      <span className="text-center">{side}</span>
+      <span className={`mt-2 mb-3 text-md text-gray-800`}>{title}</span>
+      {children}
+    </Stack>
+  )
+}
+
+export default ChildrenPreview

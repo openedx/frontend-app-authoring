@@ -16,6 +16,7 @@ import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -55,12 +56,19 @@ export const PreviewLibraryXBlockChanges = ({
     if (!blockData) {
       return <Loading />;
     }
+    if (blockData.isContainer) {
+      return <CompareContainersWidget
+        title={blockData.displayName}
+        upstreamBlockId={blockData.upstreamBlockId}
+        downstreamBlockId={blockData.downstreamBlockId}
+      />
+    }
+
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isContainer}
       />
     );
   }, [blockData]);
@@ -110,12 +118,12 @@ export const PreviewLibraryXBlockChanges = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <AlertMessage
+        {!blockData.isContainer && <AlertMessage
           show
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.olderVersionPreviewAlert)}
-        />
+        />}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
