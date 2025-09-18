@@ -1,0 +1,12 @@
+{
+  "primary": "#358F0A",
+  "primary_alt": "#46bd0d",
+  "primary_hover": "#64e327",
+  "primary_active": "#9afa6b",
+  "primary_light": "#b5f794",
+  "secondary": "#450909",
+  "secondary_alt": "#690f0f",
+  "secondary_hover": "#e31b1b",
+  "secondary_active": "#358F0A",
+  "secondary_light": "#f07575"
+}

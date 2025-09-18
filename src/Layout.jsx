@@ -206,7 +206,7 @@ const Layout = () => {
               label: intl.formatMessage(messages.sidebarAssignmentsTitle),
               path: '/assignments',
               icon: <ParagonIcons.Assignment />,
-              isVisible: menuConfig.enable_assignments || false, 
+              isVisible: true, //menuConfig.enable_assignments || false, 
             },
             {
               label: 'Switch to Old View',

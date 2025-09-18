@@ -50,9 +50,9 @@ import Layout from './Layout';
 import './styles/conditional-styles.css';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
-
 import  Calendar  from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
+import { applyTheme } from './styles/themeLoader'
 
 // Load styles only for new UI
 const loadStylesForNewUI = () => {
@@ -72,6 +72,11 @@ registerFontAwesomeIcons();
 const App = () => {
   const [oldUI, setOldUI] = useState(() => localStorage.getItem('oldUI'));
   console.log('oldUI in Index', oldUI);
+
+  // Apply theme from JSON
+  useEffect(() => {
+    applyTheme(); // Load default theme from /theme.json
+  }, []);
 
   useEffect(() => {
     // Load styles based on UI mode
