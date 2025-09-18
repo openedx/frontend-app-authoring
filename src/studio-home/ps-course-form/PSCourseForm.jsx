@@ -951,7 +951,7 @@ const PSCourseForm = ({
                                   <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
                                   {createOrRerunOrganizations ? (
                                     <CustomTypeaheadDropdown
-                                      readOnly={canCreateNewOrganization}
+                                      readOnly={!canCreateNewOrganization}
                                       name="organization"
                                       value={editedValues.organization || ''}
                                       controlClassName={errors.organization ? 'is-invalid' : ''}
