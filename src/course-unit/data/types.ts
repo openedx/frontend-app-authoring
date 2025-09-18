@@ -32,7 +32,7 @@ export interface CourseOutlineData {
 
 export interface ContainerChildData {
   blockId: string;
-  blockType: ContainerType | typeof COMPONENT_TYPES;
+  blockType: ContainerType | keyof typeof COMPONENT_TYPES;
   id: string;
   name: string;
   upstreamLink: UpstreamInfo;

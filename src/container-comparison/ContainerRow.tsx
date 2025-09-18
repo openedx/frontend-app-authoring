@@ -3,11 +3,11 @@ import { getItemIcon } from "../generic/block-type-utils";
 import { ContainerType } from "../generic/key-utils";
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 
-export type ContainerState = "removed" | "added" | "modified";
+export type ContainerState = "removed" | "added" | "modified" | "moved";
 
 export interface ContainerRowProps {
   title: string;
-  containerType: ContainerType | typeof COMPONENT_TYPES;
+  containerType: ContainerType | keyof typeof COMPONENT_TYPES;
   state?: ContainerState;
   tense?: "past" | "future";
   onClick?: () => void;
