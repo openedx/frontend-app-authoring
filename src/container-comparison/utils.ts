@@ -62,6 +62,10 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
         // has moved from its position
         state = "moved";
       }
+      if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
+        // Has been renamed
+        state = "renamed";
+      }
       if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = "modified";

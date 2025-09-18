@@ -1,4 +1,4 @@
-import { Stack } from "@openedx/paragon";
+import { Card } from "@openedx/paragon";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { LoadingSpinner } from "../generic/Loading";
@@ -34,6 +34,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
         title={child.name}
         containerType={child.blockType}
         state={child.state}
+        side="Before"
       />
     ))
   }, [isLoading, result]);
@@ -48,18 +49,27 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
         title={child.displayName}
         containerType={child.containerType}
         state={child.state}
+        side="After"
       />
     ))
   }, [libLoading, isLoading, result]);
 
   return (
-    <Stack direction="horizontal" gap={3}>
-      <ChildrenPreview title={title} side="Before">
-        {renderBeforeChildren()}
-      </ChildrenPreview>
-      <ChildrenPreview title={title} side="After">
-        {renderAfterChildren()}
-      </ChildrenPreview>
-    </Stack>
+    <div className="row">
+      <div className="col col-6 p-1">
+        <Card className="p-4">
+          <ChildrenPreview title={title} side="Before">
+            {renderBeforeChildren()}
+          </ChildrenPreview>
+        </Card>
+      </div>
+      <div className="col col-6 p-1">
+        <Card className="p-4">
+          <ChildrenPreview title={title} side="After">
+            {renderAfterChildren()}
+          </ChildrenPreview>
+        </Card>
+      </div>
+    </div>
   )
 }
