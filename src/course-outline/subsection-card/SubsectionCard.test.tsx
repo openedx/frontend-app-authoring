@@ -75,6 +75,8 @@ const subsection: XBlock = {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:subsection:1',
     versionSynced: 1,
+    versionAvailable: 2,
+    versionDeclined: null,
     errorMessage: null,
   },
 } satisfies Partial<XBlock> as XBlock;

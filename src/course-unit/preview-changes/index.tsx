@@ -5,6 +5,7 @@ import {
 import { Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
 import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
@@ -55,12 +56,21 @@ export const PreviewLibraryXBlockChanges = ({
     if (!blockData) {
       return <Loading />;
     }
+    if (blockData.isContainer) {
+      return (
+        <CompareContainersWidget
+          title={blockData.displayName}
+          upstreamBlockId={blockData.upstreamBlockId}
+          downstreamBlockId={blockData.downstreamBlockId}
+        />
+      );
+    }
+
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isContainer}
       />
     );
   }, [blockData]);
@@ -109,13 +119,15 @@ export const PreviewLibraryXBlockChanges = ({
           {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="bg-light-300">
+        {!blockData.isContainer && (
         <AlertMessage
           show
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.olderVersionPreviewAlert)}
         />
+        )}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>

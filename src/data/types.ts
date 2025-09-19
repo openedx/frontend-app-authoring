@@ -52,7 +52,11 @@ export interface UpstreamInfo {
   readyToSync: boolean,
   upstreamRef: string,
   versionSynced: number,
+  versionAvailable: number | null,
+  versionDeclined: number | null,
   errorMessage: string | null,
+  isModified?: boolean,
+  hasTopLevelParent?: boolean,
 }
 
 export interface XBlock {
