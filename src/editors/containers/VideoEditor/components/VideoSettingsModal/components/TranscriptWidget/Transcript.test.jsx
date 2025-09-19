@@ -2,29 +2,47 @@ import React from 'react';
 import {
   render, fireEvent, screen, initializeMocks,
 } from 'CourseAuthoring/testUtils';
-import { TranscriptInternal, hooks } from './Transcript';
+import { useDispatch } from 'react-redux';
+import TranscriptInternal, { hooks } from './Transcript';
 
+import { thunkActions } from '../../../../../../data/redux';
+
+// Mock child components
 jest.mock('./TranscriptActionMenu', () => jest.fn(() => <div>TranscriptActionMenu</div>));
 jest.mock('./LanguageSelector', () => jest.fn(() => <div>LanguageSelector</div>));
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: jest.fn(),
+}));
+jest.mock('../../../../../../data/redux', () => ({
+  thunkActions: {
+    video: {
+      deleteTranscript: jest.fn(),
+    },
+  },
+}));
 
 const defaultProps = {
   index: 0,
   language: '',
   transcriptUrl: undefined,
-  deleteTranscript: jest.fn(),
 };
 
 describe('TranscriptInternal', () => {
   const cancelDelete = jest.fn();
-  const deleteTranscript = jest.fn();
-  jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
-    inDeleteConfirmation: false,
-    launchDeleteConfirmation: deleteTranscript,
-    cancelDelete,
-  });
+  const mockDispatch = jest.fn();
 
   beforeEach(() => {
     initializeMocks();
+    jest.clearAllMocks();
+    useDispatch.mockReturnValue(mockDispatch);
+
+    // Default hook mock
+    jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+      inDeleteConfirmation: false,
+      launchDeleteConfirmation: jest.fn(),
+      cancelDelete,
+    });
   });
 
   it('renders ActionRow and LanguageSelector when not in delete confirmation', () => {
@@ -34,15 +52,20 @@ describe('TranscriptInternal', () => {
   });
 
   it('renders TranscriptActionMenu when language is not empty', () => {
-    const props = { language: 'en', transcriptUrl: 'url' };
-    render(<TranscriptInternal {...defaultProps} {...props} />);
+    render(<TranscriptInternal {...defaultProps} language="en" transcriptUrl="url" />);
     expect(screen.getByText('TranscriptActionMenu')).toBeInTheDocument();
   });
 
   it('calls launchDeleteConfirmation when IconButton is clicked', () => {
+    const launchDeleteConfirmation = jest.fn();
+    jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
+      inDeleteConfirmation: false,
+      launchDeleteConfirmation,
+      cancelDelete,
+    });
     render(<TranscriptInternal {...defaultProps} />);
     fireEvent.click(screen.getByRole('button'));
-    expect(deleteTranscript).toHaveBeenCalled();
+    expect(launchDeleteConfirmation).toHaveBeenCalled();
   });
 
   it('renders delete confirmation card when inDeleteConfirmation is true', () => {
@@ -53,7 +76,9 @@ describe('TranscriptInternal', () => {
     });
     render(<TranscriptInternal {...defaultProps} />);
     expect(screen.getByText('Delete this transcript?')).toBeInTheDocument();
-    expect(screen.getByText('Are you sure you want to delete this transcript?')).toBeInTheDocument();
+    expect(
+      screen.getByText('Are you sure you want to delete this transcript?'),
+    ).toBeInTheDocument();
   });
 
   it('calls cancelDelete when cancel button is clicked', () => {
@@ -67,16 +92,21 @@ describe('TranscriptInternal', () => {
     expect(cancelDelete).toHaveBeenCalled();
   });
 
-  it('calls deleteTranscript and cancelDelete when confirm delete is clicked', () => {
+  it('dispatches deleteTranscript thunk and calls cancelDelete when confirm delete is clicked', () => {
     jest.spyOn(hooks, 'setUpDeleteConfirmation').mockReturnValue({
       inDeleteConfirmation: true,
       launchDeleteConfirmation: jest.fn(),
       cancelDelete,
     });
-    const props = { language: 'es', deleteTranscript };
-    render(<TranscriptInternal {...defaultProps} {...props} />);
+
+    thunkActions.video.deleteTranscript.mockReturnValue('mockThunk');
+
+    render(<TranscriptInternal {...defaultProps} language="es" />);
+
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
-    expect(deleteTranscript).toHaveBeenCalledWith({ language: 'es' });
+
+    expect(thunkActions.video.deleteTranscript).toHaveBeenCalledWith({ language: 'es' });
+    expect(mockDispatch).toHaveBeenCalledWith('mockThunk');
     expect(cancelDelete).toHaveBeenCalled();
   });
 });
