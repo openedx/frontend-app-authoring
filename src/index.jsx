@@ -59,11 +59,16 @@ import { LoadingSpinner } from './generic/Loading';
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
+  console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
   document.body.className = isOldUI ? 'old-ui' : 'new-ui';
+  console.log('Body className set to:', document.body.className);
 
   if (!isOldUI) {
+    console.log('Loading titaned-lib styles...');
     import('titaned-lib/dist/index.css');
     import('./styles/styles-overrides.scss');
+  } else {
+    console.log('Skipping titaned-lib styles for old UI');
   }
 };
 
@@ -106,6 +111,7 @@ const App = () => {
 
   useEffect(() => {
     if (oldUI !== null) {
+      console.log('Loading styles for oldUI:', oldUI);
       // Load styles based on UI mode
       loadStylesForNewUI(oldUI);
 
@@ -152,6 +158,9 @@ const App = () => {
   }
 
   console.log('Rendering app with oldUI:', oldUI);
+  console.log('oldUI !== true:', oldUI !== true);
+  console.log('Using Layout:', oldUI !== true);
+  console.log('Using Outlet:', oldUI === true);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
