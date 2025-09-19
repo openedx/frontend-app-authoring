@@ -1,14 +1,14 @@
-import { diffPreviewContainerChildren, CourseContainerChildBase, ContainerChildBase } from "./utils";
+import { diffPreviewContainerChildren, CourseContainerChildBase, ContainerChildBase } from './utils';
 
 const getMockCourseContainerData = (
-  type: "added|deleted" | "moved|deleted" | "all"
+  type: 'added|deleted' | 'moved|deleted' | 'all',
 ): [CourseContainerChildBase[], ContainerChildBase[]] => {
   switch (type) {
-    case "moved|deleted":
+    case 'moved|deleted':
       return [
         [
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@1",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@1',
             name: 'Unit 1 remote edit - local edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -16,11 +16,11 @@ const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true
-            }
+              isModified: true,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@2",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@2',
             name: 'New unit remote edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -28,11 +28,11 @@ const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@3",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@3',
             name: 'Unit with tags',
             blockType: 'vertical',
             upstreamLink: {
@@ -40,11 +40,11 @@ const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@4",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@4',
             name: 'One more unit',
             blockType: 'vertical',
             upstreamLink: {
@@ -52,33 +52,33 @@ const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false
-            }
-          }
+              isModified: false,
+            },
+          },
         ],
         [
           {
             id: 'lct:UNIX:CS1:unit:unit-with-tags-bec5f9',
             displayName: 'Unit with tags',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:unit-1-2a1741',
             displayName: 'Unit 1 remote edit 2',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:one-more-unit-745176',
             displayName: 'One more unit',
-            containerType: 'unit'
-          }
+            containerType: 'unit',
+          },
         ],
       ] as [CourseContainerChildBase[], ContainerChildBase[]];
-    case "added|deleted":
+    case 'added|deleted':
       return [
         [
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@1",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@1',
             name: 'Unit 1 remote edit - local edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -86,11 +86,11 @@ const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true
-            }
+              isModified: true,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@2",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@2',
             name: 'New unit remote edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -98,11 +98,11 @@ const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@3",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@3',
             name: 'Unit with tags',
             blockType: 'vertical',
             upstreamLink: {
@@ -110,11 +110,11 @@ const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@4",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@4',
             name: 'One more unit',
             blockType: 'vertical',
             upstreamLink: {
@@ -122,38 +122,38 @@ const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false
-            }
-          }
+              isModified: false,
+            },
+          },
         ],
         [
           {
             id: 'lct:UNIX:CS1:unit:unit-1-2a1741',
             displayName: 'Unit 1 remote edit 2',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:unit-with-tags-bec5f9',
             displayName: 'Unit with tags',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:added-unit-1',
             displayName: 'Added unit',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:one-more-unit-745176',
             displayName: 'One more unit',
-            containerType: 'unit'
-          }
+            containerType: 'unit',
+          },
         ],
       ] as [CourseContainerChildBase[], ContainerChildBase[]];
-    case "all":
+    case 'all':
       return [
         [
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@1",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@1',
             name: 'Unit 1 remote edit - local edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -161,11 +161,11 @@ const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true
-            }
+              isModified: true,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@2",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@2',
             name: 'New unit remote edit',
             blockType: 'vertical',
             upstreamLink: {
@@ -173,11 +173,11 @@ const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@3",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@3',
             name: 'Unit with tags',
             blockType: 'vertical',
             upstreamLink: {
@@ -185,11 +185,11 @@ const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false
-            }
+              isModified: false,
+            },
           },
           {
-            id: "block-v1:UNIX+UX1+2025_T3+type@vertical+block@4",
+            id: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@4',
             name: 'One more unit',
             blockType: 'vertical',
             upstreamLink: {
@@ -197,41 +197,41 @@ const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false
-            }
-          }
+              isModified: false,
+            },
+          },
         ],
         [
           {
             id: 'lct:UNIX:CS1:unit:unit-with-tags-bec5f9',
             displayName: 'Unit with tags',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:added-unit-1',
             displayName: 'Added unit',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:one-more-unit-745176',
             displayName: 'One more unit',
-            containerType: 'unit'
+            containerType: 'unit',
           },
           {
             id: 'lct:UNIX:CS1:unit:unit-1-2a1741',
             displayName: 'Unit 1 remote edit 2',
-            containerType: 'unit'
+            containerType: 'unit',
           },
         ],
       ] as [CourseContainerChildBase[], ContainerChildBase[]];
     default:
       throw new Error();
   }
-}
+};
 
 describe('diffPreviewContainerChildren', () => {
   it('should handle moved and deleted', () => {
-    const [a, b] = getMockCourseContainerData("moved|deleted");
+    const [a, b] = getMockCourseContainerData('moved|deleted');
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
     // renamed takes precendence over moved
@@ -243,15 +243,13 @@ describe('diffPreviewContainerChildren', () => {
   });
 
   it('should handle add and delete', () => {
-    const [a, b] = getMockCourseContainerData("added|deleted");
+    const [a, b] = getMockCourseContainerData('added|deleted');
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("(anon)#(anon) result: ", result); // __AUTO_GENERATED_PRINT_VAR_END__
     expect(result[0].length).toEqual(result[1].length);
     // No change, state=undefined
-    expect(result[0][0].state).toEqual("renamed");
+    expect(result[0][0].state).toEqual('renamed');
     expect(result[0][0].originalName).toEqual(b[0].displayName);
-    expect(result[1][0].state).toEqual("renamed");
+    expect(result[1][0].state).toEqual('renamed');
 
     // Deleted entry
     expect(result[0][1].state).toEqual('removed');
@@ -263,12 +261,12 @@ describe('diffPreviewContainerChildren', () => {
   });
 
   it('should handle add, delete and moved', () => {
-    const [a, b] = getMockCourseContainerData("all");
+    const [a, b] = getMockCourseContainerData('all');
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
     // renamed takes precendence over moved
-    expect(result[0][0].state).toEqual("renamed");
-    expect(result[1][4].state).toEqual("renamed");
+    expect(result[0][0].state).toEqual('renamed');
+    expect(result[1][4].state).toEqual('renamed');
     expect(result[1][4].id).toEqual(result[0][0].upstreamLink.upstreamRef);
 
     // Deleted entry

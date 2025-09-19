@@ -63,13 +63,13 @@ export async function createCourseXblock({
   libraryContentKey,
 }: {
   type: string,
-  category: string,
+  category?: string,
   parentLocator: string,
-  displayName: string,
-  boilerplate: string,
-  stagedContent: string,
-  libraryContentKey: string,
-}): Promise<object> {
+  displayName?: string,
+  boilerplate?: string,
+  stagedContent?: string,
+  libraryContentKey?: string,
+}): Promise<any> {
   const body = {
     type,
     boilerplate,
@@ -95,7 +95,7 @@ export async function handleCourseUnitVisibilityAndData(
   type: string,
   isVisible: boolean,
   groupAccess: boolean,
-  isDiscussionEnabled: boolean
+  isDiscussionEnabled: boolean,
 ): Promise<object> {
   const body = {
     publish: groupAccess ? null : type,
