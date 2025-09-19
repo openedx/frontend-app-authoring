@@ -87,7 +87,8 @@ const Header = ({
         type="button"
         onClick={async () => {
           try {
-            const success = await setUIPreference(true); // true means new UI
+            // Call API to set UI preference to new UI
+            const success = await setUIPreference(true);
             if (success) {
               // Trigger UI mode change event to update the app
               window.dispatchEvent(new CustomEvent('uiModeChanged'));
@@ -96,12 +97,10 @@ const Header = ({
             } else {
               // eslint-disable-next-line no-console
               console.error('Failed to switch to new UI');
-              // You might want to show a toast notification here
             }
           } catch (error) {
             // eslint-disable-next-line no-console
             console.error('Error switching to new UI:', error);
-            // You might want to show a toast notification here
           }
         }}
         style={{

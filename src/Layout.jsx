@@ -29,8 +29,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import messages from './messages';
 import { useContentSearchConnection } from './search-manager/data/apiHooks';
 import { SearchContextProvider } from './search-manager';
-import { setUIPreference } from './services/uiPreferenceService';
 import { LoadingSpinner } from './generic/Loading';
+import { setUIPreference } from './services/uiPreferenceService';
 
 // Icon mapping for API icon names
 // const iconMap = {
@@ -343,21 +343,18 @@ const Layout = () => {
   const handleNavigate = async (path) => {
     if (path === 'switch-to-old-view') {
       try {
-        const success = await setUIPreference(false); // false means old UI
+        // Call API to set UI preference to old UI
+        const success = await setUIPreference(false);
         if (success) {
           // Trigger UI mode change event to update the app
           window.dispatchEvent(new CustomEvent('uiModeChanged'));
           // Redirect to refresh the page
           window.location.href = '/authoring/home';
         } else {
-          // eslint-disable-next-line no-console
           console.error('Failed to switch to old UI');
-          // You might want to show a toast notification here
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error switching to old UI:', error);
-        // You might want to show a toast notification here
       }
     } else {
       navigate(path);

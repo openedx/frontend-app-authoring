@@ -55,13 +55,12 @@ import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
 import { applyTheme } from './styles/themeLoader';
 import { getUIPreference } from './services/uiPreferenceService';
-import { LoadingSpinner } from './generic/Loading';
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
-  console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
+  // console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
   document.body.className = isOldUI ? 'old-ui' : 'new-ui';
-  console.log('Body className set to:', document.body.className);
+  // console.log('Body className set to:', document.body.className);
 
   if (!isOldUI) {
     console.log('Loading titaned-lib styles...');
@@ -77,7 +76,7 @@ const queryClient = new QueryClient();
 registerFontAwesomeIcons();
 
 const App = () => {
-  const [oldUI, setOldUI] = useState(null); // null means loading, true/false means loaded
+  const [oldUI, setOldUI] = useState(null);
   const [loading, setLoading] = useState(true);
   console.log('oldUI in Index', oldUI);
 
@@ -90,51 +89,43 @@ const App = () => {
   useEffect(() => {
     const loadUIPreference = async () => {
       try {
-        console.log('Loading UI preference from API...');
         const useNewUI = await getUIPreference();
-        console.log('API returned use_new_ui:', useNewUI);
-        const oldUIValue = !useNewUI;
-        console.log('Setting oldUI to:', oldUIValue);
+        const oldUIValue = !useNewUI ? 'true' : 'false';
+        console.log('API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
         setOldUI(oldUIValue);
         setLoading(false);
-        console.log('UI preference loaded successfully');
       } catch (error) {
         console.error('Failed to load UI preference:', error);
-        console.log('Using fallback: oldUI = false (new UI)');
-        setOldUI(false); // Default to new UI on error
         setLoading(false);
       }
     };
-
     loadUIPreference();
   }, []);
 
   useEffect(() => {
-    if (oldUI !== null) {
-      console.log('Loading styles for oldUI:', oldUI);
-      // Load styles based on UI mode
-      loadStylesForNewUI(oldUI);
+    // Load styles based on UI mode
+    loadStylesForNewUI(oldUI === 'true');
 
-      if (process.env.HOTJAR_APP_ID) {
-        try {
-          initializeHotjar({
-            hotjarId: process.env.HOTJAR_APP_ID,
-            hotjarVersion: process.env.HOTJAR_VERSION,
-            hotjarDebug: !!process.env.HOTJAR_DEBUG,
-          });
-        } catch (error) {
-          logError(error);
-        }
+    if (process.env.HOTJAR_APP_ID) {
+      try {
+        initializeHotjar({
+          hotjarId: process.env.HOTJAR_APP_ID,
+          hotjarVersion: process.env.HOTJAR_VERSION,
+          hotjarDebug: !!process.env.HOTJAR_DEBUG,
+        });
+      } catch (error) {
+        logError(error);
       }
     }
-  }, [oldUI]);
+  }, [oldUI]); // Add oldUI as dependency
 
   // Listen for custom events that might be triggered when UI mode changes
   useEffect(() => {
     const handleUIModeChange = async () => {
       try {
         const useNewUI = await getUIPreference();
-        setOldUI(!useNewUI);
+        const oldUIValue = !useNewUI ? 'true' : 'false';
+        setOldUI(oldUIValue);
       } catch (error) {
         console.error('Failed to refresh UI preference:', error);
       }
@@ -149,29 +140,25 @@ const App = () => {
 
   // Show loading screen while UI preference is being fetched
   if (loading) {
-    console.log('Still loading UI preference...');
     return (
       <div className="d-flex justify-content-center align-items-center flex-column vh-100">
-        <LoadingSpinner />
+        <div>Loading...</div>
       </div>
     );
   }
 
   console.log('Rendering app with oldUI:', oldUI);
-  console.log('oldUI !== true:', oldUI !== true);
-  console.log('Using Layout:', oldUI !== true);
-  console.log('Using Outlet:', oldUI === true);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route element={oldUI !== true ? <Layout /> : <Outlet />}>
-          <Route path="/home" element={oldUI !== true ? <Dashboard /> : <StudioHome />} />
+        <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
+          <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
           {/* <Route path="/home" element={<StudioHome />} /> */}
           <Route path="/widgets-create" element={<CreateWidgets />} />
           <Route path="/my-courses" element={<MyCourses />} />
           {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
-          {oldUI === true ? (
+          {oldUI === 'true' ? (
             <Route path="/libraries" element={<StudioHome />} />
           ) : (
             <Route path="/libraries" element={<LibrariesV2Tab />} />
