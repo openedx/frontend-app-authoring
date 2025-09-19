@@ -234,8 +234,9 @@ describe('diffPreviewContainerChildren', () => {
     const [a, b] = getMockCourseContainerData("moved|deleted");
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
-    expect(result[0][0].state).toEqual('moved');
-    expect(result[1][0].state).toEqual('moved');
+    // renamed takes precendence over moved
+    expect(result[0][0].state).toEqual('renamed');
+    expect(result[1][2].state).toEqual('renamed');
     expect(result[0][1].state).toEqual('removed');
     expect(result[1][1].state).toEqual('removed');
     expect(result[1][2].displayName).toEqual(a[0].name);
@@ -244,10 +245,13 @@ describe('diffPreviewContainerChildren', () => {
   it('should handle add and delete', () => {
     const [a, b] = getMockCourseContainerData("added|deleted");
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("(anon)#(anon) result: ", result); // __AUTO_GENERATED_PRINT_VAR_END__
     expect(result[0].length).toEqual(result[1].length);
     // No change, state=undefined
-    expect(result[0][0].state).toEqual(undefined);
-    expect(result[1][0].state).toEqual(undefined);
+    expect(result[0][0].state).toEqual("renamed");
+    expect(result[0][0].originalName).toEqual(b[0].displayName);
+    expect(result[1][0].state).toEqual("renamed");
 
     // Deleted entry
     expect(result[0][1].state).toEqual('removed');
@@ -262,9 +266,9 @@ describe('diffPreviewContainerChildren', () => {
     const [a, b] = getMockCourseContainerData("all");
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
-    // Moved
-    expect(result[0][0].state).toEqual("moved");
-    expect(result[1][4].state).toEqual("moved");
+    // renamed takes precendence over moved
+    expect(result[0][0].state).toEqual("renamed");
+    expect(result[1][4].state).toEqual("renamed");
     expect(result[1][4].id).toEqual(result[0][0].upstreamLink.upstreamRef);
 
     // Deleted entry
@@ -273,9 +277,8 @@ describe('diffPreviewContainerChildren', () => {
     expect(result[1][1].displayName).toEqual(result[0][1].name);
 
     // added entry
-    expect(result[0][3].state).toEqual('added');
-    // Since the first element was moved, newly added elements goes up by 1 index
+    expect(result[0][2].state).toEqual('added');
     expect(result[1][2].state).toEqual('added');
-    expect(result[1][2].id).toEqual(result[0][3].id);
+    expect(result[1][2].id).toEqual(result[0][2].id);
   });
 });

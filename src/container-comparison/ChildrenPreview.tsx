@@ -1,7 +1,7 @@
 import { Stack } from "@openedx/paragon";
 
 interface Props {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   side: "Before" | "After";
 }
