@@ -6,7 +6,7 @@ import { Form, Icon } from '@openedx/paragon';
 import { Calendar } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { convertToDateFromString, convertToStringFromDate, isValidDate } from '../../utils';
+import { isValidDate } from '../../utils';
 import { DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import messages from './messages';
 
@@ -27,7 +27,7 @@ const DatepickerControl = ({
   onChange,
 }) => {
   const intl = useIntl();
-  const formattedDate = convertToDateFromString(value);
+  const formattedDate = value;
   const inputFormat = {
     [DATEPICKER_TYPES.date]: DATE_FORMAT,
     [DATEPICKER_TYPES.time]: TIME_FORMAT,
@@ -69,7 +69,7 @@ const DatepickerControl = ({
           showPopperArrow={false}
           onChange={(date) => {
             if (isValidDate(date)) {
-              onChange(convertToStringFromDate(date));
+              onChange(date);
             }
           }}
         />

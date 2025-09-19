@@ -37,7 +37,7 @@ describe('<ScheduleRow />', () => {
     const input = getByPlaceholderText('MM/DD/YYYY');
     fireEvent.change(input, { target: { value: '06/15/2023' } });
     expect(onChangeMock).toHaveBeenCalledWith(
-      '2023-06-15T00:00:00Z',
+      new Date('2023-06-15T00:00:00Z'),
       props.controlName,
     );
   });
