@@ -39,6 +39,7 @@ import IntroductionVideo from '../../schedule-and-details/introducing-section/in
 import { useCreateOrRerunCourse } from '../../generic/create-or-rerun-course/hooks';
 import { fetchStudioHomeData } from '../data/thunks';
 import { fetchCourseAppSettings } from '../../advanced-settings/data/thunks';
+import { isOldUI } from '../../utils/uiPreference';
 import { videoTranscriptLanguages } from '../../editors/data/constants/video';
 import { LICENSE_TYPE } from '../../schedule-and-details/license-section/constants';
 import { useLicenseDetails } from '../../schedule-and-details/license-section/hooks';
@@ -172,19 +173,25 @@ const PSCourseForm = ({
   const userTimezone = useMemo(getUserTimezoneString, []);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        await dispatch(fetchStudioHomeData());
-      } catch (error) {
-        console.error('Error loading studio home data:', error);
-      }
-    };
+    // Only make API calls for new UI to prevent infinite calls in old UI
+    if (!isOldUI()) {
+      const loadData = async () => {
+        try {
+          await dispatch(fetchStudioHomeData());
+        } catch (error) {
+          console.error('Error loading studio home data:', error);
+        }
+      };
 
-    loadData();
+      loadData();
+    }
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCourseAppSettings());
+    // Only make API calls for new UI to prevent infinite calls in old UI
+    if (!isOldUI()) {
+      dispatch(fetchCourseAppSettings());
+    }
   }, [dispatch]);
   useEffect(() => {
     if (showSuccessAlert) {

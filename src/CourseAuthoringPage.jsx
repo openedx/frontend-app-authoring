@@ -13,6 +13,7 @@ import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { fetchStudioHomeData } from './studio-home/data/thunks';
+import { isOldUI } from './utils/uiPreference';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
@@ -26,7 +27,10 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   }, [courseId]);
 
   useEffect(() => {
-    dispatch(fetchStudioHomeData());
+    // Only make API calls for new UI to prevent infinite calls in old UI
+    if (!isOldUI()) {
+      dispatch(fetchStudioHomeData());
+    }
   }, []);
 
   const courseDetail = useModel('courseDetails', courseId);
