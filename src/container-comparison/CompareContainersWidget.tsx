@@ -16,20 +16,25 @@ interface Props {
 }
 
 export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: Props) => {
-  const { data, isLoading } = useCourseContainerChildren(downstreamBlockId);
-  const { data: libData, isLoading: libLoading } = useContainerChildren(upstreamBlockId, true) as UseQueryResult<Container[], Error>;;
+  const { data, isPending } = useCourseContainerChildren(downstreamBlockId);
+  const { data: libData, isPending: libPending } = useContainerChildren(upstreamBlockId, true) as UseQueryResult<Container[], Error>;;
 
   const result = useCallback(
-    () => diffPreviewContainerChildren(data?.children || [], libData || []),
+    () => {
+      if (!data || !libData) {
+        return [undefined, undefined];
+      }
+      return diffPreviewContainerChildren(data.children, libData)
+    },
     [data, libData]
   );
 
   const renderBeforeChildren = useCallback(() => {
-    if (isLoading) {
+    if (isPending) {
       return <div className="m-auto"><LoadingSpinner /></div>
     }
 
-    return result()[0].map((child) => (
+    return result()[0]?.map((child) => (
       <ContainerRow
         title={child.name}
         containerType={child.blockType}
@@ -38,14 +43,14 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
         side="Before"
       />
     ))
-  }, [isLoading, result]);
+  }, [isPending, result]);
 
   const renderAfterChildren = useCallback(() => {
-    if (libLoading || isLoading) {
+    if (libPending || isPending) {
       return <div className="m-auto"><LoadingSpinner /></div>
     }
 
-    return result()[1].map((child) => (
+    return result()[1]?.map((child) => (
       <ContainerRow
         title={child.displayName}
         containerType={child.containerType}
@@ -53,7 +58,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
         side="After"
       />
     ))
-  }, [libLoading, isLoading, result]);
+  }, [libPending, isPending, result]);
 
   return (
     <div className="row">
