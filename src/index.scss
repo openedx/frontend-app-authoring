@@ -57,12 +57,21 @@ div.xblock-highlight {
 html,
 body {
   background-color: $light-200;
-  overflow: hidden !important; /* Prevent outer scrollbar */
   // height: 100%;
 
   .editor-page {
     background-color: $light-100;
   }
+}
+
+/* Only apply overflow hidden for new UI */
+body.new-ui {
+  overflow: hidden !important; /* Prevent outer scrollbar for new UI */
+}
+
+/* Allow scrolling for old UI */
+body.old-ui {
+  overflow: auto !important; /* Allow scrolling for old UI */
 }
 
 mark {
@@ -73,7 +82,6 @@ mark {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  overflow: hidden;
 }
 
 .content-wrapper {
@@ -81,7 +89,17 @@ mark {
   flex: 1;
   min-height: 0;
   flex-grow: 1;
+}
+
+/* Different overflow behavior for old vs new UI */
+body.new-ui .app-container,
+body.new-ui .content-wrapper {
   overflow: hidden;
+}
+
+body.old-ui .app-container,
+body.old-ui .content-wrapper {
+  overflow: visible;
 }
 
 .main-content {
@@ -91,13 +109,23 @@ mark {
   padding-bottom: 0px;
   padding-top: 0;
   box-sizing: border-box;
-  overflow-y: auto;
-  height: calc(100vh - 100px);
   background-color: var(--bg-body);
 
   .page-content {
     flex-grow: 1;
   }
+}
+
+/* Different overflow behavior for old vs new UI */
+body.new-ui .main-content {
+  overflow-y: auto;
+  height: calc(100vh - 100px);
+}
+
+body.old-ui .main-content {
+  overflow-y: visible;
+  height: auto;
+  min-height: calc(100vh - 100px);
 }
 
 .pgn-btn-active {
