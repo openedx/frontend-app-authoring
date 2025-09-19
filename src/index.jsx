@@ -147,13 +147,13 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
-          <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
+        <Route element={oldUI !== true ? <Layout /> : <Outlet />}>
+          <Route path="/home" element={oldUI !== true ? <Dashboard /> : <StudioHome />} />
           {/* <Route path="/home" element={<StudioHome />} /> */}
           <Route path="/widgets-create" element={<CreateWidgets />} />
           <Route path="/my-courses" element={<MyCourses />} />
           {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
-          {oldUI === 'true' ? (
+          {oldUI === true ? (
             <Route path="/libraries" element={<StudioHome />} />
           ) : (
             <Route path="/libraries" element={<LibrariesV2Tab />} />
