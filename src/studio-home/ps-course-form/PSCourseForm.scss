@@ -1055,3 +1055,14 @@
 .react-datepicker-wrapper {
     width: 100%;
 }
+
+.read-only-organization-dropdown {
+    .dropdown-toggle {
+        width: 100% !important;
+    }
+
+    .dropdown-menu.show {
+        width: 100% !important;
+        border-radius: 10px !important;
+    }
+}

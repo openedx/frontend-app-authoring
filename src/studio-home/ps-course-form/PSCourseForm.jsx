@@ -108,12 +108,13 @@ const PSCourseForm = ({
         const organizations = response.data || [];
         setAllowedOrganizations(organizations?.allowed_organizations_for_courses);
         setCanCreateNewOrganization(organizations?.can_create_organizations);
-        console.log('allowedOrganizations', allowedOrganizations);
       } catch (error) {
         console.error('Error fetching organizations:', error);
         setAllowedOrganizations([]);
         setCanCreateNewOrganization(false);
       }
+      console.log('allowedOrganizations', allowedOrganizations);
+      console.log('canCreateNewOrganization', canCreateNewOrganization);
     };
 
     fetchOrganizations();
@@ -963,18 +964,27 @@ const PSCourseForm = ({
                                       required
                                     />
                                   ) : (
-                                    <CustomTypeaheadDropdown
-                                      readOnly
-                                      name="organization"
-                                      value={editedValues.organization || ''}
-                                      controlClassName={errors.organization ? 'is-invalid' : ''}
-                                      options={allowedOrganizations}
-                                      placeholder="Select an organization"
-                                      handleChange={(value) => handleInputChange('organization', value)}
-                                      handleBlur={handleCustomBlurForDropdown}
-                                      noOptionsMessage="No organizations available"
-                                      required
-                                    />
+                                    <Dropdown className="read-only-organization-dropdown">
+                                      <Dropdown.Toggle id="organization-dropdown" variant="outline-primary">
+                                        {editedValues.organization || 'Select an organization'}
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        {allowedOrganizations && allowedOrganizations.length > 0 ? (
+                                          allowedOrganizations.map((org) => (
+                                            <Dropdown.Item
+                                              key={org}
+                                              onClick={() => handleInputChange('organization', org)}
+                                            >
+                                              {org}
+                                            </Dropdown.Item>
+                                          ))
+                                        ) : (
+                                          <Dropdown.Item disabled>
+                                            No Organizations available
+                                          </Dropdown.Item>
+                                        )}
+                                      </Dropdown.Menu>
+                                    </Dropdown>
                                   )}
                                   <Form.Text>
                                     The name of the organization sponsoring the course.
