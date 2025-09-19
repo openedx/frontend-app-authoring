@@ -714,12 +714,12 @@ const PSCourseForm = ({
     if (!editedValues.startDate) {
       newErrors.startDate = 'Course start date is required.';
     }
-    
+
     // Validate that end date is not earlier than start date (only if both dates are provided)
     if (editedValues.startDate && editedValues.endDate) {
       const startDate = new Date(editedValues.startDate);
       const endDate = new Date(editedValues.endDate);
-      
+
       if (endDate < startDate) {
         newErrors.endDate = 'Course end date cannot be earlier than start date.';
       } else {
@@ -735,7 +735,7 @@ const PSCourseForm = ({
     if (editedValues.startDate && editedValues.enrollmentStart) {
       const startDate = new Date(editedValues.startDate);
       const enrollmentStartDate = new Date(editedValues.enrollmentStart);
-      
+
       if (startDate <= enrollmentStartDate) {
         newErrors.startDate = 'Course start date must be later than the enrollment start date.';
       } else {
@@ -759,12 +759,12 @@ const PSCourseForm = ({
         delete newErrors.enrollmentEnd;
       }
     }
-    
+
     // Validate that enrollment end date is not earlier than course start date (only if both dates are provided)
     if (editedValues.enrollmentEnd && editedValues.startDate) {
       const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
       const courseStartDate = new Date(editedValues.startDate);
-      
+
       if (enrollmentEndDate < courseStartDate) {
         newErrors.enrollmentEnd = 'Enrollment end date cannot be earlier than course start date.';
       } else {
@@ -772,12 +772,12 @@ const PSCourseForm = ({
         delete newErrors.enrollmentEnd;
       }
     }
-    
+
     // Validate that enrollment end date is not later than course end date (only if both dates are provided)
     if (editedValues.enrollmentEnd && editedValues.endDate) {
       const enrollmentEndDate = new Date(editedValues.enrollmentEnd);
       const courseEndDate = new Date(editedValues.endDate);
-      
+
       if (enrollmentEndDate > courseEndDate) {
         newErrors.enrollmentEnd = 'Enrollment end date cannot be later than course end date.';
       } else {
@@ -964,27 +964,37 @@ const PSCourseForm = ({
                                       required
                                     />
                                   ) : (
-                                    <Dropdown className="read-only-organization-dropdown">
-                                      <Dropdown.Toggle id="organization-dropdown" variant="outline-primary">
-                                        {editedValues.organization || 'Select an organization'}
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        {allowedOrganizations && allowedOrganizations.length > 0 ? (
-                                          allowedOrganizations.map((org) => (
-                                            <Dropdown.Item
-                                              key={org}
-                                              onClick={() => handleInputChange('organization', org)}
-                                            >
-                                              {org}
+                                    <div className="read-only-organization-dropdown">
+                                      <Dropdown>
+                                        <Dropdown.Toggle
+                                          id="organization-dropdown"
+                                          variant="outline-primary"
+                                          className={`form-control ${errors.organization && touched.organization ? 'is-invalid' : ''}`}
+                                          onBlur={() => handleBlur('organization')}
+                                        >
+                                          {editedValues.organization || 'Select an organization'}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          {allowedOrganizations && allowedOrganizations.length > 0 ? (
+                                            allowedOrganizations.map((org) => (
+                                              <Dropdown.Item
+                                                key={org}
+                                                onClick={() => {
+                                                  handleInputChange('organization', org);
+                                                  handleBlur('organization');
+                                                }}
+                                              >
+                                                {org}
+                                              </Dropdown.Item>
+                                            ))
+                                          ) : (
+                                            <Dropdown.Item disabled>
+                                              No Organizations available
                                             </Dropdown.Item>
-                                          ))
-                                        ) : (
-                                          <Dropdown.Item disabled>
-                                            No Organizations available
-                                          </Dropdown.Item>
-                                        )}
-                                      </Dropdown.Menu>
-                                    </Dropdown>
+                                          )}
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
                                   )}
                                   <Form.Text>
                                     The name of the organization sponsoring the course.
