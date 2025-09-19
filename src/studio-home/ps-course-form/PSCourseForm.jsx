@@ -949,9 +949,9 @@ const PSCourseForm = ({
                               <Col xs={12} md={12}>
                                 <Form.Group>
                                   <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
-                                  {createOrRerunOrganizations ? (
+                                  {canCreateNewOrganization ? (
                                     <CustomTypeaheadDropdown
-                                      readOnly={!canCreateNewOrganization}
+                                      readOnly={false}
                                       name="organization"
                                       value={editedValues.organization || ''}
                                       controlClassName={errors.organization ? 'is-invalid' : ''}
@@ -963,21 +963,18 @@ const PSCourseForm = ({
                                       required
                                     />
                                   ) : (
-                                    <Dropdown>
-                                      <Dropdown.Toggle id="organization-dropdown" variant="outline-primary">
-                                        {editedValues.organization || 'Select an organization'}
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        {allowedOrganizations?.map((org) => (
-                                          <Dropdown.Item
-                                            key={org}
-                                            onClick={() => handleInputChange('organization', org)}
-                                          >
-                                            {org}
-                                          </Dropdown.Item>
-                                        ))}
-                                      </Dropdown.Menu>
-                                    </Dropdown>
+                                    <CustomTypeaheadDropdown
+                                      readOnly
+                                      name="organization"
+                                      value={editedValues.organization || ''}
+                                      controlClassName={errors.organization ? 'is-invalid' : ''}
+                                      options={allowedOrganizations}
+                                      placeholder="Select an organization"
+                                      handleChange={(value) => handleInputChange('organization', value)}
+                                      handleBlur={handleCustomBlurForDropdown}
+                                      noOptionsMessage="No organizations available"
+                                      required
+                                    />
                                   )}
                                   <Form.Text>
                                     The name of the organization sponsoring the course.
