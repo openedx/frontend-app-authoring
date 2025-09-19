@@ -54,6 +54,7 @@ import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
 import { applyTheme } from './styles/themeLoader';
+import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
@@ -84,18 +85,22 @@ const App = () => {
   //   applyTheme(); // Load default theme from /theme.json
   // }, []);
 
-  // Load UI preference from localStorage (synced by API)
+  // Load UI preference from API (primary) with localStorage fallback
   useEffect(() => {
-    const loadUIPreference = () => {
+    const loadUIPreference = async () => {
       try {
-        console.log('Loading UI preference from localStorage...');
-        const oldUIValue = localStorage.getItem('oldUI') || 'false'; // Default to new UI
-        console.log('localStorage returned oldUI:', oldUIValue);
+        console.log('Loading UI preference from API...');
+        const useNewUI = await getUIPreference();
+        const oldUIValue = !useNewUI ? 'true' : 'false';
+        console.log('API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
         setOldUI(oldUIValue);
         setLoading(false);
       } catch (error) {
-        console.error('Failed to load UI preference from localStorage:', error);
-        setOldUI('false'); // Default to new UI on error
+        console.error('API failed, falling back to localStorage:', error);
+        // Fallback to localStorage if API fails
+        const oldUIValue = localStorage.getItem('oldUI') || 'false';
+        console.log('localStorage fallback returned oldUI:', oldUIValue);
+        setOldUI(oldUIValue);
         setLoading(false);
       }
     };
