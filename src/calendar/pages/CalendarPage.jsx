@@ -4,10 +4,8 @@ import { CalendarProvider } from '../context/CalendarContext';
 import CalendarHeader from '../components/CalendarHeader';
 import CalendarView from '../components/CalendarView';
 import ErrorDisplay from '../components/ErrorDisplay';
-import { isOldUI } from '../../utils/uiPreference';
-
 // Load calendar styles only for new UI
-if (!isOldUI()) {
+if (localStorage.getItem('oldUI') !== 'true') {
   await import('../assets/styles/_calendar.scss');
 }
 

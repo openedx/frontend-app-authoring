@@ -50,10 +50,9 @@ import CustomTaxonomyDetailPage from './src/taxonomy/taxonomy-detail/CustomTaxon
 import FileSection from './src/import-page/file-section/FileSection';
 import ImportStepper from './src/import-page/import-stepper/ImportStepper';
 import CustomAdvancedSettingsHeader from './src/advanced-settings/CustomAdvancedSettingsHeader';
-import { isOldUI } from './src/utils/uiPreference';
 
 const getPluginSlots = () => {
-    if (typeof window !== 'undefined' && isOldUI()) {
+    if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
         return {};
     }
     

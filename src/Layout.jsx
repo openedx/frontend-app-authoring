@@ -343,10 +343,10 @@ const Layout = () => {
   const handleNavigate = async (path) => {
     if (path === 'switch-to-old-view') {
       try {
-        // Call API to set UI preference to old UI
+        console.log('Switching to old UI...');
         const success = await setUIPreference(false);
         if (success) {
-          // Redirect to refresh the page
+          console.log('Successfully switched to old UI, reloading page...');
           window.location.href = '/authoring/home';
         } else {
           console.error('Failed to switch to old UI');

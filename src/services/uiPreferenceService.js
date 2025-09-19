@@ -1,6 +1,5 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import { setCurrentUIPreference } from '../utils/uiPreference';
 
 // Simple cache to prevent multiple API calls
 let cachedUIPreference = null;
@@ -18,33 +17,37 @@ export const getUIPreference = async () => {
   }
 
   try {
-    console.log('Fetching UI preference from API (first time only)...');
+    console.log('Fetching UI preference from API...');
     
     const response = await getAuthenticatedHttpClient().get(
       `${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`,
     );
 
     if (response.status === 200 && response.data) {
-      cachedUIPreference = response.data.use_new_ui === true;
+      const useNewUI = response.data.use_new_ui === true;
+      cachedUIPreference = useNewUI;
       isInitialized = true;
-      setCurrentUIPreference(cachedUIPreference);
-      console.log('UI preference cached:', cachedUIPreference);
-      return cachedUIPreference;
+      
+      // Update localStorage for plugin config compatibility
+      localStorage.setItem('oldUI', useNewUI ? 'false' : 'true');
+      
+      console.log('API returned use_new_ui:', useNewUI, 'Updated localStorage to:', useNewUI ? 'false' : 'true');
+      return useNewUI;
     }
 
-    // Default to new UI if API fails or data is invalid
-    console.warn('Failed to get UI preference from API, defaulting to new UI');
-    cachedUIPreference = true;
+    // Default to old UI if API fails
+    console.warn('API failed, defaulting to old UI');
+    cachedUIPreference = false;
     isInitialized = true;
-    setCurrentUIPreference(cachedUIPreference);
-    return cachedUIPreference;
+    localStorage.setItem('oldUI', 'true');
+    return false;
   } catch (error) {
     console.error('Error fetching UI preference:', error);
-    // Default to new UI on error
-    cachedUIPreference = true;
+    // Default to old UI on error
+    cachedUIPreference = false;
     isInitialized = true;
-    setCurrentUIPreference(cachedUIPreference);
-    return cachedUIPreference;
+    localStorage.setItem('oldUI', 'true');
+    return false;
   }
 };
 
@@ -55,6 +58,8 @@ export const getUIPreference = async () => {
  */
 export const setUIPreference = async (useNewUI) => {
   try {
+    console.log('Setting UI preference via API:', useNewUI);
+    
     const response = await getAuthenticatedHttpClient().post(
       `${getConfig().STUDIO_BASE_URL}/titaned/api/v1/set_ui_preference/`,
       {
@@ -63,10 +68,11 @@ export const setUIPreference = async (useNewUI) => {
     );
 
     if (response.status === 200 && response.data?.success) {
-      // Update cache with new value
+      // Update cache and localStorage
       cachedUIPreference = useNewUI;
-      setCurrentUIPreference(cachedUIPreference);
-      console.log('UI preference updated and cached:', cachedUIPreference);
+      localStorage.setItem('oldUI', useNewUI ? 'false' : 'true');
+      
+      console.log('UI preference updated successfully:', useNewUI, 'localStorage set to:', useNewUI ? 'false' : 'true');
       return true;
     }
 

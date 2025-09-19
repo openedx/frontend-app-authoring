@@ -87,17 +87,15 @@ const Header = ({
         type="button"
         onClick={async () => {
           try {
-            // Call API to set UI preference to new UI
+            console.log('Switching to new UI...');
             const success = await setUIPreference(true);
             if (success) {
-              // Reload the page to apply changes
+              console.log('Successfully switched to new UI, reloading page...');
               window.location.reload();
             } else {
-              // eslint-disable-next-line no-console
               console.error('Failed to switch to new UI');
             }
           } catch (error) {
-            // eslint-disable-next-line no-console
             console.error('Error switching to new UI:', error);
           }
         }}

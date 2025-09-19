@@ -54,13 +54,12 @@ import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
 import { applyTheme } from './styles/themeLoader';
-import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
-  // console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
+  console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
   document.body.className = isOldUI ? 'old-ui' : 'new-ui';
-  // console.log('Body className set to:', document.body.className);
+  console.log('Body className set to:', document.body.className);
 
   if (!isOldUI) {
     console.log('Loading titaned-lib styles...');
@@ -81,22 +80,22 @@ const App = () => {
   console.log('oldUI in Index', oldUI);
 
   // Apply theme from JSON
-  useEffect(() => {
-    applyTheme(); // Load default theme from /theme.json
-  }, []);
+  // useEffect(() => {
+  //   applyTheme(); // Load default theme from /theme.json
+  // }, []);
 
-  // Load UI preference from API on component mount (only called once)
+  // Load UI preference from localStorage (synced by API)
   useEffect(() => {
-    const loadUIPreference = async () => {
+    const loadUIPreference = () => {
       try {
-        console.log('Initial load: Fetching UI preference from API...');
-        const useNewUI = await getUIPreference();
-        const oldUIValue = !useNewUI ? 'true' : 'false';
-        console.log('Initial load: API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
+        console.log('Loading UI preference from localStorage...');
+        const oldUIValue = localStorage.getItem('oldUI') || 'false'; // Default to new UI
+        console.log('localStorage returned oldUI:', oldUIValue);
         setOldUI(oldUIValue);
         setLoading(false);
       } catch (error) {
-        console.error('Failed to load UI preference:', error);
+        console.error('Failed to load UI preference from localStorage:', error);
+        setOldUI('false'); // Default to new UI on error
         setLoading(false);
       }
     };
@@ -104,8 +103,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Load styles based on UI mode
-    loadStylesForNewUI(oldUI === 'true');
+    // Only load styles after we know the UI preference
+    if (oldUI !== null) {
+      loadStylesForNewUI(oldUI === 'true');
+    }
 
     if (process.env.HOTJAR_APP_ID) {
       try {
