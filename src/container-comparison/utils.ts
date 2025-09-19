@@ -40,14 +40,14 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     const element = b[index];
     mapB.set(element[idKey], { ...element, index });
   }
-  const updatedA: WithState<A>[] = [];
+  const updatedA: WithState<A>[] = Array(b.length);
   const updatedB: WithState<B>[] = [];
   for (let index = 0; index < b.length; index++) {
     const newVersion = b[index];
     const oldVersion = mapA.get(newVersion.id);
     if (!oldVersion) {
       // This is a newly added component
-      updatedA.splice(index, 0, {
+      updatedA.splice(index, 1, {
         id: newVersion.id,
         name: newVersion.displayName,
         blockType: newVersion.containerType,
@@ -73,7 +73,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
         state = "modified";
       }
       // Insert in its original index
-      updatedA.splice(oldVersion.index, 0, {...oldVersion, state, originalName});
+      updatedA.splice(oldVersion.index, 1, {...oldVersion, state, originalName});
       updatedB.push({...newVersion, displayName, state});
       // Delete it from mapA as it is processed.
       mapA.delete(newVersion.id);
