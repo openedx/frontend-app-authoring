@@ -85,14 +85,28 @@ const App = () => {
   //   applyTheme(); // Load default theme from /theme.json
   // }, []);
 
-  // Load UI preference from API (primary) with localStorage fallback
+  // Load UI preference from API and sync with localStorage
   useEffect(() => {
     const loadUIPreference = async () => {
       try {
         console.log('Loading UI preference from API...');
         const useNewUI = await getUIPreference();
         const oldUIValue = !useNewUI ? 'true' : 'false';
+        const currentLocalStorage = localStorage.getItem('oldUI');
+        
         console.log('API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
+        console.log('Current localStorage oldUI:', currentLocalStorage);
+        
+        // Check if API response matches localStorage
+        if (currentLocalStorage !== oldUIValue) {
+          console.log('Mismatch detected! API:', oldUIValue, 'localStorage:', currentLocalStorage);
+          console.log('Updating localStorage and reloading page...');
+          localStorage.setItem('oldUI', oldUIValue);
+          // Reload page to re-run build-time config with correct localStorage
+          window.location.reload();
+          return;
+        }
+        
         setOldUI(oldUIValue);
         setLoading(false);
       } catch (error) {
