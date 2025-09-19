@@ -1,7 +1,7 @@
 import { UpstreamInfo } from "../data/types";
 import { ContainerState } from "./ContainerRow";
 
-type WithState<T> = T & { state?: ContainerState };
+type WithState<T> = T & { state?: ContainerState, originalName?: string };
 
 export type CourseContainerChildBase = {
   name: string;
@@ -58,6 +58,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       // It was present in previous version
       let state: ContainerState | undefined;
       const displayName = oldVersion.upstreamLink.isModified ? oldVersion.name : newVersion.displayName;
+      let originalName: string | undefined;
       if (index !== oldVersion.index) {
         // has moved from its position
         state = "moved";
@@ -65,13 +66,14 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
         // Has been renamed
         state = "renamed";
+        originalName = newVersion.displayName;
       }
       if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = "modified";
       }
       // Insert in its original index
-      updatedA.splice(oldVersion.index, 0, {...oldVersion, state});
+      updatedA.splice(oldVersion.index, 0, {...oldVersion, state, originalName});
       updatedB.push({...newVersion, displayName, state});
       // Delete it from mapA as it is processed.
       mapA.delete(newVersion.id);
