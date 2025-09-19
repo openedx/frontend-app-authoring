@@ -60,12 +60,16 @@ const ContainerRow = ({ title, containerType, state, side, originalName, onClick
             />
             <span className="small font-weight-bold">{title}</span>
           </Stack>
-          {stateContext[2] && <span className="micro">
-          <FormattedMessage {...stateContext[2]} values={{
-            blockType: containerType,
-            name: originalName,
-          }} />
-          </span>}
+          {stateContext[2] ? (
+            <span className="micro">
+              <FormattedMessage {...stateContext[2]} values={{
+                blockType: containerType,
+                name: originalName,
+              }} />
+            </span>
+          ): (
+            <span className="micro">&nbsp;</span>
+          )}
         </Stack>
         <ActionRow.Spacer />
     </ActionRow>
