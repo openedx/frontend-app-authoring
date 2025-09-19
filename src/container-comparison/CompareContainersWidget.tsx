@@ -1,13 +1,11 @@
 import { Card } from '@openedx/paragon';
-import { UseQueryResult } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
-import { Container } from '../library-authoring/data/api';
 import { useContainerChildren } from '../library-authoring/data/apiHooks';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
-import { diffPreviewContainerChildren } from './utils';
+import { ContainerChildBase, diffPreviewContainerChildren } from './utils';
 
 interface Props {
   title: string;
@@ -20,14 +18,14 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
   const {
     data: libData,
     isPending: libPending,
-  } = useContainerChildren(upstreamBlockId, true) as UseQueryResult<Container[], Error>;
+  } = useContainerChildren(upstreamBlockId, true);
 
   const result = useCallback(
     () => {
       if (!data || !libData) {
         return [undefined, undefined];
       }
-      return diffPreviewContainerChildren(data.children, libData);
+      return diffPreviewContainerChildren(data.children, libData as ContainerChildBase[]);
     },
     [data, libData],
   );
@@ -56,7 +54,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
     return result()[1]?.map((child) => (
       <ContainerRow
         title={child.displayName}
-        containerType={child.containerType}
+        containerType={child.containerType || child.blockType!}
         state={child.state}
         side="After"
       />

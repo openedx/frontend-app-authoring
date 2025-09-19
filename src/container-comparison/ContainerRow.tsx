@@ -14,7 +14,7 @@ export type ContainerState = 'removed' | 'added' | 'modified' | 'renamed' | 'mov
 
 export interface ContainerRowProps {
   title: string;
-  containerType: ContainerType | keyof typeof COMPONENT_TYPES;
+  containerType: ContainerType | keyof typeof COMPONENT_TYPES | string;
   state?: ContainerState;
   side: 'Before' | 'After';
   originalName?: string;

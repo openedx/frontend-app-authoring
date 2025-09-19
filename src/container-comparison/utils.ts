@@ -14,8 +14,13 @@ export type CourseContainerChildBase = {
 export type ContainerChildBase = {
   displayName: string;
   id: string;
+  containerType?: string;
+  blockType?: string;
+} & ({
   containerType: string;
-};
+} | {
+  blockType: string;
+});
 
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
@@ -48,7 +53,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       addedA.push({
         id: newVersion.id,
         name: newVersion.displayName,
-        blockType: newVersion.containerType,
+        blockType: newVersion.containerType || newVersion.blockType,
         index,
       } as WithIndex<A>);
       updatedB.push({ ...newVersion, state: 'added' });
