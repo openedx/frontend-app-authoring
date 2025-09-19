@@ -85,13 +85,14 @@ const App = () => {
     applyTheme(); // Load default theme from /theme.json
   }, []);
 
-  // Load UI preference from API on component mount
+  // Load UI preference from API on component mount (only called once)
   useEffect(() => {
     const loadUIPreference = async () => {
       try {
+        console.log('Initial load: Fetching UI preference from API...');
         const useNewUI = await getUIPreference();
         const oldUIValue = !useNewUI ? 'true' : 'false';
-        console.log('API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
+        console.log('Initial load: API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
         setOldUI(oldUIValue);
         setLoading(false);
       } catch (error) {
@@ -119,24 +120,9 @@ const App = () => {
     }
   }, [oldUI]); // Add oldUI as dependency
 
-  // Listen for custom events that might be triggered when UI mode changes
-  useEffect(() => {
-    const handleUIModeChange = async () => {
-      try {
-        const useNewUI = await getUIPreference();
-        const oldUIValue = !useNewUI ? 'true' : 'false';
-        setOldUI(oldUIValue);
-      } catch (error) {
-        console.error('Failed to refresh UI preference:', error);
-      }
-    };
-
-    window.addEventListener('uiModeChanged', handleUIModeChange);
-
-    return () => {
-      window.removeEventListener('uiModeChanged', handleUIModeChange);
-    };
-  }, []);
+  // Note: uiModeChanged event listener removed because UI switching actions
+  // (Header.tsx and Layout.jsx) immediately reload/redirect the page after
+  // dispatching the event, making the event listener redundant.
 
   // Show loading screen while UI preference is being fetched
   if (loading) {

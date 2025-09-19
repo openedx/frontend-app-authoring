@@ -346,8 +346,6 @@ const Layout = () => {
         // Call API to set UI preference to old UI
         const success = await setUIPreference(false);
         if (success) {
-          // Trigger UI mode change event to update the app
-          window.dispatchEvent(new CustomEvent('uiModeChanged'));
           // Redirect to refresh the page
           window.location.href = '/authoring/home';
         } else {

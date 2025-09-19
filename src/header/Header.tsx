@@ -90,8 +90,6 @@ const Header = ({
             // Call API to set UI preference to new UI
             const success = await setUIPreference(true);
             if (success) {
-              // Trigger UI mode change event to update the app
-              window.dispatchEvent(new CustomEvent('uiModeChanged'));
               // Reload the page to apply changes
               window.location.reload();
             } else {

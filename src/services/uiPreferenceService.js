@@ -1,52 +1,46 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
 
-// Track API call state to prevent multiple simultaneous calls
-let isApiCallInProgress = false;
-let apiCallPromise = null;
+// Simple cache to prevent multiple API calls
+let cachedUIPreference = null;
+let isInitialized = false;
 
 /**
  * Get the current UI preference from the API
  * @returns {Promise<boolean>} true if new UI should be used, false for old UI
  */
 export const getUIPreference = async () => {
+  // Return cached value if already initialized
+  if (isInitialized && cachedUIPreference !== null) {
+    console.log('Returning cached UI preference:', cachedUIPreference);
+    return cachedUIPreference;
+  }
+
   try {
-    // Prevent multiple simultaneous API calls
-    if (isApiCallInProgress && apiCallPromise) {
-      console.log('API call already in progress, waiting for result...');
-      return await apiCallPromise;
+    console.log('Fetching UI preference from API (first time only)...');
+    
+    const response = await getAuthenticatedHttpClient().get(
+      `${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`,
+    );
+
+    if (response.status === 200 && response.data) {
+      cachedUIPreference = response.data.use_new_ui === true;
+      isInitialized = true;
+      console.log('UI preference cached:', cachedUIPreference);
+      return cachedUIPreference;
     }
 
-    console.log('Fetching UI preference from API...');
-    isApiCallInProgress = true;
-    
-    // Create a promise that will be reused if multiple calls happen
-    apiCallPromise = (async () => {
-      try {
-        const response = await getAuthenticatedHttpClient().get(
-          `${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`,
-        );
-
-        if (response.status === 200 && response.data) {
-          return response.data.use_new_ui === true;
-        }
-
-        // Default to new UI if API fails or data is invalid
-        console.warn('Failed to get UI preference from API, defaulting to new UI');
-        return true;
-      } finally {
-        isApiCallInProgress = false;
-        apiCallPromise = null;
-      }
-    })();
-
-    return await apiCallPromise;
+    // Default to new UI if API fails or data is invalid
+    console.warn('Failed to get UI preference from API, defaulting to new UI');
+    cachedUIPreference = true;
+    isInitialized = true;
+    return cachedUIPreference;
   } catch (error) {
     console.error('Error fetching UI preference:', error);
-    isApiCallInProgress = false;
-    apiCallPromise = null;
     // Default to new UI on error
-    return false;
+    cachedUIPreference = true;
+    isInitialized = true;
+    return cachedUIPreference;
   }
 };
 
@@ -65,6 +59,9 @@ export const setUIPreference = async (useNewUI) => {
     );
 
     if (response.status === 200 && response.data?.success) {
+      // Update cache with new value
+      cachedUIPreference = useNewUI;
+      console.log('UI preference updated and cached:', cachedUIPreference);
       return true;
     }
 
@@ -74,4 +71,13 @@ export const setUIPreference = async (useNewUI) => {
     console.error('Error setting UI preference:', error);
     return false;
   }
+};
+
+/**
+ * Clear the UI preference cache (useful for testing or forced refresh)
+ */
+export const clearUIPreferenceCache = () => {
+  cachedUIPreference = null;
+  isInitialized = false;
+  console.log('UI preference cache cleared');
 };
