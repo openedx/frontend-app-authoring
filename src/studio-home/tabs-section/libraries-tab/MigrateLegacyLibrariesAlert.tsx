@@ -11,7 +11,7 @@ export const MigrateLegacyLibrariesAlert = () => (
     </Alert.Heading>
     <div className="row">
       <div className="col-8">
-        <FormattedMessage {...messages.alertDescription} />
+        <FormattedMessage {...messages.alertDescriptionV1} />
       </div>
       <div className="col-4 d-flex justify-content-center align-items-start">
         <Button>
