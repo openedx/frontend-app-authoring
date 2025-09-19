@@ -85,11 +85,17 @@ const App = () => {
   useEffect(() => {
     const loadUIPreference = async () => {
       try {
+        console.log('Loading UI preference from API...');
         const useNewUI = await getUIPreference();
-        setOldUI(!useNewUI); // Convert to oldUI boolean
+        console.log('API returned use_new_ui:', useNewUI);
+        const oldUIValue = !useNewUI;
+        console.log('Setting oldUI to:', oldUIValue);
+        setOldUI(oldUIValue);
         setLoading(false);
+        console.log('UI preference loaded successfully');
       } catch (error) {
         console.error('Failed to load UI preference:', error);
+        console.log('Using fallback: oldUI = false (new UI)');
         setOldUI(false); // Default to new UI on error
         setLoading(false);
       }
@@ -137,12 +143,15 @@ const App = () => {
 
   // Show loading screen while UI preference is being fetched
   if (loading) {
+    console.log('Still loading UI preference...');
     return (
       <div className="d-flex justify-content-center align-items-center flex-column vh-100">
         <LoadingSpinner />
       </div>
     );
   }
+
+  console.log('Rendering app with oldUI:', oldUI);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
