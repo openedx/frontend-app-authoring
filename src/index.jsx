@@ -53,7 +53,7 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-import { applyTheme } from './styles/themeLoader';
+// import { applyTheme } from './styles/themeLoader';
 import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
@@ -85,37 +85,36 @@ const App = () => {
   //   applyTheme(); // Load default theme from /theme.json
   // }, []);
 
-  // Load UI preference from API and sync with localStorage
+  // Load UI preference: first from localStorage, then sync with API
   useEffect(() => {
     const loadUIPreference = async () => {
       try {
-        console.log('Loading UI preference from API...');
+        // First, load from localStorage for immediate display
+        const localStorageValue = localStorage.getItem('oldUI') || 'false';
+        console.log('Initial localStorage oldUI:', localStorageValue);
+        setOldUI(localStorageValue);
+        setLoading(false);
+
+        // Then, sync with API in background (only once)
+        console.log('Syncing with API...');
         const useNewUI = await getUIPreference();
-        const oldUIValue = !useNewUI ? 'true' : 'false';
-        const currentLocalStorage = localStorage.getItem('oldUI');
-        
-        console.log('API returned use_new_ui:', useNewUI, 'Setting oldUI to:', oldUIValue);
-        console.log('Current localStorage oldUI:', currentLocalStorage);
-        
+        const apiOldUIValue = !useNewUI ? 'true' : 'false';
+        console.log('API returned use_new_ui:', useNewUI, 'API oldUI:', apiOldUIValue);
+
         // Check if API response matches localStorage
-        if (currentLocalStorage !== oldUIValue) {
-          console.log('Mismatch detected! API:', oldUIValue, 'localStorage:', currentLocalStorage);
+        if (localStorageValue !== apiOldUIValue) {
+          console.log('Mismatch detected! localStorage:', localStorageValue, 'API:', apiOldUIValue);
           console.log('Updating localStorage and reloading page...');
-          localStorage.setItem('oldUI', oldUIValue);
+          localStorage.setItem('oldUI', apiOldUIValue);
           // Reload page to re-run build-time config with correct localStorage
           window.location.reload();
           return;
         }
-        
-        setOldUI(oldUIValue);
-        setLoading(false);
+
+        console.log('localStorage and API are in sync, no reload needed');
       } catch (error) {
-        console.error('API failed, falling back to localStorage:', error);
-        // Fallback to localStorage if API fails
-        const oldUIValue = localStorage.getItem('oldUI') || 'false';
-        console.log('localStorage fallback returned oldUI:', oldUIValue);
-        setOldUI(oldUIValue);
-        setLoading(false);
+        console.error('API sync failed, using localStorage value:', error);
+        // If API fails, just use localStorage value (already set above)
       }
     };
     loadUIPreference();
