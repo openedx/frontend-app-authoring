@@ -74,12 +74,13 @@ const { default: CustomTaxonomyDetailPage } = await import('./src/taxonomy/taxon
 const { default: FileSection } = await import('./src/import-page/file-section/FileSection');
 const { default: ImportStepper } = await import('./src/import-page/import-stepper/ImportStepper');
 const { default: CustomAdvancedSettingsHeader } = await import('./src/advanced-settings/CustomAdvancedSettingsHeader');
+const { isOldUI } = await import('./src/utils/uiPreference');
 
 
 {% raw %}
 
 const getPluginSlots = () => {
-    if (typeof window !== 'undefined' && localStorage.getItem('oldUI') === 'true') {
+    if (typeof window !== 'undefined' && isOldUI()) {
         return {};
     }
     

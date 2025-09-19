@@ -8,6 +8,7 @@ import { PageWrap } from '@edx/frontend-platform/react';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { Textbooks } from 'CourseAuthoring/textbooks';
 import { LmsBook } from '@openedx/paragon/icons';
+import { isOldUI, isNewUI } from './utils/uiPreference';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -43,7 +44,7 @@ const MobileCourseNavigation = ({ items }) => {
       <select
         className="ca-mobile-nav-select"
         style={{
-          display: localStorage.getItem('oldUI') === 'true' ? 'none' : 'block',
+          display: isOldUI() ? 'none' : 'block',
         }}
         value={location.pathname}
         onChange={handleNavigation}
@@ -81,10 +82,9 @@ const CoursePageLayout = ({
       handleMyCoursesClick();
     }
   };
-  // const oldUI = localStorage.getItem('oldUI');
   return (
     <>
-      {localStorage.getItem('oldUI') === 'false'
+      {isNewUI()
       && (
       <div className="ca-breadcrumb-bg">
         <div className="ca-breadcrumb-container">
@@ -112,7 +112,7 @@ const CoursePageLayout = ({
       <div
         className="ca-main-layout"
         style={{
-          marginTop: localStorage.getItem('oldUI') === 'true' ? '1rem' : 0,
+          marginTop: isOldUI() ? '1rem' : 0,
         }}
       >
         <MobileCourseNavigation items={sidebarItems} />

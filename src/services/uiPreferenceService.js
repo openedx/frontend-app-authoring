@@ -1,5 +1,6 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
+import { setCurrentUIPreference } from '../utils/uiPreference';
 
 // Simple cache to prevent multiple API calls
 let cachedUIPreference = null;
@@ -26,6 +27,7 @@ export const getUIPreference = async () => {
     if (response.status === 200 && response.data) {
       cachedUIPreference = response.data.use_new_ui === true;
       isInitialized = true;
+      setCurrentUIPreference(cachedUIPreference);
       console.log('UI preference cached:', cachedUIPreference);
       return cachedUIPreference;
     }
@@ -34,12 +36,14 @@ export const getUIPreference = async () => {
     console.warn('Failed to get UI preference from API, defaulting to new UI');
     cachedUIPreference = true;
     isInitialized = true;
+    setCurrentUIPreference(cachedUIPreference);
     return cachedUIPreference;
   } catch (error) {
     console.error('Error fetching UI preference:', error);
     // Default to new UI on error
     cachedUIPreference = true;
     isInitialized = true;
+    setCurrentUIPreference(cachedUIPreference);
     return cachedUIPreference;
   }
 };
@@ -61,6 +65,7 @@ export const setUIPreference = async (useNewUI) => {
     if (response.status === 200 && response.data?.success) {
       // Update cache with new value
       cachedUIPreference = useNewUI;
+      setCurrentUIPreference(cachedUIPreference);
       console.log('UI preference updated and cached:', cachedUIPreference);
       return true;
     }
