@@ -1,5 +1,5 @@
-import { UpstreamInfo } from "../data/types";
-import { ContainerState } from "./ContainerRow";
+import { UpstreamInfo } from '../data/types';
+import { ContainerState } from './ContainerRow';
 
 type WithState<T> = T & { state?: ContainerState, originalName?: string };
 type WithIndex<T> = T & { index: number };
@@ -9,17 +9,17 @@ export type CourseContainerChildBase = {
   id: string;
   upstreamLink: UpstreamInfo;
   blockType: string;
-}
+};
 
 export type ContainerChildBase = {
   displayName: string;
   id: string;
   containerType: string;
-}
+};
 
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
-    || (link.versionSynced < (link.versionDeclined || 0))
+    || (link.versionSynced < (link.versionDeclined || 0));
 }
 
 /**
@@ -29,7 +29,7 @@ export function checkIsReadyToSync(link: UpstreamInfo): boolean {
 export function diffPreviewContainerChildren<A extends CourseContainerChildBase, B extends ContainerChildBase>(
   a: A[],
   b: B[],
-  idKey: string = "id"
+  idKey: string = 'id',
 ): [WithState<A>[], WithState<B>[]] {
   const mapA = new Map<any, WithIndex<A>>();
   const mapB = new Map<any, WithIndex<B>>();
@@ -51,7 +51,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
         blockType: newVersion.containerType,
         index,
       } as WithIndex<A>);
-      updatedB.push({...newVersion, state: "added"});
+      updatedB.push({ ...newVersion, state: 'added' });
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
@@ -59,20 +59,20 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       let originalName: string | undefined;
       if (index !== oldVersion.index) {
         // has moved from its position
-        state = "moved";
+        state = 'moved';
       }
       if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
         // Has been renamed
-        state = "renamed";
+        state = 'renamed';
         originalName = newVersion.displayName;
       }
       if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
-        state = "modified";
+        state = 'modified';
       }
       // Insert in its original index
-      updatedA.splice(oldVersion.index, 1, {...oldVersion, state, originalName});
-      updatedB.push({...newVersion, displayName, state});
+      updatedA.splice(oldVersion.index, 1, { ...oldVersion, state, originalName });
+      updatedB.push({ ...newVersion, displayName, state });
       // Delete it from mapA as it is processed.
       mapA.delete(newVersion.id);
     }
@@ -80,12 +80,12 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 
   // If there are remaining items in mapA, it means they were deleted in newVersion;
   mapA.forEach((oldVersion) => {
-    updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: "removed" });
+    updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: 'removed' });
     updatedB.splice(oldVersion.index, 0, {
       id: oldVersion.id,
       displayName: oldVersion.name,
       containerType: oldVersion.blockType,
-      state: "removed",
+      state: 'removed',
     } as WithState<B>);
   });
 
@@ -97,9 +97,8 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 
   // Use new mapB for getting new index for added elements
   addedA.forEach((addedRow) => {
-    updatedA.splice(mapB.get(addedRow.id)?.index!, 0, { ...addedRow, state: "added" });
+    updatedA.splice(mapB.get(addedRow.id)?.index!, 0, { ...addedRow, state: 'added' });
   });
 
   return [updatedA, updatedB];
 }
-

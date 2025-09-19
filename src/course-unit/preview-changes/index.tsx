@@ -5,6 +5,7 @@ import {
 import { Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
 import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
@@ -16,7 +17,6 @@ import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
-import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -57,11 +57,13 @@ export const PreviewLibraryXBlockChanges = ({
       return <Loading />;
     }
     if (blockData.isContainer) {
-      return <CompareContainersWidget
-        title={blockData.displayName}
-        upstreamBlockId={blockData.upstreamBlockId}
-        downstreamBlockId={blockData.downstreamBlockId}
-      />
+      return (
+        <CompareContainersWidget
+          title={blockData.displayName}
+          upstreamBlockId={blockData.upstreamBlockId}
+          downstreamBlockId={blockData.downstreamBlockId}
+        />
+      );
     }
 
     return (
@@ -118,12 +120,14 @@ export const PreviewLibraryXBlockChanges = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body className="bg-light-300">
-        {!blockData.isContainer && <AlertMessage
+        {!blockData.isContainer && (
+        <AlertMessage
           show
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.olderVersionPreviewAlert)}
-        />}
+        />
+        )}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
