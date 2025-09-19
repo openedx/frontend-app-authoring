@@ -105,7 +105,10 @@ describe('<LibraryInfo />', () => {
 
     expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
-    expect(screen.getByText('Published')).toBeInTheDocument();
+    // First 'Published' from the state
+    expect(screen.getAllByText('Published')[0]).toBeInTheDocument();
+    // Second 'Published' from the published button
+    expect(screen.getAllByText('Published')[1]).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.getByText('staff')).toBeInTheDocument();
   });
@@ -115,7 +118,10 @@ describe('<LibraryInfo />', () => {
 
     expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
-    expect(screen.getByText('Published')).toBeInTheDocument();
+    // First 'Published' from the state
+    expect(screen.getAllByText('Published')[0]).toBeInTheDocument();
+    // Second 'Published' from the published button
+    expect(screen.getAllByText('Published')[1]).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.queryByText('staff')).not.toBeInTheDocument();
   });
