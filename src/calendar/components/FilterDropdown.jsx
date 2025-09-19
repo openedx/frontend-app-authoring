@@ -5,7 +5,7 @@ import Dropdown from './Dropdown';
 import messages from '../data/messages';
 
 const FilterDropdown = ({ types }) => {
-  const { filterByType, filteredEvents, nextEvent, prevEvent } = useCalendarContext();
+  const { filterByType, filteredEvents,filterType, nextEvent, prevEvent } = useCalendarContext();
 
   const filterOptions = [
     { value: 'all', messageId: 'all' },
@@ -17,6 +17,7 @@ const FilterDropdown = ({ types }) => {
       <Dropdown
         options={filterOptions}
         onChange={filterByType}
+        value={filterType}
       />
       {filteredEvents.length > 1 && (
         <div className="filter-nav">

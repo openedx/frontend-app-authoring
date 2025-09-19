@@ -409,13 +409,13 @@ const Dashboard = () => {
     fetchNavigationItems().then((data) => {
       setIsAISuggestionsEnabled(data?.assistant_is_enabled || false);
       setIsTodoListEnabled(data?.todo_list_is_enabled || false);
-      setIsCalendarWidgetEnabled(data?.calendar_widget_is_enabled || true);
+      setIsCalendarWidgetEnabled(data?.enable_calendar || false);
     }).catch((error) => {
       console.error('Error in fetchNavigationItems:', error);
       // Set default values on error
       setIsAISuggestionsEnabled(false);
       setIsTodoListEnabled(false);
-      setIsCalendarWidgetEnabled(true);
+      setIsCalendarWidgetEnabled(false);
     });
   }, []);
 
