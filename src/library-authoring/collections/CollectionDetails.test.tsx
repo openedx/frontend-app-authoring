@@ -142,7 +142,7 @@ describe('<CollectionDetails />', () => {
       { blockType: 'Problem', count: 1 },
       { blockType: 'Video', count: 0 },
     ].forEach(({ blockType, count }) => {
-      const blockCount = screen.getByText(blockType).closest('div') as HTMLDivElement;
+      const blockCount = screen.getByText(blockType).closest('div')!;
       expect(within(blockCount).getByText(count.toString())).toBeInTheDocument();
     });
   });

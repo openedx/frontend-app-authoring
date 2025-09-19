@@ -1,26 +1,37 @@
 import { useCallback, useContext, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import { Error, Warning, School } from '@openedx/paragon/icons';
+import { Error, Delete, School } from '@openedx/paragon/icons';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import { ContainerType } from '@src/generic/key-utils';
+import { type ContainerHit } from '@src/search-manager';
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { ToastContext } from '../../generic/toast-context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { useContentFromSearchIndex, useDeleteContainer, useRestoreContainer } from '../data/apiHooks';
 import messages from './messages';
-import { ContainerType } from '../../generic/key-utils';
-import { ContainerHit } from '../../search-manager';
-import { useContainerEntityLinks } from '../../course-libraries/data/apiHooks';
-import { LoadingSpinner } from '../../generic/Loading';
 
 type ContainerDeleterProps = {
-  isOpen: boolean,
   close: () => void,
   containerId: string,
 };
 
+type ContainerParents = {
+  displayName?: string[],
+  key?: string[],
+};
+
+const getOtherParentContainers = (containerParents?: ContainerParents, currentParentId?: string) => {
+  const currentParentIndex = containerParents?.key?.findIndex((id) => id === currentParentId);
+  return containerParents?.displayName?.filter(
+    (_, index) => index !== currentParentIndex,
+  );
+};
+
 const ContainerDeleter = ({
-  isOpen,
   close,
   containerId,
 }: ContainerDeleterProps) => {
@@ -29,20 +40,24 @@ const ContainerDeleter = ({
     sidebarItemInfo,
     closeLibrarySidebar,
   } = useSidebarContext();
+  const {
+    containerId: parentContainerId,
+  } = useLibraryContext();
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);
-  const { hits, isLoading } = useContentFromSearchIndex([containerId]);
+  const { hits, isPending } = useContentFromSearchIndex([containerId]);
   const containerData = (hits as ContainerHit[])?.[0];
   const {
     data: dataDownstreamLinks,
-    isLoading: linksIsLoading,
-  } = useContainerEntityLinks({ upstreamContainerKey: containerId });
+    isPending: isPendingLinks,
+  } = useEntityLinks({ upstreamKey: containerId, contentType: 'containers' });
   const downstreamCount = dataDownstreamLinks?.length ?? 0;
 
   const messageMap = useMemo(() => {
     const containerType = containerData?.blockType;
-    let parentCount = 0;
+    let otherParentContainers: string[] | undefined;
+    let otherParentCount = 0;
     let parentMessage: React.ReactNode;
     switch (containerType) {
       case ContainerType.Section:
@@ -50,42 +65,44 @@ const ContainerDeleter = ({
           title: intl.formatMessage(messages.deleteSectionWarningTitle),
           parentMessage: '',
           courseCount: downstreamCount,
-          courseMessage: messages.deleteSectionCourseMessaage,
+          courseMessage: messages.deleteSectionCourseMessage,
           deleteSuccess: intl.formatMessage(messages.deleteSectionSuccess),
           deleteError: intl.formatMessage(messages.deleteSectionFailed),
           undoDeleteError: messages.undoDeleteSectionToastFailed,
         };
       case ContainerType.Subsection:
-        parentCount = containerData?.sections?.displayName?.length || 0;
-        if (parentCount === 1) {
+        otherParentContainers = getOtherParentContainers(containerData?.sections, parentContainerId);
+        otherParentCount = otherParentContainers?.length || 0;
+        if (otherParentCount === 1) {
           parentMessage = intl.formatMessage(
             messages.deleteSubsectionParentMessage,
             { parentName: <b>{containerData?.sections?.displayName?.[0]}</b> },
           );
-        } else if (parentCount > 1) {
+        } else if (otherParentCount > 1) {
           parentMessage = intl.formatMessage(messages.deleteSubsectionMultipleParentMessage, {
-            parentCount: <b>{parentCount}</b>,
+            parentCount: <b>{otherParentCount}</b>,
           });
         }
         return {
           title: intl.formatMessage(messages.deleteSubsectionWarningTitle),
           parentMessage,
           courseCount: downstreamCount,
-          courseMessage: messages.deleteSubsectionCourseMessaage,
+          courseMessage: messages.deleteSubsectionCourseMessage,
           deleteSuccess: intl.formatMessage(messages.deleteSubsectionSuccess),
           deleteError: intl.formatMessage(messages.deleteSubsectionFailed),
           undoDeleteError: messages.undoDeleteSubsectionToastFailed,
         };
-      default:
-        parentCount = containerData?.subsections?.displayName?.length || 0;
-        if (parentCount === 1) {
+      default: // Unit
+        otherParentContainers = getOtherParentContainers(containerData?.subsections, parentContainerId);
+        otherParentCount = otherParentContainers?.length || 0;
+        if (otherParentCount === 1) {
           parentMessage = intl.formatMessage(
             messages.deleteUnitParentMessage,
-            { parentName: <b>{containerData?.subsections?.displayName?.[0]}</b> },
+            { parentName: <b>{otherParentContainers?.[0]}</b> },
           );
-        } else if (parentCount > 1) {
+        } else if (otherParentCount > 1) {
           parentMessage = intl.formatMessage(messages.deleteUnitMultipleParentMessage, {
-            parentCount: <b>{parentCount}</b>,
+            parentCount: <b>{otherParentCount}</b>,
           });
         }
         return {
@@ -100,8 +117,8 @@ const ContainerDeleter = ({
     }
   }, [containerData, downstreamCount, messages, intl]);
 
-  const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
-    unitName: <b>{containerData?.displayName}</b>,
+  const deleteText = intl.formatMessage(messages.deleteContainerConfirm, {
+    containerName: <b>{containerData?.displayName}</b>,
     message: (
       <div className="text-danger-900">
         {messageMap.parentMessage && (
@@ -153,14 +170,20 @@ const ContainerDeleter = ({
     });
   }, [sidebarItemInfo, showToast, deleteContainerMutation, messageMap]);
 
+  // istanbul ignore if: loading state
+  if (isPending || isPendingLinks) {
+    // Only render the modal after loading
+    return null;
+  }
+
   return (
     <DeleteModal
-      isOpen={isOpen}
+      isOpen
       close={close}
-      variant="warning"
+      variant="danger"
       title={messageMap?.title}
-      icon={Warning}
-      description={isLoading || linksIsLoading ? <LoadingSpinner size="sm" /> : deleteText}
+      icon={Delete}
+      description={deleteText}
       onDeleteSubmit={onDelete}
     />
   );

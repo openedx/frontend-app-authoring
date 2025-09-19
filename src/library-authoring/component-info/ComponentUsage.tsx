@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Collapsible, Hyperlink, Stack } from '@openedx/paragon';
-import { useMemo } from 'react';
-import { useEntityLinks } from '../../course-libraries/data/apiHooks';
 
-import AlertError from '../../generic/alert-error';
-import Loading from '../../generic/Loading';
+import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
+import AlertError from '@src/generic/alert-error';
+import Loading from '@src/generic/Loading';
+
 import messages from './messages';
 import { useContentFromSearchIndex } from '../data/apiHooks';
 
@@ -33,8 +35,8 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     data: dataDownstreamLinks,
     isError: isErrorDownstreamLinks,
     error: errorDownstreamLinks,
-    isLoading: isLoadingDownstreamLinks,
-  } = useEntityLinks({ upstreamUsageKey: usageKey });
+    isPending: isPendingDownstreamLinks,
+  } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
 
   const downstreamKeys = useMemo(
     () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],
@@ -45,14 +47,14 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     hits: downstreamHits,
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
-    isLoading: isLoadingIndexDocuments,
+    isPending: isPendingIndexDocuments,
   } = useContentFromSearchIndex(downstreamKeys);
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;
   }
 
-  if (isLoadingDownstreamLinks || (isLoadingIndexDocuments && !!downstreamKeys.length)) {
+  if (isPendingDownstreamLinks || (isPendingIndexDocuments && !!downstreamKeys.length)) {
     return <Loading />;
   }
 

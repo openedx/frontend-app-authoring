@@ -7,7 +7,6 @@ import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import { ComponentMenu } from './ComponentMenu';
@@ -18,7 +17,7 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { openComponentInfoSidebar, sidebarItemInfo } = useSidebarContext();
+  const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const {
@@ -35,16 +34,15 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const { navigateTo } = useLibraryRoutes();
   const selectComponent = useCallback(() => {
     if (!componentPickerMode) {
-      navigateTo({ selectedItemId: usageKey });
+      openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     } else {
       // In component picker mode, we want to open the sidebar
       // without changing the URL
       openComponentInfoSidebar(usageKey);
     }
-  }, [usageKey, navigateTo, openComponentInfoSidebar]);
+  }, [usageKey, openItemSidebar, openComponentInfoSidebar, componentPickerMode]);
 
   const selected = sidebarItemInfo?.type === SidebarBodyItemId.ComponentInfo
     && sidebarItemInfo.id === usageKey;

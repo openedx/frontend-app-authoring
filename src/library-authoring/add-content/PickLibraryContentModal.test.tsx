@@ -1,12 +1,12 @@
-import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
+import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
 import {
   fireEvent,
   render as baseRender,
   waitFor,
   screen,
   initializeMocks,
-} from '../../testUtils';
-import { studioHomeMock } from '../../studio-home/__mocks__';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import mockResult from '../__mocks__/library-search.json';
 import { LibraryProvider } from '../common/context/LibraryContext';

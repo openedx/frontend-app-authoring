@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { selectors } from '../../../../../data/redux';
@@ -16,9 +16,8 @@ const ExplanationWidget = ({
   images,
   isLibrary,
   blockId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const initialContent = settings?.solutionExplanation || '';
   const newContent = replaceStaticWithAsset({
@@ -66,8 +65,6 @@ ExplanationWidget.propTypes = {
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
   blockId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   settings: selectors.problem.settings(state),
@@ -78,4 +75,4 @@ export const mapStateToProps = (state) => ({
 });
 
 export const ExplanationWidgetInternal = ExplanationWidget; // For testing only
-export default injectIntl(connect(mapStateToProps)(ExplanationWidget));
+export default connect(mapStateToProps)(ExplanationWidget);

@@ -383,28 +383,30 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`should open ${childType} page on double click`, async () => {
+      const user = userEvent.setup();
       renderLibrarySectionPage(undefined, undefined, cType);
       const child = await screen.findByText(`${childType} block 0`);
       // Trigger double click. Find the child card as the parent element
-      userEvent.click(child.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
+      await user.dblClick(child.parentElement!.parentElement!.parentElement!);
       expect((await screen.findAllByText(new RegExp(`${childType} block 0`, 'i')))[0]).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`${childType} Info`, 'i') })).toBeInTheDocument();
     });
 
     it(`${cType} sidebar should render "new ${childType}" and "existing ${childType}" buttons`, async () => {
+      const user = userEvent.setup();
       renderLibrarySectionPage(undefined, undefined, cType);
       const addChild = await screen.findByRole('button', { name: new RegExp(`add ${childType}`, 'i') });
-      userEvent.click(addChild);
+      await user.click(addChild);
       const addNew = await screen.findByRole('button', { name: new RegExp(`^new ${childType}$`, 'i') });
       const addExisting = await screen.findByRole('button', { name: new RegExp(`^existing ${childType}$`, 'i') });
 
       // Clicking "add new" shows create container modal (tested below)
-      userEvent.click(addNew);
+      await user.click(addNew);
       expect(await screen.findByLabelText(new RegExp(`name your ${childType}`, 'i'))).toBeInTheDocument();
       fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
       // Clicking "add existing" shows content picker modal
-      userEvent.click(addExisting);
+      await user.click(addExisting);
       expect(await screen.findByRole('dialog')).toBeInTheDocument();
       expect(await screen.findByRole('button', { name: new RegExp(`add to ${cType}`, 'i') })).toBeInTheDocument();
       // No "Types" filter shown
@@ -412,6 +414,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`"add new" button should add ${childType} to the ${cType}`, async () => {
+      const user = userEvent.setup();
       const { libraryId } = mockContentLibrary;
       const containerId = cType === ContainerType.Section
         ? mockGetContainerMetadata.sectionId
@@ -429,7 +432,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       renderLibrarySectionPage(containerId, libraryId, cType);
 
       const addChild = await screen.findByRole('button', { name: new RegExp(`add new ${childType}`, 'i') });
-      userEvent.click(addChild);
+      await user.click(addChild);
       const textBox = await screen.findByLabelText(new RegExp(`name your ${childType}`, 'i'));
       fireEvent.change(textBox, { target: { value: `New ${childType} Title` } });
       fireEvent.click(screen.getByRole('button', { name: /create/i }));
@@ -448,6 +451,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`"add new" button should show error when adding ${childType} to the ${cType}`, async () => {
+      const user = userEvent.setup();
       const { libraryId } = mockContentLibrary;
       const containerId = cType === ContainerType.Section
         ? mockGetContainerMetadata.sectionId
@@ -465,7 +469,7 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
       renderLibrarySectionPage(containerId, libraryId, cType);
 
       const addChild = await screen.findByRole('button', { name: new RegExp(`add new ${childType}`, 'i') });
-      userEvent.click(addChild);
+      await user.click(addChild);
       const textBox = await screen.findByLabelText(new RegExp(`name your ${childType}`, 'i'));
       fireEvent.change(textBox, { target: { value: `New ${childType} Title` } });
       fireEvent.click(screen.getByRole('button', { name: /create/i }));
@@ -483,12 +487,13 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
     });
 
     it(`"add existing ${childType}" button should load ${cType} content picker modal`, async () => {
+      const user = userEvent.setup();
       renderLibrarySectionPage(undefined, undefined, cType);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
       const addChild = await screen.findByRole('button', { name: new RegExp(`add existing ${childType}`, 'i') });
-      userEvent.click(addChild);
+      await user.click(addChild);
 
       // Content picker loaded (modal behavior is tested elsewhere)
       expect(await screen.findByRole('dialog')).toBeInTheDocument();

@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
+import { selectors } from '@src/editors/data/redux';
 import AnswerOption from './AnswerOption';
 import * as hooks from './hooks';
-import { selectors } from '../../../../../data/redux';
 
 const { problem } = selectors;
 
-jest.mock('../../../../../data/redux', () => ({
+jest.mock('@src/editors/data/redux', () => ({
   __esModule: true,
   default: jest.fn(),
   selectors: {
@@ -27,7 +27,7 @@ jest.mock('../../../../../data/redux', () => ({
   },
 }));
 
-jest.mock('../../../../../sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');
+jest.mock('@src/editors/sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');
 
 describe('AnswerOption', () => {
   const answerWithOnlyFeedback = {
@@ -57,12 +57,6 @@ describe('AnswerOption', () => {
   const props = {
     hasSingleAnswer: false,
     answer: answerWithOnlyFeedback,
-    // redux
-    problemType: 'multiplechoiceresponse',
-    images: {},
-    isLibrary: false,
-    learningContextId: 'course+org+run',
-    blockId: 'block-id',
   };
 
   beforeEach(() => {

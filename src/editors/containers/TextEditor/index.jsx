@@ -6,7 +6,7 @@ import {
   Spinner,
   Toast,
 } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getConfig } from '@edx/frontend-platform';
 import { actions, selectors } from '../../data/redux';
@@ -32,9 +32,8 @@ const TextEditor = ({
   learningContextId,
   images,
   isLibrary,
-  // inject
-  intl,
 }) => {
+  const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const initialContent = blockValue ? blockValue.data.data : '';
   const newContent = replaceStaticWithAsset({
@@ -123,8 +122,6 @@ TextEditor.propTypes = {
   learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
-  // inject
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -144,4 +141,4 @@ export const mapDispatchToProps = {
 };
 
 export const TextEditorInternal = TextEditor; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(TextEditor));
+export default connect(mapStateToProps, mapDispatchToProps)(TextEditor);

@@ -23,8 +23,8 @@ import { Container } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { useLibraryRoutes } from '../routes';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useRunOnNextRender } from '../../utils';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
+import { skipIfUnwantedTarget, useRunOnNextRender } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
 
 interface LibraryContainerChildrenProps {
@@ -46,8 +46,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
   const { showOnlyPublished } = useLibraryContext();
-  const { navigateTo } = useLibraryRoutes();
-  const { setSidebarAction } = useSidebarContext();
+  const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
     try {
@@ -67,17 +66,17 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
     setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
   });
 
-  const jumpToManageTags = () => {
-    navigateTo({ selectedItemId: container.originalId });
+  const jumpToManageTags = useCallback(() => {
+    openItemSidebar(container.originalId, SidebarBodyItemId.ContainerInfo);
     scheduleJumpToTags();
-  };
+  }, [openItemSidebar, scheduleJumpToTags, container.originalId]);
 
   return (
     <>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
@@ -91,8 +90,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         direction="horizontal"
         gap={3}
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         {!showOnlyPublished && container.hasUnpublishedChanges && (
           <Badge
@@ -127,7 +125,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
-  const { sidebarItemInfo } = useSidebarContext();
+  const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
   const orderMutator = useUpdateContainerChildren(containerKey);
   const { showToast } = useContext(ToastContext);
@@ -167,13 +165,17 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   }, [children, setOrderedChildren]);
 
   const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
+    if (readOnly) {
+      // don't allow interaction if rendered as preview
+      return;
+    }
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
-      navigateTo({ selectedItemId: child.originalId });
+      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo);
     } else {
       navigateTo({ containerId: child.originalId });
     }
-  }, [navigateTo]);
+  }, [openItemSidebar, navigateTo, readOnly]);
 
   const getComponentStyle = useCallback((childId: string) => {
     const style: { marginBottom: string, borderRadius: string, outline?: string } = {
@@ -226,8 +228,8 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderRadius: '8px',
               borderLeft: '8px solid #E1DDDB',
             }}
-            isClickable
-            onClick={(e) => handleChildClick(child, e.detail)}
+            isClickable={!readOnly}
+            onClick={(e) => skipIfUnwantedTarget(e, (event) => handleChildClick(child, event.detail))}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleChildClick(child, 1);

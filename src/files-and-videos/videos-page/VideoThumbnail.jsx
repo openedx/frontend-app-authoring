@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { VideoFile } from '@openedx/paragon/icons';
 import {
   Badge,
@@ -22,9 +22,8 @@ const VideoThumbnail = ({
   videoImageSettings,
   status,
   pageLoadStatus,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const fileInputControl = useFileInput({
     onAddFile: (files) => {
       const [file] = files;
@@ -48,21 +47,30 @@ const VideoThumbnail = ({
   const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
   const failedMessage = intl.formatMessage(messages.failedCheckboxLabel);
 
-  const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
+  const showThumbnail = allowThumbnailUpload && isUploaded;
 
   return (
     <div className="video-thumbnail row justify-content-center align-itmes-center">
-      {allowThumbnailUpload && showThumbnail && <div className="thumbnail-overlay" />}
+      {allowThumbnailUpload && isUploaded && <div className="thumbnail-overlay" />}
       {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
         <>
           <div className="border rounded">
-            <Image
-              style={imageSize}
-              className="m-1 bg-light-300"
-              src={thumbnail}
-              alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
-              onError={() => setThumbnailError(true)}
-            />
+            { thumbnail ? (
+              <Image
+                style={imageSize}
+                className="m-1 bg-light-300"
+                src={thumbnail}
+                alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+                onError={() => setThumbnailError(true)}
+              />
+            ) : (
+              <div
+                className="row justify-content-center align-items-center m-0"
+                style={imageSize}
+              >
+                <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
+              </div>
+            )}
           </div>
           <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
             <Button
@@ -119,12 +127,10 @@ VideoThumbnail.propTypes = {
   }).isRequired,
   status: PropTypes.string.isRequired,
   pageLoadStatus: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 VideoThumbnail.defaultProps = {
   thumbnail: null,
 };
 
-export default injectIntl(VideoThumbnail);
+export default VideoThumbnail;

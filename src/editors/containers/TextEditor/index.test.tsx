@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '../../testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { TextEditorInternal as TextEditor, mapStateToProps, mapDispatchToProps } from '.';
@@ -53,8 +52,6 @@ describe('TextEditor', () => {
     learningContextId: 'course+org+run',
     images: {},
     isLibrary: false,
-    // inject
-    intl: { formatMessage },
   };
 
   afterAll(() => jest.restoreAllMocks());

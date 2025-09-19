@@ -1,10 +1,11 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
+import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
-} from '../../testUtils';
+} from '@src/testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
@@ -44,6 +45,7 @@ const getContainerHitSample = (containerType: ContainerType = ContainerType.Unit
 } as ContainerHit);
 
 mockContentLibrary.applyMock();
+mockContentSearchConfig.applyMock();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -143,16 +145,17 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Subsection,
     },
   ])('$label', async ({ containerType }) => {
+    const user = userEvent.setup();
     render(<ContainerCard hit={getContainerHitSample(containerType)} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Open menu item
     const openMenuItem = await screen.findByRole('button', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
-    userEvent.click(openMenuItem);
+    await user.click(openMenuItem);
     expect(mockNavigate).toHaveBeenCalledWith({
       pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
       search: '',
@@ -173,12 +176,13 @@ describe('<ContainerCard />', () => {
       containerType: ContainerType.Subsection,
     },
   ])('$label', async ({ containerType }) => {
+    const user = userEvent.setup();
     render(<ContainerCard hit={getContainerHitSample(containerType)} />);
 
     // Open menu item
     const cardItem = await screen.findByText(`${containerType} Display Formated Name`);
     expect(cardItem).toBeInTheDocument();
-    userEvent.click(cardItem, undefined, { clickCount: 2 });
+    await user.dblClick(cardItem);
     expect(mockNavigate).toHaveBeenCalledWith({
       pathname: `/library/${libraryId}/${containerType}/${getContainerHitSample(containerType).usageKey}`,
       search: '',
@@ -186,14 +190,18 @@ describe('<ContainerCard />', () => {
   });
 
   it('should delete the container from the menu & restore the container', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(200);
+    // Mock the search result to get the display name of the container on the Modal
+    mockSearchResult(hydrateSearchResult([{
+      displayName: 'unit Display Name',
+    }]));
 
     render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
-
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
     // Click on Delete Item
     const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
     expect(deleteMenuItem).toBeInTheDocument();
@@ -223,13 +231,14 @@ describe('<ContainerCard />', () => {
   });
 
   it('should show error on delete the container from the menu', async () => {
+    const user = userEvent.setup();
     axiosMock.onDelete(getLibraryContainerApiUrl(getContainerHitSample().usageKey)).reply(400);
 
     render(<ContainerCard hit={getContainerHitSample()} />);
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Click on Delete Item
     const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
@@ -237,7 +246,8 @@ describe('<ContainerCard />', () => {
     fireEvent.click(deleteMenuItem);
 
     // Confirm delete Modal is open
-    expect(screen.getByText('Delete Unit'));
+    const modal = await screen.findByRole('dialog', { name: 'Delete Unit' });
+    expect(modal).toBeVisible();
     const deleteButton = screen.getByRole('button', { name: /delete/i });
     fireEvent.click(deleteButton);
 
@@ -425,7 +435,7 @@ describe('<ContainerCard />', () => {
       containerType: parentType,
       displayName: 'Parent Container Display Name',
     });
-
+    const user = userEvent.setup();
     render(
       <ContainerCard hit={containerHit} />,
       false,
@@ -434,7 +444,7 @@ describe('<ContainerCard />', () => {
 
     // Open menu
     expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
 
     // Click on Remove Item
     const removeMenuItem = await screen.findByRole('button', { name: expectedRemoveText });
@@ -442,7 +452,8 @@ describe('<ContainerCard />', () => {
     fireEvent.click(removeMenuItem);
 
     // Confirm remove Modal is open
-    expect(await screen.findByText(/will not delete it from the library/i)).toBeInTheDocument();
+    const regex = new RegExp(`will not delete the ${containerType} from your library`, 'i');
+    expect(await screen.findByText(regex)).toBeInTheDocument();
     const removeButton = screen.getByRole('button', { name: /remove/i });
     fireEvent.click(removeButton);
 

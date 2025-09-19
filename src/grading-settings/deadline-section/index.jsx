@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import classNames from 'classnames';
 
 import { DEFAULT_TIME_STAMP, TIME_FORMAT } from '../../constants';
@@ -9,8 +9,9 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
+  setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
 }) => {
+  const intl = useIntl();
   const timeStampValue = gracePeriod
     ? `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
     : DEFAULT_TIME_STAMP;
@@ -70,7 +71,6 @@ DeadlineSection.defaultProps = {
 };
 
 DeadlineSection.propTypes = {
-  intl: intlShape.isRequired,
   setShowSavePrompt: PropTypes.func.isRequired,
   setGradingData: PropTypes.func.isRequired,
   setShowSuccessAlert: PropTypes.func.isRequired,
@@ -80,4 +80,4 @@ DeadlineSection.propTypes = {
   }),
 };
 
-export default injectIntl(DeadlineSection);
+export default DeadlineSection;

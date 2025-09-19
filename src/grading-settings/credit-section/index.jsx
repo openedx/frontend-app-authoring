@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
 const CreditSection = ({
-  intl, eligibleGrade, setShowSavePrompt, minimumGradeCredit, setGradingData, setShowSuccessAlert,
+  eligibleGrade,
+  setShowSavePrompt,
+  minimumGradeCredit,
+  setGradingData,
+  setShowSuccessAlert,
 }) => {
+  const intl = useIntl();
   const [errorEffort, setErrorEffort] = useState(false);
 
   const handleCreditChange = (e) => {
@@ -60,7 +65,6 @@ const CreditSection = ({
 };
 
 CreditSection.propTypes = {
-  intl: intlShape.isRequired,
   eligibleGrade: PropTypes.number.isRequired,
   setShowSavePrompt: PropTypes.func.isRequired,
   setGradingData: PropTypes.func.isRequired,
@@ -68,4 +72,4 @@ CreditSection.propTypes = {
   minimumGradeCredit: PropTypes.number.isRequired,
 };
 
-export default injectIntl(CreditSection);
+export default CreditSection;

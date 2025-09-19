@@ -63,19 +63,21 @@ describe('<DeleteModal />', () => {
     expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
   });
 
-  it('calls onDeleteSubmit function when the "Delete" button is clicked', () => {
+  it('calls onDeleteSubmit function when the "Delete" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const okButton = getByRole('button', { name: messages.deleteButton.defaultMessage });
-    userEvent.click(okButton);
+    await user.click(okButton);
     expect(onDeleteSubmitMock).toHaveBeenCalledTimes(1);
   });
 
-  it('calls the close function when the "Cancel" button is clicked', () => {
+  it('calls the close function when the "Cancel" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByRole } = renderComponent();
 
     const cancelButton = getByRole('button', { name: messages.cancelButton.defaultMessage });
-    userEvent.click(cancelButton);
+    await user.click(cancelButton);
     expect(closeMock).toHaveBeenCalledTimes(1);
   });
 

@@ -21,6 +21,20 @@ describe('<CourseTeamSidebar />', () => {
     expect(getByText(messages.sidebarAbout_3.defaultMessage)).toBeInTheDocument();
   });
 
+  it('renders CourseTeamSidebar component based on support email variable', () => {
+    const { getByText } = renderComponent();
+    const courseTeamSupportEmail = process.env.COURSE_TEAM_SUPPORT_EMAIL;
+
+    if (courseTeamSupportEmail) {
+      expect(getByText(messages.helpInfoSidebarTitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(courseTeamSupportEmail)).toBeInTheDocument();
+      expect(getByText(/to add, remove, or update user access in bulk\./i)).toBeInTheDocument();
+    } else {
+      expect(getByText(messages.helpInfoSidebarTitle.defaultMessage)).not.toBeInTheDocument();
+      expect(getByText(/to add, remove, or update user access in bulk\./i)).not.toBeInTheDocument();
+    }
+  });
+
   it('render CourseTeamSidebar when isOwnershipHint is true', () => {
     const { getByText } = renderComponent({ isOwnershipHint: true });
 

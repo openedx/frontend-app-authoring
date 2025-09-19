@@ -5,7 +5,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 
-import { studioHomeMock } from '../__mocks__';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import initializeStore from '../../store';
 import messages from './messages';
 import CourseNewCourseForm from '.';

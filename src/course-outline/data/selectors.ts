@@ -1,0 +1,15 @@
+export const getOutlineIndexData = (state) => state.courseOutline.outlineIndexData;
+export const getLoadingStatus = (state) => state.courseOutline.loadingStatus;
+export const getStatusBarData = (state) => state.courseOutline.statusBarData;
+export const getSavingStatus = (state) => state.courseOutline.savingStatus;
+export const getSectionsList = (state) => state.courseOutline.sectionsList;
+export const getCurrentItem = (state) => state.courseOutline.currentItem;
+export const getCurrentSection = (state) => state.courseOutline.currentSection;
+export const getCurrentSubsection = (state) => state.courseOutline.currentSubsection;
+export const getCourseActions = (state) => state.courseOutline.actions;
+export const getCustomRelativeDatesActiveFlag = (state) => state.courseOutline.isCustomRelativeDatesActive;
+export const getProctoredExamsFlag = (state) => state.courseOutline.enableProctoredExams;
+export const getTimedExamsFlag = (state) => state.courseOutline.enableTimedExams;
+export const getPasteFileNotices = (state) => state.courseOutline.pasteFileNotices;
+export const getErrors = (state) => state.courseOutline.errors;
+export const getCreatedOn = (state) => state.courseOutline.createdOn;

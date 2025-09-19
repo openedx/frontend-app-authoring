@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  FormattedDate,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage, FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Stack } from '@openedx/paragon';
 import ErrorAlert from '../../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import SelectableBox from '../../../editors/sharedComponents/SelectableBox';
@@ -25,9 +20,8 @@ const OrderTranscriptForm = ({
   transcriptionPlans,
   errorMessages,
   transcriptStatus,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [data, setData] = useState(activeTranscriptPreferences || { videoSourceLanguage: '' });
 
   const [validCieloTranscriptionPlan, validThreePlayTranscriptionPlan] = checkTranscriptionPlans(transcriptionPlans);
@@ -200,12 +194,10 @@ OrderTranscriptForm.propTypes = {
       languages: PropTypes.shape({}),
     }).isRequired,
   }).isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 OrderTranscriptForm.defaultProps = {
   activeTranscriptPreferences: null,
 };
 
-export default injectIntl(OrderTranscriptForm);
+export default OrderTranscriptForm;

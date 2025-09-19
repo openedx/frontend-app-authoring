@@ -9,9 +9,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.heading.title',
     defaultMessage: 'Course optimizer',
   },
-  beta: {
-    id: 'course-authoring.course-optimizer.beta',
-    defaultMessage: 'Beta',
+  new: {
+    id: 'course-authoring.course-optimizer.new',
+    defaultMessage: 'New',
   },
   headingSubtitle: {
     id: 'course-authoring.course-optimizer.heading.subtitle',
@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   buttonTitle: {
     id: 'course-authoring.course-optimizer.button.title',
-    defaultMessage: 'Start scanning',
+    defaultMessage: 'Scan course',
   },
   preparingStepTitle: {
     id: 'course-authoring.course-optimizer.peparing-step.title',
@@ -56,6 +56,18 @@ const messages = defineMessages({
   lastScannedOn: {
     id: 'course-authoring.course-optimizer.last-scanned-on',
     defaultMessage: 'Last scanned on',
+  },
+  scanHeader: {
+    id: 'course-authoring.course-optimizer.scanHeader',
+    defaultMessage: 'Scan results',
+  },
+  updateButton: {
+    id: 'course-authoring.scanResults.updateButton',
+    defaultMessage: 'Update',
+  },
+  updated: {
+    id: 'course-authoring.scanResults.updated',
+    defaultMessage: 'Updated',
   },
 });
 

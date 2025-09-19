@@ -16,7 +16,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
@@ -125,14 +125,12 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
       </Dropdown>
       {isConfirmingDelete && (
         <ContainerDeleter
-          isOpen={isConfirmingDelete}
           close={cancelDelete}
           containerId={containerKey}
         />
       )}
       {isConfirmingRemove && (
         <ContainerRemover
-          isOpen={isConfirmingRemove}
           close={cancelRemove}
           containerKey={containerKey}
           displayName={displayName}
@@ -245,7 +243,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openContainerInfoSidebar, sidebarItemInfo } = useSidebarContext();
+  const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -276,11 +274,11 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       // without changing the URL
       openContainerInfoSidebar(containerKey);
     } else if (!doubleClicked) {
-      navigateTo({ selectedItemId: containerKey });
+      openItemSidebar(containerKey, SidebarBodyItemId.ContainerInfo);
     } else {
       navigateTo({ containerId: containerKey });
     }
-  }, [containerKey, openContainerInfoSidebar, navigateTo]);
+  }, [containerKey, openContainerInfoSidebar, openItemSidebar, navigateTo]);
 
   return (
     <BaseCard

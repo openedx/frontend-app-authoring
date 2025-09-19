@@ -97,6 +97,7 @@ describe('<Breadcrumbs />', () => {
   });
 
   it('render Breadcrumbs\'s dropdown menus correctly', async () => {
+    const user = userEvent.setup();
     const { getByText, queryAllByTestId } = renderComponent();
 
     expect(getByText(breadcrumbsExpected.section.displayName)).toBeInTheDocument();
@@ -105,31 +106,50 @@ describe('<Breadcrumbs />', () => {
     expect(queryAllByTestId('breadcrumbs-subsection-dropdown-item')).toHaveLength(0);
 
     const button = getByText(breadcrumbsExpected.section.displayName);
-    userEvent.click(button);
+    await user.click(button);
     await waitFor(() => {
       expect(queryAllByTestId('breadcrumbs-dropdown-item-level-0')).toHaveLength(5);
     });
 
-    userEvent.click(getByText(breadcrumbsExpected.subsection.displayName));
+    await user.click(getByText(breadcrumbsExpected.subsection.displayName));
     await waitFor(() => {
       expect(queryAllByTestId('breadcrumbs-dropdown-item-level-1')).toHaveLength(2);
     });
   });
 
+  it('navigates to the first unit in subsection via the intermediate subsection redirect page', async () => {
+    const user = userEvent.setup();
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { ancestor_xblocks } = courseSectionVerticalMock;
+    const displayName = ancestor_xblocks[1].children[0].display_name;
+    const subsectionId = 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
+    const expectedUrl = `/course/${courseId}/subsection/${subsectionId}`;
+    const { getByText, getByRole } = renderComponent();
+
+    const dropdownBtn = getByText(breadcrumbsExpected.subsection.displayName);
+    await user.click(dropdownBtn);
+
+    const dropdownItem = getByRole('link', { name: displayName });
+    await user.click(dropdownItem);
+    expect(dropdownItem).toHaveAttribute('href', expectedUrl);
+  });
+
   it('navigates using the new course outline page when the waffle flag is enabled', async () => {
+    const user = userEvent.setup();
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
     const { getByText, getByRole } = renderComponent();
 
     const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
-    userEvent.click(dropdownBtn);
+    await user.click(dropdownBtn);
 
     const dropdownItem = getByRole('link', { name: display_name });
-    userEvent.click(dropdownItem);
+    await user.click(dropdownItem);
     expect(dropdownItem).toHaveAttribute('href', url);
   });
 
   it('falls back to window.location.href when the waffle flag is disabled', async () => {
+    const user = userEvent.setup();
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { ancestor_xblocks: [{ children: [{ display_name, url }] }] } = courseSectionVerticalMock;
     axiosMock
@@ -139,7 +159,7 @@ describe('<Breadcrumbs />', () => {
     const { getByText, getByRole } = renderComponent();
 
     const dropdownBtn = getByText(breadcrumbsExpected.section.displayName);
-    userEvent.click(dropdownBtn);
+    await user.click(dropdownBtn);
 
     const dropdownItem = getByRole('link', { name: display_name });
     // We need waitFor here because the waffle flag defaults to true but asynchronously loads false from our axiosMock

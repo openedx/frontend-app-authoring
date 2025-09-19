@@ -41,8 +41,9 @@ const SelectableRadioSet = (props) => (
 describe('<SelectableBox.Set />', () => {
   describe('correct rendering', () => {
     it('renders without props', () => {
-      const { container } = render(<SelectableRadioSet name="testName" />);
-      expect(container).toMatchSnapshot();
+      render(<SelectableRadioSet name="testName" />);
+      expect(screen.getAllByRole('button')).toHaveLength(3);
+      [1, 2, 3].forEach((item) => expect(screen.getByText(`SelectableRadio${item}`)).toBeInTheDocument());
     });
     it('forwards props', () => {
       render((<SelectableRadioSet name="testName" data-testid="test-radio-set-name" />));
@@ -63,10 +64,11 @@ describe('<SelectableBox.Set />', () => {
       expect(screen.getByText(checkboxText(1))).toBeInTheDocument();
     });
     it('renders with on change event', async () => {
+      const user = userEvent.setup();
       const onChangeSpy = jest.fn();
       render(<SelectableCheckboxSet onChange={onChangeSpy} />);
       const checkbox = screen.getByRole('button', { name: checkboxText(1) });
-      await userEvent.click(checkbox);
+      await await user.click(checkbox);
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with checkbox type', () => {

@@ -129,7 +129,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
 
     // Click on the component card to open the sidebar
     fireEvent.click(screen.queryAllByText('Introduction to Testing')[0]);
@@ -165,6 +168,7 @@ describe('<ComponentPicker />', () => {
   });
 
   it('double clicking a collection should open it', async () => {
+    const user = userEvent.setup();
     render(<ComponentPicker />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -172,13 +176,16 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Collection 1')[0]).toBeInTheDocument();
+    });
 
     // Mock the collection search result
     mockSearchResult(mockCollectionResult);
 
     // Double click on the collection card to open the collection
-    userEvent.dblClick(screen.queryAllByText('Collection 1')[0]);
+    await user.dblClick(screen.queryAllByText('Collection 1')[0]);
 
     // Wait for the collection to load
     await screen.findByText(/Back to Library/i);
@@ -193,7 +200,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Collection 1')[0]).toBeInTheDocument();
+    });
 
     // Click on the collection card to open the sidebar
     fireEvent.click(screen.queryAllByText('Collection 1')[0]);
@@ -228,7 +238,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Collection 1')[0]).toBeInTheDocument();
+    });
 
     // Click on the collection card to open the sidebar
     fireEvent.click(screen.queryAllByText('Collection 1')[0]);
@@ -270,7 +283,7 @@ describe('<ComponentPicker />', () => {
     await screen.findByText(/Change Library/i);
     fireEvent.click(screen.getByText(/Change Library/i));
 
-    await screen.findByText('Select which Library would you like to reference components from.');
+    await screen.findByText('Choose a library to browse components.');
   });
 
   it('should pick multiple components using the component card button', async () => {
@@ -282,7 +295,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByRole('button', { name: 'Select' })[0]).toBeInTheDocument();
+    });
 
     // Select the first component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
@@ -329,7 +345,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
 
     // Click on the component card to open the sidebar
     fireEvent.click(screen.queryAllByText('Introduction to Testing')[0]);
@@ -412,7 +431,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Collection 1')[0]).toBeInTheDocument();
+    });
 
     // Click on the collection card to open the sidebar
     fireEvent.click(screen.queryAllByText('Collection 1')[0]);

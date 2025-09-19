@@ -3,13 +3,16 @@ import {
   initializeMocks,
   render,
   screen,
-} from '../../../testUtils';
-import { COURSE_CREATOR_STATES } from '../../../constants';
-import { studioHomeMock } from '../../__mocks__';
+} from '@src/testUtils';
+import { COURSE_CREATOR_STATES } from '@src/constants';
+import { type DeprecatedReduxState } from '@src/store';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { initialState } from '../../factories/mockApiResponses';
 
 import CoursesTab from '.';
 import { studioHomeCoursesRequestParamsDefault } from '../../data/slice';
+
+type StudioHomeState = DeprecatedReduxState['studioHome'];
 
 const onClickNewCourse = jest.fn();
 const isShowProcessing = false;
@@ -19,9 +22,9 @@ const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
 const showNewCourseContainer = true;
 
-const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
+const renderComponent = (overrideProps = {}, studioHomeState: Partial<StudioHomeState> = {}) => {
   // Generate a custom initial state based on studioHomeCoursesRequestParams
-  const customInitialState: any = { // TODO: remove 'any' once our redux state has proper types
+  const customInitialState: Partial<DeprecatedReduxState> = {
     ...initialState,
     studioHome: {
       ...initialState.studioHome,
@@ -118,7 +121,7 @@ describe('<CoursesTab />', () => {
 
   it('should reset filters when in pressed the button to clean them', () => {
     const props = { isLoading: false, coursesDataItems: [] };
-    const customStoreData = { studioHomeCoursesRequestParams: { isFiltered: true } };
+    const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
     const { store } = renderComponent(props, customStoreData);
     const cleanFiltersButton = screen.getByRole('button', { name: /clear filters/i });
     expect(cleanFiltersButton).toBeInTheDocument();

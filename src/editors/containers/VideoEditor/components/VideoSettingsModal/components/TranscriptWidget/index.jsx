@@ -3,8 +3,7 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Form,
@@ -91,9 +90,8 @@ const TranscriptWidget = ({
   updateField,
   isUploadError,
   isDeleteError,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [error] = React.useContext(ErrorContext).transcripts;
   const [showImportCard, setShowImportCard] = React.useState(true);
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
@@ -224,7 +222,6 @@ TranscriptWidget.propTypes = {
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isDeleteError: PropTypes.bool.isRequired,
-  intl: PropTypes.shape(intlShape).isRequired,
 };
 export const mapStateToProps = (state) => ({
   transcripts: selectors.video.transcripts(state),
@@ -241,4 +238,4 @@ export const mapDispatchToProps = (dispatch) => ({
 });
 
 export const TranscriptWidgetInternal = TranscriptWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(TranscriptWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(TranscriptWidget);

@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  injectIntl,
-  intlShape,
+  useIntl,
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
@@ -15,7 +14,6 @@ import ExtendedCourseDetails from './extended-course-details';
 import messages from './messages';
 
 const IntroducingSection = ({
-  intl,
   title,
   subtitle,
   duration,
@@ -34,6 +32,7 @@ const IntroducingSection = ({
   videoThumbnailImageAssetPath,
   onChange,
 }) => {
+  const intl = useIntl();
   const overviewHelpText = (
     <FormattedMessage
       id="course-authoring.schedule-section.introducing.course-overview.help-text"
@@ -182,7 +181,6 @@ IntroducingSection.defaultProps = {
 };
 
 IntroducingSection.propTypes = {
-  intl: intlShape.isRequired,
   title: PropTypes.string,
   subtitle: PropTypes.string,
   duration: PropTypes.string,
@@ -202,4 +200,4 @@ IntroducingSection.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(IntroducingSection);
+export default IntroducingSection;

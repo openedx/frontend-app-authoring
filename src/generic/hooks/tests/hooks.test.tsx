@@ -1,17 +1,12 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { act, renderHook } from '@testing-library/react';
-import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
-import { iframeMessageTypes, iframeStateKeys } from '../../../constants';
-import { useIframeBehavior } from '../useIframeBehavior';
+import { iframeMessageTypes } from '../../../constants';
+import { useIframeBehavior, iframeBehaviorState } from '../useIframeBehavior';
 import { useLoadBearingHook } from '../useLoadBearingHook';
 
 jest.useFakeTimers();
-
-jest.mock('@edx/react-unit-test-utils', () => ({
-  useKeyedState: jest.fn(),
-}));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
@@ -27,20 +22,10 @@ describe('useIframeBehavior', () => {
   const iframeRef = { current: { contentWindow: null } as HTMLIFrameElement };
 
   beforeEach(() => {
-    (useKeyedState as jest.Mock).mockImplementation((key, initialValue) => {
-      switch (key) {
-        case iframeStateKeys.iframeHeight:
-          return [0, setIframeHeight];
-        case iframeStateKeys.hasLoaded:
-          return [false, setHasLoaded];
-        case iframeStateKeys.showError:
-          return [false, setShowError];
-        case iframeStateKeys.windowTopOffset:
-          return [null, setWindowTopOffset];
-        default:
-          return [initialValue, jest.fn()];
-      }
-    });
+    jest.spyOn(iframeBehaviorState, 'iframeHeight').mockImplementation(() => [0, setIframeHeight]);
+    jest.spyOn(iframeBehaviorState, 'hasLoaded').mockImplementation(() => [false, setHasLoaded]);
+    jest.spyOn(iframeBehaviorState, 'showError').mockImplementation(() => [false, setShowError]);
+    jest.spyOn(iframeBehaviorState, 'windowTopOffset').mockImplementation(() => [null, setWindowTopOffset]);
 
     window.scrollTo = jest.fn((x: number | ScrollToOptions, y?: number): void => {
       const scrollY = typeof x === 'number' ? y : (x as ScrollToOptions).top || 0;
@@ -58,14 +43,7 @@ describe('useIframeBehavior', () => {
 
   it('scrolls to previous position on video fullscreen exit', () => {
     const mockWindowTopOffset = 100;
-
-    (useKeyedState as jest.Mock).mockImplementation((key) => {
-      if (key === iframeStateKeys.windowTopOffset) {
-        return [mockWindowTopOffset, setWindowTopOffset];
-      }
-      return [null, jest.fn()];
-    });
-
+    jest.spyOn(iframeBehaviorState, 'windowTopOffset').mockImplementation(() => [mockWindowTopOffset, setWindowTopOffset]);
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
@@ -144,8 +122,42 @@ describe('useIframeBehavior', () => {
     expect(setWindowTopOffset).toHaveBeenCalledWith(window.scrollY);
   });
 
+  it('handles xblockScroll message correctly', () => {
+    const iframeElement = document.createElement('iframe');
+    iframeElement.setAttribute('name', 'xblock-iframe');
+    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });
+
+    const iframeParentElement = document.createElement('div');
+    iframeParentElement.setAttribute('id', 'div0');
+    Object.defineProperty(iframeParentElement, 'offsetTop', { writable: true, configurable: true, value: 25 });
+
+    iframeParentElement.appendChild(iframeElement);
+    document.body.appendChild(iframeParentElement);
+
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
+
+    const message = {
+      data: {
+        type: iframeMessageTypes.xblockScroll,
+        offset: 100,
+      },
+    };
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 175, left: 0, behavior: 'smooth' });
+    expect(window.scrollY).toBe(100 + document.getElementsByName('xblock-iframe')[0].offsetTop + document.getElementsByName('xblock-iframe')[0]!.parentElement!.offsetTop);
+  });
+
   it('handles offset message correctly', () => {
-    document.body.innerHTML = '<div id="unit-iframe" style="position: absolute; top: 50px;"></div>';
+    const iframeElement = document.createElement('iframe');
+    iframeElement.setAttribute('id', 'unit-iframe');
+    Object.defineProperty(iframeElement, 'offsetTop', { writable: true, configurable: true, value: 50 });
+
+    document.body.appendChild(iframeElement);
+
     renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
@@ -156,6 +168,7 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 150);
     expect(window.scrollY).toBe(100 + (document.getElementById('unit-iframe') as HTMLElement).offsetTop);
   });
 

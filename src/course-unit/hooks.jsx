@@ -6,10 +6,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { camelCaseObject } from '@edx/frontend-platform/utils';
 
-import { RequestStatus } from '../data/constants';
-import { useClipboard } from '../generic/clipboard';
-import { useEventListener } from '../generic/hooks';
-import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '../constants';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { RequestStatus } from '@src/data/constants';
+import { useClipboard } from '@src/generic/clipboard';
+import { useEventListener } from '@src/generic/hooks';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '@src/constants';
+
 import { messageTypes, PUBLISH_TYPES } from './constants';
 import {
   createNewCourseXBlock,
@@ -40,7 +43,6 @@ import {
   updateMovedXBlockParams,
   updateQueryPendingStatus,
 } from './data/slice';
-import { useIframe } from '../generic/hooks/context/hooks';
 
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
@@ -129,6 +131,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );
 
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
   const unitXBlockActions = {
     handleDelete: (XBlockId) => {
       dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
@@ -139,6 +143,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
         XBlockId,
         (courseKey, locator) => sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
       ));
+    },
+    handleUnlink: async (XBlockId) => {
+      await unlinkDownstream(XBlockId);
+      dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
     },
   };
 
@@ -212,6 +220,24 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       dispatch(getCourseOutlineInfoQuery(courseId));
     }
   }, [isMoveModalOpen]);
+
+  useEffect(() => {
+    const handlePageRefreshUsingStorage = (event) => {
+      // ignoring tests for if block, because it triggers when someone
+      // edits the component using editor which has a separate store
+      /* istanbul ignore next */
+      if (event.key === 'courseRefreshTriggerOnComponentEditSave') {
+        dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+        dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
+        localStorage.removeItem(event.key);
+      }
+    };
+
+    window.addEventListener('storage', handlePageRefreshUsingStorage);
+    return () => {
+      window.removeEventListener('storage', handlePageRefreshUsingStorage);
+    };
+  }, [blockId, sequenceId, isSplitTestType]);
 
   return {
     sequenceId,

@@ -1,20 +1,20 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Breadcrumb,
-  Container,
-} from '@openedx/paragon';
+import { Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 
+import ErrorAlert from '@src/generic/alert-error';
+import { ContainerType } from '@src/generic/key-utils';
+import type { ContainerHit } from '@src/search-manager';
 import Loading from '../../generic/Loading';
 import NotFoundAlert from '../../generic/NotFoundAlert';
 import SubHeader from '../../generic/sub-header/SubHeader';
-import ErrorAlert from '../../generic/alert-error';
 import Header from '../../header';
+
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useContainer, useContentLibrary } from '../data/apiHooks';
+import { useContentFromSearchIndex, useContentLibrary } from '../data/apiHooks';
 import { LibrarySidebar } from '../library-sidebar';
+import { ParentBreadcrumbs } from '../generic/parent-breadcrumbs';
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { LibraryUnitBlocks } from './LibraryUnitBlocks';
 import messages from './messages';
@@ -35,13 +35,12 @@ export const LibraryUnitPage = () => {
 
   const { sidebarItemInfo } = useSidebarContext();
 
-  const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
+  const { data: libraryData, isPending: isLibPending } = useContentLibrary(libraryId);
+  // fetch unitData from index as it includes its parent subsections as well.
   const {
-    data: unitData,
-    isLoading,
-    isError,
-    error,
-  } = useContainer(containerId);
+    hits, isPending, isError, error,
+  } = useContentFromSearchIndex(containerId ? [containerId] : []);
+  const unitData = (hits as ContainerHit[])?.[0];
 
   if (!containerId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -49,7 +48,7 @@ export const LibraryUnitPage = () => {
   }
 
   // Only show loading if unit or library data is not fetched from index yet
-  if (isLibLoading || isLoading) {
+  if (isLibPending || isPending) {
     return <Loading />;
   }
 
@@ -61,24 +60,6 @@ export const LibraryUnitPage = () => {
   if (isError) {
     return <ErrorAlert error={error} />;
   }
-
-  const breadcrumbs = (
-    <Breadcrumb
-      ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-      links={[
-        {
-          label: libraryData.title,
-          to: `/library/${libraryId}`,
-        },
-        // Adding empty breadcrumb to add the last `>` spacer.
-        {
-          label: '',
-          to: '',
-        },
-      ]}
-      linkAs={Link}
-    />
-  );
 
   return (
     <div className="d-flex">
@@ -105,7 +86,13 @@ export const LibraryUnitPage = () => {
                   addContentBtnText={intl.formatMessage(messages.addContentButton)}
                 />
               )}
-              breadcrumbs={breadcrumbs}
+              breadcrumbs={(
+                <ParentBreadcrumbs
+                  libraryData={libraryData}
+                  parents={unitData.subsections}
+                  containerType={ContainerType.Unit}
+                />
+              )}
               hideBorder
             />
           </div>

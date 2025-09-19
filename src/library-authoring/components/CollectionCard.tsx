@@ -7,17 +7,17 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import { MoreVert } from '@openedx/paragon/icons';
+import { Delete, MoreVert } from '@openedx/paragon/icons';
 
-import { type CollectionHit } from '../../search-manager';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import { type CollectionHit } from '@src/search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
-import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 
 type CollectionMenuProps = {
@@ -98,7 +98,8 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
       <DeleteModal
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}
-        variant="warning"
+        variant="danger"
+        icon={Delete}
         category={type}
         description={intl.formatMessage(messages.deleteCollectionConfirm, {
           collectionTitle: displayName,
@@ -116,7 +117,7 @@ type CollectionCardProps = {
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { setCollectionId, showOnlyPublished } = useLibraryContext();
-  const { openCollectionInfoSidebar, sidebarItemInfo } = useSidebarContext();
+  const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
     type: itemType,
@@ -144,7 +145,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       if (doubleClicked) {
         navigateTo({ collectionId });
       } else {
-        navigateTo({ selectedItemId: collectionId });
+        openItemSidebar(collectionId, SidebarBodyItemId.CollectionInfo);
       }
 
       // In component picker mode, we want to open the sidebar or the collection
@@ -154,7 +155,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
     } else {
       openCollectionInfoSidebar(collectionId);
     }
-  }, [collectionId, navigateTo, openCollectionInfoSidebar, setCollectionId, componentPickerMode]);
+  }, [collectionId, navigateTo, openItemSidebar, openCollectionInfoSidebar, setCollectionId, componentPickerMode]);
 
   return (
     <BaseCard

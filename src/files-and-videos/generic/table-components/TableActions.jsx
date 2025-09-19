@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
   Button,
@@ -22,9 +22,8 @@ const TableActions = ({
   encodingsDownloadUrl,
   fileType,
   setInitialState,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
   const { state, clearSelection } = useContext(DataTableContext);
 
@@ -110,11 +109,10 @@ TableActions.propTypes = {
   handleSort: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
   setInitialState: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
 TableActions.defaultProps = {
   encodingsDownloadUrl: null,
 };
 
-export default injectIntl(TableActions);
+export default TableActions;

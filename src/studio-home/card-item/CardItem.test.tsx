@@ -1,15 +1,15 @@
 import * as reactRedux from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 
-import { studioHomeMock } from '../__mocks__';
-import messages from '../messages';
-import { trimSlashes } from './utils';
 import {
   fireEvent,
   initializeMocks,
   render,
   screen,
-} from '../../testUtils';
+} from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import messages from '../messages';
+import { trimSlashes } from './utils';
 import CardItem from '.';
 
 jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => studioHomeMock);

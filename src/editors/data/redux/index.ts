@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import { combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { StrictDict } from '../../utils';
 
 import * as app from './app';
@@ -107,7 +108,6 @@ export interface EditorState {
     videos: Record<string, any>;
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
-    isMarkdownEditorEnabledForCourse: boolean;
   },
   requests: Record<keyof typeof RequestKeys, {
     status: keyof typeof RequestStates;
@@ -157,6 +157,12 @@ export interface EditorState {
     rawOLX: string;
     rawMarkdown: string;
     problemType: null | ProblemType | AdvancedProblemType;
+    /**
+     * Is the "markdown" editor currently active (as opposed to visual or advanced editors)
+     * This is confusingly named, and different from `isMarkdownEditorEnabledForContext`
+     * which is a waffle flag that determines whether the user is allowed to use the
+     * "markdown" editor at all in this course/library.
+     */
     isMarkdownEditorEnabled: boolean;
     question: string;
     answers: any[];
@@ -193,4 +199,10 @@ export interface EditorState {
 
 export { actions, selectors };
 
+export function initializeStore(preloadedState = undefined) {
+  return configureStore({
+    reducer: editorReducer,
+    preloadedState,
+  });
+}
 export default rootReducer;

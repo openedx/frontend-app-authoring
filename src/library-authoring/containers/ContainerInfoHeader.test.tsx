@@ -69,6 +69,7 @@ describe('<ContainerInfoHeader />', () => {
   });
 
   it('should update container title', async () => {
+    const user = userEvent.setup();
     render();
 
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
@@ -80,8 +81,9 @@ describe('<ContainerInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Unit Title{enter}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Unit Title{enter}');
+    await user.keyboard('{Enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
@@ -93,6 +95,7 @@ describe('<ContainerInfoHeader />', () => {
   });
 
   it('should not update container title if title is the same', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
@@ -103,8 +106,9 @@ describe('<ContainerInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, `${mockGetContainerMetadata.containerData.displayName}{enter}`);
+    await user.clear(textBox);
+    await user.type(textBox, `${mockGetContainerMetadata.containerData.displayName}{enter}`);
+    await user.keyboard('{Enter}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -112,6 +116,7 @@ describe('<ContainerInfoHeader />', () => {
   });
 
   it('should not update container title if title is empty', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
@@ -122,8 +127,8 @@ describe('<ContainerInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, '{enter}');
+    await user.clear(textBox);
+    await user.keyboard('{Enter}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -131,6 +136,7 @@ describe('<ContainerInfoHeader />', () => {
   });
 
   it('should close edit container title on press Escape', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
@@ -141,8 +147,9 @@ describe('<ContainerInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Unit Title{esc}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Unit Title');
+    await user.keyboard('{Escape}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -150,6 +157,7 @@ describe('<ContainerInfoHeader />', () => {
   });
 
   it('should show error on edit container title', async () => {
+    const user = userEvent.setup();
     render();
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
@@ -160,8 +168,9 @@ describe('<ContainerInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /text input/i });
 
-    userEvent.clear(textBox);
-    userEvent.type(textBox, 'New Unit Title{enter}');
+    await user.clear(textBox);
+    await user.type(textBox, 'New Unit Title{enter}');
+    await user.keyboard('{Enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);

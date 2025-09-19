@@ -32,14 +32,14 @@ const messages = defineMessages({
     description: 'Tab title for review tab',
   },
   reviewTabDescriptionEmpty: {
-    id: 'course-authoring.course-libraries.tab.home.description-no-links',
+    id: 'course-authoring.course-libraries.tab.review.description-no-links',
     defaultMessage: 'All components are up to date',
     description: 'Description text for home tab',
   },
   breadcrumbLabel: {
     id: 'course-authoring.course-libraries.downstream-block.breadcrumb.label',
     defaultMessage: 'Location:',
-    description: 'label for breadcrumb in component cards in course libraries page.',
+    description: 'Label for breadcrumb in component cards in course libraries page.',
   },
   totalComponentLabel: {
     id: 'course-authoring.course-libraries.libcard.total-component.label',
@@ -79,17 +79,17 @@ const messages = defineMessages({
   cardReviewContentBtn: {
     id: 'course-authoring.course-libraries.review-tab.libcard.review-btn-text',
     defaultMessage: 'Review Updates',
-    description: 'Card review button for component in review tab',
+    description: 'Card review button for component/container in review tab',
   },
   cardUpdateContentBtn: {
     id: 'course-authoring.course-libraries.review-tab.libcard.update-btn-text',
     defaultMessage: 'Update',
-    description: 'Card update button for component in review tab',
+    description: 'Card update button for component/container in review tab',
   },
   cardIgnoreContentBtn: {
     id: 'course-authoring.course-libraries.review-tab.libcard.ignore-btn-text',
     defaultMessage: 'Ignore',
-    description: 'Card ignore button for component in review tab',
+    description: 'Card ignore button for component/container in review tab',
   },
   updateSingleBlockSuccess: {
     id: 'course-authoring.course-libraries.review-tab.libcard.update-success-toast',
@@ -115,6 +115,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-libraries.home-tab.error.message',
     defaultMessage: 'Something went wrong! Could not fetch results.',
     description: 'Generic error message displayed when fetching link data fails.',
+  },
+  viewSectionInCourseLabel: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.view-section.label',
+    defaultMessage: 'View Section in Course',
+    description: 'Label of the button to see the section in the course',
   },
 });
 

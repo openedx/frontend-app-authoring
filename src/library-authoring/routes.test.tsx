@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import fetchMock from 'fetch-mock-jest';
+import { initializeMocks, render } from '@src/testUtils';
+import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import {
   mockContentLibrary,
 } from './data/api.mocks';
 import { LibraryLayout } from '.';
 import { ContentType, useLibraryRoutes } from './routes';
 import mockResult from './__mocks__/library-search.json';
-import { initializeMocks, render } from '../testUtils';
-import { studioHomeMock } from '../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 
 const mockNavigate = jest.fn();

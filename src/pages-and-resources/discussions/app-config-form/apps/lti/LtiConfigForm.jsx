@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { ensureConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Card, Form, MailtoLink } from '@openedx/paragon';
 
 import { useFormik } from 'formik';
@@ -18,7 +18,8 @@ import { useModel } from '../../../../../generic/model-store';
 
 ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 
-const LtiConfigForm = ({ onSubmit, intl, formRef }) => {
+const LtiConfigForm = ({ onSubmit, formRef }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
 
   const { selectedAppId, piiConfig } = useSelector((state) => state.discussions);
@@ -180,10 +181,9 @@ const LtiConfigForm = ({ onSubmit, intl, formRef }) => {
 };
 
 LtiConfigForm.propTypes = {
-  intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
 };
 
-export default injectIntl(LtiConfigForm);
+export default LtiConfigForm;

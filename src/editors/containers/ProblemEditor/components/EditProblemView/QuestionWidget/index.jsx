@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { selectors } from '../../../../../data/redux';
@@ -16,9 +16,8 @@ const QuestionWidget = ({
   images,
   isLibrary,
   blockId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const initialContent = question;
   const newContent = replaceStaticWithAsset({
@@ -62,8 +61,6 @@ QuestionWidget.propTypes = {
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
   blockId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   question: selectors.problem.question(state),
@@ -74,4 +71,4 @@ export const mapStateToProps = (state) => ({
 });
 
 export const QuestionWidgetInternal = QuestionWidget; // For testing only
-export default injectIntl(connect(mapStateToProps)(QuestionWidget));
+export default connect(mapStateToProps)(QuestionWidget);

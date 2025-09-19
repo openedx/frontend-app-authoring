@@ -1,12 +1,14 @@
 /* istanbul ignore file */
 import { camelCaseObject } from '@edx/frontend-platform';
-import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
-import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { createAxiosError } from '../../testUtils';
+
+import { mockContentTaxonomyTagsData } from '@src/content-tags-drawer/data/api.mocks';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
+import { createAxiosError } from '@src/testUtils';
+import downstreamLinkInfo from '@src/search-manager/data/__mocks__/downstream-links.json';
+import * as courseLibApi from '@src/course-libraries/data/api';
+
 import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
-import downstreamLinkInfo from '../../search-manager/data/__mocks__/downstream-links.json';
 import * as api from './api';
-import * as courseLibApi from '../../course-libraries/data/api';
 
 /**
  * Mock for `getContentLibraryV2List()`
@@ -378,7 +380,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   publishedBy: null,
   lastDraftCreated: null,
   lastDraftCreatedBy: null,
-  hasUnpublishedChanges: false,
+  hasUnpublishedChanges: true,
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
@@ -514,6 +516,13 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
     case mockGetContainerMetadata.subsectionId:
     case mockGetContainerMetadata.subsectionIdEmpty:
       return Promise.resolve(mockGetContainerMetadata.subsectionData);
+    case mockGetContainerMetadata.unitIdPublished:
+    case mockGetContainerMetadata.sectionIdPublished:
+    case mockGetContainerMetadata.subsectionIdPublished:
+      return Promise.resolve({
+        ...mockGetContainerMetadata.containerData,
+        hasUnpublishedChanges: false,
+      });
     default:
       if (containerId.startsWith('lct:org1:Demo_course_generated:')) {
         const lastPart = containerId.split(':').pop();
@@ -531,10 +540,13 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
 }
 mockGetContainerMetadata.unitId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.unitIdEmpty = 'lct:org:lib:unit:test-unit-empty';
+mockGetContainerMetadata.unitIdPublished = 'lct:org:lib:unit:test-unit-published';
 mockGetContainerMetadata.sectionId = 'lct:org:lib:section:test-section-1';
-mockGetContainerMetadata.subsectionId = 'lb:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.sectionIdPublished = 'lct:org:lib:section:test-section-published';
+mockGetContainerMetadata.subsectionId = 'lct:org1:Demo_course:subsection:subsection-0';
+mockGetContainerMetadata.subsectionIdPublished = 'lct:org1:Demo_course:subsection:subsection-published';
 mockGetContainerMetadata.sectionIdEmpty = 'lct:org:lib:section:test-section-empty';
-mockGetContainerMetadata.subsectionIdEmpty = 'lb:org1:Demo_course:subsection:subsection-empty';
+mockGetContainerMetadata.subsectionIdEmpty = 'lct:org1:Demo_course:subsection:subsection-empty';
 mockGetContainerMetadata.unitIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.sectionIdError = 'lct:org:lib:section:section_error';
 mockGetContainerMetadata.subsectionIdError = 'lct:org:lib:section:section_error';
@@ -650,6 +662,138 @@ mockGetContainerChildren.childTemplate = {
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerChildren.applyMock = () => {
   jest.spyOn(api, 'getLibraryContainerChildren').mockImplementation(mockGetContainerChildren);
+};
+
+/**
+ * Mock for `getBlockHierarchy()`
+ *
+ * This mock returns a fixed response for the given component ID.
+ */
+export async function mockGetComponentHierarchy(componentId: string): Promise<api.ItemHierarchyData> {
+  const getChildren = (childId: string, childCount: number) => {
+    let blockType = 'html';
+    let name = 'text';
+    let typeNamespace = 'lb';
+    if (childId.includes('unit')) {
+      blockType = 'unit';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('subsection')) {
+      blockType = 'subsection';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('section')) {
+      blockType = 'section';
+      name = blockType;
+      typeNamespace = 'lct';
+    }
+
+    return Array(childCount).fill(mockGetContainerChildren.childTemplate).map(
+      (child, idx) => (
+        {
+          ...child,
+          id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
+          displayName: `${name} block ${idx}`,
+          publishedDisplayName: `${name} block published ${idx}`,
+          hasUnpublishedChanges: true,
+        }
+      ),
+    );
+  };
+
+  return Promise.resolve(
+    {
+      objectKey: componentId,
+      sections: getChildren(mockGetContainerMetadata.sectionId, 2),
+      subsections: getChildren(mockGetContainerMetadata.subsectionId, 3),
+      units: getChildren(mockGetContainerMetadata.unitId, 4),
+      components: getChildren(componentId, 1),
+    },
+  );
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetComponentHierarchy.applyMock = () => {
+  jest.spyOn(api, 'getBlockHierarchy').mockImplementation(mockGetComponentHierarchy);
+};
+
+/**
+ * Mock for `getLibraryContainerHierarchy()`
+ *
+ * This mock returns a fixed response for the given container ID.
+ */
+export async function mockGetContainerHierarchy(containerId: string): Promise<api.ItemHierarchyData> {
+  const getChildren = (childId: string, childCount: number) => {
+    let blockType = 'html';
+    let name = 'text';
+    let typeNamespace = 'lb';
+    if (childId.includes('unit')) {
+      blockType = 'unit';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('subsection')) {
+      blockType = 'subsection';
+      name = blockType;
+      typeNamespace = 'lct';
+    } else if (childId.includes('section')) {
+      blockType = 'section';
+      name = blockType;
+      typeNamespace = 'lct';
+    }
+
+    let numChildren = childCount;
+    if (
+      // The selected container only shows itself, no other items.
+      childId === containerId
+      || [
+        mockGetContainerHierarchy.unitIdOneChild,
+        mockGetContainerHierarchy.subsectionIdOneChild,
+        mockGetContainerHierarchy.sectionIdOneChild,
+      ].includes(containerId)
+    ) {
+      numChildren = 1;
+    } else if ([
+      mockGetContainerMetadata.unitIdEmpty,
+      mockGetContainerMetadata.sectionIdEmpty,
+      mockGetContainerMetadata.subsectionIdEmpty,
+    ].includes(containerId)) {
+      numChildren = 0;
+    }
+    return Array(numChildren).fill(mockGetContainerChildren.childTemplate).map(
+      (child, idx) => (
+        {
+          ...child,
+          id: (
+            childId === containerId
+              ? childId
+              // Generate a unique ID when multiple child blocks
+              : `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`
+          ),
+          displayName: `${name} block ${idx}`,
+          publishedDisplayName: `${name} block published ${idx}`,
+          hasUnpublishedChanges: true,
+        }
+      ),
+    );
+  };
+
+  return Promise.resolve(
+    {
+      objectKey: containerId,
+      sections: getChildren(mockGetContainerMetadata.sectionId, 2),
+      subsections: getChildren(mockGetContainerMetadata.subsectionId, 3),
+      units: getChildren(mockGetContainerMetadata.unitId, 4),
+      components: getChildren('lb:org1:Demo_course_generated:text:text-0', 5),
+    },
+  );
+}
+
+mockGetContainerHierarchy.unitIdOneChild = 'lct:org:lib:unit:test-unit-one';
+mockGetContainerHierarchy.sectionIdOneChild = 'lct:org:lib:section:test-section-one';
+mockGetContainerHierarchy.subsectionIdOneChild = 'lct:org1:Demo_course:subsection:subsection-one';
+
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerHierarchy.applyMock = () => {
+  jest.spyOn(api, 'getLibraryContainerHierarchy').mockImplementation(mockGetContainerHierarchy);
 };
 
 /**
@@ -769,23 +913,36 @@ mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockIm
 export async function mockGetEntityLinks(
   _downstreamContextKey?: string,
   _readyToSync?: boolean,
-  upstreamUsageKey?: string,
+  _useTopLevelParents?: boolean,
+  upstreamKey?: string,
+  contentType?: 'all' | 'components' | 'containers',
 ): ReturnType<typeof courseLibApi.getEntityLinks> {
   const thisMock = mockGetEntityLinks;
-  switch (upstreamUsageKey) {
-    case thisMock.upstreamContainerKey: return thisMock.response;
-    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
-    case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
-    default: return [];
+  if (contentType === 'components') {
+    switch (upstreamKey) {
+      case thisMock.upstreamContainerKey: return thisMock.componentResponse;
+      case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentResponse;
+      case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
+      default: return [];
+    }
+  } else if (contentType === 'containers') {
+    switch (upstreamKey) {
+      case thisMock.unitKey: return thisMock.unitResponse;
+      case thisMock.subsectionKey: return thisMock.subsectionResponse;
+      case thisMock.sectionKey: return thisMock.sectionResponse;
+      default: return [];
+    }
   }
+  return thisMock.allResponse;
 }
+
 mockGetEntityLinks.upstreamContainerKey = mockLibraryBlockMetadata.usageKeyPublished;
-mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
+mockGetEntityLinks.componentResponse = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
   id: 875,
   upstreamContextTitle: 'CS problems 3',
   upstreamVersion: 10,
   readyToSync: true,
-  upstreamUsageKey: mockLibraryBlockMetadata.usageKeyPublished,
+  upstreamKey: mockLibraryBlockMetadata.usageKeyPublished,
   upstreamContextKey: 'lib:Axim:TEST2',
   downstreamUsageKey: obj.usageKey,
   downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -793,36 +950,18 @@ mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usa
   versionDeclined: null,
   created: '2025-02-08T14:07:05.588484Z',
   updated: '2025-02-08T14:07:05.588484Z',
+  upstreamType: 'component',
 }));
 mockGetEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
 mockGetEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
-
-mockGetEntityLinks.applyMock = () => jest.spyOn(
-  courseLibApi,
-  'getEntityLinks',
-).mockImplementation(mockGetEntityLinks);
-
-export async function mockGetContainerEntityLinks(
-  _downstreamContextKey?: string,
-  _readyToSync?: boolean,
-  upstreamContainerKey?: string,
-): ReturnType<typeof courseLibApi.getContainerEntityLinks> {
-  const thisMock = mockGetContainerEntityLinks;
-  switch (upstreamContainerKey) {
-    case thisMock.unitKey: return thisMock.unitResponse;
-    case thisMock.subsectionKey: return thisMock.subsectionResponse;
-    case thisMock.sectionKey: return thisMock.sectionResponse;
-    default: return [];
-  }
-}
-mockGetContainerEntityLinks.unitKey = mockGetContainerMetadata.unitId;
-mockGetContainerEntityLinks.unitResponse = [
+mockGetEntityLinks.unitKey = mockGetContainerMetadata.unitId;
+mockGetEntityLinks.unitResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamKey: mockGetEntityLinks.unitKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -830,13 +969,14 @@ mockGetContainerEntityLinks.unitResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.unitKey,
+    upstreamKey: mockGetEntityLinks.unitKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -844,16 +984,17 @@ mockGetContainerEntityLinks.unitResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
-];
-mockGetContainerEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
-mockGetContainerEntityLinks.subsectionResponse = [
+] as courseLibApi.PublishableEntityLink[];
+mockGetEntityLinks.subsectionKey = mockGetContainerMetadata.subsectionId;
+mockGetEntityLinks.subsectionResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamKey: mockGetEntityLinks.subsectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-subsection-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -861,13 +1002,14 @@ mockGetContainerEntityLinks.subsectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.subsectionKey,
+    upstreamKey: mockGetEntityLinks.subsectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-subsection-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -875,16 +1017,17 @@ mockGetContainerEntityLinks.subsectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
-];
-mockGetContainerEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
-mockGetContainerEntityLinks.sectionResponse = [
+] as courseLibApi.PublishableEntityLink[];
+mockGetEntityLinks.sectionKey = mockGetContainerMetadata.sectionId;
+mockGetEntityLinks.sectionResponse = [
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamKey: mockGetEntityLinks.sectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-section-key',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -892,13 +1035,14 @@ mockGetContainerEntityLinks.sectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
   {
     id: 1,
     upstreamContextTitle: 'CS problems 3',
     upstreamVersion: 1,
     readyToSync: false,
-    upstreamContainerKey: mockGetContainerEntityLinks.sectionKey,
+    upstreamKey: mockGetEntityLinks.sectionKey,
     upstreamContextKey: 'lib:Axim:TEST2',
     downstreamUsageKey: 'some-section-key-1',
     downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
@@ -906,10 +1050,16 @@ mockGetContainerEntityLinks.sectionResponse = [
     versionDeclined: null,
     created: '2025-02-08T14:07:05.588484Z',
     updated: '2025-02-08T14:07:05.588484Z',
+    upstreamType: 'container',
   },
+] as courseLibApi.PublishableEntityLink[];
+mockGetEntityLinks.allResponse = [
+  ...mockGetEntityLinks.componentResponse,
+  ...mockGetEntityLinks.unitResponse,
+  ...mockGetEntityLinks.subsectionResponse,
+  ...mockGetEntityLinks.sectionResponse,
 ];
-
-mockGetContainerEntityLinks.applyMock = () => jest.spyOn(
+mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
-  'getContainerEntityLinks',
-).mockImplementation(mockGetContainerEntityLinks);
+  'getEntityLinks',
+).mockImplementation(mockGetEntityLinks);

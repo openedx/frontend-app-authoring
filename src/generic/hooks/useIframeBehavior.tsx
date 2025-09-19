@@ -1,12 +1,23 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { logError } from '@edx/frontend-platform/logging';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { useKeyedState } from '@edx/react-unit-test-utils';
-
+import StrictDict from '@src/editors/utils/StrictDict';
 import { useLoadBearingHook } from './useLoadBearingHook';
-import { iframeStateKeys, iframeMessageTypes } from '../../constants';
+import { iframeMessageTypes } from '../../constants';
 import { UseIFrameBehaviorReturnTypes, UseIFrameBehaviorTypes } from '../types';
 import { useEventListener } from './useEventListener';
+
+/**
+ * Internal state hooks for useIFrameBehavior.
+ * Defined and exported here so they can be mocked/manipulated in tests.
+ */
+export const iframeBehaviorState = StrictDict({
+  /* eslint-disable react-hooks/rules-of-hooks */
+  iframeHeight: (val) => useState<number>(val),
+  hasLoaded: (val) => useState<boolean>(val),
+  showError: (val) => useState<boolean>(val),
+  windowTopOffset: (val) => useState<number | null>(val),
+  /* eslint-enable react-hooks/rules-of-hooks */
+});
 
 /**
  * Custom hook to manage iframe behavior.
@@ -31,10 +42,10 @@ export const useIframeBehavior = ({
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
 
-  const [iframeHeight, setIframeHeight] = useKeyedState<number>(iframeStateKeys.iframeHeight, 0);
-  const [hasLoaded, setHasLoaded] = useKeyedState<boolean>(iframeStateKeys.hasLoaded, false);
-  const [showError, setShowError] = useKeyedState<boolean>(iframeStateKeys.showError, false);
-  const [windowTopOffset, setWindowTopOffset] = useKeyedState<number | null>(iframeStateKeys.windowTopOffset, null);
+  const [iframeHeight, setIframeHeight] = iframeBehaviorState.iframeHeight(0);
+  const [hasLoaded, setHasLoaded] = iframeBehaviorState.hasLoaded(false);
+  const [showError, setShowError] = iframeBehaviorState.showError(false);
+  const [windowTopOffset, setWindowTopOffset] = iframeBehaviorState.windowTopOffset(null);
 
   const receiveMessage = useCallback((event: MessageEvent) => {
     if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
@@ -69,6 +80,16 @@ export const useIframeBehavior = ({
           onBlockNotification?.({
             eventType: method.substr(7), // Remove the 'xblock:' prefix that we added in wrap.ts
             ...args,
+          });
+        }
+        break;
+      case iframeMessageTypes.xblockScroll:
+        if (document.getElementsByName('xblock-iframe')) {
+          const iframeElement = document.getElementsByName('xblock-iframe')[0];
+          window.scrollTo({
+            top: data.offset + iframeElement!.offsetTop + iframeElement.parentElement!.offsetTop,
+            left: 0,
+            behavior: 'smooth',
           });
         }
         break;

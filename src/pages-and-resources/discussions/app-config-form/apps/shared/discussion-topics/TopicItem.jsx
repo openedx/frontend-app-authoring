@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { useFormikContext } from 'formik';
 
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Card, Form,
 } from '@openedx/paragon';
@@ -13,7 +13,6 @@ import messages from '../../../messages';
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
 const TopicItem = ({
-  intl,
   index,
   id,
   name,
@@ -21,6 +20,7 @@ const TopicItem = ({
   hasError,
   onFocus,
 }) => {
+  const intl = useIntl();
   const {
     handleChange, handleBlur, errors,
   } = useFormikContext();
@@ -139,9 +139,8 @@ TopicItem.propTypes = {
   id: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
   hasError: PropTypes.bool.isRequired,
   onFocus: PropTypes.func.isRequired,
 };
 
-export default injectIntl(TopicItem);
+export default TopicItem;

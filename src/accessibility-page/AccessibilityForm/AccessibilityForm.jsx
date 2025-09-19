@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  injectIntl, FormattedMessage, intlShape, FormattedDate, FormattedTime,
+  FormattedMessage, FormattedDate, FormattedTime, useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Alert, Form, Stack, StatefulButton,
@@ -15,9 +15,8 @@ import messages from './messages';
 
 const AccessibilityForm = ({
   accessibilityEmail,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const {
     errors,
     values,
@@ -139,8 +138,6 @@ const AccessibilityForm = ({
 
 AccessibilityForm.propTypes = {
   accessibilityEmail: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(AccessibilityForm);
+export default AccessibilityForm;

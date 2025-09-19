@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Toast } from '@openedx/paragon';
 import messages from './messages';
 
@@ -11,9 +11,8 @@ const ApiStatusToast = ({
   setClose,
   setSelectedRows,
   fileType,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const handleClose = () => {
     setSelectedRows([]);
     setClose();
@@ -36,8 +35,6 @@ ApiStatusToast.propTypes = {
   setClose: PropTypes.func.isRequired,
   setSelectedRows: PropTypes.func.isRequired,
   fileType: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(ApiStatusToast);
+export default ApiStatusToast;

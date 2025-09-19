@@ -8,18 +8,16 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
+import { ToastContext } from '@src/generic/toast-context';
+
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useClipboard } from '../../generic/clipboard';
-import { ToastContext } from '../../generic/toast-context';
-import {
-  useAddItemsToContainer,
-  useRemoveContainerChildren,
-  useRemoveItemsFromCollection,
-} from '../data/apiHooks';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
+import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
+import ComponentRemover from './ComponentRemover';
 import messages from './messages';
 import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
@@ -36,18 +34,17 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const {
     sidebarItemInfo,
-    openComponentInfoSidebar,
     closeLibrarySidebar,
     setSidebarAction,
+    openItemSidebar,
   } = useSidebarContext();
-  const { navigateTo, insideCollection } = useLibraryRoutes();
+  const { insideCollection } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const addItemToContainerMutation = useAddItemsToContainer(containerId);
   const removeCollectionComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
-  const removeContainerItemMutation = useRemoveContainerChildren(containerId);
-  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isRemoveModalOpen, openRemoveModal, closeRemoveModal] = useToggle(false);
   const { copyToClipboard } = useClipboard();
 
   const updateClipboardClick = () => {
@@ -66,36 +63,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     });
   };
 
-  const removeFromContainer = () => {
-    const restoreComponent = () => {
-      addItemToContainerMutation.mutateAsync([usageKey]).then(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
-      });
-    };
-
-    removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarItemInfo?.id === usageKey) {
-        // Close sidebar if current component is open
-        closeLibrarySidebar();
-      }
-      showToast(
-        intl.formatMessage(messages.removeComponentFromContainerSuccess),
-        {
-          label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
-          onClick: restoreComponent,
-        },
-      );
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
-    });
-  };
-
   const handleEdit = useCallback(() => {
-    navigateTo({ selectedItemId: usageKey });
+    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     openComponentEditor(usageKey);
-  }, [usageKey, navigateTo]);
+  }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
@@ -104,13 +75,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   });
 
   const showManageCollections = useCallback(() => {
-    navigateTo({ selectedItemId: usageKey });
+    openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
     scheduleJumpToCollection();
   }, [
     scheduleJumpToCollection,
-    openComponentInfoSidebar,
     usageKey,
-    navigateTo,
+    openItemSidebar,
   ]);
 
   const containerType = containerId ? getBlockType(containerId) : 'collection';
@@ -122,6 +92,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         as={IconButton}
         src={MoreVert}
         iconAs={Icon}
+        size="sm"
         variant="primary"
         alt={intl.formatMessage(messages.componentCardMenuAlt)}
         data-testid="component-card-menu-toggle"
@@ -134,11 +105,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
         {containerId && (
-          <Dropdown.Item onClick={removeFromContainer}>
+          <Dropdown.Item onClick={openRemoveModal}>
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={confirmDelete}>
+        <Dropdown.Item onClick={openDeleteModal}>
           <FormattedMessage {...messages.menuDelete} />
         </Dropdown.Item>
         {insideCollection && (
@@ -155,11 +126,16 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...containerMessages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
-      {isConfirmingDelete && (
+      {isDeleteModalOpen && (
         <ComponentDeleter
           usageKey={usageKey}
-          isConfirmingDelete={isConfirmingDelete}
-          cancelDelete={cancelDelete}
+          close={closeDeleteModal}
+        />
+      )}
+      {isRemoveModalOpen && (
+        <ComponentRemover
+          usageKey={usageKey}
+          close={closeRemoveModal}
         />
       )}
     </Dropdown>

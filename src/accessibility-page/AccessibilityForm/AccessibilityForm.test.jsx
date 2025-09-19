@@ -1,6 +1,5 @@
 import {
   render,
-  act,
   screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -74,22 +73,24 @@ describe('<AccessibilityPolicyForm />', () => {
   describe('statusAlert', () => {
     let formSections;
     let submitButton;
+    let user;
     beforeEach(async () => {
+      user = userEvent.setup();
       renderComponent();
       formSections = screen.getAllByRole('textbox');
-      await act(async () => {
-        userEvent.type(formSections[0], 'email@email.com');
-        userEvent.type(formSections[1], 'test name');
-        userEvent.type(formSections[2], 'feedback message');
-      });
+
+      await user.type(formSections[0], 'email@email.com');
+      await user.type(formSections[1], 'test name');
+      await user.type(formSections[2], 'feedback message');
+
       submitButton = screen.getByText(messages.accessibilityPolicyFormSubmitLabel.defaultMessage);
     });
 
     it('shows correct success message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(200);
-      await act(async () => {
-        userEvent.click(submitButton);
-      });
+
+      await user.click(submitButton);
+
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.SUCCESSFUL);
 
@@ -104,9 +105,9 @@ describe('<AccessibilityPolicyForm />', () => {
 
     it('shows correct rate limiting message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(429);
-      await act(async () => {
-        userEvent.click(submitButton);
-      });
+
+      await user.click(submitButton);
+
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.FAILED);
 
@@ -123,23 +124,24 @@ describe('<AccessibilityPolicyForm />', () => {
   describe('input validation', () => {
     let formSections;
     let submitButton;
+    let user;
     beforeEach(async () => {
+      user = userEvent.setup();
       renderComponent();
       formSections = screen.getAllByRole('textbox');
-      await act(async () => {
-        userEvent.type(formSections[0], 'email@email.com');
-        userEvent.type(formSections[1], 'test name');
-        userEvent.type(formSections[2], 'feedback message');
-      });
+
+      await user.type(formSections[0], 'email@email.com');
+      await user.type(formSections[1], 'test name');
+      await user.type(formSections[2], 'feedback message');
+
       submitButton = screen.getByText(messages.accessibilityPolicyFormSubmitLabel.defaultMessage);
     });
 
     it('adds validation checking on each input field', async () => {
-      await act(async () => {
-        userEvent.clear(formSections[0]);
-        userEvent.clear(formSections[1]);
-        userEvent.clear(formSections[2]);
-      });
+      await user.clear(formSections[0]);
+      await user.clear(formSections[1]);
+      await user.clear(formSections[2]);
+
       const emailError = screen.getByTestId('error-feedback-email');
       expect(emailError).toBeVisible();
 
@@ -151,12 +153,10 @@ describe('<AccessibilityPolicyForm />', () => {
     });
 
     it('sumbit button is disabled when trying to submit with all empty fields', async () => {
-      await act(async () => {
-        userEvent.clear(formSections[0]);
-        userEvent.clear(formSections[1]);
-        userEvent.clear(formSections[2]);
-        userEvent.click(submitButton);
-      });
+      await user.clear(formSections[0]);
+      await user.clear(formSections[1]);
+      await user.clear(formSections[2]);
+      await user.click(submitButton);
 
       expect(submitButton.closest('button')).toBeDisabled();
     });

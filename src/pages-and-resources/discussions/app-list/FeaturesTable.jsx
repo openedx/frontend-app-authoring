@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Remove, Check } from '@openedx/paragon/icons';
 import { DataTable } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import groupBy from 'lodash/groupBy';
 
 import messages from './messages';
@@ -10,7 +10,8 @@ import appMessages from '../app-config-form/messages';
 import { FEATURE_TYPES } from '../data/constants';
 import './FeaturesTable.scss';
 
-const FeaturesTable = ({ apps, features, intl }) => {
+const FeaturesTable = ({ apps, features }) => {
+  const intl = useIntl();
   const {
     basic, partial, full, common,
   } = groupBy(features, (feature) => feature.featureSupportType);
@@ -89,10 +90,9 @@ const FeaturesTable = ({ apps, features, intl }) => {
   );
 };
 
-export default injectIntl(FeaturesTable);
+export default FeaturesTable;
 
 FeaturesTable.propTypes = {
   apps: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  intl: intlShape.isRequired,
 };

@@ -115,12 +115,13 @@ describe('TranscriptTab', () => {
       });
 
       it('should upload new transcript', async () => {
+        const user = userEvent.setup();
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_upload/`).reply(204);
         await act(async () => {
           const addFileInput = screen.getByLabelText(genericMessages.fileInputAriaLabel.defaultMessage);
           expect(addFileInput).toBeInTheDocument();
 
-          userEvent.upload(addFileInput, file);
+          await user.upload(addFileInput, file);
         });
         const addStatus = store.getState().videos.transcriptStatus;
 
@@ -128,10 +129,11 @@ describe('TranscriptTab', () => {
       });
 
       it('should show default error message', async () => {
+        const user = userEvent.setup();
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_upload/`).reply(404);
         await act(async () => {
           const addFileInput = screen.getByLabelText(genericMessages.fileInputAriaLabel.defaultMessage);
-          userEvent.upload(addFileInput, file);
+          await user.upload(addFileInput, file);
         });
         const addStatus = store.getState().videos.transcriptStatus;
 
@@ -141,10 +143,11 @@ describe('TranscriptTab', () => {
       });
 
       it('should show api provided error message', async () => {
+        const user = userEvent.setup();
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_upload/`).reply(404, { error: 'api error' });
         await act(async () => {
           const addFileInput = screen.getByLabelText(genericMessages.fileInputAriaLabel.defaultMessage);
-          userEvent.upload(addFileInput, file);
+          await user.upload(addFileInput, file);
         });
         const addStatus = store.getState().videos.transcriptStatus;
 
@@ -297,11 +300,12 @@ describe('TranscriptTab', () => {
       });
 
       it('should replace transcript', async () => {
+        const user = userEvent.setup();
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_upload/`).reply(204);
 
         await act(async () => {
           const addFileInput = screen.getAllByLabelText(genericMessages.fileInputAriaLabel.defaultMessage)[0];
-          userEvent.upload(addFileInput, file);
+          await user.upload(addFileInput, file);
         });
         const addStatus = store.getState().videos.transcriptStatus;
 
@@ -313,11 +317,12 @@ describe('TranscriptTab', () => {
       });
 
       it('should show error message', async () => {
+        const user = userEvent.setup();
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_upload/`).reply(404);
 
         await act(async () => {
           const addFileInput = screen.getAllByLabelText(genericMessages.fileInputAriaLabel.defaultMessage)[0];
-          userEvent.upload(addFileInput, file);
+          await user.upload(addFileInput, file);
         });
 
         const addStatus = store.getState().videos.transcriptStatus;

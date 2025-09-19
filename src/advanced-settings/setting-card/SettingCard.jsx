@@ -11,7 +11,7 @@ import {
 import { InfoOutline, Warning } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import messages from './messages';
@@ -25,9 +25,8 @@ const SettingCard = ({
   saveSettingsPrompt,
   isEditableState,
   setIsEditableState,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const { deprecated, help, displayName } = settingData;
   const initialValue = JSON.stringify(settingData.value, null, 4);
   const [isOpen, open, close] = useToggle(false);
@@ -115,7 +114,6 @@ const SettingCard = ({
 };
 
 SettingCard.propTypes = {
-  intl: intlShape.isRequired,
   settingData: PropTypes.shape({
     deprecated: PropTypes.bool,
     help: PropTypes.string,
@@ -137,4 +135,4 @@ SettingCard.propTypes = {
   setIsEditableState: PropTypes.func.isRequired,
 };
 
-export default injectIntl(SettingCard);
+export default SettingCard;

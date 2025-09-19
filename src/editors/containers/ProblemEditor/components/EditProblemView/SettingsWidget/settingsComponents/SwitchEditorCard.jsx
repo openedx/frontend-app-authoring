@@ -1,24 +1,27 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
+import { useEditorContext } from '@src/editors/EditorContext';
+import { selectors, thunkActions } from '@src/editors/data/redux';
+import BaseModal from '@src/editors/sharedComponents/BaseModal';
+import Button from '@src/editors/sharedComponents/Button';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import messages from '../messages';
-import { selectors, thunkActions } from '../../../../../../data/redux';
-import BaseModal from '../../../../../../sharedComponents/BaseModal';
-import Button from '../../../../../../sharedComponents/Button';
 import { handleConfirmEditorSwitch } from '../hooks';
-import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
 const SwitchEditorCard = ({
   editorType,
   problemType,
-  switchEditor,
-  isMarkdownEditorEnabled,
 }) => {
   const [isConfirmOpen, setConfirmOpen] = React.useState(false);
+  const { isMarkdownEditorEnabledForContext } = useEditorContext();
+  const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
+  const dispatch = useDispatch();
 
-  if (isMarkdownEditorEnabled || problemType === ProblemTypeKeys.ADVANCED) { return null; }
+  const isMarkdownEditorActive = isMarkdownEditorEnabled && isMarkdownEditorEnabledForContext;
+  if (isMarkdownEditorActive || problemType === ProblemTypeKeys.ADVANCED) { return null; }
 
   return (
     <Card className="border border-light-700 shadow-none">
@@ -29,7 +32,10 @@ const SwitchEditorCard = ({
         confirmAction={(
           <Button
             /* istanbul ignore next */
-            onClick={() => handleConfirmEditorSwitch({ switchEditor: () => switchEditor(editorType), setConfirmOpen })}
+            onClick={() => handleConfirmEditorSwitch({
+              switchEditor: () => dispatch(thunkActions.problem.switchEditor(editorType)),
+              setConfirmOpen,
+            })}
             variant="primary"
           >
             <FormattedMessage {...messages[`ConfirmSwitchButtonLabel-${editorType}`]} />
@@ -52,19 +58,8 @@ const SwitchEditorCard = ({
 };
 
 SwitchEditorCard.propTypes = {
-  switchEditor: PropTypes.func.isRequired,
-  isMarkdownEditorEnabled: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
   editorType: PropTypes.string.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  isMarkdownEditorEnabled: selectors.problem.isMarkdownEditorEnabled(state)
-     && selectors.app.isMarkdownEditorEnabledForCourse(state),
-});
-export const mapDispatchToProps = {
-  switchEditor: thunkActions.problem.switchEditor,
-};
-
-export const SwitchEditorCardInternal = SwitchEditorCard; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(SwitchEditorCard);
+export default SwitchEditorCard;

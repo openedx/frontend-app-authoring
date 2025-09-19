@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { answerOptionProps } from '../../../../../../../data/services/cms/types';
 import FeedbackControl from './FeedbackControl';
@@ -15,9 +15,8 @@ export const FeedbackBox = ({
   images,
   isLibrary,
   learningContextId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const props = {
     answer,
     intl,
@@ -70,7 +69,6 @@ FeedbackBox.propTypes = {
   images: PropTypes.shape({}).isRequired,
   learningContextId: PropTypes.string.isRequired,
   isLibrary: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(FeedbackBox);
+export default FeedbackBox;
