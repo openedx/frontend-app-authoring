@@ -8,6 +8,7 @@ import { generatePath, useHref } from 'react-router-dom';
 import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
+import { setUIPreference } from '../services/uiPreferenceService';
 
 type ContainerPropsType = React.ComponentProps<typeof Container>;
 
@@ -83,10 +84,25 @@ const Header = ({
         />
       )}
       <button
-        onClick={() => {
-          localStorage.setItem('oldUI', 'false');
-          window.dispatchEvent(new CustomEvent('uiModeChanged'));
-          window.location.reload();
+        type="button"
+        onClick={async () => {
+          try {
+            const success = await setUIPreference(true); // true means new UI
+            if (success) {
+              // Trigger UI mode change event to update the app
+              window.dispatchEvent(new CustomEvent('uiModeChanged'));
+              // Reload the page to apply changes
+              window.location.reload();
+            } else {
+              // eslint-disable-next-line no-console
+              console.error('Failed to switch to new UI');
+              // You might want to show a toast notification here
+            }
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error switching to new UI:', error);
+            // You might want to show a toast notification here
+          }
         }}
         style={{
           position: 'absolute',

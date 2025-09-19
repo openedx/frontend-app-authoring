@@ -51,13 +51,14 @@ import Layout from './Layout';
 import './styles/conditional-styles.css';
 import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreateNewCourseForm';
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
-import  Calendar  from './calendar/pages/CalendarPage';
+import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-import { applyTheme } from './styles/themeLoader'
+import { applyTheme } from './styles/themeLoader';
+import { getUIPreference } from './services/uiPreferenceService';
+import { LoadingSpinner } from './generic/Loading';
 
 // Load styles only for new UI
-const loadStylesForNewUI = () => {
-  const isOldUI = localStorage.getItem('oldUI') === 'true';
+const loadStylesForNewUI = (isOldUI) => {
   document.body.className = isOldUI ? 'old-ui' : 'new-ui';
 
   if (!isOldUI) {
@@ -71,7 +72,8 @@ const queryClient = new QueryClient();
 registerFontAwesomeIcons();
 
 const App = () => {
-  const [oldUI, setOldUI] = useState(() => localStorage.getItem('oldUI'));
+  const [oldUI, setOldUI] = useState(null); // null means loading, true/false means loaded
+  const [loading, setLoading] = useState(true);
   console.log('oldUI in Index', oldUI);
 
   // Apply theme from JSON
@@ -79,44 +81,68 @@ const App = () => {
     applyTheme(); // Load default theme from /theme.json
   }, []);
 
+  // Load UI preference from API on component mount
   useEffect(() => {
-    // Load styles based on UI mode
-    loadStylesForNewUI();
-
-    if (process.env.HOTJAR_APP_ID) {
+    const loadUIPreference = async () => {
       try {
-        initializeHotjar({
-          hotjarId: process.env.HOTJAR_APP_ID,
-          hotjarVersion: process.env.HOTJAR_VERSION,
-          hotjarDebug: !!process.env.HOTJAR_DEBUG,
-        });
+        const useNewUI = await getUIPreference();
+        setOldUI(!useNewUI); // Convert to oldUI boolean
+        setLoading(false);
       } catch (error) {
-        logError(error);
+        console.error('Failed to load UI preference:', error);
+        setOldUI(false); // Default to new UI on error
+        setLoading(false);
+      }
+    };
+
+    loadUIPreference();
+  }, []);
+
+  useEffect(() => {
+    if (oldUI !== null) {
+      // Load styles based on UI mode
+      loadStylesForNewUI(oldUI);
+
+      if (process.env.HOTJAR_APP_ID) {
+        try {
+          initializeHotjar({
+            hotjarId: process.env.HOTJAR_APP_ID,
+            hotjarVersion: process.env.HOTJAR_VERSION,
+            hotjarDebug: !!process.env.HOTJAR_DEBUG,
+          });
+        } catch (error) {
+          logError(error);
+        }
       }
     }
-  }, [oldUI]); // Add oldUI as dependency
+  }, [oldUI]);
 
-  // Listen for storage changes to detect oldUI changes
+  // Listen for custom events that might be triggered when UI mode changes
   useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === 'oldUI') {
-        setOldUI(e.newValue);
+    const handleUIModeChange = async () => {
+      try {
+        const useNewUI = await getUIPreference();
+        setOldUI(!useNewUI);
+      } catch (error) {
+        console.error('Failed to refresh UI preference:', error);
       }
     };
 
-    // Listen for custom events that might be triggered when UI mode changes
-    const handleUIModeChange = () => {
-      setOldUI(localStorage.getItem('oldUI'));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
     window.addEventListener('uiModeChanged', handleUIModeChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('uiModeChanged', handleUIModeChange);
     };
   }, []);
+
+  // Show loading screen while UI preference is being fetched
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center flex-column vh-100">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   const router = createBrowserRouter(
     createRoutesFromElements(
