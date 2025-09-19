@@ -34,6 +34,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
         title={child.name}
         containerType={child.blockType}
         state={child.state}
+        originalName={child.originalName}
         side="Before"
       />
     ))

@@ -15,10 +15,11 @@ export interface ContainerRowProps {
   containerType: ContainerType | keyof typeof COMPONENT_TYPES;
   state?: ContainerState;
   side: "Before" | "After";
+  originalName?: string;
   onClick?: () => void;
 }
 
-const ContainerRow = ({ title, containerType, state, side, onClick }: ContainerRowProps) => {
+const ContainerRow = ({ title, containerType, state, side, originalName, onClick }: ContainerRowProps) => {
   const stateContext = useMemo(() => {
     let message: MessageDescriptor | undefined;
     switch (state) {
@@ -33,7 +34,7 @@ const ContainerRow = ({ title, containerType, state, side, onClick }: ContainerR
         return ["text-white bg-danger-600", Delete, message];
       case "renamed":
         message = side === "Before" ? messages.renamedDiffBeforeMessage : messages.renamedDiffAfterMessage;
-        return ["bg-light-300 text-light-300", Done, message];
+        return ["bg-light-300 text-light-300 ", Done, message];
       case "moved":
         message = side === "Before" ? messages.movedDiffBeforeMessage : messages.movedDiffAfterMessage;
         return ["bg-light-300 text-light-300", Done, message];
@@ -43,13 +44,13 @@ const ContainerRow = ({ title, containerType, state, side, onClick }: ContainerR
   }, [state, side]);
 
   return (
-    <Stack direction="horizontal" gap={0} className="mb-2 rounded shadow-sm border border-light-100">
+    <Stack onClick={onClick} direction="horizontal" gap={0} className="mb-2 rounded shadow-sm border border-light-100">
       <div
         className={`px-1 align-self-stretch align-content-center rounded-left ${stateContext[0]}`}
       >
         <Icon size="sm" src={stateContext[1]} />
       </div>
-      <ActionRow onClick={onClick} className="p-2">
+      <ActionRow className="p-2">
         <Stack direction="vertical" gap={3}>
           <Stack direction="horizontal" gap={2}>
             <Icon
@@ -62,7 +63,7 @@ const ContainerRow = ({ title, containerType, state, side, onClick }: ContainerR
           {stateContext[2] && <span className="micro">
           <FormattedMessage {...stateContext[2]} values={{
             blockType: containerType,
-            name: title,
+            name: originalName,
           }} />
           </span>}
         </Stack>
