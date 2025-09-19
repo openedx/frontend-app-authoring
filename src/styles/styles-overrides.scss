@@ -2130,6 +2130,42 @@ body {
   }
 }
 
+.error-content {
+  .error-code {
+    h1 {
+      // background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+      background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+    }
+  }
+
+  .error-actions {
+    gap: 1rem !important;
+    /* margin-inline: 1rem; */
+    /* margin-right: 1rem; */
+    display: flex;
+    justify-content: center;
+  }
+
+  .error-message {
+    h2 {
+      color: var(--text-primary) !important;
+    }
+
+    p {
+      color: var(--text-muted) !important;
+    }
+  }
+
+  .error-help {
+    p {
+      color: var(--text-secondary) !important;
+    }
+  }
+}
+
 // S Styles End
 
 // N Styles Start

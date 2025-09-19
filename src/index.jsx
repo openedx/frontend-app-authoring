@@ -40,6 +40,7 @@ import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
+import PageNotFound from './generic/PageNotFound';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 // eslint-disable-next-line import/no-unresolved
@@ -119,55 +120,59 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
-        <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
-        {/* <Route path="/home" element={<StudioHome />} /> */}
-        <Route path="/widgets-create" element={<CreateWidgets />} />
-        <Route path="/my-courses" element={<MyCourses />} />
-        {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
-        {oldUI === 'true' ? (
-          <Route path="/libraries" element={<StudioHome />} />
-        ) : (
-          <Route path="/libraries" element={<LibrariesV2Tab />} />
-        )}
-        <Route path="/libraries-v1" element={<StudioHome />} />
-        <Route path="/library/create" element={<CreateLibrary />} />
-        <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
-        <Route path="/component-picker" element={<ComponentPicker />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/assignments" element={<AssignmentPage />} />
-        <Route
-          path="/component-picker/multiple"
-          element={<ComponentPicker componentPickerMode="multiple" />}
-        />
-        <Route
-          path="/legacy/preview-changes/:usageKey"
-          element={<PreviewChangesEmbed />}
-        />
-        <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
-        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-        <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
-        {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
-          <Route path="/accessibility" element={<AccessibilityPage />} />
-        )}
-        {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-          <>
-            <Route path="/taxonomies" element={<TaxonomyLayout />}>
-              <Route index element={<TaxonomyListPage />} />
-            </Route>
-            <Route path="/taxonomy" element={<TaxonomyLayout />}>
+      <>
+        <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
+          <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
+          {/* <Route path="/home" element={<StudioHome />} /> */}
+          <Route path="/widgets-create" element={<CreateWidgets />} />
+          <Route path="/my-courses" element={<MyCourses />} />
+          {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
+          {oldUI === 'true' ? (
+            <Route path="/libraries" element={<StudioHome />} />
+          ) : (
+            <Route path="/libraries" element={<LibrariesV2Tab />} />
+          )}
+          <Route path="/libraries-v1" element={<StudioHome />} />
+          <Route path="/library/create" element={<CreateLibrary />} />
+          <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
+          <Route path="/component-picker" element={<ComponentPicker />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/assignments" element={<AssignmentPage />} />
+          <Route
+            path="/component-picker/multiple"
+            element={<ComponentPicker componentPickerMode="multiple" />}
+          />
+          <Route
+            path="/legacy/preview-changes/:usageKey"
+            element={<PreviewChangesEmbed />}
+          />
+          <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+          <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+          <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
+          {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
+            <Route path="/accessibility" element={<AccessibilityPage />} />
+          )}
+          {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+            <>
+              <Route path="/taxonomies" element={<TaxonomyLayout />}>
+                <Route index element={<TaxonomyListPage />} />
+              </Route>
+              <Route path="/taxonomy" element={<TaxonomyLayout />}>
+                <Route
+                  path="/taxonomy/:taxonomyId"
+                  element={<TaxonomyDetailPage />}
+                />
+              </Route>
               <Route
-                path="/taxonomy/:taxonomyId"
-                element={<TaxonomyDetailPage />}
+                path="/tagging/components/widget/:contentId"
+                element={<ContentTagsDrawer />}
               />
-            </Route>
-            <Route
-              path="/tagging/components/widget/:contentId"
-              element={<ContentTagsDrawer />}
-            />
-          </>
-        )}
-      </Route>,
+            </>
+          )}
+        </Route>
+        {/* Catch-all route for 404 errors - outside Layout for full page */}
+        <Route path="*" element={<PageNotFound />} />
+      </>,
     ),
     {
       basename: getPath(getConfig().PUBLIC_PATH),
