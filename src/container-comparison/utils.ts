@@ -2,6 +2,7 @@ import { UpstreamInfo } from "../data/types";
 import { ContainerState } from "./ContainerRow";
 
 type WithState<T> = T & { state?: ContainerState, originalName?: string };
+type WithIndex<T> = T & { index: number };
 
 export type CourseContainerChildBase = {
   name: string;
@@ -30,29 +31,26 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   b: B[],
   idKey: string = "id"
 ): [WithState<A>[], WithState<B>[]] {
-  const mapA = new Map<any, A & { index: number }>();
-  const mapB = new Map<any, B & { index: number }>();
+  const mapA = new Map<any, WithIndex<A>>();
+  const mapB = new Map<any, WithIndex<B>>();
   for (let index = 0; index < a.length; index++) {
     const element = a[index];
     mapA.set(element.upstreamLink?.upstreamRef, { ...element, index });
   }
-  for (let index = 0; index < b.length; index++) {
-    const element = b[index];
-    mapB.set(element[idKey], { ...element, index });
-  }
-  const updatedA: WithState<A>[] = Array(b.length);
+  const updatedA: WithState<A>[] = [...a];
+  const addedA: Array<WithIndex<A>> = [];
   const updatedB: WithState<B>[] = [];
   for (let index = 0; index < b.length; index++) {
     const newVersion = b[index];
     const oldVersion = mapA.get(newVersion.id);
     if (!oldVersion) {
       // This is a newly added component
-      updatedA.splice(index, 1, {
+      addedA.push({
         id: newVersion.id,
         name: newVersion.displayName,
         blockType: newVersion.containerType,
-        state: "added",
-      } as WithState<A>);
+        index,
+      } as WithIndex<A>);
       updatedB.push({...newVersion, state: "added"});
     } else {
       // It was present in previous version
@@ -82,13 +80,24 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 
   // If there are remaining items in mapA, it means they were deleted in newVersion;
   mapA.forEach((oldVersion) => {
-    updatedA.splice(oldVersion.index, 0, { ...oldVersion, state: "removed" });
+    updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: "removed" });
     updatedB.splice(oldVersion.index, 0, {
       id: oldVersion.id,
       displayName: oldVersion.name,
       containerType: oldVersion.blockType,
       state: "removed",
     } as WithState<B>);
+  });
+
+  // Create a map for id with index of newly updatedB array
+  for (let index = 0; index < updatedB.length; index++) {
+    const element = updatedB[index];
+    mapB.set(element[idKey], { ...element, index });
+  }
+
+  // Use new mapB for getting new index for added elements
+  addedA.forEach((addedRow) => {
+    updatedA.splice(mapB.get(addedRow.id)?.index!, 0, { ...addedRow, state: "added" });
   });
 
   return [updatedA, updatedB];
