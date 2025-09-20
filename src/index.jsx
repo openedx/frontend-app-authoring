@@ -54,7 +54,7 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-// import { applyTheme } from './styles/themeLoader';
+import { applyTheme } from './styles/themeLoader';
 // import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
@@ -82,11 +82,6 @@ const App = () => {
   const [menuConfig, setMenuConfig] = useState(null);
   console.log('oldUI in Index', oldUI);
 
-  // Apply theme from JSON
-  // useEffect(() => {
-  //   applyTheme(); // Load default theme from /theme.json
-  // }, []);
-
   // Load UI preference and menu config in one API call to avoid race conditions
   useEffect(() => {
     const loadUIPreferenceAndMenuConfig = async () => {
@@ -100,11 +95,11 @@ const App = () => {
         // Then, fetch both UI preference and menu config in one API call
         console.log('Fetching menu config and UI preference...');
         const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
-        
+
         if (response.status === 200 && response.data) {
           console.log('Menu config:', response.data);
           setMenuConfig(response.data);
-          
+
           // Extract UI preference from the same response
           const useNewUI = response.data.use_new_ui === true;
           const apiOldUIValue = !useNewUI ? 'true' : 'false';
@@ -130,9 +125,16 @@ const App = () => {
         setMenuConfig({}); // Set empty object as fallback
       }
     };
-    
+
     loadUIPreferenceAndMenuConfig();
   }, []);
+
+  // Apply theme from JSON
+  useEffect(() => {
+    if (oldUI === 'false') {
+      applyTheme(); // Load default theme from /theme.json
+    }
+  }, [oldUI]);
 
   useEffect(() => {
     // Only load styles after we know the UI preference
