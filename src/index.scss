@@ -74,6 +74,14 @@ html, body.old-ui {
   overflow: auto !important; /* Allow scrolling for old UI */
 }
 
+html.old-ui {
+  overflow: auto !important; /* Allow scrolling for old UI */
+}
+
+html.new-ui {
+  overflow: hidden !important; /* Prevent outer scrollbar for new UI */
+}
+
 mark {
   padding: 0;
 }

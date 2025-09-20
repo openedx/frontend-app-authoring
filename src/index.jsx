@@ -61,7 +61,9 @@ import { applyTheme } from './styles/themeLoader';
 const loadStylesForNewUI = (isOldUI) => {
   console.log('loadStylesForNewUI called with isOldUI:', isOldUI);
   document.body.className = isOldUI ? 'old-ui' : 'new-ui';
+  document.documentElement.className = isOldUI ? 'old-ui' : 'new-ui';
   console.log('Body className set to:', document.body.className);
+  console.log('Html className set to:', document.documentElement.className);
 
   if (!isOldUI) {
     console.log('Loading titaned-lib styles...');
