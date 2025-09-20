@@ -55,7 +55,7 @@ import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
 // import { applyTheme } from './styles/themeLoader';
-import { getUIPreference } from './services/uiPreferenceService';
+// import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
@@ -87,9 +87,9 @@ const App = () => {
   //   applyTheme(); // Load default theme from /theme.json
   // }, []);
 
-  // Load UI preference: first from localStorage, then sync with API
+  // Load UI preference and menu config in one API call to avoid race conditions
   useEffect(() => {
-    const loadUIPreference = async () => {
+    const loadUIPreferenceAndMenuConfig = async () => {
       try {
         // First, load from localStorage for immediate display
         const localStorageValue = localStorage.getItem('oldUI') || 'false';
@@ -97,48 +97,41 @@ const App = () => {
         setOldUI(localStorageValue);
         setLoading(false);
 
-        // Then, sync with API in background (only once)
-        console.log('Syncing with API...');
-        const useNewUI = await getUIPreference();
-        const apiOldUIValue = !useNewUI ? 'true' : 'false';
-        console.log('API returned use_new_ui:', useNewUI, 'API oldUI:', apiOldUIValue);
-
-        // Check if API response matches localStorage
-        if (localStorageValue !== apiOldUIValue) {
-          console.log('Mismatch detected! localStorage:', localStorageValue, 'API:', apiOldUIValue);
-          console.log('Updating localStorage and reloading page...');
-          localStorage.setItem('oldUI', apiOldUIValue);
-          // Reload page to re-run build-time config with correct localStorage
-          window.location.reload();
-          return;
-        }
-
-        console.log('localStorage and API are in sync, no reload needed');
-      } catch (error) {
-        console.error('API sync failed, using localStorage value:', error);
-        // If API fails, just use localStorage value (already set above)
-      }
-    };
-    loadUIPreference();
-  }, []);
-
-  // Get Menu-Config for Api Routing Guard.
-  useEffect(() => {
-    const fetchMenuConfig = async () => {
-      try {
+        // Then, fetch both UI preference and menu config in one API call
+        console.log('Fetching menu config and UI preference...');
         const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
-        console.log('Menu config:', response.data);
-        return response.data;
+        
+        if (response.status === 200 && response.data) {
+          console.log('Menu config:', response.data);
+          setMenuConfig(response.data);
+          
+          // Extract UI preference from the same response
+          const useNewUI = response.data.use_new_ui === true;
+          const apiOldUIValue = !useNewUI ? 'true' : 'false';
+          console.log('API returned use_new_ui:', useNewUI, 'API oldUI:', apiOldUIValue);
+
+          // Check if API response matches localStorage
+          if (localStorageValue !== apiOldUIValue) {
+            console.log('Mismatch detected! localStorage:', localStorageValue, 'API:', apiOldUIValue);
+            console.log('Updating localStorage and reloading page...');
+            localStorage.setItem('oldUI', apiOldUIValue);
+            // Reload page to re-run build-time config with correct localStorage
+            window.location.reload();
+            return;
+          }
+
+          console.log('localStorage and API are in sync, no reload needed');
+        } else {
+          console.warn('API failed, using localStorage value and default menu config');
+          setMenuConfig({}); // Set empty object as fallback
+        }
       } catch (error) {
-        console.error('Failed to fetch menu config:', error);
-        return null; // Return null on error
+        console.error('API call failed, using localStorage value and default menu config:', error);
+        setMenuConfig({}); // Set empty object as fallback
       }
     };
-
-    fetchMenuConfig().then((getMenuConfig) => {
-      console.log('Menu config result:', getMenuConfig);
-      setMenuConfig(getMenuConfig);
-    });
+    
+    loadUIPreferenceAndMenuConfig();
   }, []);
 
   useEffect(() => {
@@ -165,7 +158,7 @@ const App = () => {
   // dispatching the event, making the event listener redundant.
 
   // Show loading screen while UI preference is being fetched
-  if (loading) {
+  if (loading || menuConfig === null) {
     return (
       <div className="d-flex justify-content-center align-items-center flex-column vh-100">
         <div>Loading.. Please wait...</div>
