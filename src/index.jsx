@@ -83,9 +83,9 @@ const App = () => {
   console.log('oldUI in Index', oldUI);
 
   // Apply theme from JSON
-  useEffect(() => {
-    applyTheme(); // Load default theme from /theme.json
-  }, []);
+  // useEffect(() => {
+  //   applyTheme(); // Load default theme from /theme.json
+  // }, []);
 
   // Load UI preference: first from localStorage, then sync with API
   useEffect(() => {
