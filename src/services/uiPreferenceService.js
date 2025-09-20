@@ -37,17 +37,17 @@ export const getUIPreference = async () => {
 
     // Default to old UI if API fails
     console.warn('API failed, defaulting to old UI');
-    cachedUIPreference = true;
+    cachedUIPreference = false;
     isInitialized = true;
     localStorage.setItem('oldUI', 'false');
-    return true;
+    return false;
   } catch (error) {
     console.error('Error fetching UI preference:', error);
     // Default to old UI on error
-    cachedUIPreference = true;
+    cachedUIPreference = false;
     isInitialized = true;
-    localStorage.setItem('oldUI', 'false');
-    return true;
+    localStorage.setItem('oldUI', 'true');
+    return false;
   }
 };
 

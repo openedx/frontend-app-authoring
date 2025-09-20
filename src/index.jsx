@@ -79,7 +79,7 @@ registerFontAwesomeIcons();
 const App = () => {
   const [oldUI, setOldUI] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [menuConfig, setMenuConfig] = useState(null);
+  // const [menuConfig, setMenuConfig] = useState(null);
   console.log('oldUI in Index', oldUI);
 
   // Apply theme from JSON
@@ -122,24 +122,24 @@ const App = () => {
     loadUIPreference();
   }, []);
 
-  // Get Menu-Config for Api Routing Guard.
-  useEffect(() => {
-    const fetchMenuConfig = async () => {
-      try {
-        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
-        console.log('Menu config:', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Failed to fetch menu config:', error);
-        return null; // Return null on error
-      }
-    };
+  // // Get Menu-Config for Api Routing Guard.
+  // useEffect(() => {
+  //   const fetchMenuConfig = async () => {
+  //     try {
+  //       const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+  //       console.log('Menu config:', response.data);
+  //       return response.data;
+  //     } catch (error) {
+  //       console.error('Failed to fetch menu config:', error);
+  //       return null; // Return null on error
+  //     }
+  //   };
 
-    fetchMenuConfig().then((getMenuConfig) => {
-      console.log('Menu config result:', getMenuConfig);
-      setMenuConfig(getMenuConfig);
-    });
-  }, []);
+  //   fetchMenuConfig().then((getMenuConfig) => {
+  //     console.log('Menu config result:', getMenuConfig);
+  //     setMenuConfig(getMenuConfig);
+  //   });
+  // }, []);
 
   useEffect(() => {
     // Only load styles after we know the UI preference
@@ -168,7 +168,7 @@ const App = () => {
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center flex-column vh-100">
-        <div>Loading...</div>
+        <div>Loading.. Please wait...</div>
       </div>
     );
   }
@@ -182,9 +182,9 @@ const App = () => {
           <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
           {/* <Route path="/home" element={<StudioHome />} /> */}
           {/* <Route path="/widgets-create" element={<CreateWidgets />} /> */}
-          {oldUI === 'false' && (
-            <Route path="/my-courses" element={<MyCourses />} />
-          )}
+          {/* {oldUI === 'false' && ( */}
+          <Route path="/my-courses" element={<MyCourses />} />
+          {/* )} */}
           {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
           {oldUI === 'true' ? (
             <Route path="/libraries" element={<StudioHome />} />
@@ -195,12 +195,12 @@ const App = () => {
           <Route path="/library/create" element={<CreateLibrary />} />
           <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
           <Route path="/component-picker" element={<ComponentPicker />} />
-          {menuConfig?.enable_calendar && oldUI === 'false' && (
+          {/* {menuConfig?.enable_calendar && oldUI === 'false' && ( */}
           <Route path="/calendar" element={<Calendar />} />
-          )}
-          {menuConfig?.enable_assignments && oldUI === 'false' && (
+          {/* )} */}
+          {/* {menuConfig?.enable_assignments && oldUI === 'false' && ( */}
           <Route path="/assignments" element={<AssignmentPage />} />
-          )}
+          {/* )} */}
           <Route
             path="/component-picker/multiple"
             element={<ComponentPicker componentPickerMode="multiple" />}
@@ -211,9 +211,9 @@ const App = () => {
           />
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-          {menuConfig?.allow_to_create_new_course && oldUI === 'false' && (
+          {/* {menuConfig?.allow_to_create_new_course && oldUI === 'false' && ( */}
           <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
-          )}
+          {/* )} */}
           {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
             <Route path="/accessibility" element={<AccessibilityPage />} />
           )}
