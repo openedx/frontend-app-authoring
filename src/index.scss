@@ -65,12 +65,12 @@ body {
 }
 
 /* Only apply overflow hidden for new UI */
-body.new-ui {
+html, body.new-ui {
   overflow: hidden !important; /* Prevent outer scrollbar for new UI */
 }
 
 /* Allow scrolling for old UI */
-body.old-ui {
+html, body.old-ui {
   overflow: auto !important; /* Allow scrolling for old UI */
 }
 

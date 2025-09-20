@@ -2166,6 +2166,14 @@ body {
   }
 }
 
+select.form-control {
+  option {
+    &:active {
+      background-color: var(--primary) !important;
+    }
+  }
+}
+
 // S Styles End
 
 // N Styles Start

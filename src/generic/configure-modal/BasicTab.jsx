@@ -1,5 +1,6 @@
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Form } from '@openedx/paragon';
+import { Stack, Form, Dropdown } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 
 import { DatepickerControl, DATEPICKER_TYPES } from '../datepicker-control';
@@ -13,6 +14,7 @@ const BasicTab = ({
   isSelfPaced,
 }) => {
   const intl = useIntl();
+  const [graderDropdownOpen, setGraderDropdownOpen] = useState(false);
 
   const {
     releaseDate,
@@ -20,11 +22,17 @@ const BasicTab = ({
     dueDate,
   } = values;
 
-  const onChangeGraderType = (e) => setFieldValue('graderType', e.target.value);
+  const onChangeGraderType = (value) => {
+    setFieldValue('graderType', value);
+    setGraderDropdownOpen(false);
+  };
 
-  const createOptions = () => courseGraders.map((option) => (
-    <option key={option} value={option}> {option} </option>
-  ));
+  const getGraderDisplayValue = () => {
+    if (graderType === 'notgraded') {
+      return intl.formatMessage(messages.notGradedTypeOption);
+    }
+    return graderType;
+  };
 
   return (
     <>
@@ -59,17 +67,36 @@ const BasicTab = ({
             <hr />
             <Form.Group>
               <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
-              <Form.Control
-                as="select"
-                defaultValue={graderType}
-                onChange={onChangeGraderType}
-                data-testid="grader-type-select"
+              <Dropdown 
+                show={graderDropdownOpen} 
+                onToggle={setGraderDropdownOpen}
+                className="titaned-grader-dropdown-wrapper"
               >
-                <option key="notgraded" value="notgraded">
-                  {intl.formatMessage(messages.notGradedTypeOption)}
-                </option>
-                {createOptions()}
-              </Form.Control>
+                <Dropdown.Toggle 
+                  variant="outline-primary" 
+                  className="titaned-grader-dropdown-toggle"
+                  data-testid="grader-type-select"
+                >
+                  {getGraderDisplayValue()}
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="titaned-grader-dropdown-menu">
+                  <Dropdown.Item 
+                    onClick={() => onChangeGraderType('notgraded')}
+                    className="titaned-grader-dropdown-item"
+                  >
+                    {intl.formatMessage(messages.notGradedTypeOption)}
+                  </Dropdown.Item>
+                  {courseGraders.map((option) => (
+                    <Dropdown.Item 
+                      key={option} 
+                      onClick={() => onChangeGraderType(option)}
+                      className="titaned-grader-dropdown-item"
+                    >
+                      {option}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
             {!isSelfPaced && (
               <div data-testid="due-date-stack">

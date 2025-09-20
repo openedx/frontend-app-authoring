@@ -22,6 +22,7 @@ import MyCourses from 'my-courses/MyCourses';
 import CreateWidgets from 'widgets-create/CreateWidgets';
 import LibrariesV2Tab from 'studio-home/tabs-section/libraries-v2-tab';
 import { configure, getMessages, IntlProvider } from '@edx/frontend-platform/i18n';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
@@ -53,7 +54,7 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-// import { applyTheme } from './styles/themeLoader';
+import { applyTheme } from './styles/themeLoader';
 import { getUIPreference } from './services/uiPreferenceService';
 
 // Load styles only for new UI
@@ -78,12 +79,15 @@ registerFontAwesomeIcons();
 const App = () => {
   const [oldUI, setOldUI] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [menuConfig, setMenuConfig] = useState(null);
   console.log('oldUI in Index', oldUI);
 
   // Apply theme from JSON
-  // useEffect(() => {
-  //   applyTheme(); // Load default theme from /theme.json
-  // }, []);
+  useEffect(() => {
+    if (oldUI === 'false') {
+      applyTheme(); // Load default theme from /theme.json
+    }
+  }, []);
 
   // Load UI preference: first from localStorage, then sync with API
   useEffect(() => {
@@ -118,6 +122,25 @@ const App = () => {
       }
     };
     loadUIPreference();
+  }, []);
+
+  // Get Menu-Config for Api Routing Guard.
+  useEffect(() => {
+    const fetchMenuConfig = async () => {
+      try {
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+        console.log('Menu config:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch menu config:', error);
+        return null; // Return null on error
+      }
+    };
+
+    fetchMenuConfig().then((getMenuConfig) => {
+      console.log('Menu config result:', getMenuConfig);
+      setMenuConfig(getMenuConfig);
+    });
   }, []);
 
   useEffect(() => {
@@ -160,8 +183,10 @@ const App = () => {
         <Route element={oldUI !== 'true' ? <Layout /> : <Outlet />}>
           <Route path="/home" element={oldUI !== 'true' ? <Dashboard /> : <StudioHome />} />
           {/* <Route path="/home" element={<StudioHome />} /> */}
-          <Route path="/widgets-create" element={<CreateWidgets />} />
-          <Route path="/my-courses" element={<MyCourses />} />
+          {/* <Route path="/widgets-create" element={<CreateWidgets />} /> */}
+          {oldUI === 'false' && (
+            <Route path="/my-courses" element={<MyCourses />} />
+          )}
           {/* <Route path="/libraries" element={<LibrariesV2Tab />} /> */}
           {oldUI === 'true' ? (
             <Route path="/libraries" element={<StudioHome />} />
@@ -172,8 +197,12 @@ const App = () => {
           <Route path="/library/create" element={<CreateLibrary />} />
           <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
           <Route path="/component-picker" element={<ComponentPicker />} />
+          {menuConfig?.enable_calendar && oldUI === 'false' && (
           <Route path="/calendar" element={<Calendar />} />
+          )}
+          {menuConfig?.enable_assignments && oldUI === 'false' && (
           <Route path="/assignments" element={<AssignmentPage />} />
+          )}
           <Route
             path="/component-picker/multiple"
             element={<ComponentPicker componentPickerMode="multiple" />}
@@ -184,7 +213,9 @@ const App = () => {
           />
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+          {menuConfig?.allow_to_create_new_course && oldUI === 'false' && (
           <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
+          )}
           {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
             <Route path="/accessibility" element={<AccessibilityPage />} />
           )}
