@@ -56,3 +56,30 @@
     line-height: 1.2;
     letter-spacing: normal;
 }
+
+.search-field-loading {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+}
+
+.my-courses-search-field {
+    .pgn__searchfield {
+        border-radius: 8px !important;
+        border: 1px solid var(--primary) !important;
+
+        &:hover,
+        &:active {
+            border-radius: 8px !important;
+            border: 1px solid var(--primary) !important;
+        }
+    }
+
+    .pgn__searchfield-form {
+        border-radius: 8px !important;
+
+        input {
+            border-radius: 8px !important;
+        }
+    }
+}

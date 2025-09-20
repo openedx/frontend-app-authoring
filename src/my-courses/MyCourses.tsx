@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import {
-  Button, Container, Icon, Pagination, Row,
+  Alert, Button, Container, Icon, Pagination, Row, SearchField,
 } from '@openedx/paragon';
 import './MyCourses.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ import messages from 'studio-home/tabs-section/messages';
 // import CourseFilter from './course-filter/CourseFilter';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { debounce } from 'lodash';
 import { useMyCourses } from './hooks';
 import { getCourseDetail, getMyCoursesParams } from './data/selectors';
 import { fetchMyCoursesData } from './data/thunks';
@@ -41,9 +42,13 @@ const MyCourses = () => {
   const navigate = useNavigate();
   const courseDetails = useSelector(getCourseDetail);
   const [isReRunEnabled, setIsReRunEnabled] = useState(false);
+  const [inputSearchValue, setInputSearchValue] = useState('');
+  const [showNoResultsAlert, setShowNoResultsAlert] = useState(false);
 
   const myCoursesParams = useSelector(getMyCoursesParams);
-  const { currentPage, isFiltered } = myCoursesParams;
+  const {
+    currentPage, isFiltered, search, order, archivedOnly, activeOnly, cleanFilters,
+  } = myCoursesParams;
 
   const locationValue = location.search ?? '';
 
@@ -62,15 +67,62 @@ const MyCourses = () => {
 
   const handlePageSelected = useCallback((page: number) => {
     const {
-      search, order, archivedOnly, activeOnly,
+      search: searchParam, order: orderParam, archivedOnly: archivedOnlyParam, activeOnly: activeOnlyParam,
     } = myCoursesParams;
     const customParams = {
-      search, order, archivedOnly, activeOnly,
+      search: searchParam, order: orderParam, archivedOnly: archivedOnlyParam, activeOnly: activeOnlyParam,
     };
 
     dispatch(fetchMyCoursesData(locationValue, false, { page, ...customParams }, true));
     dispatch(updateMyCoursesCoursesCustomParams({ currentPage: page, isFiltered: true }));
   }, [dispatch, locationValue, myCoursesParams]);
+
+  // regex to check if a string has only whitespace
+  const regexOnlyWhiteSpaces = /^\s+$/;
+
+  const handleSearchCourses = (searchValueDebounced) => {
+    const valueFormatted = searchValueDebounced.trim();
+    const filterParams = {
+      search: valueFormatted.length > 0 ? valueFormatted : undefined,
+      activeOnly,
+      archivedOnly,
+      order,
+    };
+    const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
+
+    if (valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
+      dispatch(updateMyCoursesCoursesCustomParams({
+        currentPage: 1,
+        isFiltered: true,
+        cleanFilters: false,
+        ...filterParams,
+      }));
+
+      dispatch(fetchMyCoursesData(locationValue, false, { page: 1, ...filterParams }, true));
+    }
+
+    setInputSearchValue(searchValueDebounced);
+  };
+
+  const handleSearchCoursesDebounced = useCallback(
+    debounce((value) => handleSearchCourses(value), 400),
+    [activeOnly, archivedOnly, order, inputSearchValue],
+  );
+
+  const handleCleanFilters = useCallback(() => {
+    dispatch(updateMyCoursesCoursesCustomParams({
+      currentPage: 1,
+      search: undefined,
+      order: 'display_name',
+      archivedOnly: undefined,
+      activeOnly: undefined,
+      isFiltered: false,
+      cleanFilters: true,
+    }));
+    setInputSearchValue('');
+    setShowNoResultsAlert(false);
+    dispatch(fetchMyCoursesData(locationValue, false, { page: 1 }, true));
+  }, [dispatch, locationValue]);
 
   const isNotFilteringCourses = !isFiltered && !isLoadingCourses;
   const hasCourses = courses?.length > 0;
@@ -107,6 +159,24 @@ const MyCourses = () => {
       dispatch(fetchCourseDetail(course.courseKey));
     });
   }, [courses, dispatch]);
+
+  // Handle delayed showing of no results alert
+  useEffect(() => {
+    const hasCompletedLoading = !isLoadingCourses && !isFailedCoursesPage;
+    const shouldShowAlert = isFiltered && !hasCourses && hasCompletedLoading;
+    
+    if (shouldShowAlert) {
+      // Delay showing the alert by 1.5 seconds to prevent blinking during loading
+      const timer = setTimeout(() => {
+        setShowNoResultsAlert(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // Hide alert immediately if conditions are no longer met
+      setShowNoResultsAlert(false);
+    }
+  }, [isFiltered, hasCourses, isLoadingCourses, isFailedCoursesPage]);
 
   const updatedCourses: Course[] = courses.map(course => {
     const courseDetail = courseDetails.find(detail => detail.courseId === course.courseKey);
@@ -190,6 +260,22 @@ const MyCourses = () => {
     )
   );
 
+  const renderNoCoursesFoundAlert = () => {
+    return showNoResultsAlert ? (
+      <Alert className="mt-4">
+        <Alert.Heading>
+          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
+        </Alert.Heading>
+        <p data-testid="courses-not-found-alert">
+          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
+        </p>
+        <Button variant="primary" onClick={handleCleanFilters}>
+          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+        </Button>
+      </Alert>
+    ) : null;
+  };
+
   return (
     <Container className="mt-4">
       {/* Add the filters at the top */}
@@ -213,6 +299,20 @@ const MyCourses = () => {
           <div className="d-flex justify-content-between align-items-center mb-3 gap-3 filters-container">
             <div className="my-courses-title">My Courses</div>
             <div className="d-flex align-items-center gap-3">
+              <div className="d-flex flex-row my-courses-search-field">
+                <SearchField
+                  onChange={handleSearchCoursesDebounced}
+                  value={cleanFilters ? '' : inputSearchValue}
+                  className="mr-4"
+                  data-testid="input-filter-courses-search"
+                  placeholder="Search"
+                />
+                {isLoadingCourses && (
+                  <span className="search-field-loading" data-testid="loading-search-spinner">
+                    <LoadingSpinner size="sm" />
+                  </span>
+                )}
+              </div>
               <CoursesFilters
                 dispatch={dispatch}
                 locationValue={locationValue}
@@ -232,6 +332,7 @@ const MyCourses = () => {
             </div>
           </div>
           {hasCourses ? renderCourseGrid() : renderEmptyState()}
+          {renderNoCoursesFoundAlert()}
         </div>
       )}
     </Container>
