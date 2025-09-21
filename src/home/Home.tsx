@@ -5,6 +5,7 @@ import { Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { MainCardLayout } from 'shared/Components/Common/Layouts/MainCardLayout';
 import { useAppEventContext } from 'context/AppEventContext';
 import { useEffect } from 'react';
 import { SocketEvent } from 'context/AppEventContext/types';
@@ -90,23 +91,25 @@ const Home = () => {
   };
 
   return (
-    <>
-      <section className="tw-h-full tw-flex tw-flex-col tw-gap-8">
-        <article className="studio-home-sub-header">
-          <section>
-            <h2 className="tw-font-medium tw-text-4xl tw-leading-[44px] tw-text-gray-900 tw-tracking-[-0.72px] tw-mb-0">
-              {intl.formatMessage(messages.headingTitle, {
-                userName: capitalizeString(username) || 'Teacher',
-              })}
-            </h2>
-          </section>
-        </article>
-        {getMainBody()}
-      </section>
-      <div className="alert-toast">
-        <InternetConnectionAlert isFailed={anyQueryIsFailed} isQueryPending={anyQueryIsPending} />
-      </div>
-    </>
+    <div className="tw-h-screen tw-w-full tw-p-3">
+      <MainCardLayout>
+        <section className="tw-h-full tw-flex tw-flex-col tw-gap-8">
+          <article className="studio-home-sub-header">
+            <section>
+              <h2 className="tw-font-medium tw-text-4xl tw-leading-[44px] tw-text-gray-900 tw-tracking-[-0.72px] tw-mb-0">
+                {intl.formatMessage(messages.headingTitle, {
+                  userName: capitalizeString(username) || 'Teacher',
+                })}
+              </h2>
+            </section>
+          </article>
+          {getMainBody()}
+        </section>
+        <div className="alert-toast">
+          <InternetConnectionAlert isFailed={anyQueryIsFailed} isQueryPending={anyQueryIsPending} />
+        </div>
+      </MainCardLayout>
+    </div>
   );
 };
 

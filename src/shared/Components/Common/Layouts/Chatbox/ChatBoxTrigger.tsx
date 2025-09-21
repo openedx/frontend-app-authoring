@@ -8,7 +8,7 @@ const ChatBoxTrigger = () => {
   const { setOpen } = useSidebar();
 
   return (
-    <div className="tw-absolute tw-bottom-3 tw-right-3 tw-z-[10000] hover:tw-animate-bounce">
+    <div className="tw-absolute tw-bottom-6 tw-right-6 tw-z-[10000] hover:tw-animate-bounce">
       <button
         onClick={() => setOpen(true)}
         type="button"

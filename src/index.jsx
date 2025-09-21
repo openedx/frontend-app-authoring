@@ -76,40 +76,92 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<AppLayout />}>
-        <Route path="/home" element={<Home />} />
+        <Route
+          path="/home"
+          element={(
+            <Home />
+          )}
+        />
         {/* <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} /> */}
-        <Route path="/library/create" element={<CreateLibrary />} />
-        <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
+        <Route
+          path="/library/create"
+          element={(
+            <CreateLibrary />
+          )}
+        />
+        <Route
+          path="/library/:libraryId/*"
+          element={(
+            <LibraryLayout />
+          )}
+        />
 
-        <Route path="/courses" element={<StudioHome />} />
-        <Route path="/students" element={<StudentsPage />} />
+        <Route
+          path="/courses"
+          element={(
+            <StudioHome />
+          )}
+        />
+        <Route
+          path="/students"
+          element={(
+            <StudentsPage />
+          )}
+        />
 
         <Route
           path="/component-picker"
-          element={<ComponentPicker extraFilter={['NOT block_type = "unit"']} />}
+          element={(
+            <ComponentPicker extraFilter={['NOT block_type = "unit"']} />
+          )}
         />
         <Route
           path="/component-picker/multiple"
-          element={
+          element={(
             <ComponentPicker
               componentPickerMode="multiple"
               extraFilter={['NOT block_type = "unit"']}
             />
-          }
+          )}
         />
-        <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
+        <Route
+          path="/legacy/preview-changes/:usageKey"
+          element={(
+            <PreviewChangesEmbed />
+          )}
+        />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
-        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+        <Route
+          path="/course_rerun/:courseId"
+          element={(
+            <CourseRerun />
+          )}
+        />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
-          <Route path="/accessibility" element={<AccessibilityPage />} />
+          <Route
+            path="/accessibility"
+            element={(
+              <AccessibilityPage />
+            )}
+          />
         )}
         {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
           <>
-            <Route path="/taxonomies" element={<TaxonomyLayout />}>
+            <Route
+              path="/taxonomies"
+              element={(
+                <TaxonomyLayout />
+              )}
+            >
               <Route index element={<TaxonomyListPage />} />
             </Route>
-            <Route path="/taxonomy" element={<TaxonomyLayout />}>
+            <Route
+              path="/taxonomy"
+              element={(
+                <TaxonomyLayout />
+              )}
+            >
               <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
             </Route>
             <Route path="/tagging/components/widget/:contentId" element={<ContentTagsDrawer />} />

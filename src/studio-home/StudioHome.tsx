@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Plus } from '@untitledui/icons';
 import Button from 'shared/Components/Common/Button';
+import { MainCardLayout } from 'shared/Components/Common/Layouts/MainCardLayout';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -116,26 +117,28 @@ const StudioHome = () => {
   };
 
   return (
-    <>
-      <section className="tw-h-full tw-flex tw-flex-col">
-        <article className="studio-home-sub-header">
-          <section>
-            <SubHeader
-              hideBorder
-              title={intl.formatMessage(messages.headingTitle)}
-              headerActions={headerButtons}
-            />
-          </section>
-        </article>
-        {getMainBody()}
-      </section>
-      <div className="alert-toast">
-        <InternetConnectionAlert
-          isFailed={anyQueryIsFailed}
-          isQueryPending={anyQueryIsPending}
-        />
-      </div>
-    </>
+    <div className="tw-h-screen tw-w-full tw-p-3">
+      <MainCardLayout>
+        <section className="tw-h-full tw-flex tw-flex-col">
+          <article className="studio-home-sub-header">
+            <section>
+              <SubHeader
+                hideBorder
+                title={intl.formatMessage(messages.headingTitle)}
+                headerActions={headerButtons}
+              />
+            </section>
+          </article>
+          {getMainBody()}
+        </section>
+        <div className="alert-toast">
+          <InternetConnectionAlert
+            isFailed={anyQueryIsFailed}
+            isQueryPending={anyQueryIsPending}
+          />
+        </div>
+      </MainCardLayout>
+    </div>
   );
 };
 
