@@ -7,22 +7,25 @@ import * as unitApi from '../../course-unit/data/api';
  * This mock returns a fixed response for the given container ID.
  */
 export async function mockGetCourseContainerChildren(containerId: string): Promise<CourseContainerChildrenData> {
-  let numChildren: number = 3;
+  const numChildren: number = 3;
   let blockType: string;
   switch (containerId) {
     case mockGetCourseContainerChildren.unitId:
-      blockType = "text";
+      blockType = 'text';
       break;
     case mockGetCourseContainerChildren.sectionId:
-      blockType = "subsection";
+      blockType = 'subsection';
       break;
     case mockGetCourseContainerChildren.subsectionId:
-      blockType = "unit";
+      blockType = 'unit';
       break;
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
     case mockGetCourseContainerChildren.subsectionIdLoading:
       return new Promise(() => { });
+    default:
+      blockType = 'unit';
+      break;
   }
   const children = Array(numChildren).fill(mockGetCourseContainerChildren.childTemplate).map((child, idx) => (
     {
@@ -41,7 +44,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     }
   ));
   return Promise.resolve({
-    canPasteComponent:  true,
+    canPasteComponent: true,
     isPublished: false,
     children,
   });
@@ -68,4 +71,3 @@ mockGetCourseContainerChildren.childTemplate = {
 mockGetCourseContainerChildren.applyMock = () => {
   jest.spyOn(unitApi, 'getCourseContainerChildren').mockImplementation(mockGetCourseContainerChildren);
 };
-

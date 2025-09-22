@@ -1,7 +1,9 @@
-import userEvent from "@testing-library/user-event";
-import { fireEvent, initializeMocks, render, screen } from "../testUtils";
-import ContainerRow from "./ContainerRow";
-import messages from "./messages";
+import userEvent from '@testing-library/user-event';
+import {
+  fireEvent, initializeMocks, render, screen,
+} from '../testUtils';
+import ContainerRow from './ContainerRow';
+import messages from './messages';
 
 describe('<ContainerRow />', () => {
   beforeEach(() => {
@@ -16,14 +18,14 @@ describe('<ContainerRow />', () => {
   test('renders with modified state', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="Before" state="modified" />);
     expect(await screen.findByText(
-      messages.modifiedDiffBeforeMessage.defaultMessage.replace('{blockType}', 'subsection')
+      messages.modifiedDiffBeforeMessage.defaultMessage.replace('{blockType}', 'subsection'),
     )).toBeInTheDocument();
   });
 
   test('renders with removed state', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="After" state="removed" />);
     expect(await screen.findByText(
-      messages.removedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection')
+      messages.removedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection'),
     )).toBeInTheDocument();
   });
 
@@ -72,7 +74,7 @@ describe('<ContainerRow />', () => {
     const card = titleDiv.closest('.clickable');
     expect(card).not.toBe(null);
     fireEvent.select(card!);
-    await user.keyboard("{enter}");
+    await user.keyboard('{enter}');
     expect(onClick).toHaveBeenCalled();
   });
 
@@ -84,14 +86,14 @@ describe('<ContainerRow />', () => {
   test('renders with moved state', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="After" state="moved" />);
     expect(await screen.findByText(
-      messages.movedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection')
+      messages.movedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection'),
     )).toBeInTheDocument();
   });
 
   test('renders with added state', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="After" state="added" />);
     expect(await screen.findByText(
-      messages.addedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection')
+      messages.addedDiffAfterMessage.defaultMessage.replace('{blockType}', 'subsection'),
     )).toBeInTheDocument();
   });
-})
+});
