@@ -1,4 +1,6 @@
-import { Breadcrumb, Button, Card, Icon, Stack } from '@openedx/paragon';
+import {
+  Breadcrumb, Button, Card, Icon, Stack,
+} from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
@@ -22,68 +24,9 @@ interface Props extends ContainerInfoProps {
 }
 
 /**
- * CompareContainersWidget component. Displays a diff of set of child containers from two different sources
- * and allows the user to select the container to view. This is a wrapper component that maintains current
- * source state. Actual implementation of the diff view is done by _CompareContainersWidget.
- */
-export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
-  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
-    parent: ContainerInfoProps[];
-  }>({
-    title,
-    upstreamBlockId,
-    downstreamBlockId,
-    parent: [],
-  });
-
-  const onRowClick = (row: WithState<CourseContainerChildBase>) => {
-    if (!row.upstreamLink || row.state !== "modified") {
-      return;
-    }
-
-    setCurrentContainerState((prev) => ({
-      title: row.name,
-      upstreamBlockId: row.upstreamLink.upstreamRef,
-      downstreamBlockId: row.id,
-      parent: [...prev.parent, {
-        title,
-        upstreamBlockId,
-        downstreamBlockId,
-      }]
-    }));
-  }
-
-  const onBackBtnClick = () => {
-    setCurrentContainerState((prev) => {
-      if (prev.parent.length < 1) {
-        return prev;
-      }
-      const prevParent = prev.parent[prev.parent.length-1];
-      return {
-        title: prevParent!.title,
-        upstreamBlockId: prevParent!.upstreamBlockId,
-        downstreamBlockId: prevParent!.downstreamBlockId,
-        parent: prev.parent.slice(0, -1),
-      }
-    });
-  }
-
-  return (
-    <_CompareContainersWidget
-      title={currentContainerState.title}
-      upstreamBlockId={currentContainerState.upstreamBlockId}
-      downstreamBlockId={currentContainerState.downstreamBlockId}
-      parent={currentContainerState.parent}
-      onRowClick={onRowClick}
-      onBackBtnClick={onBackBtnClick}
-    />
-  );
-};
-
-/**
  * Actual implementation of the displaying diff between children of containers.
  */
-const _CompareContainersWidget = ({
+const CompareContainersWidgetInner = ({
   title,
   upstreamBlockId,
   downstreamBlockId,
@@ -139,28 +82,28 @@ const _CompareContainersWidget = ({
   const getTitleComponent = () => {
     if (parent.length === 0) {
       return title;
-    } else {
-      return (
-        <Breadcrumb ariaLabel="title breadcrumb"
-          links={[
-            {
-              label: <Stack direction="horizontal" gap={1}><Icon size='xs' src={ArrowBack} />Back</Stack>,
-              onClick: onBackBtnClick,
-              variant: "link",
-              className: "px-0 text-gray-900",
-            },
-            {
-              label: title,
-              variant: "link",
-              className: "px-0 text-gray-900",
-              disabled: true,
-            },
-          ]}
-          linkAs={Button}
-        />
-      );
     }
-  }
+    return (
+      <Breadcrumb
+        ariaLabel="title breadcrumb"
+        links={[
+          {
+            label: <Stack direction="horizontal" gap={1}><Icon size="xs" src={ArrowBack} />Back</Stack>,
+            onClick: onBackBtnClick,
+            variant: 'link',
+            className: 'px-0 text-gray-900',
+          },
+          {
+            label: title,
+            variant: 'link',
+            className: 'px-0 text-gray-900',
+            disabled: true,
+          },
+        ]}
+        linkAs={Button}
+      />
+    );
+  };
 
   return (
     <div className="row">
@@ -179,5 +122,64 @@ const _CompareContainersWidget = ({
         </Card>
       </div>
     </div>
+  );
+};
+
+/**
+ * CompareContainersWidget component. Displays a diff of set of child containers from two different sources
+ * and allows the user to select the container to view. This is a wrapper component that maintains current
+ * source state. Actual implementation of the diff view is done by CompareContainersWidgetInner.
+ */
+export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
+  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
+    parent: ContainerInfoProps[];
+  }>({
+    title,
+    upstreamBlockId,
+    downstreamBlockId,
+    parent: [],
+  });
+
+  const onRowClick = (row: WithState<CourseContainerChildBase>) => {
+    if (!row.upstreamLink || row.state !== 'modified') {
+      return;
+    }
+
+    setCurrentContainerState((prev) => ({
+      title: row.name,
+      upstreamBlockId: row.upstreamLink.upstreamRef,
+      downstreamBlockId: row.id,
+      parent: [...prev.parent, {
+        title,
+        upstreamBlockId,
+        downstreamBlockId,
+      }],
+    }));
+  };
+
+  const onBackBtnClick = () => {
+    setCurrentContainerState((prev) => {
+      if (prev.parent.length < 1) {
+        return prev;
+      }
+      const prevParent = prev.parent[prev.parent.length - 1];
+      return {
+        title: prevParent!.title,
+        upstreamBlockId: prevParent!.upstreamBlockId,
+        downstreamBlockId: prevParent!.downstreamBlockId,
+        parent: prev.parent.slice(0, -1),
+      };
+    });
+  };
+
+  return (
+    <CompareContainersWidgetInner
+      title={currentContainerState.title}
+      upstreamBlockId={currentContainerState.upstreamBlockId}
+      downstreamBlockId={currentContainerState.downstreamBlockId}
+      parent={currentContainerState.parent}
+      onRowClick={onRowClick}
+      onBackBtnClick={onBackBtnClick}
+    />
   );
 };

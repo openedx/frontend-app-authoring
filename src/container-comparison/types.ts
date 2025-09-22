@@ -1,4 +1,4 @@
-import { UpstreamInfo } from "../data/types";
+import { UpstreamInfo } from '../data/types';
 
 export type ContainerState = 'removed' | 'added' | 'modified' | 'renamed' | 'moved';
 

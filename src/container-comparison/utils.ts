@@ -1,5 +1,7 @@
 import { UpstreamInfo } from '../data/types';
-import { ContainerChildBase, ContainerState, CourseContainerChildBase, WithIndex, WithState } from './types';
+import {
+  ContainerChildBase, ContainerState, CourseContainerChildBase, WithIndex, WithState,
+} from './types';
 
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
@@ -66,10 +68,10 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   mapA.forEach((oldVersion) => {
     updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: 'removed' });
     updatedB.splice(oldVersion.index, 0, {
-        id: oldVersion.id,
-        displayName: oldVersion.name,
-        containerType: oldVersion.blockType,
-        state: 'removed',
+      id: oldVersion.id,
+      displayName: oldVersion.name,
+      containerType: oldVersion.blockType,
+      state: 'removed',
     } as unknown as WithState<B>);
   });
 

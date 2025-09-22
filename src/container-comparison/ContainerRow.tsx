@@ -1,4 +1,6 @@
-import { ActionRow, Card, Icon, Stack } from '@openedx/paragon';
+import {
+  ActionRow, Card, Icon, Stack,
+} from '@openedx/paragon';
 import type { MessageDescriptor } from 'react-intl';
 import { useMemo } from 'react';
 import {
@@ -48,7 +50,7 @@ const ContainerRow = ({
 
   return (
     <Card
-      isClickable={state==="modified"}
+      isClickable={state === 'modified'}
       onClick={onClick}
       onKeyDown={(e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -84,8 +86,8 @@ const ContainerRow = ({
                 />
               </span>
             ) : (
-                <span className="micro">&nbsp;</span>
-              )}
+              <span className="micro">&nbsp;</span>
+            )}
           </Stack>
           <ActionRow.Spacer />
         </ActionRow>

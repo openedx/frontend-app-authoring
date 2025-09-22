@@ -28,7 +28,7 @@ const CompareChangesWidget = ({
   const intl = useIntl();
 
   return (
-    <div className='bg-white p-2'>
+    <div className="bg-white p-2">
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
         <Tab eventKey="old" title={intl.formatMessage(messages.oldVersionTitle)}>
           <div className="p-2 bg-white">

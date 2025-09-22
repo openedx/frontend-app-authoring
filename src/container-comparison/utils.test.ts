@@ -1,4 +1,5 @@
-import { diffPreviewContainerChildren, CourseContainerChildBase, ContainerChildBase } from './utils';
+import { ContainerChildBase, CourseContainerChildBase } from './types';
+import { diffPreviewContainerChildren } from './utils';
 
 const getMockCourseContainerData = (
   type: 'added|deleted' | 'moved|deleted' | 'all',
