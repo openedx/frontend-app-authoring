@@ -40,6 +40,7 @@ import MetricCard from './components/MetricCard';
 import messages from './messages';
 import { CalendarProvider, useCalendarContext } from '../calendar/context/CalendarContext';
 import NavigationButton from '../calendar/components/NavigationButton';
+import message from "../../src/calendar/data/messages"
 // Sortable widget card for modal
 const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
   const {
@@ -443,7 +444,9 @@ const Dashboard = () => {
 
     return (
       <>
-        <h4 className="card-header">Calendar</h4>
+        <h4 className="card-header">{intl && intl.formatMessage
+            ? intl.formatMessage(message.calendarTitle)
+            : messages.calendarTitle.defaultMessage}</h4>
         <div className="calendar-card">
           <div className="calendar-nav">
             <NavigationButton type="prev" onClick={prev} />
