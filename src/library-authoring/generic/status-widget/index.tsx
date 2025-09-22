@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import {
   FormattedDate,
   FormattedMessage,
@@ -93,6 +92,7 @@ type StatusWidgedProps = {
   numBlocks?: number;
   onCommit?: () => Promise<void>;
   onCommitLabel?: string;
+  onCommitStatus?: 'pending' | 'error' | 'idle' | 'success';
   onRevert?: () => void;
 };
 
@@ -123,6 +123,7 @@ const StatusWidget = ({
   numBlocks,
   onCommit,
   onCommitLabel,
+  onCommitStatus,
   onRevert,
 }: StatusWidgedProps) => {
   const intl = useIntl();
@@ -132,7 +133,7 @@ const StatusWidget = ({
   let statusMessage: string;
   let extraStatusMessage: string | undefined;
   let bodyMessage: React.ReactNode | undefined;
-  const [publishButtonState, setPublishButtonState] = useState<'default' | 'pending' | 'complete'>('default');
+  let publishButtonState: 'pending' | 'complete' | 'default' = 'default';
 
   if (!lastPublished) {
     // Entity is never published (new)
@@ -175,24 +176,11 @@ const StatusWidget = ({
     }
   }
 
-  if (publishButtonState !== 'pending') {
-    if (isPublished && publishButtonState !== 'complete') {
-      setPublishButtonState('complete');
-    } else if (!isPublished && publishButtonState !== 'default') {
-      setPublishButtonState('default');
-    }
+  if (onCommitStatus === 'pending') {
+    publishButtonState = 'pending';
+  } else if (isPublished) {
+    publishButtonState = 'complete';
   }
-
-  const handleOnClickPublish = useCallback(() => {
-    if (onCommit) {
-      setPublishButtonState('pending');
-      onCommit().finally(() => {
-        // Set to default to let new 'isPublished' value to decide
-        // the new state of the button.
-        setPublishButtonState('default');
-      });
-    }
-  }, [setPublishButtonState, onCommit]);
 
   return (
     <Stack>
@@ -229,7 +217,7 @@ const StatusWidget = ({
                 pending: <Icon src={SpinnerSimple} className="icon-spin" />,
               }}
               disabledStates={['pending', 'complete']}
-              onClick={handleOnClickPublish}
+              onClick={onCommit}
             />
           )}
           {onRevert && (
