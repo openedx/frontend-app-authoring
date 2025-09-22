@@ -17,11 +17,11 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 const unit = {
-  id: 'unit-1',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
 };
 
 const subsection = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
   displayName: 'Subsection Name',
   category: 'sequential',
   published: true,
@@ -43,7 +43,7 @@ const subsection = {
 } satisfies Partial<XBlock> as XBlock;
 
 const section = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
   category: 'chapter',
   published: true,
@@ -188,7 +188,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `/course/:courseId?show=${subsection.id}`);
+    // url encode subsection.id
+    const subsectionIdUrl = encodeURIComponent(subsection.id);
+    renderComponent(collapsedSections, `/course/:courseId?show=${subsectionIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -200,7 +202,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `/course/:courseId?show=${unit.id}`);
+    // url encode subsection.id
+    const unitIdUrl = encodeURIComponent(unit.id);
+    renderComponent(collapsedSections, `/course/:courseId?show=${unitIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -232,7 +236,6 @@ describe('<SectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -252,7 +255,6 @@ describe('<SectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

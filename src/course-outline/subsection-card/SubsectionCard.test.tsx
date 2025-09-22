@@ -52,7 +52,7 @@ const unit = {
 };
 
 const subsection: XBlock = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
   displayName: 'Subsection Name',
   category: 'sequential',
   published: true,
@@ -82,7 +82,7 @@ const subsection: XBlock = {
 } satisfies Partial<XBlock> as XBlock;
 
 const section: XBlock = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
   published: true,
   visibilityState: 'live',
@@ -323,7 +323,7 @@ describe('<SubsectionCard />', () => {
     expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
     expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
-      parentLocator: '123',
+      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       category: 'vertical',
       libraryContentKey: containerKey,
     });
@@ -340,7 +340,6 @@ describe('<SubsectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -360,7 +359,6 @@ describe('<SubsectionCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: subsection name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

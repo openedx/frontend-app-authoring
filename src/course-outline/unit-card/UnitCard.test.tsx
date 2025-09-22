@@ -19,7 +19,7 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 const section = {
-  id: '1',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
   published: true,
   visibilityState: 'live',
@@ -34,7 +34,7 @@ const section = {
 } satisfies Partial<XBlock> as XBlock;
 
 const subsection = {
-  id: '12',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
   displayName: 'Subsection Name',
   published: true,
   visibilityState: 'live',
@@ -48,7 +48,7 @@ const subsection = {
 } satisfies Partial<XBlock> as XBlock;
 
 const unit = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
   displayName: 'unit Name',
   category: 'vertical',
   published: true,
@@ -109,7 +109,10 @@ describe('<UnitCard />', () => {
     const { findByTestId } = renderComponent();
 
     expect(await findByTestId('unit-card-header')).toBeInTheDocument();
-    expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute('href', '/some/123');
+    expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute(
+      'href',
+      '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
+    );
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -200,7 +203,6 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -220,7 +222,6 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available for container changes at this time')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

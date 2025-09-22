@@ -236,8 +236,8 @@ describe('diffPreviewContainerChildren', () => {
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
     // renamed takes precendence over moved
-    expect(result[0][0].state).toEqual('renamed');
-    expect(result[1][2].state).toEqual('renamed');
+    expect(result[0][0].state).toEqual('locallyRenamed');
+    expect(result[1][2].state).toEqual('locallyRenamed');
     expect(result[0][1].state).toEqual('removed');
     expect(result[1][1].state).toEqual('removed');
     expect(result[1][2].name).toEqual(a[0].name);
@@ -248,9 +248,9 @@ describe('diffPreviewContainerChildren', () => {
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
     // No change, state=undefined
-    expect(result[0][0].state).toEqual('renamed');
+    expect(result[0][0].state).toEqual('locallyRenamed');
     expect(result[0][0].originalName).toEqual(b[0].displayName);
-    expect(result[1][0].state).toEqual('renamed');
+    expect(result[1][0].state).toEqual('locallyRenamed');
 
     // Deleted entry
     expect(result[0][1].state).toEqual('removed');
@@ -266,8 +266,8 @@ describe('diffPreviewContainerChildren', () => {
     const result = diffPreviewContainerChildren(a as CourseContainerChildBase[], b);
     expect(result[0].length).toEqual(result[1].length);
     // renamed takes precendence over moved
-    expect(result[0][0].state).toEqual('renamed');
-    expect(result[1][4].state).toEqual('renamed');
+    expect(result[0][0].state).toEqual('locallyRenamed');
+    expect(result[1][4].state).toEqual('locallyRenamed');
     expect(result[1][4].id).toEqual(result[0][0].id);
 
     // Deleted entry
