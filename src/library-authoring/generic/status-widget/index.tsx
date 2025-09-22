@@ -132,7 +132,7 @@ const StatusWidget = ({
   let statusMessage: string;
   let extraStatusMessage: string | undefined;
   let bodyMessage: React.ReactNode | undefined;
-  const [publishButtonState, setPublishButtonState] = useState('default');
+  const [publishButtonState, setPublishButtonState] = useState<'default' | 'pending' | 'complete'>('default');
 
   if (!lastPublished) {
     // Entity is never published (new)
@@ -189,7 +189,7 @@ const StatusWidget = ({
       onCommit().finally(() => {
         // Set to default to let new 'isPublished' value to decide
         // the new state of the button.
-        setPublishButtonState('deafult');
+        setPublishButtonState('default');
       });
     }
   }, [setPublishButtonState, onCommit]);
