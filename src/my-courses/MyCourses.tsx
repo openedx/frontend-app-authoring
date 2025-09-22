@@ -164,18 +164,17 @@ const MyCourses = () => {
   useEffect(() => {
     const hasCompletedLoading = !isLoadingCourses && !isFailedCoursesPage;
     const shouldShowAlert = isFiltered && !hasCourses && hasCompletedLoading;
-    
+
     if (shouldShowAlert) {
       // Delay showing the alert by 1.5 seconds to prevent blinking during loading
       const timer = setTimeout(() => {
         setShowNoResultsAlert(true);
-      }, 1500);
-      
+      }, 1000);
+
       return () => clearTimeout(timer);
-    } else {
-      // Hide alert immediately if conditions are no longer met
-      setShowNoResultsAlert(false);
     }
+    // Hide alert immediately if conditions are no longer met
+    setShowNoResultsAlert(false);
   }, [isFiltered, hasCourses, isLoadingCourses, isFailedCoursesPage]);
 
   const updatedCourses: Course[] = courses.map(course => {
@@ -260,8 +259,8 @@ const MyCourses = () => {
     )
   );
 
-  const renderNoCoursesFoundAlert = () => {
-    return showNoResultsAlert ? (
+  const renderNoCoursesFoundAlert = () => (
+    showNoResultsAlert ? (
       <Alert className="mt-4">
         <Alert.Heading>
           {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
@@ -273,8 +272,8 @@ const MyCourses = () => {
           {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
         </Button>
       </Alert>
-    ) : null;
-  };
+    ) : null
+  );
 
   return (
     <Container className="mt-4">
@@ -301,17 +300,13 @@ const MyCourses = () => {
             <div className="d-flex align-items-center gap-3">
               <div className="d-flex flex-row my-courses-search-field">
                 <SearchField
+                  onSubmit={handleSearchCourses}
                   onChange={handleSearchCoursesDebounced}
                   value={cleanFilters ? '' : inputSearchValue}
                   className="mr-4"
                   data-testid="input-filter-courses-search"
                   placeholder="Search"
                 />
-                {isLoadingCourses && (
-                  <span className="search-field-loading" data-testid="loading-search-spinner">
-                    <LoadingSpinner size="sm" />
-                  </span>
-                )}
               </div>
               <CoursesFilters
                 dispatch={dispatch}
@@ -331,8 +326,16 @@ const MyCourses = () => {
               )}
             </div>
           </div>
-          {hasCourses ? renderCourseGrid() : renderEmptyState()}
-          {renderNoCoursesFoundAlert()}
+          {isLoadingCourses && isFiltered ? (
+            <Row className="m-0 mt-4 justify-content-center">
+              <LoadingSpinner />
+            </Row>
+          ) : (
+            <>
+              {hasCourses ? renderCourseGrid() : renderEmptyState()}
+              {renderNoCoursesFoundAlert()}
+            </>
+          )}
         </div>
       )}
     </Container>
