@@ -107,13 +107,13 @@ const VideoSourceWidget = () => {
               onBlur={fallbackVideos.onBlur(index)}
             />
             <IconButtonWithTooltip
-              key={`top-delete-${videoUrl}`}
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteFallbackVideo)}
               src={DeleteOutline}
               iconAs={Icon}
               alt={intl.formatMessage(messages.deleteFallbackVideo)}
-              onClick={() => deleteFallbackVideo(videoUrl)}
+              onClick={() => deleteFallbackVideo(index)}
+              data-testid="delete-fallback-video"
             />
           </Form.Group>
         </Form.Row>
