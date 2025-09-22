@@ -76,6 +76,16 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
         badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
         badgeIcon: DraftIcon,
       };
+    case ITEM_BADGE_STATUS.unscheduled:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeUnscheduled),
+        badgeIcon: DraftIcon,
+      };
+    case ITEM_BADGE_STATUS.needs_attention:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeNeedsAttention),
+        badgeIcon: DraftIcon,
+      };
     default:
       return {
         badgeTitle: '',

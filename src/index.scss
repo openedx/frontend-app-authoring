@@ -122,3 +122,9 @@ mark {
   height: 20px;
   color: #667085;
 }
+
+.btn {
+  .btn-icon-before {
+    margin-inline-end: 4px !important;
+  }
+}

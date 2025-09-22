@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useLocation,
 } from 'react-router-dom';
+import { MainCardLayout } from 'shared/Components/Common/Layouts/MainCardLayout';
 import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
@@ -47,12 +48,14 @@ const CourseAuthoringPage = ({ courseId, children }) => {
     );
   }
   return (
-    <div>
-      {/* While V2 Editors are temporarily served from their own pages
-      using url pattern containing /editor/,
-      we shouldn't have the header and footer on these pages.
-      This functionality will be removed in TNL-9591 */}
-      {children}
+    <div className="tw-h-screen tw-w-full tw-p-3">
+      <MainCardLayout>
+        {/* While V2 Editors are temporarily served from their own pages
+        using url pattern containing /editor/,
+        we shouldn't have the header and footer on these pages.
+        This functionality will be removed in TNL-9591 */}
+        {children}
+      </MainCardLayout>
     </div>
   );
 };

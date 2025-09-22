@@ -21,6 +21,7 @@ export const MainCardLayout = ({ children }: { children: React.ReactNode }) => (
         'tw-border tw-border-white tw-border-solid',
         'tw-rounded-[20px]',
         'tw-flex tw-flex-col tw-gap-8',
+        'tw-overflow-y-auto',
       )}
     >
       {children}

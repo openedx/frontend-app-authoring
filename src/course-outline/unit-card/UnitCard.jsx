@@ -1,36 +1,33 @@
 // @ts-check
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useSearchParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { File05 } from '@untitledui/icons';
+import Badge from '../../shared/Components/Common/Badge';
+import { isUnitReadOnly } from '../../course-unit/data/utils';
+import { PreviewLibraryXBlockChanges } from '../../course-unit/preview-changes';
+import { RequestStatus } from '../../data/constants';
+import { useClipboard } from '../../generic/clipboard';
 import CourseOutlineUnitCardExtraActionsSlot from '../../plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
+import CardHeaderWithDropdownOnly from '../card-header/CardHeaderWithDropdownOnly';
+import messages from '../card-header/messages';
+import TitleLink from '../card-header/TitleLink';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { fetchCourseSectionQuery } from '../data/thunk';
-import { RequestStatus } from '../../data/constants';
-import { isUnitReadOnly } from '../../course-unit/data/utils';
-import CardHeader from '../card-header/CardHeader';
 import SortableItem from '../drag-helper/SortableItem';
-import TitleLink from '../card-header/TitleLink';
-import XBlockStatus from '../xblock-status/XBlockStatus';
-import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
-import { useClipboard } from '../../generic/clipboard';
-import { PreviewLibraryXBlockChanges } from '../../course-unit/preview-changes';
+import { getItemStatus, getItemStatusBadgeContent, scrollToElement } from '../utils';
 
 const UnitCard = ({
   unit,
   subsection,
   section,
-  isSelfPaced,
-  isCustomRelativeDatesActive,
   index,
+  isLastUnit,
   getPossibleMoves,
   onOpenPublishModal,
   onOpenConfigureModal,
@@ -52,7 +49,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-
+  const navigate = useNavigate();
   const {
     id,
     category,
@@ -78,6 +75,8 @@ const UnitCard = ({
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
       isVertical: true,
     };
+    // OpenEdx implementation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [upstreamInfo]);
 
   const readOnly = isUnitReadOnly(unit);
@@ -100,7 +99,6 @@ const UnitCard = ({
     visibilityState,
     hasChanges,
   });
-  const borderStyle = getItemStatusBorder(unitStatus);
 
   const handleClickMenuButton = () => {
     dispatch(setCurrentItem(unit));
@@ -134,19 +132,11 @@ const UnitCard = ({
   }, [dispatch, section]);
 
   const titleComponent = (
-    <TitleLink
-      title={displayName}
-      titleLink={getTitleLink(id)}
-      namePrefix={namePrefix}
-    />
+    <TitleLink title={displayName} titleLink={getTitleLink(id)} namePrefix={namePrefix} />
   );
 
   const extraActionsComponent = (
-    <CourseOutlineUnitCardExtraActionsSlot
-      unit={unit}
-      subsection={subsection}
-      section={section}
-    />
+    <CourseOutlineUnitCardExtraActionsSlot unit={unit} subsection={subsection} section={section} />
   );
 
   useEffect(() => {
@@ -158,19 +148,36 @@ const UnitCard = ({
       const alignWithTop = !!isScrolledToElement;
       scrollToElement(currentRef.current, alignWithTop);
     }
+    // OpenEdx implementation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScrolledToElement]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
     }
+    // OpenEdx implementation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savingStatus]);
+
+  const intl = useIntl();
+  const { badgeTitle } = getItemStatusBadgeContent(unitStatus, messages, intl);
+
+  // Map unitStatus to Badge variant
+  const getBadgeVariant = (status) => {
+    switch (status) {
+      case 'live':
+        return 'success';
+      case 'draft':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
 
   if (!isHeaderVisible) {
     return null;
   }
-
-  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
     <>
@@ -178,53 +185,56 @@ const UnitCard = ({
         id={id}
         category={category}
         key={id}
-        isDraggable={isDraggable}
+        isDraggable
         isDroppable={actions.childAddable}
         componentStyle={{
-          background: '#fdfdfd',
-          ...borderStyle,
+          marginBottom: isLastUnit ? '0px' : '24px',
         }}
       >
-        <div
-          className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
-          data-testid="unit-card"
-          ref={currentRef}
-        >
-          <CardHeader
-            title={displayName}
-            status={unitStatus}
-            hasChanges={hasChanges}
-            cardId={id}
-            onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
-            onClickConfigure={onOpenConfigureModal}
-            onClickEdit={openForm}
-            onClickDelete={onOpenDeleteModal}
-            onClickMoveUp={handleUnitMoveUp}
-            onClickMoveDown={handleUnitMoveDown}
-            onClickSync={openSyncModal}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
-            onClickDuplicate={onDuplicateSubmit}
-            titleComponent={titleComponent}
-            namePrefix={namePrefix}
-            actions={actions}
-            isVertical
-            enableCopyPasteUnits={enableCopyPasteUnits}
-            onClickCopy={handleCopyClick}
-            discussionEnabled={discussionEnabled}
-            discussionsSettings={discussionsSettings}
-            parentInfo={parentInfo}
-            extraActionsComponent={extraActionsComponent}
-            readyToSync={upstreamInfo.readyToSync}
-          />
-          <div className="unit-card__content item-children" data-testid="unit-card__content">
-            <XBlockStatus
-              isSelfPaced={isSelfPaced}
-              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-              blockData={unit}
+        <div className="tw-flex tw-gap-2 tw-items-center" ref={currentRef}>
+          <div className="tw-flex-1">
+            <button
+              onClick={() => navigate(getTitleLink(id))}
+              type="button"
+              className="tw-flex tw-items-center tw-gap-2 tw-border-0 tw-bg-transparent tw-w-fit tw-px-0"
+            >
+              <div className="tw-flex tw-items-center tw-justify-center tw-size-6">
+                <File05 className="tw-text-violet-500 tw-size-4" />
+              </div>
+              <div className="tw-text-sm tw-font-semibold tw-text-gray-700">{displayName}</div>
+            </button>
+          </div>
+          <div className="tw-flex tw-gap-2 tw-items-center">
+            <Badge variant={getBadgeVariant(unitStatus)}>{badgeTitle}</Badge>
+            <CardHeaderWithDropdownOnly
+              title={displayName}
+              status={unitStatus}
+              hasChanges={hasChanges}
+              cardId={id}
+              onClickMenuButton={handleClickMenuButton}
+              onClickPublish={onOpenPublishModal}
+              onClickConfigure={onOpenConfigureModal}
+              onClickEdit={openForm}
+              onClickDelete={onOpenDeleteModal}
+              onClickMoveUp={handleUnitMoveUp}
+              onClickMoveDown={handleUnitMoveDown}
+              onClickSync={openSyncModal}
+              isFormOpen={isFormOpen}
+              closeForm={closeForm}
+              onEditSubmit={handleEditSubmit}
+              isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
+              onClickDuplicate={onDuplicateSubmit}
+              titleComponent={titleComponent}
+              namePrefix={namePrefix}
+              actions={actions}
+              isVertical
+              enableCopyPasteUnits={enableCopyPasteUnits}
+              onClickCopy={handleCopyClick}
+              discussionEnabled={discussionEnabled}
+              discussionsSettings={discussionsSettings}
+              parentInfo={parentInfo}
+              extraActionsComponent={extraActionsComponent}
+              readyToSync={upstreamInfo.readyToSync}
             />
           </div>
         </div>
@@ -295,10 +305,9 @@ UnitCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
+  isLastUnit: PropTypes.bool.isRequired,
   getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
-  isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   discussionsSettings: PropTypes.shape({
     providerType: PropTypes.string,
     enableGradedUnits: PropTypes.bool,

@@ -27,7 +27,15 @@ const messages = defineMessages({
   },
   statusBadgeUnpublishedChanges: {
     id: 'course-authoring.course-outline.card.status-badge.draft-unpublished-changes',
-    defaultMessage: 'Draft (Unpublished changes)',
+    defaultMessage: 'Draft',
+  },
+  statusBadgeUnscheduled: {
+    id: 'course-authoring.course-outline.card.status-badge.unscheduled',
+    defaultMessage: 'Unscheduled',
+  },
+  statusBadgeNeedsAttention: {
+    id: 'course-authoring.course-outline.card.status-badge.needs-attention',
+    defaultMessage: 'Needs attention',
   },
   altButtonRename: {
     id: 'course-authoring.course-outline.card.button.edit.alt',
