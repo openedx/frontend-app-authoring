@@ -21,47 +21,50 @@ interface Props extends ContainerInfoProps {
   onBackBtnClick: () => void;
 }
 
+/**
+ * CompareContainersWidget component. Displays a diff of set of child containers from two different sources
+ * and allows the user to select the container to view. This is a wrapper component that maintains current
+ * source state. Actual implementation of the diff view is done by _CompareContainersWidget.
+ */
 export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
-  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps>({
+  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
+    parent: ContainerInfoProps[];
+  }>({
     title,
     upstreamBlockId,
     downstreamBlockId,
+    parent: [],
   });
-  const [parent, setParent] = useState<ContainerInfoProps[]>([]);
 
   const onRowClick = (row: WithState<CourseContainerChildBase>) => {
     if (!row.upstreamLink || row.state !== "modified") {
       return;
     }
 
-    setCurrentContainerState({
+    setCurrentContainerState((prev) => ({
       title: row.name,
       upstreamBlockId: row.upstreamLink.upstreamRef,
       downstreamBlockId: row.id,
-    });
-
-    setParent((prev) => {
-      return [...prev, {
+      parent: [...prev.parent, {
         title,
         upstreamBlockId,
         downstreamBlockId,
-      }];
-    });
+      }]
+    }));
   }
 
   const onBackBtnClick = () => {
-    if (parent.length < 1) {
-      return;
-    }
-    const prevParent = parent.pop();
-    setCurrentContainerState({
-      title: prevParent!.title,
-      upstreamBlockId: prevParent!.upstreamBlockId,
-      downstreamBlockId: prevParent!.downstreamBlockId,
-    });
-    setParent(prev => {
-      prev.pop();
-      return prev;
+    setCurrentContainerState((prev) => {
+      if (prev.parent.length < 1) {
+        return prev;
+      }
+      const prevParent = prev.parent[prev.parent.length-1];
+      return {
+        title: prevParent!.title,
+        upstreamBlockId: prevParent!.upstreamBlockId,
+        downstreamBlockId: prevParent!.downstreamBlockId,
+        parent: prev.parent.slice(0, -1),
+      }
     });
   }
 
@@ -70,13 +73,16 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
       title={currentContainerState.title}
       upstreamBlockId={currentContainerState.upstreamBlockId}
       downstreamBlockId={currentContainerState.downstreamBlockId}
-      parent={parent}
+      parent={currentContainerState.parent}
       onRowClick={onRowClick}
       onBackBtnClick={onBackBtnClick}
     />
   );
 };
 
+/**
+ * Actual implementation of the displaying diff between children of containers.
+ */
 const _CompareContainersWidget = ({
   title,
   upstreamBlockId,
