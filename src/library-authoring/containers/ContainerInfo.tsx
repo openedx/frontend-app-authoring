@@ -60,11 +60,12 @@ const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <ContainerDeleter
-        isOpen={isConfirmingDelete}
-        close={cancelDelete}
-        containerId={containerId}
-      />
+      {isConfirmingDelete && (
+        <ContainerDeleter
+          close={cancelDelete}
+          containerId={containerId}
+        />
+      )}
     </>
   );
 };

@@ -8,7 +8,7 @@ import {
 } from '@src/testUtils';
 import { ContainerType } from '@src/generic/key-utils';
 import type { ToastActionData } from '@src/generic/toast-context';
-import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
+import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 import {
   mockContentLibrary,
   mockGetContainerChildren,
@@ -162,16 +162,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
   describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
     beforeEach(() => {
       ({ axiosMock, mockShowToast } = initializeMocks());
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [{
-              blockType: containerType,
-              displayName: `Test ${containerType}`,
-            }],
-          },
-        ],
-      });
+      mockSearchResult(hydrateSearchResult([{
+        blockType: containerType,
+        displayName: `Test ${containerType}`,
+      }]));
     });
 
     it(`should delete the ${containerType} using the menu`, async () => {
@@ -189,7 +183,8 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       fireEvent.click(deleteMenuItem);
 
       // Confirm delete Modal is open
-      expect(screen.getByText(`Delete ${containerType[0].toUpperCase()}${containerType.slice(1)}`));
+      const modal = await screen.findByRole('dialog', { name: `Delete ${containerType[0].toUpperCase()}${containerType.slice(1)}` });
+      expect(modal).toBeInTheDocument();
       const deleteButton = screen.getByRole('button', { name: /delete/i });
       fireEvent.click(deleteButton);
 
