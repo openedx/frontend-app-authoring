@@ -92,13 +92,7 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Published')).toBeInTheDocument();
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        (_: string, element: Element | null) => !!element
-                && element.nodeName === 'SPAN'
-                && /Last published on June 22, 2024 at (00:00|24:00) by Luke\./.test(
-                  getInnerText(element),
-                ),
-      ),
+      screen.getByText(matchInnerText('SPAN', 'Last published on June 22, 2024 at 00:00 by Luke.')),
     ).toBeInTheDocument();
   });
 
