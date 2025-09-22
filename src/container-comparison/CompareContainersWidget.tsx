@@ -3,13 +3,14 @@ import {
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import { useCallback, useMemo, useState } from 'react';
+import { ContainerType } from '../generic/key-utils';
 import { LoadingSpinner } from '../generic/Loading';
 import { useContainerChildren } from '../library-authoring/data/apiHooks';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
 import { ContainerChild, ContainerChildBase, WithState } from './types';
-import { diffPreviewContainerChildren } from './utils';
+import { diffPreviewContainerChildren, isRowClickable } from './utils';
 
 interface ContainerInfoProps {
   title: string;
@@ -142,7 +143,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
   });
 
   const onRowClick = (row: WithState<ContainerChild>) => {
-    if (!row.downstreamId || !row.id || row.state !== 'modified') {
+    if (!isRowClickable(row.state, row.blockType as ContainerType)) {
       return;
     }
 
@@ -151,9 +152,9 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
       upstreamBlockId: row.id!,
       downstreamBlockId: row.downstreamId!,
       parent: [...prev.parent, {
-        title,
-        upstreamBlockId,
-        downstreamBlockId,
+        title: prev.title,
+        upstreamBlockId: prev.upstreamBlockId,
+        downstreamBlockId: prev.downstreamBlockId,
       }],
     }));
   };

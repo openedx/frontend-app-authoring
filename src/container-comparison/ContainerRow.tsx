@@ -12,6 +12,7 @@ import { getItemIcon } from '../generic/block-type-utils';
 import { ContainerType } from '../generic/key-utils';
 import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 import { ContainerState } from './types';
+import { isRowClickable } from './utils';
 
 export interface ContainerRowProps {
   title: string;
@@ -37,7 +38,7 @@ const ContainerRow = ({
       case 'removed':
         message = side === 'Before' ? messages.removedDiffBeforeMessage : messages.removedDiffAfterMessage;
         return ['text-white bg-danger-600', Delete, message];
-      case 'renamed':
+      case 'locallyRenamed':
         message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedDiffAfterMessage;
         return ['bg-light-300 text-light-300 ', Done, message];
       case 'moved':
@@ -50,7 +51,7 @@ const ContainerRow = ({
 
   return (
     <Card
-      isClickable={state === 'modified'}
+      isClickable={isRowClickable(state, containerType)}
       onClick={onClick}
       onKeyDown={(e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {

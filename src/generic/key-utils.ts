@@ -90,3 +90,19 @@ export enum ContainerType {
    */
   Components = 'components',
 }
+
+/**
+ * Normalize a container type to the standard version. For example, 'sequential' will be normalized to 'subsection'.
+ */
+export function NormalizeContainerType(containerType: ContainerType | string) {
+  switch (containerType) {
+    case ContainerType.Chapter:
+      return ContainerType.Section;
+    case ContainerType.Sequential:
+      return ContainerType.Subsection;
+    case ContainerType.Vertical:
+      return ContainerType.Unit;
+    default:
+      return containerType;
+  }
+}

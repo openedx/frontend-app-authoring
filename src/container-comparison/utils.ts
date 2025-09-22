@@ -1,12 +1,18 @@
 import { UpstreamInfo } from '../data/types';
+import { ContainerType, NormalizeContainerType } from '../generic/key-utils';
 import {
-    ContainerChild,
-  ContainerChildBase, ContainerState, CourseContainerChildBase, WithIndex, WithState,
+  ContainerChild,
+  ContainerChildBase,
+  ContainerState,
+  CourseContainerChildBase,
+  WithIndex,
+  WithState,
 } from './types';
 
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
-    || (link.versionSynced < (link.versionDeclined || 0));
+    || (link.versionSynced < (link.versionDeclined || 0))
+      || ((link.readyToSyncChildren?.length || 0) > 0);
 }
 
 /**
@@ -55,7 +61,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       }
       if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
         // Has been renamed
-        state = 'renamed';
+        state = 'locallyRenamed';
         originalName = newVersion.displayName;
       }
       if (checkIsReadyToSync(oldVersion.upstreamLink)) {
@@ -65,7 +71,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       // Insert in its original index
       updatedA.splice(oldVersion.index, 1, {
         name: oldVersion.name,
-        blockType: oldVersion.blockType,
+        blockType: NormalizeContainerType(oldVersion.blockType),
         id: oldVersion.upstreamLink.upstreamRef,
         downstreamId: oldVersion.id,
         state,
@@ -87,7 +93,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   mapA.forEach((oldVersion) => {
     updatedA.splice(oldVersion.index, 1, {
       name: oldVersion.name,
-      blockType: oldVersion.blockType,
+      blockType: NormalizeContainerType(oldVersion.blockType),
       id: oldVersion.upstreamLink.upstreamRef,
       downstreamId: oldVersion.id,
       state: 'removed',
@@ -95,7 +101,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     updatedB.splice(oldVersion.index, 0, {
       id: oldVersion.upstreamLink.upstreamRef,
       name: oldVersion.name,
-      blockType: oldVersion.blockType,
+      blockType: NormalizeContainerType(oldVersion.blockType),
       downstreamId: oldVersion.id,
       state: 'removed',
     });
@@ -113,4 +119,12 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   });
 
   return [updatedA, updatedB];
+}
+
+export function isRowClickable(state?: ContainerState, blockType?: ContainerType) {
+  return state === 'modified' && blockType && [
+    ContainerType.Section,
+    ContainerType.Subsection,
+    ContainerType.Unit,
+  ].includes(blockType);
 }
