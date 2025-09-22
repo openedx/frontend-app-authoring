@@ -1,16 +1,15 @@
-import { ActionRow, Icon, Stack } from '@openedx/paragon';
+import { ActionRow, Card, Icon, Stack } from '@openedx/paragon';
 import type { MessageDescriptor } from 'react-intl';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { useMemo } from 'react';
 import {
   Cached, Delete, Done, Plus,
 } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { ContainerType } from '../generic/key-utils';
 import { getItemIcon } from '../generic/block-type-utils';
-
-export type ContainerState = 'removed' | 'added' | 'modified' | 'renamed' | 'moved';
+import { ContainerType } from '../generic/key-utils';
+import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
+import { ContainerState } from './types';
 
 export interface ContainerRowProps {
   title: string;
@@ -48,39 +47,50 @@ const ContainerRow = ({
   }, [state, side]);
 
   return (
-    <Stack onClick={onClick} direction="horizontal" gap={0} className="mb-2 rounded shadow-sm border border-light-100">
-      <div
-        className={`px-1 align-self-stretch align-content-center rounded-left ${stateContext[0]}`}
-      >
-        <Icon size="sm" src={stateContext[1]} />
-      </div>
-      <ActionRow className="p-2">
-        <Stack direction="vertical" gap={3}>
-          <Stack direction="horizontal" gap={2}>
-            <Icon
-              src={getItemIcon(containerType)}
-              screenReaderText={containerType}
-              title={title}
-            />
-            <span className="small font-weight-bold">{title}</span>
-          </Stack>
-          {stateContext[2] ? (
-            <span className="micro">
-              <FormattedMessage
-                {...stateContext[2]}
-                values={{
-                  blockType: containerType,
-                  name: originalName,
-                }}
+    <Card
+      isClickable={state==="modified"}
+      onClick={onClick}
+      onKeyDown={(e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick?.();
+        }
+      }}
+      className="mb-2 rounded shadow-sm border border-light-100"
+    >
+      <Stack direction="horizontal" gap={0}>
+        <div
+          className={`px-1 align-self-stretch align-content-center rounded-left ${stateContext[0]}`}
+        >
+          <Icon size="sm" src={stateContext[1]} />
+        </div>
+        <ActionRow className="p-2">
+          <Stack direction="vertical" gap={3}>
+            <Stack direction="horizontal" gap={2}>
+              <Icon
+                src={getItemIcon(containerType)}
+                screenReaderText={containerType}
+                title={title}
               />
-            </span>
-          ) : (
-            <span className="micro">&nbsp;</span>
-          )}
-        </Stack>
-        <ActionRow.Spacer />
-      </ActionRow>
-    </Stack>
+              <span className="small font-weight-bold">{title}</span>
+            </Stack>
+            {stateContext[2] ? (
+              <span className="micro">
+                <FormattedMessage
+                  {...stateContext[2]}
+                  values={{
+                    blockType: containerType,
+                    name: originalName,
+                  }}
+                />
+              </span>
+            ) : (
+                <span className="micro">&nbsp;</span>
+              )}
+          </Stack>
+          <ActionRow.Spacer />
+        </ActionRow>
+      </Stack>
+    </Card>
   );
 };
 

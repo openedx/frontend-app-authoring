@@ -1,26 +1,5 @@
 import { UpstreamInfo } from '../data/types';
-import { ContainerState } from './ContainerRow';
-
-type WithState<T> = T & { state?: ContainerState, originalName?: string };
-type WithIndex<T> = T & { index: number };
-
-export type CourseContainerChildBase = {
-  name: string;
-  id: string;
-  upstreamLink: UpstreamInfo;
-  blockType: string;
-};
-
-export type ContainerChildBase = {
-  displayName: string;
-  id: string;
-  containerType?: string;
-  blockType?: string;
-} & ({
-  containerType: string;
-} | {
-  blockType: string;
-});
+import { ContainerChildBase, ContainerState, CourseContainerChildBase, WithIndex, WithState } from './types';
 
 export function checkIsReadyToSync(link: UpstreamInfo): boolean {
   return (link.versionSynced < (link.versionAvailable || 0))
@@ -77,7 +56,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       }
       // Insert in its original index
       updatedA.splice(oldVersion.index, 1, { ...oldVersion, state, originalName });
-      updatedB.push({ ...newVersion, displayName, state });
+      updatedB.push({ ...newVersion, displayName, state } as WithState<B>);
       // Delete it from mapA as it is processed.
       mapA.delete(newVersion.id);
     }
@@ -87,11 +66,11 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   mapA.forEach((oldVersion) => {
     updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: 'removed' });
     updatedB.splice(oldVersion.index, 0, {
-      id: oldVersion.id,
-      displayName: oldVersion.name,
-      containerType: oldVersion.blockType,
-      state: 'removed',
-    } as WithState<B>);
+        id: oldVersion.id,
+        displayName: oldVersion.name,
+        containerType: oldVersion.blockType,
+        state: 'removed',
+    } as unknown as WithState<B>);
   });
 
   // Create a map for id with index of newly updatedB array

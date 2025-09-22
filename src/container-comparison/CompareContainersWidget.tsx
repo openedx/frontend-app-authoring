@@ -1,47 +1,116 @@
-import { Card } from '@openedx/paragon';
-import { useCallback } from 'react';
+import { Breadcrumb, Button, Card, Icon, Stack } from '@openedx/paragon';
+import { ArrowBack } from '@openedx/paragon/icons';
+import { useCallback, useMemo, useState } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
 import { useContainerChildren } from '../library-authoring/data/apiHooks';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
-import { ContainerChildBase, diffPreviewContainerChildren } from './utils';
+import { ContainerChildBase, CourseContainerChildBase, WithState } from './types';
+import { diffPreviewContainerChildren } from './utils';
 
-interface Props {
+interface ContainerInfoProps {
   title: string;
   upstreamBlockId: string;
   downstreamBlockId: string;
 }
 
-export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: Props) => {
+interface Props extends ContainerInfoProps {
+  parent: ContainerInfoProps[];
+  onRowClick: (row: WithState<CourseContainerChildBase>) => void;
+  onBackBtnClick: () => void;
+}
+
+export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
+  const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps>({
+    title,
+    upstreamBlockId,
+    downstreamBlockId,
+  });
+  const [parent, setParent] = useState<ContainerInfoProps[]>([]);
+
+  const onRowClick = (row: WithState<CourseContainerChildBase>) => {
+    if (!row.upstreamLink || row.state !== "modified") {
+      return;
+    }
+
+    setCurrentContainerState({
+      title: row.name,
+      upstreamBlockId: row.upstreamLink.upstreamRef,
+      downstreamBlockId: row.id,
+    });
+
+    setParent((prev) => {
+      return [...prev, {
+        title,
+        upstreamBlockId,
+        downstreamBlockId,
+      }];
+    });
+  }
+
+  const onBackBtnClick = () => {
+    if (parent.length < 1) {
+      return;
+    }
+    const prevParent = parent.pop();
+    setCurrentContainerState({
+      title: prevParent!.title,
+      upstreamBlockId: prevParent!.upstreamBlockId,
+      downstreamBlockId: prevParent!.downstreamBlockId,
+    });
+    setParent(prev => {
+      prev.pop();
+      return prev;
+    });
+  }
+
+  return (
+    <_CompareContainersWidget
+      title={currentContainerState.title}
+      upstreamBlockId={currentContainerState.upstreamBlockId}
+      downstreamBlockId={currentContainerState.downstreamBlockId}
+      parent={parent}
+      onRowClick={onRowClick}
+      onBackBtnClick={onBackBtnClick}
+    />
+  );
+};
+
+const _CompareContainersWidget = ({
+  title,
+  upstreamBlockId,
+  downstreamBlockId,
+  parent,
+  onRowClick,
+  onBackBtnClick,
+}: Props) => {
   const { data, isPending } = useCourseContainerChildren(downstreamBlockId);
   const {
     data: libData,
     isPending: libPending,
   } = useContainerChildren(upstreamBlockId, true);
 
-  const result = useCallback(
-    () => {
-      if (!data || !libData) {
-        return [undefined, undefined];
-      }
-      return diffPreviewContainerChildren(data.children, libData as ContainerChildBase[]);
-    },
-    [data, libData],
-  );
+  const result = useMemo(() => {
+    if (!data || !libData) {
+      return [undefined, undefined];
+    }
+    return diffPreviewContainerChildren(data.children, libData as ContainerChildBase[]);
+  }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {
     if (isPending) {
       return <div className="m-auto"><LoadingSpinner /></div>;
     }
 
-    return result()[0]?.map((child) => (
+    return result[0]?.map((child) => (
       <ContainerRow
         title={child.name}
         containerType={child.blockType}
         state={child.state}
         originalName={child.originalName}
         side="Before"
+        onClick={() => onRowClick(child)}
       />
     ));
   }, [isPending, result]);
@@ -51,7 +120,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
       return <div className="m-auto"><LoadingSpinner /></div>;
     }
 
-    return result()[1]?.map((child) => (
+    return result[1]?.map((child) => (
       <ContainerRow
         title={child.displayName}
         containerType={child.containerType || child.blockType!}
@@ -61,18 +130,44 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
     ));
   }, [libPending, isPending, result]);
 
+  const getTitleComponent = () => {
+    if (parent.length === 0) {
+      return title;
+    } else {
+      return (
+        <Breadcrumb ariaLabel="title breadcrumb"
+          links={[
+            {
+              label: <Stack direction="horizontal" gap={1}><Icon size='xs' src={ArrowBack} />Back</Stack>,
+              onClick: onBackBtnClick,
+              variant: "link",
+              className: "px-0 text-gray-900",
+            },
+            {
+              label: title,
+              variant: "link",
+              className: "px-0 text-gray-900",
+              disabled: true,
+            },
+          ]}
+          linkAs={Button}
+        />
+      );
+    }
+  }
+
   return (
     <div className="row">
       <div className="col col-6 p-1">
         <Card className="p-4">
-          <ChildrenPreview title={title} side="Before">
+          <ChildrenPreview title={getTitleComponent()} side="Before">
             {renderBeforeChildren()}
           </ChildrenPreview>
         </Card>
       </div>
       <div className="col col-6 p-1">
         <Card className="p-4">
-          <ChildrenPreview title={title} side="After">
+          <ChildrenPreview title={getTitleComponent()} side="After">
             {renderAfterChildren()}
           </ChildrenPreview>
         </Card>
