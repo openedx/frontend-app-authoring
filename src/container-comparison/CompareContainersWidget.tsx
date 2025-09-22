@@ -55,6 +55,7 @@ const CompareContainersWidgetInner = ({
 
     return result[0]?.map((child) => (
       <ContainerRow
+        key={child.id}
         title={child.name}
         containerType={child.blockType}
         state={child.state}
@@ -72,6 +73,7 @@ const CompareContainersWidgetInner = ({
 
     return result[1]?.map((child) => (
       <ContainerRow
+        key={child.id}
         title={child.name}
         containerType={child.blockType}
         state={child.state}

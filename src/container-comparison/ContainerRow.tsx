@@ -51,7 +51,7 @@ const ContainerRow = ({
 
   return (
     <Card
-      isClickable={isRowClickable(state, containerType)}
+      isClickable={isRowClickable(state, containerType as ContainerType)}
       onClick={onClick}
       onKeyDown={(e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
