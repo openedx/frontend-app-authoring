@@ -22,3 +22,10 @@ export type ContainerChildBase = {
 } | {
   blockType: string;
 });
+
+export type ContainerChild = {
+  name: string;
+  id?: string;
+  downstreamId?: string;
+  blockType: string;
+}

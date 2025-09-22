@@ -240,7 +240,7 @@ describe('diffPreviewContainerChildren', () => {
     expect(result[1][2].state).toEqual('renamed');
     expect(result[0][1].state).toEqual('removed');
     expect(result[1][1].state).toEqual('removed');
-    expect(result[1][2].displayName).toEqual(a[0].name);
+    expect(result[1][2].name).toEqual(a[0].name);
   });
 
   it('should handle add and delete', () => {
@@ -255,8 +255,8 @@ describe('diffPreviewContainerChildren', () => {
     // Deleted entry
     expect(result[0][1].state).toEqual('removed');
     expect(result[1][1].state).toEqual('removed');
-    expect(result[1][0].displayName).toEqual(a[0].name);
-    expect(result[0][3].name).toEqual(result[1][3].displayName);
+    expect(result[1][0].name).toEqual(a[0].name);
+    expect(result[0][3].name).toEqual(result[1][3].name);
     expect(result[0][3].state).toEqual('added');
     expect(result[1][3].state).toEqual('added');
   });
@@ -268,12 +268,12 @@ describe('diffPreviewContainerChildren', () => {
     // renamed takes precendence over moved
     expect(result[0][0].state).toEqual('renamed');
     expect(result[1][4].state).toEqual('renamed');
-    expect(result[1][4].id).toEqual(result[0][0].upstreamLink.upstreamRef);
+    expect(result[1][4].id).toEqual(result[0][0].id);
 
     // Deleted entry
     expect(result[0][1].state).toEqual('removed');
     expect(result[1][1].state).toEqual('removed');
-    expect(result[1][1].displayName).toEqual(result[0][1].name);
+    expect(result[1][1].name).toEqual(result[0][1].name);
 
     // added entry
     expect(result[0][2].state).toEqual('added');

@@ -1,5 +1,6 @@
 import { UpstreamInfo } from '../data/types';
 import {
+    ContainerChild,
   ContainerChildBase, ContainerState, CourseContainerChildBase, WithIndex, WithState,
 } from './types';
 
@@ -16,16 +17,16 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   a: A[],
   b: B[],
   idKey: string = 'id',
-): [WithState<A>[], WithState<B>[]] {
+): [WithState<ContainerChild>[], WithState<ContainerChild>[]] {
   const mapA = new Map<any, WithIndex<A>>();
-  const mapB = new Map<any, WithIndex<B>>();
+  const mapB = new Map<any, WithIndex<ContainerChild>>();
   for (let index = 0; index < a.length; index++) {
     const element = a[index];
     mapA.set(element.upstreamLink?.upstreamRef, { ...element, index });
   }
-  const updatedA: WithState<A>[] = [...a];
-  const addedA: Array<WithIndex<A>> = [];
-  const updatedB: WithState<B>[] = [];
+  const updatedA: WithState<ContainerChild>[] = Array(a.length);
+  const addedA: Array<WithIndex<ContainerChild>> = [];
+  const updatedB: WithState<ContainerChild>[] = [];
   for (let index = 0; index < b.length; index++) {
     const newVersion = b[index];
     const oldVersion = mapA.get(newVersion.id);
@@ -34,10 +35,15 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       addedA.push({
         id: newVersion.id,
         name: newVersion.displayName,
-        blockType: newVersion.containerType || newVersion.blockType,
+        blockType: (newVersion.containerType || newVersion.blockType)!,
         index,
-      } as WithIndex<A>);
-      updatedB.push({ ...newVersion, state: 'added' });
+      });
+      updatedB.push({
+        name: newVersion.displayName,
+        blockType: (newVersion.blockType || newVersion.containerType)!,
+        id: newVersion.id,
+        state: 'added',
+      });
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
@@ -57,8 +63,21 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
         state = 'modified';
       }
       // Insert in its original index
-      updatedA.splice(oldVersion.index, 1, { ...oldVersion, state, originalName });
-      updatedB.push({ ...newVersion, displayName, state } as WithState<B>);
+      updatedA.splice(oldVersion.index, 1, {
+        name: oldVersion.name,
+        blockType: oldVersion.blockType,
+        id: oldVersion.upstreamLink.upstreamRef,
+        downstreamId: oldVersion.id,
+        state,
+        originalName,
+      });
+      updatedB.push({
+        name: displayName,
+        blockType: (newVersion.blockType || newVersion.containerType)!,
+        id: newVersion.id,
+        downstreamId: oldVersion.id,
+        state,
+      });
       // Delete it from mapA as it is processed.
       mapA.delete(newVersion.id);
     }
@@ -66,13 +85,20 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 
   // If there are remaining items in mapA, it means they were deleted in newVersion;
   mapA.forEach((oldVersion) => {
-    updatedA.splice(oldVersion.index, 1, { ...oldVersion, state: 'removed' });
-    updatedB.splice(oldVersion.index, 0, {
-      id: oldVersion.id,
-      displayName: oldVersion.name,
-      containerType: oldVersion.blockType,
+    updatedA.splice(oldVersion.index, 1, {
+      name: oldVersion.name,
+      blockType: oldVersion.blockType,
+      id: oldVersion.upstreamLink.upstreamRef,
+      downstreamId: oldVersion.id,
       state: 'removed',
-    } as unknown as WithState<B>);
+    });
+    updatedB.splice(oldVersion.index, 0, {
+      id: oldVersion.upstreamLink.upstreamRef,
+      name: oldVersion.name,
+      blockType: oldVersion.blockType,
+      downstreamId: oldVersion.id,
+      state: 'removed',
+    });
   });
 
   // Create a map for id with index of newly updatedB array

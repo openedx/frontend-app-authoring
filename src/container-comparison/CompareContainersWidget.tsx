@@ -8,7 +8,7 @@ import { useContainerChildren } from '../library-authoring/data/apiHooks';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
-import { ContainerChildBase, CourseContainerChildBase, WithState } from './types';
+import { ContainerChild, ContainerChildBase, WithState } from './types';
 import { diffPreviewContainerChildren } from './utils';
 
 interface ContainerInfoProps {
@@ -19,7 +19,7 @@ interface ContainerInfoProps {
 
 interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
-  onRowClick: (row: WithState<CourseContainerChildBase>) => void;
+  onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
 }
 
@@ -71,10 +71,11 @@ const CompareContainersWidgetInner = ({
 
     return result[1]?.map((child) => (
       <ContainerRow
-        title={child.displayName}
-        containerType={child.containerType || child.blockType!}
+        title={child.name}
+        containerType={child.blockType}
         state={child.state}
         side="After"
+        onClick={() => onRowClick(child)}
       />
     ));
   }, [libPending, isPending, result]);
@@ -140,15 +141,15 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
     parent: [],
   });
 
-  const onRowClick = (row: WithState<CourseContainerChildBase>) => {
-    if (!row.upstreamLink || row.state !== 'modified') {
+  const onRowClick = (row: WithState<ContainerChild>) => {
+    if (!row.downstreamId || !row.id || row.state !== 'modified') {
       return;
     }
 
     setCurrentContainerState((prev) => ({
       title: row.name,
-      upstreamBlockId: row.upstreamLink.upstreamRef,
-      downstreamBlockId: row.id,
+      upstreamBlockId: row.id!,
+      downstreamBlockId: row.downstreamId!,
       parent: [...prev.parent, {
         title,
         upstreamBlockId,
