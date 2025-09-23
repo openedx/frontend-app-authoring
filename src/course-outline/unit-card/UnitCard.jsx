@@ -170,10 +170,18 @@ const UnitCard = ({
         return 'success';
       case 'draft':
         return 'warning';
+      case 'unpublished_changes':
+        return 'warning';
       default:
         return 'default';
     }
   };
+
+  const isDraggable = (
+    actions.draggable
+      && (actions.allowMoveUp || actions.allowMoveDown)
+      && !subsection.upstreamInfo?.upstreamRef
+  );
 
   if (!isHeaderVisible) {
     return null;
@@ -185,7 +193,7 @@ const UnitCard = ({
         id={id}
         category={category}
         key={id}
-        isDraggable
+        isDraggable={isDraggable}
         isDroppable={actions.childAddable}
         componentStyle={{
           marginBottom: isLastUnit ? '0px' : '24px',
@@ -288,6 +296,9 @@ UnitCard.propTypes = {
     shouldScroll: PropTypes.bool,
     isTimeLimited: PropTypes.bool,
     graded: PropTypes.bool,
+    upstreamInfo: PropTypes.shape({
+      upstreamRef: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
   section: PropTypes.shape({
     id: PropTypes.string.isRequired,

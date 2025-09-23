@@ -44,6 +44,22 @@ const messages = defineMessages({
     defaultMessage: 'An error has occurred creating the file',
     description: 'Error message in toast when exporting tags of a course',
   },
+  dueDate: {
+    id: 'course-authoring.course-outline.messages.dueDate.label',
+    defaultMessage: 'Due date: {dueDate}',
+  },
+  publishCourse: {
+    id: 'course-authoring.course-outline.messages.publishCourse.label',
+    defaultMessage: 'Publish course',
+  },
+  published: {
+    id: 'course-authoring.course-outline.messages.published.label',
+    defaultMessage: 'Published',
+  },
+  disabledPublishButtonTooltip: {
+    id: 'course-authoring.course-outline.messages.disabledPublishButtonTooltip.label',
+    defaultMessage: 'The start and end dates for the course are not set.',
+  }
 });
 
 export default messages;

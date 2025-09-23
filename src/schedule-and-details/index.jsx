@@ -339,7 +339,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           </Layout>
         </section>
       </Container>
-      <div className="alert-toast">
+      <div className="alert-toast !tw-w-auto">
         {!isEditableState && (
           <InternetConnectionAlert
             isFailed={savingStatus === RequestStatus.FAILED}

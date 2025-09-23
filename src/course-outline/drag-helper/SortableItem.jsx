@@ -48,23 +48,22 @@ const SortableItem = ({
 
   return (
     <div ref={setNodeRef} style={style} className="tw-flex tw-items-center">
-      {isDraggable && (
-        <div
-          className={classNames(
-            'tw-p-1 tw-mr-2 focus-visible:tw-outline-none tw-flex tw-items-center tw-justify-center',
-            gripContainerClassName,
-          )}
-          {...attributes}
-          {...listeners}
-        >
-          <DotsGrid
-            className="tw-w-4 tw-h-4 focus:tw-outline-none"
-            ref={setActivatorNodeRef}
-            key="drag-to-reorder-icon"
-            aria-label={intl.formatMessage(messages.tooltipContent)}
-          />
-        </div>
-      )}
+      <div
+        className={classNames(
+          'tw-p-1 tw-mr-2 focus-visible:tw-outline-none tw-flex tw-items-center tw-justify-center',
+          gripContainerClassName,
+          !isDraggable && 'tw-cursor-not-allowed',
+        )}
+        {...attributes}
+        {...listeners}
+      >
+        <DotsGrid
+          className="tw-w-4 tw-h-4 focus:tw-outline-none"
+          ref={setActivatorNodeRef}
+          key="drag-to-reorder-icon"
+          aria-label={intl.formatMessage(messages.tooltipContent)}
+        />
+      </div>
       <div className="tw-flex-1">{children}</div>
     </div>
   );

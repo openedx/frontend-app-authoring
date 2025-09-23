@@ -1,55 +1,45 @@
 // @ts-check
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button as OpenEdxButton,
   Container,
-  Layout,
   Row,
-  TransitionReplace,
-  Toast,
+  Toast
 } from '@openedx/paragon';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Add as IconAdd, CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
-import { CourseAuthoringOutlineSidebarSlot } from '../plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
-import { LoadingSpinner } from '../generic/Loading';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
+import { Plus } from '@untitledui/icons';
 import { RequestStatus } from '../data/constants';
-import SubHeader from '../generic/sub-header/SubHeader';
-import ProcessingNotification from '../generic/processing-notification';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import DeleteModal from '../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../generic/configure-modal/ConfigureModal';
-import AlertMessage from '../generic/alert-message';
+import DeleteModal from '../generic/delete-modal/DeleteModal';
+import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { LoadingSpinner } from '../generic/Loading';
+import ProcessingNotification from '../generic/processing-notification';
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import getPageHeadTitle from '../generic/utils';
-import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
+import Button from '../shared/Components/Common/Button';
 import { COURSE_BLOCK_NAMES } from './constants';
-import StatusBar from './status-bar/StatusBar';
-import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
-import SectionCard from './section-card/SectionCard';
-import SubsectionCard from './subsection-card/SubsectionCard';
-import UnitCard from './unit-card/UnitCard';
-import HighlightsModal from './highlights-modal/HighlightsModal';
-import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
-import PublishModal from './publish-modal/PublishModal';
-import PageAlerts from './page-alerts/PageAlerts';
+import { getTagsExportFile } from './data/api';
+import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import DraggableList from './drag-helper/DraggableList';
 import {
   canMoveSection,
-  possibleUnitMoves,
   possibleSubsectionMoves,
+  possibleUnitMoves,
 } from './drag-helper/utils';
+import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
+import HighlightsModal from './highlights-modal/HighlightsModal';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
-import { getTagsExportFile } from './data/api';
-import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
-import Button from '../shared/Components/Common/Button';
-import { Plus } from '@untitledui/icons';
+import PageAlerts from './page-alerts/PageAlerts';
+import PublishModal from './publish-modal/PublishModal';
+import SectionCard from './section-card/SectionCard';
+import SubsectionCard from './subsection-card/SubsectionCard';
+import UnitCard from './unit-card/UnitCard';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -220,7 +210,7 @@ const CourseOutline = ({ courseId }) => {
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return (
-      <Row className="m-0 mt-4 justify-content-center">
+      <Row className="tw-absolute tw-right-1/2 tw-top-1/2">
         <LoadingSpinner />
       </Row>
     );
@@ -412,6 +402,7 @@ const CourseOutline = ({ courseId }) => {
             </div>
           )}
         </div>
+
         <EnableHighlightsModal
           isOpen={isEnableHighlightsModalOpen}
           close={closeEnableHighlightsModal}
