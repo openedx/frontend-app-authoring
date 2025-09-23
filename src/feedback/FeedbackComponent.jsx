@@ -79,7 +79,18 @@ const FeedbackComponent = () => {
         className={`feedback-button ${isOpen ? 'open' : ''}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (isOpen) {
+            setFormData({
+              satisfaction: 0,
+              experience: '',
+              issues: '',
+              issueDescription: '',
+            });
+            setSubmitStatus(null);
+          }
+        }}
         aria-label={isOpen ? 'Close feedback' : 'Give feedback'}
       >
         <div className="icon">
