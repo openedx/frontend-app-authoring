@@ -47,16 +47,31 @@ describe('CompareContainersWidget', () => {
       downstreamBlockId={mockGetCourseContainerChildren.sectionId}
     />);
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
-    const blocks = await screen.findAllByText('subsection block 0');
+    let blocks = await screen.findAllByText('subsection block 0');
     expect(blocks.length).toEqual(2);
     await user.click(blocks[0]);
     // Breadcrumbs
     const breadcrumbs = await screen.findAllByRole('button', { name: 'subsection block 0' });
     expect(breadcrumbs.length).toEqual(2);
+
+    const removedRows = await screen.findAllByText('This unit was removed');
+    // clicking on removed or added rows does not updated the page.
+    await user.click(removedRows[0]);
+    // Still in same page
+    expect((await screen.findAllByRole('button', { name: 'subsection block 0' })).length).toEqual(2);
+
+    // Back breadcrumb
     const backbtns = await screen.findAllByRole('button', { name: 'Back' });
     expect(backbtns.length).toEqual(2);
+
+    // Go back
     await user.click(backbtns[0]);
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
-    expect((await screen.findAllByText('subsection block 0')).length).toEqual(2);
+    blocks = await screen.findAllByText('subsection block 0');
+    expect(blocks.length).toEqual(2);
+
+    // After side click also works
+    await user.click(blocks[1]);
+    expect((await screen.findAllByRole('button', { name: 'subsection block 0' })).length).toEqual(2);
   });
 });

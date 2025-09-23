@@ -163,6 +163,7 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
 
   const onBackBtnClick = () => {
     setCurrentContainerState((prev) => {
+      // istanbul ignore if: this should never happen
       if (prev.parent.length < 1) {
         return prev;
       }

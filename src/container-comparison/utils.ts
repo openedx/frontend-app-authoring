@@ -1,5 +1,5 @@
 import { UpstreamInfo } from '../data/types';
-import { ContainerType, NormalizeContainerType } from '../generic/key-utils';
+import { ContainerType, normalizeContainerType } from '../generic/key-utils';
 import {
   ContainerChild,
   ContainerChildBase,
@@ -71,7 +71,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       // Insert in its original index
       updatedA.splice(oldVersion.index, 1, {
         name: oldVersion.name,
-        blockType: NormalizeContainerType(oldVersion.blockType),
+        blockType: normalizeContainerType(oldVersion.blockType),
         id: oldVersion.upstreamLink.upstreamRef,
         downstreamId: oldVersion.id,
         state,
@@ -93,7 +93,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   mapA.forEach((oldVersion) => {
     updatedA.splice(oldVersion.index, 1, {
       name: oldVersion.name,
-      blockType: NormalizeContainerType(oldVersion.blockType),
+      blockType: normalizeContainerType(oldVersion.blockType),
       id: oldVersion.upstreamLink.upstreamRef,
       downstreamId: oldVersion.id,
       state: 'removed',
@@ -101,7 +101,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     updatedB.splice(oldVersion.index, 0, {
       id: oldVersion.upstreamLink.upstreamRef,
       name: oldVersion.name,
-      blockType: NormalizeContainerType(oldVersion.blockType),
+      blockType: normalizeContainerType(oldVersion.blockType),
       downstreamId: oldVersion.id,
       state: 'removed',
     });
