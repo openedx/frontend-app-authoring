@@ -446,7 +446,7 @@ const Dashboard = () => {
       <>
         <h4 className="card-header">{intl && intl.formatMessage
             ? intl.formatMessage(message.calendarTitle)
-            : messages.calendarTitle.defaultMessage}</h4>
+            : message.calendarTitle.defaultMessage}</h4>
         <div className="calendar-card">
           <div className="calendar-nav">
             <NavigationButton type="prev" onClick={prev} />
