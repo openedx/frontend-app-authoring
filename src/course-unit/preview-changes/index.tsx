@@ -30,7 +30,7 @@ const ConfirmationModal = ({
 }: {
   modalType: ConfirmationModalType,
   onClose: () => void,
-  updateAndRefresh: (accept: boolean) => void,
+  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void,
 }) => {
   const intl = useIntl();
 
@@ -40,11 +40,13 @@ const ConfirmationModal = ({
     btnLabel,
     btnVariant,
     accept,
+    overrideCustomizations,
   } = useMemo(() => {
     let resultTitle: string | undefined;
     let resultDescription: string | undefined;
     let resutlBtnLabel: string | undefined;
     let resultAccept: boolean = false;
+    let resultOverrideCustomizations: boolean = false;
     let resultBtnVariant: 'danger' | 'primary' = 'danger';
 
     switch (modalType) {
@@ -58,6 +60,7 @@ const ConfirmationModal = ({
         resultDescription = intl.formatMessage(messages.updateToPublishedLibraryContentBody);
         resutlBtnLabel = intl.formatMessage(messages.updateToPublishedLibraryContentConfirm);
         resultAccept = true;
+        resultOverrideCustomizations = true;
         break;
       case 'keep':
         resultTitle = intl.formatMessage(messages.keepCourseContentTitle);
@@ -75,6 +78,7 @@ const ConfirmationModal = ({
       btnLabel: resutlBtnLabel,
       accept: resultAccept,
       btnVariant: resultBtnVariant,
+      overrideCustomizations: resultOverrideCustomizations,
     };
   }, [modalType]);
 
@@ -85,7 +89,7 @@ const ConfirmationModal = ({
       variant="warning"
       title={title}
       description={description}
-      onDeleteSubmit={() => updateAndRefresh(accept)}
+      onDeleteSubmit={() => updateAndRefresh(accept, overrideCustomizations)}
       btnLabel={btnLabel}
       buttonVariant={btnVariant}
     />
@@ -146,7 +150,7 @@ export const PreviewLibraryXBlockChanges = ({
     );
   }, [blockData, isTextWithLocalChanges]);
 
-  const updateAndRefresh = useCallback(async (accept: boolean) => {
+  const updateAndRefresh = useCallback(async (accept: boolean, overrideCustomizations: boolean) => {
     // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
@@ -156,7 +160,10 @@ export const PreviewLibraryXBlockChanges = ({
     const failureMsg = accept ? messages.acceptChangesFailure : messages.ignoreChangesFailure;
 
     try {
-      await mutation.mutateAsync(blockData.downstreamBlockId);
+      await mutation.mutateAsync({
+        blockId: blockData.downstreamBlockId,
+        overrideCustomizations,
+      });
       postChange(accept);
     } catch (e) {
       showToast(intl.formatMessage(failureMsg));
@@ -253,7 +260,7 @@ export const PreviewLibraryXBlockChanges = ({
             </Button>
           ) : (
             <LoadingButton
-              onClick={() => updateAndRefresh(true)}
+              onClick={() => updateAndRefresh(true, false)}
               label={intl.formatMessage(messages.acceptChangesBtn)}
             />
           )}
