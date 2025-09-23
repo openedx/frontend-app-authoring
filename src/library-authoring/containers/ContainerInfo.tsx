@@ -2,13 +2,13 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Stack,
-  Tab,
-  Tabs,
   Dropdown,
   Icon,
   IconButton,
   useToggle,
 } from '@openedx/paragon';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Tab, Nav } from 'react-bootstrap';
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
@@ -39,7 +39,6 @@ type ContainerPreviewProps = {
 
 const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   const intl = useIntl();
-
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
 
   return (
@@ -159,23 +158,21 @@ const ContainerInfo = () => {
     sidebarTab && isContainerInfoTab(sidebarTab)
   ) ? sidebarTab : defaultContainerTab;
 
-  /* istanbul ignore next */
   const handleTabChange = (newTab: ContainerInfoTab) => {
     resetSidebarAction();
     setSidebarTab(newTab);
   };
 
-  const renderTab = useCallback((infoTab: ContainerInfoTab, title: string, component?: React.ReactNode) => {
+  const renderTab = useCallback((infoTab: ContainerInfoTab, title: string) => {
     if (hiddenTabs.includes(infoTab)) {
-      // For some reason, returning anything other than empty list breaks the tab style
-      return [];
+      return null;
     }
     return (
-      <Tab eventKey={infoTab} title={title}>
-        {component}
-      </Tab>
+      <Nav.Item key={infoTab}>
+        <Nav.Link eventKey={infoTab}>{title}</Nav.Link>
+      </Nav.Item>
     );
-  }, [hiddenTabs, defaultContainerTab, containerId]);
+  }, [hiddenTabs]);
 
   if (!container || !containerId || !containerType) {
     return null;
@@ -188,34 +185,50 @@ const ContainerInfo = () => {
         containerType={containerType}
         hasUnpublishedChanges={container.hasUnpublishedChanges}
       />
-      <Tabs
-        variant="tabs"
-        className="my-3 d-flex justify-content-around"
+
+      <Tab.Container
         defaultActiveKey={defaultContainerTab}
         activeKey={tab}
-        onSelect={handleTabChange}
+        onSelect={(k) => handleTabChange(k as ContainerInfoTab)}
+        mountOnEnter
+        unmountOnExit
       >
-        {renderTab(
-          CONTAINER_INFO_TABS.Preview,
-          intl.formatMessage(messages.previewTabTitle),
-          <ContainerPreview containerId={containerId} />,
-        )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Manage,
-          intl.formatMessage(messages.manageTabTitle),
-          <ContainerOrganize />,
-        )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Usage,
-          intl.formatMessage(messages.usageTabTitle),
-          <ContainerUsage />,
-        )}
-        {renderTab(
-          CONTAINER_INFO_TABS.Settings,
-          intl.formatMessage(messages.settingsTabTitle),
-          // TODO: container settings component
-        )}
-      </Tabs>
+        <Nav variant="tabs" className="my-3 d-flex justify-content-around">
+          {renderTab(
+            CONTAINER_INFO_TABS.Preview,
+            intl.formatMessage(messages.previewTabTitle),
+          )}
+          {renderTab(
+            CONTAINER_INFO_TABS.Manage,
+            intl.formatMessage(messages.manageTabTitle),
+          )}
+          {renderTab(
+            CONTAINER_INFO_TABS.Usage,
+            intl.formatMessage(messages.usageTabTitle),
+          )}
+          {/* 👇 Always show Settings */}
+          <Nav.Item>
+            <Nav.Link eventKey={CONTAINER_INFO_TABS.Settings}>
+              {intl.formatMessage(messages.settingsTabTitle)}
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+
+        <Tab.Content className="mt-3">
+          <Tab.Pane eventKey={CONTAINER_INFO_TABS.Preview}>
+            <ContainerPreview containerId={containerId} />
+          </Tab.Pane>
+          <Tab.Pane eventKey={CONTAINER_INFO_TABS.Manage}>
+            <ContainerOrganize />
+          </Tab.Pane>
+          <Tab.Pane eventKey={CONTAINER_INFO_TABS.Usage}>
+            <ContainerUsage />
+          </Tab.Pane>
+          <Tab.Pane eventKey={CONTAINER_INFO_TABS.Settings}>
+            {/* TODO: Container settings component */}
+          </Tab.Pane>
+        </Tab.Content>
+      </Tab.Container>
     </Stack>
   );
 };
