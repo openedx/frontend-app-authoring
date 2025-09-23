@@ -24,7 +24,8 @@
         height: 48px;
 
         &:hover {
-            background: var(--primary-alt);
+            color: var(--text-white);
+            background: var(--primary);
             width: 140px;
             transform: translateY(-2px);
         }
@@ -33,6 +34,10 @@
             background: var(--danger);
             width: 100%;
             min-width: 110px;
+
+            &:hover {
+                color: var(--text-white);
+            }
         }
 
         .icon {
@@ -199,7 +204,8 @@
         transition: background 0.2s ease;
 
         &:hover:not(:disabled) {
-            background: var(--primary-alt);
+            color: var(--primary);
+            background: var(--primary-light);
         }
 
         &:disabled {
