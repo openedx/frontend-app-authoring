@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ModalDialog } from '@openedx/paragon';
 
 import { IframeProvider } from 'generic/hooks/context/iFrameContext';
@@ -6,21 +6,44 @@ import { useIframe } from 'generic/hooks/context/hooks';
 import { useEventListener } from 'generic/hooks/useEventListener';
 import { useCanvasContext } from 'context/Canvas';
 
+import { getJwtToken } from 'utils/auth';
+import ZTOCenterLoading from 'shared/Components/Common/ZTOCenterLoading';
+import { cn } from 'shared/lib/utils';
+
 interface CanvasProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 // TODO: Get from env variable
-const CANVAS_URL = 'http://localhost:3000';
-export const IFRAME_FEATURE_POLICY = 'microphone *; camera *; midi *; geolocation *; encrypted-media *; clipboard-write *';
+const CANVAS_URL = 'http://localhost:3000/canvas';
 
 const Canvas: React.FC<CanvasProps> = ({ isOpen, onClose }) => {
-  const { iframeRef, setIframeRef } = useIframe();
+  const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
 
   useEffect(() => {
     setIframeRef(iframeRef);
   }, [setIframeRef]);
+
+  useEffect(() => {
+    const initializeIframe = async () => {
+      const accessToken = await getJwtToken();
+      if (!accessToken) {
+        return;
+      }
+
+      // Send auth tokens once iframe is loaded
+      // Wait for 1 second to ensure the iframe is loaded
+      setTimeout(() => {
+        sendMessageToIframe('AUTH_TOKENS', { accessToken, refreshToken: accessToken });
+      }, 500);
+    };
+
+    if (isIframeLoaded) {
+      initializeIframe();
+    }
+  }, [sendMessageToIframe, isIframeLoaded]);
 
   const receiveMessage = useCallback(
     (event: MessageEvent) => {
@@ -43,6 +66,10 @@ const Canvas: React.FC<CanvasProps> = ({ isOpen, onClose }) => {
 
   useEventListener('message', receiveMessage);
 
+  const handleIframeLoad = useCallback(() => {
+    setIsIframeLoaded(true);
+  }, []);
+
   return (
     <ModalDialog
       title=""
@@ -53,20 +80,30 @@ const Canvas: React.FC<CanvasProps> = ({ isOpen, onClose }) => {
       variant="default"
       onClose={() => {}}
       isFullscreenOnMobile
+      className="tw-relative"
     >
-      <div className="tw-p-3 tw-w-full tw-h-full tw-bg-white">
-        <iframe
-          ref={iframeRef}
-          title="canvas-iframe"
-          id="canvas-iframe"
-          src={CANVAS_URL}
-          allow={IFRAME_FEATURE_POLICY}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="origin"
-          className="tw-h-full tw-w-full tw-rounded-[20px] tw-overflow-hidden"
-        />
-      </div>
+      <iframe
+        ref={iframeRef}
+        title="canvas-iframe"
+        id="canvas-iframe"
+        src={CANVAS_URL}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="origin"
+        className={cn('tw-h-full tw-w-full tw-overflow-hidden')}
+        onLoad={handleIframeLoad}
+      />
+      {/* Loading indicator */}
+      {!isIframeLoaded && (
+        <div className="tw-p-3 tw-h-full tw-w-full tw-bg-white tw-absolute tw-inset-0">
+          <div className="tw-rounded-[20px] tw-border tw-border-gray-200 tw-shadow-lg tw-h-full tw-w-full">
+            <ZTOCenterLoading
+              description="Đang chờ xác thực từ ứng dụng chính..." // TODO: Translate
+              className="tw-flex-col"
+            />
+          </div>
+        </div>
+      )}
     </ModalDialog>
   );
 };

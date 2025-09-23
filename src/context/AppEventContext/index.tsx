@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { createContext } from 'utils/context';
+import { useCanvasContext } from 'context/Canvas';
 
 import {
   ClientToServerEvents,
@@ -39,6 +40,7 @@ const createEmptyRegistryMap = () => {
 export default function AppEventContextProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
+  const { openCanvas } = useCanvasContext();
 
   const eventCallbacksRef = useRef(createEmptyRegistryMap());
 
@@ -70,12 +72,7 @@ export default function AppEventContextProvider({ children }: { children: React.
       },
       [SocketEvent.OPEN_CANVAS]: {
         handler: (data) => {
-          console.log('received data', data);
-        },
-      },
-      [SocketEvent.UPDATE_CANVAS]: {
-        handler: (data) => {
-          console.log('received update data', data);
+          openCanvas(data);
         },
       },
     };
