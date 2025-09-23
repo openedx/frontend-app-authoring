@@ -21,6 +21,7 @@ import AppLayout from 'shared/Components/Common/Layouts/AppLayout';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import Canvas from './canvas';
 import messages from './i18n';
 import { StudentsPage } from './students-page/index';
 
@@ -46,6 +47,7 @@ import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
 import AppEventContextProvider from './context/AppEventContext';
+import CanvasContextProvider from './context/Canvas';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -179,9 +181,12 @@ const App = () => {
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
           <Head />
-          <AppEventContextProvider>
-            <RouterProvider router={router} />
-          </AppEventContextProvider>
+          <CanvasContextProvider>
+            <AppEventContextProvider>
+              <RouterProvider router={router} />
+              <Canvas />
+            </AppEventContextProvider>
+          </CanvasContextProvider>
         </QueryClientProvider>
       </ToastProvider>
     </AppProvider>
