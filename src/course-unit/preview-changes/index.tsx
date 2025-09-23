@@ -97,7 +97,7 @@ export interface LibraryChangesMessageData {
   downstreamBlockId: string,
   upstreamBlockId: string,
   upstreamBlockVersionSynced: number,
-  upstreamDownstreamIsModified?: boolean,
+  isLocallyModified?: boolean,
   isContainer: boolean,
   blockType?: string | null,
 }
@@ -127,7 +127,7 @@ export const PreviewLibraryXBlockChanges = ({
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.upstreamDownstreamIsModified);
+  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.isLocallyModified);
 
   const getBody = useCallback(() => {
     if (!blockData) {

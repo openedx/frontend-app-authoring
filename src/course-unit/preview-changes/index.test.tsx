@@ -21,7 +21,7 @@ const defaultEventData: LibraryChangesMessageData = {
   upstreamBlockId: 'lct:org:lib1:unit:1',
   upstreamBlockVersionSynced: 1,
   isContainer: false,
-  upstreamDownstreamIsModified: false,
+  isLocallyModified: false,
   blockType: 'html',
 };
 
@@ -136,7 +136,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   });
 
   it('should render modal of text with local changes', async () => {
-    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+    render({ ...defaultEventData, isLocallyModified: true });
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
 
@@ -150,7 +150,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   it('update changes works', async () => {
     const user = userEvent.setup();
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
-    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+    render({ ...defaultEventData, isLocallyModified: true });
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     const acceptBtn = await screen.findByRole('button', { name: 'Update to published library content' });
@@ -172,7 +172,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
   it('keep changes work', async () => {
     const user = userEvent.setup();
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(200, {});
-    render({ ...defaultEventData, upstreamDownstreamIsModified: true });
+    render({ ...defaultEventData, isLocallyModified: true });
 
     expect(await screen.findByText('Preview changes: Test block')).toBeInTheDocument();
     const ignoreBtn = await screen.findByRole('button', { name: 'Keep course content' });
