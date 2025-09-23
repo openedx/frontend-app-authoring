@@ -1,5 +1,5 @@
-import { UpstreamInfo } from '../data/types';
-import { ContainerType, normalizeContainerType } from '../generic/key-utils';
+import { UpstreamInfo } from '@src/data/types';
+import { ContainerType, normalizeContainerType } from '@src/generic/key-utils';
 import {
   ContainerChild,
   ContainerChildBase,

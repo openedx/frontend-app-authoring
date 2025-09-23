@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCourseContainerChildren } from '../../course-unit/data/api';
-import { getCourseKey } from '../../generic/key-utils';
+import { getCourseContainerChildren } from '@src/course-unit/data/api';
+import { getCourseKey } from '@src/generic/key-utils';
 
 export const containerComparisonQueryKeys = {
   all: ['containerComparison'],

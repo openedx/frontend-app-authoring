@@ -7,10 +7,10 @@ import {
   Cached, Delete, Done, Plus,
 } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { ContainerType } from '@src/generic/key-utils';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import messages from './messages';
-import { getItemIcon } from '../generic/block-type-utils';
-import { ContainerType } from '../generic/key-utils';
-import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 import { ContainerState } from './types';
 import { isRowClickable } from './utils';
 

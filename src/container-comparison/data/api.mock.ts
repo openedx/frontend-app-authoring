@@ -1,5 +1,5 @@
-import { CourseContainerChildrenData } from '../../course-unit/data/types';
-import * as unitApi from '../../course-unit/data/api';
+import { CourseContainerChildrenData } from '@src/course-unit/data/types';
+import * as unitApi from '@src/course-unit/data/api';
 
 /**
  * Mock for `getLibraryContainerChildren()`

@@ -1,6 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
-import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
 import { LibraryBlock, type VersionSpec } from '../LibraryBlock';
 

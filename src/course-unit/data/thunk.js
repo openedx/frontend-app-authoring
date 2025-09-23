@@ -3,11 +3,11 @@ import { camelCaseObject } from '@edx/frontend-platform';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import { handleResponseErrors } from '../../generic/saving-error-alert';
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
-import { updateModel, updateModels } from '../../generic/model-store';
+} from '@src/generic/processing-notification/data/slice';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { updateModel, updateModels } from '@src/generic/model-store';
 import { messageTypes } from '../constants';
 import {
   editUnitDisplayName,

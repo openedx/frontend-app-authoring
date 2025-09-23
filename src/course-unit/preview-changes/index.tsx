@@ -6,17 +6,17 @@ import { Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
-import { useEventListener } from '../../generic/hooks';
-import { messageTypes } from '../constants';
-import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
-import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
-import AlertMessage from '../../generic/alert-message';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import { useEventListener } from '@src/generic/hooks';
+import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
+import AlertMessage from '@src/generic/alert-message';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import LoadingButton from '@src/generic/loading-button';
+import Loading from '@src/generic/Loading';
 import messages from './messages';
-import { ToastContext } from '../../generic/toast-context';
-import LoadingButton from '../../generic/loading-button';
-import Loading from '../../generic/Loading';
+import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
+import { messageTypes } from '../constants';
 
 export interface LibraryChangesMessageData {
   displayName: string,
