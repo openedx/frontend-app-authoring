@@ -101,7 +101,7 @@ const VideoSourceWidget = ({
         <FormattedMessage {...messages.fallbackVideoMessage} />
       </div>
       {fallbackVideos.formValue.length > 0 ? fallbackVideos.formValue.map((videoUrl, index) => (
-        <Form.Row className="mt-3.5 mx-0 flex-nowrap">
+        <Form.Row className="mt-3.5 mx-0 flex-nowrap" key={videoUrl}>
           <Form.Group>
             <Form.Control
               floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
