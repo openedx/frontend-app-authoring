@@ -4,7 +4,7 @@ import {
 import type { MessageDescriptor } from 'react-intl';
 import { useMemo } from 'react';
 import {
-  Cached, Delete, Done, Plus,
+  Cached, ChevronRight, Delete, Done, Plus,
 } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getItemIcon } from '@src/generic/block-type-utils';
@@ -26,6 +26,7 @@ export interface ContainerRowProps {
 const ContainerRow = ({
   title, containerType, state, side, originalName, onClick,
 }: ContainerRowProps) => {
+  const isClickable = isRowClickable(state, containerType as ContainerType);
   const stateContext = useMemo(() => {
     let message: MessageDescriptor | undefined;
     switch (state) {
@@ -34,7 +35,7 @@ const ContainerRow = ({
         return ['text-white bg-success-500', Plus, message];
       case 'modified':
         message = side === 'Before' ? messages.modifiedDiffBeforeMessage : messages.modifiedDiffAfterMessage;
-        return ['text-white bg-warning-800', Cached, message];
+        return ['text-white bg-warning-900', Cached, message];
       case 'removed':
         message = side === 'Before' ? messages.removedDiffBeforeMessage : messages.removedDiffAfterMessage;
         return ['text-white bg-danger-600', Delete, message];
@@ -51,7 +52,7 @@ const ContainerRow = ({
 
   return (
     <Card
-      isClickable={isRowClickable(state, containerType as ContainerType)}
+      isClickable={isClickable}
       onClick={onClick}
       onKeyDown={(e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -67,7 +68,7 @@ const ContainerRow = ({
           <Icon size="sm" src={stateContext[1]} />
         </div>
         <ActionRow className="p-2">
-          <Stack direction="vertical" gap={3}>
+          <Stack direction="vertical" gap={2}>
             <Stack direction="horizontal" gap={2}>
               <Icon
                 src={getItemIcon(containerType)}
@@ -91,6 +92,7 @@ const ContainerRow = ({
             )}
           </Stack>
           <ActionRow.Spacer />
+          {isClickable && <Icon size='md' src={ChevronRight} />}
         </ActionRow>
       </Stack>
     </Card>
