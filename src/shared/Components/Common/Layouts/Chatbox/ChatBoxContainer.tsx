@@ -1,13 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useIframe } from 'generic/hooks/context/hooks';
+import { useCallback, useEffect, useState } from 'react';
 import { Sidebar, useSidebar } from 'shared/Components/ui/sidebar';
 import iframeEvents from 'shared/constants/iframeEvents';
 import { cn } from 'shared/lib/utils';
+import { getJwtToken } from 'utils/auth';
 
 // TODO: Get from env variable
 const CHATBOX_URL = 'http://localhost:3000/chatbox';
 
 const ChatBoxContainer = () => {
   const { setOpen } = useSidebar();
+  const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
+
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
 
   const handleCloseChatbox = useCallback(() => {
     setOpen(false);
@@ -31,6 +36,29 @@ const ChatBoxContainer = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, [handleCloseChatbox]);
 
+  useEffect(() => {
+    setIframeRef(iframeRef);
+  }, [setIframeRef]);
+
+  useEffect(() => {
+    const initializeIframe = async () => {
+      const accessToken = await getJwtToken();
+      if (!accessToken) {
+        return;
+      }
+
+      // Send auth tokens once iframe is loaded
+      // Wait for 1 second to ensure the iframe is loaded
+      setTimeout(() => {
+        sendMessageToIframe('AUTH_TOKENS', { accessToken, refreshToken: accessToken });
+      }, 500);
+    };
+
+    if (isIframeLoaded) {
+      initializeIframe();
+    }
+  }, [sendMessageToIframe, isIframeLoaded]);
+
   return (
     <Sidebar
       side="right"
@@ -50,10 +78,12 @@ const ChatBoxContainer = () => {
         )}
       >
         <iframe
+          ref={iframeRef}
           title="chatbox-iframe"
           id="chatbox-iframe"
           src={CHATBOX_URL}
           className="tw-h-full tw-w-full tw-border-none"
+          onLoad={() => setIsIframeLoaded(true)}
         />
       </div>
     </Sidebar>
