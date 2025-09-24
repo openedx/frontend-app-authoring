@@ -11,6 +11,7 @@ import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import LibraryInfo from './LibraryInfo';
+import * as apiHooks from '../data/apiHooks';
 
 const {
   libraryId: mockLibraryId,
@@ -144,8 +145,7 @@ describe('<LibraryInfo />', () => {
 
   it('should publish library 2', async () => {
     const useCommitLibraryChangesSpy = jest
-      // @ts-ignore
-      .spyOn('../data/apiHooks', 'useCommitLibraryChanges')
+      .spyOn(apiHooks, 'useCommitLibraryChanges')
       .mockReturnValue(
         // @ts-ignore
         {
@@ -161,8 +161,6 @@ describe('<LibraryInfo />', () => {
 
     const publishButton = screen.getByRole('button', { name: /publish/i });
     fireEvent.click(publishButton);
-
-    screen.logTestingPlaygroundURL();
 
     await waitFor(() => {
       expect(screen.getByText(/publishing/i)).toBeInTheDocument();
