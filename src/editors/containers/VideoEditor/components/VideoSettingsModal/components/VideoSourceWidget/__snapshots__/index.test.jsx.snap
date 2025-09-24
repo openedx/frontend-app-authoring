@@ -78,6 +78,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
   </div>
   <Form.Row
     className="mt-3.5 mx-0 flex-nowrap"
+    key="somEUrL"
   >
     <Form.Group>
       <Form.Control
@@ -236,6 +237,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
   </div>
   <Form.Row
     className="mt-3.5 mx-0 flex-nowrap"
+    key="somEUrL"
   >
     <Form.Group>
       <Form.Control
