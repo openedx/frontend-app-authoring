@@ -144,12 +144,16 @@ describe('<LibraryInfo />', () => {
 
   it('should publish library 2', async () => {
     const useCommitLibraryChangesSpy = jest
+      // @ts-ignore
       .spyOn('../data/apiHooks', 'useCommitLibraryChanges')
-      .mockReturnValue({
-        mutate: jest.fn(),
-        mutateAsync: jest.fn(),
-        status: 'pending',
-      });
+      .mockReturnValue(
+        // @ts-ignore
+        {
+          mutate: jest.fn(),
+          mutateAsync: jest.fn(),
+          status: 'pending',
+        },
+      );
 
     render();
 
