@@ -21,6 +21,7 @@ const CANVAS_URL = 'http://localhost:3000/canvas';
 const Canvas: React.FC<CanvasProps> = ({ isOpen, onClose }) => {
   const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
   const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+  const { content } = useCanvasContext();
 
   useEffect(() => {
     setIframeRef(iframeRef);
@@ -37,6 +38,7 @@ const Canvas: React.FC<CanvasProps> = ({ isOpen, onClose }) => {
       // Wait for 1 second to ensure the iframe is loaded
       setTimeout(() => {
         sendMessageToIframe('AUTH_TOKENS', { accessToken, refreshToken: accessToken });
+        sendMessageToIframe('CANVAS_CONTENT', { content });
       }, 500);
     };
 

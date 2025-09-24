@@ -1,7 +1,7 @@
 export enum CanvasContentType {
   PRESENTATION = 'presentation',
   REPORTS = 'reports',
-  PROMPT_PRACTICING = 'prompt_practicing',
+  PLAYGROUND = 'playground',
 }
 
 export type CanvasContent = {

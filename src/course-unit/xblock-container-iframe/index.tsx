@@ -278,7 +278,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         allow={IFRAME_FEATURE_POLICY}
         allowFullScreen
         loading="lazy"
-        style={{ height: iframeHeight + iframeOffset }}
+        style={{ height: Math.max(iframeHeight + iframeOffset, 300) }}
         scrolling="no"
         referrerPolicy="origin"
         className="xblock-container-iframe"
