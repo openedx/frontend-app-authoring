@@ -1,13 +1,14 @@
 import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
 import { useToggle } from '@openedx/paragon';
-import { ToastContext } from '../../generic/toast-context';
+
+import { ToastContext } from '@src/generic/toast-context';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
 
 const LibraryPublishStatus = () => {
   const intl = useIntl();

@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
   initializeMocks,
-} from '../../testUtils';
+} from '@src/testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -140,6 +140,30 @@ describe('<LibraryInfo />', () => {
       expect(axiosMock.history.post[0].url).toEqual(url);
       expect(mockShowToast).toHaveBeenCalledWith('Library published successfully');
     });
+  });
+
+  it('should publish library 2', async () => {
+    const useCommitLibraryChangesSpy = jest
+      .spyOn('../data/apiHooks', 'useCommitLibraryChanges')
+      .mockReturnValue({
+        mutate: jest.fn(),
+        mutateAsync: jest.fn(),
+        status: 'pending',
+      });
+
+    render();
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
+    const publishButton = screen.getByRole('button', { name: /publish/i });
+    fireEvent.click(publishButton);
+
+    screen.logTestingPlaygroundURL();
+
+    await waitFor(() => {
+      expect(screen.getByText(/publishing/i)).toBeInTheDocument();
+    });
+    useCommitLibraryChangesSpy.mockRestore();
   });
 
   it('should show error on publish library', async () => {
