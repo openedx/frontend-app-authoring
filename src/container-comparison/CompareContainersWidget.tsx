@@ -3,14 +3,16 @@ import {
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import { useCallback, useMemo, useState } from 'react';
-import { ContainerType } from '../generic/key-utils';
-import { LoadingSpinner } from '../generic/Loading';
-import { useContainerChildren } from '../library-authoring/data/apiHooks';
+import { ContainerType } from '@src/generic/key-utils';
+import { LoadingSpinner } from '@src/generic/Loading';
+import { useContainerChildren } from '@src/library-authoring/data/apiHooks';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
 import { ContainerChild, ContainerChildBase, WithState } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 
 interface ContainerInfoProps {
   title: string;
@@ -35,6 +37,7 @@ const CompareContainersWidgetInner = ({
   onRowClick,
   onBackBtnClick,
 }: Props) => {
+  const intl = useIntl();
   const { data, isPending } = useCourseContainerChildren(downstreamBlockId);
   const {
     data: libData,
@@ -89,7 +92,7 @@ const CompareContainersWidgetInner = ({
     }
     return (
       <Breadcrumb
-        ariaLabel="title breadcrumb"
+        ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
         links={[
           {
             label: <Stack direction="horizontal" gap={1}><Icon size="xs" src={ArrowBack} />Back</Stack>,

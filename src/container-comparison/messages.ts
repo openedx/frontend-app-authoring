@@ -51,6 +51,21 @@ const messages = defineMessages({
     defaultMessage: 'This {blockType} was moved',
     description: 'Description for moved component in after section of diff preview',
   },
+  breadcrumbAriaLabel: {
+    id: 'course-authoring.container-comparison.diff.breadcrumb.ariaLabel',
+    defaultMessage: 'Title breadcrumb',
+    description: 'Aria label text for breadcrumb in diff preview',
+  },
+  diffBeforeTitle: {
+    id: 'course-authoring.container-comparison.diff.before.title',
+    defaultMessage: 'Before',
+    description: 'Before section title text',
+  },
+  diffAfterTitle: {
+    id: 'course-authoring.container-comparison.diff.after.title',
+    defaultMessage: 'After',
+    description: 'After section title text',
+  },
 });
 
 export default messages;
