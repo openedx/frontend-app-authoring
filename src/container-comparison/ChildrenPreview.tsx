@@ -10,9 +10,9 @@ interface Props {
 
 const ChildrenPreview = ({ title, children, side }: Props) => {
   const intl = useIntl();
-  const sideTitle = side === 'Before' ?
-    intl.formatMessage(messages.diffBeforeTitle) :
-    intl.formatMessage(messages.diffAfterTitle);
+  const sideTitle = side === 'Before'
+    ? intl.formatMessage(messages.diffBeforeTitle)
+    : intl.formatMessage(messages.diffAfterTitle);
 
   return (
     <Stack direction="vertical">

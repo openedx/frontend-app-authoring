@@ -92,7 +92,7 @@ const ContainerRow = ({
             )}
           </Stack>
           <ActionRow.Spacer />
-          {isClickable && <Icon size='md' src={ChevronRight} />}
+          {isClickable && <Icon size="md" src={ChevronRight} />}
         </ActionRow>
       </Stack>
     </Card>

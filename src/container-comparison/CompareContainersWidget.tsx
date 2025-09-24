@@ -6,12 +6,12 @@ import { useCallback, useMemo, useState } from 'react';
 import { ContainerType } from '@src/generic/key-utils';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainerChildren } from '@src/library-authoring/data/apiHooks';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
 import { ContainerChild, ContainerChildBase, WithState } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 interface ContainerInfoProps {
