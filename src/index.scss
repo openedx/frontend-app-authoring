@@ -37,6 +37,110 @@
 @tailwind base;
 @tailwind components;
 
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    /* react-calendar */
+    --react-calendar-bg: white;
+    --react-calendar-text-color: theme('colors.gray.700');
+    --react-calendar-font-size: 0.875rem;
+    --react-calendar-weekday-color: theme('colors.gray.700');
+    --react-calendar-border-color: theme('colors.gray.300');
+    --react-calendar-disabled-bg: theme('colors.gray.50');
+    --react-calendar-hover-bg: theme('colors.gray.100');
+    --react-calendar-weekend-color: theme('colors.gray.700');
+    --react-calendar-neighboring-month-color: theme('colors.gray.500');
+    --react-calendar-disabled-text: theme('colors.gray.500');
+    --react-calendar-today-bg: theme('colors.warning.100');
+    --react-calendar-today-hover-bg: theme('colors.warning.300');
+    --react-calendar-active-text-light: #fff;
+    --react-calendar-active-bg-light: theme('colors.brand.600');
+    --react-calendar-active-hover-bg-light: theme('colors.brand.700');
+    --react-calendar-active-bg: theme('colors.brand.600');
+    --react-calendar-active-hover-bg: theme('colors.brand.700');
+    --react-calendar-active-text: white;
+
+    /* react-clock */
+    --react-clock-border-color: theme('colors.gray.300');
+    --react-clock-hand-color: theme('colors.gray.900');
+    --react-clock-mark-color: theme('colors.gray.900');
+    --react-clock-second-hand-color: theme('colors.error.500');
+
+    /* react-datetime-picker */
+    --react-datetime-picker-disabled-bg: theme('colors.gray.50');
+    --react-datetime-picker-radius: theme('borderRadius.lg');
+    --react-datetime-picker-disabled-text: theme('colors.gray.500');
+    --react-datetime-picker-border-color: theme('colors.gray.300');
+    --react-datetime-picker-invalid-bg: rgba(2, 1, 1, 0.1);
+    --react-datetime-picker-button-hover: theme('colors.brand.700');
+    --react-datetime-picker-clock-bg: white;
+    --react-datetime-picker-clock-border: theme('colors.gray.300');
+    --react-datetime-picker-focus-bg: theme('colors.gray.100');
+    --react-datetime-picker-clear-button-disabled: theme('colors.gray.500');
+
+    /**
+     * DateRangePicker
+     */
+    --react-calendar-date-range-picker-input-border: theme('colors.gray.300');
+    --react-calendar-date-range-picker-input-focus-bg: theme('colors.gray.100');
+    --react-calendar-date-range-picker-input-border-radius: theme('borderRadius.lg');
+    --react-calendar-date-range-picker-input-invalid-bg: rgba(2, 1, 1, 0.1);
+    --react-calendar-date-range-picker-title-range-bg: theme('colors.gray.100');
+
+    /* toastify */
+    --toast-background: theme('colors.gray.50');
+    --toast-text-color: theme('colors.gray.700');
+
+    --toast-background-dark: theme('colors.gray.600');
+    --toast-text-color-dark: theme('colors.gray.100');
+
+    /* zto-select */
+    --zto-select-border-color: theme('colors.gray.300');
+    --zto-select-border-color-focus: theme('colors.brand.500');
+    --zto-select-border-radius: theme('borderRadius.lg');
+    --zto-select-placeholder-color: theme('colors.gray.500');
+    --zto-select-placeholder-font-size: 0.875rem;
+    --zto-select-placeholder-font-weight: 400;
+
+    --zto-select-disabled-background-color: theme('colors.gray.50');
+    --zto-select-disabled-border-color: theme('colors.gray.300');
+    --zto-select-disabled-text-color: theme('colors.gray.500');
+
+    --zto-select-padding-x: 1rem;
+    --zto-select-padding-y: 0.562rem;
+    --zto-select-single-height: 2.5rem;
+    --zto-font-size-sm: 1rem;
+
+    --zto-select-padding-x-small: 0.5rem;
+    --zto-select-padding-y-small: 0.25rem;
+    --zto-select-single-height-small: 2rem;
+    --zto-font-size-sm: 0.875rem;
+    --zto-select-padding-x-lg: 1rem;
+    --zto-select-padding-y-lg: 0.75rem;
+    --zto-select-single-height-lg: 3rem;
+
+    --zto-select-dropdown-background-color: theme('colors.white');
+    --zto-select-dropdown-border-color: theme('colors.gray.300');
+    --zto-select-dropdown-border-radius: theme('borderRadius.lg');
+    --zto-select-dropdown-shadow: theme('boxShadow.md');
+
+    --zto-select-option-selected-background-color: theme('colors.brand.500');
+    --zto-select-option-selected-border-color: theme('colors.brand.500');
+    --zto-select-option-hover-background-color: theme('colors.gray.50');
+
+    --zto-select-clear-background-color: theme('colors.gray.400');
+    --zto-select-clear-background-color-hover: theme('colors.gray.500');
+    --zto-select-clear-color: theme('colors.white');
+
+    --zto-select-text-color: theme('colors.gray.700');
+    --zto-select-text-font-size: 0.875rem;
+    --zto-select-text-font-weight: 400;
+
+    --zto-select-item-selected-background-color: theme('colors.brand.25');
+    --zto-select-item-selected-text-color: theme('colors.brand.700');
+  }
+}
+
 /* Force Plus Jakarta Sans to be the default font family */
 body, html {
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;

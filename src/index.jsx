@@ -21,6 +21,7 @@ import AppLayout from 'shared/Components/Common/Layouts/AppLayout';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import { DialogProvider } from 'shared/context/dialog';
 import Canvas from './canvas';
 import messages from './i18n';
 import { StudentsPage } from './students-page/index';
@@ -182,10 +183,12 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <Head />
           <CanvasContextProvider>
-            <AppEventContextProvider>
-              <RouterProvider router={router} />
-              <Canvas />
-            </AppEventContextProvider>
+            <DialogProvider>
+              <AppEventContextProvider>
+                <RouterProvider router={router} />
+                <Canvas />
+              </AppEventContextProvider>
+            </DialogProvider>
           </CanvasContextProvider>
         </QueryClientProvider>
       </ToastProvider>
