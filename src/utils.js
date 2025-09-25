@@ -11,7 +11,11 @@ import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resource
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
 import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResourcesProvider';
 import {
-  hasValidDateFormat, hasValidTimeFormat, decodeDateTime, endOfDayTime, startOfDayTime,
+  hasValidDateFormat,
+  hasValidTimeFormat,
+  decodeDateTime,
+  endOfDayTime,
+  startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
 
@@ -68,7 +72,8 @@ export function deepConvertingKeysToSnakeCase(obj) {
   const snakeCaseObj = {};
   Object.entries(obj).forEach(([key, value]) => {
     const snakeCaseKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
-    snakeCaseObj[snakeCaseKey] = key === 'gradeCutoffs' ? value : deepConvertingKeysToSnakeCase(value);
+    snakeCaseObj[snakeCaseKey] =
+      key === 'gradeCutoffs' ? value : deepConvertingKeysToSnakeCase(value);
   });
   return snakeCaseObj;
 }
@@ -138,7 +143,8 @@ export function useAppSetting(settingName) {
     }
   }, [courseId]);
 
-  const saveSetting = async (value) => dispatch(updateCourseAppSetting(courseId, settingName, value));
+  const saveSetting = async (value) =>
+    dispatch(updateCourseAppSetting(courseId, settingName, value));
   return [settingValue, saveSetting];
 }
 
@@ -161,7 +167,7 @@ export function setupYupExtensions() {
       list.forEach((item, index) => {
         const propertyValue = item[property];
 
-        if (propertyValue && list.filter(entry => entry[property] === propertyValue).length > 1) {
+        if (propertyValue && list.filter((entry) => entry[property] === propertyValue).length > 1) {
           errors.push(
             this.createError({
               path: `${this.path}[${index}].${property}`,
@@ -179,23 +185,31 @@ export function setupYupExtensions() {
     });
   });
 
-  Yup.addMethod(Yup.object, 'uniqueObjectProperty', function uniqueObjectProperty(propertyName, message) {
-    return this.test('unique', message, function testUniqueness(discussionTopic) {
-      if (!discussionTopic || !discussionTopic[propertyName]) {
-        return true;
-      }
-      const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
-        .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
+  Yup.addMethod(
+    Yup.object,
+    'uniqueObjectProperty',
+    function uniqueObjectProperty(propertyName, message) {
+      return this.test('unique', message, function testUniqueness(discussionTopic) {
+        if (!discussionTopic || !discussionTopic[propertyName]) {
+          return true;
+        }
+        const isDuplicate = this.parent
+          .filter((topic) => topic !== discussionTopic)
+          .some(
+            (topic) =>
+              topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase(),
+          );
 
-      if (isDuplicate) {
-        throw this.createError({
-          path: `${this.path}.${propertyName}`,
-          error: message,
-        });
-      }
-      return true;
-    });
-  });
+        if (isDuplicate) {
+          throw this.createError({
+            path: `${this.path}.${propertyName}`,
+            error: message,
+          });
+        }
+        return true;
+      });
+    },
+  );
 
   Yup.addMethod(Yup.string, 'compare', function compare(message, type) {
     return this.test('isGreater', message, function isGreater() {
@@ -203,14 +217,18 @@ export function setupYupExtensions() {
       // of if startTime or endTime is not present for time comparison
       // or startDate or endDate is not present for date comparison
 
-      if (!this.parent
-        || (!(this.parent.startTime && this.parent.endTime) && type === 'time')
-        || (!(this.parent.startDate && this.parent.endDate) && type === 'date')
+      if (
+        !this.parent ||
+        (!(this.parent.startTime && this.parent.endTime) && type === 'time') ||
+        (!(this.parent.startDate && this.parent.endDate) && type === 'date')
       ) {
         return true;
       }
 
-      const startDateTime = decodeDateTime(this.parent.startDate, startOfDayTime(this.parent.startTime));
+      const startDateTime = decodeDateTime(
+        this.parent.startDate,
+        startOfDayTime(this.parent.startTime),
+      );
       const endDateTime = decodeDateTime(this.parent.endDate, endOfDayTime(this.parent.endTime));
       let isInvalidStartDateTime;
 
@@ -303,9 +321,9 @@ export const getFileSizeToClosestByte = (fileSize) => {
 };
 
 /**
-* A generic hook to run callback on next render cycle.
-* @param {} callback - Callback function that needs to be run later
-*/
+ * A generic hook to run callback on next render cycle.
+ * @param {} callback - Callback function that needs to be run later
+ */
 export const useRunOnNextRender = (callback) => {
   const [scheduled, setScheduled] = useState(false);
 
@@ -323,19 +341,21 @@ export const useRunOnNextRender = (callback) => {
 
 export const capitalizeString = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-export const convertFromSnakeCaseToTitleCase = (string) => string.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+export const convertFromSnakeCaseToTitleCase = (string) =>
+  string.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+
 
 /**
-* Formats a UTC date string to local timezone with specified format
-* @param {string} date - The UTC date string to format
-* @param {string} [format='ll, LT'] - Moment.js format string
-*                                     Default: 'll, LT' (e.g., "Sep 4, 2023, 3:45 PM")
-* @returns {string} The formatted date string in local timezone
-* @example
-* formatToDate('2023-09-04T15:45:00Z')
-* // Returns: "Sep 4, 2023, 3:45 PM"
-*
-* formatToDate('2023-09-04T15:45:00Z', 'YYYY-MM-DD')
-* // Returns: "2023-09-04"
-*/
+ * Formats a UTC date string to local timezone with specified format
+ * @param {string} date - The UTC date string to format
+ * @param {string} [format='ll, LT'] - Moment.js format string
+ *                                     Default: 'll, LT' (e.g., "Sep 4, 2023, 3:45 PM")
+ * @returns {string} The formatted date string in local timezone
+ * @example
+ * formatToDate('2023-09-04T15:45:00Z')
+ * // Returns: "Sep 4, 2023, 3:45 PM"
+ *
+ * formatToDate('2023-09-04T15:45:00Z', 'YYYY-MM-DD')
+ * // Returns: "2023-09-04"
+ */
 export const formatToDate = (date, format = 'll, LT') => moment.utc(date).local().format(format);
