@@ -325,6 +325,13 @@
         .content-area {
             background-color: var(--bg-surface);
             min-height: 250px;
+            .form-section{
+                .pgn__form-control-description{
+                    .pgn__icon{
+                        display: none;
+                    }
+                }
+            }
         }
     }
 
