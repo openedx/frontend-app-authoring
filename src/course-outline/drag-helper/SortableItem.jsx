@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import { DotsGrid } from '@untitledui/icons';
 import classNames from 'classnames';
+import { cn } from 'shared/lib/utils';
 import messages from './messages';
 
 const SortableItem = ({
@@ -14,6 +15,7 @@ const SortableItem = ({
   isDroppable,
   componentStyle,
   children,
+  className,
   // injected
   intl,
   gripContainerClassName = '',
@@ -47,7 +49,7 @@ const SortableItem = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="tw-flex tw-items-center">
+    <div ref={setNodeRef} style={style} className={cn('tw-flex tw-items-center', className)}>
       <div
         className={classNames(
           'tw-p-1 tw-mr-2 focus-visible:tw-outline-none tw-flex tw-items-center tw-justify-center',
@@ -73,11 +75,13 @@ SortableItem.defaultProps = {
   componentStyle: null,
   isDroppable: true,
   isDraggable: true,
+  className: '',
 };
 
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
   category: PropTypes.string.isRequired,
+  className: PropTypes.string,
   isDroppable: PropTypes.bool,
   isDraggable: PropTypes.bool,
   children: PropTypes.node.isRequired,

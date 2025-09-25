@@ -7,3 +7,41 @@
     transform: rotate(360deg);
   }
 }
+
+// Animated gradient border animation
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+.animated-border {
+  position: relative;
+  border-radius: 10px;
+  
+  &::after,
+  &::before {
+    content: '';
+    position: absolute;
+    height: calc(100% + 8px);
+    width: calc(100% + 8px);
+    background-image: conic-gradient(from var(--angle), #FFA4F6, #B7DCFF);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -200;
+    padding: 3px;
+    border-radius: 16px;
+    animation: 3s spin linear infinite;
+  }
+}
+

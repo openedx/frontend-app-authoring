@@ -9,6 +9,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import Button from 'shared/Components/Common/Button';
 import { Plus } from '@untitledui/icons';
+import DimmedLayout from 'shared/Components/Common/DimmedLayout';
+import { GenerationStatus } from 'types/course';
 import courseUnitMessages from '../../course-unit/course-sequence/messages';
 import { RequestStatus } from '../../data/constants';
 import CardHeaderWithDropdownOnly from '../card-header/CardHeaderWithDropdownOnly';
@@ -96,7 +98,11 @@ const SectionCard = ({
     published,
     visibilityState,
     actions: sectionActions,
+    xmlAttributes,
   } = section;
+
+  const { generationStatus } = xmlAttributes;
+  const isCreating = generationStatus === GenerationStatus.CREATING;
 
   useEffect(() => {
     if (activeId === id && isExpanded) {
@@ -194,100 +200,103 @@ const SectionCard = ({
     />
   );
 
-  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+  const isDraggable = !isCreating || (actions.draggable && (actions.allowMoveUp || actions.allowMoveDown));
   const releaseDate = section.start ? formatToDate(section.start) : '';
 
   const isSectionWithNoUnit = section.childInfo?.children?.[0]?.childInfo?.children?.length === 0;
 
   return (
-    <SortableItem
-      id={id}
-      category={category}
-      isDraggable={isDraggable}
-      isDroppable={actions.childAddable}
-      componentStyle={{
-        padding: '24px 16px',
-        borderRadius: '16px',
-        border: '1px solid #FFF',
-        background: 'rgba(255, 255, 255, 0.70)',
-        marginBottom: '16px',
-        alignItems: 'start',
-      }}
-      gripContainerClassName="tw-mt-[2px]"
-    >
-      <div
-        className={classNames('tw-flex tw-flex-col', !isSectionWithNoUnit && 'tw-gap-6')}
-        ref={currentRef}
+    <DimmedLayout generationStatus={generationStatus}>
+      <SortableItem
+        id={id}
+        category={category}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
+        componentStyle={{
+          padding: '24px 16px',
+          borderRadius: '16px',
+          border: '1px solid #FFF',
+          background: 'rgba(255, 255, 255, 0.70)',
+          marginBottom: '16px',
+          alignItems: 'start',
+        }}
+        gripContainerClassName="tw-mt-[2px]"
+        className={generationStatus && 'animated-border !tw-bg-white'}
       >
-        <div className="tw-flex tw-gap-2 tw-items-start">
-          <div className="tw-flex tw-flex-col tw-gap-1 tw-flex-1">
-            <div className="tw-text-gray-900 tw-text-lg tw-font-bold tw-leading-7 tw-flex tw-gap-2 tw-items-center">
-              <button
-                type="button"
-                className={classNames(
-                  'tw-w-6 tw-h-6 tw-flex tw-items-center tw-justify-center tw-border-0 tw-bg-transparent',
-                  {
-                    'tw-rotate-[270deg]': !isExpanded || isSectionWithNoUnit,
-                  },
-                  isSectionWithNoUnit && 'tw-cursor-not-allowed',
-                )}
-                onClick={handleExpandContent}
-                disabled={isSectionWithNoUnit}
-              >
-                <ChevronTriangleDown />
-              </button>
-              <span className="tw-flex-1 tw-line-clamp-1 tw-overflow-hidden tw-text-ellipsis tw-max-w-[391px]">
-                {displayName}
-              </span>
-            </div>
-            {releaseDate && (
+        <div
+          className={classNames('tw-flex tw-flex-col', !isSectionWithNoUnit && 'tw-gap-6')}
+          ref={currentRef}
+        >
+          <div className="tw-flex tw-gap-2 tw-items-start">
+            <div className="tw-flex tw-flex-col tw-gap-1 tw-flex-1">
+              <div className="tw-text-gray-900 tw-text-lg tw-font-bold tw-leading-7 tw-flex tw-gap-2 tw-items-center">
+                <button
+                  type="button"
+                  className={classNames(
+                    'tw-w-6 tw-h-6 tw-flex tw-items-center tw-justify-center tw-border-0 tw-bg-transparent',
+                    {
+                      'tw-rotate-[270deg]': !isExpanded || isSectionWithNoUnit,
+                    },
+                    isSectionWithNoUnit && 'tw-cursor-not-allowed',
+                  )}
+                  onClick={handleExpandContent}
+                  disabled={isSectionWithNoUnit}
+                >
+                  <ChevronTriangleDown />
+                </button>
+                <span className="tw-flex-1 tw-line-clamp-1 tw-overflow-hidden tw-text-ellipsis tw-max-w-[391px]">
+                  {displayName}
+                </span>
+              </div>
+              {releaseDate && (
               <div className="tw-text-gray-500 tw-text-xs tw-font-normal tw-leading-none tw-ml-8">
                 {intl.formatMessage(xblockStatusMessages.releasedLabel)} {releaseDate}
               </div>
-            )}
+              )}
+            </div>
+            <div className="tw-flex tw-gap-2 tw-items-center">
+              <Button
+                variant="secondary"
+                size="sm"
+                iconBefore={Plus}
+                className="!tw-w-auto tw-border-gray-300 tw-text-gray-700 !tw-py-[6px] !tw-px-[10px] focus:!tw-border"
+                labels={{ default: intl.formatMessage(courseUnitMessages.newUnitBtnText) }}
+                onClick={handleNewUnitSubmit}
+              />
+              <CardHeaderWithDropdownOnly
+                cardId={id}
+                title={displayName}
+                status={sectionStatus}
+                hasChanges={hasChanges}
+                onClickMenuButton={handleClickMenuButton}
+                onClickPublish={onOpenPublishModal}
+                onClickConfigure={onOpenConfigureModal}
+                onClickEdit={openForm}
+                onClickDelete={onOpenDeleteModal}
+                onClickMoveUp={handleSectionMoveUp}
+                onClickMoveDown={handleSectionMoveDown}
+                isFormOpen={isFormOpen}
+                closeForm={closeForm}
+                onEditSubmit={handleEditSubmit}
+                isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+                onClickDuplicate={onDuplicateSubmit}
+                titleComponent={titleComponent}
+                namePrefix={namePrefix}
+                actions={actions}
+              />
+            </div>
           </div>
-          <div className="tw-flex tw-gap-2 tw-items-center">
-            <Button
-              variant="secondary"
-              size="sm"
-              iconBefore={Plus}
-              className="!tw-w-auto tw-border-gray-300 tw-text-gray-700 !tw-py-[6px] !tw-px-[10px] focus:!tw-border"
-              labels={{ default: intl.formatMessage(courseUnitMessages.newUnitBtnText) }}
-              onClick={handleNewUnitSubmit}
-            />
-            <CardHeaderWithDropdownOnly
-              cardId={id}
-              title={displayName}
-              status={sectionStatus}
-              hasChanges={hasChanges}
-              onClickMenuButton={handleClickMenuButton}
-              onClickPublish={onOpenPublishModal}
-              onClickConfigure={onOpenConfigureModal}
-              onClickEdit={openForm}
-              onClickDelete={onOpenDeleteModal}
-              onClickMoveUp={handleSectionMoveUp}
-              onClickMoveDown={handleSectionMoveDown}
-              isFormOpen={isFormOpen}
-              closeForm={closeForm}
-              onEditSubmit={handleEditSubmit}
-              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-              onClickDuplicate={onDuplicateSubmit}
-              titleComponent={titleComponent}
-              namePrefix={namePrefix}
-              actions={actions}
-            />
-          </div>
-        </div>
-        {isExpanded && (
+          {isExpanded && (
           <div
             data-testid="section-card__subsections"
             className={classNames('section-card__subsections', { 'item-children': isDraggable })}
           >
             {children}
           </div>
-        )}
-      </div>
-    </SortableItem>
+          )}
+        </div>
+      </SortableItem>
+    </DimmedLayout>
   );
 };
 
@@ -297,6 +306,9 @@ SectionCard.defaultProps = {
 
 SectionCard.propTypes = {
   section: PropTypes.shape({
+    xmlAttributes: PropTypes.shape({
+      generationStatus: PropTypes.string.isRequired,
+    }).isRequired,
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
     category: PropTypes.string.isRequired,
@@ -305,6 +317,7 @@ SectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
+    start: PropTypes.string,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,
