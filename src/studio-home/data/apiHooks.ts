@@ -12,7 +12,7 @@ export const studioHomeQueryKeys = {
 export const useLibrariesV1Data = (enabled: boolean = true) => (
   useQuery({
     queryKey: studioHomeQueryKeys.librariesV1(),
-    queryFn: () => getStudioHomeLibraries(),
+    queryFn: getStudioHomeLibraries,
     enabled,
   })
 );

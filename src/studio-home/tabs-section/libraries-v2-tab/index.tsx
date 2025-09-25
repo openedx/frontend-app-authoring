@@ -113,7 +113,7 @@ const LibrariesV2List: React.FC<Props> = ({
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
 
@@ -133,7 +133,7 @@ const LibrariesV2List: React.FC<Props> = ({
     }
   }, [data, handleSelect]);
 
-  if (isLoading && !isFiltered) {
+  if (isPending && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -141,7 +141,7 @@ const LibrariesV2List: React.FC<Props> = ({
     );
   }
 
-  const hasV2Libraries = !isLoading && !isError && ((data!.results.length || 0) > 0);
+  const hasV2Libraries = !isPending && !isError && ((data!.results.length || 0) > 0);
 
   return (
     isError ? (
@@ -169,14 +169,14 @@ const LibrariesV2List: React.FC<Props> = ({
               </Button>
             )}
             <LibrariesV2Filters
-              isLoading={isLoading}
+              isPending={isPending}
               isFiltered={isFiltered}
               filterParams={filterParams}
               setFilterParams={setFilterParams}
               setCurrentPage={setCurrentPage}
             />
           </Stack>
-          {!isLoading && !isError
+          {!isPending && !isError
           && (
             <p>
               {intl.formatMessage(messages.coursesPaginationInfo, {
@@ -197,7 +197,7 @@ const LibrariesV2List: React.FC<Props> = ({
               hasV2Libraries={hasV2Libraries}
               selectMode={inSelectMode ? 'single' : null}
               isFiltered={isFiltered}
-              isLoading={isLoading}
+              isLoading={isPending}
               data={data!}
               handleClearFilters={handleClearFilters}
             />
@@ -207,7 +207,7 @@ const LibrariesV2List: React.FC<Props> = ({
             hasV2Libraries={hasV2Libraries}
             selectMode={inSelectMode ? 'single' : null}
             isFiltered={isFiltered}
-            isLoading={isLoading}
+            isLoading={isPending}
             data={data!}
             handleClearFilters={handleClearFilters}
           />

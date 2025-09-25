@@ -2,7 +2,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Alert,
   Badge,
   Stack,
   Tab,
@@ -18,6 +17,7 @@ import messages from './messages';
 import LibrariesList from './libraries-tab';
 import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
+import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
 
 const TabsSection = ({
   showNewCourseContainer,
@@ -90,13 +90,6 @@ const TabsSection = ({
       </Tab>,
     );
 
-    // TODO: update this link when tutorial is ready.
-    const librariesTutorialLink = (
-      <Alert.Link href="https://docs.openedx.org">
-        {intl.formatMessage(messages.librariesV2TabBetaTutorialLinkText)}
-      </Alert.Link>
-    );
-
     if (librariesV2Enabled) {
       tabs.push(
         <Tab
@@ -110,12 +103,7 @@ const TabsSection = ({
           )}
         >
           <div>
-            <Alert variant="info">
-              {intl.formatMessage(
-                messages.librariesV2TabBetaText,
-                { link: librariesTutorialLink },
-              )}
-            </Alert>
+            <WelcomeLibrariesV2Alert />
             <LibrariesV2List />
           </div>
         </Tab>,
