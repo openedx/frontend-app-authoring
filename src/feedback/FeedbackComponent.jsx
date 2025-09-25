@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Check } from '@openedx/paragon/icons'; // Keep only the Check icon
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import './feedback.scss';
+import './feedbackComponent.scss';
 
-const Feedback = () => {
+const FeedbackComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     mood: '',
@@ -202,4 +202,4 @@ const Feedback = () => {
   );
 };
 
-export default Feedback;
+export default FeedbackComponent;
