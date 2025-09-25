@@ -7,7 +7,7 @@ import LibrariesV2OrderFilterMenu from './libraries-v2-order-filter-menu';
 import messages from '../../messages';
 
 export interface LibrariesV2FiltersProps {
-  isLoading?: boolean;
+  isPending?: boolean;
   isFiltered?: boolean;
   filterParams: { search?: string | undefined, order?: string };
   setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined, order: string }>>;
@@ -15,7 +15,7 @@ export interface LibrariesV2FiltersProps {
 }
 
 const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
-  isLoading = false,
+  isPending = false,
   isFiltered = false,
   filterParams,
   setFilterParams,
@@ -93,7 +93,7 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
           className="mr-4"
           placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
         />
-        {isLoading && (
+        {isPending && (
           <span className="search-field-loading">
             <LoadingSpinner size="sm" />
           </span>
