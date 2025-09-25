@@ -6,7 +6,6 @@ import './Feedback.scss';
 
 const Feedback = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [formData, setFormData] = useState({
     mood: '',
     feedbackType: '',
@@ -88,8 +87,6 @@ const Feedback = () => {
     <div className="feedback-container">
       <button
         className={`feedback-button vertical ${isOpen ? 'open' : ''}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         onClick={() => {
           setIsOpen(!isOpen);
           if (isOpen) {

@@ -106,7 +106,7 @@ const Header = ({
           right: '15rem',
           zIndex: 9999,
           border: '1px solid var(--primary)',
-          backgroundColor: 'var(--priary-light)',
+          backgroundColor: 'var(--primary-light)',
           color: 'var(--primary)',
           padding: '0.4375rem 0.75rem',
           textAlign: 'center',
