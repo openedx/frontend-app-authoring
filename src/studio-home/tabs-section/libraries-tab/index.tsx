@@ -34,27 +34,27 @@ const LibrariesTab = () => {
         )}
       />
     ) : (
-        <>
-          {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
-          <div className="courses-tab">
-            {sortAlphabeticallyArray(data.libraries).map(({
-              displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey
-            }) => (
-                <CardItem
-                  key={`${org}+${number}`}
-                  isLibraries
-                  displayName={displayName}
-                  org={org}
-                  number={number}
-                  url={url}
-                  isMigrated={isMigrated}
-                  migratedToKey={migratedToKey}
-                  migratedToTitle={migratedToTitle}
-                  migratedToCollectionKey={migratedToCollectionKey}
-                />
-              ))}
-          </div>
-        </>
+      <>
+        {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
+        <div className="courses-tab">
+          {sortAlphabeticallyArray(data?.libraries || []).map(({
+            displayName, org, number, url, isMigrated, migratedToKey, migratedToTitle, migratedToCollectionKey,
+          }) => (
+            <CardItem
+              key={`${org}+${number}`}
+              isLibraries
+              displayName={displayName}
+              org={org}
+              number={number}
+              url={url}
+              isMigrated={isMigrated}
+              migratedToKey={migratedToKey}
+              migratedToTitle={migratedToTitle}
+              migratedToCollectionKey={migratedToCollectionKey}
+            />
+          ))}
+        </div>
+      </>
     )
   );
 };
