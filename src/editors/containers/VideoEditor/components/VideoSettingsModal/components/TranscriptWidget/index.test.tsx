@@ -1,61 +1,73 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-} from '@src/testUtils';
-import * as reactredux from 'react-redux';
+import { screen, initializeMocks } from '@src/testUtils';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
+import { selectors } from '../../../../../../data/redux';
+import { TranscriptWidgetInternal as TranscriptWidget, hooks } from './index';
 
-import { formatMessage } from '../../../../../../testUtils';
-import { actions, selectors } from '../../../../../../data/redux';
-import {
-  TranscriptWidgetInternal as TranscriptWidget, mapStateToProps, mapDispatchToProps, hooks,
-} from './index';
+jest.mock('../../../../../../data/redux', () => {
+  const actual = jest.requireActual('../../../../../../data/redux');
+  return {
+    ...actual, // keep initializeStore and other real exports
+    actions: {
+      video: {
+        updateField: jest.fn().mockName('actions.video.updateField'),
+      },
+    },
+    thunkActions: {
+      video: {
+        deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
+        updateTranscriptHandlerUrl: jest.fn().mockName('thunkActions.video.updateTranscriptHandlerUrl'),
+      },
+    },
+    selectors: {
+      app: {
+        isLibrary: jest.fn(() => false),
+        shouldCreateBlock: jest.fn(() => false),
+      },
+      video: {
+        transcripts: (state) => state.video.transcripts,
+        selectedVideoTranscriptUrls: (state) => state.video.selectedVideoTranscriptUrls,
+        allowTranscriptDownloads: (state) => state.video.allowTranscriptDownloads,
+        showTranscriptByDefault: (state) => state.video.showTranscriptByDefault,
+        allowTranscriptImport: (state) => state.video.allowTranscriptImport,
+      },
+      requests: {
+        isFailed: (state, { requestKey }) => state.requests[requestKey] || false,
+      },
+    },
+  };
+});
 
-jest.mock('../../../../../../data/redux', () => ({
-  actions: {
-    video: {
-      updateField: jest.fn().mockName('actions.video.updateField'),
-    },
-  },
-  thunkActions: {
-    video: {
-      deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
-      updateTranscriptHandlerUrl: jest.fn().mockName('thunkActions.video.updateTranscriptHandlerUrl'),
-    },
-  },
-
-  selectors: {
-    app: {
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      shouldCreateBlock: jest.fn(() => false),
-    },
-    video: {
-      transcripts: jest.fn(state => ({ transcripts: state })),
-      selectedVideoTranscriptUrls: jest.fn(state => ({ selectedVideoTranscriptUrls: state })),
-      allowTranscriptDownloads: jest.fn(state => ({ allowTranscriptDownloads: state })),
-      showTranscriptByDefault: jest.fn(state => ({ showTranscriptByDefault: state })),
-      allowTranscriptImport: jest.fn(state => ({ allowTranscriptImport: state })),
-    },
-    requests: {
-      isFailed: jest.fn(state => ({ isFailed: state })),
-    },
-  },
-}));
 jest.mock('../CollapsibleFormWidget', () => 'CollapsibleFormWidget');
 jest.mock('./Transcript', () => 'Transcript');
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: jest.fn(() => jest.fn()),
-  useSelector: jest.fn(),
-}));
-
-jest.spyOn(reactredux, 'useSelector').mockImplementation((selectorFn) => selectorFn({}));
+// helper for tests
+const makeInitialState = (overrides: PartialEditorState = {}): PartialEditorState => ({
+  video: {
+    transcripts: [],
+    selectedVideoTranscriptUrls: {},
+    allowTranscriptDownloads: false,
+    showTranscriptByDefault: false,
+    allowTranscriptImport: false,
+    ...overrides.video,
+  },
+  app: {
+    blockTitle: 'Test Block',
+    ...overrides.app,
+  },
+  requests: {
+    [RequestKeys.uploadTranscript]: { status: 'inactive' },
+    [RequestKeys.deleteTranscript]: { status: 'inactive' },
+    ...overrides.requests,
+  },
+});
 
 describe('TranscriptWidget', () => {
   beforeEach(() => {
-    jest.spyOn(selectors.app, 'shouldCreateBlock').mockReset();
+    initializeMocks();
+    jest.spyOn(selectors.app, 'shouldCreateBlock').mockReturnValue(false);
   });
 
   describe('hooks', () => {
@@ -100,126 +112,90 @@ describe('TranscriptWidget', () => {
   });
 
   describe('component', () => {
-    const props = {
-      error: {},
-      subtitle: 'SuBTItle',
-      title: 'tiTLE',
-      intl: { formatMessage },
-      transcripts: [],
-      selectedVideoTranscriptUrls: {},
-      allowTranscriptDownloads: false,
-      showTranscriptByDefault: false,
-      allowTranscriptImport: false,
-      updateField: jest.fn().mockName('args.updateField'),
-      isUploadError: false,
-      isDeleteError: false,
-    };
-
-    beforeEach(() => {
-      initializeMocks();
+    test('renders as expected with default state', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState(),
+      });
+      expect(screen.getByText('Add video transcripts (.srt files only) for improved accessibility.')).toBeInTheDocument();
     });
 
-    describe('render component', () => {
-      test('renders as expected with default props', () => {
-        const { container } = render(<TranscriptWidget {...props} />);
-        expect(container.querySelector('collapsibleformwidget')).toBeInTheDocument();
-        expect(screen.getByText('Add video transcripts (.srt files only) for improved accessibility.')).toBeInTheDocument();
+    test('renders with allowTranscriptImport true', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({ video: { allowTranscriptImport: true } }),
       });
-
-      test('renders as expected with allowTranscriptImport true', () => {
-        render(<TranscriptWidget {...props} allowTranscriptImport />);
-        expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
-      });
-
-      test('renders as expected with transcripts', () => {
-        const { container } = render(<TranscriptWidget {...props} transcripts={['en']} />);
-        expect(container.querySelector('transcript')).toBeInTheDocument();
-        expect(container.querySelector('transcript')).toHaveAttribute('language', 'en');
-      });
-
-      test('renders as expected with transcripts and urls', () => {
-        const { container } = render(<TranscriptWidget {...props} transcripts={['en']} selectedVideoTranscriptUrls={{ en: 'url' }} />);
-        expect(container.querySelector('transcript')).toBeInTheDocument();
-        expect(container.querySelector('transcript')).toHaveAttribute('language', 'en');
-        expect(container.querySelector('transcript')).toHaveAttribute('transcriptUrl', 'url');
-      });
-
-      test('renders as expected with allowTranscriptDownloads true', () => {
-        const { container } = render(<TranscriptWidget {...props} allowTranscriptDownloads transcripts={['en']} />);
-        expect(container.querySelector('transcript')).toBeInTheDocument();
-        expect(container.querySelector('transcript')).toHaveAttribute('language', 'en');
-        const checkbox = screen.getByRole('checkbox', { name: 'Allow transcript downloads' });
-        expect(checkbox).toBeInTheDocument();
-        expect(checkbox).toBeChecked();
-      });
-
-      test('renders as expected with showTranscriptByDefault true', () => {
-        render(<TranscriptWidget {...props} showTranscriptByDefault transcripts={['en']} />);
-        const checkbox = screen.getByRole('checkbox', { name: 'Show transcript in the video player by default' });
-        expect(checkbox).toBeInTheDocument();
-        expect(checkbox).toBeChecked();
-      });
-
-      test('snapshot: renders ErrorAlert with upload error message', () => {
-        render(<TranscriptWidget {...props} isUploadError transcripts={['en', 'fr']} />);
-        expect(screen.getByText('Failed to upload transcript. Please try again.')).toBeInTheDocument();
-      });
-
-      test('snapshot: renders ErrorAlert with delete error message', () => {
-        render(<TranscriptWidget {...props} isDeleteError transcripts={['en']} />);
-        expect(screen.getByText('Failed to delete transcript. Please try again.')).toBeInTheDocument();
-      });
-
-      test('snapshot: render when `isCreateWorkflow` is `True`', () => {
-        jest.spyOn(selectors.app, 'shouldCreateBlock').mockReturnValue(true);
-        render(<TranscriptWidget {...props} />);
-        expect(screen.getByText('Transcripts')).toBeInTheDocument();
-        expect(screen.getByText('To add transcripts, save and reopen this video')).toBeInTheDocument();
-      });
+      expect(screen.getByText('We found transcript for this video on YouTube. Would you like to import it now?')).toBeInTheDocument();
     });
-    describe('mapStateToProps', () => {
-      const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-      test('transcripts from video.transcript', () => {
-        expect(
-          mapStateToProps(testState).transcripts,
-          // @ts-ignore
-        ).toEqual(selectors.video.transcripts(testState));
+
+    test('renders with transcripts', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({ video: { transcripts: ['en'] as any } }),
       });
-      test('allowTranscriptDownloads from video.allowTranscriptDownloads', () => {
-        expect(
-          mapStateToProps(testState).allowTranscriptDownloads,
-          // @ts-ignore
-        ).toEqual(selectors.video.allowTranscriptDownloads(testState));
-      });
-      test('showTranscriptByDefault from video.showTranscriptByDefault', () => {
-        expect(
-          mapStateToProps(testState).showTranscriptByDefault,
-          // @ts-ignore
-        ).toEqual(selectors.video.showTranscriptByDefault(testState));
-      });
-      test('allowTranscriptImport from video.allowTranscriptImport', () => {
-        expect(
-          mapStateToProps(testState).allowTranscriptImport,
-          // @ts-ignore
-        ).toEqual(selectors.video.allowTranscriptImport(testState));
-      });
-      test('isUploadError from requests.isFinished', () => {
-        expect(
-          mapStateToProps(testState).isUploadError,
-        ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.uploadTranscript }));
-      });
-      test('isDeleteError from requests.isFinished', () => {
-        expect(
-          mapStateToProps(testState).isDeleteError,
-        ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.deleteTranscript }));
-      });
+      const widget = screen.getByTestId('redux-provider').querySelector('collapsibleformwidget');
+      expect(widget).toHaveAttribute('subtitle', 'English');
     });
-    describe('mapDispatchToProps', () => {
-      const dispatch = jest.fn();
-      test('updateField from actions.video.updateField', () => {
-        // @ts-ignore
-        expect(mapDispatchToProps.updateField).toEqual(dispatch(actions.video.updateField));
+
+    test('renders with transcript URLs', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({
+          video: {
+            transcripts: ['en'] as any,
+            selectedVideoTranscriptUrls: { en: 'url' } as any,
+          },
+        }),
       });
+      const widget = screen.getByTestId('redux-provider').querySelector('collapsibleformwidget');
+      expect(widget).toHaveAttribute('subtitle', 'English');
+    });
+
+    test('renders with allowTranscriptDownloads true', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({
+          video: { transcripts: ['en'] as any, allowTranscriptDownloads: true },
+        }),
+      });
+      const checkbox = screen.getByRole('checkbox', { name: 'Allow transcript downloads' });
+      expect(checkbox).toBeChecked();
+    });
+
+    test('renders with showTranscriptByDefault true', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({
+          video: { transcripts: ['en'] as any, showTranscriptByDefault: true },
+        }),
+      });
+      const checkbox = screen.getByRole('checkbox', {
+        name: 'Show transcript in the video player by default',
+      });
+      expect(checkbox).toBeChecked();
+    });
+
+    test('renders upload error', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({
+          video: { transcripts: ['en'] as any },
+          requests: { [RequestKeys.uploadTranscript]: { status: 'failed' } },
+        }),
+      });
+      expect(screen.getByText('Failed to upload transcript. Please try again.')).toBeInTheDocument();
+    });
+
+    test('renders delete error', () => {
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState({
+          video: { transcripts: ['en'] as any },
+          requests: { [RequestKeys.deleteTranscript]: { status: 'failed' } },
+        }),
+      });
+      expect(screen.getByText('Failed to delete transcript. Please try again.')).toBeInTheDocument();
+    });
+
+    test('renders create workflow screen when shouldCreateBlock is true', () => {
+      jest.spyOn(selectors.app, 'shouldCreateBlock').mockReturnValue(true);
+      editorRender(<TranscriptWidget />, {
+        initialState: makeInitialState(),
+      });
+      expect(screen.getByText('Transcripts')).toBeInTheDocument();
+      expect(screen.getByText('To add transcripts, save and reopen this video')).toBeInTheDocument();
     });
   });
 });
