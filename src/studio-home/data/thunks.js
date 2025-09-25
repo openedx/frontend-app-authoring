@@ -3,14 +3,12 @@ import {
   getStudioHomeData,
   sendRequestForCourseCreator,
   handleCourseNotification,
-  getStudioHomeLibraries,
   getStudioHomeCoursesV2,
 } from './api';
 import {
   fetchStudioHomeDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
-  fetchLibraryDataSuccess,
   fetchCourseDataSuccessV2,
 } from './slice';
 
@@ -58,20 +56,6 @@ function fetchOnlyStudioHomeData() {
   return fetchStudioHomeData('', false, {}, false, false);
 }
 
-function fetchLibraryData() {
-  return async (dispatch) => {
-    dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.IN_PROGRESS }));
-
-    try {
-      const libraryData = await getStudioHomeLibraries();
-      dispatch(fetchLibraryDataSuccess(libraryData));
-      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
-      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.FAILED }));
-    }
-  };
-}
-
 function handleDeleteNotificationQuery(url) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: RequestStatus.PENDING }));
@@ -103,7 +87,6 @@ function requestCourseCreatorQuery() {
 export {
   fetchStudioHomeData,
   fetchOnlyStudioHomeData,
-  fetchLibraryData,
   requestCourseCreatorQuery,
   handleDeleteNotificationQuery,
 };

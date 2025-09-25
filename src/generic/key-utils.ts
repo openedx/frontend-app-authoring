@@ -14,6 +14,17 @@ export function getBlockType(usageKey: string): string {
 }
 
 /**
+ * Parses a library key and returns the organization and library name as an object.
+ */
+export function parseLibraryKey(libraryKey: string): { org: string, lib: string } {
+  const [, org, lib] = libraryKey?.split(':') || [];
+  if (org && lib) {
+    return { org, lib };
+  }
+  throw new Error(`Invalid libraryKey: ${libraryKey}`);
+}
+
+/**
  * Given a usage key like `lb:org:lib:html:id`, get the library key
  * @param usageKey e.g. `lb:org:lib:html:id`
  * @returns The library key, e.g. `lib:org:lib`
