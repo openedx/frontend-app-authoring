@@ -98,7 +98,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
 
 const LibrariesTab = () => {
   const intl = useIntl();
-  const { isLoading, data, isError } = useLibrariesV1Data();
+  const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [migrationFilter, setMigrationFilter] = useState<Filter[]>(BaseFilterState);
@@ -112,7 +112,7 @@ const LibrariesTab = () => {
   const totalPages = Math.ceil(filteredData.length / perPage);
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -136,7 +136,7 @@ const LibrariesTab = () => {
 
   return (
     <>
-      <MigrateLegacyLibrariesAlert />
+      {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
           <SearchField
@@ -149,12 +149,12 @@ const LibrariesTab = () => {
           />
           <MigrationFilter filters={migrationFilter} setFilters={setMigrationFilter} />
           <ActionRow.Spacer />
-          {!isLoading && !isError
+          {!isPending && !isError
             && (
               <>
                 {intl.formatMessage(messages.coursesPaginationInfo, {
                   length: currentPageData?.length,
-                  total: data.libraries.length,
+                  total: data?.libraries.length,
                 })}
               </>
             )}
