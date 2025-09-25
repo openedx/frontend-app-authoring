@@ -109,6 +109,11 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(library1).toBeChecked();
     expect(library2).toBeChecked();
     expect(nextButton).not.toBeDisabled();
+
+    library2.click();
+    expect(library1).toBeChecked();
+    expect(library2).not.toBeChecked();
+    expect(nextButton).not.toBeDisabled();
   });
 
   it('should select a library destination', async () => {
