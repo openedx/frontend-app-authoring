@@ -64,7 +64,7 @@
         font-size: 18px;
         font-weight: 600;
         color: var(--text-primary);
-        margin-bottom: 6px;
+        margin-bottom: 15px;
     }
 
     .feedback-body {
@@ -144,7 +144,7 @@
     }
 
     .form-group {
-        margin-bottom: 6px;
+        margin-bottom: 15px;
     }
 
     .form-textarea {
@@ -166,7 +166,6 @@
 
         &::placeholder {
             color: var(--text-muted);
-            font-style: italic;
         }
     }
 
