@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Check } from '@openedx/paragon/icons'; // Keep only the Check icon
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import './Feedback.scss';
+import './feedback.scss';
 
 const Feedback = () => {
   const [isOpen, setIsOpen] = useState(false);
