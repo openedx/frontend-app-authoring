@@ -31,7 +31,7 @@ import { useContentSearchConnection } from './search-manager/data/apiHooks';
 import { SearchContextProvider } from './search-manager';
 import { LoadingSpinner } from './generic/Loading';
 import { setUIPreference } from './services/uiPreferenceService';
-import Feedback from './feedback/feedback';
+import Feedback from './feedback/Feedback';
 
 
 // Icon mapping for API icon names
