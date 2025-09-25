@@ -31,7 +31,8 @@ import { useContentSearchConnection } from './search-manager/data/apiHooks';
 import { SearchContextProvider } from './search-manager';
 import { LoadingSpinner } from './generic/Loading';
 import { setUIPreference } from './services/uiPreferenceService';
-import FeedbackComponent from './feedback/FeedbackComponent';
+import Feedback from './feedback/feedback';
+
 
 // Icon mapping for API icon names
 // const iconMap = {
@@ -552,7 +553,7 @@ const Layout = () => {
           </div>
         </div> */}
       </SidebarProvider>
-      <FeedbackComponent />
+      <Feedback />
     </div>
   );
 

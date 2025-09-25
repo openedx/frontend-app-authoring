@@ -1,53 +1,39 @@
 .feedback-container {
     position: fixed;
-    bottom: 10px;
-    right: 35px;
+    top: 50%;
+    right: 12px;
     z-index: 1002;
-
+    transform: translateY(-50%);
 
     .feedback-button {
         background: var(--primary);
         color: var(--text-white);
         border: none;
-        border-radius: 25px;
+        border-radius: 6px;
         padding: 8px 12px;
-        font-size: 14px;
         font-weight: 500;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: width 0.3s ease, background 0.3s ease, transform 0.2s ease;
+        transition: background 0.3s ease, transform 0.2s ease;
         display: flex;
+        flex-direction: row;
         align-items: center;
-        gap: 8px;
         justify-content: center;
-        width: 48px;
-        height: 48px;
-
-        &:hover {
-            color: var(--text-white);
-            background: var(--primary);
-            width: 140px;
-            transform: translateY(-2px);
-        }
+        text-align: center;
+        height: 100%;
+        min-height: 100px;
+        width: 35px;
 
         &.open {
             background: var(--danger);
-            width: 100%;
-            min-width: 110px;
-
-            &:hover {
-                color: var(--text-white);
-            }
-        }
-
-        .icon {
-            width: 24px;
-            height: 24px;
+            height: 100%;
+            min-height: 70px;
         }
 
         .text {
             white-space: nowrap;
-            font-size: 14px;
+            font-size: 16px;
+            transform: rotate(270deg);
         }
 
         &:focus {
@@ -58,8 +44,9 @@
 
     .feedback-form-container {
         position: absolute;
-        bottom: calc(100% + 10px);
-        right: calc(0);
+        top: 50%;
+        right: calc(100% + 10px);
+        transform: translateY(-50%);
         width: 340px;
         background: var(--bg-surface);
         border-radius: 8px;
@@ -70,31 +57,18 @@
         -webkit-overflow-scrolling: touch;
         -ms-overflow-style: none;
         scrollbar-width: none;
+        padding: 12px 18px;
     }
 
-    .feedback-header {
-        background: rgba(0, 0, 0, 0.05);
-        padding: 12px;
+    .feedback-question {
         font-size: 18px;
         font-weight: 600;
         color: var(--text-primary);
+        margin-bottom: 6px;
     }
 
     .feedback-body {
-        padding: 12px;
-    }
-
-    .feedback-intro {
-        text-align: left;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 12px;
-        line-height: 1.2;
-    }
-
-    .form-group {
-        margin-bottom: 12px;
+        padding: 0;
     }
 
     .form-label {
@@ -102,39 +76,75 @@
         font-size: 14px;
         font-weight: 600;
         color: var(--text-primary);
-        margin-bottom: 6px;
+    }
 
-        &.required:after {
-            content: '*';
-            color: var(--danger);
-            margin-left: 4px;
+    .mood-rating {
+        display: flex;
+        gap: 16px;
+        overflow: visible;
+    }
+
+    .mood-icon-wrapper {
+        position: relative;
+        pointer-events: all;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .mood-tooltip {
+            display: none;
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--text-white);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1004;
+            transition: opacity 0.2s ease;
+            opacity: 0;
+        }
+
+        &:hover .mood-tooltip {
+            display: block;
+            opacity: 1;
         }
     }
 
-    .star-rating {
-        display: flex;
-        gap: 6px;
-    }
-
-    .star-icon {
-        width: 28px;
-        height: 28px;
+    .mood-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 32px;
+        /* Adjusted for emoji size */
         cursor: pointer;
-        color: var(--text-muted);
-        transition: transform 0.2s ease;
+        color: var(--primary);
+        transition: transform 0.2s ease, color 0.2s ease;
 
-        &.filled {
-            color: var(--warning);
+        &.selected {
+            transform: scale(1.3);
         }
 
         &:hover {
-            transform: scale(1.15);
+            color: var(--warning);
+            transform: scale(1.3);
         }
 
         &:focus {
             outline: none;
             outline-offset: none;
         }
+    }
+
+    .form-group {
+        margin-bottom: 6px;
     }
 
     .form-textarea {
@@ -152,7 +162,6 @@
         &:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         &::placeholder {
@@ -163,7 +172,8 @@
 
     .radio-group {
         display: flex;
-        gap: 16px;
+        flex-direction: column;
+        margin-bottom: -12px;
     }
 
     .radio-label {
@@ -196,6 +206,7 @@
         background: var(--primary);
         color: var(--text-white);
         padding: 8px 12px;
+        margin: 0;
         border: none;
         border-radius: 6px;
         font-size: 14px;
@@ -245,6 +256,7 @@
         text-align: center;
         padding: 20px;
         font-size: 16px;
+        font-weight: 700;
         color: var(--text-primary);
     }
 

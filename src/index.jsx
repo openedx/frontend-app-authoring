@@ -57,20 +57,23 @@ import AssignmentPage from './assignment/pages/AssignmentPage';
 import { applyTheme } from './styles/themeLoader';
 // import { getUIPreference } from './services/uiPreferenceService';
 import * as Sentry from '@sentry/react';
-
-const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
-Sentry.init({
-  dsn: sentryresponse.data.sentry.dsn,
-  environment: sentryresponse.data.sentry.environment,
-  tracesSampleRate: sentryresponse.data.sentry.traces_sample_rate,
-  sendDefaultPii: sentryresponse.data.sentry.send_default_pii,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-});
+try {
+  const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+  Sentry.init({
+    dsn: sentryresponse.data.sentry.dsn,
+    environment: sentryresponse.data.sentry.environment,
+    tracesSampleRate: sentryresponse.data.sentry.traces_sample_rate,
+    sendDefaultPii: sentryresponse.data.sentry.send_default_pii,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+} catch (error) {
+  console.error('API call failed, fro sentry:', error);
+}
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {

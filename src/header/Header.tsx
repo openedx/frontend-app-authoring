@@ -101,18 +101,18 @@ const Header = ({
         }}
         style={{
           position: 'absolute',
-          top: '0.4rem',
+          top: '0.8rem',
           borderRadius: '6px',
-          right: '20rem',
+          right: '15rem',
           zIndex: 9999,
-          backgroundColor: 'var(--primary)',
-          color: 'white',
-          padding: '10px',
+          border: '1px solid var(--primary)',
+          backgroundColor: 'var(--priary-light)',
+          color: 'var(--primary)',
+          padding: '0.4375rem 0.75rem',
           textAlign: 'center',
-          fontSize: '16px',
-          fontWeight: 'bold',
+          fontSize: '0.875rem',
+          lineHeight: '1.4286',
           width: 'fit-content',
-          border: 'none',
           cursor: 'pointer',
         }}
       >

@@ -167,6 +167,12 @@
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px;
+    .fc-event{
+      &:hover{
+        background-color: var(--primary);
+        color: var(--text-white);
+      }
+    }
   }
 
   .fc-col-header-cell-cushion {
