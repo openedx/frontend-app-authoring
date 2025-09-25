@@ -26,6 +26,7 @@ const AddComponent = ({
   parentLocator,
   isSplitTestType,
   isUnitVerticalType,
+  isProblemBankType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
 }) => {
@@ -156,7 +157,7 @@ const AddComponent = ({
     }
   };
 
-  if (isUnitVerticalType || isSplitTestType) {
+  if (isUnitVerticalType || isSplitTestType || isProblemBankType) {
     return (
       <div className="py-4">
         {Object.keys(componentTemplates).length && isUnitVerticalType ? (
