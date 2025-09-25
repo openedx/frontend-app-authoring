@@ -15,6 +15,7 @@ const ComponentModalView = ({
   modalParams,
   handleCreateNewXBlock,
   isRequestedModalView,
+  onCloseNewComponentModal,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -29,6 +30,10 @@ const ComponentModalView = ({
     handleCreateNewXBlock(type, moduleTitle);
     dispatch(updateQueryPendingStatus(true));
     setModuleTitle('');
+    close();
+    if (onCloseNewComponentModal) {
+      onCloseNewComponentModal();
+    }
   };
 
   const renderAddComponentButton = () => (
@@ -127,6 +132,7 @@ ComponentModalView.propTypes = {
     }),
   }).isRequired,
   isRequestedModalView: PropTypes.bool,
+  onCloseNewComponentModal: PropTypes.func,
 };
 
 export default ComponentModalView;

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
@@ -26,6 +26,7 @@ const AddComponent = ({
   isUnitVerticalType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
+  onCloseNewComponentModal,
 }) => {
   const intl = useIntl();
   const [isOpenAdvanced, openAdvanced, closeAdvanced] = useToggle(false);
@@ -66,8 +67,11 @@ const AddComponent = ({
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
+    if (onCloseNewComponentModal) {
+      onCloseNewComponentModal();
+    }
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, onCloseNewComponentModal, sendMessageToIframe]);
 
   const handleLibraryV2Selection = useCallback((selection) => {
     handleCreateNewCourseXBlock({
@@ -126,9 +130,14 @@ const AddComponent = ({
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.html:
+        // Always create HTML component directly without modal, using the first available template
+        const htmlTemplate = componentTemplates.find(comp => comp.type === COMPONENT_TYPES.html);
+        const firstTemplate = htmlTemplate?.templates?.[0];
+        const boilerplateName = firstTemplate?.boilerplateName || firstTemplate?.category || 'text';
+        
         handleCreateNewCourseXBlock({
           type,
-          boilerplate: moduleName,
+          boilerplate: boilerplateName,
           parentLocator: blockId,
         }, /* istanbul ignore next */ ({ courseKey, locator }) => {
           setCourseId(courseKey);
@@ -141,14 +150,27 @@ const AddComponent = ({
     }
   };
 
+  const filteredComponentTemplates = useMemo(() => {
+    return componentTemplates.filter((component) => {
+      const allowedTypes = [
+        COMPONENT_TYPES.html,      // Text
+        COMPONENT_TYPES.video,     // Video
+        COMPONENT_TYPES.problem,   // Problem
+        COMPONENT_TYPES.openassessment, // Open Response
+        COMPONENT_TYPES.advanced   // Advanced
+      ];
+      return allowedTypes.includes(component.type);
+    });
+  }, [componentTemplates]);
+
   if (isUnitVerticalType || isSplitTestType) {
     return (
       <div className="py-4">
         {Object.keys(componentTemplates).length && isUnitVerticalType ? (
           <>
             <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
-            <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
-              {componentTemplates.map((component) => {
+            <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center tw-gap-4">
+              {filteredComponentTemplates.map((component) => {
                 const { type, displayName, beta } = component;
                 let modalParams;
 
@@ -165,12 +187,17 @@ const AddComponent = ({
                     };
                     break;
                   case COMPONENT_TYPES.html:
-                    modalParams = {
-                      open: openHtml,
-                      close: closeHtml,
-                      isOpen: isOpenHtml,
-                    };
-                    break;
+                    // Skip modal for HTML components - create directly
+                    return (
+                      <li key={type}>
+                        <AddComponentButton
+                          onClick={() => handleCreateNewXBlock(type)}
+                          displayName={displayName}
+                          type={type}
+                          beta={beta}
+                        />
+                      </li>
+                    );
                   case COMPONENT_TYPES.openassessment:
                     modalParams = {
                       open: openOpenAssessment,
@@ -197,6 +224,7 @@ const AddComponent = ({
                     component={component}
                     handleCreateNewXBlock={handleCreateNewXBlock}
                     modalParams={modalParams}
+                    onCloseNewComponentModal={onCloseNewComponentModal}
                   />
                 );
               })}
@@ -278,6 +306,7 @@ AddComponent.propTypes = {
   isUnitVerticalType: PropTypes.bool.isRequired,
   parentLocator: PropTypes.string.isRequired,
   handleCreateNewCourseXBlock: PropTypes.func.isRequired,
+  onCloseNewComponentModal: PropTypes.func,
   addComponentTemplateData: {
     blockId: PropTypes.string.isRequired,
     model: PropTypes.shape({

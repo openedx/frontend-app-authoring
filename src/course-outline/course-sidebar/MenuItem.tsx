@@ -2,7 +2,7 @@ import { Collapsible } from '@openedx/paragon';
 import { ChevronDown, ChevronRight } from '@untitledui/icons';
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface MenuItemProps {
   menuItem: {
@@ -13,16 +13,14 @@ interface MenuItemProps {
       title: string;
     }>;
   };
+  isItemActive: (href: string) => boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ menuItem }) => {
+const MenuItem: React.FC<MenuItemProps> = ({ menuItem, isItemActive }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const isMenuActive = (index: number) => location.pathname === menuItem.items[index].href;
 
   // Check if any item in this menu is active
-  const hasActiveItem = menuItem.items.some((_, index) => isMenuActive(index));
+  const hasActiveItem = menuItem.items.some(item => isItemActive(item.href));
   const [isCollapsed, setIsCollapsed] = useState(!hasActiveItem);
 
   const handleToggle = useCallback(() => {
@@ -53,7 +51,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ menuItem }) => {
               key={item.title}
               className={classNames(
                 'tw-self-stretch tw-justify-start tw-text-slate-700 tw-text-sm tw-font-medium tw-leading-tight tw-pl-6 tw-pr-3 tw-py-[10px] tw-cursor-pointer',
-                isMenuActive(index) && 'tw-text-violet-700 tw-bg-violet-100 tw-rounded-[8px]',
+                isItemActive(item.href) && 'tw-text-violet-700 tw-bg-violet-100 tw-rounded-[8px]',
               )}
               onClick={() => navigate(item.href)}
             >

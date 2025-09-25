@@ -53,6 +53,21 @@ const messages = defineMessages({
     defaultMessage: 'library',
     description: 'Text of the link in the alert when the unit is read only because is a library unit',
   },
+  pageTitle: {
+    id: 'course-authoring.course-unit.page.title',
+    defaultMessage: 'Unit',
+    description: 'Title of the page',
+  },
+  newComponentButtonText: {
+    id: 'course-authoring.course-unit.new-component.button.text',
+    defaultMessage: 'New component',
+    description: 'Text of the button to add a new component',
+  },
+  newComponentModalTitle: {
+    id: 'course-authoring.course-unit.new-component.modal.title',
+    defaultMessage: 'Select New Component to Create',
+    description: 'Title of the modal to add a new component',
+  },
 });
 
 export default messages;

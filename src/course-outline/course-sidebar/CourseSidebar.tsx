@@ -1,6 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 import { OverlayTrigger, Toast, Tooltip } from '@openedx/paragon';
 import { LayoutLeft, Rocket02 } from '@untitledui/icons';
@@ -9,7 +10,7 @@ import Badge from 'shared/Components/Common/Badge';
 import { RequestStatus } from '../../data/constants';
 import { useModel } from '../../generic/model-store';
 import {
-  hideProcessingNotification
+  hideProcessingNotification,
 } from '../../generic/processing-notification/data/slice';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from '../../header/hooks';
 import Button from '../../shared/Components/Common/Button';
@@ -35,6 +36,7 @@ const RocketIcon = () => <Rocket02 className="!tw-size-5" />;
 const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const location = useLocation();
   const courseDetails = useModel('courseDetails', courseId);
   const sectionsList = useSelector(getSectionsList);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,6 +48,22 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId }) => {
   const contentMenuItems = useContentMenuItems(courseId);
   const settingMenuItems = useSettingMenuItems(courseId);
   const toolsMenuItems = useToolsMenuItems(courseId);
+
+  // Create a function to check if a menu item is active
+  const isItemActive = useCallback((href: string) => {
+    // Get all menu items from all sections
+    const allMenuItems = [...contentMenuItems, ...settingMenuItems, ...toolsMenuItems];
+
+    // First check for exact matches across all menu items
+    const hasExactMatch = allMenuItems.some(item => location.pathname === item.href);
+
+    if (hasExactMatch) {
+      // If there's an exact match, only highlight that specific item
+      return location.pathname === href;
+    }
+    // If no exact match, fall back to startsWith logic
+    return location.pathname.startsWith(href);
+  }, [location.pathname, contentMenuItems, settingMenuItems, toolsMenuItems]);
 
   // Build the navigation tree similar to header
   const mainMenuDropdowns = [
@@ -80,10 +98,9 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId }) => {
       visibilityState,
       hasChanges,
     });
-    const isDisabled =
-      (sectionStatus === ITEM_BADGE_STATUS.live ||
-        sectionStatus === ITEM_BADGE_STATUS.publishedNotLive) &&
-      !hasChanges;
+    const isDisabled = (sectionStatus === ITEM_BADGE_STATUS.live
+        || sectionStatus === ITEM_BADGE_STATUS.publishedNotLive)
+      && !hasChanges;
     return !isDisabled;
   };
 
@@ -288,7 +305,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ courseId }) => {
       >
         <div className="tw-px-4 tw-pb-6 tw-flex tw-flex-col tw-gap-1">
           {mainMenuDropdowns.map((menuItem) => (
-            <MenuItem key={menuItem.id} menuItem={menuItem} />
+            <MenuItem key={menuItem.id} menuItem={menuItem} isItemActive={isItemActive} />
           ))}
         </div>
       </div>
