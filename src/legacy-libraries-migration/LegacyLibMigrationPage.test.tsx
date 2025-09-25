@@ -89,11 +89,9 @@ describe('<LegacyLibMigrationPage />', () => {
     // The next button is disabled
     expect(nextButton).toBeDisabled();
 
-    expect(screen.getByText('MBA')).toBeInTheDocument();
-    expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
-    expect(screen.getByText('MBA 1')).toBeInTheDocument();
-
-    screen.logTestingPlaygroundURL();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+    expect(await screen.findByText('Legacy library 1')).toBeInTheDocument();
+    expect(await screen.findByText('MBA 1')).toBeInTheDocument();
 
     const library1 = screen.getByRole('checkbox', { name: 'MBA' });
     const library2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
@@ -158,7 +156,7 @@ describe('<LegacyLibMigrationPage />', () => {
     // Should show alert of SelectDestinationView
     expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
 
-    const createButton = screen.getByRole('button', { name: /create new library/i });
+    const createButton = await screen.findByRole('button', { name: /create new library/i });
     expect(createButton).toBeInTheDocument();
     createButton.click();
 
