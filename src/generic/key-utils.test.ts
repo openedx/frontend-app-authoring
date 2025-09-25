@@ -1,9 +1,11 @@
 import {
   buildCollectionUsageKey,
+  ContainerType,
   getBlockType,
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
+  normalizeContainerType,
 } from './key-utils';
 
 describe('component utils', () => {
@@ -97,6 +99,21 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${libraryKey}' and collection Id '${collectionId}'`, () => {
         expect(buildCollectionUsageKey(libraryKey, collectionId)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('normalizeContainerType', () => {
+    for (const [containerType, expected] of [
+      [ContainerType.Vertical, ContainerType.Unit],
+      [ContainerType.Sequential, ContainerType.Subsection],
+      [ContainerType.Chapter, ContainerType.Section],
+      [ContainerType.Unit, ContainerType.Unit],
+      [ContainerType.Section, ContainerType.Section],
+      [ContainerType.Subsection, ContainerType.Subsection],
+    ] as const) {
+      it(`returns '${expected}' for '${containerType}'`, () => {
+        expect(normalizeContainerType(containerType)).toStrictEqual(expected);
       });
     }
   });
