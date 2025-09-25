@@ -5,17 +5,18 @@ import {
 import { Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { useEventListener } from '../../generic/hooks';
-import { messageTypes } from '../constants';
-import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
-import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
-import AlertMessage from '../../generic/alert-message';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
+import { useEventListener } from '@src/generic/hooks';
+import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
+import AlertMessage from '@src/generic/alert-message';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ToastContext } from '@src/generic/toast-context';
+import LoadingButton from '@src/generic/loading-button';
+import Loading from '@src/generic/Loading';
 import messages from './messages';
-import { ToastContext } from '../../generic/toast-context';
-import LoadingButton from '../../generic/loading-button';
-import Loading from '../../generic/Loading';
+import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
+import { messageTypes } from '../constants';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -55,12 +56,21 @@ export const PreviewLibraryXBlockChanges = ({
     if (!blockData) {
       return <Loading />;
     }
+    if (blockData.isContainer) {
+      return (
+        <CompareContainersWidget
+          title={blockData.displayName}
+          upstreamBlockId={blockData.upstreamBlockId}
+          downstreamBlockId={blockData.downstreamBlockId}
+        />
+      );
+    }
+
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isContainer}
       />
     );
   }, [blockData]);
@@ -109,13 +119,15 @@ export const PreviewLibraryXBlockChanges = ({
           {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="bg-light-300">
+        {!blockData.isContainer && (
         <AlertMessage
           show
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.olderVersionPreviewAlert)}
         />
+        )}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>

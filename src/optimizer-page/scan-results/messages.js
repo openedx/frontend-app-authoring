@@ -82,6 +82,10 @@ const messages = defineMessages({
     id: 'course-authoring.scanResults.updated',
     defaultMessage: 'Updated',
   },
+  updateAllButtonText: {
+    id: 'course-authoring.scanResults.updateAllButtonText',
+    defaultMessage: 'Update all',
+  },
 });
 
 export default messages;

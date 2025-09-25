@@ -43,7 +43,7 @@ export const CreateLibrary = ({
   const {
     mutate,
     data,
-    isLoading,
+    isPending,
     isError,
     error,
   } = useCreateLibraryV2();
@@ -178,7 +178,7 @@ export const CreateLibrary = ({
                   type="submit"
                   variant="primary"
                   className="action btn-primary"
-                  state={isLoading ? 'disabled' : 'enabled'}
+                  state={isPending ? 'disabled' : 'enabled'}
                   disabledStates={['disabled']}
                   labels={{
                     enabled: intl.formatMessage(messages.createLibraryButton),

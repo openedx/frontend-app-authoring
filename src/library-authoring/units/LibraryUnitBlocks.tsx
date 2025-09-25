@@ -290,7 +290,6 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
       >
         {orderedBlocks?.map((block, idx) => (
           // A container can have multiple instances of the same block
-          // eslint-disable-next-line react/no-array-index-key
           <ComponentBlock
             // eslint-disable-next-line react/no-array-index-key
             key={`${block.originalId}-${idx}-${block.modified}`}

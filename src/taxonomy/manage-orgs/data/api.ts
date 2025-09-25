@@ -1,15 +1,10 @@
-// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-/**
- * @param {number} taxonomyId
- * @returns {string}
- */
-export const getManageOrgsApiUrl = (taxonomyId) => new URL(
+export const getManageOrgsApiUrl = (taxonomyId: number): string => new URL(
   `api/content_tagging/v1/taxonomies/${taxonomyId}/orgs/`,
   getApiBaseUrl(),
 ).href;
@@ -20,18 +15,7 @@ export const getManageOrgsApiUrl = (taxonomyId) => new URL(
 export const useManageOrgs = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    /**
-    * @type {import("@tanstack/react-query").MutateFunction<
-    *   any,
-    *   any,
-    *   {
-    *     taxonomyId: number,
-    *     orgs?: string[],
-    *     allOrgs: boolean,
-    *   }
-    * >}
-    */
-    mutationFn: async ({ taxonomyId, orgs, allOrgs }) => {
+    mutationFn: async ({ taxonomyId, orgs, allOrgs }: { taxonomyId: number, orgs?: string[], allOrgs: boolean }) => {
       const { data } = await getAuthenticatedHttpClient().put(
         getManageOrgsApiUrl(taxonomyId),
         {

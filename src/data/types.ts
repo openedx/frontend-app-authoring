@@ -48,11 +48,22 @@ export interface XBlockPrereqs {
   blockDisplayName: string;
 }
 
+export interface UpstreamChildrenInfo {
+  name: string;
+  upstream: string;
+  id: string;
+}
+
 export interface UpstreamInfo {
   readyToSync: boolean,
   upstreamRef: string,
   versionSynced: number,
+  versionAvailable: number | null,
+  versionDeclined: number | null,
   errorMessage: string | null,
+  isModified?: boolean,
+  hasTopLevelParent?: boolean,
+  readyToSyncChildren?: UpstreamChildrenInfo[],
 }
 
 export interface XBlock {

@@ -7,6 +7,7 @@ export const STATEFUL_BUTTON_STATES = {
   default: 'default',
   pending: 'pending',
   error: 'error',
+  disable: 'disable',
 };
 
 export const USER_ROLES = {

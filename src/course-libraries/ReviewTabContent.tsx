@@ -144,7 +144,7 @@ const ItemReviewList = ({
 
   const {
     hits,
-    isLoading: isIndexDataLoading,
+    isPending: isIndexDataPending,
     hasError,
     hasNextPage,
     isFetchingNextPage,
@@ -243,7 +243,7 @@ const ItemReviewList = ({
     }
   }, [blockData]);
 
-  if (isIndexDataLoading) {
+  if (isIndexDataPending) {
     return <Loading />;
   }
 
@@ -314,7 +314,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
   const {
     data: outOfSyncItems,
-    isLoading: isSyncItemsLoading,
+    isPending: isSyncItemsLoading,
     isError,
     error,
   } = useEntityLinks({

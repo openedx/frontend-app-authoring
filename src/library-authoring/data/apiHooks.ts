@@ -6,6 +6,7 @@ import {
   type Query,
   type QueryClient,
   replaceEqualDeep,
+  keepPreviousData,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { type MeiliSearch } from 'meilisearch';
@@ -201,7 +202,7 @@ export const useUpdateLibraryMetadata = () => {
     mutationFn: api.updateLibraryMetadata,
     onMutate: async (data) => {
       const queryKey = libraryAuthoringQueryKeys.contentLibrary(data.id);
-      const previousLibraryData = queryClient.getQueriesData(queryKey)[0][1] as api.ContentLibrary;
+      const previousLibraryData = queryClient.getQueriesData({ queryKey })[0][1] as api.ContentLibrary;
 
       const newLibraryData = {
         ...previousLibraryData,
@@ -231,7 +232,7 @@ export const useContentLibraryV2List = (customParams: api.GetLibrariesV2CustomPa
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
     queryFn: () => api.getContentLibraryV2List(customParams),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 );
 
@@ -366,7 +367,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
     mutationFn: (data: api.UpdateXBlockFieldsRequest) => api.updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
       const queryKey = xblockQueryKeys.xblockFields(usageKey);
-      const previousBlockData = queryClient.getQueriesData(queryKey)?.[0]?.[1] as api.XBlockFields | undefined;
+      const previousBlockData = queryClient.getQueriesData({ queryKey })?.[0]?.[1] as api.XBlockFields | undefined;
       const formatedData = camelCaseObject(data);
 
       if (!previousBlockData) {
