@@ -16,6 +16,7 @@ import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
 import { getItemIcon } from '@src/generic/block-type-utils';
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
 
 import { messageTypes } from '../constants';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
@@ -137,6 +138,16 @@ export const PreviewLibraryXBlockChanges = ({
     if (!blockData) {
       return <Loading />;
     }
+    if (blockData.isContainer) {
+      return (
+        <CompareContainersWidget
+          title={blockData.displayName}
+          upstreamBlockId={blockData.upstreamBlockId}
+          downstreamBlockId={blockData.downstreamBlockId}
+        />
+      );
+    }
+
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
@@ -144,7 +155,6 @@ export const PreviewLibraryXBlockChanges = ({
         oldTitle={isTextWithLocalChanges ? blockData.displayName : null}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isContainer}
         hasLocalChanges={isTextWithLocalChanges}
       />
     );
@@ -239,14 +249,14 @@ export const PreviewLibraryXBlockChanges = ({
             icon={Info}
             title={intl.formatMessage(messages.localEditsAlert)}
           />
-        ) : (
+        ) : (!blockData.isContainer && (
           <AlertMessage
             show
             variant="warning"
             icon={Warning}
             title={intl.formatMessage(messages.olderVersionPreviewAlert)}
           />
-        )}
+        ))}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>

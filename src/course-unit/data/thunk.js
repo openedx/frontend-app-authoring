@@ -3,17 +3,17 @@ import { camelCaseObject } from '@edx/frontend-platform';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import { handleResponseErrors } from '../../generic/saving-error-alert';
-import { RequestStatus } from '../../data/constants';
-import { NOTIFICATION_MESSAGES } from '../../constants';
-import { updateModel, updateModels } from '../../generic/model-store';
+} from '@src/generic/processing-notification/data/slice';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { RequestStatus } from '@src/data/constants';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+import { updateModel, updateModels } from '@src/generic/model-store';
 import { messageTypes } from '../constants';
 import {
   editUnitDisplayName,
   getVerticalData,
   createCourseXblock,
-  getCourseVerticalChildren,
+  getCourseContainerChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
@@ -126,7 +126,7 @@ export function editCourseUnitVisibilityAndData(
           }
           const courseSectionVerticalData = await getVerticalData(blockId);
           dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
-          const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
+          const courseVerticalChildrenData = await getCourseContainerChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -163,7 +163,7 @@ export function createNewCourseXBlock(body, callback, blockId, sendMessageToIfra
               localStorage.removeItem('staticFileNotices');
             }
           }
-          const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
+          const courseVerticalChildrenData = await getCourseContainerChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
           if (callback) {
@@ -190,11 +190,11 @@ export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPag
     }
 
     try {
-      const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
+      const courseVerticalChildrenData = await getCourseContainerChildren(itemId);
       if (isSplitTestType) {
         const blockIds = courseVerticalChildrenData.children.map(child => child.blockId);
         const childrenDataArray = await Promise.all(
-          blockIds.map(blockId => getCourseVerticalChildren(blockId)),
+          blockIds.map(blockId => getCourseContainerChildren(blockId)),
         );
         const allChildren = childrenDataArray.reduce(
           (acc, data) => acc.concat(data.children || []),
@@ -239,7 +239,7 @@ export function duplicateUnitItemQuery(itemId, xblockId, callback) {
       callback(courseKey, locator);
       const courseSectionVerticalData = await getVerticalData(itemId);
       dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
-      const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
+      const courseVerticalChildrenData = await getCourseContainerChildren(itemId);
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));

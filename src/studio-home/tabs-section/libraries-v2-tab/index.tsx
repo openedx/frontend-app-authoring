@@ -6,15 +6,17 @@ import {
   Alert,
   Button,
 } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Error } from '@openedx/paragon/icons';
 
-import { useContentLibraryV2List } from '../../../library-authoring';
-import { LoadingSpinner } from '../../../generic/Loading';
-import AlertMessage from '../../../generic/alert-message';
+import { useContentLibraryV2List } from '@src/library-authoring';
+import { LoadingSpinner } from '@src/generic/Loading';
+import AlertMessage from '@src/generic/alert-message';
 import CardItem from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
+import { WelcomeLibrariesV2Alert } from './WelcomeLibrariesV2Alert';
 
 type Props = Record<never, never>;
 
@@ -37,11 +39,11 @@ const LibrariesV2Tab: React.FC<Props> = () => {
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
 
-  if (isLoading && !isFiltered) {
+  if (isPending && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -49,23 +51,11 @@ const LibrariesV2Tab: React.FC<Props> = () => {
     );
   }
 
-  const hasV2Libraries = !isLoading && !isError && ((data!.results.length || 0) > 0);
-
-  // TODO: update this link when tutorial is ready.
-  const librariesTutorialLink = (
-    <Alert.Link href="https://docs.openedx.org">
-      {intl.formatMessage(messages.librariesV2TabBetaTutorialLinkText)}
-    </Alert.Link>
-  );
+  const hasV2Libraries = !isPending && !isError && ((data!.results.length || 0) > 0);
 
   return (
     <>
-      <Alert variant="info">
-        {intl.formatMessage(
-          messages.librariesV2TabBetaText,
-          { link: librariesTutorialLink },
-        )}
-      </Alert>
+      {getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<WelcomeLibrariesV2Alert />)}
 
       {isError ? (
         <AlertMessage
@@ -81,24 +71,24 @@ const LibrariesV2Tab: React.FC<Props> = () => {
         <div className="courses-tab-container">
           <div className="d-flex flex-row justify-content-between my-4">
             <LibrariesV2Filters
-              isLoading={isLoading}
+              isPending={isPending}
               isFiltered={isFiltered}
               filterParams={filterParams}
               setFilterParams={setFilterParams}
               setCurrentPage={setCurrentPage}
             />
-            {!isLoading && !isError
-            && (
-              <p>
-                {intl.formatMessage(messages.coursesPaginationInfo, {
-                  length: data!.results.length,
-                  total: data!.count,
-                })}
-              </p>
-            )}
+            {!isPending && !isError
+              && (
+                <p>
+                  {intl.formatMessage(messages.coursesPaginationInfo, {
+                    length: data.results.length,
+                    total: data.count,
+                  })}
+                </p>
+              )}
           </div>
 
-          { hasV2Libraries
+          {hasV2Libraries
             ? data!.results.map(({
               id, org, slug, title,
             }) => (
@@ -110,7 +100,7 @@ const LibrariesV2Tab: React.FC<Props> = () => {
                 number={slug}
                 path={`/library/${id}`}
               />
-            )) : isFiltered && !isLoading && (
+            )) : isFiltered && !isPending && (
               <Alert className="mt-4">
                 <Alert.Heading>
                   {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}

@@ -14,7 +14,7 @@ import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.'
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
 
-const usageKey = 'some-id';
+const usageKey = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@1';
 const defaultEventData: LibraryChangesMessageData = {
   displayName: 'Test block',
   downstreamBlockId: usageKey,
