@@ -63,19 +63,6 @@ const messages = defineMessages({
     defaultMessage: 'Beta',
     description: 'Text used to mark the Libraries v2 feature as "in beta"',
   },
-  librariesV2TabBetaText: {
-    id: 'course-authoring.studio-home.libraries.tab.library.beta-text',
-    defaultMessage: 'Welcome to the new Beta Libraries experience! Libraries have been redesigned from the ground up,'
-      + ' making it much easier to reuse and remix course content. The new Libraries space lets you create, organize and'
-      + ' manage new content; reuse your content in as many courses as you\'d like; sync updates centrally; and create'
-      + ' and randomize problem sets. See {link} for details.',
-    description: 'Explanatory text shown on the Libraries v2 tab during the beta release.',
-  },
-  librariesV2TabBetaTutorialLinkText: {
-    id: 'course-authoring.studio-home.libraries.tab.library.beta-link-text',
-    defaultMessage: 'Libraries v2 tutorial',
-    description: 'Text to use as the link in the "course-authoring.studio-home.libraries.tab.library.beta-text" message',
-  },
   librariesV2TabLibrarySearchPlaceholder: {
     id: 'course-authoring.studio-home.libraries.tab.library.search-placeholder',
     defaultMessage: 'Search',
@@ -89,22 +76,55 @@ const messages = defineMessages({
     defaultMessage: 'There are no libraries with the current filters.',
   },
   alertTitle: {
-    id: 'studio-home.legacy-libraries.migrate-alert.title',
+    id: 'studio-home.libraries.migrate-alert.title',
     defaultMessage: 'Migrate Legacy Libraries',
     description: 'Title for the alert message to migrate legacy libraries',
   },
-  alertDescription: {
-    id: 'studio-home.legacy-libraries.migrate-alert.description',
+  alertDescriptionV1: {
+    id: 'studio-home.libraries.migrate-alert.description-v1',
     defaultMessage: 'In a future release, legacy libraries will no longer be supported.'
       + ' The new libraries experience allows you to author sections, subsections, units,'
       + ' and components to reuse across your courses. Content from legacy libraries can be'
       + ' migrated to the new experience.',
-    description: 'Description for the alert message to migrate legacy libraries',
+    description: 'Description for the alert message to migrate legacy libraries on legacy libraries tab.',
   },
   alertReviewButton: {
     id: 'studio-home.legacy-libraries.migrate-alert.review-button',
     defaultMessage: 'Review Legacy Libraries',
     description: 'Label for the button to review legacy libraries',
+  },
+  librariesV1TabMigrationFilterLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.label',
+    description: 'Label text for migration filter in legacy libraries tab',
+    defaultMessage: 'Any Migration Status',
+  },
+  librariesV1TabMigrationFilterMigratedLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.item.migrated.label',
+    description: 'Label text for migrated migration filter menu item in legacy libraries tab',
+    defaultMessage: 'Migrated',
+  },
+  librariesV1TabMigrationFilterUnmigratedLabel: {
+    id: 'course-authoring.studio-home.libraries.tab.migration.filter.item.unmigrated.label',
+    description: 'Label text for unmigrated migration filter menu item in legacy libraries tab',
+    defaultMessage: 'Unmigrated',
+  },
+  alertDescriptionV2: {
+    id: 'studio-home.libraries.migrate-alert.description-v2',
+    defaultMessage: 'Welcome to the new Content Libraries experience! Libraries have been redesigned'
+      + ' from the ground up, making it much easier to reuse content. You can create, organize and manage'
+      + ' new content, reuse your content in as many courses as you\'d like, publish updates, and create/randomize'
+      + ' problem sets. See {link} for details.',
+    description: 'Description for the alert message while there are no libraries pending migration on v2 tab.',
+  },
+  alertDescriptionV2MigrationPending: {
+    id: 'studio-home.libraries.migrate-alert.description-v2.migration-pending',
+    defaultMessage: ' Legacy libraries can be migrated using the migration tool.',
+    description: 'Complementary description for the alert message while there are libraries pending migration.',
+  },
+  alertLibrariesDocLinkText: {
+    id: 'studio-home.libraries.migrate-alert.docs',
+    defaultMessage: 'Libraries documentation',
+    description: 'Link text for the libraries documentation link.',
   },
 });
 
