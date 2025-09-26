@@ -351,6 +351,7 @@ const Layout = () => {
         const success = await setUIPreference(false);
         if (success) {
           console.log('Successfully switched to old UI, reloading page...');
+          localStorage.removeItem('bannerClosedTimestamp');
           window.location.href = '/authoring/home';
         } else {
           console.error('Failed to switch to old UI');
