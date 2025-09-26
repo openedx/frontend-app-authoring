@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Check } from '@openedx/paragon/icons'; // Keep only the Check icon
+import React, { useState, useEffect } from 'react'; // Add useEffect import
+import { Check } from '@openedx/paragon/icons';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
 import './feedbackComponent.scss';
-import emoji1 from './emoji/emoji-1.png'
-import emoji2 from './emoji/emoji-2.png'
-import emoji3 from './emoji/emoji-3.png'
-import emoji4 from './emoji/emoji-4.png'
+import emoji1 from './emoji/emoji-1.png';
+import emoji2 from './emoji/emoji-2.png';
+import emoji3 from './emoji/emoji-3.png';
+import emoji4 from './emoji/emoji-4.png';
 
-
-const FeedbackComponent = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const FeedbackComponent = ({ isOpen, setIsOpen }) => {
   const [formData, setFormData] = useState({
     mood: '',
     feedbackType: '',
@@ -25,6 +23,14 @@ const FeedbackComponent = () => {
     { value: 'good', label: 'Good', emoji: <img src={emoji3} alt="Good" />, rating: 3, question: 'What excited you most?' },
     { value: 'love_it', label: 'Love it', emoji: <img src={emoji4} alt="Love it" />, rating: 4, question: 'What excited you most?' },
   ];
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({ mood: '', feedbackType: '', description: '' });
+      setSubmitStatus(null);
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
 
   const handleMoodClick = (value) => {
     setFormData((prev) => ({ ...prev, mood: value }));
@@ -64,24 +70,13 @@ const FeedbackComponent = () => {
 
       setSubmitStatus('success');
       setTimeout(() => {
-        setIsOpen(false);
-        setSubmitStatus(null);
-        setIsSubmitting(false);
-        setFormData({
-          mood: '',
-          feedbackType: '',
-          description: '',
-        });
+        setIsOpen(false); // useEffect will handle reset
       }, 3000);
     } catch (error) {
       console.error('Error submitting feedback:', error);
       setSubmitStatus('error');
       setIsSubmitting(false);
-      setFormData({
-        mood: '',
-        feedbackType: '',
-        description: '',
-      });
+      setFormData({ mood: '', feedbackType: '', description: '' });
       setTimeout(() => {
         setSubmitStatus(null);
       }, 2000);
@@ -92,17 +87,7 @@ const FeedbackComponent = () => {
     <div className="feedback-container">
       <button
         className={`feedback-button vertical ${isOpen ? 'open' : ''}`}
-        onClick={() => {
-          setIsOpen(!isOpen);
-          if (isOpen) {
-            setFormData({
-              mood: '',
-              feedbackType: '',
-              description: '',
-            });
-            setSubmitStatus(null);
-          }
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Close feedback form' : 'Open feedback form'}
       >
         <span className="text">{isOpen ? 'Close' : 'Feedback'}</span>
@@ -114,7 +99,7 @@ const FeedbackComponent = () => {
             {submitStatus === 'success' ? (
               <div className="success-message">
                 <Check className="check-icon" />
-                <p>Thanks! Your feedback helps us make TELS Studio even better</p>
+                <p>Thank you! Your feedback helps us make your experience even better.</p>
               </div>
             ) : submitStatus === 'error' ? (
               <div className="error-message">
@@ -124,7 +109,6 @@ const FeedbackComponent = () => {
               <>
                 <div className="feedback-question">How's your experience with the new Studio?</div>
                 <form onSubmit={handleSubmit}>
-
                   <div className="form-group">
                     <div className="mood-rating">
                       {moods.map((mood) => (
@@ -178,7 +162,7 @@ const FeedbackComponent = () => {
                           value={formData.description}
                           onChange={handleInputChange}
                           className="form-textarea"
-                          placeholder="Share your thoughts..."
+                          placeholder="Please share your thoughts"
                         />
                       </div>
 
