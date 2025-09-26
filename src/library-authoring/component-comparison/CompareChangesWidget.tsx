@@ -56,7 +56,6 @@ const CompareChangesWidget = ({
                   usageKey={oldUsageKey || usageKey}
                   version={oldVersion}
                   minHeight="50vh"
-                  showTitle={hasLocalChanges}
                   isBlockV1={!!oldUsageKey}
                 />
               </IframeProvider>
@@ -70,7 +69,6 @@ const CompareChangesWidget = ({
                 usageKey={usageKey}
                 version={newVersion}
                 minHeight="50vh"
-                showTitle={hasLocalChanges}
               />
             </IframeProvider>
           </div>
