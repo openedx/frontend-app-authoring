@@ -48,10 +48,10 @@ const MakeLinkOrSpan = ({
 
 interface CardTitleProps {
   readOnlyItem: boolean;
-  selectMode?: 'single' | 'multiple' | null;
+  selectMode?: 'single' | 'multiple';
   destinationUrl: string;
   title: string;
-  itemId?: string | null;
+  itemId?: string;
   isMigrated?: boolean;
   migratedToKey?: string;
   migratedToTitle?: string;
@@ -140,8 +140,8 @@ interface BaseProps {
   migratedToKey?: string;
   migratedToTitle?: string;
   migratedToCollectionKey?: string | null;
-  selectMode?: 'single' | 'multiple' | null;
-  itemId?: string | null;
+  selectMode?: 'single' | 'multiple';
+  itemId?: string;
 }
 
 type Props = BaseProps & (

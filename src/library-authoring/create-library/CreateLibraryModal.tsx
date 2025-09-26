@@ -8,7 +8,7 @@ import type { ContentLibrary } from '../data/api';
 interface CreateLibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  handlePostCreate?: ((library: ContentLibrary) => void) | null,
+  handlePostCreate: (library: ContentLibrary) => void,
 }
 
 export const CreateLibraryModal = ({

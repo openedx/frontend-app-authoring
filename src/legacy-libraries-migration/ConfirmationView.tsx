@@ -14,10 +14,9 @@ import {
 
 import type { ContentLibrary } from '@src/library-authoring/data/api';
 import { LibraryV1Data } from '@src/studio-home/data/api';
+import { BoldText } from '@src/utils';
 
 import messages from './messages';
-
-const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 
 interface ConfirmationCardProps {
   legacyLib: LibraryV1Data;
@@ -61,7 +60,7 @@ const ConfirmationCard = ({
 );
 
 interface ConfirmationViewProps {
-  destination: ContentLibrary | undefined;
+  destination: ContentLibrary;
   legacyLibraries: LibraryV1Data[];
 }
 
@@ -75,7 +74,7 @@ export const ConfirmationView = ({
         {...messages.confirmationViewAlert}
         values={{
           count: legacyLibraries.length,
-          libraryName: destination?.title,
+          libraryName: destination.title,
           b: BoldText,
         }}
       />
@@ -83,7 +82,7 @@ export const ConfirmationView = ({
     {legacyLibraries.map((legacyLib) => (
       <ConfirmationCard
         legacyLib={legacyLib}
-        destinationName={destination?.title ?? ''}
+        destinationName={destination.title}
       />
     ))}
   </Container>

@@ -23,7 +23,7 @@ import LibrariesV2Filters from './libraries-v2-filters';
 
 interface CardListProps {
   hasV2Libraries: boolean;
-  selectMode?: 'single' | 'multiple' | null;
+  selectMode?: 'single' | 'multiple';
   isFiltered: boolean;
   isLoading: boolean;
   data: LibrariesV2Response;
@@ -83,14 +83,14 @@ const CardList: React.FC<CardListProps> = ({
 };
 
 interface Props {
-  selectedLibraryId?: string | null;
-  handleSelect?: ((library: ContentLibrary) => void) | null;
+  selectedLibraryId?: string;
+  handleSelect?: (library: ContentLibrary) => void;
   showCreateLibrary?: boolean;
 }
 
 const LibrariesV2List: React.FC<Props> = ({
-  selectedLibraryId = null,
-  handleSelect = null,
+  selectedLibraryId,
+  handleSelect,
   showCreateLibrary = false,
 }) => {
   const intl = useIntl();
@@ -195,7 +195,7 @@ const LibrariesV2List: React.FC<Props> = ({
           >
             <CardList
               hasV2Libraries={hasV2Libraries}
-              selectMode={inSelectMode ? 'single' : null}
+              selectMode={inSelectMode ? 'single' : undefined}
               isFiltered={isFiltered}
               isLoading={isPending}
               data={data!}
@@ -205,7 +205,7 @@ const LibrariesV2List: React.FC<Props> = ({
         ) : (
           <CardList
             hasV2Libraries={hasV2Libraries}
-            selectMode={inSelectMode ? 'single' : null}
+            selectMode={inSelectMode ? 'single' : undefined}
             isFiltered={isFiltered}
             isLoading={isPending}
             data={data!}

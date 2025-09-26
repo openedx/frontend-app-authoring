@@ -45,7 +45,7 @@ const CardList = ({
           number={number}
           url={url}
           itemId={libraryKey}
-          selectMode={inSelectMode ? 'multiple' : null}
+          selectMode={inSelectMode ? 'multiple' : undefined}
           isMigrated={isMigrated}
           migratedToKey={migratedToKey}
           migratedToTitle={migratedToTitle}
@@ -139,14 +139,14 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
 };
 
 interface LibrariesListProps {
-  selectedIds?: string[] | null;
-  handleCheck?: ((library: LibraryV1Data, action: 'add' | 'remove') => void) | null;
+  selectedIds?: string[];
+  handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
   hideMigationAlert?: boolean;
 }
 
 const LibrariesList = ({
-  selectedIds = null,
-  handleCheck = null,
+  selectedIds,
+  handleCheck,
   hideMigationAlert = false,
 }: LibrariesListProps) => {
   const intl = useIntl();

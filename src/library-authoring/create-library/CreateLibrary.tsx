@@ -27,12 +27,12 @@ import type { ContentLibrary } from '../data/api';
 
 export const CreateLibrary = ({
   showInModal = false,
-  handleCancel = null,
-  handlePostCreate = null,
+  handleCancel,
+  handlePostCreate,
 }: {
   showInModal?: boolean,
-  handleCancel?: (() => void) | null,
-  handlePostCreate?: ((library: ContentLibrary) => void) | null,
+  handleCancel?: () => void,
+  handlePostCreate?: (library: ContentLibrary) => void,
 }) => {
   const intl = useIntl();
   const navigate = useNavigate();

@@ -173,10 +173,12 @@ export const LegacyLibMigrationPage = () => {
                 eventKey="confirmation-view"
                 title={intl.formatMessage(messages.confirmStepTitle)}
               >
-                <ConfirmationView
-                  destination={destinationLibrary}
-                  legacyLibraries={legacyLibraries}
-                />
+                {destinationLibrary && (
+                  <ConfirmationView
+                    destination={destinationLibrary}
+                    legacyLibraries={legacyLibraries}
+                  />
+                )}
               </Stepper.Step>
             </Stepper>
           </div>
