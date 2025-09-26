@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     gap: 4px;
     font-size: 1.05rem;
     font-weight: 600;
@@ -13,7 +14,13 @@
     text-align: center;
     padding: 0;
     overflow: hidden;
-    max-height: 26px; 
+    max-height: 26px;
+    .message_wrape{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+    }
 
     &.showBanner {
         animation: expandHeight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -25,11 +32,13 @@
 
     .feedback_banner_button {
         text-decoration: underline;
+        margin: 0 4px;
 
         &:hover {
             color: var(--primary);
         }
     }
+
     .close_icon {
         position: absolute;
         right: 30px;
@@ -45,6 +54,7 @@
         max-height: 0;
         opacity: 0;
     }
+
     to {
         max-height: 26px;
         opacity: 1;
@@ -53,9 +63,10 @@
 
 @keyframes collapseHeight {
     from {
-        max-height: 26px; 
+        max-height: 26px;
         opacity: 1;
     }
+
     to {
         max-height: 0;
         opacity: 0;
@@ -63,9 +74,56 @@
 }
 
 @media only screen and (max-width : 900px) {
-    .feedback_banner{
-        .desktopview{
-          display: none;
+    .feedback_banner {
+        .desktopview {
+            display: none;
         }
+    }
+}
+
+@media only screen and (max-width : 650px) {
+    .feedback_banner {
+        height: 40px;
+        max-height: 40px;
+        font-size: 0.8rem;
+        flex-direction: row;
+
+        .message_wrape{
+            flex-direction: column;
+            line-height: 1.25;
+            margin-right: 18px;
+        }
+        &.showBanner {
+            animation: expandHeightPhone 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        &.hideBanner {
+            animation: collapseHeightPhone 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    }
+}
+
+
+@keyframes expandHeightPhone {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+
+    to {
+        max-height: 40px;
+        opacity: 1;
+    }
+}
+
+@keyframes collapseHeightPhone {
+    from {
+        max-height: 40px;
+        opacity: 1;
+    }
+
+    to {
+        max-height: 0;
+        opacity: 0;
     }
 }
