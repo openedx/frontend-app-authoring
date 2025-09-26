@@ -1,5 +1,6 @@
-.feedback_banner{
+.feedback_banner {
     width: 100%;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11,10 +12,60 @@
     border: 1px solid var(--border-color);
     text-align: center;
     padding: 0;
-    .feedback_banner_button{
+    overflow: hidden;
+    max-height: 26px; 
+
+    &.showBanner {
+        animation: expandHeight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    &.hideBanner {
+        animation: collapseHeight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .feedback_banner_button {
         text-decoration: underline;
-        &:hover{
+
+        &:hover {
             color: var(--primary);
+        }
+    }
+    .close_icon {
+        position: absolute;
+        right: 30px;
+        cursor: pointer;
+        height: 18px;
+        width: 18px;
+    }
+}
+
+
+@keyframes expandHeight {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 26px;
+        opacity: 1;
+    }
+}
+
+@keyframes collapseHeight {
+    from {
+        max-height: 26px; 
+        opacity: 1;
+    }
+    to {
+        max-height: 0;
+        opacity: 0;
+    }
+}
+
+@media only screen and (max-width : 900px) {
+    .feedback_banner{
+        .desktopview{
+          display: none;
         }
     }
 }
