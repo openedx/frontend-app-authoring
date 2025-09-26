@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import Button from 'shared/Components/Common/Button';
 import { Plus } from '@untitledui/icons';
-import DimmedLayout from 'shared/Components/Common/DimmedLayout';
+import DimmedOverlay from 'shared/Components/Common/DimmedOverlay';
 import { GenerationStatus } from 'types/course';
 import courseUnitMessages from '../../course-unit/course-sequence/messages';
 import { RequestStatus } from '../../data/constants';
@@ -206,7 +206,7 @@ const SectionCard = ({
   const isSectionWithNoUnit = section.childInfo?.children?.[0]?.childInfo?.children?.length === 0;
 
   return (
-    <DimmedLayout generationStatus={generationStatus}>
+    <DimmedOverlay generationStatus={generationStatus}>
       <SortableItem
         id={id}
         category={category}
@@ -296,7 +296,7 @@ const SectionCard = ({
           )}
         </div>
       </SortableItem>
-    </DimmedLayout>
+    </DimmedOverlay>
   );
 };
 

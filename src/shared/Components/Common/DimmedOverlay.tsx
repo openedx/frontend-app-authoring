@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from 'shared/lib/utils';
 import { GenerationStatus } from 'types/course';
 
-const DimmedLayout = ({ children, generationStatus }:
+const DimmedOverlay = ({ children, generationStatus }:
 { children: React.ReactNode, generationStatus: GenerationStatus }) => {
   return generationStatus ? (
     <div className={cn(
@@ -16,4 +16,4 @@ const DimmedLayout = ({ children, generationStatus }:
   ) : (children);
 };
 
-export default DimmedLayout;
+export default DimmedOverlay;
