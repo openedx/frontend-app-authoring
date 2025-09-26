@@ -173,6 +173,8 @@ const ItemReviewList = ({
       upstreamBlockId: outOfSyncItemsByKey[info.usageKey].upstreamKey,
       upstreamBlockVersionSynced: outOfSyncItemsByKey[info.usageKey].versionSynced,
       isContainer: info.blockType === 'vertical' || info.blockType === 'sequential' || info.blockType === 'chapter',
+      blockType: info.blockType,
+      isLocallyModified: outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
     });
   }, [outOfSyncItemsByKey]);
 
@@ -213,7 +215,10 @@ const ItemReviewList = ({
 
   const updateBlock = useCallback(async (info: ContentHit) => {
     try {
-      await acceptChangesMutation.mutateAsync(info.usageKey);
+      await acceptChangesMutation.mutateAsync({
+        blockId: info.usageKey,
+        overrideCustomizations: info.blockType === 'html' && outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
+      });
       reloadLinks(info.usageKey);
       showToast(intl.formatMessage(
         messages.updateSingleBlockSuccess,
@@ -230,7 +235,9 @@ const ItemReviewList = ({
       return;
     }
     try {
-      await ignoreChangesMutation.mutateAsync(blockData.downstreamBlockId);
+      await ignoreChangesMutation.mutateAsync({
+        blockId: blockData.downstreamBlockId,
+      });
       reloadLinks(blockData.downstreamBlockId);
       showToast(intl.formatMessage(
         messages.ignoreSingleBlockSuccess,

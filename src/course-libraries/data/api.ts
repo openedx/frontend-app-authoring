@@ -29,6 +29,7 @@ export interface BasePublishableEntityLink {
   created: string;
   updated: string;
   readyToSync: boolean;
+  downstreamIsModified: boolean;
 }
 
 export interface ComponentPublishableEntityLink extends BasePublishableEntityLink {

@@ -1,4 +1,3 @@
-// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -44,14 +43,6 @@ export async function getVerticalData(unitId: string): Promise<object> {
 
 /**
  * Creates a new course XBlock.
- * @param {Object} options - The options for creating the XBlock.
- * @param {string} options.type - The type of the XBlock.
- * @param {string} [options.category] - The category of the XBlock. Defaults to the type if not provided.
- * @param {string} options.parentLocator - The parent locator.
- * @param {string} [options.displayName] - The display name.
- * @param {string} [options.boilerplate] - The boilerplate.
- * @param {string} [options.stagedContent] - The staged content.
- * @param {string} [options.libraryContentKey] - component key from library if being imported.
  */
 export async function createCourseXblock({
   type,
@@ -63,13 +54,13 @@ export async function createCourseXblock({
   libraryContentKey,
 }: {
   type: string,
-  category?: string,
+  category?: string, // The category of the XBlock. Defaults to the type if not provided.
   parentLocator: string,
   displayName?: string,
   boilerplate?: string,
   stagedContent?: string,
-  libraryContentKey?: string,
-}): Promise<any> {
+  libraryContentKey?: string, // component key from library if being imported.
+}) {
   const body = {
     type,
     boilerplate,
@@ -92,8 +83,8 @@ export async function createCourseXblock({
  */
 export async function handleCourseUnitVisibilityAndData(
   unitId: string,
-  type: string,
-  isVisible: boolean,
+  type: string, // The action type (e.g., PUBLISH_TYPES.discardChanges).
+  isVisible: boolean, // The visibility status for students.
   groupAccess: boolean,
   isDiscussionEnabled: boolean,
 ): Promise<object> {
@@ -160,9 +151,6 @@ export async function getCourseOutlineInfo(courseId: string): Promise<CourseOutl
 
 /**
  * Move a unit item to new unit.
- * @param {string} sourceLocator - The ID of the item to be moved.
- * @param {string} targetParentLocator - The ID of the XBlock associated with the item.
- * @returns {Promise<moveInfo>} - The move information.
  */
 export async function patchUnitItem(sourceLocator: string, targetParentLocator: string): Promise<MoveInfoData> {
   const { data } = await getAuthenticatedHttpClient()
@@ -176,18 +164,22 @@ export async function patchUnitItem(sourceLocator: string, targetParentLocator: 
 
 /**
  * Accept the changes from upstream library block in course
- * @param {string} blockId - The ID of the item to be updated from library.
  */
-export async function acceptLibraryBlockChanges(blockId: string) {
+export async function acceptLibraryBlockChanges({
+  blockId,
+  overrideCustomizations = false,
+}: {
+  blockId: string,
+  overrideCustomizations?: boolean,
+}) {
   await getAuthenticatedHttpClient()
-    .post(libraryBlockChangesUrl(blockId));
+    .post(libraryBlockChangesUrl(blockId), { override_customizations: overrideCustomizations });
 }
 
 /**
  * Ignore the changes from upstream library block in course
- * @param {string} blockId - The ID of the item to be updated from library.
  */
-export async function ignoreLibraryBlockChanges(blockId: string) {
+export async function ignoreLibraryBlockChanges({ blockId } : { blockId: string }) {
   await getAuthenticatedHttpClient()
     .delete(libraryBlockChangesUrl(blockId));
 }

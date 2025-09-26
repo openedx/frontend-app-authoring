@@ -17,6 +17,16 @@ const messages = defineMessages({
     defaultMessage: 'Compare Changes',
     description: 'Title used for the compare changes dialog',
   },
+  courseContentTitle: {
+    id: 'course-authoring.library-authoring.component-comparison.courseContent',
+    defaultMessage: 'Course content',
+    description: 'Title shown for course content when comparing changes',
+  },
+  publishedLibraryContentTitle: {
+    id: 'course-authoring.library-authoring.component-comparison.publishedLibraryContent',
+    defaultMessage: 'Published library content',
+    description: 'Title shown for published library content when comparing changes',
+  },
 });
 
 export default messages;
