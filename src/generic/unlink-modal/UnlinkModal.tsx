@@ -5,11 +5,10 @@ import {
 } from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { BoldText } from '@src/utils';
 
 import messages from './messages';
 import LoadingButton from '../loading-button';
-
-const BoldText = (chunk: string[]) => <b>{chunk}</b>;
 
 type UnlinkModalPropsContainer = {
   displayName?: string;

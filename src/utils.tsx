@@ -347,3 +347,5 @@ export const skipIfUnwantedTarget = (
   }
   onClick(e);
 };
+
+export const BoldText = (chunk: string[]) => <b>{chunk}</b>;
