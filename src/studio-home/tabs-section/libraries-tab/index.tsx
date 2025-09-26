@@ -163,7 +163,7 @@ const LibrariesList = ({
   const perPage = 10;
   const totalPages = Math.ceil(filteredData.length / perPage);
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
-  const inSelectMode = handleCheck !== null;
+  const inSelectMode = handleCheck !== undefined;
 
   const handleChangeCheckboxSet = useCallback((event) => {
     if (handleCheck) {

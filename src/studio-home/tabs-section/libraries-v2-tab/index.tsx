@@ -100,7 +100,7 @@ const LibrariesV2List: React.FC<Props> = ({
   const [isCreateLibraryOpen, openCreateLibrary, closeCreateLibrary] = useToggle(false);
 
   const isFiltered = Object.keys(filterParams).length > 0;
-  const inSelectMode = handleSelect !== null;
+  const inSelectMode = handleSelect !== undefined;
 
   const handlePageSelect = (page: number) => {
     setCurrentPage(page);
