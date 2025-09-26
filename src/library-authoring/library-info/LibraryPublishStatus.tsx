@@ -1,13 +1,14 @@
 import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
 import { useToggle } from '@openedx/paragon';
-import { ToastContext } from '../../generic/toast-context';
+
+import { ToastContext } from '@src/generic/toast-context';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
 
 const LibraryPublishStatus = () => {
   const intl = useIntl();
@@ -18,14 +19,14 @@ const LibraryPublishStatus = () => {
   const revertLibraryChanges = useRevertLibraryChanges();
   const { showToast } = useContext(ToastContext);
 
-  const commit = useCallback(() => {
+  const commit = useCallback(async () => {
     if (libraryData) {
-      commitLibraryChanges.mutateAsync(libraryData.id)
-        .then(() => {
-          showToast(intl.formatMessage(messages.publishSuccessMsg));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.publishErrorMsg));
-        });
+      try {
+        await commitLibraryChanges.mutateAsync(libraryData.id);
+        showToast(intl.formatMessage(messages.publishSuccessMsg));
+      } catch (e) {
+        showToast(intl.formatMessage(messages.publishErrorMsg));
+      }
     }
   }, [libraryData]);
 
@@ -51,6 +52,7 @@ const LibraryPublishStatus = () => {
       <StatusWidget
         {...libraryData}
         onCommit={!readOnly ? commit : undefined}
+        onCommitStatus={commitLibraryChanges.status}
         onCommitLabel={intl.formatMessage(messages.publishLibraryButtonLabel)}
         onRevert={!readOnly ? openConfirmModal : undefined}
       />
