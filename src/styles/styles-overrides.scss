@@ -2569,5 +2569,12 @@ option{
     background-color: var(--primary-light);
   }
 }
+a{
+  color: var(--primary);
+  &:hover{
+    color: var(--primary-light);
+    cursor: pointer;
+  }
+}
 
 //so end

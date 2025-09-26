@@ -56,6 +56,24 @@ import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
 import { applyTheme } from './styles/themeLoader';
 // import { getUIPreference } from './services/uiPreferenceService';
+import * as Sentry from '@sentry/react';
+try {
+  const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+  Sentry.init({
+    dsn: sentryresponse.data.sentry.dsn,
+    environment: sentryresponse.data.sentry.environment,
+    tracesSampleRate: sentryresponse.data.sentry.traces_sample_rate,
+    sendDefaultPii: sentryresponse.data.sentry.send_default_pii,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+} catch (error) {
+  console.error('API call failed, fro sentry:', error);
+}
 
 // Load styles only for new UI
 const loadStylesForNewUI = (isOldUI) => {
@@ -193,10 +211,10 @@ const App = () => {
           <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
           <Route path="/component-picker" element={<ComponentPicker />} />
           {menuConfig?.enable_calendar && oldUI === 'false' && (
-          <Route path="/calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<Calendar />} />
           )}
           {menuConfig?.enable_assignments && oldUI === 'false' && (
-          <Route path="/assignments" element={<AssignmentPage />} />
+            <Route path="/assignments" element={<AssignmentPage />} />
           )}
           <Route
             path="/component-picker/multiple"
@@ -209,7 +227,7 @@ const App = () => {
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {menuConfig?.allow_to_create_new_course && oldUI === 'false' && (
-          <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
+            <Route path="/new-course" element={<CustomCreateNewCourseForm />} />
           )}
           {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
             <Route path="/accessibility" element={<AccessibilityPage />} />
