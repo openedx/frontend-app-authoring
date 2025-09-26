@@ -65,7 +65,7 @@ const Header = ({
     : generatePath(libraryHref, { libraryId: contextId });
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <StudioHeader
         org={org}
         number={number}
@@ -85,6 +85,7 @@ const Header = ({
       )}
       <button
         type="button"
+        className="ui-switch-button"
         onClick={async () => {
           try {
             console.log('Switching to new UI...');
@@ -99,26 +100,10 @@ const Header = ({
             console.error('Error switching to new UI:', error);
           }
         }}
-        style={{
-          position: 'absolute',
-          top: '0.8rem',
-          borderRadius: '6px',
-          right: '15rem',
-          zIndex: 9999,
-          border: '1px solid var(--primary)',
-          backgroundColor: 'var(--primary-light)',
-          color: 'var(--primary)',
-          padding: '0.4375rem 0.75rem',
-          textAlign: 'center',
-          fontSize: '0.875rem',
-          lineHeight: '1.4286',
-          width: 'fit-content',
-          cursor: 'pointer',
-        }}
       >
         Switch to New UI
       </button>
-    </>
+    </div>
   );
 };
 
