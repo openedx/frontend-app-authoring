@@ -120,6 +120,7 @@ describe('FilesAndUploads utils', () => {
       const dateStr = '2023-10-01T12:00:00Z';
       const date = convertToDateFromString(dateStr);
       expect(date).toBeInstanceOf(Date);
+      // @ts-ignore
       expect(date.toISOString()).toBe('2023-10-01T12:00:00.000Z');
     });
 
