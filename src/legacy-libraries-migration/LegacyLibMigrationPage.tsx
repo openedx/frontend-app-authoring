@@ -21,7 +21,6 @@ import LibrariesList from '@src/studio-home/tabs-section/libraries-tab';
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
-import { MigrationStepsViewer } from './MigrationStepsViewer';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 
@@ -148,23 +147,32 @@ export const LegacyLibMigrationPage = () => {
             <SubHeader
               title={intl.formatMessage(messages.siteTitle)}
             />
-            <MigrationStepsViewer currentStep={currentStep} />
             <Stepper activeKey={currentStep}>
-              <Stepper.Step eventKey="select-libraries" title="Select Legacy Libraries">
+              <Stepper.Header />
+              <Stepper.Step
+                eventKey="select-libraries"
+                title={intl.formatMessage(messages.selectLegacyLibrariesStepTitle)}
+              >
                 <LibrariesList
                   selectedIds={legacyLibrariesIds}
                   handleCheck={handleUpdateLegacyLibraries}
                   hideMigationAlert
                 />
               </Stepper.Step>
-              <Stepper.Step eventKey="select-destination" title="Select Destination">
+              <Stepper.Step
+                eventKey="select-destination"
+                title={intl.formatMessage(messages.selectDestinationStepTitle)}
+              >
                 <SelectDestinationView
                   destinationId={destinationLibrary?.id}
                   setDestinationId={setDestination}
                   legacyLibCount={legacyLibraries.length}
                 />
               </Stepper.Step>
-              <Stepper.Step eventKey="confirmation-view" title="Confirmation">
+              <Stepper.Step
+                eventKey="confirmation-view"
+                title={intl.formatMessage(messages.confirmStepTitle)}
+              >
                 <ConfirmationView
                   destination={destinationLibrary}
                   legacyLibraries={legacyLibraries}
