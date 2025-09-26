@@ -1,0 +1,20 @@
+.feedback_banner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    padding: 0;
+    .feedback_banner_button{
+        text-decoration: underline;
+        &:hover{
+            color: var(--primary);
+        }
+    }
+}

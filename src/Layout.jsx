@@ -32,6 +32,7 @@ import { SearchContextProvider } from './search-manager';
 import { LoadingSpinner } from './generic/Loading';
 import { setUIPreference } from './services/uiPreferenceService';
 import FeedbackComponent from './feedback/FeedbackComponent';
+import FeedbackLink from './feedbackBanner/FeedbackLink';
 
 
 // Icon mapping for API icon names
@@ -115,6 +116,7 @@ const Layout = () => {
   const [headerButtons, setHeaderButtons] = useState({});
   const [languageSelectorList, setLanguageSelectorList] = useState([]);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   // const DefaultIcon = ParagonIcons.Home;
 
@@ -503,6 +505,7 @@ const Layout = () => {
       {/* <p>This is header</p> */}
       <SidebarProvider>
         <div className="header-container">
+          <FeedbackLink isOpen={isFeedbackOpen} setIsOpen={setIsFeedbackOpen} />
           <MainHeader
             logoUrl={config.LOGO_URL}
             // menuAlignment={headerData.menu.align}
@@ -553,7 +556,7 @@ const Layout = () => {
           </div>
         </div> */}
       </SidebarProvider>
-      <FeedbackComponent />
+      <FeedbackComponent isOpen={isFeedbackOpen} setIsOpen={setIsFeedbackOpen} />
     </div>
   );
 
