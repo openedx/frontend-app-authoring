@@ -65,21 +65,27 @@ body {
 }
 
 /* Only apply overflow hidden for new UI */
-html, body.new-ui {
-  overflow: hidden !important; /* Prevent outer scrollbar for new UI */
+html,
+body.new-ui {
+  overflow: hidden !important;
+  /* Prevent outer scrollbar for new UI */
 }
 
 /* Allow scrolling for old UI */
-html, body.old-ui {
-  overflow: auto !important; /* Allow scrolling for old UI */
+html,
+body.old-ui {
+  overflow: auto !important;
+  /* Allow scrolling for old UI */
 }
 
 html.old-ui {
-  overflow: auto !important; /* Allow scrolling for old UI */
+  overflow: auto !important;
+  /* Allow scrolling for old UI */
 }
 
 html.new-ui {
-  overflow: hidden !important; /* Prevent outer scrollbar for new UI */
+  overflow: hidden !important;
+  /* Prevent outer scrollbar for new UI */
 }
 
 mark {
@@ -159,21 +165,26 @@ body.old-ui .main-content {
 
 /* Styles for the sidebar scrollbar */
 .sidebar-container::-webkit-scrollbar {
-  width: 4px; /* width of the vertical scrollbar */
+  width: 4px;
+  /* width of the vertical scrollbar */
   z-index: 10;
 }
 
 .sidebar-container::-webkit-scrollbar-track {
-  background: transparent; /* color of the track */
+  background: transparent;
+  /* color of the track */
 }
 
 .sidebar-container::-webkit-scrollbar-thumb {
-  background-color: #888; /* color of the scrollbar thumb */
-  border-radius: 4px; /* roundness of the scrollbar thumb */
+  background-color: #888;
+  /* color of the scrollbar thumb */
+  border-radius: 4px;
+  /* roundness of the scrollbar thumb */
 }
 
 .sidebar-container::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* color of the scrollbar thumb on hover */
+  background-color: #555;
+  /* color of the scrollbar thumb on hover */
 }
 
 /* UI Switch Button Styles */
@@ -193,31 +204,37 @@ body.old-ui .main-content {
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  
+
   /* Use left positioning to stay consistent relative to header content */
   left: 50%;
-  transform: translateY(-50%) translateX(-50px); /* Center horizontally, then move right towards search icon */
-  
+  transform: translateY(-50%) translateX(-50px);
+  /* Center horizontally, then move right towards search icon */
+
   /* Responsive adjustments - move right more as screen gets bigger */
-  @media (min-width: 768px) {
+  @media (min-width: 680px) {
     transform: translateY(-50%) translateX(0px);
   }
-  
-  @media (min-width: 1024px) {
-    transform: translateY(-50%) translateX(50px);
+
+  @media (min-width: 841px) {
+    transform: translateY(-50%) translateX(115px);
   }
-  
+
+  @media (min-width: 841px) and (max-width:920px) {
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+
   @media (min-width: 1440px) {
     transform: translateY(-50%) translateX(100px);
   }
-  
+
   @media (min-width: 1920px) {
     transform: translateY(-50%) translateX(150px);
   }
-  
+
   /* Fallback for very small screens */
   @media (max-width: 480px) {
-    transform: translateY(-50%) translateX(-100px);
+    transform: translateY(-50%) translateX(-80px);
     font-size: 12px;
     padding: 6px 10px;
   }
