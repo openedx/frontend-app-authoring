@@ -54,7 +54,6 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-// import { applyTheme } from './styles/themeLoader';
 // import { getUIPreference } from './services/uiPreferenceService';
 import * as Sentry from '@sentry/react';
 import { dynamicTheme } from 'titaned-frontend-library';
@@ -153,7 +152,6 @@ const App = () => {
   // Apply theme from JSON
   useEffect(() => {
     if (oldUI === 'false') {
-      // applyTheme(); // Load default theme from /theme.json
       (async () => {
         try {
           const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
