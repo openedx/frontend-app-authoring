@@ -1,4 +1,4 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ModalDialog } from '@openedx/paragon';
 
 import messages from './messages';
@@ -27,7 +27,7 @@ export const CreateLibraryModal = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {intl.formatMessage(messages.createLibrary)}
+          <FormattedMessage {...messages.createLibrary} />
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>

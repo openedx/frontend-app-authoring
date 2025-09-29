@@ -9,7 +9,7 @@ import {
   Stack,
   useToggle,
 } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Add, Error } from '@openedx/paragon/icons';
 
 import { CreateLibraryModal, useContentLibraryV2List } from '@src/library-authoring';
@@ -38,8 +38,6 @@ const CardList: React.FC<CardListProps> = ({
   data,
   handleClearFilters,
 }) => {
-  const intl = useIntl();
-
   if (hasV2Libraries) {
     return (
       <>
@@ -68,13 +66,13 @@ const CardList: React.FC<CardListProps> = ({
     return (
       <Alert className="mt-4">
         <Alert.Heading>
-          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
+          <FormattedMessage {...messages.librariesV2TabLibraryNotFoundAlertTitle} />
         </Alert.Heading>
         <p>
-          {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
+          <FormattedMessage {...messages.librariesV2TabLibraryNotFoundAlertMessage} />
         </p>
         <Button variant="primary" onClick={handleClearFilters}>
-          {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+          <FormattedMessage {...messages.coursesTabCourseNotFoundAlertCleanFiltersButton} />
         </Button>
       </Alert>
     );
@@ -165,7 +163,7 @@ const LibrariesV2List: React.FC<Props> = ({
                 iconBefore={Add}
                 className="mr-3"
               >
-                {intl.formatMessage(messages.createLibraryButton)}
+                <FormattedMessage {...messages.createLibraryButton} />
               </Button>
             )}
             <LibrariesV2Filters

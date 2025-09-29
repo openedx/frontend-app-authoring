@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Button,
@@ -34,10 +34,6 @@ const ExitModal = ({
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const handleExit = useCallback(() => {
-    navigate('/libraries-v1');
-  }, []);
-
   return (
     <ModalDialog
       title={intl.formatMessage(messages.exitModalTitle)}
@@ -48,19 +44,19 @@ const ExitModal = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {intl.formatMessage(messages.exitModalTitle)}
+          <FormattedMessage {...messages.exitModalTitle} />
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {intl.formatMessage(messages.exitModalBodyText)}
+        <FormattedMessage {...messages.exitModalBodyText} />
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
           <ModalDialog.CloseButton variant="tertiary">
-            {intl.formatMessage(messages.exitModalCancelText)}
+            <FormattedMessage {...messages.exitModalCancelText} />
           </ModalDialog.CloseButton>
-          <Button onClick={handleExit}>
-            {intl.formatMessage(messages.exitModalConfirmText)}
+          <Button onClick={() => navigate('/libraries-v1')}>
+            <FormattedMessage {...messages.exitModalConfirmText} />
           </Button>
         </ActionRow>
       </ModalDialog.Footer>
@@ -138,7 +134,7 @@ export const LegacyLibMigrationPage = () => {
       <div className="legacy-library-migration-page">
         <Helmet>
           <title>
-            {intl.formatMessage(messages.siteTitle)}
+            <FormattedMessage {...messages.siteTitle} />
           </title>
         </Helmet>
         <Header isHiddenMainMenu />
