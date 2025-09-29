@@ -14,9 +14,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RequestStatus } from '@src/data/constants';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
-import LibrariesTab from './libraries-tab';
-import LibrariesV2Tab from './libraries-v2-tab/index';
+import LibrariesList from './libraries-tab';
+import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
+import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
 
 const TabsSection = ({
   showNewCourseContainer,
@@ -101,7 +102,10 @@ const TabsSection = ({
             </Stack>
           )}
         >
-          <LibrariesV2Tab />
+          <div>
+            <WelcomeLibrariesV2Alert />
+            <LibrariesV2List />
+          </div>
         </Tab>,
       );
     }
@@ -117,7 +121,7 @@ const TabsSection = ({
               : messages.librariesTabTitle,
           )}
         >
-          <LibrariesTab />
+          <LibrariesList />
         </Tab>,
       );
     }

@@ -93,6 +93,11 @@ const messages = defineMessages({
     defaultMessage: 'Review Legacy Libraries',
     description: 'Label for the button to review legacy libraries',
   },
+  createLibraryButton: {
+    id: 'studio-home.legacy-libraries.migrate.create-button',
+    defaultMessage: 'Create New Library',
+    description: 'Label for the button to create a new library in the library list view.',
+  },
   librariesV1TabMigrationFilterLabel: {
     id: 'course-authoring.studio-home.libraries.tab.migration.filter.label',
     description: 'Label text for migration filter in legacy libraries tab',
