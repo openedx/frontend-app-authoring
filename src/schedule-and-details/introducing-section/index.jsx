@@ -70,7 +70,18 @@ const IntroducingSection = ({
   );
 
   const [initialOverview] = React.useState(overview);
+  console.log('[IntroducingSection] initialOverview (init):', initialOverview);
+
   const [initialSidebar] = React.useState(aboutSidebarHtml);
+
+  React.useEffect(() => {
+    console.log('[IntroducingSection] initialOverview on mount:', initialOverview);
+  }, []);
+
+  React.useEffect(() => {
+    console.log('[IntroducingSection] overview changed:', overview);
+    console.log('[IntroducingSection] initialOverview vs overview equal?:', Object.is(initialOverview, overview));
+  }, [overview, initialOverview]);
 
   return (
     <section className="section-container introducing-section">
@@ -116,7 +127,11 @@ const IntroducingSection = ({
             <WysiwygEditor
               initialValue={initialOverview}
               value={overview}
-              onChange={(value) => onChange(value, 'overview')}
+              onChange={(value) => {
+                console.log('[IntroducingSection] Wysiwyg onChange value:', value);
+                console.log('[IntroducingSection] (onChange) initialOverview snapshot stays:', initialOverview);
+                onChange(value, 'overview');
+              }}
             />
             <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
           </Form.Group>
