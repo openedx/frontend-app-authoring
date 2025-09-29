@@ -18,7 +18,7 @@ import * as ParagonIcons from '@openedx/paragon/icons';
 //   LmsBook,
 // } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
-import { MainHeader, Sidebar, SidebarProvider } from 'titaned-lib';
+import { MainHeader, Sidebar, SidebarProvider } from 'titaned-frontend-library';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
 // import MainHeader from 'library/Header/MainHeader';
 // import { SidebarProvider } from 'library/providers/SidebarProvider';

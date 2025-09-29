@@ -54,9 +54,10 @@ import CustomCreateNewCourseForm from './studio-home/ps-course-form/CustomCreate
 import registerFontAwesomeIcons from './utils/RegisterFontAwesome';
 import Calendar from './calendar/pages/CalendarPage';
 import AssignmentPage from './assignment/pages/AssignmentPage';
-import { applyTheme } from './styles/themeLoader';
+// import { applyTheme } from './styles/themeLoader';
 // import { getUIPreference } from './services/uiPreferenceService';
 import * as Sentry from '@sentry/react';
+import { dynamicTheme } from 'titaned-frontend-library';
 try {
   const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
   Sentry.init({
@@ -84,11 +85,11 @@ const loadStylesForNewUI = (isOldUI) => {
   console.log('Html className set to:', document.documentElement.className);
 
   if (!isOldUI) {
-    console.log('Loading titaned-lib styles...');
-    import('titaned-lib/dist/index.css');
+    console.log('Loading titaned-frontend-library styles...');
+    import('titaned-frontend-library/dist/index.css');
     import('./styles/styles-overrides.scss');
   } else {
-    console.log('Skipping titaned-lib styles for old UI');
+    console.log('Skipping titaned-frontend-library styles for old UI');
   }
 };
 
@@ -152,7 +153,15 @@ const App = () => {
   // Apply theme from JSON
   useEffect(() => {
     if (oldUI === 'false') {
-      applyTheme(); // Load default theme from /theme.json
+      // applyTheme(); // Load default theme from /theme.json
+      (async () => {
+        try {
+          const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+          dynamicTheme(response);
+        } catch (error) {
+          console.error('Error fetching theme config:', error);
+        }
+      })();
     }
   }, [oldUI]);
 
