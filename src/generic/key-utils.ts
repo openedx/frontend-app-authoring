@@ -71,6 +71,11 @@ export function isLibraryV1Key(learningContextKey: string | undefined | null): l
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('library-v1:');
 }
 
+/** Check if this is a V1 block key. */
+export function isBlockV1Key(usageKey: string | undefined | null): usageKey is string {
+  return typeof usageKey === 'string' && usageKey.startsWith('block-v1:');
+}
+
 /**
  * Build a collection usage key from library V2 context key and collection Id.
  * This Collection Usage Key is only used on tagging.

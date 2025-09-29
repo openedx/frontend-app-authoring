@@ -151,11 +151,12 @@ export const PreviewLibraryXBlockChanges = ({
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
-        oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : null}
-        oldTitle={isTextWithLocalChanges ? blockData.displayName : null}
+        oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : undefined}
+        oldTitle={isTextWithLocalChanges ? blockData.displayName : undefined}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
         hasLocalChanges={isTextWithLocalChanges}
+        showNewTitle={isTextWithLocalChanges}
       />
     );
   }, [blockData, isTextWithLocalChanges]);
@@ -182,46 +183,39 @@ export const PreviewLibraryXBlockChanges = ({
     }
   }, [blockData]);
 
-  const { title, ariaLabel } = useMemo(() => {
-    const itemIcon = getItemIcon(blockData.blockType || '');
+  const itemIcon = getItemIcon(blockData.blockType || '');
 
-    // Build title
-    const defaultTitle = intl.formatMessage(
-      blockData.isContainer
-        ? messages.defaultContainerTitle
-        : messages.defaultComponentTitle,
-      {
-        itemIcon: <Icon size="lg" src={itemIcon} />,
-      },
-    );
-    const resultTitle = blockData.displayName
-      ? intl.formatMessage(messages.title, {
-        blockTitle: blockData?.displayName,
-        blockIcon: <Icon size="lg" src={itemIcon} />,
-      })
-      : defaultTitle;
+  // Build title
+  const defaultTitle = intl.formatMessage(
+    blockData.isContainer
+      ? messages.defaultContainerTitle
+      : messages.defaultComponentTitle,
+    {
+      itemIcon: <Icon size="lg" src={itemIcon} />,
+    },
+  );
+  const title = blockData.displayName
+    ? intl.formatMessage(messages.title, {
+      blockTitle: blockData?.displayName,
+      blockIcon: <Icon size="lg" src={itemIcon} />,
+    })
+    : defaultTitle;
 
-    // Build aria label
-    const defaultAriaLabel = intl.formatMessage(
-      blockData.isContainer
-        ? messages.defaultContainerTitle
-        : messages.defaultComponentTitle,
-      {
-        itemIcon: '',
-      },
-    );
-    const resultAriaLabel = blockData.displayName
-      ? intl.formatMessage(messages.title, {
-        blockTitle: blockData?.displayName,
-        blockIcon: '',
-      })
-      : defaultAriaLabel;
-
-    return {
-      title: resultTitle,
-      ariaLabel: resultAriaLabel,
-    };
-  }, [blockData]);
+  // Build aria label
+  const defaultAriaLabel = intl.formatMessage(
+    blockData.isContainer
+      ? messages.defaultContainerTitle
+      : messages.defaultComponentTitle,
+    {
+      itemIcon: '',
+    },
+  );
+  const ariaLabel = blockData.displayName
+    ? intl.formatMessage(messages.title, {
+      blockTitle: blockData?.displayName,
+      blockIcon: '',
+    })
+    : defaultAriaLabel;
 
   return (
     <ModalDialog

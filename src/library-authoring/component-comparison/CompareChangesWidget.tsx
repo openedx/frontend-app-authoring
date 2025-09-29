@@ -9,10 +9,11 @@ import messages from './messages';
 interface Props {
   usageKey: string;
   oldVersion?: VersionSpec;
-  oldTitle?: string | null;
   newVersion?: VersionSpec;
-  oldUsageKey?: string | null;
+  oldTitle?: string;
+  showNewTitle?: boolean;
   hasLocalChanges?: boolean;
+  oldUsageKey?: string;
 }
 
 /**
@@ -27,8 +28,9 @@ const CompareChangesWidget = ({
   usageKey,
   oldVersion = 'published',
   newVersion = 'draft',
-  oldTitle = null,
-  oldUsageKey = null,
+  oldTitle,
+  showNewTitle = false,
+  oldUsageKey,
   hasLocalChanges = false,
 }: Props) => {
   const intl = useIntl();
@@ -56,7 +58,6 @@ const CompareChangesWidget = ({
                   usageKey={oldUsageKey || usageKey}
                   version={oldVersion}
                   minHeight="50vh"
-                  isBlockV1={!!oldUsageKey}
                 />
               </IframeProvider>
             </div>
@@ -68,6 +69,7 @@ const CompareChangesWidget = ({
               <LibraryBlock
                 usageKey={usageKey}
                 version={newVersion}
+                showTitle={showNewTitle}
                 minHeight="50vh"
               />
             </IframeProvider>
