@@ -25,6 +25,13 @@ import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
 import type { ContentLibrary } from '../data/api';
 
+/**
+ * Renders the form and logic to create a new library.
+ *
+ * Use `showInModal` to render this component in a way that can be
+ * used in a modal. Currently this component is used in a modal in the
+ * legacy libraries migration flow.
+ */
 export const CreateLibrary = ({
   showInModal = false,
   handleCancel,
