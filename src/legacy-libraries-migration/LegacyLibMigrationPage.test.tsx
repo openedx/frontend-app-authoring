@@ -116,6 +116,26 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(nextButton).not.toBeDisabled();
   });
 
+  it('should back to select legacy libraries', async () => {
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
+    legacyLibrary.click();
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    nextButton.click();
+
+    // Should show alert of SelectDestinationView
+    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+
+    const backButton = screen.getByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+  });
+
   it('should select a library destination', async () => {
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
@@ -139,6 +159,32 @@ describe('<LegacyLibMigrationPage />', () => {
 
     expect(radioButton).toBeChecked();
     expect(nextButton).not.toBeDisabled();
+  });
+
+  it('should back to select library destination', async () => {
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
+    legacyLibrary.click();
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    nextButton.click();
+
+    // Should show alert of SelectDestinationView
+    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    const radioButton = screen.getByRole('radio', { name: /test library 1/i });
+    radioButton.click();
+
+    nextButton.click();
+    expect(await screen.findByText(/these 1 legacy library will be migrated to/i)).toBeInTheDocument();
+
+    const backButton = screen.getByRole('button', { name: /back/i });
+    backButton.click();
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
   });
 
   it('should open the create new library modal', async () => {

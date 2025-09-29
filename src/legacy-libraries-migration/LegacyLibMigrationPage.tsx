@@ -85,6 +85,7 @@ export const LegacyLibMigrationPage = () => {
         // TODO Call migration API
         break;
       default:
+        /* istanbul ignore next */
         break;
     }
   }, [currentStep, setCurrentStep]);
@@ -102,6 +103,7 @@ export const LegacyLibMigrationPage = () => {
         setCurrentStep('select-destination');
         break;
       default:
+        /* istanbul ignore next */
         break;
     }
   }, [currentStep, setCurrentStep]);
@@ -113,8 +115,10 @@ export const LegacyLibMigrationPage = () => {
       case 'select-destination':
         return destinationLibrary === undefined;
       case 'confirmation-view':
+        /* istanbul ignore next */
         return false;
       default:
+        /* istanbul ignore next */
         return true;
     }
   }, [legacyLibraries, currentStep, destinationLibrary]);
@@ -134,7 +138,7 @@ export const LegacyLibMigrationPage = () => {
       <div className="legacy-library-migration-page">
         <Helmet>
           <title>
-            <FormattedMessage {...messages.siteTitle} />
+            {intl.formatMessage(messages.siteTitle)}
           </title>
         </Helmet>
         <Header isHiddenMainMenu />
