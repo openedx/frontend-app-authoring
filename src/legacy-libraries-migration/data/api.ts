@@ -51,13 +51,12 @@ export interface BulkMigrateRequestData {
  * Get migration task status
  */
 export async function getMigrationStatus(
-  migrationId: string
+  migrationId: string,
 ): Promise<MigrateTaskStatusData> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.get(getMigrationStatusUrl(migrationId));
   return camelCaseObject(data);
 }
-
 
 /**
  * Bulk migrate legacy libraries

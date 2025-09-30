@@ -147,7 +147,7 @@ const LibraryAuthoringPage = ({
   const params = new URLSearchParams(location.search);
   const { showToast } = useContext(ToastContext);
   const queryClient = useQueryClient();
-  
+
   // Get migration status every second if applicable
   const migrationId = params.get('migration_task');
   const {
