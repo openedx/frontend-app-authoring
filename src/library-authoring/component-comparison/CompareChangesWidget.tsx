@@ -10,6 +10,10 @@ interface Props {
   usageKey: string;
   oldVersion?: VersionSpec;
   newVersion?: VersionSpec;
+  oldTitle?: string;
+  showNewTitle?: boolean;
+  hasLocalChanges?: boolean;
+  oldUsageKey?: string;
 }
 
 /**
@@ -24,29 +28,48 @@ const CompareChangesWidget = ({
   usageKey,
   oldVersion = 'published',
   newVersion = 'draft',
+  oldTitle,
+  showNewTitle = false,
+  oldUsageKey,
+  hasLocalChanges = false,
 }: Props) => {
   const intl = useIntl();
+
+  const oldTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.courseContentTitle)
+    : intl.formatMessage(messages.oldVersionTitle);
+  const newTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.publishedLibraryContentTitle)
+    : intl.formatMessage(messages.newVersionTitle);
 
   return (
     <div className="bg-white p-2">
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-        <Tab eventKey="old" title={intl.formatMessage(messages.oldVersionTitle)}>
+        <Tab eventKey="old" title={oldTabMessage}>
           <div className="p-2 bg-white">
-            <IframeProvider>
-              <LibraryBlock
-                usageKey={usageKey}
-                version={oldVersion}
-                minHeight="50vh"
-              />
-            </IframeProvider>
+            {oldTitle && hasLocalChanges && (
+              <div className="h3 mt-3.5">
+                {oldTitle}
+              </div>
+            )}
+            <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-15px' } : {}}>
+              <IframeProvider>
+                <LibraryBlock
+                  usageKey={oldUsageKey || usageKey}
+                  version={oldVersion}
+                  minHeight="50vh"
+                />
+              </IframeProvider>
+            </div>
           </div>
         </Tab>
-        <Tab eventKey="new" title={intl.formatMessage(messages.newVersionTitle)}>
+        <Tab eventKey="new" title={newTabMessage}>
           <div className="p-2 bg-white">
             <IframeProvider>
               <LibraryBlock
                 usageKey={usageKey}
                 version={newVersion}
+                showTitle={showNewTitle}
                 minHeight="50vh"
               />
             </IframeProvider>
