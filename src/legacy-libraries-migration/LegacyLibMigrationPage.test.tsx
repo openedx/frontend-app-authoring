@@ -14,6 +14,7 @@ import { getContentLibraryV2CreateApiUrl } from '@src/library-authoring/create-l
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 
 import { LegacyLibMigrationPage } from './LegacyLibMigrationPage';
+import { bulkMigrateLegacyLibrariesUrl } from './data/api';
 
 const path = '/libraries-v1/migrate/*';
 let axiosMock: MockAdapter;
@@ -250,6 +251,7 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should confirm migration', async () => {
+    axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(200);
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
@@ -285,6 +287,11 @@ describe('<LegacyLibMigrationPage />', () => {
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
     confirmButton.click();
 
-    // TODO: expect call migrate API
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(axiosMock.history.post[0].data).toBe(
+      '{"sources":["library-v1:MBA+123","library-v1:UNIX+LG1","library-v1:MBA+1234"],"target":"lib:SampleTaxonomyOrg1:TL1","create_collections":true}',
+    );
   });
 });

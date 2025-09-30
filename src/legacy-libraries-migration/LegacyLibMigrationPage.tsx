@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,10 +17,12 @@ import SubHeader from '@src/generic/sub-header/SubHeader';
 import type { ContentLibrary } from '@src/library-authoring/data/api';
 import type { LibraryV1Data } from '@src/studio-home/data/api';
 import LibrariesList from '@src/studio-home/tabs-section/libraries-tab';
+import { ToastContext } from '@src/generic/toast-context';
 
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
+import { useUpdateContainerCollections } from './data/apiHooks';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 
@@ -66,11 +68,32 @@ const ExitModal = ({
 
 export const LegacyLibMigrationPage = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
+  const { showToast } = useContext(ToastContext);
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-libraries');
   const [isExitModalOpen, openExitModal, closeExitModal] = useToggle(false);
   const [legacyLibraries, setLegacyLibraries] = useState<LibraryV1Data[]>([]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
+  const migrate = useUpdateContainerCollections();
+
+  const handleMigrate = useCallback(async () => {
+    if (destinationLibrary) {
+      try {
+        const migrationTask = await migrate.mutateAsync({
+          sources: legacyLibraries.map((lib) => lib.libraryKey),
+          target: destinationLibrary.id,
+          create_collections: true,
+        });
+        showToast(intl.formatMessage(messages.migrationInProgress, {
+          count: legacyLibraries.length,
+        }));
+        navigate(`/library/${destinationLibrary.id}?migration_task=${migrationTask.uuid}`);
+      } catch (error) {
+        showToast(intl.formatMessage(messages.migrationFailed));
+      }
+    }
+  }, [migrate, legacyLibraries, destinationLibrary]);
 
   const handleNext = useCallback(() => {
     switch (currentStep) {
@@ -82,13 +105,13 @@ export const LegacyLibMigrationPage = () => {
         break;
       case 'confirmation-view':
         setConfirmationButtonState('pending');
-        // TODO Call migration API
+        handleMigrate();
         break;
       default:
         /* istanbul ignore next */
         break;
     }
-  }, [currentStep, setCurrentStep]);
+  }, [currentStep, setCurrentStep, handleMigrate]);
 
   const handleBack = useCallback(() => {
     switch (currentStep) {
