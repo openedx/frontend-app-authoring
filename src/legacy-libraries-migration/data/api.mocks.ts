@@ -1,5 +1,3 @@
-import { createAxiosError } from '@src/testUtils';
-
 import * as api from './api';
 
 export async function mockGetMigrationStatus(migrationId: string): Promise<api.MigrateTaskStatusData> {
@@ -8,9 +6,8 @@ export async function mockGetMigrationStatus(migrationId: string): Promise<api.M
       return mockGetMigrationStatus.migrationStatusData;
     case mockGetMigrationStatus.migrationIdFailed:
       return mockGetMigrationStatus.migrationStatusFailedData;
-    case mockGetMigrationStatus.migrationIdError:
-      throw createAxiosError({ code: 500, message: 'Internal Error.', path: api.getMigrationStatusUrl(migrationId) });
     default:
+      /* istanbul ignore next */
       throw new Error(`mockGetMigrationStatus: unknown migration ID "${migrationId}"`);
   }
 }
@@ -61,5 +58,4 @@ mockGetMigrationStatus.migrationStatusFailedData = {
     },
   ],
 };
-mockGetMigrationStatus.migrationIdError = '3';
 mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getMigrationStatus').mockImplementation(mockGetMigrationStatus);

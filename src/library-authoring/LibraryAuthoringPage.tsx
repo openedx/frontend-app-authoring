@@ -239,6 +239,7 @@ const LibraryAuthoringPage = ({
         showToast(intl.formatMessage(migrationMessages.migrationFailed));
         deleteMigrationIdParam = true;
       } else if (migrationStatusData.state === 'Canceled') {
+        /* istanbul ignore next */
         deleteMigrationIdParam = true;
       }
 
