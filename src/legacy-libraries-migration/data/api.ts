@@ -32,7 +32,7 @@ export interface MigrateTaskStatusData {
   created: string;
   modified: string;
   artifacts: string[];
-  uuid: string[];
+  uuid: string;
   parameters: MigrateArtifacts[];
 }
 
