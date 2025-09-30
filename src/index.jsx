@@ -58,7 +58,7 @@ import AssignmentPage from './assignment/pages/AssignmentPage';
 import * as Sentry from '@sentry/react';
 import { dynamicTheme } from 'titaned-frontend-library';
 try {
-  const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/mfe_context/`);
+  const sentryresponse = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/mfe_context/`);
   Sentry.init({
     dsn: sentryresponse.data.sentry.dsn,
     environment: sentryresponse.data.sentry.environment,
@@ -154,7 +154,7 @@ const App = () => {
     if (oldUI === 'false') {
       (async () => {
         try {
-          const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/mfe_context/`);
+          const response = await getAuthenticatedHttpClient().get(`${getConfig().LMS_BASE_URL}/titaned/api/v1/mfe_context/`);
           dynamicTheme(response);
         } catch (error) {
           console.error('Error fetching theme config:', error);
