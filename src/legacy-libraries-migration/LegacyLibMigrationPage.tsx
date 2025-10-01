@@ -88,7 +88,8 @@ export const LegacyLibMigrationPage = () => {
         const migrationTask = await migrate.mutateAsync({
           sources: legacyLibraries.map((lib) => lib.libraryKey),
           target: destinationLibrary.id,
-          create_collections: true,
+          createCollections: true,
+          repeatHandlingStrategy: 'update',
         });
         showToast(intl.formatMessage(messages.migrationInProgress, {
           count: legacyLibraries.length,

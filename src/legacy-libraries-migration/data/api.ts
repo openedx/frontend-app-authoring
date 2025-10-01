@@ -39,12 +39,12 @@ export interface MigrateTaskStatusData {
 export interface BulkMigrateRequestData {
   sources: string[];
   target: string;
-  target_collection_slug_list?: string[];
-  create_collections?: boolean;
-  composition_level?: string;
-  repeat_handling_strategy?: string;
-  preserve_url_slugs?: boolean;
-  forward_source_to_target?: boolean;
+  targetCollectionSlugList?: string[];
+  createCollections?: boolean;
+  compositionLevel?: string;
+  repeatHandlingStrategy?: string;
+  preserveUrlSlugs?: boolean;
+  forwardSourceToTarget?: boolean;
 }
 
 /**
