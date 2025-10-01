@@ -34,7 +34,7 @@ mockGetMigrationStatus.migrationStatusData = {
       forwardSourceToTarget: true,
     },
   ],
-};
+} as api.MigrateTaskStatusData;
 mockGetMigrationStatus.migrationIdFailed = '2';
 mockGetMigrationStatus.migrationStatusFailedData = {
   uuid: mockGetMigrationStatus.migrationId,
@@ -57,5 +57,5 @@ mockGetMigrationStatus.migrationStatusFailedData = {
       forwardSourceToTarget: true,
     },
   ],
-};
+} as api.MigrateTaskStatusData;
 mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getMigrationStatus').mockImplementation(mockGetMigrationStatus);

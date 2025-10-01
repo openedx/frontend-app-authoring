@@ -17,7 +17,7 @@ export interface MigrateArtifacts {
   source: string;
   target: string;
   compositionLevel: string;
-  repeatHandlingStrategy: string;
+  repeatHandlingStrategy: 'update' | 'skip' | 'fork';
   preserveUrlSlugs: boolean;
   targetCollectionSlug: string;
   forwardSourceToTarget: boolean;

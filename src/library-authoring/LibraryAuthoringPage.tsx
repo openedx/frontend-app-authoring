@@ -248,7 +248,7 @@ const LibraryAuthoringPage = ({
         navigate({
           pathname: location.pathname,
           search: params.toString(),
-        });
+        }, { replace: true });
       }
     }
   }, [migrationId, migrationStatusData, migrationStatusIsPending, migrationStatusIsError]);

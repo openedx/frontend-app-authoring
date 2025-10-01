@@ -89,7 +89,7 @@ const messages = defineMessages({
   },
   migrationFailed: {
     id: 'legacy-libraries-migration.confirmation-step.toast.migration-failed',
-    defaultMessage: 'Legacy libraries migration failed',
+    defaultMessage: 'Legacy libraries migration failed.',
     description: 'Toast message that indicates the migration of legacy libraries is failed',
   },
   migrationSuccess: {

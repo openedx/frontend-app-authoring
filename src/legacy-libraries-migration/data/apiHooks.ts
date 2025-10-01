@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 
 import * as api from './api';
 
@@ -25,8 +25,7 @@ export const useUpdateContainerCollections = () => (
 export const useMigrationStatus = (migrationId: string | null) => (
   useQuery({
     queryKey: legacyMigrationQueryKeys.migrationTask(migrationId),
-    queryFn: () => api.getMigrationStatus(migrationId!),
-    enabled: migrationId !== null,
+    queryFn: migrationId ? () => api.getMigrationStatus(migrationId!) : skipToken,
     refetchInterval: 1000, // Refresh every second
   })
 );

@@ -1089,6 +1089,6 @@ describe('<LibraryAuthoringPage />', () => {
       },
     });
 
-    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed'));
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.'));
   });
 });
