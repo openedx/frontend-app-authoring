@@ -182,29 +182,30 @@ export const LegacyLibMigrationPage = () => {
               </Stepper.Step>
             </Stepper>
           </div>
-          <div className="content-buttons d-flex justify-content-between">
-            <Button variant="outline-primary" onClick={handleBack}>
-              {currentStep === 'select-libraries'
-                ? intl.formatMessage(messages.cancel)
-                : intl.formatMessage(messages.back)}
-            </Button>
-            {currentStep !== 'confirmation-view' ? (
-              <Button onClick={handleNext} disabled={isNextDisabled()}>
-                {intl.formatMessage(messages.next)}
-              </Button>
-            ) : (
-              <StatefulButton
-                state={confirmationButtonState}
-                disabledStates={['pending']}
-                labels={{
-                  default: intl.formatMessage(messages.confirm),
-                  pending: intl.formatMessage(messages.confirm),
-                }}
-                onClick={handleNext}
-              />
-            )}
-          </div>
         </Container>
+        <div className="content-buttons d-flex justify-content-between pl-6 pr-6 bg-white">
+          <Button className="mt-3 mb-2" variant="outline-primary" onClick={handleBack}>
+            {currentStep === 'select-libraries'
+              ? intl.formatMessage(messages.cancel)
+              : intl.formatMessage(messages.back)}
+          </Button>
+          {currentStep !== 'confirmation-view' ? (
+            <Button className="mt-3 mb-2" onClick={handleNext} disabled={isNextDisabled()}>
+              {intl.formatMessage(messages.next)}
+            </Button>
+          ) : (
+            <StatefulButton
+              className="mt-3 mb-2"
+              state={confirmationButtonState}
+              disabledStates={['pending']}
+              labels={{
+                default: intl.formatMessage(messages.confirm),
+                pending: intl.formatMessage(messages.confirm),
+              }}
+              onClick={handleNext}
+            />
+          )}
+        </div>
       </div>
       <ExitModal
         isExitModalOpen={isExitModalOpen}

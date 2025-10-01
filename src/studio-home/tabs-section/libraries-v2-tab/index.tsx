@@ -203,7 +203,6 @@ const LibrariesV2List: React.FC<Props> = ({
         ) : (
           <CardList
             hasV2Libraries={hasV2Libraries}
-            selectMode={inSelectMode ? 'single' : undefined}
             isFiltered={isFiltered}
             isLoading={isPending}
             data={data!}

@@ -73,7 +73,7 @@ const messages = defineMessages({
   },
   updateToPublishedLibraryContentBody: {
     id: 'course-authoring.review-tab.preview.update-to-published.modal.body',
-    defaultMessage: 'Updating this block will discard local changes. Any eidts made within this course will be discarted, and cannot be recovered',
+    defaultMessage: 'Updating this block will discard local changes. Any edits made within this course will be discarded, and cannot be recovered',
     description: 'Body of the modal to update a content to the published library content',
   },
   updateToPublishedLibraryContentConfirm: {
@@ -93,7 +93,7 @@ const messages = defineMessages({
   },
   keepCourseContentBody: {
     id: 'course-authoring.review-tab.preview.keep-course-content.modal.body',
-    defaultMessage: 'This will keep the locally edited course content. if the component is published again in its library, you can choose to update to published library content',
+    defaultMessage: 'This will keep the locally edited course content. If the component is published again in its library, you can choose to update to published library content',
     description: 'Body of the modal to keep the content of a course component',
   },
 });
