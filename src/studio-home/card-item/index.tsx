@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COURSE_CREATOR_STATES } from '@src/constants';
 import { parseLibraryKey } from '@src/generic/key-utils';
+import classNames from 'classnames';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
@@ -141,6 +142,7 @@ interface BaseProps {
   migratedToTitle?: string;
   migratedToCollectionKey?: string | null;
   selectMode?: 'single' | 'multiple';
+  isSelected?: boolean;
   itemId?: string;
 }
 
@@ -167,6 +169,7 @@ const CardItem: React.FC<Props> = ({
   isLibraries = false,
   courseKey = '',
   selectMode,
+  isSelected,
   itemId = '',
   path,
   url,
@@ -218,7 +221,10 @@ const CardItem: React.FC<Props> = ({
   };
 
   return (
-    <Card className="card-item">
+    <Card className={classNames('card-item', {
+      selected: isSelected,
+    })}
+    >
       <Card.Header
         size="sm"
         title={(

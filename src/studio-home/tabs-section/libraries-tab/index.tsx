@@ -19,9 +19,11 @@ import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 const CardList = ({
   data,
   inSelectMode,
+  selectedIds,
 }: {
   data: LibraryV1Data[],
   inSelectMode: boolean,
+  selectedIds?: string[];
 }) => (
   // eslint-disable-next-line react/jsx-no-useless-fragment
   <>
@@ -46,6 +48,7 @@ const CardList = ({
           url={url}
           itemId={libraryKey}
           selectMode={inSelectMode ? 'multiple' : undefined}
+          isSelected={selectedIds && selectedIds.includes(libraryKey)}
           isMigrated={isMigrated}
           migratedToKey={migratedToKey}
           migratedToTitle={migratedToTitle}
@@ -237,6 +240,7 @@ export const LibrariesList = ({
             <CardList
               data={currentPageData}
               inSelectMode={inSelectMode}
+              selectedIds={selectedIds}
             />
           </Form.CheckboxSet>
         ) : (

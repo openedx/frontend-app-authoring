@@ -10,6 +10,10 @@
 
     .card-item {
       margin: 0 0 16px !important;
+
+      &.selected {
+        box-shadow: 0 0 0 2px var(--pgn-color-primary-700);
+      }
     }
   }
 

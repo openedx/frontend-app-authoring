@@ -24,6 +24,7 @@ import LibrariesV2Filters from './libraries-v2-filters';
 interface CardListProps {
   hasV2Libraries: boolean;
   selectMode?: 'single' | 'multiple';
+  selectedLibraryId?: string;
   isFiltered: boolean;
   isLoading: boolean;
   data: LibrariesV2Response;
@@ -33,6 +34,7 @@ interface CardListProps {
 const CardList: React.FC<CardListProps> = ({
   hasV2Libraries,
   selectMode,
+  selectedLibraryId,
   isFiltered,
   isLoading,
   data,
@@ -53,6 +55,7 @@ const CardList: React.FC<CardListProps> = ({
               number={slug}
               path={`/library/${id}`}
               selectMode={selectMode}
+              isSelected={selectedLibraryId === id}
               itemId={id}
             />
           ))
@@ -194,6 +197,7 @@ const LibrariesV2List: React.FC<Props> = ({
             <CardList
               hasV2Libraries={hasV2Libraries}
               selectMode={inSelectMode ? 'single' : undefined}
+              selectedLibraryId={selectedLibraryId}
               isFiltered={isFiltered}
               isLoading={isPending}
               data={data!}
