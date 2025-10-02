@@ -16,7 +16,7 @@ import {
 } from '@src/testUtils';
 import messages from '../messages';
 import tabMessages from './messages';
-import TabsSection from '.';
+import { TabsSection } from '.';
 import {
   initialState,
   generateGetStudioHomeDataApiResponse,

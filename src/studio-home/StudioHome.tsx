@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Button,
   Container,
@@ -13,18 +13,20 @@ import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import Loading from '../generic/Loading';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import Header from '../header';
-import SubHeader from '../generic/sub-header/SubHeader';
+import { LegacyMigrationHelpSidebar } from '@src/legacy-libraries-migration/LegacyMigrationHelpSidebar';
+import Loading from '@src/generic/Loading';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import Header from '@src/header';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import AlertMessage from '@src/generic/alert-message';
+
 import HomeSidebar from './home-sidebar';
-import TabsSection from './tabs-section';
+import { initTabKeyState, TabKeyType, TabsSection } from './tabs-section';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
-import AlertMessage from '../generic/alert-message';
 
 const StudioHome = () => {
   const intl = useIntl();
@@ -50,6 +52,8 @@ const StudioHome = () => {
 
   const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
   const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;
+
+  const [tabKey, setTabKey] = useState<TabKeyType>(initTabKeyState(location.pathname, librariesV2Enabled || false));
 
   const {
     userIsActive,
@@ -116,6 +120,8 @@ const StudioHome = () => {
     return (<Loading />);
   }
 
+  const showMigrationHelpSidebar = () => tabKey === 'legacyLibraries' || tabKey === 'libraries';
+
   const getMainBody = () => {
     if (isFailedLoadingPage) {
       return (
@@ -133,13 +139,16 @@ const StudioHome = () => {
     if (!userIsActive) {
       return <VerifyEmailLayout />;
     }
+    const firstLayoutSize = showMigrationHelpSidebar() ? 12 : 9;
+    const secondLayoutSize = showMigrationHelpSidebar() ? 0 : 3;
+
     return (
       <Layout
-        lg={[{ span: 9 }, { span: 3 }]}
-        md={[{ span: 9 }, { span: 3 }]}
-        sm={[{ span: 9 }, { span: 3 }]}
-        xs={[{ span: 9 }, { span: 3 }]}
-        xl={[{ span: 9 }, { span: 3 }]}
+        lg={[{ span: firstLayoutSize }, { span: secondLayoutSize }]}
+        md={[{ span: firstLayoutSize }, { span: secondLayoutSize }]}
+        sm={[{ span: firstLayoutSize }, { span: secondLayoutSize }]}
+        xs={[{ span: firstLayoutSize }, { span: secondLayoutSize }]}
+        xl={[{ span: firstLayoutSize }, { span: secondLayoutSize }]}
       >
         <Layout.Element>
           <section>
@@ -151,13 +160,17 @@ const StudioHome = () => {
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={Boolean(isShowProcessing) && !isFiltered}
+              tabKey={tabKey}
+              setTabKey={setTabKey}
               librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />
           </section>
         </Layout.Element>
         <Layout.Element>
-          <HomeSidebar />
+          {!showMigrationHelpSidebar() && (
+            <HomeSidebar />
+          )}
         </Layout.Element>
       </Layout>
     );
@@ -166,26 +179,33 @@ const StudioHome = () => {
   return (
     <>
       <Header isHiddenMainMenu />
-      <Container size="xl" className="p-4 mt-3">
-        <section className="mb-4">
-          <article className="studio-home-sub-header">
-            <section>
-              <SubHeader
-                title={intl.formatMessage(messages.headingTitle, { studioShortName: studioShortName || 'Studio' })}
-                headerActions={headerButtons}
-              />
+      <div className="d-flex">
+        <div className="flex-fill">
+          <Container size="xl" className="p-4 mt-3">
+            <section className="mb-4">
+              <article className="studio-home-sub-header">
+                <section>
+                  <SubHeader
+                    title={intl.formatMessage(messages.headingTitle, { studioShortName: studioShortName || 'Studio' })}
+                    headerActions={headerButtons}
+                  />
+                </section>
+              </article>
+              {getMainBody()}
             </section>
-          </article>
-          {getMainBody()}
-        </section>
-      </Container>
+          </Container>
+          <StudioFooterSlot />
+        </div>
+        {showMigrationHelpSidebar() && (
+          <LegacyMigrationHelpSidebar />
+        )}
+      </div>
       <div className="alert-toast">
         <InternetConnectionAlert
           isFailed={anyQueryIsFailed}
           isQueryPending={anyQueryIsPending}
         />
       </div>
-      <StudioFooterSlot />
     </>
   );
 };
