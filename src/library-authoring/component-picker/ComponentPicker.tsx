@@ -56,11 +56,11 @@ type ComponentPickerProps = {
 } & (
   {
     componentPickerMode?: 'single',
-    onComponentSelected?: ComponentSelectedEvent,
-    onChangeComponentSelection?: never,
+    onComponentSelected: ComponentSelectedEvent,
+    onChangeComponentSelection?: ComponentSelectionChangedEvent,
   } | {
-    componentPickerMode: 'multiple'
-    onComponentSelected?: never,
+    componentPickerMode?: 'multiple'
+    onComponentSelected?: ComponentSelectedEvent,
     onChangeComponentSelection?: ComponentSelectionChangedEvent,
   }
 );
