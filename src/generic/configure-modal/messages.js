@@ -170,34 +170,42 @@ const messages = defineMessages({
   alwaysShowAssessmentResults: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.always-show-assessment-results',
     defaultMessage: 'Always show assessment results',
+    description: 'Always show assessment results option in visibility tab',
   },
   alwaysShowAssessmentResultsDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.always-show-assessment-results-description',
     defaultMessage: 'When learners submit an answer to an assessment, they immediately see whether the answer is correct or incorrect, and the score received.',
+    description: 'Always show assessment results option description in visibility tab',
   },
   neverShowAssessmentResults: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results',
     defaultMessage: 'Never show assessment results',
+    description: 'Never show assessment results option in visibility tab',
   },
   neverShowAssessmentResultsDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-description',
     defaultMessage: 'Learners never see whether their answers to assessments are correct or incorrect, nor the score received.',
+    description: 'Never show assessment results option description in visibility tab',
   },
   showAssessmentResultsPastDue: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.show-assessment-results-past-due',
     defaultMessage: 'Show assessment results when subsection is past due',
+    description: 'Show assessment results past due option in visibility tab',
   },
   showAssessmentResultsPastDueDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.show-assessment-results-past-due-description',
     defaultMessage: 'Learners do not see whether their answer to assessments were correct or incorrect, nor the score received, until after the due date for the subsection has passed. If the subsection does not have a due date, learners always see their scores when they submit answers to assessments.',
+    description: 'Show assessment results past due option description in visibility tab',
   },
   neverShowAssessmentResultsButIncludeGrade: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-but-include-grade',
-    defaultMessage: 'Never show assessment results, but include in grade calculations',
+    defaultMessage: 'Never show individual assessment results, but show overall assessment results after due date',
+    description: 'Never show assessment results but include in grade calculations option in visibility tab',
   },
   neverShowAssessmentResultsButIncludeGradeDescription: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.never-show-assessment-results-but-include-grade-description',
-    defaultMessage: 'Learners never see whether their answers to assessments are correct or incorrect, nor the score received. However, the scores they receive on assessments are included in their overall course grade.',
+    defaultMessage: 'Learners do not see question-level correctness or scores before or after the due date. However, once the due date passes, they can see their overall score for the subsection on the Progress page.',
+    description: 'Never show assessment results but include in grade calculations option description in visibility tab',
   },
   setSpecialExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.set-special-exam',
