@@ -120,7 +120,7 @@ const StudioHome = () => {
     return (<Loading />);
   }
 
-  const showMigrationHelpSidebar = () => tabKey === 'legacyLibraries' || tabKey === 'libraries';
+  const showMigrationHelpSidebar = () => getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR && (tabKey === 'legacyLibraries' || tabKey === 'libraries');
 
   const getMainBody = () => {
     if (isFailedLoadingPage) {

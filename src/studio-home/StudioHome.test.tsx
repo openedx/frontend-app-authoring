@@ -1,4 +1,5 @@
 import * as reactRedux from 'react-redux';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -235,6 +236,11 @@ describe('<StudioHome />', () => {
     });
 
     describe('legacy migration help sidebar', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_LEGACY_LIBRARY_MIGRATOR: 'true',
+      });
+
       it('should not render the sidebar in home', () => {
         render(<StudioHome />, { path: '/home' });
         expect(screen.queryByText('Help & Support')).not.toBeInTheDocument();
