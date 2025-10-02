@@ -1,6 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   Badge,
   Stack,
@@ -19,45 +18,57 @@ import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
 import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
 
-const TabsSection = ({
+const TABS_LIST = {
+  courses: 'courses',
+  libraries: 'libraries',
+  legacyLibraries: 'legacyLibraries',
+  archived: 'archived',
+  taxonomies: 'taxonomies',
+} as const;
+
+export type TabKeyType = keyof typeof TABS_LIST;
+
+export const initTabKeyState = (pname: string, librariesV2Enabled: boolean) => {
+  if (pname.includes('/libraries-v1')) {
+    return TABS_LIST.legacyLibraries;
+  }
+
+  if (pname.includes('/libraries')) {
+    return librariesV2Enabled
+      ? TABS_LIST.libraries
+      : TABS_LIST.legacyLibraries;
+  }
+
+  // Default to courses tab
+  return TABS_LIST.courses;
+};
+
+interface TabsSectionProps {
+  showNewCourseContainer: boolean;
+  onClickNewCourse: () => void;
+  tabKey: TabKeyType;
+  setTabKey: (tab: TabKeyType) => void;
+  isShowProcessing: boolean;
+  librariesV1Enabled?: boolean;
+  librariesV2Enabled?: boolean;
+}
+
+export const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
+  tabKey,
+  setTabKey,
   isShowProcessing,
   librariesV1Enabled,
   librariesV2Enabled,
-}) => {
+}: TabsSectionProps) => {
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const TABS_LIST = {
-    courses: 'courses',
-    libraries: 'libraries',
-    legacyLibraries: 'legacyLibraries',
-    archived: 'archived',
-    taxonomies: 'taxonomies',
-  } as const;
-  type TabKeyType = keyof typeof TABS_LIST;
-
-  const initTabKeyState = (pname: string) => {
-    if (pname.includes('/libraries-v1')) {
-      return TABS_LIST.legacyLibraries;
-    }
-
-    if (pname.includes('/libraries')) {
-      return librariesV2Enabled
-        ? TABS_LIST.libraries
-        : TABS_LIST.legacyLibraries;
-    }
-
-    // Default to courses tab
-    return TABS_LIST.courses;
-  };
-
-  const [tabKey, setTabKey] = useState<TabKeyType>(initTabKeyState(pathname));
 
   // This is needed to handle navigating using the back/forward buttons in the browser
   useEffect(() => {
-    setTabKey(initTabKeyState(pathname));
+    setTabKey(initTabKeyState(pathname, librariesV2Enabled || false));
   }, [pathname]);
 
   const { courses, numPages, coursesCount } = useSelector(getStudioHomeData);
@@ -163,13 +174,3 @@ const TabsSection = ({
     </Tabs>
   );
 };
-
-TabsSection.propTypes = {
-  showNewCourseContainer: PropTypes.bool.isRequired,
-  onClickNewCourse: PropTypes.func.isRequired,
-  isShowProcessing: PropTypes.bool.isRequired,
-  librariesV1Enabled: PropTypes.bool,
-  librariesV2Enabled: PropTypes.bool,
-};
-
-export default TabsSection;
