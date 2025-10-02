@@ -72,7 +72,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
-  const isProblemBankType = [COURSE_BLOCK_NAMES.legacyLibraryContent.id, COURSE_BLOCK_NAMES.itembank.id].includes(unitCategory);
+  const isProblemBankType = [
+    COURSE_BLOCK_NAMES.legacyLibraryContent.id,
+    COURSE_BLOCK_NAMES.itembank.id,
+  ].includes(unitCategory);
 
   const headerNavigationsActions = {
     handleViewLive: () => {
