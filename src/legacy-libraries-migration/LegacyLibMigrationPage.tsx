@@ -16,7 +16,7 @@ import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import type { ContentLibrary } from '@src/library-authoring/data/api';
 import type { LibraryV1Data } from '@src/studio-home/data/api';
-import LibrariesList from '@src/studio-home/tabs-section/libraries-tab';
+import { Filter, LibrariesList } from '@src/studio-home/tabs-section/libraries-tab';
 
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
@@ -157,6 +157,7 @@ export const LegacyLibMigrationPage = () => {
                   selectedIds={legacyLibrariesIds}
                   handleCheck={handleUpdateLegacyLibraries}
                   hideMigationAlert
+                  initialFilter={[Filter.unmigrated]}
                 />
               </Stepper.Step>
               <Stepper.Step

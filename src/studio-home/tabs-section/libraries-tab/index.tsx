@@ -62,7 +62,7 @@ function findInValues<T extends {}>(arr: T[] | undefined, searchValue: string) {
   )));
 }
 
-enum Filter {
+export enum Filter {
   migrated = 'migrated',
   unmigrated = 'unmigrated',
 }
@@ -142,18 +142,20 @@ interface LibrariesListProps {
   selectedIds?: string[];
   handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
   hideMigationAlert?: boolean;
+  initialFilter?: Filter[];
 }
 
-const LibrariesList = ({
+export const LibrariesList = ({
   selectedIds,
   handleCheck,
   hideMigationAlert = false,
+  initialFilter = BaseFilterState,
 }: LibrariesListProps) => {
   const intl = useIntl();
   const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(BaseFilterState);
+  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(initialFilter);
 
   let filteredData = findInValues(data?.libraries, search || '') || [];
   if (migrationFilter.length === 1) {
@@ -259,5 +261,3 @@ const LibrariesList = ({
     </>
   );
 };
-
-export default LibrariesList;

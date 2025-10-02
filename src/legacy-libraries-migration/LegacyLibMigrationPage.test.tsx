@@ -82,12 +82,22 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should select legacy libraries', async () => {
+    const user = userEvent.setup();
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
     // The next button is disabled
     expect(nextButton).toBeDisabled();
+
+    // The filter is Unmigrated by default
+    const filterButton = await screen.findByRole('button', { name: /unmigrated/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Clear filter to show all
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
 
     expect(await screen.findByText('MBA')).toBeInTheDocument();
     expect(await screen.findByText('Legacy library 1')).toBeInTheDocument();
@@ -250,9 +260,17 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should confirm migration', async () => {
+    const user = userEvent.setup();
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    // The filter is 'unmigrated' by default.
+    // Clear the filter to select all libraries
+    const filterButton = screen.getByRole('button', { name: /unmigrated/i });
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
 
     const legacyLibrary1 = screen.getByRole('checkbox', { name: 'MBA' });
     const legacyLibrary2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
