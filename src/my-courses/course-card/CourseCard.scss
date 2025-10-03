@@ -15,6 +15,7 @@
     .card-content-section {
         padding: 0 6px !important;
         margin-bottom: 10px;
+
     }
 }
 
@@ -36,9 +37,17 @@
 
     p {
         font-size: 14px;
+        line-height: 1.2;
+        word-break: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
-  
+
 .card-title {
     font-size: 1rem;
     line-height: 1.2;
@@ -59,11 +68,11 @@
     gap: 0.2rem;
     justify-content: space-between;
     flex-wrap: wrap;
-  
+
     @media (max-width: 340px) {
         flex-direction: column;
     }
-  
+
     button {
         // flex: 1;
         white-space: nowrap;

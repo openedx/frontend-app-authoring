@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
   sidebarAdvancedSettings: {
     id: 'course-navigation.sidebar.advanced-settings',
-    defaultMessage: 'Advance Settings',
+    defaultMessage: 'Advanced Settings',
     description: 'Label for Advanced Settings sidebar item',
   },
   sidebarImport: {
