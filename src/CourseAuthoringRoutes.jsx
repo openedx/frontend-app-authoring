@@ -148,7 +148,7 @@ const CourseAuthoringRoutes = () => {
     { label: 'Certificates', path: `/course/${courseId}/certificates` },
     { label: 'Updates', path: `/course/${courseId}/course_info` },
     { label: 'Group Configurations', path: `/course/${courseId}/group_configurations` },
-    { label: 'Advance Settings', path: `/course/${courseId}/settings/advanced` },
+    { label: 'Advanced Settings', path: `/course/${courseId}/settings/advanced` },
     { label: 'Import', path: `/course/${courseId}/import` },
     { label: 'Export', path: `/course/${courseId}/export` },
     { label: 'Files', path: `/course/${courseId}/assets` },
