@@ -15,6 +15,7 @@ export type UseMessageHandlersTypes = {
   handleOpenManageTagsModal: (id: string) => void;
   handleShowProcessingNotification: (variant: string) => void;
   handleHideProcessingNotification: () => void;
+  handleRefreshIframe: () => void;
 };
 
 export type MessageHandlersTypes = Record<string, (payload: any) => void>;
