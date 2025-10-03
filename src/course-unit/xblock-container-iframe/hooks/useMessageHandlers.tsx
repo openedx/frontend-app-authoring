@@ -31,6 +31,7 @@ export const useMessageHandlers = ({
   handleShowProcessingNotification,
   handleHideProcessingNotification,
   handleEditXBlock,
+  handleRefreshIframe,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
@@ -50,6 +51,7 @@ export const useMessageHandlers = ({
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
     [messageTypes.refreshPositions]: handleFinishXBlockDragging,
+    [messageTypes.refreshIframe]: handleRefreshIframe,
     [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
     [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
     [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
