@@ -24,6 +24,7 @@ import {
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
 import ContainerUsage from './ContainerUsage';
+import { SettingsPanel } from './SettingsPanel';
 import { useLibraryRoutes } from '../routes';
 import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import { LibraryContainerChildren } from '../section-subsections/LibraryContainerChildren';
@@ -225,7 +226,7 @@ const ContainerInfo = () => {
             <ContainerUsage />
           </Tab.Pane>
           <Tab.Pane eventKey={CONTAINER_INFO_TABS.Settings}>
-            {/* TODO: Container settings component */}
+            <SettingsPanel containerType={containerType} />
           </Tab.Pane>
         </Tab.Content>
       </Tab.Container>

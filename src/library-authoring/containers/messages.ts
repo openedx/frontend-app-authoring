@@ -216,6 +216,91 @@ const messages = defineMessages({
     defaultMessage: 'Failed to publish changes',
     description: 'Popup text seen if publishing a container fails',
   },
+  settingsSectionDefaultText: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-default-text',
+    defaultMessage: 'Section settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings.',
+    description: 'Settings section tab default text',
+  },
+  settingsSubSectionDefaultText: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-subsection-default-text',
+    defaultMessage: 'Subsection settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings.',
+    description: 'Settings subsection tab default text',
+  },
+  settingsUnitDefaultText: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-unit-default-text',
+    defaultMessage: 'Unit settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings',
+    description: 'Settings unit tab default text',
+  },
+  settingsSectionGradingLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-grading-label',
+    defaultMessage: 'Subsection Grading',
+    description: 'Label for the grading section in settings',
+  },
+  settingsSectionVisibilityLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-visibility-label',
+    defaultMessage: 'Visibility',
+    description: 'Label for the visibility in settings',
+  },
+  settingsSectionAssessmentResultsVisibilityLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-assessment-results-visibility-label',
+    defaultMessage: 'Assessment Results Visibility',
+    description: 'Label for the Assessment Results Visibility in settings',
+  },
+  settingsSectionUpgradeButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-upgrade-button',
+    defaultMessage: 'Upgraded',
+    description: 'Label for the upgrade button in settings',
+  },
+  settingsSectionGradeButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-grade-button',
+    defaultMessage: 'Graded',
+    description: 'Label for the grade button in settings',
+  },
+  settingsSectionDefaultVisibilityButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-default-visibility-button',
+    defaultMessage: 'Default Visibility',
+    description: 'Label for the default visibility button in settings',
+  },
+  settingsSectionStaffOnlyButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-staff-only-button',
+    defaultMessage: 'Staff Only',
+    description: 'Label for the staff only button in settings',
+  },
+  settingsSectionShowButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-show-button',
+    defaultMessage: 'Show',
+    description: 'Label for the show button in settings',
+  },
+  settingsSectionHideButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-hide-button',
+    defaultMessage: 'Hide',
+    description: 'Label for the hide button in settings',
+  },
+  settingsSectionHideContentAfterDueDateLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-hide-content-after-due-date',
+    defaultMessage: 'Hide content after due date',
+    description: 'Label for the hide content after due date checkbox in settings',
+  },
+  settingsSectionOnlyShowResultsAfterDueDateLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-only-show-results-after-due-date',
+    defaultMessage: 'Only show results after due date',
+    description: 'Label for the only show results after due date checkbox in settings',
+  },
+  settingsSectionDiscussionLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-discussion-label',
+    defaultMessage: 'Discussion',
+    description: 'Label for the discussion in settings',
+  },
+  settingsSectionEnableDiscussionLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-enable-discussion-label',
+    defaultMessage: 'Enable Discussion',
+    description: 'Label for the enable discussion checkbox in settings',
+  },
+  settingsSectionUnpublishedUnitsLabel: {
+    id: 'course-authoring.library-authoring.container-sidebar.publisher.settings-section-unpublished-units-label',
+    defaultMessage: 'Topics for unpublished units will not be created',
+    description: 'Label for the unpublished units in settings',
+  },
 });
 
 export default messages;
