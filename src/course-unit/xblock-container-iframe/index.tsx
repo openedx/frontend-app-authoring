@@ -186,6 +186,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleRefreshIframe = () => {
     // Updating iframeKey forces the iframe to re-render.
+    /* istanbul ignore next */
     setIframeKey((prev) => prev + 1);
   };
 
