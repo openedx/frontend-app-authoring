@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -6,6 +6,8 @@ import {
 } from '@openedx/paragon';
 
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import MarkdownToolbar from './EditorToolbar';
+
 import messages from './messages';
 import './index.scss';
 
@@ -19,13 +21,17 @@ const CodeEditor = ({
   const intl = useIntl();
   const DOMref = useRef();
   const btnRef = useRef();
+
+  const [editor, setEditor] = useState(null);
+
   hooks.createCodeMirrorDomNode({
-    ref: DOMref, initialText: value, upstreamRef: innerRef, lang,
+    ref: DOMref, initialText: value, upstreamRef: innerRef, lang, onReady: setEditor,
   });
   const { showBtnEscapeHTML, hideBtn } = hooks.prepareShowBtnEscapeHTML();
 
   return (
     <div>
+      {lang === 'markdown' && <MarkdownToolbar editorRef={editor} />}
       <div id="CodeMirror" ref={DOMref} />
       {showBtnEscapeHTML && lang !== 'markdown' && (
         <Button
