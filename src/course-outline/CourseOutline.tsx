@@ -2,14 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
+  Hyperlink,
+  Icon,
   Layout,
+  PageBanner,
   Row,
   TransitionReplace,
   Toast,
   StandardModal,
 } from '@openedx/paragon';
+import { ArrowForward, CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
-import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -60,6 +64,7 @@ import {
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import releaseNotesMessages from '../release-notes/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
@@ -70,6 +75,7 @@ interface CourseOutlineProps {
 const CourseOutline = ({ courseId }: CourseOutlineProps) => {
   const intl = useIntl();
   const location = useLocation();
+  const [showPageBanner, setShowPageBanner] = useState(getConfig().ENABLE_RELEASE_NOTES_BANNER);
 
   const {
     courseUsageKey,
@@ -282,6 +288,25 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
 
   return (
     <>
+      {showPageBanner
+        && (
+        <PageBanner
+          show={showPageBanner}
+          variant="accentA"
+          dismissible
+          onDismiss={() => setShowPageBanner(false)}
+        >
+          🎉 {intl.formatMessage(releaseNotesMessages.releaseNotesBannerText)}
+          <Hyperlink
+            destination={`${getConfig().BASE_URL}/release-notes`}
+            target="_blank"
+            className="ml-2"
+          >
+            {intl.formatMessage(releaseNotesMessages.releaseNotesBannerLinkText)}
+            <Icon className="ml-1" src={ArrowForward} />
+          </Hyperlink>
+        </PageBanner>
+        )}
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>

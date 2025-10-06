@@ -1,0 +1,32 @@
+.pgn__pageBanner__accentA {
+    background-color: #5DE3BF;
+    color: #000000;
+    text-align: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+
+    a {
+        color: #000000;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 20px;
+        text-decoration-line: underline;
+        text-decoration-style: solid;
+        text-decoration-skip-ink: auto;
+        text-decoration-thickness: auto;
+        text-underline-offset: auto;
+        text-underline-position: from-font;
+    }
+
+    .pgn__icon {
+        height: 16px !important;
+        width: 16px !important;
+    }
+
+    .pgn__hyperlink__external-icon {
+        display: none;
+    }
+}
