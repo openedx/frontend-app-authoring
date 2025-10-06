@@ -152,8 +152,6 @@ const LibraryAuthoringPage = ({
   const migrationId = params.get('migration_task');
   const {
     data: migrationStatusData,
-    isPending: migrationStatusIsPending,
-    isError: migrationStatusIsError,
   } = useMigrationStatus(migrationId);
 
   const {
@@ -224,34 +222,28 @@ const LibraryAuthoringPage = ({
   }, [navigateTo]);
 
   // Verify the migration task status
-  useEffect(() => {
-    if (migrationId) {
-      if (migrationStatusIsPending || migrationStatusIsError) {
-        return;
-      }
-
-      let deleteMigrationIdParam = false;
-      if (migrationStatusData.state === 'Succeeded') {
-        showToast(intl.formatMessage(migrationMessages.migrationSuccess));
-        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-        deleteMigrationIdParam = true;
-      } else if (migrationStatusData.state === 'Failed') {
-        showToast(intl.formatMessage(migrationMessages.migrationFailed));
-        deleteMigrationIdParam = true;
-      } else if (migrationStatusData.state === 'Canceled') {
-        /* istanbul ignore next */
-        deleteMigrationIdParam = true;
-      }
-
-      if (deleteMigrationIdParam) {
-        params.delete('migration_task');
-        navigate({
-          pathname: location.pathname,
-          search: params.toString(),
-        }, { replace: true });
-      }
+  if (migrationId) {
+    let deleteMigrationIdParam = false;
+    if (migrationStatusData?.state === 'Succeeded') {
+      showToast(intl.formatMessage(migrationMessages.migrationSuccess));
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Failed') {
+      showToast(intl.formatMessage(migrationMessages.migrationFailed));
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Canceled') {
+      /* istanbul ignore next */
+      deleteMigrationIdParam = true;
     }
-  }, [migrationId, migrationStatusData, migrationStatusIsPending, migrationStatusIsError]);
+
+    if (deleteMigrationIdParam) {
+      params.delete('migration_task');
+      navigate({
+        pathname: location.pathname,
+        search: params.toString(),
+      }, { replace: true });
+    }
+  }
 
   if (isLoadingLibraryData) {
     return <Loading />;
