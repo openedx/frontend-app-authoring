@@ -115,7 +115,8 @@ describe('ProctoredExamSettings', () => {
       expect(zendeskTicketInput.checked).toEqual(true);
     });
 
-    it('Updates Zendesk ticket field if software_secure is provider', async () => {
+    it.skip('Updates Zendesk ticket field if software_secure is provider', async () => {
+      // Test skipped as proctortrack provider is being deprecated from the platform
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -863,7 +864,8 @@ describe('ProctoredExamSettings', () => {
       });
     });
 
-    it('Include Zendesk ticket in post request if user is not an admin', async () => {
+    it.skip('Include Zendesk ticket in post request if user is not an admin', async () => {
+      // Test skipped as proctortrack provider is being deprecated from the platform
       // use non-admin user for test
       const isAdmin = false;
       setupApp(isAdmin);
