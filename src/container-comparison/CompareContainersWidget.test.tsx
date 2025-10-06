@@ -1,8 +1,8 @@
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
-import { getLibraryContainerApiUrl } from '../library-authoring/data/api';
-import { mockGetContainerChildren, mockGetContainerMetadata } from '../library-authoring/data/api.mocks';
-import { initializeMocks, render, screen } from '../testUtils';
+import { getLibraryContainerApiUrl } from '@src/library-authoring/data/api';
+import { mockGetContainerChildren, mockGetContainerMetadata } from '@src/library-authoring/data/api.mocks';
+import { initializeMocks, render, screen } from '@src/testUtils';
 import { CompareContainersWidget } from './CompareContainersWidget';
 import { mockGetCourseContainerChildren } from './data/api.mock';
 
