@@ -260,7 +260,7 @@ describe('ProctoredExamSettings', () => {
         const selectElement = screen.getByDisplayValue('proctortrack');
         fireEvent.change(selectElement, { target: { value: provider } });
 
-        const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
         const proctoringForm = screen.getByTestId('proctoringForm');
         fireEvent.submit(proctoringForm);
