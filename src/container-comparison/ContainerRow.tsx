@@ -40,7 +40,10 @@ const ContainerRow = ({
         message = side === 'Before' ? messages.removedDiffBeforeMessage : messages.removedDiffAfterMessage;
         return ['text-white bg-danger-600', Delete, message];
       case 'locallyRenamed':
-        message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedDiffAfterMessage;
+        message = side === 'Before' ? messages.renamedDiffBeforeMessage : messages.renamedUpdatedDiffAfterMessage;
+        return ['bg-light-300 text-light-300 ', Done, message];
+      case 'locallyContentUpdated':
+        message = side === 'Before' ? messages.locallyContentUpdatedBeforeMessage : messages.locallyContentUpdatedAfterMessage;
         return ['bg-light-300 text-light-300 ', Done, message];
       case 'moved':
         message = side === 'Before' ? messages.movedDiffBeforeMessage : messages.movedDiffAfterMessage;
