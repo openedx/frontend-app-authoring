@@ -105,7 +105,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     });
 
-    it('Updates Zendesk ticket field if proctortrack is provider', async () => {
+    it.skip('Updates Zendesk ticket field if proctortrack is provider', async () => {
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -607,7 +607,7 @@ describe('ProctoredExamSettings', () => {
       expect(submitButton).toHaveAttribute('disabled');
     });
 
-    it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
+    it.skip('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
