@@ -251,7 +251,8 @@ describe('ProctoredExamSettings', () => {
         expect(document.activeElement).toEqual(escalationEmailInput);
       });
 
-      it(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
+      // Test skipped due to Proctortrack deprecation
+      it.skip(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
         });
@@ -259,7 +260,7 @@ describe('ProctoredExamSettings', () => {
         const selectElement = screen.getByDisplayValue('proctortrack');
         fireEvent.change(selectElement, { target: { value: provider } });
 
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+        const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
         const proctoringForm = screen.getByTestId('proctoringForm');
         fireEvent.submit(proctoringForm);
