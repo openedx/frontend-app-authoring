@@ -105,6 +105,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     });
 
+    // Test skipped due to Proctortrack deprecation
     it.skip('Updates Zendesk ticket field if proctortrack is provider', async () => {
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
@@ -115,8 +116,7 @@ describe('ProctoredExamSettings', () => {
       expect(zendeskTicketInput.checked).toEqual(true);
     });
 
-    it.skip('Updates Zendesk ticket field if software_secure is provider', async () => {
-      // Test skipped as proctortrack provider is being deprecated from the platform
+    it('Updates Zendesk ticket field if software_secure is provider', async () => {
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -350,7 +350,8 @@ describe('ProctoredExamSettings', () => {
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
       });
 
-      it(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
+      // Test skipped due to Proctortrack deprecation
+      it.skip(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
         });
@@ -607,6 +608,7 @@ describe('ProctoredExamSettings', () => {
       expect(submitButton).toHaveAttribute('disabled');
     });
 
+    // Test skipped due to Proctortrack deprecation
     it.skip('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
@@ -864,8 +866,8 @@ describe('ProctoredExamSettings', () => {
       });
     });
 
+    // Test skipped due to Proctortrack deprecation
     it.skip('Include Zendesk ticket in post request if user is not an admin', async () => {
-      // Test skipped as proctortrack provider is being deprecated from the platform
       // use non-admin user for test
       const isAdmin = false;
       setupApp(isAdmin);
