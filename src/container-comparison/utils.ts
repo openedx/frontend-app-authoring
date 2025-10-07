@@ -64,15 +64,13 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       if (oldVersion.upstreamLink.isModified && !isRenamed) {
         // The content is updated, not the name.
         state = 'locallyContentUpdated';
-      }
-      if (isRenamed) {
+      } else if (isRenamed) {
         // Has been renamed.
         // TODO: At this point we can't know if the content is updated or not
         // because `upstreamLink.isModified` is also true when renaming.
         state = 'locallyRenamed';
         originalName = newVersion.displayName;
-      }
-      if (checkIsReadyToSync(oldVersion.upstreamLink)) {
+      } else if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = 'modified';
       }

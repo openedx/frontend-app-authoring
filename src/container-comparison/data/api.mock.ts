@@ -47,6 +47,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     canPasteComponent: true,
     isPublished: false,
     children,
+    upstreamReadyToSyncChildrenInfo: [],
   });
 }
 mockGetCourseContainerChildren.unitId = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0';

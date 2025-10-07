@@ -1,4 +1,5 @@
 import {
+  Alert,
   Breadcrumb, Button, Card, Icon, Stack,
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
@@ -6,7 +7,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { ContainerType } from '@src/generic/key-utils';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainerChildren } from '@src/library-authoring/data/apiHooks';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { BoldText } from '@src/utils';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -18,12 +20,15 @@ interface ContainerInfoProps {
   title: string;
   upstreamBlockId: string;
   downstreamBlockId: string;
+  isReadyToSyncIndividually?: boolean;
 }
 
 interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
   onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
+  showLocalUpdateAlert: boolean;
+  localUpdateAlertBlockName: string;
 }
 
 /**
@@ -36,9 +41,11 @@ const CompareContainersWidgetInner = ({
   parent,
   onRowClick,
   onBackBtnClick,
+  showLocalUpdateAlert,
+  localUpdateAlertBlockName,
 }: Props) => {
   const intl = useIntl();
-  const { data, isPending } = useCourseContainerChildren(downstreamBlockId);
+  const { data, isPending } = useCourseContainerChildren(downstreamBlockId, false);
   const {
     data: libData,
     isPending: libPending,
@@ -112,8 +119,28 @@ const CompareContainersWidgetInner = ({
     );
   };
 
+  const renderAlert = useCallback(() => {
+    // Show this alert if the only change is a local override to a text component
+    if (showLocalUpdateAlert) {
+      return (
+        <Alert variant="info">
+          <FormattedMessage
+            {...messages.localChangeInTextAlert}
+            values={{
+              blockName: localUpdateAlertBlockName,
+              b: BoldText,
+            }}
+          />
+        </Alert>
+      );
+    }
+
+    return null;
+  }, [showLocalUpdateAlert, localUpdateAlertBlockName]);
+
   return (
-    <div className="row">
+    <div className="row justify-content-center">
+      {renderAlert()}
       <div className="col col-6 p-1">
         <Card className="p-4">
           <ChildrenPreview title={getTitleComponent()} side="Before">
@@ -137,7 +164,12 @@ const CompareContainersWidgetInner = ({
  * and allows the user to select the container to view. This is a wrapper component that maintains current
  * source state. Actual implementation of the diff view is done by CompareContainersWidgetInner.
  */
-export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
+export const CompareContainersWidget = ({
+  title,
+  upstreamBlockId,
+  downstreamBlockId,
+  isReadyToSyncIndividually = false,
+}: ContainerInfoProps) => {
   const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
     parent: ContainerInfoProps[];
   }>({
@@ -146,6 +178,18 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
     downstreamBlockId,
     parent: [],
   });
+
+  const { data } = useCourseContainerChildren(downstreamBlockId, true);
+  let showLocalUpdateAlert = false;
+  let localUpdateAlertBlockName = '';
+
+  // Show this alert if the only change is a local override to a text component
+  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo.length === 1
+        && data.upstreamReadyToSyncChildrenInfo[0].isModified
+        && data.upstreamReadyToSyncChildrenInfo[0].blockType === 'html') {
+    showLocalUpdateAlert = true;
+    localUpdateAlertBlockName = data.upstreamReadyToSyncChildrenInfo[0].name;
+  }
 
   const onRowClick = (row: WithState<ContainerChild>) => {
     if (!isRowClickable(row.state, row.blockType as ContainerType)) {
@@ -188,6 +232,8 @@ export const CompareContainersWidget = ({ title, upstreamBlockId, downstreamBloc
       parent={currentContainerState.parent}
       onRowClick={onRowClick}
       onBackBtnClick={onBackBtnClick}
+      showLocalUpdateAlert={showLocalUpdateAlert}
+      localUpdateAlertBlockName={localUpdateAlertBlockName}
     />
   );
 };

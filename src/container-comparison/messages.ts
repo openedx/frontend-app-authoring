@@ -76,6 +76,11 @@ const messages = defineMessages({
     defaultMessage: 'After',
     description: 'After section title text',
   },
+  localChangeInTextAlert: {
+    id: 'course-authoring.container-comparison.text-with-local-change.alert',
+    defaultMessage: 'The only change is to text block <b>{blockName}</b> which has been edited in this course. Accepting will not remove local edits.',
+    description: 'Alert to show if the only change is a local override to a text component.',
+  },
 });
 
 export default messages;

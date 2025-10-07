@@ -11,16 +11,16 @@ export const containerComparisonQueryKeys = {
   /**
    * Key for a single container
    */
-  container: (usageKey: string) => {
+  container: (usageKey: string, getUpstreamInfo: boolean) => {
     const courseKey = getCourseKey(usageKey);
-    return [...containerComparisonQueryKeys.course(courseKey), usageKey];
+    return [...containerComparisonQueryKeys.course(courseKey), usageKey, getUpstreamInfo.toString()];
   },
 };
 
-export const useCourseContainerChildren = (usageKey?: string) => (
+export const useCourseContainerChildren = (usageKey?: string, getUpstreamInfo?: boolean) => (
   useQuery({
     enabled: !!usageKey,
-    queryFn: () => getCourseContainerChildren(usageKey!),
-    queryKey: containerComparisonQueryKeys.container(usageKey!),
+    queryFn: () => getCourseContainerChildren(usageKey!, getUpstreamInfo),
+    queryKey: containerComparisonQueryKeys.container(usageKey!, getUpstreamInfo || false),
   })
 );
