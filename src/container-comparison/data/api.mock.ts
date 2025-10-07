@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { CourseContainerChildrenData } from '@src/course-unit/data/types';
 import * as unitApi from '@src/course-unit/data/api';
 
@@ -9,15 +10,19 @@ import * as unitApi from '@src/course-unit/data/api';
 export async function mockGetCourseContainerChildren(containerId: string): Promise<CourseContainerChildrenData> {
   const numChildren: number = 3;
   let blockType: string;
+  let displayName: string;
   switch (containerId) {
     case mockGetCourseContainerChildren.unitId:
       blockType = 'text';
+      displayName = 'unit block 00';
       break;
     case mockGetCourseContainerChildren.sectionId:
       blockType = 'subsection';
+      displayName = 'Test Title';
       break;
     case mockGetCourseContainerChildren.subsectionId:
       blockType = 'unit';
+      displayName = 'subsection block 00';
       break;
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
@@ -25,6 +30,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
       return new Promise(() => { });
     default:
       blockType = 'unit';
+      displayName = 'subsection block 00';
       break;
   }
   const children = Array(numChildren).fill(mockGetCourseContainerChildren.childTemplate).map((child, idx) => (
@@ -32,7 +38,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
       ...child,
       // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
       id: `block-v1:UNIX+UX1+2025_T3+type@${blockType}+block@${idx}`,
-      name: `${blockType} block ${idx}`,
+      name: `${blockType} block ${idx}${idx}`,
       blockType,
       upstreamLink: {
         upstreamRef: `lct:org1:Demo_course_generated:${blockType}:${blockType}-${idx}`,
@@ -47,6 +53,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     canPasteComponent: true,
     isPublished: false,
     children,
+    displayName,
     upstreamReadyToSyncChildrenInfo: [],
   });
 }

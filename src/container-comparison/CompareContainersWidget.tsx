@@ -5,8 +5,9 @@ import {
 import { ArrowBack } from '@openedx/paragon/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { ContainerType } from '@src/generic/key-utils';
+import ErrorAlert from '@src/generic/alert-error';
 import { LoadingSpinner } from '@src/generic/Loading';
-import { useContainerChildren } from '@src/library-authoring/data/apiHooks';
+import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { BoldText } from '@src/utils';
 import ChildrenPreview from './ChildrenPreview';
@@ -17,7 +18,6 @@ import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
 
 interface ContainerInfoProps {
-  title: string;
   upstreamBlockId: string;
   downstreamBlockId: string;
   isReadyToSyncIndividually?: boolean;
@@ -35,7 +35,6 @@ interface Props extends ContainerInfoProps {
  * Actual implementation of the displaying diff between children of containers.
  */
 const CompareContainersWidgetInner = ({
-  title,
   upstreamBlockId,
   downstreamBlockId,
   parent,
@@ -45,11 +44,17 @@ const CompareContainersWidgetInner = ({
   localUpdateAlertBlockName,
 }: Props) => {
   const intl = useIntl();
-  const { data, isPending } = useCourseContainerChildren(downstreamBlockId, false);
+  const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, false);
   const {
     data: libData,
-    isPending: libPending,
+    isError: isLibError,
+    error: libError,
   } = useContainerChildren(upstreamBlockId, true);
+  const {
+    data: containerData,
+    isError: isContainerTitleError,
+    error: containerTitleError,
+  } = useContainer(upstreamBlockId);
 
   const result = useMemo(() => {
     if (!data || !libData) {
@@ -59,7 +64,7 @@ const CompareContainersWidgetInner = ({
   }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {
-    if (isPending) {
+    if (!result[0]) {
       return <div className="m-auto"><LoadingSpinner /></div>;
     }
 
@@ -74,10 +79,10 @@ const CompareContainersWidgetInner = ({
         onClick={() => onRowClick(child)}
       />
     ));
-  }, [isPending, result]);
+  }, [result]);
 
   const renderAfterChildren = useCallback(() => {
-    if (libPending || isPending) {
+    if (!result[1]) {
       return <div className="m-auto"><LoadingSpinner /></div>;
     }
 
@@ -91,9 +96,13 @@ const CompareContainersWidgetInner = ({
         onClick={() => onRowClick(child)}
       />
     ));
-  }, [libPending, isPending, result]);
+  }, [result]);
 
-  const getTitleComponent = () => {
+  const getTitleComponent = useCallback((title?: string | null) => {
+    if (!title) {
+      return <div className="m-auto"><LoadingSpinner /></div>;
+    }
+
     if (parent.length === 0) {
       return title;
     }
@@ -102,6 +111,7 @@ const CompareContainersWidgetInner = ({
         ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
         links={[
           {
+            // This raises failed prop-type error as label expects a string but it works without any issues
             label: <Stack direction="horizontal" gap={1}><Icon size="xs" src={ArrowBack} />Back</Stack>,
             onClick: onBackBtnClick,
             variant: 'link',
@@ -117,7 +127,11 @@ const CompareContainersWidgetInner = ({
         linkAs={Button}
       />
     );
-  };
+  }, [parent]);
+
+  if (isError || isLibError || isContainerTitleError) {
+    return <ErrorAlert error={error || libError || containerTitleError} />;
+  }
 
   const renderAlert = useCallback(() => {
     // Show this alert if the only change is a local override to a text component
@@ -143,14 +157,14 @@ const CompareContainersWidgetInner = ({
       {renderAlert()}
       <div className="col col-6 p-1">
         <Card className="p-4">
-          <ChildrenPreview title={getTitleComponent()} side="Before">
+          <ChildrenPreview title={getTitleComponent(data?.displayName)} side="Before">
             {renderBeforeChildren()}
           </ChildrenPreview>
         </Card>
       </div>
       <div className="col col-6 p-1">
         <Card className="p-4">
-          <ChildrenPreview title={getTitleComponent()} side="After">
+          <ChildrenPreview title={getTitleComponent(containerData?.publishedDisplayName)} side="After">
             {renderAfterChildren()}
           </ChildrenPreview>
         </Card>
@@ -165,7 +179,6 @@ const CompareContainersWidgetInner = ({
  * source state. Actual implementation of the diff view is done by CompareContainersWidgetInner.
  */
 export const CompareContainersWidget = ({
-  title,
   upstreamBlockId,
   downstreamBlockId,
   isReadyToSyncIndividually = false,
@@ -173,7 +186,6 @@ export const CompareContainersWidget = ({
   const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
     parent: ContainerInfoProps[];
   }>({
-    title,
     upstreamBlockId,
     downstreamBlockId,
     parent: [],
@@ -197,11 +209,9 @@ export const CompareContainersWidget = ({
     }
 
     setCurrentContainerState((prev) => ({
-      title: row.name,
       upstreamBlockId: row.id!,
       downstreamBlockId: row.downstreamId!,
       parent: [...prev.parent, {
-        title: prev.title,
         upstreamBlockId: prev.upstreamBlockId,
         downstreamBlockId: prev.downstreamBlockId,
       }],
@@ -216,7 +226,6 @@ export const CompareContainersWidget = ({
       }
       const prevParent = prev.parent[prev.parent.length - 1];
       return {
-        title: prevParent!.title,
         upstreamBlockId: prevParent!.upstreamBlockId,
         downstreamBlockId: prevParent!.downstreamBlockId,
         parent: prev.parent.slice(0, -1),
@@ -226,7 +235,6 @@ export const CompareContainersWidget = ({
 
   return (
     <CompareContainersWidgetInner
-      title={currentContainerState.title}
       upstreamBlockId={currentContainerState.upstreamBlockId}
       downstreamBlockId={currentContainerState.downstreamBlockId}
       parent={currentContainerState.parent}
