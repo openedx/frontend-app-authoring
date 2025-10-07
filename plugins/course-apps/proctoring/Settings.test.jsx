@@ -584,7 +584,6 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'mockproc',
-          create_zendesk_tickets: true,
         },
       });
 
@@ -654,7 +653,6 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'mockproc',
-          create_zendesk_tickets: true,
         },
       });
 
