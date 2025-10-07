@@ -31,6 +31,9 @@ describe('CompareContainersWidget', () => {
     expect((await screen.findAllByText('subsection block 2')).length).toEqual(1);
     expect((await screen.findAllByText('subsection block 11')).length).toEqual(1);
     expect((await screen.findAllByText('subsection block 22')).length).toEqual(1);
+    expect(screen.queryByText(
+      /the only change is to text block which has been edited in this course\. accepting will not remove local edits\./i,
+    )).not.toBeInTheDocument();
   });
 
   test('renders loading spinner when data is pending', async () => {
@@ -89,5 +92,20 @@ describe('CompareContainersWidget', () => {
     await user.click(block);
     expect(await screen.findByRole('button', { name: 'subsection block 00' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
+  });
+
+  test('should show alert if the only change is a local override to a text component', async () => {
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
+    axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
+    render(<CompareContainersWidget
+      upstreamBlockId={mockGetContainerMetadata.sectionId}
+      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlert}
+    />);
+
+    expect((await screen.findAllByText('Test Title')).length).toEqual(2);
+
+    expect(screen.getByText(
+      /the only change is to text block which has been edited in this course\. accepting will not remove local edits\./i,
+    )).toBeInTheDocument();
   });
 });

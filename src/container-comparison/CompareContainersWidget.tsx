@@ -1,15 +1,18 @@
+import { useCallback, useMemo, useState } from 'react';
+
 import {
   Alert,
   Breadcrumb, Button, Card, Icon, Stack,
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+
 import { ContainerType } from '@src/generic/key-utils';
 import ErrorAlert from '@src/generic/alert-error';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { BoldText } from '@src/utils';
+
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -129,10 +132,6 @@ const CompareContainersWidgetInner = ({
     );
   }, [parent]);
 
-  if (isError || isLibError || isContainerTitleError) {
-    return <ErrorAlert error={error || libError || containerTitleError} />;
-  }
-
   const renderAlert = useCallback(() => {
     // Show this alert if the only change is a local override to a text component
     if (showLocalUpdateAlert) {
@@ -151,6 +150,10 @@ const CompareContainersWidgetInner = ({
 
     return null;
   }, [showLocalUpdateAlert, localUpdateAlertBlockName]);
+
+  if (isError || isLibError || isContainerTitleError) {
+    return <ErrorAlert error={error || libError || containerTitleError} />;
+  }
 
   return (
     <div className="row justify-content-center">
