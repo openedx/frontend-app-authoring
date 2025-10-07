@@ -2,10 +2,11 @@ import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import { screen, initializeMocks } from '@src/testUtils';
-import { editorRender } from '@src/editors/editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
+import { initialState } from '@src/course-outline/__mocks__/courseOutlineIndex';
 
 jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
@@ -17,17 +18,19 @@ jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');
 jest.mock('./settingsComponents/SwitchEditorCard', () => 'SwitchEditorCard');
 jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
 jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
+// NOTE: Do NOT mock useSelector here. We rely on the real hook so that
+// editorRender's provided initialState flows into the component under test.
 mockWaffleFlags();
 
 describe('SettingsWidget', () => {
   const showAdvancedSettingsCardsBaseProps = {
     isAdvancedCardsVisible: false,
     showAdvancedCards: jest.fn().mockName('showAdvancedSettingsCards.showAdvancedCards'),
-    setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
   };
 
   const props = {
     problemType: ProblemTypeKeys.TEXTINPUT,
+    editorRef: { current: null},
     settings: {},
     defaultSettings: {
       maxAttempts: 2,
@@ -90,6 +93,45 @@ describe('SettingsWidget', () => {
         <SettingsWidget {...props} problemType={ProblemTypeKeys.ADVANCED} />,
       );
       expect(container.querySelector('randomization')).toBeInTheDocument();
+    });
+  });
+  describe('SwitchEditorCard rendering (markdown vs advanced)', () => {
+    test('shows two SwitchEditorCard components when markdown is available and not currently enabled', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null, // non-advanced problem
+          isMarkdownEditorEnabled: false, // currently in advanced/raw (or standard) editor
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '## Problem', // markdown content exists so button should appear
+          isDirty: false,
+        },
+      };
+      const { container } = editorRender(<SettingsWidget {...props} />, { initialState: modifiedInitialState });
+      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(2);
+    });
+
+    test('shows only the advanced SwitchEditorCard when already in markdown mode', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null,
+          isMarkdownEditorEnabled: true, // already in markdown editor, so markdown button hidden
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '## Problem',
+          isDirty: false,
+        },
+      };
+      const { container } = editorRender(<SettingsWidget {...props} />, { initialState: modifiedInitialState });
+      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
     });
   });
 

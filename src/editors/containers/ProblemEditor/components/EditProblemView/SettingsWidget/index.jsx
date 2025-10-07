@@ -26,6 +26,7 @@ import Randomization from './settingsComponents/Randomization';
 // This widget should be connected, grab all settings from store, update them as needed.
 const SettingsWidget = ({
   problemType,
+  editorRef,
   // redux
   answers,
   groupFeedbackList,
@@ -45,6 +46,7 @@ const SettingsWidget = ({
     isMarkdownEditorEnabledForContext,
   } = useEditorContext();
   const rawMarkdown = useSelector(selectors.problem.rawMarkdown);
+  const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
   const showMarkdownEditorButton = isMarkdownEditorEnabledForContext && rawMarkdown;
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   const feedbackCard = () => {
@@ -159,12 +161,12 @@ const SettingsWidget = ({
             </div>
           )}
           <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="advanced" />
+            <SwitchEditorCard problemType={problemType} editorType="advanced" editorRef={editorRef} />
           </div>
-          { showMarkdownEditorButton
+          { (showMarkdownEditorButton && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
           && (
           <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="markdown" />
+            <SwitchEditorCard problemType={problemType} editorType="markdown" editorRef={editorRef} />
           </div>
           )}
         </Collapsible.Body>

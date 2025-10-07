@@ -11,26 +11,46 @@ import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactSta
 import { camelizeKeys } from '../../../utils';
 import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 import { RequestKeys } from '../../constants/requests';
+import { convertMarkdownToXml } from '../../../utils';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { problem: problemActions, requests: requestActions };
 const selectors = { app: appSelectors };
 
-export const switchToAdvancedEditor = () => (dispatch, getState) => {
-  const state = getState();
+
+export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
+  const { problem } = getState();
   const editorObject = fetchEditorContent({ format: '' });
-  const reactOLXParser = new ReactStateOLXParser({ problem: state.problem, editorObject });
-  const rawOLX = reactOLXParser.buildOLX();
-  dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX }));
+
+  let rawOLX;
+  if (problem.isMarkdownEditorEnabled) {
+    // Convert current markdown from CodeMirror editor
+    if (editorRef?.current?.state?.doc) {
+      const markdownContent = editorRef.current.state.doc.toString();
+      rawOLX = convertMarkdownToXml(markdownContent);
+    }
+    else{
+      // Fallback to previously saved olx
+      rawOLX = problem.rawOLX;
+    }
+  } else {
+    rawOLX = new ReactStateOLXParser({ problem, editorObject }).buildOLX();
+  }
+
+  dispatch(actions.problem.updateField({
+    problemType: ProblemTypeKeys.ADVANCED,
+    rawOLX,
+    isMarkdownEditorEnabled: false,
+  }));
 };
 
 export const switchToMarkdownEditor = () => (dispatch) => {
   dispatch(actions.problem.updateField({ isMarkdownEditorEnabled: true }));
 };
 
-export const switchEditor = (editorType) => (dispatch, getState) => {
+export const switchEditor = (editorType, editorRef) => (dispatch, getState) => {
   if (editorType === 'advanced') {
-    switchToAdvancedEditor()(dispatch, getState);
+    switchToAdvancedEditor(editorRef)(dispatch, getState);
   } else {
     switchToMarkdownEditor()(dispatch);
   }
