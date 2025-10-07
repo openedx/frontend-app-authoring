@@ -56,6 +56,8 @@ const SwitchEditorCard = ({
 SwitchEditorCard.propTypes = {
   problemType: PropTypes.string.isRequired,
   editorType: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  editorRef: PropTypes.object.isRequired,
 };
 
 export default SwitchEditorCard;

@@ -141,7 +141,7 @@ describe('CodeEditor', () => {
         expect(hooks.createCodeMirrorDomNode).toHaveBeenCalled();
         fireEvent.click(screen.getByRole('button', { name: 'Unescape HTML Literals' }));
         expect(mockEscapeHTMLSpecialChars).toHaveBeenCalled();
-        // Prevent React.useRef mock leakage into subsequent tests 
+        // Prevent React.useRef mock leakage into subsequent tests
         useRefSpy.mockRestore();
       });
     });

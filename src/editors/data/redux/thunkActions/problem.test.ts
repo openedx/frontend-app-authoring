@@ -90,7 +90,7 @@ describe('problem thunkActions', () => {
       expect(dispatch).toHaveBeenCalledWith(
         actions.problem.updateField({
           problemType: ProblemTypeKeys.ADVANCED,
-          rawOLX: `<problem>\n<p>MockMarkdownContent</p>\n</problem>`,
+          rawOLX: '<problem>\n<p>MockMarkdownContent</p>\n</problem>',
           isMarkdownEditorEnabled: false,
         }),
       );

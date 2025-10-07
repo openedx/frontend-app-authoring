@@ -59,5 +59,4 @@ describe('SwitchEditorCard - markdown', () => {
     const reduxWrapper = (container.firstChild as HTMLElement | null);
     expect(reduxWrapper?.innerHTML).toBe('');
   });
-
 });

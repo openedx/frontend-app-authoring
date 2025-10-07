@@ -6,7 +6,6 @@ import { editorRender, type PartialEditorState } from '@src/editors/editorTestRe
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
-import { initialState } from '@src/course-outline/__mocks__/courseOutlineIndex';
 
 jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
@@ -18,8 +17,6 @@ jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');
 jest.mock('./settingsComponents/SwitchEditorCard', () => 'SwitchEditorCard');
 jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
 jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
-// NOTE: Do NOT mock useSelector here. We rely on the real hook so that
-// editorRender's provided initialState flows into the component under test.
 mockWaffleFlags();
 
 describe('SettingsWidget', () => {
@@ -30,7 +27,7 @@ describe('SettingsWidget', () => {
 
   const props = {
     problemType: ProblemTypeKeys.TEXTINPUT,
-    editorRef: { current: null},
+    editorRef: { current: null },
     settings: {},
     defaultSettings: {
       maxAttempts: 2,

@@ -195,6 +195,8 @@ SettingsWidget.propTypes = {
   blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  editorRef: PropTypes.object.isRequired,
   setBlockTitle: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,

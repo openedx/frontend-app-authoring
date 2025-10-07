@@ -1,4 +1,5 @@
 import { get, isEmpty } from 'lodash';
+import { camelizeKeys, convertMarkdownToXml } from '@src/editors/utils';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
@@ -8,15 +9,12 @@ import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
 import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
 import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
-import { camelizeKeys } from '../../../utils';
 import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 import { RequestKeys } from '../../constants/requests';
-import { convertMarkdownToXml } from '../../../utils';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { problem: problemActions, requests: requestActions };
 const selectors = { app: appSelectors };
-
 
 export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
   const { problem } = getState();
@@ -28,8 +26,7 @@ export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
     if (editorRef?.current?.state?.doc) {
       const markdownContent = editorRef.current.state.doc.toString();
       rawOLX = convertMarkdownToXml(markdownContent);
-    }
-    else{
+    } else {
       // Fallback to previously saved olx
       rawOLX = problem.rawOLX;
     }
