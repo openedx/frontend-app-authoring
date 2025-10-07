@@ -32,7 +32,6 @@ const ProctoringSettings = ({ onClose }) => {
     proctoringProvider: false,
     escalationEmail: '',
     allowOptingOut: false,
-    createZendeskTickets: false,
   };
   const [formValues, setFormValues] = useState(initialFormValues);
   const [loading, setLoading] = useState(true);
@@ -78,14 +77,14 @@ const ProctoringSettings = ({ onClose }) => {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
-    if (['allowOptingOut', 'createZendeskTickets'].includes(name)) {
+    if (['allowOptingOut'].includes(name)) {
       // Form.Radio expects string values, so convert back to a boolean here
       setFormValues({ ...formValues, [name]: value === 'true' });
     } else if (name === 'proctoringProvider') {
       const newFormValues = { ...formValues, proctoringProvider: value };
 
       if (value === 'software_secure') {
-        setFormValues({ ...newFormValues, createZendeskTickets: true });
+        setFormValues({ ...newFormValues });
         setShowEscalationEmail(false);
       } else if (isLtiProvider(value)) {
         setFormValues(newFormValues);
@@ -113,7 +112,6 @@ const ProctoringSettings = ({ onClose }) => {
         enable_proctored_exams: formValues.enableProctoredExams,
         // lti providers are managed outside edx-platform, lti_external indicates this
         proctoring_provider: isLtiProviderSelected ? 'lti_external' : selectedProvider,
-        create_zendesk_tickets: formValues.createZendeskTickets,
       },
     };
     if (isEdxStaff) {
@@ -378,29 +376,6 @@ const ProctoringSettings = ({ onClose }) => {
                   {intl.formatMessage(messages['authoring.proctoring.yes'])}
                 </Form.Radio>
                 <Form.Radio value="false" data-testid="allowOptingOutNo">
-                  {intl.formatMessage(messages['authoring.proctoring.no'])}
-                </Form.Radio>
-              </Form.RadioSet>
-            </Form.Group>
-          </fieldset>
-        )}
-
-        {/* CREATE ZENDESK TICKETS */}
-        { isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
-          <fieldset aria-describedby="createZendeskTicketsText">
-            <Form.Group controlId="formCreateZendeskTickets">
-              <Form.Label as="legend" className="font-weight-bold">
-                {intl.formatMessage(messages['authoring.proctoring.createzendesk.label'])}
-              </Form.Label>
-              <Form.RadioSet
-                name="createZendeskTickets"
-                value={formValues.createZendeskTickets.toString()}
-                onChange={handleChange}
-              >
-                <Form.Radio value="true" data-testid="createZendeskTicketsYes">
-                  {intl.formatMessage(messages['authoring.proctoring.yes'])}
-                </Form.Radio>
-                <Form.Radio value="false" data-testid="createZendeskTicketsNo">
                   {intl.formatMessage(messages['authoring.proctoring.no'])}
                 </Form.Radio>
               </Form.RadioSet>

@@ -105,26 +105,6 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     });
 
-    it('Updates Zendesk ticket field if software_secure is provider', async () => {
-      await waitFor(() => {
-        screen.getByDisplayValue('mockproc');
-      });
-      const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'software_secure' } });
-      const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
-      expect(zendeskTicketInput.checked).toEqual(true);
-    });
-
-    it('Does not update zendesk ticket field for any other provider', async () => {
-      await waitFor(() => {
-        screen.getByDisplayValue('mockproc');
-      });
-      const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'mockproc' } });
-      const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
-      expect(zendeskTicketInput.checked).toEqual(true);
-    });
-
     it('Hides all other fields when enabledProctorExam is false when first loaded', async () => {
       cleanup();
       // Overrides the handler defined in beforeEach.
@@ -151,8 +131,6 @@ describe('ProctoredExamSettings', () => {
       expect(screen.queryByText('Allow Opting Out of Proctored Exams')).toBeNull();
       expect(screen.queryByDisplayValue('mockproc')).toBeNull();
       expect(screen.queryByTestId('escalationEmail')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
     });
 
     it('Hides all other fields when enableProctoredExams toggled to false', async () => {
@@ -162,8 +140,6 @@ describe('ProctoredExamSettings', () => {
       expect(screen.queryByText('Allow opting out of proctored exams')).toBeDefined();
       expect(screen.queryByDisplayValue('mockproc')).toBeDefined();
       expect(screen.queryByTestId('escalationEmail')).toBeDefined();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).toBeDefined();
-      expect(screen.queryByTestId('createZendeskTicketsNo')).toBeDefined();
 
       let enabledProctoredExamCheck = screen.getAllByLabelText('Proctored exams', { exact: false })[0];
       expect(enabledProctoredExamCheck.checked).toEqual(true);
@@ -173,8 +149,6 @@ describe('ProctoredExamSettings', () => {
       expect(screen.queryByText('Allow opting out of proctored exams')).toBeNull();
       expect(screen.queryByDisplayValue('mockproc')).toBeNull();
       expect(screen.queryByTestId('escalationEmail')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
     });
 
     it('Hides unsupported fields when lti provider is selected', async () => {
@@ -519,18 +493,16 @@ describe('ProctoredExamSettings', () => {
   });
 
   describe('Toggles field visibility based on user permissions', () => {
-    it('Hides opting out and zendesk tickets for non edX staff', async () => {
+    it('Hides opting out for non edX staff', async () => {
       setupApp(false);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       expect(screen.queryByTestId('allowOptingOutYes')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
     });
 
-    it('Shows opting out and zendesk tickets for edX staff', async () => {
+    it('Shows opting out for edX staff', async () => {
       setupApp(true);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       expect(screen.queryByTestId('allowOptingOutYes')).not.toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).not.toBeNull();
     });
   });
 
@@ -653,7 +625,6 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'lti_external',
-          create_zendesk_tickets: true,
         },
       });
 
@@ -705,7 +676,6 @@ describe('ProctoredExamSettings', () => {
           allow_proctoring_opt_out: false,
           proctoring_provider: 'mockproc',
           proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: true,
         },
         available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
         course_start_date: '2070-01-01T00:00:00Z',
@@ -723,7 +693,6 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'mockproc',
-          create_zendesk_tickets: true,
         },
       });
 
@@ -821,29 +790,6 @@ describe('ProctoredExamSettings', () => {
           expect.stringContaining('Proctored exam settings saved successfully.'),
         );
         expect(document.activeElement).toEqual(successAlert);
-      });
-    });
-
-    // Test skipped due to Proctortrack deprecation
-    it.skip('Include Zendesk ticket in post request if user is not an admin', async () => {
-      // use non-admin user for test
-      const isAdmin = false;
-      setupApp(isAdmin);
-
-      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
-      // Make a change to the proctoring provider
-      const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-      const submitButton = screen.getByTestId('submissionButton');
-      fireEvent.click(submitButton);
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
-        proctored_exam_settings: {
-          enable_proctored_exams: true,
-          proctoring_provider: 'proctortrack',
-          proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: false,
-        },
       });
     });
   });
