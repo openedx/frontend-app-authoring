@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { CourseContainerChildrenData } from '@src/course-unit/data/types';
 import * as unitApi from '@src/course-unit/data/api';
 
