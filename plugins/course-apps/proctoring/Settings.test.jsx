@@ -214,8 +214,7 @@ describe('ProctoredExamSettings', () => {
         expect(document.activeElement).toEqual(escalationEmailInput);
       });
 
-      // Test skipped due to Proctortrack deprecation
-      it.skip(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
+      it.(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
         });
@@ -569,7 +568,38 @@ describe('ProctoredExamSettings', () => {
       submitButton = screen.getByTestId('submissionButton');
       expect(submitButton).toHaveAttribute('disabled');
     });
+    
+    it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));Expand commentComment on line L610Code has comments. Press enter to view.
+      // Make a change to the provider to proctortrack and set the email
+      const selectElement = screen.getByDisplayValue('mockproc');
+      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
+      const escalationEmail = screen.getByTestId('escalationEmail');
+      expect(escalationEmail.value).toEqual('test@example.com');
+      fireEvent.change(escalationEmail, { target: { value: 'proctortrack@example.com' } });
+      expect(escalationEmail.value).toEqual('proctortrack@example.com');
+      const submitButton = screen.getByTestId('submissionButton');
+      fireEvent.click(submitButton);
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'proctortrack',
+          proctoring_escalation_email: 'proctortrack@example.com',
+          create_zendesk_tickets: false,
+        },
+      });
 
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
+    });
+    
     it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
 
