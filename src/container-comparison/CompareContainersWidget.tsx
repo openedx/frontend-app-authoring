@@ -198,7 +198,10 @@ export const CompareContainersWidget = ({
   let showLocalUpdateAlert = false;
   let localUpdateAlertBlockName = '';
 
-  // Show this alert if the only change is a local override to a text component
+  // Show this alert if the only change is a local override to a text component.
+  // We decided not to put this in `CompareContainersWidgetInner` because if you enter a child,
+  // the alert would disappear. By keeping this call in CompareContainersWidget,
+  // the alert remains in the modal regardless of whether you navigate within the children.
   if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo.length === 1
         && data.upstreamReadyToSyncChildrenInfo[0].isModified
         && data.upstreamReadyToSyncChildrenInfo[0].blockType === 'html') {
