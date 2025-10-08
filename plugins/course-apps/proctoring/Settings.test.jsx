@@ -313,7 +313,6 @@ describe('ProctoredExamSettings', () => {
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
       });
 
-      
       it(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
