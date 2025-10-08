@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
 } from '@openedx/paragon';
@@ -144,6 +144,7 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
 interface LibrariesListProps {
   selectedIds?: string[];
   handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
+  setSelectedLibraries?: (libraries: LibraryV1Data[]) => void;
   hideMigationAlert?: boolean;
   initialFilter?: Filter[];
 }
@@ -151,6 +152,7 @@ interface LibrariesListProps {
 export const LibrariesList = ({
   selectedIds,
   handleCheck,
+  setSelectedLibraries,
   hideMigationAlert = false,
   initialFilter = BaseFilterState,
 }: LibrariesListProps) => {
@@ -170,6 +172,10 @@ export const LibrariesList = ({
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
   const inSelectMode = handleCheck !== undefined;
 
+  const allChecked = filteredData.every(value => selectedIds?.includes(value.libraryKey));
+  const someChecked = filteredData.some(value => selectedIds?.includes(value.libraryKey));
+  const checkboxIsIndeterminate = someChecked && !allChecked;
+
   const handleChangeCheckboxSet = useCallback((event) => {
     if (handleCheck) {
       const libraryId = event.target.value;
@@ -183,6 +189,14 @@ export const LibrariesList = ({
       }
     }
   }, [handleCheck, currentPageData]);
+
+  const handleSelectAll = useCallback(() => {
+    if (checkboxIsIndeterminate || selectedIds?.length === 0) {
+      setSelectedLibraries?.(filteredData);
+    } else {
+      setSelectedLibraries?.([]);
+    }
+  }, [checkboxIsIndeterminate, selectedIds, filteredData]);
 
   if (isPending) {
     return (
@@ -211,6 +225,15 @@ export const LibrariesList = ({
       {!hideMigationAlert && getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
+          {inSelectMode && (
+            <Form.Checkbox
+              checked={allChecked}
+              isIndeterminate={checkboxIsIndeterminate}
+              onChange={() => handleSelectAll()}
+            >
+              <FormattedMessage {...messages.selectAll} />
+            </Form.Checkbox>
+          )}
           <SearchField
             // istanbul ignore next
             onSubmit={() => {}}

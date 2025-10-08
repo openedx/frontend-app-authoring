@@ -126,6 +126,37 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(nextButton).not.toBeDisabled();
   });
 
+  it('should select all legacy libraries', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+
+    // The filter is Unmigrated by default
+    const filterButton = await screen.findByRole('button', { name: /unmigrated/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Clear filter to show all
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
+
+    const selectAll = screen.getByRole('checkbox', { name: /select all/i });
+    await user.click(selectAll);
+
+    const library1 = screen.getByRole('checkbox', { name: 'MBA' });
+    const library2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
+    const library3 = screen.getByRole('checkbox', { name: 'MBA 1' });
+
+    expect(library1).toBeChecked();
+    expect(library2).toBeChecked();
+    expect(library3).toBeChecked();
+
+    await user.click(selectAll);
+    expect(library1).not.toBeChecked();
+    expect(library2).not.toBeChecked();
+    expect(library3).not.toBeChecked();
+  });
+
   it('should back to select legacy libraries', async () => {
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();

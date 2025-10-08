@@ -158,6 +158,7 @@ export const LegacyLibMigrationPage = () => {
                   handleCheck={handleUpdateLegacyLibraries}
                   hideMigationAlert
                   initialFilter={[Filter.unmigrated]}
+                  setSelectedLibraries={setLegacyLibraries}
                 />
               </Stepper.Step>
               <Stepper.Step
