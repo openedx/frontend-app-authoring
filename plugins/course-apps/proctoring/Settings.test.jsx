@@ -214,7 +214,7 @@ describe('ProctoredExamSettings', () => {
         expect(document.activeElement).toEqual(escalationEmailInput);
       });
 
-      it.(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
+      it(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
         });
