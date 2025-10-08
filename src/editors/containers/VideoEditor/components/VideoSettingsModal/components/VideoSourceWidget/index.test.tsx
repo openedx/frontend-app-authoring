@@ -150,7 +150,7 @@ describe('VideoSourceWidget', () => {
     expect(screen.getAllByText('Video URL').length).toBe(3); // 1 main + 2 fallback
     const deleteButtons = screen.getAllByRole('button', { name: /delete/i });
     fireEvent.click(deleteButtons[0]);
-    expect(deleteFallbackVideo).toHaveBeenCalledWith('url1');
+    expect(deleteFallbackVideo).toHaveBeenCalledWith(0);
   });
 
   it('calls addFallbackVideo when add button is clicked', () => {
