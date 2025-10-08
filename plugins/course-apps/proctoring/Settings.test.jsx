@@ -568,7 +568,7 @@ describe('ProctoredExamSettings', () => {
       submitButton = screen.getByTestId('submissionButton');
       expect(submitButton).toHaveAttribute('disabled');
     });
-    
+
     it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
@@ -599,7 +599,7 @@ describe('ProctoredExamSettings', () => {
         expect(document.activeElement).toEqual(errorAlert);
       });
     });
-    
+
     it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
 
