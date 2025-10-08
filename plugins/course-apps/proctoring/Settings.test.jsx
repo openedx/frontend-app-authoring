@@ -587,7 +587,6 @@ describe('ProctoredExamSettings', () => {
           allow_proctoring_opt_out: false,
           proctoring_provider: 'proctortrack',
           proctoring_escalation_email: 'proctortrack@example.com',
-          create_zendesk_tickets: false,
         },
       });
 
