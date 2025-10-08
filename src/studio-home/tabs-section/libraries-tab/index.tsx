@@ -230,6 +230,7 @@ export const LibrariesList = ({
               checked={allChecked}
               isIndeterminate={checkboxIsIndeterminate}
               onChange={() => handleSelectAll()}
+              className="ml-0.5 mr-3"
             >
               <FormattedMessage {...messages.selectAll} />
             </Form.Checkbox>
