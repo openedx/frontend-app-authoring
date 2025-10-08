@@ -313,8 +313,8 @@ describe('ProctoredExamSettings', () => {
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
       });
 
-      // Test skipped due to Proctortrack deprecation
-      it.skip(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
+      
+      it(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
         await waitFor(() => {
           screen.getByDisplayValue('proctortrack');
         });
