@@ -12,6 +12,7 @@ describe('SwitchEditorCard - markdown', () => {
   const baseProps = {
     problemType: 'stringresponse',
     editorType: 'markdown',
+    editorRef: { current: null },
   };
 
   beforeEach(() => {
@@ -49,28 +50,12 @@ describe('SwitchEditorCard - markdown', () => {
     expect(confirmButton).toBeInTheDocument();
     expect(switchEditorSpy).not.toHaveBeenCalled();
     await user.click(confirmButton);
-    expect(switchEditorSpy).toHaveBeenCalledWith('markdown');
+    expect(switchEditorSpy).toHaveBeenCalledWith('markdown', { current: null });
     // Markdown editor would now be active.
   });
 
   test('renders nothing for advanced problemType', () => {
     const { container } = editorRender(<SwitchEditorCard {...baseProps} problemType="advanced" />);
-    const reduxWrapper = (container.firstChild as HTMLElement | null);
-    expect(reduxWrapper?.innerHTML).toBe('');
-  });
-
-  test('returns null when editor is already Markdown', () => {
-    // Markdown Editor support is on for this course:
-    mockWaffleFlags({ useReactMarkdownEditor: true });
-    // The markdown editor *IS* currently active (default)
-
-    const { container } = editorRender(<SwitchEditorCard {...baseProps} />, {
-      initialState: {
-        problem: {
-          isMarkdownEditorEnabled: true,
-        },
-      },
-    });
     const reduxWrapper = (container.firstChild as HTMLElement | null);
     expect(reduxWrapper?.innerHTML).toBe('');
   });

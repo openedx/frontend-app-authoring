@@ -45,31 +45,86 @@ describe('problem thunkActions', () => {
   let dispatch;
   let getState;
   let dispatchedAction;
+  let mockEditorRef;
+
+  const mockProblemState = (isMarkdownEditorEnabled) => ({
+    problem: {
+      isMarkdownEditorEnabled,
+      rawOLX: 'PREVIOUS_OLX',
+    },
+    app: {
+      learningContextId: 'course-v1:org+course+run',
+      blockValue,
+    },
+  });
+
+  const createMockEditorRef = (content = 'MockMarkdownContent') => ({
+    current: {
+      state: {
+        doc: { toString: jest.fn(() => content) },
+      },
+    },
+  });
+
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
-    getState = jest.fn(() => ({
-      problem: {
-      },
-      app: {
-        learningContextId: 'course-v1:org+course+run',
-        blockValue,
-      },
-    }));
+    mockEditorRef = createMockEditorRef();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
-  test('initializeProblem visual Problem :', () => {
-    initializeProblem(blockValue)(dispatch, getState);
-    expect(dispatch).toHaveBeenCalled();
+
+  describe('when markdown editor is enabled', () => {
+    beforeEach(() => {
+      getState = jest.fn(() => mockProblemState(true));
+    });
+
+    test('initializeProblem triggers dispatch', () => {
+      initializeProblem(blockValue)(dispatch, getState);
+      expect(dispatch).toHaveBeenCalled();
+    });
+
+    test('switchToAdvancedEditor converts markdown to OLX', () => {
+      switchToAdvancedEditor(mockEditorRef)(dispatch, getState);
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateField({
+          problemType: ProblemTypeKeys.ADVANCED,
+          rawOLX: '<problem>\n<p>MockMarkdownContent</p>\n</problem>',
+          isMarkdownEditorEnabled: false,
+        }),
+      );
+    });
+
+    test('switchToAdvancedEditor falls back to previous OLX if editorRef missing', () => {
+      switchToAdvancedEditor(null)(dispatch, getState);
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateField({
+          problemType: ProblemTypeKeys.ADVANCED,
+          rawOLX: 'PREVIOUS_OLX',
+          isMarkdownEditorEnabled: false,
+        }),
+      );
+    });
   });
-  test('switchToAdvancedEditor visual Problem', () => {
-    switchToAdvancedEditor()(dispatch, getState);
-    expect(dispatch).toHaveBeenCalledWith(
-      actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: mockOlx }),
-    );
+
+  describe('when markdown editor is disabled', () => {
+    beforeEach(() => {
+      getState = jest.fn(() => mockProblemState(false));
+    });
+
+    test('switchToAdvancedEditor uses ReactStateOLXParser', () => {
+      switchToAdvancedEditor(mockEditorRef)(dispatch, getState);
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.problem.updateField({
+          problemType: ProblemTypeKeys.ADVANCED,
+          rawOLX: mockOlx,
+          isMarkdownEditorEnabled: false,
+        }),
+      );
+    });
   });
+
   test('switchToMarkdownEditor dispatches correct actions', () => {
     switchToMarkdownEditor()(dispatch);
 
@@ -94,12 +149,12 @@ describe('problem thunkActions', () => {
     });
 
     test('dispatches switchToAdvancedEditor when editorType is advanced', () => {
-      switchEditor('advanced')(dispatch, getState);
+      switchEditor('advanced', mockEditorRef)(dispatch, getState);
       expect(switchToAdvancedEditorMock).toHaveBeenCalledWith(dispatch, getState);
     });
 
     test('dispatches switchToMarkdownEditor when editorType is markdown', () => {
-      switchEditor('markdown')(dispatch, getState);
+      switchEditor('markdown', mockEditorRef)(dispatch, getState);
       expect(switchToMarkdownEditorMock).toHaveBeenCalledWith(dispatch);
     });
   });

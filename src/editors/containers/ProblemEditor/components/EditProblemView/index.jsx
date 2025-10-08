@@ -133,7 +133,7 @@ const EditProblemView = ({ returnFunction }) => {
         )}
 
         <span className="editProblemView-settingsColumn">
-          <SettingsWidget problemType={problemType} />
+          <SettingsWidget problemType={problemType} editorRef={editorRef} />
         </span>
       </div>
     </EditorContainer>

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   render, screen, initializeMocks, fireEvent,
 } from '@src/testUtils';
+import { waitFor } from '@testing-library/react';
 import { formatMessage, MockUseState } from '../../testUtils';
 import alphanumericMap from './constants';
 import { CodeEditorInternal as CodeEditor } from './index';
@@ -107,6 +108,7 @@ describe('CodeEditor', () => {
       beforeEach(() => {
         initializeMocks();
       });
+      let useRefSpy;
       test('Renders and calls Hooks ', () => {
         const props = {
           intl: { formatMessage },
@@ -122,7 +124,7 @@ describe('CodeEditor', () => {
           .mockImplementationOnce(() => mockDOMRef) // for DOMref
           .mockImplementationOnce(() => mockBtnRef); // for btnRef
 
-        jest.spyOn(React, 'useRef').mockImplementation(mockUseRef);
+        useRefSpy = jest.spyOn(React, 'useRef').mockImplementation(mockUseRef);
 
         const mockHideBtn = jest.fn();
         jest.spyOn(hooks, 'prepareShowBtnEscapeHTML').mockImplementation(() => ({
@@ -139,6 +141,50 @@ describe('CodeEditor', () => {
         expect(hooks.createCodeMirrorDomNode).toHaveBeenCalled();
         fireEvent.click(screen.getByRole('button', { name: 'Unescape HTML Literals' }));
         expect(mockEscapeHTMLSpecialChars).toHaveBeenCalled();
+        // Prevent React.useRef mock leakage into subsequent tests
+        useRefSpy.mockRestore();
+      });
+    });
+
+    describe('value change effect', () => {
+      beforeEach(() => {
+        initializeMocks();
+      });
+
+      test('dispatches changes when value prop updates', async () => {
+        const mockDispatch = jest.fn();
+        const oldContent = 'old content';
+        const newContent = 'new content';
+        const mockView = {
+          state: { doc: { toString: () => oldContent } },
+          dispatch: mockDispatch,
+        };
+        const innerRef = { current: mockView };
+
+        jest.spyOn(hooks, 'createCodeMirrorDomNode').mockImplementation(() => ({}));
+        jest.spyOn(hooks, 'prepareShowBtnEscapeHTML').mockReturnValue({ showBtnEscapeHTML: false, hideBtn: jest.fn() });
+
+        const { rerender } = render(<CodeEditor innerRef={innerRef} value={oldContent} lang="xml" />);
+        // Initial render: value matches doc, no dispatch
+        expect(mockDispatch).not.toHaveBeenCalled();
+
+        // Rerender with new value triggers effect
+        rerender(<CodeEditor innerRef={innerRef} value={newContent} lang="xml" />);
+        await waitFor(() => expect(mockDispatch).toHaveBeenCalledTimes(1));
+        const callArg = mockDispatch.mock.calls[0][0];
+        expect(callArg.changes.insert).toBe(newContent);
+        expect(callArg.changes.from).toBe(0);
+        expect(callArg.changes.to).toBe(oldContent.length);
+
+        // Simulate that the editor document now reflects the new content so a rerender
+        // with the same value does not trigger another dispatch.
+        mockView.state.doc.toString = () => newContent;
+
+        // Rerender again with same value should not trigger additional dispatch
+        mockDispatch.mockClear();
+        rerender(<CodeEditor innerRef={innerRef} value={newContent} lang="xml" />);
+        // Give a tick to ensure no extra dispatch happens
+        await waitFor(() => expect(mockDispatch).not.toHaveBeenCalled());
       });
     });
   });
