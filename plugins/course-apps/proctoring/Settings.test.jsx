@@ -570,7 +570,7 @@ describe('ProctoredExamSettings', () => {
     });
     
     it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
-      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));Expand commentComment on line L610Code has comments. Press enter to view.
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
       fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
