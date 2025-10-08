@@ -6,21 +6,21 @@ import {
   ActionRow, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
 
-import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
-import { useWaffleFlags } from '../../data/apiHooks';
-import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import ComponentModalView from './add-component-modals/ComponentModalView';
-import AddComponentButton from './add-component-btn';
-import messages from './messages';
-import { ComponentPicker } from '../../library-authoring/component-picker';
-import { ContentType } from '../../library-authoring/routes';
-import { messageTypes } from '../constants';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import { useEventListener } from '../../generic/hooks';
-import VideoSelectorPage from '../../editors/VideoSelectorPage';
-import EditorPage from '../../editors/EditorPage';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { ComponentPicker } from '@src/library-authoring/component-picker';
+import { ContentType } from '@src/library-authoring/routes';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { useEventListener } from '@src/generic/hooks';
+import VideoSelectorPage from '@src/editors/VideoSelectorPage';
+import EditorPage from '@src/editors/EditorPage';
+import { SelectedComponent } from '@src/library-authoring';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
-import { SelectedComponent } from '../../library-authoring';
+import { messageTypes } from '../constants';
+import messages from './messages';
+import AddComponentButton from './add-component-btn';
+import ComponentModalView from './add-component-modals/ComponentModalView';
+import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
 
 type ComponentTemplateData = {
   displayName: string,
