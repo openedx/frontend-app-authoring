@@ -51,11 +51,6 @@ const messages = defineMessages({
     defaultMessage: 'Ignore',
     description: 'Preview changes confirmation dialog confirm button text when user clicks on ignore changes.',
   },
-  olderVersionPreviewAlert: {
-    id: 'course-authoring.review-tab.preview.old-version-alert',
-    defaultMessage: 'The old version preview is the previous library version',
-    description: 'Alert message stating that older version in preview is of library block',
-  },
   localEditsAlert: {
     id: 'course-authoring.review-tab.preview.loal-edits-alert',
     defaultMessage: 'This library content has local edits.',
