@@ -39,7 +39,7 @@ const Header = ({
 
   const contentMenuItems = useContentMenuItems(contextId);
   const settingMenuItems = useSettingMenuItems(contextId);
-  const toolsMenuItems = useToolsMenuItems(contextId);
+  const toolsMenuItems = useToolsMenuItems(contextId, isLibrary);
   const mainMenuDropdowns = !isLibrary ? [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
@@ -56,7 +56,11 @@ const Header = ({
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
       items: toolsMenuItems,
     },
-  ] : [];
+  ] : [{
+    id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+    buttonTitle: intl.formatMessage(messages['header.links.tools']),
+    items: toolsMenuItems,
+  }];
 
   const getOutlineLink = () => {
     if (isLibrary) {
