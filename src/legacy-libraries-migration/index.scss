@@ -17,4 +17,20 @@
       margin-top: calc(var(--pgn-spacing-spacer-base)) !important;;
     }
   }
+
+  .row {
+    margin-right: 0; // To avoid create a horizontal scroll using Layout
+  }
+}
+
+.legacy-libraries-migration-help {
+  z-index: 1000; // same as header
+  flex: 350px 0 0;
+  position: sticky;
+  top: 0;
+  right: 0;
+
+  hr {
+    width: 100%;
+  }
 }
