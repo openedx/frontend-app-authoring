@@ -47,7 +47,7 @@ const CompareContainersWidgetInner = ({
   localUpdateAlertBlockName,
 }: Props) => {
   const intl = useIntl();
-  const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, false);
+  const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, parent.length === 0);
   const {
     data: libData,
     isError: isLibError,
