@@ -1,5 +1,4 @@
 import * as reactRedux from 'react-redux';
-import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -233,28 +232,6 @@ describe('<StudioHome />', () => {
       render(<StudioHome />, { path: '/home' });
       expect(screen.getByText('Looking for help with Studio?')).toBeInTheDocument();
       expect(screen.getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
-    });
-
-    describe('legacy migration help sidebar', () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_LEGACY_LIBRARY_MIGRATOR: 'true',
-      });
-
-      it('should not render the sidebar in home', () => {
-        render(<StudioHome />, { path: '/home' });
-        expect(screen.queryByText('Help & Support')).not.toBeInTheDocument();
-      });
-
-      it('should render the sidebar in libraries', () => {
-        render(<StudioHome />, { path: '/libraries' });
-        expect(screen.getByText('Help & Support')).toBeInTheDocument();
-      });
-
-      it('should render the sidebar in legacy libraries', () => {
-        render(<StudioHome />, { path: '/libraries-v1' });
-        expect(screen.getByText('Help & Support')).toBeInTheDocument();
-      });
     });
   });
 });

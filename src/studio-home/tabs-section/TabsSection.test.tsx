@@ -1,6 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { useState } from 'react';
 
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { userEvent } from '@testing-library/user-event';
@@ -15,10 +14,9 @@ import {
   act,
   within,
 } from '@src/testUtils';
-
 import messages from '../messages';
 import tabMessages from './messages';
-import { initTabKeyState, TabKeyType, TabsSection } from '.';
+import TabsSection from '.';
 import {
   initialState,
   generateGetStudioHomeDataApiResponse,
@@ -38,26 +36,16 @@ const libraryApiLink = `${getStudioHomeApiUrl()}/libraries`;
 // The Libraries v2 tab title contains a badge, so we need to use regex to match its tab text.
 const librariesBetaTabTitle = /Libraries Beta/;
 
-const TabSectionComponent = (overrideProps) => {
-  const location = useLocation();
-  const [tabKey, setTabKey] = useState<TabKeyType>(initTabKeyState(
-    location.pathname,
-    overrideProps.librariesV2Enabled || true,
-  ));
-
-  return (
-    <TabsSection
-      showNewCourseContainer={false}
-      onClickNewCourse={() => {}}
-      tabKey={tabKey}
-      setTabKey={setTabKey}
-      isShowProcessing
-      librariesV1Enabled
-      librariesV2Enabled
-      {...overrideProps}
-    />
-  );
-};
+const tabSectionComponent = (overrideProps) => (
+  <TabsSection
+    showNewCourseContainer={false}
+    onClickNewCourse={() => {}}
+    isShowProcessing
+    librariesV1Enabled
+    librariesV2Enabled
+    {...overrideProps}
+  />
+);
 
 export const LocationDisplay = () => {
   const location = useLocation();
@@ -70,15 +58,15 @@ const render = (overrideProps = {}) => baseRender(
     <Routes>
       <Route
         path="/home"
-        element={<TabSectionComponent {...overrideProps} />}
+        element={tabSectionComponent(overrideProps)}
       />
       <Route
         path="/libraries"
-        element={<TabSectionComponent {...overrideProps} />}
+        element={tabSectionComponent(overrideProps)}
       />
       <Route
         path="/libraries-v1"
-        element={<TabSectionComponent {...overrideProps} />}
+        element={tabSectionComponent(overrideProps)}
       />
     </Routes>
     <LocationDisplay />
