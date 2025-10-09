@@ -7,11 +7,11 @@ import { LAST_EXPORT_COOKIE_NAME, SUCCESS_DATE_FORMAT } from './data/constants';
 /**
  * Sets an export-related cookie with the provided information.
  *
- * @param {Date} date - Date of export.
+ * @param date - Date of export (unix timestamp).
  * @param {boolean} completed - Indicates if export was completed successfully.
  * @returns {void}
  */
-export const setExportCookie = (date, completed) => {
+export const setExportCookie = (date: number, completed: boolean): void => {
   const cookies = new Cookies();
   cookies.set(LAST_EXPORT_COOKIE_NAME, { date, completed }, { path: window.location.pathname });
 };

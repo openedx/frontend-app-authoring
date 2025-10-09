@@ -141,7 +141,6 @@ export const PreviewLibraryXBlockChanges = ({
     if (blockData.isContainer) {
       return (
         <CompareContainersWidget
-          title={blockData.displayName}
           upstreamBlockId={blockData.upstreamBlockId}
           downstreamBlockId={blockData.downstreamBlockId}
         />
