@@ -30,7 +30,7 @@ export function fetchImportStatus(courseId, fileName) {
       }
       dispatch(updateLoadingStatus(RequestStatus.SUCCESSFUL));
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus(RequestStatus.DENIED));
       } else {

@@ -14,7 +14,7 @@ Object.defineProperty(window, 'location', {
 describe('setExportCookie', () => {
   it('should set the export cookie with the provided date and completed status', () => {
     const cookiesSetMock = jest.spyOn(Cookies.prototype, 'set');
-    const date = '2023-07-24';
+    const date = moment('2023-07-24').valueOf();
     const completed = true;
     setExportCookie(date, completed);
 

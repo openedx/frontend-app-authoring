@@ -1,6 +1,11 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  error: {
+    id: 'course-authoring.container-comparison.diff.error.message',
+    defaultMessage: 'Unexpected error: Failed to fetch container data',
+    description: 'Generic error message',
+  },
   removedDiffBeforeMessage: {
     id: 'course-authoring.container-comparison.diff.before.removed-message',
     defaultMessage: 'This {blockType} will be removed in the new version',

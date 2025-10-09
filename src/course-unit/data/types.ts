@@ -42,4 +42,5 @@ export interface CourseContainerChildrenData {
   canPasteComponent: boolean;
   children: ContainerChildData[],
   isPublished: boolean;
+  displayName: string;
 }

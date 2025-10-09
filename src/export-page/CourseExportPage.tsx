@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -27,7 +26,7 @@ import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
 
-const CourseExportPage = ({ courseId }) => {
+const CourseExportPage = ({ courseId }: { courseId: string }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const exportTriggered = useSelector(getExportTriggered);
@@ -126,10 +125,6 @@ const CourseExportPage = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseExportPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseExportPage;

@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -24,7 +23,7 @@ import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
 
-const CourseImportPage = ({ courseId }) => {
+const CourseImportPage = ({ courseId }: { courseId: string }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const cookies = new Cookies();
@@ -102,10 +101,6 @@ const CourseImportPage = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseImportPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseImportPage;
