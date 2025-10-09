@@ -6,7 +6,7 @@ import Header from '../header';
 const ReleaseNotes = () => (
   <>
     <Header isHiddenMainMenu />
-    <main className="page-content">
+    <main className="release-notes-page-content">
       <h1>Welcome to release-notes!</h1>
     </main>
     <StudioFooterSlot />

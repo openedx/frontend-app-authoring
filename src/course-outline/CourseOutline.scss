@@ -8,3 +8,8 @@
 @import "./publish-modal/PublishModal";
 @import "./xblock-status/XBlockStatus";
 @import "./drag-helper/SortableItem";
+
+.course-outline-page-loader {
+    min-height: 760px;
+    padding-top: 385px;
+}
