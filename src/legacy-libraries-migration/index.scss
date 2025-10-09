@@ -17,6 +17,10 @@
       margin-top: calc(var(--pgn-spacing-spacer-base)) !important;;
     }
   }
+
+  .row {
+    margin-right: 0; // To avoid create a horizontal scroll using Layout
+  }
 }
 
 .legacy-libraries-migration-help {
@@ -25,8 +29,6 @@
   position: sticky;
   top: 0;
   right: 0;
-  height: 100vh;
-  overflow-y: auto;
 
   hr {
     width: 100%;
