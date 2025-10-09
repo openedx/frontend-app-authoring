@@ -29,6 +29,7 @@ interface CardListProps {
   isLoading: boolean;
   data: LibrariesV2Response;
   handleClearFilters: () => void;
+  scrollIntoView?: boolean;
 }
 
 const CardList: React.FC<CardListProps> = ({
@@ -39,6 +40,7 @@ const CardList: React.FC<CardListProps> = ({
   isLoading,
   data,
   handleClearFilters,
+  scrollIntoView = false,
 }) => {
   if (hasV2Libraries) {
     return (
@@ -57,6 +59,7 @@ const CardList: React.FC<CardListProps> = ({
               selectMode={selectMode}
               isSelected={selectedLibraryId === id}
               itemId={id}
+              scrollIntoView={scrollIntoView && selectedLibraryId === id}
             />
           ))
         }
@@ -99,6 +102,7 @@ const LibrariesV2List: React.FC<Props> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [filterParams, setFilterParams] = useState({});
   const [isCreateLibraryOpen, openCreateLibrary, closeCreateLibrary] = useToggle(false);
+  const [scrollIntoCard, setScrollIntoCard] = useState(false);
 
   const isFiltered = Object.keys(filterParams).length > 0;
   const inSelectMode = handleSelect !== undefined;
@@ -122,17 +126,19 @@ const LibrariesV2List: React.FC<Props> = ({
     if (handleSelect) {
       handleSelect(library);
       closeCreateLibrary();
+      setScrollIntoCard(true);
     }
-  }, [handleSelect, closeCreateLibrary]);
+  }, [handleSelect, closeCreateLibrary, setScrollIntoCard]);
 
   const handleOnChangeRadioSet = useCallback((libraryId: string) => {
+    setScrollIntoCard(false);
     if (handleSelect && data) {
       const library = data.results.find((item) => item.id === libraryId);
       if (library) {
         handleSelect(library);
       }
     }
-  }, [data, handleSelect]);
+  }, [data, handleSelect, setScrollIntoCard]);
 
   if (isPending && !isFiltered) {
     return (
@@ -202,6 +208,7 @@ const LibrariesV2List: React.FC<Props> = ({
               isLoading={isPending}
               data={data!}
               handleClearFilters={handleClearFilters}
+              scrollIntoView={scrollIntoCard}
             />
           </Form.RadioSet>
         ) : (
