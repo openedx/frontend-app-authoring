@@ -17,11 +17,11 @@ import { Download, Loop, Newsstand } from '@openedx/paragon/icons';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { LibraryBackupStatus } from '@src/library-authoring/backup-restore/data/constants';
 import { useCreateLibraryBackup, useGetLibraryBackupStatus } from '@src/library-authoring/backup-restore/data/hooks';
-import NotFoundAlert from '../../generic/NotFoundAlert';
-import Header from '../../header';
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { useContentLibrary } from '../data/apiHooks';
-import messages from './messages';
+import NotFoundAlert from '@src/generic/NotFoundAlert';
+import Header from '@src/header';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useContentLibrary } from '@src/library-authoring/data/apiHooks';
+import messages from '@src/library-authoring/backup-restore/messages';
 
 export const LibraryBackupPage = () => {
   const intl = useIntl();
