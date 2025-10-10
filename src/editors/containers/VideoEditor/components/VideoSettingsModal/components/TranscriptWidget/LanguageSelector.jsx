@@ -11,8 +11,8 @@ import {
 import { Check } from '@openedx/paragon/icons';
 import { connect, useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getLanguageName } from '@src/editors/data/constants/video';
 import { thunkActions, selectors } from '../../../../../../data/redux';
-import { videoTranscriptLanguages } from '../../../../../../data/constants/video';
 import { FileInput, fileInput } from '../../../../../../sharedComponents/FileInput';
 import messages from './messages';
 
@@ -47,25 +47,25 @@ export const hooks = {
 const LanguageSelector = ({
   index, // For a unique id for the form control
   language,
-  // Redux
   openLanguages, // Only allow those languages not already associated with a transcript to be selected
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
   const [localLang, setLocalLang] = React.useState(language);
-  const input = fileInput({ onAddFile: hooks.addFileCallback({ dispatch: useDispatch(), localLang }) });
+  const input = fileInput({ onAddFile: hooks.addFileCallback({ dispatch, localLang }) });
   const onLanguageChange = hooks.onSelectLanguage({
-    dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
+    dispatch, languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
   });
 
   const getTitle = () => {
-    if (Object.prototype.hasOwnProperty.call(videoTranscriptLanguages, language)) {
+    if (language) {
       return (
         <ActionRow>
-          {videoTranscriptLanguages[language]}
+          {getLanguageName(language)}
           <ActionRow.Spacer />
           <Icon className="text-primary-500" src={Check} />
         </ActionRow>
-
       );
     }
     return (
@@ -78,10 +78,7 @@ const LanguageSelector = ({
 
   return (
     <>
-
-      <Dropdown
-        className="w-100 mb-2"
-      >
+      <Dropdown className="w-100 mb-2">
         <Dropdown.Toggle
           iconAs={Button}
           aria-label={intl.formatMessage(messages.languageSelectLabel)}
@@ -93,14 +90,25 @@ const LanguageSelector = ({
           {getTitle()}
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
+          {openLanguages.map(lang => {
+            const name = getLanguageName(lang);
+
             if (language === lang) {
-              return (<Dropdown.Item>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>);
+              return (
+                <Dropdown.Item key={lang}>
+                  {name}
+                  <Icon className="text-primary-500" src={Check} />
+                </Dropdown.Item>
+              );
             }
-            if (openLanguages.some(row => row.includes(lang))) {
-              return (<Dropdown.Item onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>);
-            }
-            return (<Dropdown.Item className="disabled">{text}</Dropdown.Item>);
+            return (
+              <Dropdown.Item
+                key={lang}
+                onClick={() => onLanguageChange({ newLang: lang })}
+              >
+                {name}
+              </Dropdown.Item>
+            );
           })}
         </Dropdown.Menu>
       </Dropdown>
