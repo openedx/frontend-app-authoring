@@ -7,13 +7,13 @@ import {
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus } from '@src/data/constants';
-import { isUnitReadOnly } from '@src/course-unit/data/utils';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -22,6 +22,7 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course
 import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 
 interface UnitCardProps {
@@ -31,8 +32,9 @@ interface UnitCardProps {
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus: string;
+  savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
+  onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
   getTitleLink: (locator: string) => string;
   index: number;
@@ -59,6 +61,7 @@ const UnitCard = ({
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
+  onOpenUnlinkModal,
   onDuplicateSubmit,
   getTitleLink,
   onOrderChange,
@@ -74,6 +77,8 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
+  const { courseId } = useParams();
+  const queryClient = useQueryClient();
 
   const {
     id,
@@ -101,8 +106,6 @@ const UnitCard = ({
       isContainer: true,
     };
   }, [upstreamInfo]);
-
-  const readOnly = isUnitReadOnly(unit);
 
   // re-create actions object for customizations
   const actions = { ...unitActions };
@@ -155,7 +158,10 @@ const UnitCard = ({
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
-  }, [dispatch, section]);
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+  }, [dispatch, section, queryClient, courseId]);
 
   const titleComponent = (
     <TitleLink
@@ -231,13 +237,14 @@ const UnitCard = ({
             onClickConfigure={onOpenConfigureModal}
             onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
+            onClickUnlink={onOpenUnlinkModal}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
-            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
+            savingStatus={savingStatus}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

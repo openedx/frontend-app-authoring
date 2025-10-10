@@ -1,8 +1,7 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import ErrorPage from './ErrorPage';
-import editorRender from '../../editorTestRender';
-import { initializeStore } from '../../data/redux';
+import { editorRender } from '../../editorTestRender';
 
 describe('Editor Page', () => {
   const emptyProps = {
@@ -25,7 +24,7 @@ describe('Editor Page', () => {
   };
 
   beforeEach(() => {
-    initializeMocks({ initialState, initializeStore });
+    initializeMocks();
   });
 
   describe('rendered with empty props', () => {
@@ -61,7 +60,7 @@ describe('Editor Page', () => {
       });
     });
     it('should have custom message', () => {
-      render(<ErrorPage {...passedProps} />);
+      editorRender(<ErrorPage {...passedProps} />, { initialState });
       expect(screen.getByText('cUStomMEssagE')).toBeInTheDocument();
     });
   });

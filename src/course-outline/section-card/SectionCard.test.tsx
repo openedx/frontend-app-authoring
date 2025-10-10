@@ -1,24 +1,27 @@
 import {
-  act, fireEvent, initializeMocks, render, screen, within,
+  act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import SectionCard from './SectionCard';
 
-const mockPathname = '/foo-bar';
+const mockUseAcceptLibraryBlockChanges = jest.fn();
+const mockUseIgnoreLibraryBlockChanges = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
+jest.mock('@src/course-unit/data/apiHooks', () => ({
+  useAcceptLibraryBlockChanges: () => ({
+    mutateAsync: mockUseAcceptLibraryBlockChanges,
+  }),
+  useIgnoreLibraryBlockChanges: () => ({
+    mutateAsync: mockUseIgnoreLibraryBlockChanges,
   }),
 }));
 
 const unit = {
-  id: 'unit-1',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
 };
 
 const subsection = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
   displayName: 'Subsection Name',
   category: 'sequential',
   published: true,
@@ -36,11 +39,11 @@ const subsection = {
     children: [{
       id: unit.id,
     }],
-  },
-} as XBlock;
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
+} satisfies Partial<XBlock> as XBlock;
 
 const section = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
   category: 'chapter',
   published: true,
@@ -63,17 +66,20 @@ const section = {
         }],
       },
     }],
-  },
+  } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:section:1',
     versionSynced: 1,
+    versionAvailable: 2,
+    versionDeclined: null,
+    errorMessage: null,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const onEditSectionSubmit = jest.fn();
 
-const renderComponent = (props?: object, entry = '/') => render(
+const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SectionCard
     section={section}
     index={1}
@@ -82,8 +88,8 @@ const renderComponent = (props?: object, entry = '/') => render(
     onOpenPublishModal={jest.fn()}
     onOpenHighlightsModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    savingStatus=""
     onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
     isSectionsExpanded
@@ -97,7 +103,8 @@ const renderComponent = (props?: object, entry = '/') => render(
     <span>children</span>
   </SectionCard>,
   {
-    path: '/',
+    path: '/course/:courseId',
+    params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },
@@ -181,7 +188,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${subsection.id}`);
+    // url encode subsection.id
+    const subsectionIdUrl = encodeURIComponent(subsection.id);
+    renderComponent(collapsedSections, `/course/:courseId?show=${subsectionIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -193,7 +202,9 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${unit.id}`);
+    // url encode subsection.id
+    const unitIdUrl = encodeURIComponent(unit.id);
+    renderComponent(collapsedSections, `/course/:courseId?show=${unitIdUrl}`);
 
     const cardSubsections = await screen.findByTestId('section-card__subsections');
     const newSubsectionButton = await screen.findByRole('button', { name: 'New subsection' });
@@ -206,11 +217,56 @@ describe('<SectionCard />', () => {
     const collapsedSections = { ...section };
     // @ts-ignore-next-line
     collapsedSections.isSectionsExpanded = false;
-    renderComponent(collapsedSections, `?show=${randomId}`);
+    renderComponent(collapsedSections, `/course/:courseId?show=${randomId}`);
 
     const cardSubsections = screen.queryByTestId('section-card__subsections');
     const newSubsectionButton = screen.queryByRole('button', { name: 'New subsection' });
     expect(cardSubsections).toBeNull();
     expect(newSubsectionButton).toBeNull();
+  });
+
+  it('should sync section changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('section-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
+
+    // Click on accept changes
+    const acceptChangesButton = screen.getByText(/accept changes/i);
+    fireEvent.click(acceptChangesButton);
+
+    await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should decline sync section changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('section-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: section name/i })).toBeInTheDocument();
+
+    // Click on ignore changes
+    const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
+    fireEvent.click(ignoreChangesButton);
+
+    // Should open the confirmation modal
+    expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
+
+    // Click on ignore button
+    const ignoreButton = screen.getByRole('button', { name: /ignore/i });
+    fireEvent.click(ignoreButton);
+
+    await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
   });
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
   Card, CheckboxControl, breakpoints,
@@ -12,8 +12,9 @@ import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
 
 const AppCard = ({
-  app, onClick, intl, selected, features,
+  app, onClick, selected, features,
 }) => {
+  const intl = useIntl();
   const { canChangeProviders } = useSelector(state => state.courseDetail);
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
@@ -72,8 +73,7 @@ AppCard.propTypes = {
   }).isRequired,
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
-  intl: intlShape.isRequired,
   features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
-export default injectIntl(AppCard);
+export default AppCard;

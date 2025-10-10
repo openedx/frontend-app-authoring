@@ -2,7 +2,7 @@ import React from 'react';
 import { initializeMocks } from '@src/testUtils';
 import { RequestKeys } from '@src/editors/data/constants/requests';
 import { SelectImageModalInternal as SelectImageModal } from '.';
-import editorRender from '../../../editorTestRender';
+import { editorRender, type PartialEditorState } from '../../../editorTestRender';
 
 jest.mock('../../BaseModal', () => 'BaseModal');
 jest.mock('../../FileInput', () => 'FileInput');
@@ -47,7 +47,7 @@ jest.mock('./hooks', () => ({
 }));
 
 describe('SelectImageModal', () => {
-  const initialState = {
+  const initialState: PartialEditorState = {
     app: {
       imageCount: 1,
       learningContextId: 'library-v1:abc123', // so isLibrary returns true
@@ -72,7 +72,7 @@ describe('SelectImageModal', () => {
       images: ['image.pgn'],
     };
     beforeEach(() => {
-      initializeMocks({ initialState });
+      initializeMocks({ });
     });
     test('renders correctly', () => {
       const { container } = editorRender(<SelectImageModal {...props} />, { initialState });

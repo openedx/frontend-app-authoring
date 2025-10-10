@@ -1,9 +1,9 @@
 import React from 'react';
 import { screen, initializeMocks } from '@src/testUtils';
 import { formatMessage } from '@src/editors/testUtils';
+import { editorRender } from '@src/editors/editorTestRender';
 import { ShowAnswerCardInternal as ShowAnswerCard } from './ShowAnswerCard';
 import * as hooks from '../hooks';
-import editorRender from '../../../../../../modifiedEditorTestRender';
 
 describe('ShowAnswerCard', () => {
   const showAnswer = {

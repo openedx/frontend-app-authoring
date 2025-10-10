@@ -10,6 +10,7 @@ import {
   Hyperlink,
   Icon,
   IconButton,
+  IconButtonWithTooltip,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -23,6 +24,7 @@ import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -40,8 +42,8 @@ interface CardHeaderProps {
   isFormOpen: boolean;
   onEditSubmit: (titleValue: string) => void;
   closeForm: () => void;
-  isDisabledEditField: boolean;
   onClickDelete: () => void;
+  onClickUnlink: () => void;
   onClickDuplicate: () => void;
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
@@ -67,6 +69,7 @@ interface CardHeaderProps {
   extraActionsComponent?: ReactNode,
   onClickSync?: () => void;
   readyToSync?: boolean;
+  savingStatus?: RequestStatusType;
 }
 
 const CardHeader = ({
@@ -81,8 +84,8 @@ const CardHeader = ({
   isFormOpen,
   onEditSubmit,
   closeForm,
-  isDisabledEditField,
   onClickDelete,
+  onClickUnlink,
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
@@ -100,6 +103,7 @@ const CardHeader = ({
   extraActionsComponent,
   onClickSync,
   readyToSync,
+  savingStatus,
 }: CardHeaderProps) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -116,6 +120,7 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
+  const isSaving = savingStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -169,29 +174,21 @@ const CardHeader = ({
                   onEditSubmit(titleValue);
                 }
               }}
-              disabled={isDisabledEditField}
+              disabled={isSaving}
             />
           </Form.Group>
         ) : (
           <>
             {titleComponent}
-            {readyToSync && (
-              <IconButton
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-sync-button`}
-                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-                iconAs={SyncIcon}
-                onClick={onClickSync}
-              />
-            )}
-            <IconButton
+            <IconButtonWithTooltip
               className="item-card-button-icon"
               data-testid={`${namePrefix}-edit-button`}
-              alt={intl.formatMessage(messages.altButtonEdit)}
+              alt={intl.formatMessage(messages.altButtonRename)}
+              tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
               // @ts-ignore
-              disabled={isDisabledEditField}
+              disabled={isSaving}
             />
           </>
         )}
@@ -203,6 +200,15 @@ const CardHeader = ({
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
+          {readyToSync && (
+            <IconButtonWithTooltip
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              onClick={onClickSync}
+            />
+          )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
@@ -234,7 +240,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={isDisabledEditField}
+                disabled={isSaving}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -242,7 +248,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                  disabled={isDisabledEditField}
+                  disabled={isSaving}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}
@@ -280,9 +286,20 @@ const CardHeader = ({
                   </Dropdown.Item>
                 </>
               )}
+              {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
+              {(actions.unlinkable ?? null) !== null && (
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                  onClick={onClickUnlink}
+                  disabled={!actions.unlinkable}
+                  className="allow-hover-on-disabled"
+                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+                >
+                  {intl.formatMessage(messages.menuUnlink)}
+                </Dropdown.Item>
+              )}
               {actions.deletable && (
                 <Dropdown.Item
-                  className="border-top border-light"
                   data-testid={`${namePrefix}-card-header__menu-delete-button`}
                   onClick={onClickDelete}
                 >

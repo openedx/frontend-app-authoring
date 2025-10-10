@@ -3,10 +3,10 @@ import {
   fireEvent, screen, initializeMocks,
 } from '@src/testUtils';
 import * as redux from 'react-redux';
-import editorRender from '../../../../../../editorTestRender';
+import { editorRender } from '@src/editors/editorTestRender';
+import { actions } from '@src/editors/data/redux';
 import { LicenseSelectorInternal } from './LicenseSelector';
 import * as hooks from './hooks';
-import { actions } from '../../../../../../data/redux';
 
 jest.mock('./hooks', () => ({
   determineText: jest.fn(() => ({ levelDescription: 'Test level description' })),

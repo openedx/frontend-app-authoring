@@ -6,6 +6,7 @@ import {
   type Query,
   type QueryClient,
   replaceEqualDeep,
+  keepPreviousData,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { type MeiliSearch } from 'meilisearch';
@@ -79,6 +80,15 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.container(containerId),
     'children',
   ],
+  containerHierarchy: (containerId?: string) => {
+    if (containerId) {
+      return [
+        'hierarchy',
+        ...libraryAuthoringQueryKeys.container(containerId),
+      ];
+    }
+    return ['hierarchy'];
+  },
 };
 
 export const xblockQueryKeys = {
@@ -102,6 +112,15 @@ export const xblockQueryKeys = {
    * introspecting the usage keys.
    */
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
+  componentHierarchy: (usageKey?: string) => {
+    if (usageKey) {
+      return [
+        'hierarchy',
+        ...xblockQueryKeys.xblock(usageKey),
+      ];
+    }
+    return ['hierarchy'];
+  },
 };
 
 /**
@@ -183,7 +202,7 @@ export const useUpdateLibraryMetadata = () => {
     mutationFn: api.updateLibraryMetadata,
     onMutate: async (data) => {
       const queryKey = libraryAuthoringQueryKeys.contentLibrary(data.id);
-      const previousLibraryData = queryClient.getQueriesData(queryKey)[0][1] as api.ContentLibrary;
+      const previousLibraryData = queryClient.getQueriesData({ queryKey })[0][1] as api.ContentLibrary;
 
       const newLibraryData = {
         ...previousLibraryData,
@@ -213,7 +232,7 @@ export const useContentLibraryV2List = (customParams: api.GetLibrariesV2CustomPa
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
     queryFn: () => api.getContentLibraryV2List(customParams),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   })
 );
 
@@ -348,7 +367,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
     mutationFn: (data: api.UpdateXBlockFieldsRequest) => api.updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
       const queryKey = xblockQueryKeys.xblockFields(usageKey);
-      const previousBlockData = queryClient.getQueriesData(queryKey)?.[0]?.[1] as api.XBlockFields | undefined;
+      const previousBlockData = queryClient.getQueriesData({ queryKey })?.[0]?.[1] as api.XBlockFields | undefined;
       const formatedData = camelCaseObject(data);
 
       if (!previousBlockData) {
@@ -428,6 +447,24 @@ export const usePublishComponent = (usageKey: string) => {
     onSettled: () => {
       invalidateComponentData(queryClient, contentLibraryId, usageKey);
     },
+  });
+};
+
+/** Get the full hierarchy of the given library item (component/container) */
+export const useLibraryItemHierarchy = (key: string) => {
+  let queryKey: (string | undefined)[];
+  let queryFn: () => Promise<api.ItemHierarchyData>;
+  if (key.startsWith('lb:')) {
+    queryKey = xblockQueryKeys.componentHierarchy(key);
+    queryFn = () => api.getBlockHierarchy(key);
+  } else {
+    queryKey = libraryAuthoringQueryKeys.containerHierarchy(key!);
+    queryFn = () => api.getLibraryContainerHierarchy(key!);
+  }
+  return useQuery({
+    queryKey,
+    queryFn,
+    enabled: !!key,
   });
 };
 
@@ -773,6 +810,11 @@ export const useAddItemsToContainer = (containerId?: string) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
 
+      // Invalidate all hierarchies to update grandparents and grandchildren
+      // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
+
       const containerType = getBlockType(containerId);
       if (containerType === 'section') {
         // We invalidate the search query of the each itemId if the container is a section.
@@ -833,11 +875,11 @@ export const useUpdateContainerChildren = (containerId?: string) => {
 export const useRemoveContainerChildren = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (usageKeys: string[]) => {
+    mutationFn: async (itemIds: string[]) => {
       if (!containerId) {
         return undefined;
       }
-      return api.removeLibraryContainerChildren(containerId, usageKeys);
+      return api.removeLibraryContainerChildren(containerId, itemIds);
     },
     onSettled: () => {
       if (!containerId) {
@@ -848,6 +890,11 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+
+      // Invalidate all hierarchies to update grandparents and grandchildren
+      // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
     },
   });
 };
@@ -865,6 +912,7 @@ export const usePublishContainer = (containerId: string) => {
       // The child components/xblocks could and even the container itself could appear in many different collections
       // or other containers, so it's best to just invalidate everything.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibraryContent(libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
       queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });

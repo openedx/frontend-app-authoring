@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { initializeMocks } from '@src/testUtils';
 import { RequestKeys } from '@src/editors/data/constants/requests';
-import editorRender from '../../editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import TextEditor from '.';
 
 jest.mock('../../sharedComponents/TinyMceWidget', () => 'TinyMceWidget');
@@ -16,10 +16,17 @@ jest.mock('./hooks', () => ({
 }));
 
 describe('TextEditor', () => {
-  const initialState = {
+  const initialState: PartialEditorState = {
     app: {
-      blockValue: { data: { data: 'eDiTablE Text' } },
-      shouldCreateBlock: false,
+      blockValue: {
+        data: {
+          id: 'block-v1:Org+TS100+24+type@html+block@12345',
+          display_name: 'Sample Text Block',
+          category: 'html',
+          data: 'eDiTablE Text',
+          metadata: {},
+        },
+      } as any,
       showRawEditor: false,
       blockId: 'block-123',
       learningContextId: 'course+org+run',
@@ -28,7 +35,6 @@ describe('TextEditor', () => {
     requests: {
       [RequestKeys.fetchBlock]: {
         status: 'completed',
-        error: null,
       },
     },
   };

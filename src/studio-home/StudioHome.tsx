@@ -150,7 +150,7 @@ const StudioHome = () => {
             <TabsSection
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
-              isShowProcessing={isShowProcessing && !isFiltered}
+              isShowProcessing={Boolean(isShowProcessing) && !isFiltered}
               librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />

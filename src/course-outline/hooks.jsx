@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { useQueryClient } from '@tanstack/react-query';
 
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { RequestStatus } from '@src/data/constants';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   addSection,
@@ -62,9 +65,11 @@ import {
 } from './data/thunk';
 import { useCreateCourseBlock } from './data/apiHooks';
 import { getCourseItem } from './data/api';
+import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -102,6 +107,7 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
   const [
     isAddLibrarySectionModalOpen,
     openAddLibrarySectionModal,
@@ -242,6 +248,8 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleEditSubmit = (itemId, sectionId, displayName) => {
     dispatch(editCourseItemQuery(itemId, sectionId, displayName));
+    // Invalidate container diff queries to update sync diff preview
+    queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
   };
 
   const handleDeleteItemSubmit = () => {
@@ -263,6 +271,19 @@ const useCourseOutline = ({ courseId }) => {
         return;
     }
     closeDeleteModal();
+  };
+
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
+  const handleUnlinkItemSubmit = async () => {
+    // istanbul ignore if: this should never happen
+    if (!currentItem.id) {
+      return;
+    }
+
+    await unlinkDownstream(currentItem.id);
+    dispatch(fetchCourseOutlineIndexQuery(courseId));
+    closeUnlinkModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
@@ -382,7 +403,11 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeDeleteModal,
     openDeleteModal,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    openUnlinkModal,
     handleDeleteItemSubmit,
+    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,

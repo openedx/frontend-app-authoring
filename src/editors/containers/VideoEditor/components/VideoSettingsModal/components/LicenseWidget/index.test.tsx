@@ -1,11 +1,11 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { initializeMocks } from '@src/testUtils';
-import editorRender from '../../../../../../editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import LicenseWidget from '.';
 
 describe('LicenseWidget', () => {
-  const baseState = {
+  const baseState: PartialEditorState = {
     app: {
       learningContextId: 'random-id', // not a library ID, so isLibrary returns false
       blockId: null,
@@ -19,7 +19,7 @@ describe('LicenseWidget', () => {
     requests: {},
   };
   beforeEach(() => {
-    initializeMocks({ initialState: baseState });
+    initializeMocks({});
   });
 
   test('renders as expected with default props (no license)', () => {

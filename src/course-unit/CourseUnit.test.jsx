@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, render, waitFor, within, screen,
+  act, fireEvent, render, waitFor, within, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -14,6 +14,13 @@ import {
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
+
+import { IFRAME_FEATURE_POLICY } from '@src/constants';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
+import { getClipboardUrl } from '@src/generic/data/api';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 
 import {
   getCourseSectionVerticalApiUrl,
@@ -42,8 +49,6 @@ import {
 } from './__mocks__';
 import { clipboardUnit } from '../__mocks__';
 import { executeThunk } from '../utils';
-import { IFRAME_FEATURE_POLICY } from '../constants';
-import pasteComponentMessages from '../generic/clipboard/paste-component/messages';
 import pasteNotificationsMessages from './clipboard/paste-notification/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
@@ -51,18 +56,15 @@ import { extractCourseUnitId } from './sidebar/utils';
 import CourseUnit from './CourseUnit';
 
 import tagsDrawerMessages from '../content-tags-drawer/messages';
-import { getClipboardUrl } from '../generic/data/api';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 import addComponentMessages from './add-component/messages';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
-import { IframeProvider } from '../generic/hooks/context/iFrameContext';
 import moveModalMessages from './move-modal/messages';
 import xblockContainerIframeMessages from './xblock-container-iframe/messages';
 import headerNavigationsMessages from './header-navigations/messages';
 import sidebarMessages from './sidebar/messages';
 import messages from './messages';
-import { mockWaffleFlags } from '../data/apiHooks.mock';
 
 let axiosMock;
 let store;
@@ -463,6 +465,35 @@ describe('<CourseUnit />', () => {
           .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
       )).toBeInTheDocument();
     });
+  });
+
+  it('checks if the xblock unlink is called when the corresponding unlink button is clicked', async () => {
+    render(<RootWrapper />);
+    const usageId = courseVerticalChildrenMock.children[0].block_id;
+    axiosMock
+      .onDelete(getDownstreamApiUrl(usageId))
+      .reply(200);
+
+    await waitFor(() => {
+      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(iframe).toBeInTheDocument();
+    });
+
+    simulatePostMessageEvent(messageTypes.unlinkXBlock, {
+      usageId,
+    });
+    expect(await screen.findByText(/Unlink this component?/i)).toBeInTheDocument();
+
+    const dialog = await screen.findByRole('dialog');
+    // Find the Unlink button
+    const unlinkButton = await within(dialog).findByRole('button', { name: /confirm unlink/i });
+    expect(unlinkButton).toBeInTheDocument();
+    fireEvent.click(unlinkButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(usageId));
   });
 
   it('checks if xblock is a duplicate when the corresponding duplicate button is clicked and if the sidebar status is updated', async () => {
@@ -2322,14 +2353,14 @@ describe('<CourseUnit />', () => {
 
     expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
 
-    // Disable the "Edit" button
+    // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
     const editButton = within(unitHeaderTitle).getByRole(
       'button',
       { name: 'Edit' },
     );
     expect(editButton).toBeInTheDocument();
-    expect(editButton).toBeDisabled();
+    expect(editButton).toBeEnabled();
 
     // The "Publish" button should still be enabled
     const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
@@ -2339,14 +2370,6 @@ describe('<CourseUnit />', () => {
     );
     expect(publishButton).toBeInTheDocument();
     expect(publishButton).toBeEnabled();
-
-    // Disable the "Manage Tags" button
-    const manageTagsButton = screen.getByRole(
-      'button',
-      { name: tagsDrawerMessages.manageTagsButton.defaultMessage },
-    );
-    expect(manageTagsButton).toBeInTheDocument();
-    expect(manageTagsButton).toBeDisabled();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();

@@ -108,7 +108,6 @@ export interface EditorState {
     videos: Record<string, any>;
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
-    isMarkdownEditorEnabledForCourse: boolean;
   },
   requests: Record<keyof typeof RequestKeys, {
     status: keyof typeof RequestStates;
@@ -135,7 +134,7 @@ export interface EditorState {
     },
     showTranscriptByDefault: boolean;
     handout: null,
-    licenseType: null,
+    licenseType: string | null,
     licenseDetails: {
       attribution: boolean;
       noncommercial: boolean;
@@ -158,6 +157,12 @@ export interface EditorState {
     rawOLX: string;
     rawMarkdown: string;
     problemType: null | ProblemType | AdvancedProblemType;
+    /**
+     * Is the "markdown" editor currently active (as opposed to visual or advanced editors)
+     * This is confusingly named, and different from `isMarkdownEditorEnabledForContext`
+     * which is a waffle flag that determines whether the user is allowed to use the
+     * "markdown" editor at all in this course/library.
+     */
     isMarkdownEditorEnabled: boolean;
     question: string;
     answers: any[];

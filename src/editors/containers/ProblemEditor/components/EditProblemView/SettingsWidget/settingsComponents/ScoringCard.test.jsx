@@ -2,9 +2,9 @@ import React from 'react';
 import {
   screen, initializeMocks, fireEvent,
 } from '@src/testUtils';
+import { editorRender } from '@src/editors/editorTestRender';
+import { selectors, initializeStore } from '@src/editors/data/redux';
 import ScoringCard from './ScoringCard';
-import { selectors, initializeStore } from '../../../../../../data/redux';
-import editorRender from '../../../../../../modifiedEditorTestRender';
 
 const { app } = selectors;
 

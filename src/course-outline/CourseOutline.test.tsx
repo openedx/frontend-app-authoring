@@ -11,6 +11,7 @@ import pasteButtonMessages from '@src/generic/clipboard/paste-component/messages
 import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
 import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
@@ -2439,5 +2440,47 @@ describe('<CourseOutline />', () => {
       const { outlineIndexLoadingStatus } = store.getState().courseOutline.loadingStatus;
       expect(outlineIndexLoadingStatus).toEqual(RequestStatus.DENIED);
     });
+  });
+
+  it('can unlink library block', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexWithoutSections);
+
+    renderComponent();
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
+      .reply(200, {
+        locator: courseSectionMock.id,
+      });
+    axiosMock
+      .onGet(getXBlockApiUrl(courseSectionMock.id))
+      .reply(200, {
+        ...courseSectionMock,
+        actions: {
+          ...courseSectionMock.actions,
+          unlinkable: true,
+        },
+      });
+    const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
+    fireEvent.click(newSectionButton);
+
+    const element = await screen.findByTestId('section-card');
+    expect(element).toBeInTheDocument();
+
+    axiosMock.onDelete(getDownstreamApiUrl(courseSectionMock.id)).reply(200);
+
+    const menu = await within(element).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
+    const unlinkButton = await within(element).findByRole('button', { name: 'Unlink from Library' });
+    fireEvent.click(unlinkButton);
+    const confirmButton = await screen.findByRole('button', { name: 'Confirm Unlink' });
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete).toHaveLength(1);
+    });
+    expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
   });
 });

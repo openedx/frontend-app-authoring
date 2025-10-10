@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { initializeMocks } from '@src/testUtils';
-import editorRender from '../../../../../../editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 
 import DurationWidget from '.'; // default export now uses hooks
 
@@ -16,17 +16,17 @@ jest.mock('./hooks', () => ({
 }));
 
 describe('DurationWidget', () => {
-  const initialState = {
+  const initialState: PartialEditorState = {
     video: {
       duration: {
-        startTime: 0,
-        stopTime: 10,
+        startTime: '0',
+        stopTime: '10',
       },
     },
     app: {
     },
   };
-  beforeEach(() => initializeMocks({ initialState }));
+  beforeEach(() => initializeMocks());
 
   test('renders as expected with default state', () => {
     editorRender(<DurationWidget />, {

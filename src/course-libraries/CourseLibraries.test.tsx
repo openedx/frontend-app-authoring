@@ -327,4 +327,19 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(mockShowToast).toHaveBeenCalledWith(expectedToastMsg);
     expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'] });
   });
+
+  it('should show sync modal with local changes', async () => {
+    const itemIndex = 3;
+    const user = userEvent.setup();
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(previewBtns.length).toEqual(7);
+    await user.click(previewBtns[itemIndex]);
+
+    expect(screen.getByText('This library content has local edits.')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /course content/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /published library content/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /update to published library content/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /keep course content/i })).toBeInTheDocument();
+  });
 });

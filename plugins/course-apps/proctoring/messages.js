@@ -1,11 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  'authoring.proctoring.alert.error': {
-    id: 'authoring.proctoring.alert.error',
-    defaultMessage: 'We encountered a technical error while trying to save proctored exam settings. This might be a temporary issue, so please try again in a few minutes. If the problem persists, please go to the {support_link} for help.',
-    description: 'Alert message for proctoring settings save error.',
-  },
   'authoring.proctoring.alert.forbidden': {
     id: 'authoring.proctoring.alert.forbidden',
     defaultMessage: 'You do not have permission to edit proctored exam settings for this course. If you are a course team member and this problem persists, please go to the {support_link} for help.',

@@ -1,38 +1,26 @@
 import React from 'react';
 import { screen, initializeMocks } from '@src/testUtils';
-import { formatMessage } from '../../../../../../testUtils';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import ThumbnailWidget from '.';
-import editorRender from '../../../../../../editorTestRender';
-import { initializeStore } from '../../../../../../data/redux';
 
 jest.mock('../../../../../../data/services/cms/api', () => ({
   isEdxVideo: (args) => (args),
 }));
 
 describe('ThumbnailWidget', () => {
-  const props = {
-    error: {},
-    title: 'tiTLE',
-    intl: { formatMessage },
-    isLibrary: false,
-    allowThumbnailUpload: false,
-    thumbnail: '',
-    videoId: '',
-    updateField: jest.fn().mockName('args.updateField'),
-  };
-  const initialState = {
+  const initialState: PartialEditorState = {
     app: {
-      isLibrary: false,
+      learningContextId: 'random-id',
     },
     video: {
       allowThumbnailUpload: false,
-      thumbnail: '',
+      thumbnail: '' as any,
       videoId: '',
     },
   };
 
   beforeEach(() => {
-    initializeMocks({ initialState, initializeStore });
+    initializeMocks({ });
   });
 
   describe('snapshots', () => {
@@ -60,7 +48,7 @@ describe('ThumbnailWidget', () => {
         ...initialState,
         video: {
           allowThumbnailUpload: false,
-          thumbnail: 'sOMeUrl',
+          thumbnail: 'sOMeUrl' as any,
           videoId: 'sOMeViDEoID',
         },
       };
@@ -72,7 +60,7 @@ describe('ThumbnailWidget', () => {
         ...initialState,
         video: {
           allowThumbnailUpload: true,
-          thumbnail: 'sOMeUrl',
+          thumbnail: 'sOMeUrl' as any,
           videoId: 'sOMeViDEoID',
         },
       };
@@ -85,11 +73,11 @@ describe('ThumbnailWidget', () => {
         ...initialState,
         video: {
           allowThumbnailUpload: true,
-          thumbnail: 'sOMeUrl',
+          thumbnail: 'sOMeUrl' as any,
           videoId: 'sOMeViDEoID',
         },
       };
-      editorRender(<ThumbnailWidget {...props} />, { initialState: modifiedInitialState });
+      editorRender(<ThumbnailWidget />, { initialState: modifiedInitialState });
       expect(screen.getByRole('img', { name: 'Image used as thumbnail for video' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Thumbnail' })).toBeInTheDocument();
     });
@@ -98,7 +86,7 @@ describe('ThumbnailWidget', () => {
         ...initialState,
         video: {
           allowThumbnailUpload: true,
-          thumbnail: '',
+          thumbnail: '' as any,
           videoId: 'sOMeViDEoID',
         },
       };

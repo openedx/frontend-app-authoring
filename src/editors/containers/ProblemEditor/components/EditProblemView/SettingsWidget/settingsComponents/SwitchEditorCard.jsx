@@ -1,46 +1,44 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
+import { useEditorContext } from '@src/editors/EditorContext';
+import { selectors, thunkActions } from '@src/editors/data/redux';
+import BaseModal from '@src/editors/sharedComponents/BaseModal';
+import Button from '@src/editors/sharedComponents/Button';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import messages from '../messages';
-import { selectors, thunkActions } from '../../../../../../data/redux';
-import BaseModal from '../../../../../../sharedComponents/BaseModal';
-import Button from '../../../../../../sharedComponents/Button';
 import { handleConfirmEditorSwitch } from '../hooks';
-import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
-const SwitchEditorCard = ({ problemType, editorType }) => {
+const SwitchEditorCard = ({ editorType, problemType }) => {
   const dispatch = useDispatch();
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
 
-  const isMarkdownEditorEnabled = useSelector(
-    (state) => selectors.problem.isMarkdownEditorEnabled(state)
-      && selectors.app.isMarkdownEditorEnabledForCourse(state),
-  );
+  const { isMarkdownEditorEnabledForContext } = useEditorContext();
+  const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
 
-  const [isConfirmOpen, setConfirmOpen] = React.useState(false);
+  const isMarkdownEditorActive = isMarkdownEditorEnabled && isMarkdownEditorEnabledForContext;
 
-  if (isMarkdownEditorEnabled || problemType === ProblemTypeKeys.ADVANCED) {
+  const switchEditor = useCallback(() => {
+    dispatch(thunkActions.problem.switchEditor(editorType));
+  }, [dispatch, editorType]);
+
+  if (isMarkdownEditorActive || problemType === ProblemTypeKeys.ADVANCED) {
     return null;
   }
-
-  const handleSwitch = () => {
-    handleConfirmEditorSwitch({
-      switchEditor: () => dispatch(thunkActions.problem.switchEditor(editorType)),
-      setConfirmOpen,
-    });
-  };
 
   return (
     <Card className="border border-light-700 shadow-none">
       <BaseModal
         isOpen={isConfirmOpen}
         close={() => setConfirmOpen(false)}
-        title={
-          <FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />
-        }
+        title={<FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />}
         confirmAction={(
-          <Button onClick={handleSwitch} variant="primary">
+          <Button
+            onClick={() => handleConfirmEditorSwitch({ switchEditor, setConfirmOpen })}
+            variant="primary"
+          >
             <FormattedMessage {...messages[`ConfirmSwitchButtonLabel-${editorType}`]} />
           </Button>
         )}
