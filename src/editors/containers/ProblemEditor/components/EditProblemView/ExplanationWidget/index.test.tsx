@@ -1,27 +1,8 @@
 import React from 'react';
-import { render, screen, initializeMocks } from '@src/testUtils';
-import ExplanationWidget from '.';
-
-jest.mock('../../../../../data/redux', () => ({
-  __esModule: true,
-  default: jest.fn(),
-  selectors: {
-    problem: {
-      settings: jest.fn(state => ({ question: state })),
-    },
-    app: {
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-      images: jest.fn(state => ({ images: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      blockId: jest.fn(state => ({ blockId: state })),
-    },
-  },
-  thunkActions: {
-    video: {
-      importTranscript: jest.fn(),
-    },
-  },
-}));
+import { screen, initializeMocks } from '@src/testUtils';
+import editorRender from '../../../../../modifiedEditorTestRender';
+import ExplanationWidget from './index';
+import { initializeStore } from '../../../../../data/redux';
 
 jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
   ...jest.requireActual('../../../../../sharedComponents/TinyMceWidget/hooks'),
@@ -36,19 +17,27 @@ jest.mock('../../../../../sharedComponents/TinyMceWidget', () => ({
   default: () => <div>TinyMceWidget</div>,
 }));
 
-describe('SolutionWidget', () => {
-  const props = {
+const initialState = {
+  problem: {
     settings: { solutionExplanation: 'This is my solution' },
+  },
+  app: {
     learningContextId: 'course+org+run',
     images: {},
     isLibrary: false,
     blockId: 'block-v1:Org+TS100+24+type@html+block@12345',
-  };
+  },
+};
+
+describe('SolutionWidget', () => {
   beforeEach(() => {
-    initializeMocks();
+    initializeMocks({
+      initializeStore,
+      initialState,
+    });
   });
   test('renders correct default', () => {
-    render(<ExplanationWidget {...props} />);
+    editorRender(<ExplanationWidget />, { initialState });
     expect(screen.getByText('Explanation')).toBeInTheDocument();
     expect(screen.getByText('Provide an explanation for the correct answer')).toBeInTheDocument();
     expect(screen.getByText('TinyMceWidget')).toBeInTheDocument();

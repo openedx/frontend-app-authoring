@@ -1,46 +1,43 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import {
-  FormattedMessage,
-  useIntl,
-} from '@edx/frontend-platform/i18n';
-import {
-  Hyperlink,
-  Form,
-} from '@openedx/paragon';
+import { useSelector, useDispatch } from 'react-redux';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Hyperlink, Form } from '@openedx/paragon';
 
-import { selectors, actions } from '../../../../../../data/redux';
+import { selectors, actions } from '@src/editors/data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import messages from './messages';
 import * as hooks from './hooks';
 
 /**
- * Collapsible Form widget controlling video thumbnail
+ * Collapsible Form widget controlling video social sharing.
  */
-const SocialShareWidget = ({
-  // redux
-  allowVideoSharing,
-  isLibrary,
-  videoSharingEnabledForAll,
-  videoSharingEnabledForCourse,
-  videoSharingLearnMoreLink,
-  updateField,
-}) => {
+const SocialShareWidget = () => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
+  // ✅ Get values from Redux using useSelector
+  const allowVideoSharing = useSelector(selectors.video.allowVideoSharing);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const videoSharingLearnMoreLink = useSelector(selectors.video.videoSharingLearnMoreLink);
+  const videoSharingEnabledForAll = useSelector(selectors.video.videoSharingEnabledForAll);
+  const videoSharingEnabledForCourse = useSelector(selectors.video.videoSharingEnabledForCourse);
+
+  // ✅ Equivalent logic for determining what’s active
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
-  const learnMoreLink = videoSharingLearnMoreLink || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
+  const learnMoreLink = videoSharingLearnMoreLink
+    || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
+
+  const updateField = (payload) => dispatch(actions.video.updateField(payload));
   const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
-  const getSubtitle = () => {
-    if (allowVideoSharing.value) {
-      return intl.formatMessage(messages.enabledSubtitle);
-    }
-    return intl.formatMessage(messages.disabledSubtitle);
-  };
+  const getSubtitle = () => (allowVideoSharing.value
+    ? intl.formatMessage(messages.enabledSubtitle)
+    : intl.formatMessage(messages.disabledSubtitle));
 
-  return (videoSharingEnabled ? (
+  if (!videoSharingEnabled) { return null; }
+
+  return (
     <CollapsibleFormWidget
       fontSize="x-small"
       title={intl.formatMessage(messages.title)}
@@ -49,6 +46,7 @@ const SocialShareWidget = ({
       <div>
         <FormattedMessage {...messages.socialSharingDescription} />
       </div>
+
       <Form.Checkbox
         className="mt-3"
         checked={allowVideoSharing.value}
@@ -59,6 +57,7 @@ const SocialShareWidget = ({
           {intl.formatMessage(messages.socialSharingCheckboxLabel)}
         </div>
       </Form.Checkbox>
+
       {isSetByCourse && (
         <>
           <div className="mt-2">
@@ -69,48 +68,18 @@ const SocialShareWidget = ({
           </div>
         </>
       )}
+
       <div className="mt-3">
-        <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">
+        <Hyperlink
+          className="text-primary-500"
+          destination={learnMoreLink}
+          target="_blank"
+        >
           {intl.formatMessage(messages.learnMoreLinkLabel)}
         </Hyperlink>
       </div>
     </CollapsibleFormWidget>
-  ) : null);
+  );
 };
 
-SocialShareWidget.defaultProps = {
-  allowVideoSharing: {
-    level: 'block',
-    value: false,
-  },
-  videoSharingEnabledForCourse: false,
-  videoSharingEnabledForAll: false,
-};
-
-SocialShareWidget.propTypes = {
-  // redux
-  allowVideoSharing: PropTypes.shape({
-    level: PropTypes.string.isRequired,
-    value: PropTypes.bool.isRequired,
-  }),
-  isLibrary: PropTypes.bool.isRequired,
-  videoSharingEnabledForAll: PropTypes.bool,
-  videoSharingEnabledForCourse: PropTypes.bool,
-  videoSharingLearnMoreLink: PropTypes.string.isRequired,
-  updateField: PropTypes.func.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  allowVideoSharing: selectors.video.allowVideoSharing(state),
-  isLibrary: selectors.app.isLibrary(state),
-  videoSharingLearnMoreLink: selectors.video.videoSharingLearnMoreLink(state),
-  videoSharingEnabledForAll: selectors.video.videoSharingEnabledForAll(state),
-  videoSharingEnabledForCourse: selectors.video.videoSharingEnabledForCourse(state),
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
-});
-
-export const SocialShareWidgetInternal = SocialShareWidget; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(SocialShareWidget);
+export default SocialShareWidget;

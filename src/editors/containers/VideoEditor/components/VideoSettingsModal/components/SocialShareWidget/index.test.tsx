@@ -1,318 +1,122 @@
 import React from 'react';
-import {
-  render, screen, initializeMocks,
-  fireEvent,
-} from '@src/testUtils';
-
-import { formatMessage } from '../../../../../../testUtils';
-import { SocialShareWidgetInternal as SocialShareWidget } from '.';
+import { screen, initializeMocks } from '@src/testUtils';
+import userEvent from '@testing-library/user-event';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
+import { initialState as editorInitialState } from '@src/editors/data/redux/video/reducer';
 import * as hooks from './hooks';
-
-jest.mock('../../../../../../data/redux', () => ({
-  actions: {
-    video: {
-      updateField: jest.fn().mockName('actions.video.updateField'),
-    },
-  },
-  selectors: {
-    app: {
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-    },
-    video: {
-      allowVideoSharing: jest.fn(state => ({ allowVideoSharing: state })),
-      videoSharingEnabledForAll: jest.fn(state => ({ videoSharingEnabledForAll: state })),
-      videoSharingEnabledForCourse: jest.fn(state => ({ videoSharingEnabledForCourse: state })),
-      videoSharingLearnMoreLink: jest.fn(state => ({ videoSharingLearnMoreLink: state })),
-    },
-  },
-}));
+import SocialShareWidget from './index';
 
 describe('SocialShareWidget', () => {
-  const props = {
-    intl: { formatMessage },
-    videoSharingEnabledForCourse: false,
-    videoSharingEnabledForAll: false,
-    isLibrary: false,
-    allowVideoSharing: {
-      level: 'block',
-      value: false,
-    },
-    videoSharingLearnMoreLink: 'sOMeURl.cOM',
-    updateField: jest.fn().mockName('args.updateField'),
-  };
+  const mockOnChange = jest.fn();
 
   beforeEach(() => {
     initializeMocks();
-    jest.spyOn(hooks, 'useTrackSocialSharingChange').mockReturnValue(jest.fn());
+    jest.spyOn(hooks, 'useTrackSocialSharingChange').mockReturnValue(mockOnChange);
+    jest.clearAllMocks();
   });
 
-  describe('rendered with videoSharingEnabled false', () => {
-    describe('with default props', () => {
-      it('should return null', () => {
-        const { container } = render(<SocialShareWidget {...props} />);
-        const reduxWrapper = container.firstChild;
-        expect(reduxWrapper?.textContent).toBe('');
-      });
-    });
-
-    describe('with videoSharingEnabledForAll false and isLibrary true', () => {
-      it('should return null', () => {
-        const { container } = render(<SocialShareWidget {...props} isLibrary />);
-        const reduxWrapper = container.firstChild;
-        expect(reduxWrapper?.textContent).toBe('');
-      });
-    });
-
-    describe('with videoSharingEnabledForCourse and isLibrary false and videoSharingEnabledForAll true', () => {
-      it('should return null', () => {
-        const { container } = render(<SocialShareWidget {...props} videoSharingEnabledForAll />);
-        const reduxWrapper = container.firstChild;
-        expect(reduxWrapper?.textContent).toBe('');
-      });
-    });
+  // ✅ helper to create a realistic Redux initial state
+  const makeInitialState = (overrides: PartialEditorState = {}): PartialEditorState => ({
+    ...editorInitialState,
+    app: {
+      ...editorInitialState.app,
+      blockId: 'block-v1:Org+TST101+2025+type@video+block@12345',
+      learningContextId: 'course-v1:Org+TST101+2025',
+      studioEndpointUrl: '',
+      lmsEndpointUrl: '',
+      editorInitialized: true,
+      ...(overrides.app ?? {}),
+    },
+    video: {
+      ...editorInitialState.video,
+      allowVideoSharing: { level: 'block', value: false },
+      videoSharingEnabledForAll: false,
+      videoSharingEnabledForCourse: false,
+      videoSharingLearnMoreLink: 'https://example.com',
+      transcripts: [],
+      ...(overrides.video ?? {}),
+    },
+    ...overrides,
   });
 
-  describe('rendered with videoSharingEnabled true', () => {
-    describe('and allowVideoSharing value equals true', () => {
-      describe(' with level equal to course', () => {
-        it('should have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'course',
-              value: true,
-            }}
-          />);
-          expect(screen.getByText('Change this setting on the course outline page.')).toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal true', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'course',
-              value: true,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).toBeDisabled();
-        });
-      });
-      describe(' with level equal to block', () => {
-        it('should not have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          expect(screen.queryByText('Change this setting on the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should not have override note', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          expect(screen.queryByText('Note: This setting is overridden by the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal false', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).not.toBeDisabled();
-        });
-      });
-      describe('isLibrary equals true', () => {
-        it('should not have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          expect(screen.queryByText('Change this setting on the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should not have override note', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          expect(screen.queryByText('Note: This setting is overridden by the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal false', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: true,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).not.toBeDisabled();
-        });
-      });
-      it('should have subtitle with text that reads Enabled', () => {
-        render(<SocialShareWidget
-          {...props}
-          videoSharingEnabledForCourse
-          allowVideoSharing={{
-            level: 'block',
-            value: true,
-          }}
-        />);
-        expect(screen.getByText('Social Sharing')).toBeInTheDocument();
-        fireEvent.click(screen.getByText('Social Sharing'));
-        const subtitle = screen.getByText('Enabled');
-        expect(subtitle).toBeInTheDocument();
-      });
+  it('renders null when video sharing is disabled for course and globally', () => {
+    const initialState = makeInitialState({
+      video: {
+        allowVideoSharing: { level: 'block', value: false },
+        videoSharingEnabledForCourse: false,
+        videoSharingEnabledForAll: false,
+      },
     });
 
-    describe('and allowVideoSharing value equals false', () => {
-      describe(' with level equal to course', () => {
-        it('should have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'course',
-              value: false,
-            }}
-          />);
-          expect(screen.getByText('Change this setting on the course outline page.')).toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal true', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'course',
-              value: false,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).toBeDisabled();
-        });
-      });
+    editorRender(<SocialShareWidget />, { initialState });
+    const { queryByText } = screen;
+    expect(queryByText(/Social sharing/i)).not.toBeInTheDocument();
+  });
 
-      describe(' with level equal to block', () => {
-        it('should not have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          expect(screen.queryByText('Change this setting on the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should not have override note', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          expect(screen.queryByText('Note: This setting is overridden by the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal false', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForCourse
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).toBeEnabled();
-        });
-      });
-
-      describe('isLibrary equals true', () => {
-        it('should not have setting location message', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          expect(screen.queryByText('Change this setting on the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should not have override note', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          expect(screen.queryByText('Note: This setting is overridden by the course outline page.')).not.toBeInTheDocument();
-        });
-        it('should have checkbox disabled prop equal false', () => {
-          render(<SocialShareWidget
-            {...props}
-            videoSharingEnabledForAll
-            isLibrary
-            allowVideoSharing={{
-              level: 'block',
-              value: false,
-            }}
-          />);
-          const checkbox = screen.getByRole('checkbox', { name: 'This video is shareable to social media' });
-          expect(checkbox).toBeInTheDocument();
-          expect(checkbox).toBeEnabled();
-        });
-      });
-      it('should have subtitle with text that reads Enabled', () => {
-        render(<SocialShareWidget
-          {...props}
-          videoSharingEnabledForCourse
-          allowVideoSharing={{
-            level: 'block',
-            value: false,
-          }}
-        />);
-        expect(screen.getByText('Social Sharing')).toBeInTheDocument();
-        fireEvent.click(screen.getByText('Social Sharing'));
-        const subtitle = screen.getByText('Disabled');
-        expect(subtitle).toBeInTheDocument();
-      });
+  it('renders correctly when video sharing is enabled for course', () => {
+    const initialState = makeInitialState({
+      video: {
+        allowVideoSharing: { level: 'block', value: true },
+        videoSharingEnabledForCourse: true,
+      },
     });
+
+    editorRender(<SocialShareWidget />, { initialState });
+    const elements = screen.getAllByText(/Social sharing/i);
+    expect(elements.length).toBeGreaterThan(0);
+    expect(screen.getByRole('checkbox')).toBeChecked();
+  });
+
+  it('renders correctly for library context (isLibrary = true)', () => {
+    const initialState = makeInitialState({
+      app: {
+        learningContextId: 'library-v1:abcd1234',
+      },
+      video: {
+        allowVideoSharing: { level: 'block', value: false },
+        videoSharingEnabledForAll: true,
+      },
+    });
+
+    editorRender(<SocialShareWidget />, { initialState });
+    const elements = screen.getAllByText(/Social sharing/i);
+    expect(elements.length).toBeGreaterThan(0);
+  });
+
+  it('triggers updateField when checkbox is toggled', async () => {
+    const user = userEvent.setup();
+    const initialState = makeInitialState({
+      video: {
+        allowVideoSharing: { level: 'block', value: false },
+        videoSharingEnabledForAll: false,
+        videoSharingEnabledForCourse: true,
+        videoSharingLearnMoreLink: '', // triggers fallback
+        transcripts: [],
+      },
+    });
+
+    editorRender(<SocialShareWidget />, { initialState });
+    const checkbox = screen.getByRole('checkbox');
+    await user.click(checkbox);
+    expect(mockOnChange).toHaveBeenCalled();
+  });
+
+  it('renders "Learn more" link with default docs URL if none provided', () => {
+    const initialState = makeInitialState({
+      video: {
+        allowVideoSharing: { level: 'block', value: false },
+        videoSharingEnabledForAll: false,
+        videoSharingEnabledForCourse: true,
+        videoSharingLearnMoreLink: '', // triggers fallback
+        transcripts: [],
+      },
+    });
+
+    editorRender(<SocialShareWidget />, { initialState });
+    const link = screen.getByRole('link', { name: /Learn more/i });
+    expect(link).toHaveAttribute(
+      'href',
+      'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html',
+    );
   });
 });

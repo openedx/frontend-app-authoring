@@ -1,7 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
+import React, { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Stack,
@@ -24,25 +22,32 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import { ErrorContext } from '../../../../hooks';
 import { RequestKeys } from '../../../../../../data/constants/requests';
 
-/**
- * Collapsible Form widget controlling video handouts
- */
-const HandoutWidget = ({
-  // redux
-  isLibrary,
-  handout,
-  getHandoutDownloadUrl,
-  updateField,
-  isUploadError,
-}) => {
+const HandoutWidget = () => {
   const intl = useIntl();
-  const [error] = React.useContext(ErrorContext).handout;
+  const dispatch = useDispatch();
+
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const handout = useSelector(selectors.video.handout);
+  const getHandoutDownloadUrl = useSelector(selectors.video.getHandoutDownloadUrl);
+  const isUploadError = useSelector((state) => selectors.requests.isFailed(state, {
+    requestKey: RequestKeys.uploadAsset,
+  }));
+
+  const [error] = useContext(ErrorContext).handout;
   const { fileSizeError } = hooks.fileSizeError();
   const fileInput = hooks.fileInput({ fileSizeError });
   const handoutName = hooks.parseHandoutName({ handout });
   const downloadLink = getHandoutDownloadUrl({ handout });
 
-  return (!isLibrary ? (
+  const handleDelete = () => {
+    dispatch(actions.video.updateField({ handout: null }));
+  };
+
+  if (isLibrary) {
+    return null;
+  }
+
+  return (
     <CollapsibleFormWidget
       fontSize="x-small"
       isError={Object.keys(error).length !== 0}
@@ -79,10 +84,14 @@ const HandoutWidget = ({
                 >
                   <FormattedMessage {...messages.replaceHandout} />
                 </Dropdown.Item>
-                <Dropdown.Item key="handout-actions-download" target="_blank" href={downloadLink}>
+                <Dropdown.Item
+                  key="handout-actions-download"
+                  target="_blank"
+                  href={downloadLink}
+                >
                   <FormattedMessage {...messages.downloadHandout} />
                 </Dropdown.Item>
-                <Dropdown.Item key="handout-actions-delete" onClick={() => updateField({ handout: null })}>
+                <Dropdown.Item key="handout-actions-delete" onClick={handleDelete}>
                   <FormattedMessage {...messages.deleteHandout} />
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -105,27 +114,8 @@ const HandoutWidget = ({
         </Stack>
       )}
     </CollapsibleFormWidget>
-  ) : null);
+  );
 };
 
-HandoutWidget.propTypes = {
-  // redux
-  isLibrary: PropTypes.bool.isRequired,
-  handout: PropTypes.shape({}).isRequired,
-  updateField: PropTypes.func.isRequired,
-  isUploadError: PropTypes.bool.isRequired,
-  getHandoutDownloadUrl: PropTypes.func.isRequired,
-};
-export const mapStateToProps = (state) => ({
-  isLibrary: selectors.app.isLibrary(state),
-  handout: selectors.video.handout(state),
-  getHandoutDownloadUrl: selectors.video.getHandoutDownloadUrl(state),
-  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (payload) => dispatch(actions.video.updateField(payload)),
-});
-
-export const HandoutWidgetInternal = HandoutWidget; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(HandoutWidget);
+export const HandoutWidgetInternal = HandoutWidget; // For testing
+export default HandoutWidget;
