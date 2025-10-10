@@ -6,17 +6,18 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { ROUTES } from './routes';
+import { LibraryBackupPage } from '@src/library-authoring/backup-restore';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
+import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
-import { CreateCollectionModal } from './create-collection';
-import { CreateContainerModal } from './create-container';
-import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
-import { LibraryUnitPage } from './units';
+import { CreateCollectionModal } from './create-collection';
+import { CreateContainerModal } from './create-container';
+import { ROUTES } from './routes';
 import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
+import { LibraryUnitPage } from './units';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
@@ -84,6 +85,10 @@ const LibraryLayout = () => (
       <Route
         path={ROUTES.UNIT}
         Component={LibraryUnitPage}
+      />
+      <Route
+        path={ROUTES.BACKUP}
+        Component={LibraryBackupPage}
       />
     </Route>
   </Routes>
