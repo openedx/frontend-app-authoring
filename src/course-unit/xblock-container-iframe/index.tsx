@@ -46,6 +46,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const intl = useIntl();
   const dispatch = useDispatch();
 
+  // Useful to reload iframe
+  const [iframeKey, setIframeKey] = useState(0);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
@@ -182,6 +184,12 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch(hideProcessingNotification());
   };
 
+  const handleRefreshIframe = () => {
+    // Updating iframeKey forces the iframe to re-render.
+    /* istanbul ignore next */
+    setIframeKey((prev) => prev + 1);
+  };
+
   const messageHandlers = useMessageHandlers({
     courseId,
     dispatch,
@@ -199,6 +207,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleShowProcessingNotification,
     handleHideProcessingNotification,
     handleEditXBlock,
+    handleRefreshIframe,
   });
 
   useIframeMessages(messageHandlers);
@@ -268,6 +277,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         />
       ) : null}
       <iframe
+        key={iframeKey}
         ref={iframeRef}
         title={intl.formatMessage(messages.xblockIframeTitle)}
         name="xblock-iframe"
