@@ -137,6 +137,10 @@ export const getLibraryContainerCollectionsUrl = (containerId: string) => `${get
  * Get the URL for the API endpoint to publish a single container (+ children).
  */
 export const getLibraryContainerPublishApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}publish/`;
+/**
+ * Get the URL for the API endpoint to copy a single container.
+ */
+export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
 
 export interface ContentLibrary {
   id: string;

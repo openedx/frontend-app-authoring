@@ -1,11 +1,18 @@
 import MockAdapter from 'axios-mock-adapter/types';
+import userEvent from '@testing-library/user-event';
+
+import { mockClipboardEmpty, mockClipboardHtml } from '@src/generic/data/api.mock';
 import {
   fireEvent,
   render as baseRender,
   screen,
   waitFor,
   initializeMocks,
-} from '../../testUtils';
+} from '@src/testUtils';
+import * as textEditorHooks from '@src/editors/containers/TextEditor/hooks';
+import editorCmsApi from '@src/editors/data/services/cms/api';
+import { ToastActionData } from '@src/generic/toast-context';
+
 import {
   mockContentLibrary,
   mockBlockTypesMetadata,
@@ -19,13 +26,9 @@ import {
   getLibraryPasteClipboardUrl,
   getXBlockFieldsApiUrl,
 } from '../data/api';
-import { mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import AddContent from './AddContent';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
-import editorCmsApi from '../../editors/data/services/cms/api';
-import { ToastActionData } from '../../generic/toast-context';
-import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
 
 // mockCreateLibraryBlock.applyMock();
 
@@ -193,6 +196,7 @@ describe('<AddContent />', () => {
   });
 
   it('should paste content', async () => {
+    userEvent.setup();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -204,12 +208,13 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
+    userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
   });
 
   it('should show error toast on paste failure', async () => {
+    userEvent.setup();
     // Simulate having an HTML block in the clipboard:
     mockClipboardHtml.applyMock();
 
@@ -218,7 +223,7 @@ describe('<AddContent />', () => {
 
     render();
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
+    userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
     expect(mockShowToast).toHaveBeenCalledWith(
@@ -227,6 +232,7 @@ describe('<AddContent />', () => {
   });
 
   it('should paste content inside a collection', async () => {
+    userEvent.setup();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -244,14 +250,16 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
+    userEvent.click(pasteButton);
 
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
+    await waitFor(() => expect(axiosMock.history.post.length).toEqual(1));
+    expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
-    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
+    expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl);
   });
 
   it('should show error toast on linking failure', async () => {
+    userEvent.setup();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -269,7 +277,7 @@ describe('<AddContent />', () => {
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
+    userEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
@@ -278,6 +286,7 @@ describe('<AddContent />', () => {
   });
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {
+    userEvent.setup();
     // Simulate having an HTML block in the clipboard:
     mockClipboardHtml.applyMock('conditional');
 
@@ -286,7 +295,7 @@ describe('<AddContent />', () => {
     render();
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
+    userEvent.click(pasteButton);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(0);
@@ -312,6 +321,7 @@ describe('<AddContent />', () => {
   ])('$label', async ({
     mockUrl, mockResponse, buttonName, expectedError,
   }) => {
+    userEvent.setup();
     axiosMock.onPost(mockUrl).reply(400, mockResponse);
 
     // Simulate having an HTML block in the clipboard:
@@ -319,13 +329,13 @@ describe('<AddContent />', () => {
 
     render();
     const button = await screen.findByRole('button', { name: buttonName });
-    fireEvent.click(button);
+    userEvent.click(button);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
-      expect(axiosMock.history.post[0].url).toEqual(mockUrl);
-      expect(mockShowToast).toHaveBeenCalledWith(expectedError);
     });
+    expect(axiosMock.history.post[0].url).toEqual(mockUrl);
+    expect(mockShowToast).toHaveBeenCalledWith(expectedError);
   });
 
   it('should not show collection, unit, section and subsection buttons when create component in unit', async () => {

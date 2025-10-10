@@ -13,6 +13,7 @@ import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { useClipboard } from '@src/generic/clipboard';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -39,6 +40,11 @@ type ContainerPreviewProps = {
 
 const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   const intl = useIntl();
+  const { copyToClipboard } = useClipboard();
+
+  const handleCopy = useCallback(() => {
+    copyToClipboard(containerId);
+  }, [copyToClipboard, containerId]);
 
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
 
@@ -55,6 +61,9 @@ const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
           data-testid="container-info-menu-toggle"
         />
         <Dropdown.Menu>
+          <Dropdown.Item onClick={handleCopy}>
+            <FormattedMessage {...messages.menuCopyContainer} />
+          </Dropdown.Item>
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />
           </Dropdown.Item>
