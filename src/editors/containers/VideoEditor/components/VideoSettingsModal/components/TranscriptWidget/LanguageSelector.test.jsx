@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-  render, screen, initializeMocks, fireEvent,
+  screen,
+  fireEvent,
+  initializeMocks,
 } from '@src/testUtils';
+import { editorRender } from '@src/editors/editorTestRender';
 import LanguageSelector from './LanguageSelector';
-import { selectors } from '../../../../../../data/redux';
 
 const lang1 = 'kLinGon';
 const lang1Code = 'kl';
@@ -21,36 +23,50 @@ jest.mock('../../../../../../data/constants/video', () => ({
 }));
 
 describe('LanguageSelector', () => {
-  const props = {
-    onSelect: jest.fn().mockName('props.OnSelect'),
+  const baseProps = {
     index: 1,
     language: lang1Code,
-    openLanguages: [[lang2Code, lang2], [lang3Code, lang3]],
   };
+
   beforeEach(() => {
     initializeMocks();
   });
 
   test('renders component with selected language', () => {
-    const { video } = selectors;
-    jest.spyOn(video, 'openLanguages').mockReturnValue(props.openLanguages);
-    const { container } = render(<LanguageSelector {...props} />);
+    const initialState = {
+      video: {
+        transcripts: [],
+        openLanguages: [[lang2Code, lang2], [lang3Code, lang3]],
+      },
+    };
+
+    const { container } = editorRender(<LanguageSelector {...baseProps} />, { initialState });
     expect(screen.getByRole('button', { name: 'Languages' })).toBeInTheDocument();
     expect(screen.getByText(lang1)).toBeInTheDocument();
     expect(container.querySelector('input.upload[type="file"]')).toBeInTheDocument();
   });
 
   test('renders component with no selection', () => {
-    const { video } = selectors;
-    jest.spyOn(video, 'openLanguages').mockReturnValue(props.openLanguages);
-    render(<LanguageSelector {...props} language="" />);
+    const initialState = {
+      video: {
+        transcripts: [],
+        openLanguages: [[lang2Code, lang2], [lang3Code, lang3]],
+      },
+    };
+
+    editorRender(<LanguageSelector {...baseProps} language="" />, { initialState });
     expect(screen.getByText('Select Language')).toBeInTheDocument();
   });
 
   test('transcripts no Open Languages, all dropdown items should be disabled', () => {
-    const { video } = selectors;
-    jest.spyOn(video, 'openLanguages').mockReturnValue([]);
-    const { container } = render(<LanguageSelector {...props} language="" />);
+    const initialState = {
+      video: {
+        transcripts: ['kl', 'el', 'sl'],
+        openLanguages: [],
+      },
+    };
+
+    const { container } = editorRender(<LanguageSelector {...baseProps} language="" />, { initialState });
     fireEvent.click(screen.getByRole('button', { name: 'Languages' }));
     const disabledItems = container.querySelectorAll('.disabled.dropdown-item');
     expect(disabledItems.length).toBe(3);
