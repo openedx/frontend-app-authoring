@@ -41,11 +41,6 @@ const messages = defineMessages({
     defaultMessage: 'Remove from collection',
     description: 'Menu item for remove a component from collection.',
   },
-  menuRemoveFromContainer: {
-    id: 'course-authoring.library-authoring.component.menu.remove',
-    defaultMessage: 'Remove from {containerType}',
-    description: 'Menu item for remove an item from {containerType}.',
-  },
   removeComponentFromCollectionSuccess: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-success',
     defaultMessage: 'Item successfully removed',
@@ -61,25 +56,20 @@ const messages = defineMessages({
     defaultMessage: 'Delete Component',
     description: 'Title text for the warning displayed before deleting a component',
   },
-  deleteComponentNamePlaceholder: {
-    id: 'course-authoring.library-authoring.component.delete-confirmation-placeholder',
+  componentNamePlaceholder: {
+    id: 'course-authoring.library-authoring.component.name-confirmation-placeholder',
     defaultMessage: 'this component',
     description: 'Text shown in place of the component\'s title while we\'re loading the title',
   },
   deleteComponentConfirm: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-text',
-    defaultMessage: 'Delete {componentName}? {message}',
+    defaultMessage: 'Are you sure you want to permanently delete {componentName}? This cannot be undone and will remove it from your library. {message}',
     description: 'Confirmation text to display before deleting a component',
   },
   deleteComponentConfirmCourse: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-msg-1',
-    defaultMessage: 'If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
+    defaultMessage: 'This component is used {courseCount, plural, one {{courseCountText} time} other {{courseCountText} times}} in courses, and will stop receiving updates there.',
     description: 'First part of confirmation message to display before deleting a component',
-  },
-  deleteComponentConfirmCourseSmall: {
-    id: 'course-authoring.library-authoring.component.delete-confirmation-text.course-small',
-    defaultMessage: 'Any course instances will stop receiving library updates.',
-    description: 'Small message text about courses when deleting a component',
   },
   deleteComponentConfirmUnits: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-text.units',
@@ -196,6 +186,16 @@ const messages = defineMessages({
     defaultMessage: 'Remove from unit',
     description: 'Text of the menu item to remove a component from a unit',
   },
+  removeComponentWarningTitle: {
+    id: 'course-authoring.library-authoring.component.remove-confirmation-title',
+    defaultMessage: 'Remove Component',
+    description: 'Title text for the warning displayed before removing a component from a container',
+  },
+  removeComponentConfirm: {
+    id: 'course-authoring.library-authoring.component.remove-confirmation-text',
+    defaultMessage: 'Are you sure you want to remove {componentName} from {parentContainerName}? Removing this component will not delete it from the library.',
+    description: 'Confirmation text to display before removing a container from its parent',
+  },
   removeComponentFromContainerSuccess: {
     id: 'course-authoring.library-authoring.component.remove-from-container-success',
     defaultMessage: 'Component successfully removed',
@@ -221,6 +221,11 @@ const messages = defineMessages({
     defaultMessage: 'Failed to undo remove component operation',
     description: 'Message to display on failure to undo delete component',
   },
+  componentRemoveButtonLabel: {
+    id: 'course-authoring.library-authoring.component.remove-button-label',
+    defaultMessage: 'Remove',
+    description: 'Button to confirm removal of a component from its parent container',
+  },
   containerPreviewText: {
     id: 'course-authoring.library-authoring.container.preview.text',
     defaultMessage: 'Contains {children}.',
@@ -233,12 +238,12 @@ const messages = defineMessages({
   },
   removeContainerConfirm: {
     id: 'course-authoring.library-authoring.container.remove-confirmation-text',
-    defaultMessage: 'Remove {containerName} from {parentContainerType} {parentContainerName}? Removing this {containerType} will not delete it from the library.',
+    defaultMessage: 'Are you sure you want to remove {containerName} from {parentContainerName}? This will not delete the {containerType} from your library.',
     description: 'Confirmation text to display before removing a container from its parent',
   },
   removeContainerButton: {
     id: 'course-authoring.library-authoring.container.confirm-remove-button',
-    defaultMessage: 'Remove {containerName}',
+    defaultMessage: 'Remove',
     description: 'Button to confirm removal of a container from its parent',
   },
 });

@@ -24,14 +24,14 @@ const ComponentDetails = () => {
     data: componentMetadata,
     isError,
     error,
-    isLoading,
+    isPending,
   } = useLibraryBlockMetadata(usageKey);
 
   if (isError) {
     return <AlertError error={error} />;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 

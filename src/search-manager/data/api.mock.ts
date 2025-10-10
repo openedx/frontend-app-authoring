@@ -23,6 +23,9 @@ mockContentSearchConfig.applyMock = () => (
 /**
  * Mock all future Meilisearch searches with the given response.
  *
+ * If you want to pass only the hits, use `hydrateSearchResult()` to create a full
+ * MultiSearchResponse object.
+ *
  * For a given test suite, this mock will stay in effect until you call it with
  * a different mock response, or you call `fetchMock.mockReset()`
  */
@@ -44,6 +47,25 @@ export function mockSearchResult(
     return filterFn?.(requestData) || newMockResponse;
   }, { overwriteRoutes: true });
 }
+
+/** Helper to create a full MultiSearchResponse object from an array of hits.
+ * You can then pass the result to `mockSearchResult()`.
+ */
+export const hydrateSearchResult: (hits: any[]) => MultiSearchResponse = (hits) => ({
+  results: [
+    {
+      hits,
+      offset: 0,
+      limit: 20,
+      nbHits: 0,
+      exhaustiveNbHits: true,
+      processingTimeMs: 1,
+      query: '',
+      params: '',
+      indexUid: 'studio',
+    },
+  ],
+});
 
 /**
  * Mock the block types returned by the API.

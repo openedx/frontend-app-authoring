@@ -5,8 +5,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Container, Layout, Card, Spinner, StatefulButton,
+  Badge, Container, Layout, Card, Icon, StatefulButton,
 } from '@openedx/paragon';
+import { SpinnerSimple } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 
 import CourseStepper from '../generic/course-stepper';
@@ -218,11 +219,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                     }}
                     icons={{
                       default: '',
-                      pending: <Spinner
-                        animation="border"
-                        size="sm"
-                        className="mr-2 spinner-icon"
-                      />,
+                      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
                     }}
                     state={getScanButtonState()}
                     onClick={() => dispatch(startLinkCheck(courseId))}
@@ -246,7 +243,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                       />
                     </Card.Section>
                   )}
-                  {!showStepper && (
+                  {linkCheckPresent && linkCheckResult && (
                     <>
                       <Card.Header
                         className="scan-header h3 px-3 text-black mb-2"
@@ -255,18 +252,16 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                       <Card.Section className="px-3 py-1">
                         <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                       </Card.Section>
+                      <ScanResults
+                        data={linkCheckResult}
+                        courseId={courseId}
+                        onErrorStateChange={setScanResultsError}
+                        rerunLinkUpdateInProgress={rerunLinkUpdateInProgress}
+                        rerunLinkUpdateResult={rerunLinkUpdateResult}
+                      />
                     </>
                   )}
                 </Card>
-                {linkCheckPresent && linkCheckResult && (
-                  <ScanResults
-                    data={linkCheckResult}
-                    courseId={courseId}
-                    onErrorStateChange={setScanResultsError}
-                    rerunLinkUpdateInProgress={rerunLinkUpdateInProgress}
-                    rerunLinkUpdateResult={rerunLinkUpdateResult}
-                  />
-                )}
               </article>
             </Layout.Element>
           </Layout>

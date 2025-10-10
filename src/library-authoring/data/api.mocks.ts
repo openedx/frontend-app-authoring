@@ -602,6 +602,7 @@ mockGetContainerMetadata.applyMock = () => {
  */
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
+  let blockType = 'html';
   switch (containerId) {
     case mockGetContainerMetadata.unitId:
     case mockGetContainerMetadata.sectionId:
@@ -618,7 +619,6 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       numChildren = 0;
       break;
   }
-  let blockType = 'html';
   let name = 'text';
   let typeNamespace = 'lb';
   if (containerId.includes('subsection')) {
@@ -638,6 +638,7 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
         id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
         displayName: `${name} block ${idx}`,
         publishedDisplayName: `${name} block published ${idx}`,
+        blockType,
       }
     )),
   );

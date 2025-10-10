@@ -112,12 +112,12 @@ const LibraryCollectionPage = () => {
 
   const {
     data: collectionData,
-    isLoading,
+    isPending: isLoading,
     isError,
     error,
   } = useCollection(libraryId, collectionId);
 
-  const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
+  const { data: libraryData, isPending: isLibLoading } = useContentLibrary(libraryId);
 
   if (!collectionId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.

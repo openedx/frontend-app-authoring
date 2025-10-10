@@ -11,6 +11,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,
+    "downstreamIsModified": false,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
@@ -26,6 +27,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,
+    "downstreamIsModified": false,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
@@ -41,6 +43,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 16,
     "versionDeclined": null,
+    "downstreamIsModified": true,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
@@ -56,6 +59,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,
+    "downstreamIsModified": false,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
@@ -71,6 +75,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,
+    "downstreamIsModified": false,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },
@@ -86,6 +91,7 @@
     "downstreamContextKey": "course-v1:OpenEdx+DemoX+CourseX",
     "versionSynced": 2,
     "versionDeclined": null,
+    "downstreamIsModified": false,
     "created": "2025-02-08T14:07:05.588484Z",
     "updated": "2025-02-08T14:07:05.588484Z"
   },

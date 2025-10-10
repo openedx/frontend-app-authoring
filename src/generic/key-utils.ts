@@ -14,6 +14,21 @@ export function getBlockType(usageKey: string): string {
 }
 
 /**
+ * Parses a library key and returns the organization and library name as an object.
+ */
+export function parseLibraryKey(libraryKey: string): { org: string, lib: string } {
+  const splitKey = libraryKey?.split(':') || [];
+  if (splitKey.length !== 3) {
+    throw new Error(`Invalid libraryKey: ${libraryKey}`);
+  }
+  const [, org, lib] = splitKey;
+  if (org && lib) {
+    return { org, lib };
+  }
+  throw new Error(`Invalid libraryKey: ${libraryKey}`);
+}
+
+/**
  * Given a usage key like `lb:org:lib:html:id`, get the library key
  * @param usageKey e.g. `lb:org:lib:html:id`
  * @returns The library key, e.g. `lib:org:lib`
@@ -56,6 +71,11 @@ export function isLibraryV1Key(learningContextKey: string | undefined | null): l
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('library-v1:');
 }
 
+/** Check if this is a V1 block key. */
+export function isBlockV1Key(usageKey: string | undefined | null): usageKey is string {
+  return typeof usageKey === 'string' && usageKey.startsWith('block-v1:');
+}
+
 /**
  * Build a collection usage key from library V2 context key and collection Id.
  * This Collection Usage Key is only used on tagging.
@@ -89,4 +109,20 @@ export enum ContainerType {
    * hierarchy.
    */
   Components = 'components',
+}
+
+/**
+ * Normalize a container type to the standard version. For example, 'sequential' will be normalized to 'subsection'.
+ */
+export function normalizeContainerType(containerType: ContainerType | string) {
+  switch (containerType) {
+    case ContainerType.Chapter:
+      return ContainerType.Section;
+    case ContainerType.Sequential:
+      return ContainerType.Subsection;
+    case ContainerType.Vertical:
+      return ContainerType.Unit;
+    default:
+      return containerType;
+  }
 }

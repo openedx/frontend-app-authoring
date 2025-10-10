@@ -88,7 +88,7 @@ export function fetchExportStatus(courseId) {
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
