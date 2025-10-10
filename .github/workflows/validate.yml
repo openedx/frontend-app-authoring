@@ -9,9 +9,6 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [20, 24]
 
     steps:
     - uses: actions/checkout@v5
@@ -22,7 +19,7 @@ jobs:
     - name: Archive code coverage results
       uses: actions/upload-artifact@v4
       with:
-        name: code-coverage-report-${{ matrix.node }}
+        name: code-coverage-report
         path: coverage/*.*
   coverage:
     runs-on: ubuntu-latest
@@ -32,7 +29,7 @@ jobs:
     - name: Download code coverage results
       uses: actions/download-artifact@v5
       with:
-        pattern: code-coverage-report-*
+        pattern: code-coverage-report
         path: coverage
         merge-multiple: true
     - name: Upload coverage

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import AlertError from '.';
@@ -33,7 +33,6 @@ describe('<AlertMessage />', () => {
       },
     };
     const { getByText } = render(<RootWrapper error={error} />);
-    screen.logTestingPlaygroundURL();
     expect(getByText(/this is an error message/i)).toBeInTheDocument();
     expect(getByText(/\{ "message": "this is a response body" \}/i)).toBeInTheDocument();
   });

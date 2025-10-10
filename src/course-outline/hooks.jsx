@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { useQueryClient } from '@tanstack/react-query';
 
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
@@ -64,9 +65,11 @@ import {
 } from './data/thunk';
 import { useCreateCourseBlock } from './data/apiHooks';
 import { getCourseItem } from './data/api';
+import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const waffleFlags = useWaffleFlags(courseId);
 
@@ -245,6 +248,8 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleEditSubmit = (itemId, sectionId, displayName) => {
     dispatch(editCourseItemQuery(itemId, sectionId, displayName));
+    // Invalidate container diff queries to update sync diff preview
+    queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
   };
 
   const handleDeleteItemSubmit = () => {

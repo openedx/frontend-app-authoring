@@ -177,7 +177,6 @@ describe('<LibraryUnitPage />', () => {
     const textBox = screen.getByRole('textbox', { name: /text input/i });
     expect(textBox).toBeInTheDocument();
     expect(textBox).toHaveValue('Test Unit');
-    screen.logTestingPlaygroundURL();
     fireEvent.change(textBox, { target: { value: 'New Unit Title' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
 
