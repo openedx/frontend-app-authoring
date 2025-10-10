@@ -1,4 +1,10 @@
 .lib-preview-xblock-changes-modal {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+
+  .preview-title {
+    span {
+      margin: 0 10px;
+    }
+  }
 }

@@ -10,19 +10,37 @@ import {
 import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import classNames from 'classnames';
 
-import { REGEX_RULES } from '../../constants';
-import Header from '../../header';
-import FormikControl from '../../generic/FormikControl';
-import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
-import AlertError from '../../generic/alert-error';
-import { useOrganizationListData } from '../../generic/data/apiHooks';
-import SubHeader from '../../generic/sub-header/SubHeader';
-import { useStudioHome } from '../../studio-home/hooks';
+import { REGEX_RULES } from '@src/constants';
+import { useOrganizationListData } from '@src/generic/data/apiHooks';
+import { useStudioHome } from '@src/studio-home/hooks';
+import Header from '@src/header';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import FormikControl from '@src/generic/FormikControl';
+import FormikErrorFeedback from '@src/generic/FormikErrorFeedback';
+import AlertError from '@src/generic/alert-error';
+
 import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
+import type { ContentLibrary } from '../data/api';
 
-const CreateLibrary = () => {
+/**
+ * Renders the form and logic to create a new library.
+ *
+ * Use `showInModal` to render this component in a way that can be
+ * used in a modal. Currently this component is used in a modal in the
+ * legacy libraries migration flow.
+ */
+export const CreateLibrary = ({
+  showInModal = false,
+  handleCancel,
+  handlePostCreate,
+}: {
+  showInModal?: boolean,
+  handleCancel?: () => void,
+  handlePostCreate?: (library: ContentLibrary) => void,
+}) => {
   const intl = useIntl();
   const navigate = useNavigate();
 
@@ -32,7 +50,7 @@ const CreateLibrary = () => {
   const {
     mutate,
     data,
-    isLoading,
+    isPending,
     isError,
     error,
   } = useCreateLibraryV2();
@@ -56,20 +74,30 @@ const CreateLibrary = () => {
   ) || [];
 
   const handleOnClickCancel = () => {
-    navigate('/libraries');
+    if (handleCancel) {
+      handleCancel();
+    } else {
+      navigate('/libraries');
+    }
   };
 
   if (data) {
-    navigate(`/library/${data.id}`);
+    if (handlePostCreate) {
+      handlePostCreate(data);
+    } else {
+      navigate(`/library/${data.id}`);
+    }
   }
 
   return (
     <>
-      <Header isHiddenMainMenu />
+      {!showInModal && (<Header isHiddenMainMenu />)}
       <Container size="xl" className="p-4 mt-3">
-        <SubHeader
-          title={intl.formatMessage(messages.createLibrary)}
-        />
+        {!showInModal && (
+          <SubHeader
+            title={intl.formatMessage(messages.createLibrary)}
+          />
+        )}
         <Formik
           initialValues={{
             title: '',
@@ -138,7 +166,15 @@ const CreateLibrary = () => {
                 className=""
                 controlClasses="pb-2"
               />
-              <ActionRow className="justify-content-start">
+              <ActionRow className={
+                classNames(
+                  {
+                    'justify-content-start': !showInModal,
+                    'justify-content-end': showInModal,
+                  },
+                )
+              }
+              >
                 <Button
                   variant="outline-primary"
                   onClick={handleOnClickCancel}
@@ -149,7 +185,7 @@ const CreateLibrary = () => {
                   type="submit"
                   variant="primary"
                   className="action btn-primary"
-                  state={isLoading ? 'disabled' : 'enabled'}
+                  state={isPending ? 'disabled' : 'enabled'}
                   disabledStates={['disabled']}
                   labels={{
                     enabled: intl.formatMessage(messages.createLibraryButton),
@@ -162,9 +198,7 @@ const CreateLibrary = () => {
         </Formik>
         {isError && (<AlertError error={error} />)}
       </Container>
-      <StudioFooterSlot />
+      {!showInModal && (<StudioFooterSlot />)}
     </>
   );
 };
-
-export default CreateLibrary;

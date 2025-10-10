@@ -1,12 +1,13 @@
 import {
-  Card, Icon, DataTable, StatefulButton, Spinner,
+  Card, Icon, DataTable, StatefulButton,
 } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  SpinnerSimple,
   ArrowForwardIos,
   LinkOff,
   Check,
 } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import React, { FC } from 'react';
 import { Filters, Unit } from '../types';
 import messages from './messages';
@@ -133,7 +134,7 @@ const LinksCol: FC<{
                 default: intl.formatMessage(messages.updateButton),
                 pending: intl.formatMessage(messages.updateButton),
               }}
-              icons={{ default: '', pending: <Spinner animation="border" size="sm" className="mr-2 spinner-icon" /> }}
+              icons={{ default: '', pending: <Icon src={SpinnerSimple} className="icon-spin" /> }}
               state={isUpdating ? STATEFUL_BUTTON_STATES.pending : STATEFUL_BUTTON_STATES.default}
               onClick={handleUpdate}
               disabled={isUpdating}

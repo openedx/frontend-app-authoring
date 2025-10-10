@@ -102,7 +102,7 @@ export const updateXBlockBlockIdToId = (data: object): object => {
  * @param unit - uses the 'upstreamInfo' object if found.
  * @returns True if readOnly, False if editable.
  */
-export const isUnitReadOnly = ({ upstreamInfo }: XBlock): boolean => (
+export const isUnitImportedFromLib = ({ upstreamInfo }: XBlock): boolean => (
   !!upstreamInfo
   && !!upstreamInfo.upstreamRef
   && upstreamInfo.upstreamRef.startsWith('lct:')

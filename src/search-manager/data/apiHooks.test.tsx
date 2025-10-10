@@ -41,7 +41,7 @@ describe('search manager api hooks', () => {
     fetchMockResponse();
     const { result } = renderHook(() => useGetBlockTypes('filter'), { wrapper });
     await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
+      expect(result.current.isPending).toBeFalsy();
     });
     const expectedData = {
       chapter: 1,
