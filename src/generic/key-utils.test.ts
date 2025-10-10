@@ -1,9 +1,12 @@
 import {
   buildCollectionUsageKey,
+  ContainerType,
   getBlockType,
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
+  normalizeContainerType,
+  parseLibraryKey,
 } from './key-utils';
 
 describe('component utils', () => {
@@ -67,6 +70,30 @@ describe('component utils', () => {
     }
   });
 
+  describe('parseLibraryKey', () => {
+    for (const [input, expected] of [
+      ['lib:org:lib', { org: 'org', lib: 'lib' }],
+      ['lib:OpenCraftX:ALPHA', { org: 'OpenCraftX', lib: 'ALPHA' }],
+    ] as const) {
+      it(`returns '${JSON.stringify(expected)}' for learning context key '${input}'`, () => {
+        expect(parseLibraryKey(input)).toStrictEqual(expected);
+      });
+    }
+
+    for (const input of [
+      '',
+      undefined,
+      null,
+      'not a key',
+      'lb:foo',
+      'lb:org:lib:html:id',
+    ]) {
+      it(`throws an exception for library key '${input}'`, () => {
+        expect(() => parseLibraryKey(input as any)).toThrow(`Invalid libraryKey: ${input}`);
+      });
+    }
+  });
+
   describe('isLibraryV1Key', () => {
     for (const [input, expected] of [
       ['library-v1:AximX+L1', true],
@@ -97,6 +124,21 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${libraryKey}' and collection Id '${collectionId}'`, () => {
         expect(buildCollectionUsageKey(libraryKey, collectionId)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('normalizeContainerType', () => {
+    for (const [containerType, expected] of [
+      [ContainerType.Vertical, ContainerType.Unit],
+      [ContainerType.Sequential, ContainerType.Subsection],
+      [ContainerType.Chapter, ContainerType.Section],
+      [ContainerType.Unit, ContainerType.Unit],
+      [ContainerType.Section, ContainerType.Section],
+      [ContainerType.Subsection, ContainerType.Subsection],
+    ] as const) {
+      it(`returns '${expected}' for '${containerType}'`, () => {
+        expect(normalizeContainerType(containerType)).toStrictEqual(expected);
       });
     }
   });

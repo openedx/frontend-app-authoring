@@ -8,7 +8,7 @@ import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
 
-type ContainerPropsType = React.ComponentProps<typeof Container>;
+type ContainerPropsType = Omit<React.ComponentProps<typeof Container>, 'children'>;
 
 interface HeaderProps {
   contextId?: string,

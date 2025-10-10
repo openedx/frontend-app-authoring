@@ -30,6 +30,7 @@
 @import "certificates/scss/Certificates";
 @import "group-configurations/GroupConfigurations";
 @import "optimizer-page/scan-results/ScanResults";
+@import "legacy-libraries-migration/";
 
 // To apply the glow effect to the selected Section/Subsection, in the Course Outline
 div.row:has(> div > div.highlight) {
