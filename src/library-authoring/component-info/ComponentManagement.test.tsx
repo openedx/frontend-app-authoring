@@ -34,18 +34,22 @@ mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
 
 /*
- * This function is used to get the inner text of an element.
- * https://stackoverflow.com/questions/47902335/innertext-is-undefined-in-jest-test
+ * Utility to get the inner text of an element safely.
  */
-const getInnerText = (element: Element) => element?.textContent
-  ?.split('\n')
-  .filter((text) => text && !text.match(/^\s+$/))
-  .map((text) => text.trim())
-  .join(' ');
+const getInnerText = (element: Element | null): string => {
+  if (!element) {
+    return '';
+  }
+  return (element.textContent ?? '')
+    .split('\n')
+    .filter((text) => text && !/^\s+$/.test(text))
+    .map((text) => text.trim())
+    .join(' ');
+};
 
-const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, element: Element) => (
-  element.nodeName === nodeName && getInnerText(element) === textToMatch
-);
+const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, element: Element | null) => !!element
+    && element.nodeName === nodeName
+    && getInnerText(element) === textToMatch;
 
 const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
   extraWrapper: ({ children }) => (
@@ -76,7 +80,11 @@ describe('<ComponentManagement />', () => {
     render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(await screen.findByText('(Never Published)')).toBeInTheDocument();
-    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'),
+      ),
+    ).toBeInTheDocument();
   });
 
   it('should render published status', async () => {
@@ -84,7 +92,7 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Published')).toBeInTheDocument();
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(
-      screen.getByText(matchInnerText('SPAN', 'Last published on June 22, 2024 at 24:00 by Luke.')),
+      screen.getByText(matchInnerText('SPAN', 'Last published on June 22, 2024 at 00:00 by Luke.')),
     ).toBeInTheDocument();
   });
 
@@ -106,7 +114,9 @@ describe('<ComponentManagement />', () => {
       });
       render(mockLibraryBlockMetadata.usageKeyForTags, libraryId);
       await waitFor(() => {
-        expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`Mocked ${expected} ContentTagsDrawer`),
+        ).toBeInTheDocument();
       });
     },
   );
@@ -143,10 +153,14 @@ describe('<ComponentManagement />', () => {
     mockSearchParam.mockReturnValue([SidebarActions.JumpToManageCollections]);
     render(mockLibraryBlockMetadata.usageKeyWithCollections);
     expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Manage tags' }),
+    ).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (0)' });
     expect(tagsSection).toHaveAttribute('aria-expanded', 'false');
-    const collectionsSection = await screen.findByRole('button', { name: 'Collections (1)' });
+    const collectionsSection = await screen.findByRole('button', {
+      name: 'Collections (1)',
+    });
     expect(collectionsSection).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -158,10 +172,14 @@ describe('<ComponentManagement />', () => {
     mockSearchParam.mockReturnValue([SidebarActions.JumpToManageTags]);
     render(mockLibraryBlockMetadata.usageKeyForTags);
     expect(await screen.findByText('Collections (0)')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Manage tags' }),
+    ).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (6)' });
     expect(tagsSection).toHaveAttribute('aria-expanded', 'true');
-    const collectionsSection = await screen.findByRole('button', { name: 'Collections (0)' });
+    const collectionsSection = await screen.findByRole('button', {
+      name: 'Collections (0)',
+    });
     expect(collectionsSection).toHaveAttribute('aria-expanded', 'false');
   });
 });

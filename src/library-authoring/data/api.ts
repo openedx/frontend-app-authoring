@@ -46,6 +46,11 @@ export const getLibraryBlockRestoreUrl = (usageKey: string) => `${getLibraryBloc
 export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}collections/`;
 
 /**
+ * Get the URL for a single component hierarchy api.
+ */
+export const getLibraryBlockHierarchyUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}hierarchy/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -120,6 +125,10 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getL
  * Get the URL for a single container children api.
  */
 export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false) => `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`;
+/**
+ * Get the URL for a single container hierarchy api.
+ */
+export const getLibraryContainerHierarchyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}hierarchy/`;
 /**
  * Get the URL for library container collections.
  */
@@ -579,6 +588,23 @@ export async function updateComponentCollections(usageKey: string, collectionKey
   });
 }
 
+export interface ItemHierarchyData {
+  objectKey: string;
+  sections: Container[];
+  subsections: Container[];
+  units: Container[];
+  components: LibraryBlockMetadata[];
+}
+export type ItemHierarchyMember = Container | LibraryBlockMetadata;
+
+/**
+ * Get the full hierarchy of a component
+ */
+export async function getBlockHierarchy(usageKey: string): Promise<ItemHierarchyData> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockHierarchyUrl(usageKey));
+  return camelCaseObject(data);
+}
+
 export interface CreateLibraryContainerDataRequest {
   title: string;
   containerType: ContainerType;
@@ -713,6 +739,18 @@ export async function removeLibraryContainerChildren(
     {
       data: { usage_keys: children },
     },
+  );
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetch a library container's hierarchy metadata.
+ */
+export async function getLibraryContainerHierarchy(
+  containerId: string,
+): Promise<ItemHierarchyData> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryContainerHierarchyApiUrl(containerId),
   );
   return camelCaseObject(data);
 }

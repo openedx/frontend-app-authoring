@@ -292,7 +292,7 @@ describe('library api hooks', () => {
   });
 
   it('should remove container children', async () => {
-    const containerId = 'lct:org:lib1';
+    const containerId = 'lct:org:lib:unit:unit-1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onDelete(url).reply(200);
@@ -326,9 +326,13 @@ describe('library api hooks', () => {
 
     expect(axiosMock.history.post[0].url).toEqual(url);
 
-    // Two call for `containerChildren` and library predicate
-    // and two more calls to invalidate the subsections.
-    expect(spy).toHaveBeenCalledTimes(4);
+    // Keys should be invalidated:
+    // 1. library
+    // 2. containerChildren
+    // 3. containerHierarchy
+    // 4 & 5. subsections
+    // 6 all hierarchies
+    expect(spy).toHaveBeenCalledTimes(6);
   });
 
   describe('publishContainer', () => {

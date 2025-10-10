@@ -10,6 +10,7 @@ import {
 } from '@openedx/paragon';
 
 import PropTypes from 'prop-types';
+import { useEditorContext } from '@src/editors/EditorContext';
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
@@ -41,9 +42,9 @@ const EditProblemView = ({ returnFunction }) => {
   const isDirty = useSelector(selectors.problem.isDirty);
 
   const isMarkdownEditorEnabledSelector = useSelector(selectors.problem.isMarkdownEditorEnabled);
-  const isMarkdownEditorEnabledForCourse = useSelector(selectors.app.isMarkdownEditorEnabledForCourse);
+  const { isMarkdownEditorEnabledForContext } = useEditorContext();
 
-  const isMarkdownEditorEnabled = isMarkdownEditorEnabledSelector && isMarkdownEditorEnabledForCourse;
+  const isMarkdownEditorEnabled = isMarkdownEditorEnabledSelector && isMarkdownEditorEnabledForContext;
 
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
 

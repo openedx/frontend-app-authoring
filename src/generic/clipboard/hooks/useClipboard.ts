@@ -34,7 +34,7 @@ const useClipboard = (canEdit: boolean = true) => {
   const { data: clipboardData } = useQuery({
     queryKey: ['clipboard'],
     queryFn: getClipboard,
-    refetchInterval: (data) => (data?.content?.status === CLIPBOARD_STATUS.loading ? 1000 : false),
+    refetchInterval: (query) => (query.state.data?.content?.status === CLIPBOARD_STATUS.loading ? 1000 : false),
   });
   const { showToast } = useContext(ToastContext);
 

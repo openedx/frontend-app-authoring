@@ -89,7 +89,6 @@ const ContentTagsDrawerTitle = () => {
           <div className="d-flex justify-content-center align-items-center flex-column">
             <Spinner
               animation="border"
-              size="xl"
               screenReaderText={intl.formatMessage(messages.loadingMessage)}
             />
           </div>
@@ -149,7 +148,6 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
           : (
             <Spinner
               animation="border"
-              size="xl"
               screenReaderText={intl.formatMessage(messages.loadingMessage)}
             />
           )}
@@ -197,7 +195,6 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
             <div className="d-flex justify-content-center">
               <Spinner
                 animation="border"
-                size="xl"
                 screenReaderText={intl.formatMessage(messages.loadingMessage)}
               />
             </div>

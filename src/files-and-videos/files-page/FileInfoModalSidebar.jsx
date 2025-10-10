@@ -7,7 +7,6 @@ import {
   IconButton,
   ActionRow,
   Icon,
-  Truncate,
   IconButtonWithTooltip,
   CheckboxControl,
 } from '@openedx/paragon';
@@ -15,6 +14,7 @@ import { ContentCopy, InfoOutline } from '@openedx/paragon/icons';
 
 import { getFileSizeToClosestByte } from '../../utils';
 import messages from './messages';
+import './FileInfoModalSidebar.scss';
 
 const FileInfoModalSidebar = ({
   asset,
@@ -28,7 +28,6 @@ const FileInfoModalSidebar = ({
     handleLockedAsset(asset?.id, locked);
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
-
   return (
     <Stack>
       <div className="font-weight-bold">
@@ -50,10 +49,11 @@ const FileInfoModalSidebar = ({
         <FormattedMessage {...messages.studioUrlTitle} />
       </div>
       <ActionRow>
-        <div style={{ wordBreak: 'break-word' }}>
-          <Truncate.Deprecated lines={1}>
-            {asset?.portableUrl}
-          </Truncate.Deprecated>
+        <div
+          className="files-page-url-truncate"
+          style={{ wordBreak: 'break-word' }}
+        >
+          {asset?.portableUrl}
         </div>
         <ActionRow.Spacer />
         <IconButton
@@ -67,10 +67,8 @@ const FileInfoModalSidebar = ({
         <FormattedMessage {...messages.webUrlTitle} />
       </div>
       <ActionRow>
-        <div style={{ wordBreak: 'break-word' }}>
-          <Truncate lines={1}>
-            {asset?.externalUrl}
-          </Truncate>
+        <div className="files-page-url-truncate" style={{ wordBreak: 'break-word' }}>
+          {asset?.externalUrl}
         </div>
         <ActionRow.Spacer />
         <IconButton

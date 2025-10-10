@@ -32,14 +32,14 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   onReview,
 }) => {
   const intl = useIntl();
-  const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
+  const { data, isPending } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
   const lastPublishedDate = data?.map(lib => new Date(lib.lastPublishedAt || 0).getTime())
     .reduce((acc, lastPublished) => Math.max(lastPublished, acc), 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {
-    if (isLoading) {
+    if (isPending) {
       return;
     }
     if (outOfSyncCount === 0) {
@@ -50,7 +50,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
     const dismissedAlertDate = parseInt(localStorage.getItem(alertKey) ?? '0', 10);
 
     setShowAlert((lastPublishedDate ?? 0) > dismissedAlertDate);
-  }, [outOfSyncCount, lastPublishedDate, isLoading, data]);
+  }, [outOfSyncCount, lastPublishedDate, isPending, data]);
 
   const dismissAlert = () => {
     setShowAlert(false);

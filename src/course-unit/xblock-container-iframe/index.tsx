@@ -9,34 +9,36 @@ import { useDispatch } from 'react-redux';
 import {
   hideProcessingNotification,
   showProcessingNotification,
-} from '../../generic/processing-notification/data/slice';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
-import ModalIframe from '../../generic/modal-iframe';
-import { useWaffleFlags } from '../../data/apiHooks';
-import { IFRAME_FEATURE_POLICY } from '../../constants';
-import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
-import { useIframe } from '../../generic/hooks/context/hooks';
+} from '@src/generic/processing-notification/data/slice';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
+import ModalIframe from '@src/generic/modal-iframe';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { IFRAME_FEATURE_POLICY } from '@src/constants';
+import ContentTagsDrawer from '@src/content-tags-drawer/ContentTagsDrawer';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { useIframeBehavior } from '@src/generic/hooks/useIframeBehavior';
+import { useIframeContent } from '@src/generic/hooks/useIframeContent';
+import { useIframeMessages } from '@src/generic/hooks/useIframeMessages';
+import { UnlinkModal } from '@src/generic/unlink-modal';
+import VideoSelectorPage from '@src/editors/VideoSelectorPage';
+import EditorPage from '@src/editors/EditorPage';
+
+import { messageTypes } from '../constants';
 import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   updateCourseUnitSidebar,
 } from '../data/thunk';
-import { messageTypes } from '../constants';
 import {
   useMessageHandlers,
 } from './hooks';
+import messages from './messages';
 import {
   XBlockContainerIframeProps,
   AccessManagedXBlockDataTypes,
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
-import messages from './messages';
-import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
-import { useIframeContent } from '../../generic/hooks/useIframeContent';
-import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
-import VideoSelectorPage from '../../editors/VideoSelectorPage';
-import EditorPage from '../../editors/EditorPage';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
@@ -45,6 +47,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const dispatch = useDispatch();
 
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
@@ -54,6 +57,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
   const [iframeOffset, setIframeOffset] = useState(0);
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
+  const [unlinkXBlockId, setUnlinkXBlockId] = useState<string | null>(null);
   const [configureXBlockId, setConfigureXBlockId] = useState<string | null>(null);
   const [showLegacyEditModal, setShowLegacyEditModal] = useState<boolean>(false);
   const [isManageTagsOpen, openManageTagsModal, closeManageTagsModal] = useToggle(false);
@@ -98,6 +102,11 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     openDeleteModal();
   };
 
+  const handleUnlinkXBlock = (usageId: string) => {
+    setUnlinkXBlockId(usageId);
+    openUnlinkModal();
+  };
+
   const handleManageXBlockAccess = (usageId: string) => {
     openConfigureModal();
     setConfigureXBlockId(usageId);
@@ -111,6 +120,13 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     if (deleteXBlockId) {
       unitXBlockActions.handleDelete(deleteXBlockId);
       closeDeleteModal();
+    }
+  };
+
+  const onUnlinkSubmit = () => {
+    if (unlinkXBlockId) {
+      unitXBlockActions.handleUnlink(unlinkXBlockId);
+      closeUnlinkModal();
     }
   };
 
@@ -171,6 +187,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch,
     setIframeOffset,
     handleDeleteXBlock,
+    handleUnlinkXBlock,
     handleDuplicateXBlock,
     handleManageXBlockAccess,
     handleScrollToXBlock,
@@ -199,6 +216,12 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}
         onDeleteSubmit={onDeleteSubmit}
+      />
+      <UnlinkModal
+        category="component"
+        isOpen={isUnlinkModalOpen}
+        close={closeUnlinkModal}
+        onUnlinkSubmit={onUnlinkSubmit}
       />
       <StandardModal
         title={intl.formatMessage(messages.videoPickerModalTitle)}

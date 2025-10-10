@@ -3,7 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams-all/`;
+export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/`;
 export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
 
 export interface PaginatedData<T> {
@@ -29,6 +29,7 @@ export interface BasePublishableEntityLink {
   created: string;
   updated: string;
   readyToSync: boolean;
+  downstreamIsModified: boolean;
 }
 
 export interface ComponentPublishableEntityLink extends BasePublishableEntityLink {

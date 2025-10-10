@@ -44,6 +44,7 @@ describe('useMessageHandlers', () => {
       dispatch: jest.fn(),
       setIframeOffset: jest.fn(),
       handleDeleteXBlock: jest.fn(),
+      handleUnlinkXBlock: jest.fn(),
       handleDuplicateXBlock: jest.fn(),
       handleScrollToXBlock: jest.fn(),
       handleManageXBlockAccess: jest.fn(),

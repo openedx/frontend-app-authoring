@@ -125,14 +125,12 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
       </Dropdown>
       {isConfirmingDelete && (
         <ContainerDeleter
-          isOpen={isConfirmingDelete}
           close={cancelDelete}
           containerId={containerKey}
         />
       )}
       {isConfirmingRemove && (
         <ContainerRemover
-          isOpen={isConfirmingRemove}
           close={cancelRemove}
           containerKey={containerKey}
           displayName={displayName}

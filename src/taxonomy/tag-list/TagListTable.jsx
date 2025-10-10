@@ -12,7 +12,7 @@ import { useTagListData, useSubTags } from '../data/apiHooks';
 const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);
 
-  if (subTagsData.isLoading) {
+  if (subTagsData.isPending) {
     return <LoadingSpinner />;
   }
   if (subTagsData.isError) {

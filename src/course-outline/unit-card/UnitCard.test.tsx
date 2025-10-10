@@ -19,7 +19,7 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 }));
 
 const section = {
-  id: '1',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
   published: true,
   visibilityState: 'live',
@@ -31,10 +31,10 @@ const section = {
     deletable: true,
     duplicable: true,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const subsection = {
-  id: '12',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
   displayName: 'Subsection Name',
   published: true,
   visibilityState: 'live',
@@ -45,10 +45,10 @@ const subsection = {
     deletable: true,
     duplicable: true,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const unit = {
-  id: '123',
+  id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
   displayName: 'unit Name',
   category: 'vertical',
   published: true,
@@ -65,8 +65,11 @@ const unit = {
     readyToSync: true,
     upstreamRef: 'lct:org1:lib1:unit:1',
     versionSynced: 1,
+    versionAvailable: 2,
+    versionDeclined: null,
+    errorMessage: null,
   },
-} as XBlock;
+} satisfies Partial<XBlock> as XBlock;
 
 const renderComponent = (props?: object) => render(
   <UnitCard
@@ -78,8 +81,8 @@ const renderComponent = (props?: object) => render(
     onOrderChange={jest.fn()}
     onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    savingStatus=""
     onEditSubmit={jest.fn()}
     onDuplicateSubmit={jest.fn()}
     getTitleLink={(id) => `/some/${id}`}
@@ -91,6 +94,10 @@ const renderComponent = (props?: object) => render(
     }}
     {...props}
   />,
+  {
+    path: '/course/:courseId',
+    params: { courseId: '5' },
+  },
 );
 
 describe('<UnitCard />', () => {
@@ -102,7 +109,10 @@ describe('<UnitCard />', () => {
     const { findByTestId } = renderComponent();
 
     expect(await findByTestId('unit-card-header')).toBeInTheDocument();
-    expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute('href', '/some/123');
+    expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute(
+      'href',
+      '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
+    );
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -193,7 +203,6 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
 
     // Click on accept changes
     const acceptChangesButton = screen.getByText(/accept changes/i);
@@ -213,7 +222,6 @@ describe('<UnitCard />', () => {
 
     // Should open compare preview modal
     expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
-    expect(screen.getByText('Preview not available')).toBeInTheDocument();
 
     // Click on ignore changes
     const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });

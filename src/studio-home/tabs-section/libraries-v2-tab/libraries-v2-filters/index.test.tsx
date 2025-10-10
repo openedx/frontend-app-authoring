@@ -115,13 +115,13 @@ describe('LibrariesV2Filters', () => {
   });
 
   it('should display the loading spinner when isLoading is true', () => {
-    renderComponent({ isLoading: true });
+    renderComponent({ isPending: true });
     const spinner = screen.getByText('Loading...');
     expect(spinner).toBeInTheDocument();
   });
 
   it('should not display the loading spinner when isLoading is false', () => {
-    renderComponent({ isLoading: false });
+    renderComponent({ isPending: false });
     const spinner = screen.queryByText('Loading...');
     expect(spinner).not.toBeInTheDocument();
   });

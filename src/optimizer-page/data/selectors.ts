@@ -10,3 +10,5 @@ export const getLoadingStatus = (state: RootState) => state.courseOptimizer.load
 export const getSavingStatus = (state: RootState) => state.courseOptimizer.savingStatus;
 export const getLinkCheckResult = (state: RootState) => state.courseOptimizer.linkCheckResult;
 export const getLastScannedAt = (state: RootState) => state.courseOptimizer.lastScannedAt;
+export const getRerunLinkUpdateInProgress = (state: RootState) => state.courseOptimizer.rerunLinkUpdateInProgress;
+export const getRerunLinkUpdateResult = (state: RootState) => state.courseOptimizer.rerunLinkUpdateResult;

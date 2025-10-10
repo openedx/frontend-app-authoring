@@ -1,26 +1,19 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
-import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 
 import { LibraryBlock, type VersionSpec } from '../LibraryBlock';
 
 import messages from './messages';
 
-const PreviewNotAvailable = () => {
-  const intl = useIntl();
-
-  return (
-    <div className="d-flex mt-4 justify-content-center">
-      {intl.formatMessage(messages.previewNotAvailable)}
-    </div>
-  );
-};
-
 interface Props {
   usageKey: string;
   oldVersion?: VersionSpec;
   newVersion?: VersionSpec;
-  isContainer?: boolean;
+  oldTitle?: string;
+  showNewTitle?: boolean;
+  hasLocalChanges?: boolean;
+  oldUsageKey?: string;
 }
 
 /**
@@ -35,37 +28,51 @@ const CompareChangesWidget = ({
   usageKey,
   oldVersion = 'published',
   newVersion = 'draft',
-  isContainer = false,
+  oldTitle,
+  showNewTitle = false,
+  oldUsageKey,
+  hasLocalChanges = false,
 }: Props) => {
   const intl = useIntl();
 
+  const oldTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.courseContentTitle)
+    : intl.formatMessage(messages.oldVersionTitle);
+  const newTabMessage = hasLocalChanges
+    ? intl.formatMessage(messages.publishedLibraryContentTitle)
+    : intl.formatMessage(messages.newVersionTitle);
+
   return (
-    <div>
+    <div className="bg-white p-2">
       <Tabs variant="tabs" defaultActiveKey="new" id="preview-version-toggle" mountOnEnter>
-        <Tab eventKey="old" title={intl.formatMessage(messages.oldVersionTitle)}>
+        <Tab eventKey="old" title={oldTabMessage}>
           <div className="p-2 bg-white">
-            {isContainer ? (<PreviewNotAvailable />) : (
+            {oldTitle && hasLocalChanges && (
+              <div className="h3 mt-3.5">
+                {oldTitle}
+              </div>
+            )}
+            <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-15px' } : {}}>
               <IframeProvider>
                 <LibraryBlock
-                  usageKey={usageKey}
+                  usageKey={oldUsageKey || usageKey}
                   version={oldVersion}
                   minHeight="50vh"
                 />
               </IframeProvider>
-            )}
+            </div>
           </div>
         </Tab>
-        <Tab eventKey="new" title={intl.formatMessage(messages.newVersionTitle)}>
+        <Tab eventKey="new" title={newTabMessage}>
           <div className="p-2 bg-white">
-            {isContainer ? (<PreviewNotAvailable />) : (
-              <IframeProvider>
-                <LibraryBlock
-                  usageKey={usageKey}
-                  version={newVersion}
-                  minHeight="50vh"
-                />
-              </IframeProvider>
-            )}
+            <IframeProvider>
+              <LibraryBlock
+                usageKey={usageKey}
+                version={newVersion}
+                showTitle={showNewTitle}
+                minHeight="50vh"
+              />
+            </IframeProvider>
           </div>
         </Tab>
       </Tabs>

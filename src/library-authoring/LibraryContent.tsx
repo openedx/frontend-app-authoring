@@ -36,7 +36,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    isLoading,
+    isPending,
     isFiltered,
     usageKey,
   } = useSearchContext();
@@ -56,7 +56,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     true,
   );
 
-  if (isLoading) {
+  if (isPending) {
     return <LoadingSpinner />;
   }
   if (totalHits === 0) {

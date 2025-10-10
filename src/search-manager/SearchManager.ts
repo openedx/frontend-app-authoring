@@ -40,7 +40,7 @@ export interface SearchContextData {
   defaultSearchSortOrder: SearchSortOption;
   hits: HitType[];
   totalHits: number;
-  isLoading: boolean;
+  isPending: boolean;
   hasNextPage: boolean | undefined;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;

@@ -719,14 +719,16 @@ describe('<ContentTagsDrawer />', () => {
 
       await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
       expect(mockInvalidateQueries).toHaveBeenCalledTimes(5);
-      expect(mockInvalidateQueries).toHaveBeenNthCalledWith(5, [
-        'contentLibrary',
-        'lib:org:lib',
-        'content',
-        'container',
-        containerId,
-        'children',
-      ]);
+      expect(mockInvalidateQueries).toHaveBeenNthCalledWith(5, {
+        queryKey: [
+          'contentLibrary',
+          'lib:org:lib',
+          'content',
+          'container',
+          containerId,
+          'children',
+        ],
+      });
     });
   });
 

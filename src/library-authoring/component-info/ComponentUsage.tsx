@@ -35,7 +35,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     data: dataDownstreamLinks,
     isError: isErrorDownstreamLinks,
     error: errorDownstreamLinks,
-    isLoading: isLoadingDownstreamLinks,
+    isPending: isPendingDownstreamLinks,
   } = useEntityLinks({ upstreamKey: usageKey, contentType: 'components' });
 
   const downstreamKeys = useMemo(
@@ -47,14 +47,14 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     hits: downstreamHits,
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
-    isLoading: isLoadingIndexDocuments,
+    isPending: isPendingIndexDocuments,
   } = useContentFromSearchIndex(downstreamKeys);
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;
   }
 
-  if (isLoadingDownstreamLinks || (isLoadingIndexDocuments && !!downstreamKeys.length)) {
+  if (isPendingDownstreamLinks || (isPendingIndexDocuments && !!downstreamKeys.length)) {
     return <Loading />;
   }
 

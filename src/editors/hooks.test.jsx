@@ -56,7 +56,6 @@ describe('hooks', () => {
         blockId: 'blockId',
         studioEndpointUrl: 'studioEndpointUrl',
         learningContextId: 'learningContextId',
-        isMarkdownEditorEnabledForCourse: true,
       };
       hooks.useInitializeApp({ dispatch, data: fakeData });
       expect(dispatch).not.toHaveBeenCalledWith(fakeData);
@@ -65,7 +64,6 @@ describe('hooks', () => {
         fakeData.blockId,
         fakeData.studioEndpointUrl,
         fakeData.learningContextId,
-        fakeData.isMarkdownEditorEnabledForCourse,
       ]);
       cb();
       expect(dispatch).toHaveBeenCalledWith(thunkActions.app.initialize(fakeData));

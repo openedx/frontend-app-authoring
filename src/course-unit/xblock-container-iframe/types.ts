@@ -33,6 +33,7 @@ export interface XBlockContainerIframeProps {
   unitXBlockActions: {
     handleDelete: (XBlockId: string | null) => void;
     handleDuplicate: (XBlockId: string | null) => void;
+    handleUnlink: (XBlockId: string | null) => void;
   };
   courseVerticalChildren: Array<XBlockTypes>;
   handleConfigureSubmit: (XBlockId: string, ...args: any[]) => void;

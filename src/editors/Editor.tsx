@@ -5,8 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import * as hooks from './hooks';
 
-import { useWaffleFlags } from '../data/apiHooks';
-import { isCourseKey } from '../generic/key-utils';
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
 import AdvancedEditor from './AdvancedEditor';
@@ -28,15 +26,12 @@ const Editor: React.FC<Props> = ({
   onClose = null,
   returnFunction = null,
 }) => {
-  const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
-  const isMarkdownEditorEnabledForCourse = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
   const dispatch = useDispatch();
   const loading = hooks.useInitializeApp({
     dispatch,
     data: {
       blockId,
       blockType,
-      isMarkdownEditorEnabledForCourse,
       learningContextId,
       lmsEndpointUrl,
       studioEndpointUrl,

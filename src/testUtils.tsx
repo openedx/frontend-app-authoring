@@ -24,7 +24,7 @@ import {
 } from 'react-router-dom';
 
 import { ToastContext, type ToastContextData } from './generic/toast-context';
-import initializeReduxStore from './store';
+import initializeReduxStore, { type DeprecatedReduxState } from './store';
 import { getApiWaffleFlagsUrl } from './data/api';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
@@ -157,7 +157,7 @@ const defaultUser = {
  */
 export function initializeMocks({ user = defaultUser, initialState = undefined }: {
   user?: { userId: number, username: string },
-  initialState?: Record<string, any>, // TODO: proper typing for our redux state
+  initialState?: Partial<DeprecatedReduxState>
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,

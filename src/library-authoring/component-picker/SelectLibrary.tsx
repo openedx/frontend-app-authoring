@@ -57,7 +57,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
     error,
   } = useContentLibraryV2List({
@@ -70,7 +70,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary, itemType }: Select
     return <AlertError error={error} />;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 

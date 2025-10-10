@@ -21,7 +21,6 @@ describe('app reducer', () => {
           blockId: 'anID',
           learningContextId: 'OTHERid',
           blockType: 'someTYPE',
-          isMarkdownEditorEnabledForCourse: true,
         };
         expect(reducer(
           testingState,

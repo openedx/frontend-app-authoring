@@ -35,10 +35,10 @@ export const LibraryUnitPage = () => {
 
   const { sidebarItemInfo } = useSidebarContext();
 
-  const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
+  const { data: libraryData, isPending: isLibPending } = useContentLibrary(libraryId);
   // fetch unitData from index as it includes its parent subsections as well.
   const {
-    hits, isLoading, isError, error,
+    hits, isPending, isError, error,
   } = useContentFromSearchIndex(containerId ? [containerId] : []);
   const unitData = (hits as ContainerHit[])?.[0];
 
@@ -48,7 +48,7 @@ export const LibraryUnitPage = () => {
   }
 
   // Only show loading if unit or library data is not fetched from index yet
-  if (isLibLoading || isLoading) {
+  if (isLibPending || isPending) {
     return <Loading />;
   }
 

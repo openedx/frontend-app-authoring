@@ -37,7 +37,7 @@ const messages = defineMessages({
     description: 'Button to save changes to the OLX',
   },
   advancedDetailsOLXCancelButton: {
-    id: 'course-authoring.library-authoring.component.advanced.olx-save',
+    id: 'course-authoring.library-authoring.component.advanced.olx-cancel',
     defaultMessage: 'Cancel',
     description: 'Button to cancel changes to the OLX',
   },
@@ -76,11 +76,6 @@ const messages = defineMessages({
     defaultMessage: 'Edit component',
     description: 'Title for edit component button',
   },
-  publishComponentButtonTitle: {
-    id: 'course-authoring.library-authoring.component.publish.title',
-    defaultMessage: 'Publish component',
-    description: 'Title for publish component button',
-  },
   previewTabTitle: {
     id: 'course-authoring.library-authoring.component.preview-tab.title',
     defaultMessage: 'Preview',
@@ -89,6 +84,11 @@ const messages = defineMessages({
   manageTabTitle: {
     id: 'course-authoring.library-authoring.component.manage-tab.title',
     defaultMessage: 'Manage',
+    description: 'Title for manage tab',
+  },
+  usageTabTitle: {
+    id: 'course-authoring.library-authoring.component.usage-tab.title',
+    defaultMessage: 'Usage',
     description: 'Title for manage tab',
   },
   manageTabTagsTitle: {
@@ -150,6 +150,11 @@ const messages = defineMessages({
     id: 'course-authoring.component-authoring.component.publish.error',
     defaultMessage: 'There was an error publishing the component.',
     description: 'Message when there is an error when publishing the component.',
+  },
+  usageTabHierarchyHeading: {
+    id: 'course-authoring.library-authoring.component-sidebar.usage-tab.hierarchy-heading',
+    defaultMessage: 'Content Hierarchy',
+    description: 'Heading for usage tab hierarchy section',
   },
 });
 

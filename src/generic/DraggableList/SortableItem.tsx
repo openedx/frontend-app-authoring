@@ -40,7 +40,6 @@ const SortableItem = ({
     setNodeRef,
     transform,
     transition,
-    setActivatorNodeRef,
     isDragging,
   } = useSortable({
     id,
@@ -73,8 +72,6 @@ const SortableItem = ({
           {actions}
           {!disabled && (
           <IconButtonWithTooltip
-            key="drag-to-reorder-icon"
-            ref={setActivatorNodeRef}
             tooltipPlacement="top"
             tooltipContent={intl.formatMessage(messages.tooltipContent)}
             src={DragIndicator}

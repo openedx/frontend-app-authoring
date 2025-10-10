@@ -21,7 +21,6 @@ const initialState: EditorState['app'] = {
   videos: {},
   courseDetails: {},
   showRawEditor: false,
-  isMarkdownEditorEnabledForCourse: false,
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -36,7 +35,6 @@ const app = createSlice({
       blockId: payload.blockId,
       learningContextId: payload.learningContextId,
       blockType: payload.blockType,
-      isMarkdownEditorEnabledForCourse: payload.isMarkdownEditorEnabledForCourse,
       blockValue: null,
     }),
     setUnitUrl: (state, { payload }) => ({ ...state, unitUrl: payload }),

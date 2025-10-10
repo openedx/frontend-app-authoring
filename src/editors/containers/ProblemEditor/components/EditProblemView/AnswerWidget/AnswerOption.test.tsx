@@ -1,29 +1,12 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
+import { selectors } from '@src/editors/data/redux';
 import AnswerOption from './AnswerOption';
 import * as hooks from './hooks';
-import { selectors } from '../../../../../data/redux';
 
 const { problem } = selectors;
 
-const initialState = {
-  problem: {
-    problemType: 'multiplechoiceresponse', // No problem type selected by default
-    // ... other problem-related state
-  },
-  app: {
-    images: {}, // No images loaded by default; use {} if it's an object keyed by IDs, or [] if it's a list
-    isLibrary: false, // Default to false; not in library context initially
-    learningContextId: 'course+org+run', // No context ID by default
-    blockId: 'block-id', // No block ID initially
-    // ... other app-related state
-  },
-  // ... any other top-level state slices
-};
-
-export default initialState;
-
-jest.mock('../../../../../data/redux', () => ({
+jest.mock('@src/editors/data/redux', () => ({
   __esModule: true,
   default: jest.fn(),
   selectors: {
@@ -44,7 +27,7 @@ jest.mock('../../../../../data/redux', () => ({
   },
 }));
 
-jest.mock('../../../../../sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');
+jest.mock('@src/editors/sharedComponents/ExpandableTextArea', () => 'ExpandableTextArea');
 
 describe('AnswerOption', () => {
   const answerWithOnlyFeedback = {
@@ -86,7 +69,7 @@ describe('AnswerOption', () => {
       isFeedbackVisible: false,
       toggleFeedback: jest.fn(),
     });
-    initializeMocks({ initialState });
+    initializeMocks();
   });
 
   test('renders correct option with feedback', () => {

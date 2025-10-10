@@ -22,7 +22,7 @@ export const useCreateCourseBlock = (
 ) => useMutation({
   mutationFn: createCourseXblock,
   onSettled: async (data) => {
-    callback?.(data.locator, data.parent_locator);
+    callback?.(data?.locator, data.parent_locator);
   },
 });
 

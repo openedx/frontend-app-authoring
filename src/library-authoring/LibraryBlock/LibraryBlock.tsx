@@ -2,11 +2,13 @@ import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
+import { IFRAME_FEATURE_POLICY } from '@src/constants';
+import { useIframeBehavior } from '@src/generic/hooks/useIframeBehavior';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { useIframeContent } from '@src/generic/hooks/useIframeContent';
+import { isBlockV1Key } from '@src/generic/key-utils';
+
 import messages from './messages';
-import { IFRAME_FEATURE_POLICY } from '../../constants';
-import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import { useIframeContent } from '../../generic/hooks/useIframeContent';
 
 export type VersionSpec = 'published' | 'draft' | number;
 
@@ -18,6 +20,7 @@ interface LibraryBlockProps {
   scrolling?: string;
   minHeight?: string;
   scrollIntoView?: boolean;
+  showTitle?: boolean,
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -36,15 +39,30 @@ export const LibraryBlock = ({
   minHeight,
   scrolling = 'no',
   scrollIntoView = false,
+  showTitle = false,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const lmsBaseUrl = getConfig().LMS_BASE_URL;
+  const isBlockV1 = isBlockV1Key(usageKey);
 
   const intl = useIntl();
-  const queryStr = version ? `?version=${version}` : '';
-  const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
+  const params = new URLSearchParams();
+  if (version) {
+    params.set('version', version.toString());
+  }
+  if (showTitle) {
+    params.set('show_title', 'true');
+  }
+
+  // For now, always show the draft version of the Xblock v1
+  // It would be better to use a Studio URL for this, but there is no embeddable URL
+  // to render a single component in the Studio API as far as we can tell.
+  const iframeUrl = isBlockV1
+    ? `${lmsBaseUrl}/xblock/${usageKey.replace('+type@', '+branch@draft-branch+type@')}?disable_staff_debug_info=True`
+    : `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${params.toString() ? `?${params.toString()}` : ''}`;
   const { iframeHeight } = useIframeBehavior({
     id: usageKey,
     iframeUrl,

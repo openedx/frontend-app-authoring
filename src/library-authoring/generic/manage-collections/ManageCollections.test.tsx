@@ -121,7 +121,6 @@ describe('<ManageCollections />', () => {
       collections={[]}
       useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
-    screen.logTestingPlaygroundURL();
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });

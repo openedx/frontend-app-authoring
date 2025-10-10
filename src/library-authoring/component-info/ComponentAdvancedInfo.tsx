@@ -78,10 +78,10 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
             {
               isEditingOLX ? (
                 <>
-                  <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
+                  <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isPending}>
                     <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
                   </Button>
-                  <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
+                  <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isPending}>
                     <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
                   </Button>
                 </>

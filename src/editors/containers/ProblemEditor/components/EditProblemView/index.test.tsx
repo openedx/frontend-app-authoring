@@ -43,7 +43,6 @@ jest.mock('./hooks', () => ({
 const initialState: PartialEditorState = {
   app: {
     lmsEndpointUrl: null,
-    isMarkdownEditorEnabledForCourse: false,
   },
   problem: {
     problemType: null,
@@ -89,7 +88,6 @@ describe('EditProblemView', () => {
     const modifiedInitialState: PartialEditorState = {
       app: {
         lmsEndpointUrl: null,
-        isMarkdownEditorEnabledForCourse: true,
       },
       problem: {
         problemType: null,

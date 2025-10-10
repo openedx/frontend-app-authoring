@@ -62,7 +62,7 @@ import {
  * @param {string} courseId - ID of the course
  * @returns {Object} - Object containing fetch course outline index query success or failure status
  */
-export function fetchCourseOutlineIndexQuery(courseId: string): object {
+export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) => Promise<void> {
   return async (dispatch) => {
     dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 

@@ -147,7 +147,6 @@ const OrganizationFilterSelector = ({
         : (
           <Spinner
             animation="border"
-            size="xl"
             screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
           />
         )}
@@ -235,7 +234,6 @@ export const TaxonomyListPage = () => {
             <Container className="d-flex justify-content-center mt-6">
               <Spinner
                 animation="border"
-                size="xl"
                 screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
               />
             </Container>

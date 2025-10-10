@@ -8,7 +8,7 @@ import { getWaffleFlags, waffleFlagDefaults } from './api';
 export const useWaffleFlags = (courseId?: string) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending: isLoading, isError } = useQuery({
     queryKey: ['waffleFlags', courseId],
     queryFn: () => getWaffleFlags(courseId),
     // Waffle flags change rarely, so never bother refetching them:
