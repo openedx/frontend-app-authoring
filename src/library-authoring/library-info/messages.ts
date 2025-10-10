@@ -47,7 +47,7 @@ const messages = defineMessages({
     description: 'Message when the library changes are reverted successfully.',
   },
   revertErrorMsg: {
-    id: 'course-authoring.library-authoring.publish.error',
+    id: 'course-authoring.library-authoring.revert.error',
     defaultMessage: 'There was an error reverting changes in the library.',
     description: 'Message when there is an error when reverting changes in the library.',
   },

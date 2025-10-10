@@ -1,28 +1,110 @@
-import { useCallback, useContext, useState } from 'react';
 import {
-  ActionRow, Button, ModalDialog, useToggle,
+  useCallback, useContext, useMemo, useState,
+} from 'react';
+import {
+  ActionRow, Button, Icon, ModalDialog, useToggle,
 } from '@openedx/paragon';
-import { Warning } from '@openedx/paragon/icons';
+import { Info, Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { useEventListener } from '../../generic/hooks';
+import { ToastContext } from '@src/generic/toast-context';
+import Loading from '@src/generic/Loading';
+import CompareChangesWidget from '@src/library-authoring/component-comparison/CompareChangesWidget';
+import AlertMessage from '@src/generic/alert-message';
+import LoadingButton from '@src/generic/loading-button';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { useEventListener } from '@src/generic/hooks';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
+
 import { messageTypes } from '../constants';
-import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
-import AlertMessage from '../../generic/alert-message';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
-import { ToastContext } from '../../generic/toast-context';
-import LoadingButton from '../../generic/loading-button';
-import Loading from '../../generic/Loading';
+
+type ConfirmationModalType = 'ignore' | 'update' | 'keep' | undefined;
+
+const ConfirmationModal = ({
+  modalType,
+  onClose,
+  updateAndRefresh,
+}: {
+  modalType: ConfirmationModalType,
+  onClose: () => void,
+  updateAndRefresh: (accept: boolean, overrideCustomizations: boolean) => void,
+}) => {
+  const intl = useIntl();
+
+  const {
+    title,
+    description,
+    btnLabel,
+    btnVariant,
+    accept,
+    overrideCustomizations,
+  } = useMemo(() => {
+    let resultTitle: string | undefined;
+    let resultDescription: string | undefined;
+    let resutlBtnLabel: string | undefined;
+    let resultAccept: boolean = false;
+    let resultOverrideCustomizations: boolean = false;
+    let resultBtnVariant: 'danger' | 'primary' = 'danger';
+
+    switch (modalType) {
+      case 'ignore':
+        resultTitle = intl.formatMessage(messages.confirmationTitle);
+        resultDescription = intl.formatMessage(messages.confirmationDescription);
+        resutlBtnLabel = intl.formatMessage(messages.confirmationConfirmBtn);
+        break;
+      case 'update':
+        resultTitle = intl.formatMessage(messages.updateToPublishedLibraryContentTitle);
+        resultDescription = intl.formatMessage(messages.updateToPublishedLibraryContentBody);
+        resutlBtnLabel = intl.formatMessage(messages.updateToPublishedLibraryContentConfirm);
+        resultAccept = true;
+        resultOverrideCustomizations = true;
+        break;
+      case 'keep':
+        resultTitle = intl.formatMessage(messages.keepCourseContentTitle);
+        resultDescription = intl.formatMessage(messages.keepCourseContentBody);
+        resutlBtnLabel = intl.formatMessage(messages.keepCourseContentButton);
+        resultBtnVariant = 'primary';
+        break;
+      default:
+        break;
+    }
+
+    return {
+      title: resultTitle,
+      description: resultDescription,
+      btnLabel: resutlBtnLabel,
+      accept: resultAccept,
+      btnVariant: resultBtnVariant,
+      overrideCustomizations: resultOverrideCustomizations,
+    };
+  }, [modalType]);
+
+  return (
+    <DeleteModal
+      isOpen={modalType !== undefined}
+      close={onClose}
+      variant="warning"
+      title={title}
+      description={description}
+      onDeleteSubmit={() => updateAndRefresh(accept, overrideCustomizations)}
+      btnLabel={btnLabel}
+      buttonVariant={btnVariant}
+    />
+  );
+};
 
 export interface LibraryChangesMessageData {
   displayName: string,
   downstreamBlockId: string,
   upstreamBlockId: string,
   upstreamBlockVersionSynced: number,
+  isLocallyModified?: boolean,
   isContainer: boolean,
+  blockType?: string | null,
 }
 
 export interface PreviewLibraryXBlockChangesProps {
@@ -45,27 +127,40 @@ export const PreviewLibraryXBlockChanges = ({
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
 
-  // ignore changes confirmation modal toggle.
-  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+  const [confirmationModalType, setConfirmationModalType] = useState<ConfirmationModalType>();
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
+
+  const isTextWithLocalChanges = (blockData.blockType === 'html' && blockData.isLocallyModified);
 
   const getBody = useCallback(() => {
     if (!blockData) {
       return <Loading />;
     }
+    if (blockData.isContainer) {
+      return (
+        <CompareContainersWidget
+          upstreamBlockId={blockData.upstreamBlockId}
+          downstreamBlockId={blockData.downstreamBlockId}
+        />
+      );
+    }
+
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
+        oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : undefined}
+        oldTitle={isTextWithLocalChanges ? blockData.displayName : undefined}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
-        isContainer={blockData.isContainer}
+        hasLocalChanges={isTextWithLocalChanges}
+        showNewTitle={isTextWithLocalChanges}
       />
     );
-  }, [blockData]);
+  }, [blockData, isTextWithLocalChanges]);
 
-  const updateAndRefresh = useCallback(async (accept: boolean) => {
+  const updateAndRefresh = useCallback(async (accept: boolean, overrideCustomizations: boolean) => {
     // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
@@ -75,7 +170,10 @@ export const PreviewLibraryXBlockChanges = ({
     const failureMsg = accept ? messages.acceptChangesFailure : messages.ignoreChangesFailure;
 
     try {
-      await mutation.mutateAsync(blockData.downstreamBlockId);
+      await mutation.mutateAsync({
+        blockId: blockData.downstreamBlockId,
+        overrideCustomizations,
+      });
       postChange(accept);
     } catch (e) {
       showToast(intl.formatMessage(failureMsg));
@@ -84,21 +182,46 @@ export const PreviewLibraryXBlockChanges = ({
     }
   }, [blockData]);
 
+  const itemIcon = getItemIcon(blockData.blockType || '');
+
+  // Build title
   const defaultTitle = intl.formatMessage(
     blockData.isContainer
       ? messages.defaultContainerTitle
       : messages.defaultComponentTitle,
+    {
+      itemIcon: <Icon size="lg" src={itemIcon} />,
+    },
   );
   const title = blockData.displayName
-    ? intl.formatMessage(messages.title, { blockTitle: blockData?.displayName })
+    ? intl.formatMessage(messages.title, {
+      blockTitle: blockData?.displayName,
+      blockIcon: <Icon size="lg" src={itemIcon} />,
+    })
     : defaultTitle;
+
+  // Build aria label
+  const defaultAriaLabel = intl.formatMessage(
+    blockData.isContainer
+      ? messages.defaultContainerTitle
+      : messages.defaultComponentTitle,
+    {
+      itemIcon: '',
+    },
+  );
+  const ariaLabel = blockData.displayName
+    ? intl.formatMessage(messages.title, {
+      blockTitle: blockData?.displayName,
+      blockIcon: '',
+    })
+    : defaultAriaLabel;
 
   return (
     <ModalDialog
       isOpen={isModalOpen}
       onClose={closeModal}
       size="xl"
-      title={title}
+      title={ariaLabel}
       className="lib-preview-xblock-changes-modal"
       hasCloseButton
       isFullscreenOnMobile
@@ -106,43 +229,64 @@ export const PreviewLibraryXBlockChanges = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {title}
+          <div className="d-flex preview-title">
+            {title}
+          </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <AlertMessage
-          show
-          variant="warning"
-          icon={Warning}
-          title={intl.formatMessage(messages.olderVersionPreviewAlert)}
-        />
+        {isTextWithLocalChanges ? (
+          <AlertMessage
+            show
+            variant="info"
+            icon={Info}
+            title={intl.formatMessage(messages.localEditsAlert)}
+          />
+        ) : (!blockData.isContainer && (
+          <AlertMessage
+            show
+            variant="warning"
+            icon={Warning}
+            title={intl.formatMessage(messages.olderVersionPreviewAlert)}
+          />
+        ))}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          <LoadingButton
-            onClick={() => updateAndRefresh(true)}
-            label={intl.formatMessage(messages.acceptChangesBtn)}
-          />
-          <Button
-            variant="tertiary"
-            onClick={openConfirmModal}
-          >
-            <FormattedMessage {...messages.ignoreChangesBtn} />
-          </Button>
-          <ModalDialog.CloseButton variant="tertiary">
-            <FormattedMessage {...messages.cancelBtn} />
-          </ModalDialog.CloseButton>
+          {isTextWithLocalChanges ? (
+            <Button
+              variant="tertiary"
+              onClick={() => setConfirmationModalType('update')}
+            >
+              <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
+            </Button>
+          ) : (
+            <LoadingButton
+              onClick={() => updateAndRefresh(true, false)}
+              label={intl.formatMessage(messages.acceptChangesBtn)}
+            />
+          )}
+          {isTextWithLocalChanges ? (
+            <Button
+              onClick={() => setConfirmationModalType('keep')}
+            >
+              <FormattedMessage {...messages.keepCourseContentButton} />
+            </Button>
+          ) : (
+            <Button
+              variant="tertiary"
+              onClick={() => setConfirmationModalType('ignore')}
+            >
+              <FormattedMessage {...messages.ignoreChangesBtn} />
+            </Button>
+          )}
         </ActionRow>
       </ModalDialog.Footer>
-      <DeleteModal
-        isOpen={isConfirmModalOpen}
-        close={closeConfirmModal}
-        variant="warning"
-        title={intl.formatMessage(messages.confirmationTitle)}
-        description={intl.formatMessage(messages.confirmationDescription)}
-        onDeleteSubmit={() => updateAndRefresh(false)}
-        btnLabel={intl.formatMessage(messages.confirmationConfirmBtn)}
+      <ConfirmationModal
+        modalType={confirmationModalType}
+        onClose={() => setConfirmationModalType(undefined)}
+        updateAndRefresh={updateAndRefresh}
       />
     </ModalDialog>
   );

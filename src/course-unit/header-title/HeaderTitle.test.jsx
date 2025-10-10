@@ -76,7 +76,7 @@ describe('<HeaderTitle />', () => {
     expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
-  it('Units sourced from upstream show a disabled edit button', async () => {
+  it('Units sourced from upstream show a enabled edit button', async () => {
     // Override mock unit with one sourced from an upstream library
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
@@ -95,7 +95,7 @@ describe('<HeaderTitle />', () => {
 
     const { getByRole } = renderComponent();
 
-    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeDisabled();
+    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
     expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 

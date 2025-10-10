@@ -1,0 +1,14 @@
+.status-button {
+  border: 1px solid;
+  border-left: 4px solid;
+  text-align: center;
+  white-space: pre-wrap;
+
+  &.draft-status {
+    @extend %draft-status;
+  }
+
+  &.published-status {
+    @extend %published-status;
+  }
+}

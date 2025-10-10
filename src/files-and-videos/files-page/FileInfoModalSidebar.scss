@@ -1,0 +1,16 @@
+/* stylelint-disable value-no-vendor-prefix */
+.files-page-url-truncate {
+  max-width: 200px;
+
+  /* Firefox + others fallback (single line ellipsis) */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* WebKit multiline clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 1; // adjust number of lines
+  line-clamp: 1; /* Standard property */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* stylelint-enable value-no-vendor-prefix */

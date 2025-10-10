@@ -23,8 +23,8 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock('../../generic/data/apiHooks', () => ({
-  ...jest.requireActual('../../generic/data/apiHooks'),
+jest.mock('@src/generic/data/apiHooks', () => ({
+  ...jest.requireActual('@src/generic/data/apiHooks'),
   useOrganizationListData: () => ({
     data: ['org1', 'org2', 'org3', 'org4', 'org5'],
     isLoading: false,
