@@ -40,6 +40,7 @@ import {
 } from './data/selectors';
 import {
   changeEditTitleFormOpen,
+  setXBlockPublishState,
   updateMovedXBlockParams,
   updateQueryPendingStatus,
 } from './data/slice';
@@ -171,6 +172,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(updateMovedXBlockParams({ isSuccess: false }));
   };
 
+  const resetXBlockPublishState = () => {
+    dispatch(setXBlockPublishState(false));
+  };
+
   const handleNavigateToTargetUnit = () => {
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
@@ -221,24 +226,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   }, [isMoveModalOpen]);
 
-  useEffect(() => {
-    const handlePageRefreshUsingStorage = (event) => {
-      // ignoring tests for if block, because it triggers when someone
-      // edits the component using editor which has a separate store
-      /* istanbul ignore next */
-      if (event.key === 'courseRefreshTriggerOnComponentEditSave') {
-        dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-        dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
-        localStorage.removeItem(event.key);
-      }
-    };
-
-    window.addEventListener('storage', handlePageRefreshUsingStorage);
-    return () => {
-      window.removeEventListener('storage', handlePageRefreshUsingStorage);
-    };
-  }, [blockId, sequenceId, isSplitTestType]);
-
   return {
     sequenceId,
     courseUnit,
@@ -274,6 +261,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
     setAddComponentTemplateData,
+    resetXBlockPublishState,
   };
 };
 

@@ -41,7 +41,13 @@ import {
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
-  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
+  courseId,
+  blockId,
+  unitXBlockActions,
+  courseVerticalChildren,
+  handleConfigureSubmit,
+  isUnitVerticalType,
+  resetXBlockPublishState,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -77,8 +83,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
-    sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
+    sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: newBlockId });
+    // This ensures the publish button is able
+    resetXBlockPublishState();
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, newBlockId]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);

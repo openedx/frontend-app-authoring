@@ -1,9 +1,40 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { useScrollToLastPosition, useLayoutGrid } from './hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useScrollToLastPosition, useLayoutGrid, useCourseUnit } from './hooks';
 import { iframeMessageTypes } from '../constants';
 
+import { setXBlockPublishState } from './data/slice';
+
+const queryClient = new QueryClient();
 jest.useFakeTimers();
+
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: jest.fn(),
+  useSearchParams: jest.fn(),
+}));
+
+jest.mock('../generic/hooks/context/hooks', () => ({
+  useIframe: jest.fn().mockReturnValue({
+    sendMessageToIframe: jest.fn(),
+  }),
+}));
+
+const wrapper = ({ children }) => (
+  <QueryClientProvider client={queryClient}>
+    <IntlProvider locale="en" messages={{}}>
+      {children}
+    </IntlProvider>
+  </QueryClientProvider>
+);
 
 describe('useLayoutGrid', () => {
   it('returns fullWidth layout when isUnitLibraryType is true', () => {
@@ -177,5 +208,47 @@ describe('useScrollToLastPosition', () => {
     renderHook(() => useScrollToLastPosition(storageKey));
 
     expect(setStateSpy).not.toHaveBeenCalledWith(false);
+  });
+});
+
+describe('useCourseUnit', () => {
+  const mockDispatch = jest.fn();
+
+  beforeEach(() => {
+    useDispatch.mockReturnValue(mockDispatch);
+    useNavigate.mockReturnValue(jest.fn());
+    useSearchParams.mockReturnValue([new URLSearchParams(), jest.fn()]);
+
+    useSelector.mockImplementation(() => ({}));
+  });
+
+  afterEach(() => jest.clearAllMocks());
+
+  describe('resetXBlockPublishState', () => {
+    it('dispatches setXBlockPublishState action with false', () => {
+      const { result } = renderHook(
+        () => useCourseUnit({ courseId: 'test-course', blockId: 'test-block' }),
+        { wrapper },
+      );
+
+      act(() => {
+        result.current.resetXBlockPublishState();
+      });
+
+      const filteredCalls = mockDispatch.mock.calls.filter(
+        ([action]) => action.type === setXBlockPublishState.type,
+      );
+      expect(filteredCalls).toHaveLength(1);
+      expect(filteredCalls[0][0]).toEqual(setXBlockPublishState(false));
+    });
+
+    it('is included in the hook return value', () => {
+      const { result } = renderHook(
+        () => useCourseUnit({ courseId: 'test-course', blockId: 'test-block' }),
+        { wrapper },
+      );
+
+      expect(typeof result.current.resetXBlockPublishState).toBe('function');
+    });
   });
 });
