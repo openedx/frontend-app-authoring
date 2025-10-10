@@ -4,7 +4,7 @@ import { editorRender, type PartialEditorState } from '@src/editors/editorTestRe
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
 import { selectors } from '../../../../../../data/redux';
-import { TranscriptWidgetInternal as TranscriptWidget, hooks } from './index';
+import { TranscriptWidget, hooks } from './index';
 
 jest.mock('../../../../../../data/redux', () => {
   const actual = jest.requireActual('../../../../../../data/redux');

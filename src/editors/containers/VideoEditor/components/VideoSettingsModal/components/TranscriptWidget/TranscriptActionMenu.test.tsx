@@ -5,8 +5,8 @@ import {
   initializeMocks,
 } from '@src/testUtils';
 import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
-import { thunkActions } from '../../../../../../data/redux';
-import { initialState as editorInitialState } from '../../../../../../data/redux/video/reducer';
+import { thunkActions } from '@src/editors/data/redux';
+import { initialState as editorInitialState } from '@src/editors/data/redux/video/reducer';
 
 import * as componentModule from './TranscriptActionMenu';
 
@@ -20,8 +20,8 @@ jest.mock('react-redux', () => {
   };
 });
 
-jest.mock('../../../../../../data/redux', () => {
-  const actual = jest.requireActual('../../../../../../data/redux');
+jest.mock('@src/editors/data/redux', () => {
+  const actual = jest.requireActual('@src/editors/data/redux');
   return {
     ...actual, // keep initializeStore, selectors, etc.
     thunkActions: {

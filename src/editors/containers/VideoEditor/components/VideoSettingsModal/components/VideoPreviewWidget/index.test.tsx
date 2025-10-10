@@ -1,6 +1,6 @@
 import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import { screen } from '@testing-library/react';
-import { initializeMocks } from '../../../../../../../testUtils';
+import { initializeMocks } from '@src/testUtils';
 import { VideoPreviewWidget } from '.';
 
 describe('VideoPreviewWidget', () => {

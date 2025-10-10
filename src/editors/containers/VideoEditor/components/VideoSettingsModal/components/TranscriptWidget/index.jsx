@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   FormattedMessage,
   useIntl,
@@ -26,9 +25,12 @@ import { in8lTranscriptLanguages } from '../../../../../../data/constants/video'
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
-import ImportTranscriptCard from './ImportTranscriptCard';
+import { ImportTranscriptCard } from './ImportTranscriptCard';
 import Transcript from './Transcript';
 import { ErrorContext } from '../../../../hooks';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './index';
 
@@ -82,7 +84,6 @@ const TranscriptWidget = () => {
   const [error] = React.useContext(ErrorContext).transcripts;
   const [showImportCard, setShowImportCard] = React.useState(true);
 
-  // 🔽 Replace mapStateToProps
   const transcripts = useSelector(selectors.video.transcripts);
   const selectedVideoTranscriptUrls = useSelector(selectors.video.selectedVideoTranscriptUrls);
   const allowTranscriptDownloads = useSelector(selectors.video.allowTranscriptDownloads);
@@ -99,7 +100,6 @@ const TranscriptWidget = () => {
   const isLibrary = useSelector(selectors.app.isLibrary);
   const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock);
 
-  // 🔽 Replace mapDispatchToProps
   const updateField = (stateUpdate) => dispatch(actions.video.updateField(stateUpdate));
 
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
@@ -210,20 +210,4 @@ const TranscriptWidget = () => {
   );
 };
 
-TranscriptWidget.defaultProps = {
-  selectedVideoTranscriptUrls: {},
-};
-
-TranscriptWidget.propTypes = {
-  transcripts: PropTypes.arrayOf(PropTypes.string),
-  selectedVideoTranscriptUrls: PropTypes.shape(),
-  allowTranscriptDownloads: PropTypes.bool,
-  showTranscriptByDefault: PropTypes.bool,
-  allowTranscriptImport: PropTypes.bool,
-  updateField: PropTypes.func,
-  isUploadError: PropTypes.bool,
-  isDeleteError: PropTypes.bool,
-};
-
-export const TranscriptWidgetInternal = TranscriptWidget;
-export default TranscriptWidget;
+export { TranscriptWidget };

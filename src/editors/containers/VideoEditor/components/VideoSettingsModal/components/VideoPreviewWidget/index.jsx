@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Collapsible, Image, Stack, Hyperlink,
 } from '@openedx/paragon';
-import { useSelector } from 'react-redux';// ✅ adjust import path depending on your setup
+import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../../data/redux';
 import thumbnailMessages from '../ThumbnailWidget/messages';
 import hooks from './hooks';

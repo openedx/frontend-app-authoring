@@ -9,7 +9,7 @@ import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
 import LicenseWidget from './components/LicenseWidget';
 import ThumbnailWidget from './components/ThumbnailWidget';
-import TranscriptWidget from './components/TranscriptWidget';
+import { TranscriptWidget } from './components/TranscriptWidget';
 import VideoSourceWidget from './components/VideoSourceWidget';
 // Using default import to get selectors connected VideoSourceWidget
 import ConnectedVideoPreviewWidget from './components/VideoPreviewWidget';

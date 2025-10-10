@@ -3,9 +3,8 @@ import {
   render, fireEvent, screen, initializeMocks,
 } from 'CourseAuthoring/testUtils';
 import { useDispatch } from 'react-redux';
-import TranscriptInternal, { hooks } from './Transcript';
-
-import { thunkActions } from '../../../../../../data/redux';
+import { thunkActions } from '@src/editors/data/redux';
+import Transcript, { hooks } from './Transcript';
 
 // Mock child components
 jest.mock('./TranscriptActionMenu', () => jest.fn(() => <div>TranscriptActionMenu</div>));
@@ -14,7 +13,7 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: jest.fn(),
 }));
-jest.mock('../../../../../../data/redux', () => ({
+jest.mock('@src/editors/data/redux', () => ({
   thunkActions: {
     video: {
       deleteTranscript: jest.fn(),
@@ -28,13 +27,12 @@ const defaultProps = {
   transcriptUrl: undefined,
 };
 
-describe('TranscriptInternal', () => {
+describe('Transcript', () => {
   const cancelDelete = jest.fn();
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
     initializeMocks();
-    jest.clearAllMocks();
     useDispatch.mockReturnValue(mockDispatch);
 
     // Default hook mock
@@ -46,13 +44,13 @@ describe('TranscriptInternal', () => {
   });
 
   it('renders ActionRow and LanguageSelector when not in delete confirmation', () => {
-    render(<TranscriptInternal {...defaultProps} />);
+    render(<Transcript {...defaultProps} />);
     expect(screen.getByText('LanguageSelector')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
   it('renders TranscriptActionMenu when language is not empty', () => {
-    render(<TranscriptInternal {...defaultProps} language="en" transcriptUrl="url" />);
+    render(<Transcript {...defaultProps} language="en" transcriptUrl="url" />);
     expect(screen.getByText('TranscriptActionMenu')).toBeInTheDocument();
   });
 
@@ -63,7 +61,7 @@ describe('TranscriptInternal', () => {
       launchDeleteConfirmation,
       cancelDelete,
     });
-    render(<TranscriptInternal {...defaultProps} />);
+    render(<Transcript {...defaultProps} />);
     fireEvent.click(screen.getByRole('button'));
     expect(launchDeleteConfirmation).toHaveBeenCalled();
   });
@@ -74,7 +72,7 @@ describe('TranscriptInternal', () => {
       launchDeleteConfirmation: jest.fn(),
       cancelDelete,
     });
-    render(<TranscriptInternal {...defaultProps} />);
+    render(<Transcript {...defaultProps} />);
     expect(screen.getByText('Delete this transcript?')).toBeInTheDocument();
     expect(
       screen.getByText('Are you sure you want to delete this transcript?'),
@@ -87,7 +85,7 @@ describe('TranscriptInternal', () => {
       launchDeleteConfirmation: jest.fn(),
       cancelDelete,
     });
-    render(<TranscriptInternal {...defaultProps} />);
+    render(<Transcript {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(cancelDelete).toHaveBeenCalled();
   });
@@ -101,7 +99,7 @@ describe('TranscriptInternal', () => {
 
     thunkActions.video.deleteTranscript.mockReturnValue('mockThunk');
 
-    render(<TranscriptInternal {...defaultProps} language="es" />);
+    render(<Transcript {...defaultProps} language="es" />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
 

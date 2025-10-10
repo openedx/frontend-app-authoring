@@ -50,7 +50,10 @@ export const hooks = {
 };
 /* istanbul ignore next */
 
-const LanguageSelector = ({ index, language }) => {
+const LanguageSelector = ({
+  index, // For a unique id for the form control
+  language,
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -135,5 +138,4 @@ LanguageSelector.propTypes = {
   language: PropTypes.string.isRequired,
 };
 
-export const LanguageSelectorInternal = LanguageSelector; // For testing only
 export default LanguageSelector;

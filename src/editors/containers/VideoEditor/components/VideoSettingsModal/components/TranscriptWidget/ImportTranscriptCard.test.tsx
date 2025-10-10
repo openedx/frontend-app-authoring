@@ -3,7 +3,7 @@ import {
   render, screen, fireEvent, initializeMocks,
 } from '@src/testUtils';
 import * as ReactRedux from 'react-redux';
-import { ImportTranscriptCardInternal as ImportTranscriptCard } from './ImportTranscriptCard';
+import { ImportTranscriptCard } from './ImportTranscriptCard';
 
 const mockDispatch = jest.fn();
 

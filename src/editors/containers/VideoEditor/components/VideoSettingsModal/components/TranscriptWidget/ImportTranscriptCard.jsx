@@ -49,5 +49,4 @@ ImportTranscriptCard.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
 
-export const ImportTranscriptCardInternal = ImportTranscriptCard; // For testing only
-export default ImportTranscriptCard;
+export { ImportTranscriptCard };
