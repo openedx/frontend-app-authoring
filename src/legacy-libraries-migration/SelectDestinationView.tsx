@@ -7,7 +7,7 @@ import type { ContentLibrary } from '@src/library-authoring/data/api';
 import messages from './messages';
 
 interface SelectDestinationViewProps {
-  destinationId: string | undefined;
+  destinationId?: string;
   setDestinationId: (library: ContentLibrary) => void;
   legacyLibCount: number;
 }
