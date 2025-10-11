@@ -30,7 +30,9 @@ interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
   onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
-  showLocalUpdateAlert: boolean;
+  // This three props are used in alert when the changes in on text components with local overrides
+  // It may be removed in the future
+  localUpdateAlertCount: number;
   localUpdateAlertBlockName: string;
 }
 
@@ -43,7 +45,7 @@ const CompareContainersWidgetInner = ({
   parent,
   onRowClick,
   onBackBtnClick,
-  showLocalUpdateAlert,
+  localUpdateAlertCount,
   localUpdateAlertBlockName,
 }: Props) => {
   const intl = useIntl();
@@ -134,13 +136,14 @@ const CompareContainersWidgetInner = ({
 
   const renderAlert = useCallback(() => {
     // Show this alert if the only change is a local override to a text component
-    if (showLocalUpdateAlert) {
+    if (localUpdateAlertCount > 0) {
       return (
         <Alert variant="info">
           <FormattedMessage
             {...messages.localChangeInTextAlert}
             values={{
               blockName: localUpdateAlertBlockName,
+              count: localUpdateAlertCount,
               b: BoldText,
             }}
           />
@@ -149,7 +152,7 @@ const CompareContainersWidgetInner = ({
     }
 
     return null;
-  }, [showLocalUpdateAlert, localUpdateAlertBlockName]);
+  }, [localUpdateAlertCount, localUpdateAlertBlockName]);
 
   if (isError || isLibError || isContainerTitleError) {
     return <ErrorAlert error={error || libError || containerTitleError} />;
@@ -195,18 +198,20 @@ export const CompareContainersWidget = ({
   });
 
   const { data } = useCourseContainerChildren(downstreamBlockId, true);
-  let showLocalUpdateAlert = false;
   let localUpdateAlertBlockName = '';
+  let localUpdateAlertCount = 0;
 
-  // Show this alert if the only change is a local override to a text component.
+  // Show this alert if the only change is text components with local overrides.
   // We decided not to put this in `CompareContainersWidgetInner` because if you enter a child,
   // the alert would disappear. By keeping this call in CompareContainersWidget,
   // the alert remains in the modal regardless of whether you navigate within the children.
-  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo.length === 1
-        && data.upstreamReadyToSyncChildrenInfo[0].isModified
-        && data.upstreamReadyToSyncChildrenInfo[0].blockType === 'html') {
-    showLocalUpdateAlert = true;
-    localUpdateAlertBlockName = data.upstreamReadyToSyncChildrenInfo[0].name;
+  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
+      && data.upstreamReadyToSyncChildrenInfo.every(value => value.isModified && value.blockType === 'html')
+  ) {
+    localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
+    if (localUpdateAlertCount === 1) {
+      localUpdateAlertBlockName = data.upstreamReadyToSyncChildrenInfo[0].name;
+    }
   }
 
   const onRowClick = (row: WithState<ContainerChild>) => {
@@ -246,7 +251,7 @@ export const CompareContainersWidget = ({
       parent={currentContainerState.parent}
       onRowClick={onRowClick}
       onBackBtnClick={onBackBtnClick}
-      showLocalUpdateAlert={showLocalUpdateAlert}
+      localUpdateAlertCount={localUpdateAlertCount}
       localUpdateAlertBlockName={localUpdateAlertBlockName}
     />
   );

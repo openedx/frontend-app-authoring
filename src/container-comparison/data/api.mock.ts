@@ -25,7 +25,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
       blockType = 'unit';
       displayName = 'subsection block 00';
       break;
-    case mockGetCourseContainerChildren.sectionShowsAlert:
+    case mockGetCourseContainerChildren.sectionShowsAlertSingleText:
       blockType = 'subsection';
       displayName = 'Test Title';
       upstreamReadyToSyncChildrenInfo = [{
@@ -35,6 +35,26 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
         isModified: true,
         upstream: 'upstream-id',
       }];
+      break;
+    case mockGetCourseContainerChildren.sectionShowsAlertMultipleText:
+      blockType = 'subsection';
+      displayName = 'Test Title';
+      upstreamReadyToSyncChildrenInfo = [
+        {
+          id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
+          name: 'Html block 11',
+          blockType: 'html',
+          isModified: true,
+          upstream: 'upstream-id',
+        },
+        {
+          id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@2',
+          name: 'Html block 22',
+          blockType: 'html',
+          isModified: true,
+          upstream: 'upstream-id',
+        },
+      ];
       break;
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
@@ -72,7 +92,8 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
 mockGetCourseContainerChildren.unitId = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0';
 mockGetCourseContainerChildren.subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0';
 mockGetCourseContainerChildren.sectionId = 'block-v1:UNIX+UX1+2025_T3+type@section+block@0';
-mockGetCourseContainerChildren.sectionShowsAlert = 'block-v1:UNIX+UX1+2025_T3+type@section2+block@0';
+mockGetCourseContainerChildren.sectionShowsAlertSingleText = 'block-v1:UNIX+UX1+2025_T3+type@section2+block@0';
+mockGetCourseContainerChildren.sectionShowsAlertMultipleText = 'block-v1:UNIX+UX1+2025_T3+type@section3+block@0';
 mockGetCourseContainerChildren.unitIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@loading';
 mockGetCourseContainerChildren.subsectionIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@loading';
 mockGetCourseContainerChildren.sectionIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@section+block@loading';

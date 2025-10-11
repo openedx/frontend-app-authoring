@@ -94,12 +94,12 @@ describe('CompareContainersWidget', () => {
     expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
   });
 
-  test('should show alert if the only change is a local override to a text component', async () => {
+  test('should show alert if the only change is a single text component with local overrides', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
     render(<CompareContainersWidget
       upstreamBlockId={mockGetContainerMetadata.sectionId}
-      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlert}
+      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertSingleText}
     />);
 
     expect((await screen.findAllByText('Test Title')).length).toEqual(2);
@@ -107,5 +107,22 @@ describe('CompareContainersWidget', () => {
     expect(screen.getByText(
       /the only change is to text block which has been edited in this course\. accepting will not remove local edits\./i,
     )).toBeInTheDocument();
+    expect(screen.getByText(/Html block 11/i)).toBeInTheDocument();
+  });
+
+  test('should show alert if the only changes is multiple text components with local overrides', async () => {
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
+    axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
+    render(<CompareContainersWidget
+      upstreamBlockId={mockGetContainerMetadata.sectionId}
+      downstreamBlockId={mockGetCourseContainerChildren.sectionShowsAlertMultipleText}
+    />);
+
+    expect((await screen.findAllByText('Test Title')).length).toEqual(2);
+
+    expect(screen.getByText(
+      /the only change is to which have been edited in this course\. accepting will not remove local edits\./i,
+    )).toBeInTheDocument();
+    expect(screen.getByText(/2 text blocks/i)).toBeInTheDocument();
   });
 });
