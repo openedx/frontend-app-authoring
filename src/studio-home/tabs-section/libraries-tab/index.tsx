@@ -48,7 +48,7 @@ const CardList = ({
           url={url}
           itemId={libraryKey}
           selectMode={inSelectMode ? 'multiple' : undefined}
-          isSelected={selectedIds && selectedIds.includes(libraryKey)}
+          isSelected={selectedIds?.includes(libraryKey)}
           isMigrated={isMigrated}
           migratedToKey={migratedToKey}
           migratedToTitle={migratedToTitle}
@@ -229,7 +229,7 @@ export const LibrariesList = ({
             <Form.Checkbox
               checked={allChecked}
               isIndeterminate={checkboxIsIndeterminate}
-              onChange={() => handleSelectAll()}
+              onChange={handleSelectAll}
               className="ml-0.5 mr-3"
             >
               <FormattedMessage {...messages.selectAll} />

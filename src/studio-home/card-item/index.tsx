@@ -170,7 +170,7 @@ const CardItem: React.FC<Props> = ({
   isLibraries = false,
   courseKey = '',
   selectMode,
-  isSelected,
+  isSelected = false,
   itemId = '',
   path,
   url,
