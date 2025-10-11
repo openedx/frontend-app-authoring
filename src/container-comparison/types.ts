@@ -1,6 +1,6 @@
 import { UpstreamInfo } from '@src/data/types';
 
-export type ContainerState = 'removed' | 'added' | 'modified' | 'childrenModified' | 'locallyRenamed' | 'moved';
+export type ContainerState = 'removed' | 'added' | 'modified' | 'childrenModified' | 'locallyContentUpdated' | 'locallyRenamed' | 'moved';
 
 export type WithState<T> = T & { state?: ContainerState, originalName?: string };
 export type WithIndex<T> = T & { index: number };

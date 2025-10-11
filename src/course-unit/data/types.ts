@@ -38,9 +38,18 @@ export interface ContainerChildData {
   upstreamLink: UpstreamInfo;
 }
 
+export interface UpstreamReadyToSyncChildrenInfo {
+  id: string;
+  name: string;
+  upstream: string;
+  blockType: string;
+  isModified: boolean;
+}
+
 export interface CourseContainerChildrenData {
   canPasteComponent: boolean;
-  children: ContainerChildData[],
+  children: ContainerChildData[];
   isPublished: boolean;
   displayName: string;
+  upstreamReadyToSyncChildrenInfo: UpstreamReadyToSyncChildrenInfo[];
 }

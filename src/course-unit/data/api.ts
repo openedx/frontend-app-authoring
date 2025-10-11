@@ -9,7 +9,7 @@ const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
-export const getCourseVerticalChildrenApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children`;
+export const getCourseVerticalChildrenApiUrl = (itemId: string, getUpstreamInfo: boolean = false) => `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children?get_upstream_info=${getUpstreamInfo}`;
 export const getCourseOutlineInfoUrl = (courseId: string) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 export const libraryBlockChangesUrl = (blockId: string) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
@@ -108,9 +108,12 @@ export async function handleCourseUnitVisibilityAndData(
 /**
  * Get an object containing course vertical children data.
  */
-export async function getCourseContainerChildren(itemId: string): Promise<CourseContainerChildrenData> {
+export async function getCourseContainerChildren(
+  itemId: string,
+  getUpstreamInfo: boolean = false,
+): Promise<CourseContainerChildrenData> {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseVerticalChildrenApiUrl(itemId));
+    .get(getCourseVerticalChildrenApiUrl(itemId, getUpstreamInfo));
   const camelCaseData = camelCaseObject(data);
 
   return updateXBlockBlockIdToId(camelCaseData) as CourseContainerChildrenData;

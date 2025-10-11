@@ -105,6 +105,7 @@ export interface LibraryChangesMessageData {
   isLocallyModified?: boolean,
   isContainer: boolean,
   blockType?: string | null,
+  isReadyToSyncIndividually?: boolean,
 }
 
 export interface PreviewLibraryXBlockChangesProps {
@@ -143,6 +144,7 @@ export const PreviewLibraryXBlockChanges = ({
         <CompareContainersWidget
           upstreamBlockId={blockData.upstreamBlockId}
           downstreamBlockId={blockData.downstreamBlockId}
+          isReadyToSyncIndividually={blockData.isReadyToSyncIndividually}
         />
       );
     }

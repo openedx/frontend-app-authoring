@@ -1,13 +1,18 @@
+import { useCallback, useMemo, useState } from 'react';
+
 import {
+  Alert,
   Breadcrumb, Button, Card, Icon, Stack,
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+
 import { ContainerType } from '@src/generic/key-utils';
 import ErrorAlert from '@src/generic/alert-error';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { BoldText } from '@src/utils';
+
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -18,12 +23,17 @@ import messages from './messages';
 interface ContainerInfoProps {
   upstreamBlockId: string;
   downstreamBlockId: string;
+  isReadyToSyncIndividually?: boolean;
 }
 
 interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
   onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
+  // This three props are used in alert when the changes in on text components with local overrides
+  // It may be removed in the future
+  localUpdateAlertCount: number;
+  localUpdateAlertBlockName: string;
 }
 
 /**
@@ -35,9 +45,11 @@ const CompareContainersWidgetInner = ({
   parent,
   onRowClick,
   onBackBtnClick,
+  localUpdateAlertCount,
+  localUpdateAlertBlockName,
 }: Props) => {
   const intl = useIntl();
-  const { data, isError, error } = useCourseContainerChildren(downstreamBlockId);
+  const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, parent.length === 0);
   const {
     data: libData,
     isError: isLibError,
@@ -122,12 +134,33 @@ const CompareContainersWidgetInner = ({
     );
   }, [parent]);
 
+  const renderAlert = useCallback(() => {
+    // Show this alert if the only change is a local override to a text component
+    if (localUpdateAlertCount > 0) {
+      return (
+        <Alert variant="info">
+          <FormattedMessage
+            {...messages.localChangeInTextAlert}
+            values={{
+              blockName: localUpdateAlertBlockName,
+              count: localUpdateAlertCount,
+              b: BoldText,
+            }}
+          />
+        </Alert>
+      );
+    }
+
+    return null;
+  }, [localUpdateAlertCount, localUpdateAlertBlockName]);
+
   if (isError || isLibError || isContainerTitleError) {
     return <ErrorAlert error={error || libError || containerTitleError} />;
   }
 
   return (
-    <div className="row">
+    <div className="row justify-content-center">
+      {renderAlert()}
       <div className="col col-6 p-1">
         <Card className="p-4">
           <ChildrenPreview title={getTitleComponent(data?.displayName)} side="Before">
@@ -151,7 +184,11 @@ const CompareContainersWidgetInner = ({
  * and allows the user to select the container to view. This is a wrapper component that maintains current
  * source state. Actual implementation of the diff view is done by CompareContainersWidgetInner.
  */
-export const CompareContainersWidget = ({ upstreamBlockId, downstreamBlockId }: ContainerInfoProps) => {
+export const CompareContainersWidget = ({
+  upstreamBlockId,
+  downstreamBlockId,
+  isReadyToSyncIndividually = false,
+}: ContainerInfoProps) => {
   const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
     parent: ContainerInfoProps[];
   }>({
@@ -159,6 +196,23 @@ export const CompareContainersWidget = ({ upstreamBlockId, downstreamBlockId }: 
     downstreamBlockId,
     parent: [],
   });
+
+  const { data } = useCourseContainerChildren(downstreamBlockId, true);
+  let localUpdateAlertBlockName = '';
+  let localUpdateAlertCount = 0;
+
+  // Show this alert if the only change is text components with local overrides.
+  // We decided not to put this in `CompareContainersWidgetInner` because if you enter a child,
+  // the alert would disappear. By keeping this call in CompareContainersWidget,
+  // the alert remains in the modal regardless of whether you navigate within the children.
+  if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
+      && data.upstreamReadyToSyncChildrenInfo.every(value => value.isModified && value.blockType === 'html')
+  ) {
+    localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
+    if (localUpdateAlertCount === 1) {
+      localUpdateAlertBlockName = data.upstreamReadyToSyncChildrenInfo[0].name;
+    }
+  }
 
   const onRowClick = (row: WithState<ContainerChild>) => {
     if (!isRowClickable(row.state, row.blockType as ContainerType)) {
@@ -197,6 +251,8 @@ export const CompareContainersWidget = ({ upstreamBlockId, downstreamBlockId }: 
       parent={currentContainerState.parent}
       onRowClick={onRowClick}
       onBackBtnClick={onBackBtnClick}
+      localUpdateAlertCount={localUpdateAlertCount}
+      localUpdateAlertBlockName={localUpdateAlertBlockName}
     />
   );
 };

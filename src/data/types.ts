@@ -64,6 +64,7 @@ export interface UpstreamInfo {
   isModified?: boolean,
   hasTopLevelParent?: boolean,
   readyToSyncChildren?: UpstreamChildrenInfo[],
+  isReadyToSyncIndividually?: boolean,
 }
 
 export interface XBlock {

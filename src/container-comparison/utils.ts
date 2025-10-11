@@ -36,6 +36,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   for (let index = 0; index < b.length; index++) {
     const newVersion = b[index];
     const oldVersion = mapA.get(newVersion.id);
+
     if (!oldVersion) {
       // This is a newly added component
       addedA.push({
@@ -55,16 +56,25 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
       let state: ContainerState | undefined;
       const displayName = oldVersion.upstreamLink.isModified ? oldVersion.name : newVersion.displayName;
       let originalName: string | undefined;
+      // FIXME: This logic doesn't work when the content is updated locally and the upstream display name is updated.
+      // `isRenamed` becomes true.
+      // We probably need to differentiate between `contentModified` and `rename` in the backend or
+      // send `downstream_customized` field to the frontend and use it here.
+      const isRenamed = displayName !== newVersion.displayName && displayName === oldVersion.name;
       if (index !== oldVersion.index) {
         // has moved from its position
         state = 'moved';
       }
-      if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
-        // Has been renamed
+      if (oldVersion.upstreamLink.isModified && !isRenamed) {
+        // The content is updated, not the name.
+        state = 'locallyContentUpdated';
+      } else if (isRenamed) {
+        // Has been renamed.
+        // TODO: At this point we can't know if the content is updated or not
+        // because `upstreamLink.isModified` is also true when renaming.
         state = 'locallyRenamed';
         originalName = newVersion.displayName;
-      }
-      if (checkIsReadyToSync(oldVersion.upstreamLink)) {
+      } else if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = 'modified';
       }
