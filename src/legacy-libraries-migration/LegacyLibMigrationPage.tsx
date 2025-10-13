@@ -145,11 +145,11 @@ export const LegacyLibMigrationPage = () => {
       <Header isHiddenMainMenu />
       <div className="legacy-library-migration-page">
         <Layout
-          lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          lg={[{ span: 9 }, { span: 3 }]}
+          md={[{ span: 9 }, { span: 3 }]}
+          sm={[{ span: 9 }, { span: 3 }]}
+          xs={[{ span: 9 }, { span: 3 }]}
+          xl={[{ span: 9 }, { span: 3 }]}
         >
           <Layout.Element>
             <div className="flex-fill">
