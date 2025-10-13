@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
 } from '@openedx/paragon';
@@ -19,9 +19,11 @@ import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
 const CardList = ({
   data,
   inSelectMode,
+  selectedIds,
 }: {
   data: LibraryV1Data[],
   inSelectMode: boolean,
+  selectedIds?: string[];
 }) => (
   // eslint-disable-next-line react/jsx-no-useless-fragment
   <>
@@ -46,6 +48,7 @@ const CardList = ({
           url={url}
           itemId={libraryKey}
           selectMode={inSelectMode ? 'multiple' : undefined}
+          isSelected={selectedIds?.includes(libraryKey)}
           isMigrated={isMigrated}
           migratedToKey={migratedToKey}
           migratedToTitle={migratedToTitle}
@@ -62,7 +65,7 @@ function findInValues<T extends {}>(arr: T[] | undefined, searchValue: string) {
   )));
 }
 
-enum Filter {
+export enum Filter {
   migrated = 'migrated',
   unmigrated = 'unmigrated',
 }
@@ -141,19 +144,23 @@ const MigrationFilter = ({ filters, setFilters }: MigrationFilterProps) => {
 interface LibrariesListProps {
   selectedIds?: string[];
   handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
+  setSelectedLibraries?: (libraries: LibraryV1Data[]) => void;
   hideMigationAlert?: boolean;
+  initialFilter?: Filter[];
 }
 
-const LibrariesList = ({
+export const LibrariesList = ({
   selectedIds,
   handleCheck,
+  setSelectedLibraries,
   hideMigationAlert = false,
+  initialFilter = BaseFilterState,
 }: LibrariesListProps) => {
   const intl = useIntl();
   const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(BaseFilterState);
+  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(initialFilter);
 
   let filteredData = findInValues(data?.libraries, search || '') || [];
   if (migrationFilter.length === 1) {
@@ -164,6 +171,10 @@ const LibrariesList = ({
   const totalPages = Math.ceil(filteredData.length / perPage);
   const currentPageData = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
   const inSelectMode = handleCheck !== undefined;
+
+  const allChecked = filteredData.every(value => selectedIds?.includes(value.libraryKey));
+  const someChecked = filteredData.some(value => selectedIds?.includes(value.libraryKey));
+  const checkboxIsIndeterminate = someChecked && !allChecked;
 
   const handleChangeCheckboxSet = useCallback((event) => {
     if (handleCheck) {
@@ -178,6 +189,14 @@ const LibrariesList = ({
       }
     }
   }, [handleCheck, currentPageData]);
+
+  const handleSelectAll = useCallback(() => {
+    if (checkboxIsIndeterminate || selectedIds?.length === 0) {
+      setSelectedLibraries?.(filteredData);
+    } else {
+      setSelectedLibraries?.([]);
+    }
+  }, [checkboxIsIndeterminate, selectedIds, filteredData]);
 
   if (isPending) {
     return (
@@ -206,6 +225,16 @@ const LibrariesList = ({
       {!hideMigationAlert && getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
+          {inSelectMode && (
+            <Form.Checkbox
+              checked={allChecked}
+              isIndeterminate={checkboxIsIndeterminate}
+              onChange={handleSelectAll}
+              className="ml-0.5 mr-3"
+            >
+              <FormattedMessage {...messages.selectAll} />
+            </Form.Checkbox>
+          )}
           <SearchField
             // istanbul ignore next
             onSubmit={() => {}}
@@ -235,6 +264,7 @@ const LibrariesList = ({
             <CardList
               data={currentPageData}
               inSelectMode={inSelectMode}
+              selectedIds={selectedIds}
             />
           </Form.CheckboxSet>
         ) : (
@@ -259,5 +289,3 @@ const LibrariesList = ({
     </>
   );
 };
-
-export default LibrariesList;
