@@ -544,7 +544,6 @@ const ProctoringSettings = ({ onClose }) => {
             proctoringProvider: selectedProvider,
             enableProctoredExams: proctoredExamSettings.enable_proctored_exams,
             allowOptingOut: proctoredExamSettings.allow_proctoring_opt_out,
-            createZendeskTickets: proctoredExamSettings.create_zendesk_tickets,
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
             // In order to keep our email input component controlled, we use the empty string as the default
             // and perform this conversion during GETs and POSTs.
