@@ -349,10 +349,18 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should show error when confirm migration', async () => {
+    const user = userEvent.setup();
     axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(400);
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    // The filter is 'unmigrated' by default.
+    // Clear the filter to select all libraries
+    const filterButton = screen.getByRole('button', { name: /unmigrated/i });
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
 
     const legacyLibrary1 = screen.getByRole('checkbox', { name: 'MBA' });
     const legacyLibrary2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
