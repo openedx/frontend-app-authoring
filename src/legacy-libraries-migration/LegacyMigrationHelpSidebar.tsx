@@ -8,7 +8,7 @@ export const SingleLineBreak = (chunk: string[]) => <div>{chunk}</div>;
 export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;
 
 export const LegacyMigrationHelpSidebar = () => (
-  <div className="legacy-libraries-migration-help bg-white pt-3">
+  <div className="legacy-libraries-migration-help bg-white pt-3 mt-1">
     <Stack gap={1} direction="horizontal" className="pl-4 h4 text-primary-700">
       <Icon src={Question} />
       <span>

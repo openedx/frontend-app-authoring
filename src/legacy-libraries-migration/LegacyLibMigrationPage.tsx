@@ -17,7 +17,7 @@ import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import type { ContentLibrary } from '@src/library-authoring/data/api';
 import type { LibraryV1Data } from '@src/studio-home/data/api';
-import LibrariesList from '@src/studio-home/tabs-section/libraries-tab';
+import { Filter, LibrariesList } from '@src/studio-home/tabs-section/libraries-tab';
 
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
@@ -145,11 +145,11 @@ export const LegacyLibMigrationPage = () => {
       <Header isHiddenMainMenu />
       <div className="legacy-library-migration-page">
         <Layout
-          lg={[{ span: 9 }, { span: 3 }]}
-          md={[{ span: 9 }, { span: 3 }]}
-          sm={[{ span: 9 }, { span: 3 }]}
-          xs={[{ span: 9 }, { span: 3 }]}
-          xl={[{ span: 9 }, { span: 3 }]}
+          lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
+          xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
         >
           <Layout.Element>
             <div className="flex-fill">
@@ -168,6 +168,8 @@ export const LegacyLibMigrationPage = () => {
                         selectedIds={legacyLibrariesIds}
                         handleCheck={handleUpdateLegacyLibraries}
                         hideMigationAlert
+                        initialFilter={[Filter.unmigrated]}
+                        setSelectedLibraries={setLegacyLibraries}
                       />
                     </Stepper.Step>
                     <Stepper.Step
@@ -193,29 +195,30 @@ export const LegacyLibMigrationPage = () => {
                     </Stepper.Step>
                   </Stepper>
                 </div>
-                <div className="content-buttons d-flex justify-content-between">
-                  <Button variant="outline-primary" onClick={handleBack}>
-                    {currentStep === 'select-libraries'
-                      ? intl.formatMessage(messages.cancel)
-                      : intl.formatMessage(messages.back)}
-                  </Button>
-                  {currentStep !== 'confirmation-view' ? (
-                    <Button onClick={handleNext} disabled={isNextDisabled()}>
-                      {intl.formatMessage(messages.next)}
-                    </Button>
-                  ) : (
-                    <StatefulButton
-                      state={confirmationButtonState}
-                      disabledStates={['pending']}
-                      labels={{
-                        default: intl.formatMessage(messages.confirm),
-                        pending: intl.formatMessage(messages.confirm),
-                      }}
-                      onClick={handleNext}
-                    />
-                  )}
-                </div>
               </Container>
+              <div className="content-buttons d-flex justify-content-between pl-6 pr-6 bg-white">
+                <Button className="mt-2 mb-2" variant="outline-primary" onClick={handleBack}>
+                  {currentStep === 'select-libraries'
+                    ? intl.formatMessage(messages.cancel)
+                    : intl.formatMessage(messages.back)}
+                </Button>
+                {currentStep !== 'confirmation-view' ? (
+                  <Button className="mt-2 mb-2" onClick={handleNext} disabled={isNextDisabled()}>
+                    {intl.formatMessage(messages.next)}
+                  </Button>
+                ) : (
+                  <StatefulButton
+                    className="mt-2 mb-2"
+                    state={confirmationButtonState}
+                    disabledStates={['pending']}
+                    labels={{
+                      default: intl.formatMessage(messages.confirm),
+                      pending: intl.formatMessage(messages.confirm),
+                    }}
+                    onClick={handleNext}
+                  />
+                )}
+              </div>
             </div>
           </Layout.Element>
           <Layout.Element>

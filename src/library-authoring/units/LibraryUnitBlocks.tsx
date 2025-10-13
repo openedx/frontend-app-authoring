@@ -203,7 +203,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
             usageKey={block.originalId}
             version={showOnlyPublished ? 'published' : undefined}
             minHeight={calculateMinHeight()}
-            scrollIntoView={block.isNew}
+            scrollIntoView={!readOnly && block.isNew}
           />
         </div>
       </SortableItem>
