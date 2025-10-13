@@ -38,12 +38,12 @@ const messages = defineMessages({
   },
   createBackupButton: {
     id: 'course-authoring.library-authoring.backup-page.button.create',
-    defaultMessage: 'INITIAL Download Library Backup',
+    defaultMessage: 'Download Library Backup',
     description: 'Button text to create and download a new backup',
   },
   downloadReadyButton: {
     id: 'course-authoring.library-authoring.backup-page.button.download-ready',
-    defaultMessage: 'DIFFERENT Download Library Backup',
+    defaultMessage: 'Download Library Backup',
     description: 'Button text when backup is ready for download',
   },
   creatingBackupButton: {
