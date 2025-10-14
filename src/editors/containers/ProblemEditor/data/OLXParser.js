@@ -60,27 +60,32 @@ export const responseKeys = [
 /**
  * Regular expression to validate numeric answer ranges in OLX format.
  * Matches ranges in the form of (min, max) or [min, max] where:
- * - min and max are numbers (integers or decimals)
+ * - Both min and max are required numbers (integers or decimals, positive or negative)
  * - Whitespace around numbers and comma is optional
  * - Parentheses () indicate exclusive bounds
  * - Square brackets [] indicate inclusive bounds
  *
  * @example
  * // Valid patterns:
- * (1, 5)    // Numbers 2, 3, 4
- * [1, 5]    // Numbers 1, 2, 3, 4, 5
- * (1.5, 5.5) // Decimal numbers between 1.5 and 5.5
- * [0, 100]  // Numbers 0 through 100 (inclusive)
- * ( 0 , 1 ) // With spaces
+ * (1, 5)        // Numbers 2, 3, 4
+ * [1, 5]        // Numbers 1 through 5
+ * (1.5, 5.5)    // Decimal numbers between 1.5 and 5.5
+ * [-5, 10]      // Negative to positive range
+ * (-3.5, 7)     // Negative decimal range
+ * (-1,1)        // No spaces
+ * (-1,1]        // Excludes min
+ * [-1,1)        // Excludes max
  *
  * @example
  * // Invalid patterns:
- * (5, 1)    // Min > Max
- * (1, )     // Missing max value
- * [1 5]     // Missing comma
- * {1, 5}    // Invalid brackets
+ * (5,1)         // Min > Max
+ * (1,)          // Missing max
+ * (,1)          // Missing min
+ * [1 5]         // Missing comma
+ * {1,5}         // Invalid brackets
+ * [--5,10]      // Invalid negative format
  */
-export const answerRangeFormatRegex = /^[([]\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*[)\]]$/m;
+export const answerRangeFormatRegex = /^[([]\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*[)\]]$/m;
 
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
@@ -457,7 +462,7 @@ export class OLXParser {
         [type]: defaultValue,
       };
     }
-    const isAnswerRange = answerRangeFormatRegex.test(numericalresponse['@_answer']);
+    const isAnswerRange = /[([]\s*\d*,\s*\d*\s*[)\]]/gm.test(numericalresponse['@_answer']);
     answers.push({
       id: indexToLetterMap[answers.length],
       title: numericalresponse['@_answer'],

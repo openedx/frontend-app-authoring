@@ -167,11 +167,35 @@ export const numericInputWithFractionBounds = {
   settings: {},
 };
 
-export const numericInputWithMissingUpperBound = {
+export const numericInputWithMissingLowerBound = {
   answers: [
     {
       id: 'a1',
       title: '[,2.5]',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
+
+export const numericInputWithNegativeBounds = {
+  answers: [
+    {
+      id: 'a1',
+      title: '(-5.5,-1)',
+      correct: true,
+    },
+  ],
+  problemType: 'numericalresponse',
+  settings: {},
+};
+
+export const numericInputWithSameBounds = {
+  answers: [
+    {
+      id: 'a1',
+      title: '[10,10]',
       correct: true,
     },
   ],

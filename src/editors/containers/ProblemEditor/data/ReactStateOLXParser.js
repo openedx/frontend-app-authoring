@@ -407,25 +407,21 @@ class ReactStateOLXParser {
           let lowerBoundFraction;
           let upperBoundInt;
           let upperBoundFraction;
-          if (rawLowerBound.includes('/')) {
+          if (rawLowerBound?.includes('/')) {
             lowerBoundFraction = rawLowerBound.replace(/[^0-9-/]/gm, '');
             const [numerator, denominator] = lowerBoundFraction.split('/');
-            const lowerBoundFloat = Number(numerator) / Number(denominator);
-            lowerBoundInt = lowerBoundFloat;
+            lowerBoundInt = Number(numerator) / Number(denominator);
           } else {
             // these regex replaces remove everything that is not a decimal or positive/negative number
-            lowerBoundInt = Number(rawLowerBound.replace(/[^0-9-.]/gm, ''));
+            lowerBoundInt = Number(rawLowerBound?.replace(/[^0-9-.]/gm, ''));
           }
-          if (!rawUpperBound) {
-            upperBoundInt = lowerBoundInt;
-          } else if (rawUpperBound.includes('/')) {
+          if (rawUpperBound?.includes('/')) {
             upperBoundFraction = rawUpperBound.replace(/[^0-9-/]/gm, '');
             const [numerator, denominator] = upperBoundFraction.split('/');
-            const upperBoundFloat = Number(numerator) / Number(denominator);
-            upperBoundInt = upperBoundFloat;
+            upperBoundInt = Number(numerator) / Number(denominator);
           } else {
             // these regex replaces remove everything that is not a decimal or positive/negative number
-            upperBoundInt = Number(rawUpperBound.replace(/[^0-9-.]/gm, ''));
+            upperBoundInt = Number(rawUpperBound?.replace(/[^0-9-.]/gm, ''));
           }
           if (lowerBoundInt > upperBoundInt) {
             const lowerBoundChar = rawUpperBound[rawUpperBound.length - 1] === ']' ? '[' : '(';

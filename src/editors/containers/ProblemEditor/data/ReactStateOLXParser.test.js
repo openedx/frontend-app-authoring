@@ -21,7 +21,9 @@ import {
   numericInputWithFractionBounds,
   numericInputWithEmptyUpperBound,
   numericInputWithSwappedBounds,
-  numericInputWithMissingUpperBound,
+  numericInputWithMissingLowerBound,
+  numericInputWithNegativeBounds,
+  numericInputWithSameBounds,
 } from './mockData/editorTestData';
 import ReactStateOLXParser from './ReactStateOLXParser';
 
@@ -181,11 +183,31 @@ describe('Check React State OLXParser problem', () => {
 
     test('sets upper bound = lower bound if upper bound missing', () => {
       const parser = new ReactStateOLXParser({
-        problem: numericInputWithMissingUpperBound,
-        editorObject: numericInputWithMissingUpperBound,
+        problem: numericInputWithMissingLowerBound,
+        editorObject: numericInputWithMissingLowerBound,
       });
       const result = parser.buildNumericalResponse();
       expect(result[':@']['@_answer']).toBe('[,2.5]');
+    });
+
+    test('handles negative number ranges correctly', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithNegativeBounds,
+        editorObject: numericInputWithNegativeBounds,
+      });
+
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('(-5.5,-1)');
+    });
+
+    test('handles same numbers in ranges correctly', () => {
+      const parser = new ReactStateOLXParser({
+        problem: numericInputWithSameBounds,
+        editorObject: numericInputWithSameBounds,
+      });
+
+      const result = parser.buildNumericalResponse();
+      expect(result[':@']['@_answer']).toBe('[10,10]');
     });
   });
 });
