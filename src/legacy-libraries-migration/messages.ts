@@ -82,6 +82,21 @@ const messages = defineMessages({
     + ' moved will be migrated to <b>{libraryName}</b>',
     description: 'Alert text when the legacy library is already migrated.',
   },
+  migrationInProgress: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-in-progress',
+    defaultMessage: '{count, plural, one {{count} legacy library is} other {{count} legacy libraries are}} being migrated.',
+    description: 'Toast message that indicates the legacy libraries are being migrated',
+  },
+  migrationFailed: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-failed',
+    defaultMessage: 'Legacy libraries migration failed.',
+    description: 'Toast message that indicates the migration of legacy libraries is failed',
+  },
+  migrationSuccess: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-success',
+    defaultMessage: 'The migration of legacy libraries has been completed successfully.',
+    description: 'Toast message that indicates the migration of legacy libraries is finished',
+  },
 });
 
 export default messages;

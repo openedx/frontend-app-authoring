@@ -1,6 +1,7 @@
 import {
   type ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from 'react';
@@ -20,13 +21,15 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
-import Loading from '../generic/Loading';
-import SubHeader from '../generic/sub-header/SubHeader';
-import Header from '../header';
-import NotFoundAlert from '../generic/NotFoundAlert';
-import { useStudioHome } from '../studio-home/hooks';
+import { useMigrationStatus } from '@src/legacy-libraries-migration/data/apiHooks';
+import Loading from '@src/generic/Loading';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import Header from '@src/header';
+import NotFoundAlert from '@src/generic/NotFoundAlert';
+import { useStudioHome } from '@src/studio-home/hooks';
 import {
   ClearFiltersButton,
   FilterByBlockType,
@@ -35,16 +38,19 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
   TypesFilterData,
-} from '../search-manager';
+} from '@src/search-manager';
+import { ToastContext } from '@src/generic/toast-context';
+import migrationMessages from '@src/legacy-libraries-migration/messages';
+
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
-
 import messages from './messages';
 import LibraryFilterByPublished from './generic/filter-by-published';
+import { libraryQueryPredicate } from './data/apiHooks';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -137,6 +143,16 @@ const LibraryAuthoringPage = ({
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
   const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const { showToast } = useContext(ToastContext);
+  const queryClient = useQueryClient();
+
+  // Get migration status every second if applicable
+  const migrationId = params.get('migration_task');
+  const {
+    data: migrationStatusData,
+  } = useMigrationStatus(migrationId);
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -204,6 +220,30 @@ const LibraryAuthoringPage = ({
       navigateTo({ contentType: key });
     }
   }, [navigateTo]);
+
+  // Verify the migration task status
+  if (migrationId) {
+    let deleteMigrationIdParam = false;
+    if (migrationStatusData?.state === 'Succeeded') {
+      showToast(intl.formatMessage(migrationMessages.migrationSuccess));
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Failed') {
+      showToast(intl.formatMessage(migrationMessages.migrationFailed));
+      deleteMigrationIdParam = true;
+    } else if (migrationStatusData?.state === 'Canceled') {
+      /* istanbul ignore next */
+      deleteMigrationIdParam = true;
+    }
+
+    if (deleteMigrationIdParam) {
+      params.delete('migration_task');
+      navigate({
+        pathname: location.pathname,
+        search: params.toString(),
+      }, { replace: true });
+    }
+  }
 
   if (isLoadingLibraryData) {
     return <Loading />;
