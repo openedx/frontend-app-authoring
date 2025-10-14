@@ -1,5 +1,5 @@
 import { createLibraryBackup, getLibraryBackupStatus } from '@src/library-authoring/backup-restore/data/api';
-import { GetLibraryBackupStatusResponse, LIBRARY_BACKUP_MUTATION_KEY } from '@src/library-authoring/backup-restore/data/constants';
+import { GetLibraryBackupStatusResponse, LIBRARY_BACKUP_MUTATION_KEY, LibraryBackupStatus } from '@src/library-authoring/backup-restore/data/constants';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 /**
@@ -19,11 +19,12 @@ Error>({
   queryKey: ['library-backup-status', libraryId, taskId],
   queryFn: () => getLibraryBackupStatus(libraryId, taskId),
   enabled: !!taskId, // Only run the query if taskId is provided
-  refetchInterval: (data) => (data?.state === 'Pending' || data?.state === 'Exporting' ? 2000 : false),
+  refetchInterval: (query) => (query.state.data?.state === LibraryBackupStatus.Pending
+    || query.state.data?.state === LibraryBackupStatus.Exporting ? 2000 : false),
 });
 
 export const useCreateLibraryBackup = (libraryId: string) => useMutation({
   mutationKey: [LIBRARY_BACKUP_MUTATION_KEY, libraryId],
   mutationFn: () => createLibraryBackup(libraryId),
-  cacheTime: 60, // Cache for 1 minute to prevent rapid re-creation of backups
+  gcTime: 60, // Cache for 1 minute to prevent rapid re-creation of backups
 });
