@@ -30,8 +30,8 @@ interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
   onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
-  // This three props are used in alert when the changes in on text components with local overrides
-  // It may be removed in the future
+  // This two props are used to show an alert for the changes to text components with local overrides.
+  // They may be removed in the future.
   localUpdateAlertCount: number;
   localUpdateAlertBlockName: string;
 }
@@ -134,10 +134,13 @@ const CompareContainersWidgetInner = ({
     );
   }, [parent]);
 
-  const renderAlert = useCallback(() => {
-    // Show this alert if the only change is a local override to a text component
-    if (localUpdateAlertCount > 0) {
-      return (
+  if (isError || isLibError || isContainerTitleError) {
+    return <ErrorAlert error={error || libError || containerTitleError} />;
+  }
+
+  return (
+    <div className="row justify-content-center">
+      {localUpdateAlertCount > 0 && (
         <Alert variant="info">
           <FormattedMessage
             {...messages.localChangeInTextAlert}
@@ -148,19 +151,7 @@ const CompareContainersWidgetInner = ({
             }}
           />
         </Alert>
-      );
-    }
-
-    return null;
-  }, [localUpdateAlertCount, localUpdateAlertBlockName]);
-
-  if (isError || isLibError || isContainerTitleError) {
-    return <ErrorAlert error={error || libError || containerTitleError} />;
-  }
-
-  return (
-    <div className="row justify-content-center">
-      {renderAlert()}
+      )}
       <div className="col col-6 p-1">
         <Card className="p-4">
           <ChildrenPreview title={getTitleComponent(data?.displayName)} side="Before">
