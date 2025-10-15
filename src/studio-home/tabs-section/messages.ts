@@ -131,6 +131,11 @@ const messages = defineMessages({
     defaultMessage: 'Libraries documentation',
     description: 'Link text for the libraries documentation link.',
   },
+  selectAll: {
+    id: 'studio-home.libraries.migrate.select-all',
+    defaultMessage: 'Select All',
+    description: 'Button to select all libraries when migrate legacy libraries.',
+  },
 });
 
 export default messages;

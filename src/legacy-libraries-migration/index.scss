@@ -1,8 +1,5 @@
 .legacy-library-migration-page {
   .migration-container {
-    // Calculate all the screen size subtracting the height of the header and top/bottom margins
-    min-height: calc(calc(100vh - 60px) - calc(var(--pgn-spacing-spacer-base) * 6));
-
     .courses-tab-container {
       min-height: auto;
     }
@@ -10,11 +7,25 @@
     .migration-content {
      flex: 1;
     }
+
+    .card-item {
+      margin: 0 0 16px !important;
+
+      &.selected {
+        box-shadow: 0 0 0 2px var(--pgn-color-primary-700);
+      }
+    }
   }
 
   .confirmation-view {
     .pgn__card-header-content {
       margin-top: calc(var(--pgn-spacing-spacer-base)) !important;;
     }
+  }
+
+  .content-buttons {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
   }
 }

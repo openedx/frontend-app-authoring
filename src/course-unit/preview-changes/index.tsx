@@ -4,7 +4,7 @@ import {
 import {
   ActionRow, Button, Icon, ModalDialog, useToggle,
 } from '@openedx/paragon';
-import { Info, Warning } from '@openedx/paragon/icons';
+import { Info } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { ToastContext } from '@src/generic/toast-context';
@@ -152,7 +152,7 @@ export const PreviewLibraryXBlockChanges = ({
     return (
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
-        oldUsageKey={isTextWithLocalChanges ? blockData.downstreamBlockId : undefined}
+        oldUsageKey={blockData.downstreamBlockId}
         oldTitle={isTextWithLocalChanges ? blockData.displayName : undefined}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
@@ -237,21 +237,14 @@ export const PreviewLibraryXBlockChanges = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {isTextWithLocalChanges ? (
+        {isTextWithLocalChanges && (
           <AlertMessage
             show
             variant="info"
             icon={Info}
             title={intl.formatMessage(messages.localEditsAlert)}
           />
-        ) : (!blockData.isContainer && (
-          <AlertMessage
-            show
-            variant="warning"
-            icon={Warning}
-            title={intl.formatMessage(messages.olderVersionPreviewAlert)}
-          />
-        ))}
+        )}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
