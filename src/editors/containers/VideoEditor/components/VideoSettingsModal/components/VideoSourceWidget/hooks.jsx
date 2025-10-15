@@ -45,7 +45,10 @@ export const fallbackHooks = ({ fallbackVideos, dispatch }) => ({
    * @param {string} videoUrl - the video URL to delete
    */
   deleteFallbackVideo: (videoIndex) => {
-    const updatedFallbackVideos = fallbackVideos.toSpliced(videoIndex, 1);
+    const updatedFallbackVideos = [
+      ...fallbackVideos.slice(0, videoIndex),
+      ...fallbackVideos.slice(videoIndex + 1),
+    ];
 
     dispatch(actions.video.updateField({ fallbackVideos: updatedFallbackVideos }));
   },
