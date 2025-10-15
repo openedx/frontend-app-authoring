@@ -134,6 +134,21 @@ const messages = defineMessages({
     + ' It may take some time to complete.</p>',
     description: 'Part 2 of the Body of the third question in the Help & Support sidebar',
   },
+  migrationInProgress: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-in-progress',
+    defaultMessage: '{count, plural, one {{count} legacy library is} other {{count} legacy libraries are}} being migrated.',
+    description: 'Toast message that indicates the legacy libraries are being migrated',
+  },
+  migrationFailed: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-failed',
+    defaultMessage: 'Legacy libraries migration failed.',
+    description: 'Toast message that indicates the migration of legacy libraries is failed',
+  },
+  migrationSuccess: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-success',
+    defaultMessage: 'The migration of legacy libraries has been completed successfully.',
+    description: 'Toast message that indicates the migration of legacy libraries is finished',
+  },
 });
 
 export default messages;
