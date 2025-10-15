@@ -53,9 +53,9 @@ describe('<LegacyLibMigrationPage />', () => {
     // Should render the title
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     // Should render the Migration Steps Viewer
-    expect(screen.getByText(/select legacy libraries/i)).toBeInTheDocument();
-    expect(screen.getByText(/select destination/i)).toBeInTheDocument();
-    expect(screen.getByText(/confirm/i)).toBeInTheDocument();
+    expect(screen.getByText('Select Legacy Libraries')).toBeInTheDocument();
+    expect(screen.getByText('Select Destination')).toBeInTheDocument();
+    expect(screen.getByText('Confirm')).toBeInTheDocument();
   });
 
   it('should cancel the migration', async () => {
@@ -400,5 +400,13 @@ describe('<LegacyLibMigrationPage />', () => {
       '{"sources":["library-v1:MBA+123","library-v1:UNIX+LG1","library-v1:MBA+1234"],"target":"lib:SampleTaxonomyOrg1:TL1","create_collections":true,"repeat_handling_strategy":"fork"}',
     );
     expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.');
+  });
+
+  it('should show help sidebar', async () => {
+    renderPage();
+    expect(await screen.findByText('Help & Support')).toBeInTheDocument();
+    expect(screen.getByText('What’s different in the new Content Libraries experience?')).toBeInTheDocument();
+    expect(screen.getByText('What happens when I migrate my Legacy Libraries?')).toBeInTheDocument();
+    expect(screen.getByText('How do I migrate my Legacy Libraries?')).toBeInTheDocument();
   });
 });
