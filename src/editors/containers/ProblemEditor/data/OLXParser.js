@@ -60,32 +60,42 @@ export const responseKeys = [
 /**
  * Regular expression to validate numeric answer ranges in OLX format.
  * Matches ranges in the form of (min, max) or [min, max] where:
- * - Both min and max are required numbers (integers or decimals, positive or negative)
+ * - Both min and max are required and can be:
+ *   - integers (e.g. 1, -5)
+ *   - decimals (e.g. 1.5, -0.25)
+ *   - fractions (e.g. 1/2, -3/4)
  * - Whitespace around numbers and comma is optional
  * - Parentheses () indicate exclusive bounds
  * - Square brackets [] indicate inclusive bounds
  *
  * @example
  * // Valid patterns:
- * (1, 5)        // Numbers 2, 3, 4
- * [1, 5]        // Numbers 1 through 5
- * (1.5, 5.5)    // Decimal numbers between 1.5 and 5.5
- * [-5, 10]      // Negative to positive range
- * (-3.5, 7)     // Negative decimal range
- * (-1,1)        // No spaces
- * (-1,1]        // Excludes min
- * [-1,1)        // Excludes max
+ * (1, 5)
+ * [1, 5]
+ * (1.5, 5.5)
+ * [-5, 10]
+ * (-3.5, 7)
+ * (-1,1)
+ * (-1,1]
+ * [-1,1)
+ * [1,1/2]
+ * [1/2, 2]
+ * [1/4, 1/2]
+ * (1,1/2]
+ * [1/2, 2)
+ * (1/4, 1/2)
  *
  * @example
  * // Invalid patterns:
- * (5,1)         // Min > Max
- * (1,)          // Missing max
- * (,1)          // Missing min
- * [1 5]         // Missing comma
- * {1,5}         // Invalid brackets
- * [--5,10]      // Invalid negative format
+ * (5,1)
+ * (1,)
+ * (,1)
+ * [1 5]
+ * {1,5}
+ * [--5,10]
+ * []
  */
-export const answerRangeFormatRegex = /^[([]\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*[)\]]$/m;
+export const answerRangeFormatRegex = /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
 
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
