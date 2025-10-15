@@ -76,17 +76,17 @@ describe('Signatory Component', () => {
 
   it('opens image upload modal on button click', async () => {
     const user = userEvent.setup();
-    const { getByRole, queryByRole } = renderSignatory(defaultProps);
+    const { getByRole, queryByTestId } = renderSignatory(defaultProps);
     const replaceButton = getByRole(
       'button',
       { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
     );
 
-    expect(queryByRole('presentation')).not.toBeInTheDocument();
+    expect(queryByTestId('dropzone-container')).not.toBeInTheDocument();
 
     await user.click(replaceButton);
 
-    expect(getByRole('presentation')).toBeInTheDocument();
+    expect(queryByTestId('dropzone-container')).toBeInTheDocument();
   });
 
   it('shows confirm modal on delete icon click', async () => {

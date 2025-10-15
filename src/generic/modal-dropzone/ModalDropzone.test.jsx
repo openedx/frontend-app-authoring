@@ -92,8 +92,8 @@ describe('<ModalDropzone />', () => {
 
   it('enables the upload button after a file is selected', async () => {
     const user = userEvent.setup();
-    const { getByRole } = render(<RootWrapper {...props} />);
-    const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
+    const { getByRole, getByTestId } = render(<RootWrapper {...props} />);
+    const dropzoneInput = getByTestId('dropzone-container').querySelector('input[type=file]');
 
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
     expect(uploadButton).toBeDisabled();
@@ -116,8 +116,8 @@ describe('<ModalDropzone />', () => {
 
     expect(response.asset.url).toBe(mockUrl);
 
-    const { getByRole, getByLabelText } = render(<RootWrapper {...props} />);
-    const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
+    const { getByRole, getByLabelText, getByTestId } = render(<RootWrapper {...props} />);
+    const dropzoneInput = getByTestId('dropzone-container').querySelector('input[type=file]');
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
 
     await user.upload(dropzoneInput, file);
@@ -142,10 +142,10 @@ describe('<ModalDropzone />', () => {
     const maxSizeInBytes = 20 * 1000 * 1000;
     const expectedErrorMessage = 'Custom error message';
 
-    const { getByText, getByRole } = render(
+    const { getByText, getByTestId } = render(
       <RootWrapper {...props} maxSize={maxSizeInBytes} invalidFileSizeMore={expectedErrorMessage} />,
     );
-    const dropzoneInput = getByRole('presentation', { hidden: true });
+    const dropzoneInput = getByTestId('dropzone-container').querySelector('input[type=file]');
 
     const fileToUpload = new File(
       [new ArrayBuffer(maxSizeInBytes + 1)],
@@ -153,7 +153,7 @@ describe('<ModalDropzone />', () => {
       { type: 'image/png' },
     );
 
-    await user.upload(dropzoneInput.firstChild, fileToUpload);
+    await user.upload(dropzoneInput, fileToUpload);
 
     await waitFor(() => {
       expect(getByText(expectedErrorMessage)).toBeInTheDocument();
