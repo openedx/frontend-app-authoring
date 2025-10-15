@@ -78,6 +78,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
   </div>
   <Form.Row
     className="mt-3.5 mx-0 flex-nowrap"
+    key="somEUrL"
   >
     <Form.Group>
       <Form.Control
@@ -86,7 +87,6 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       <IconButtonWithTooltip
         alt="Delete"
         iconAs="Icon"
-        key="top-delete-somEUrL"
         onClick={[Function]}
         tooltipContent="Delete"
         tooltipPlacement="top"
@@ -237,6 +237,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
   </div>
   <Form.Row
     className="mt-3.5 mx-0 flex-nowrap"
+    key="somEUrL"
   >
     <Form.Group>
       <Form.Control
@@ -245,7 +246,6 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
       <IconButtonWithTooltip
         alt="Delete"
         iconAs="Icon"
-        key="top-delete-somEUrL"
         onClick={[Function]}
         tooltipContent="Delete"
         tooltipPlacement="top"
