@@ -1,4 +1,5 @@
 import {
+  act,
   initializeMocks,
   render,
   screen,
@@ -157,5 +158,27 @@ describe('<LibraryBackupPage />', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.location = originalLocation;
+  });
+
+  it('executes timeout callback clearing task and re-enabling button after 5 minutes', async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    mockMutate.mockImplementation((_arg: any, { onSuccess }: any) => {
+      onSuccess({ task_id: 'task-123' });
+      mockStatusData = { state: LibraryBackupStatus.Pending };
+    });
+    render(<LibraryBackupPage />);
+    const button = screen.getByRole('button');
+    expect(button).toBeEnabled();
+    await user.click(button);
+
+    // Now in progress
+    expect(button).toBeDisabled();
+    act(() => {
+      jest.advanceTimersByTime(1 * 60 * 1000); // advance 1 minutes
+    });
+    // After timeout callback, should be enabled again
+    expect(button).toBeEnabled();
+    jest.useRealTimers();
   });
 });

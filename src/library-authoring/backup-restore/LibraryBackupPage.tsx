@@ -70,12 +70,12 @@ export const LibraryBackupPage = () => {
       mutation.mutate(undefined, {
         onSuccess: (data) => {
           setTaskId(data.task_id);
-          // Clear task id after 5 minutes to allow new backups
+          // Clear task id after 1 minutes to allow new backups
           timeoutRef.current = setTimeout(() => {
             setTaskId('');
             setIsMutationInProgress(false);
             timeoutRef.current = null;
-          }, 5 * 60 * 1000);
+          }, 60 * 1000);
         },
         onError: () => {
           setIsMutationInProgress(false);
