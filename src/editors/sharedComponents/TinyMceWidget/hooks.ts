@@ -11,11 +11,7 @@ import { isEmpty } from 'lodash';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
+
 import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
 import { isLibraryKey } from '../../../generic/key-utils';
@@ -31,9 +27,39 @@ export const state = StrictDict({
   refReady: (val) => useState(val),
 });
 
+/**
+ * const imageMatchRegex
+ *
+ * Image urls and ids used in the TinyMceEditor vary wildly, with different base urls,
+ * different lengths and constituent parts, and replacement of some "/" with "@".
+ * Common are the keys "asset-v1", "type", and "block", each holding a value after some separator.
+ * This regex captures only the values for these keys using capture groups, which can be used for matching.
+ */
+export const imageMatchRegex = /asset-v1.(.*).type.(.*).block.(.*)/;
+
+/**
+ * function matchImageStringsByIdentifiers
+ *
+ * matches two strings by comparing their regex capture groups using the `imageMatchRegex`
+ */
+export const matchImageStringsByIdentifiers = (a, b) => {
+  if (!a || !b || !(typeof a === 'string') || !(typeof b === 'string')) { return null; }
+  const matchA = JSON.stringify(a.match(imageMatchRegex)?.slice?.(1));
+  const matchB = JSON.stringify(b.match(imageMatchRegex)?.slice?.(1));
+  return matchA && matchA === matchB;
+};
+
+export const stringToFragment = (htmlString) => document.createRange().createContextualFragment(htmlString);
+
+export function getImageFromHtmlString(htmlString, imageSrc) {
+  const images = stringToFragment(htmlString)?.querySelectorAll('img') || [];
+
+  return Array.from(images).find((img) => matchImageStringsByIdentifiers(img.src || '', imageSrc));
+}
+
 export const addImagesAndDimensionsToRef = ({ imagesRef, images, editorContentHtml }) => {
   const imagesWithDimensions = Object.values(images).map((image: any) => {
-    const imageFragment = module.getImageFromHtmlString(editorContentHtml, image.url);
+    const imageFragment = getImageFromHtmlString(editorContentHtml, image.url);
     return { ...image, width: imageFragment?.width, height: imageFragment?.height };
   });
   // eslint-disable-next-line no-param-reassign
@@ -44,7 +70,7 @@ export const useImages = ({ images, editorContentHtml }) => {
   const imagesRef = useRef([]);
 
   useEffect(() => {
-    module.addImagesAndDimensionsToRef({ imagesRef, images, editorContentHtml });
+    addImagesAndDimensionsToRef({ imagesRef, images, editorContentHtml });
   }, [images]);
 
   return { imagesRef };
@@ -130,13 +156,44 @@ export const replaceStaticWithAsset = ({
   return false;
 };
 
+/**
+ * function updateImageDimensions
+ *
+ * Updates one images' dimensions in an array by identifying one image via a url string match
+ * that includes asset-v1, type, and block. Returns a new array.
+ *
+ * @param {Object[]} images - [{ id, ...other }]
+ * @param {string} url
+ * @param {number} width
+ * @param {number} height
+ *
+ * @returns {Object} { result, foundMatch }
+ */
+export function updateImageDimensions({
+  images, url, width, height,
+}) {
+  let foundMatch = false;
+
+  const result = images.map((image) => {
+    const imageIdentifier = image.id || image.url || image.src || image.externalUrl;
+    const isMatch = matchImageStringsByIdentifiers(imageIdentifier, url);
+    if (isMatch) {
+      foundMatch = true;
+      return { ...image, width, height };
+    }
+    return image;
+  });
+
+  return { result, foundMatch };
+}
+
 export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
   const {
     src, alt, width, height,
   } = editor.selection.getNode();
 
   // eslint-disable-next-line no-param-reassign
-  imagesRef.current = module.updateImageDimensions({
+  imagesRef.current = updateImageDimensions({
     images: imagesRef.current, url: src, width, height,
   }).result;
 
@@ -182,6 +239,41 @@ export const reparentTinyMceModals = /* istanbul ignore next */ () => {
   }
 };
 
+export const detectImageMatchingError = ({ matchingImages, tinyMceHTML }) => {
+  if (!matchingImages.length) { return true; }
+  if (matchingImages.length > 1) { return true; }
+
+  if (!matchImageStringsByIdentifiers(matchingImages[0].id, tinyMceHTML.src)) { return true; }
+  if (!matchingImages[0].width || !matchingImages[0].height) { return true; }
+  if (matchingImages[0].width !== tinyMceHTML.width) { return true; }
+  if (matchingImages[0].height !== tinyMceHTML.height) { return true; }
+
+  return false;
+};
+
+export const openModalWithSelectedImage = ({
+  editor, images, setImage, openImgModal,
+}) => () => {
+  const tinyMceHTML = editor.selection.getNode();
+  const { src: mceSrc } = tinyMceHTML;
+
+  const matchingImages = images.current.filter(image => matchImageStringsByIdentifiers(image.id, mceSrc));
+
+  const imageMatchingErrorDetected = detectImageMatchingError({ tinyMceHTML, matchingImages });
+
+  const width = imageMatchingErrorDetected ? null : matchingImages[0]?.width;
+  const height = imageMatchingErrorDetected ? null : matchingImages[0]?.height;
+
+  setImage({
+    externalUrl: tinyMceHTML.src,
+    altText: tinyMceHTML.alt,
+    width,
+    height,
+  });
+
+  openImgModal();
+};
+
 export const setupCustomBehavior = ({
   updateContent,
   openImgModal,
@@ -202,7 +294,7 @@ export const setupCustomBehavior = ({
   editor.ui.registry.addButton(tinyMCE.buttons.editImageSettings, {
     icon: 'image',
     tooltip: 'Edit Image Settings',
-    onAction: module.openModalWithSelectedImage({
+    onAction: openModalWithSelectedImage({
       editor, images, setImage, openImgModal,
     }),
   });
@@ -244,7 +336,7 @@ export const setupCustomBehavior = ({
   if (editorType === 'expandable') {
     editor.on('init', () => {
       const initialContent = editor.getContent();
-      const newContent = module.replaceStaticWithAsset({
+      const newContent = replaceStaticWithAsset({
         initialContent,
         editorType,
         lmsEndpointUrl,
@@ -274,7 +366,7 @@ export const setupCustomBehavior = ({
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
       // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
-      const newContent = module.replaceStaticWithAsset({
+      const newContent = replaceStaticWithAsset({
         initialContent,
         learningContextId,
       });
@@ -344,7 +436,7 @@ export const editorConfig = ({
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
       formats: { label: { inline: 'label' } },
-      setup: module.setupCustomBehavior({
+      setup: setupCustomBehavior({
         editorType,
         updateContent,
         openImgModal,
@@ -376,14 +468,14 @@ export const prepareEditorRef = () => {
   const setEditorRef = useCallback((ref) => {
     editorRef.current = ref;
   }, []);
-  const [refReady, setRefReady] = module.state.refReady(false);
+  const [refReady, setRefReady] = state.refReady(false);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => setRefReady(true), []);
   return { editorRef, refReady, setEditorRef };
 };
 
 export const imgModalToggle = () => {
-  const [isImgOpen, setIsOpen] = module.state.isImageModalOpen(false);
+  const [isImgOpen, setIsOpen] = state.isImageModalOpen(false);
   return {
     isImgOpen,
     openImgModal: () => setIsOpen(true),
@@ -392,7 +484,7 @@ export const imgModalToggle = () => {
 };
 
 export const sourceCodeModalToggle = (editorRef) => {
-  const [isSourceCodeOpen, setIsOpen] = module.state.isSourceCodeModalOpen(false);
+  const [isSourceCodeOpen, setIsOpen] = state.isSourceCodeModalOpen(false);
   return {
     isSourceCodeOpen,
     openSourceCodeModal: () => setIsOpen(true),
@@ -401,71 +493,6 @@ export const sourceCodeModalToggle = (editorRef) => {
       editorRef.current.focus();
     },
   };
-};
-
-/**
- * const imageMatchRegex
- *
- * Image urls and ids used in the TinyMceEditor vary wildly, with different base urls,
- * different lengths and constituent parts, and replacement of some "/" with "@".
- * Common are the keys "asset-v1", "type", and "block", each holding a value after some separator.
- * This regex captures only the values for these keys using capture groups, which can be used for matching.
- */
-export const imageMatchRegex = /asset-v1.(.*).type.(.*).block.(.*)/;
-
-/**
- * function matchImageStringsByIdentifiers
- *
- * matches two strings by comparing their regex capture groups using the `imageMatchRegex`
- */
-export const matchImageStringsByIdentifiers = (a, b) => {
-  if (!a || !b || !(typeof a === 'string') || !(typeof b === 'string')) { return null; }
-  const matchA = JSON.stringify(a.match(imageMatchRegex)?.slice?.(1));
-  const matchB = JSON.stringify(b.match(imageMatchRegex)?.slice?.(1));
-  return matchA && matchA === matchB;
-};
-
-export const stringToFragment = (htmlString) => document.createRange().createContextualFragment(htmlString);
-
-export const getImageFromHtmlString = (htmlString, imageSrc) => {
-  const images = stringToFragment(htmlString)?.querySelectorAll('img') || [];
-
-  return Array.from(images).find((img) => matchImageStringsByIdentifiers(img.src || '', imageSrc));
-};
-
-export const detectImageMatchingError = ({ matchingImages, tinyMceHTML }) => {
-  if (!matchingImages.length) { return true; }
-  if (matchingImages.length > 1) { return true; }
-
-  if (!matchImageStringsByIdentifiers(matchingImages[0].id, tinyMceHTML.src)) { return true; }
-  if (!matchingImages[0].width || !matchingImages[0].height) { return true; }
-  if (matchingImages[0].width !== tinyMceHTML.width) { return true; }
-  if (matchingImages[0].height !== tinyMceHTML.height) { return true; }
-
-  return false;
-};
-
-export const openModalWithSelectedImage = ({
-  editor, images, setImage, openImgModal,
-}) => () => {
-  const tinyMceHTML = editor.selection.getNode();
-  const { src: mceSrc } = tinyMceHTML;
-
-  const matchingImages = images.current.filter(image => matchImageStringsByIdentifiers(image.id, mceSrc));
-
-  const imageMatchingErrorDetected = detectImageMatchingError({ tinyMceHTML, matchingImages });
-
-  const width = imageMatchingErrorDetected ? null : matchingImages[0]?.width;
-  const height = imageMatchingErrorDetected ? null : matchingImages[0]?.height;
-
-  setImage({
-    externalUrl: tinyMceHTML.src,
-    altText: tinyMceHTML.alt,
-    width,
-    height,
-  });
-
-  openImgModal();
 };
 
 export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
@@ -510,41 +537,10 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
 };
 
 export const selectedImage = (val) => {
-  const [selection, setSelection] = module.state.imageSelection(val);
+  const [selection, setSelection] = state.imageSelection(val);
   return {
     clearSelection: () => setSelection(null),
     selection,
     setSelection,
   };
-};
-
-/**
- * function updateImageDimensions
- *
- * Updates one images' dimensions in an array by identifying one image via a url string match
- * that includes asset-v1, type, and block. Returns a new array.
- *
- * @param {Object[]} images - [{ id, ...other }]
- * @param {string} url
- * @param {number} width
- * @param {number} height
- *
- * @returns {Object} { result, foundMatch }
- */
-export const updateImageDimensions = ({
-  images, url, width, height,
-}) => {
-  let foundMatch = false;
-
-  const result = images.map((image) => {
-    const imageIdentifier = image.id || image.url || image.src || image.externalUrl;
-    const isMatch = matchImageStringsByIdentifiers(imageIdentifier, url);
-    if (isMatch) {
-      foundMatch = true;
-      return { ...image, width, height };
-    }
-    return image;
-  });
-
-  return { result, foundMatch };
 };
