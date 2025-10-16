@@ -53,17 +53,10 @@ type ComponentPickerProps = {
   showOnlyPublished?: boolean,
   extraFilter?: string[],
   visibleTabs?: ContentType[],
-} & (
-  {
-    componentPickerMode?: 'single',
-    onComponentSelected?: ComponentSelectedEvent,
-    onChangeComponentSelection?: never,
-  } | {
-    componentPickerMode: 'multiple'
-    onComponentSelected?: never,
-    onChangeComponentSelection?: ComponentSelectionChangedEvent,
-  }
-);
+  componentPickerMode?: 'single' | 'multiple',
+  onComponentSelected?: ComponentSelectedEvent,
+  onChangeComponentSelection?: ComponentSelectionChangedEvent,
+};
 
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */

@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -7,28 +6,64 @@ import {
   ActionRow, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
 
-import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
-import { useWaffleFlags } from '../../data/apiHooks';
-import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import ComponentModalView from './add-component-modals/ComponentModalView';
-import AddComponentButton from './add-component-btn';
-import messages from './messages';
-import { ComponentPicker } from '../../library-authoring/component-picker';
-import { ContentType } from '../../library-authoring/routes';
-import { messageTypes } from '../constants';
-import { useIframe } from '../../generic/hooks/context/hooks';
-import { useEventListener } from '../../generic/hooks';
-import VideoSelectorPage from '../../editors/VideoSelectorPage';
-import EditorPage from '../../editors/EditorPage';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { ComponentPicker } from '@src/library-authoring/component-picker';
+import { ContentType } from '@src/library-authoring/routes';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { useEventListener } from '@src/generic/hooks';
+import VideoSelectorPage from '@src/editors/VideoSelectorPage';
+import EditorPage from '@src/editors/EditorPage';
+import { SelectedComponent } from '@src/library-authoring';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
+import { messageTypes } from '../constants';
+import messages from './messages';
+import AddComponentButton from './add-component-btn';
+import ComponentModalView from './add-component-modals/ComponentModalView';
+import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
+
+type ComponentTemplateData = {
+  displayName: string,
+  category?: string,
+  type: string,
+  beta?: boolean,
+  templates: Array<{
+    boilerplateName?: string,
+    category?: string,
+    displayName: string,
+    supportLevel?: string | boolean,
+  }>,
+  supportLegend: {
+    allowUnsupportedXblocks?: boolean,
+    documentationLabel?: string,
+    showLegend?: boolean,
+  },
+};
+
+export interface AddComponentProps {
+  isSplitTestType?: boolean,
+  isUnitVerticalType?: boolean,
+  parentLocator: string,
+  handleCreateNewCourseXBlock: (
+    args: object,
+    callback?: (args: { courseKey: string, locator: string }) => void
+  ) => void,
+  isProblemBankType?: boolean,
+  addComponentTemplateData?: {
+    blockId: string,
+    parentLocator?: string,
+    model: ComponentTemplateData,
+  },
+}
 
 const AddComponent = ({
   parentLocator,
   isSplitTestType,
   isUnitVerticalType,
+  isProblemBankType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
-}) => {
+}: AddComponentProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -36,16 +71,16 @@ const AddComponent = ({
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
-  const blockId = addComponentTemplateData.parentLocator || parentLocator;
+  const blockId = addComponentTemplateData?.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
 
-  const [blockType, setBlockType] = useState(null);
-  const [courseId, setCourseId] = useState(null);
-  const [newBlockId, setNewBlockId] = useState(null);
+  const [blockType, setBlockType] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<string | null>(null);
+  const [newBlockId, setNewBlockId] = useState<string | null>(null);
   const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
-  const [selectedComponents, setSelectedComponents] = useState([]);
+  const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
   const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
@@ -84,7 +119,7 @@ const AddComponent = ({
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
   }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe, blockId, sequenceId]);
 
-  const handleLibraryV2Selection = useCallback((selection) => {
+  const handleLibraryV2Selection = useCallback((selection: SelectedComponent) => {
     handleCreateNewCourseXBlock({
       type: COMPONENT_TYPES.libraryV2,
       category: selection.blockType,
@@ -94,7 +129,7 @@ const AddComponent = ({
     closeAddLibraryContentModal();
   }, [usageId]);
 
-  const handleCreateNewXBlock = (type, moduleName) => {
+  const handleCreateNewXBlock = (type: string, moduleName?: string) => {
     switch (type) {
       case COMPONENT_TYPES.discussion:
       case COMPONENT_TYPES.dragAndDrop:
@@ -156,16 +191,16 @@ const AddComponent = ({
     }
   };
 
-  if (isUnitVerticalType || isSplitTestType) {
+  if (isUnitVerticalType || isSplitTestType || isProblemBankType) {
     return (
       <div className="py-4">
         {Object.keys(componentTemplates).length && isUnitVerticalType ? (
           <>
             <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
             <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
-              {componentTemplates.map((component) => {
+              {componentTemplates.map((component: ComponentTemplateData) => {
                 const { type, displayName, beta } = component;
-                let modalParams;
+                let modalParams: { open: () => void, close: () => void, isOpen: boolean };
 
                 if (!component.templates.length) {
                   return null;
@@ -268,7 +303,7 @@ const AddComponent = ({
             />
           </div>
         </StandardModal>
-        {isXBlockEditorModalOpen && (
+        {isXBlockEditorModalOpen && courseId && blockType && newBlockId && (
           <div className="editor-page">
             <EditorPage
               courseId={courseId}
@@ -286,34 +321,6 @@ const AddComponent = ({
   }
 
   return null;
-};
-
-AddComponent.propTypes = {
-  isSplitTestType: PropTypes.bool.isRequired,
-  isUnitVerticalType: PropTypes.bool.isRequired,
-  parentLocator: PropTypes.string.isRequired,
-  handleCreateNewCourseXBlock: PropTypes.func.isRequired,
-  addComponentTemplateData: {
-    blockId: PropTypes.string.isRequired,
-    model: PropTypes.shape({
-      displayName: PropTypes.string.isRequired,
-      category: PropTypes.string,
-      type: PropTypes.string.isRequired,
-      templates: PropTypes.arrayOf(
-        PropTypes.shape({
-          boilerplateName: PropTypes.string,
-          category: PropTypes.string,
-          displayName: PropTypes.string.isRequired,
-          supportLevel: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-        }),
-      ),
-      supportLegend: PropTypes.shape({
-        allowUnsupportedXblocks: PropTypes.bool,
-        documentationLabel: PropTypes.string,
-        showLegend: PropTypes.bool,
-      }),
-    }),
-  },
 };
 
 export default AddComponent;
