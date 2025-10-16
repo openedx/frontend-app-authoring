@@ -4,6 +4,7 @@ import {
   render,
   screen,
 } from '@src/testUtils';
+import { act } from '@testing-library/react';
 import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
 import messages from './messages';
@@ -29,10 +30,11 @@ jest.mock('@src/library-authoring/data/apiHooks', () => ({
 // Mutable mocks varied per test
 const mockMutate = jest.fn();
 let mockStatusData: any = {};
+let mockMutationError: any = null; // allows testing mutation error branch
 jest.mock('@src/library-authoring/backup-restore/data/hooks', () => ({
   useCreateLibraryBackup: () => ({
     mutate: mockMutate,
-    error: null,
+    error: mockMutationError,
   }),
   useGetLibraryBackupStatus: () => ({
     data: mockStatusData,
@@ -49,6 +51,7 @@ describe('<LibraryBackupPage />', () => {
       slug: 'test-lib',
       org: 'TestOrg',
     };
+    mockMutationError = null;
   });
 
   it('returns NotFoundAlert if no libraryData', () => {
@@ -155,5 +158,25 @@ describe('<LibraryBackupPage />', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.location = originalLocation;
+  });
+
+  it('executes timeout callback clearing task and re-enabling button after 5 minutes', () => {
+    jest.useFakeTimers();
+    mockMutate.mockImplementation((_arg: any, { onSuccess }: any) => {
+      onSuccess({ task_id: 'task-123' });
+      mockStatusData = { state: LibraryBackupStatus.Pending };
+    });
+    render(<LibraryBackupPage />);
+    const button = screen.getByRole('button');
+    expect(button).toBeEnabled();
+    fireEvent.click(button);
+    // Now in progress
+    expect(button).toBeDisabled();
+    act(() => {
+      jest.advanceTimersByTime(5 * 60 * 1000); // advance 5 minutes
+    });
+    // After timeout callback, should be enabled again
+    expect(button).toBeEnabled();
+    jest.useRealTimers();
   });
 });
