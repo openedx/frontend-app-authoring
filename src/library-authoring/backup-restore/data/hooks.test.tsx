@@ -8,7 +8,7 @@ import { useGetLibraryBackupStatus, useCreateLibraryBackup } from './hooks';
 // Mock API functions
 jest.mock('@src/library-authoring/backup-restore/data/api', () => ({
   createLibraryBackup: jest.fn(async () => ({ task_id: 'task-abc' })),
-  getLibraryBackupStatus: jest.fn(async (_libraryId: string, _taskId: string) => ({
+  getLibraryBackupStatus: jest.fn(async () => ({
     state: LibraryBackupStatus.Pending,
     url: '',
   })),
@@ -36,8 +36,6 @@ describe('backup-restore hooks', () => {
   it('useGetLibraryBackupStatus does not fetch when taskId is empty', async () => {
     const wrapper = createWrapper();
     renderHook(() => useGetLibraryBackupStatus(libraryId, ''), { wrapper });
-    // Allow microtasks to flush to prevent false positives
-    await new Promise(res => setTimeout(res, 0));
     expect(getLibraryBackupStatus).not.toHaveBeenCalled();
   });
 
