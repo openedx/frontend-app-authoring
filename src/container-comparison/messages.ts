@@ -37,14 +37,24 @@ const messages = defineMessages({
     description: 'Description for added component in after section of diff preview',
   },
   renamedDiffBeforeMessage: {
-    id: 'course-authoring.container-comparison.diff.before.renamed-message',
-    defaultMessage: 'Original Library Name: {name}',
-    description: 'Description for renamed component in before section of diff preview',
+    id: 'course-authoring.container-comparison.diff.before.locally-updated-message',
+    defaultMessage: 'Library Name: {name}',
+    description: 'Description for locally updated component in before section of diff preview',
   },
-  renamedDiffAfterMessage: {
-    id: 'course-authoring.container-comparison.diff.after.renamed-message',
-    defaultMessage: 'This {blockType} will remain renamed',
-    description: 'Description for renamed component in after section of diff preview',
+  renamedUpdatedDiffAfterMessage: {
+    id: 'course-authoring.container-comparison.diff.after.locally-updated-message',
+    defaultMessage: 'Library name remains overwritten',
+    description: 'Description for locally updated component in after section of diff preview',
+  },
+  locallyContentUpdatedBeforeMessage: {
+    id: 'course-authoring.container-comparison.diff.before.locally-content-updated-message',
+    defaultMessage: 'This {blockType} was edited locally',
+    description: 'Description for locally content updated component in before section of diff preview',
+  },
+  locallyContentUpdatedAfterMessage: {
+    id: 'course-authoring.container-comparison.diff.after.locally-content-updated-message',
+    defaultMessage: 'Local edit will remain',
+    description: 'Description for locally content updated component in after section of diff preview',
   },
   movedDiffBeforeMessage: {
     id: 'course-authoring.container-comparison.diff.before.moved-message',
@@ -70,6 +80,11 @@ const messages = defineMessages({
     id: 'course-authoring.container-comparison.diff.after.title',
     defaultMessage: 'After',
     description: 'After section title text',
+  },
+  localChangeInTextAlert: {
+    id: 'course-authoring.container-comparison.text-with-local-change.alert',
+    defaultMessage: 'The only change is to {count, plural, one {text block <b>{blockName}</b> which has been edited} other {<b>{count} text blocks</b> which have been edited}} in this course. Accepting will not remove local edits.',
+    description: 'Alert to show if the only change is on text components with local overrides.',
   },
 });
 
