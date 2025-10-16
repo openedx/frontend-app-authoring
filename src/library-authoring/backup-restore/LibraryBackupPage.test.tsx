@@ -4,7 +4,6 @@ import {
   screen,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
-import { act } from '@testing-library/react';
 import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
 import messages from './messages';
