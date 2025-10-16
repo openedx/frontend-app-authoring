@@ -32,7 +32,7 @@ export const state = StrictDict({
 });
 
 export const addImagesAndDimensionsToRef = ({ imagesRef, images, editorContentHtml }) => {
-  const imagesWithDimensions = Object.values(images).map((image) => {
+  const imagesWithDimensions = Object.values(images).map((image: any) => {
     const imageFragment = module.getImageFromHtmlString(editorContentHtml, image.url);
     return { ...image, width: imageFragment?.width, height: imageFragment?.height };
   });
@@ -273,6 +273,7 @@ export const setupCustomBehavior = ({
   editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
+      // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
       const newContent = module.replaceStaticWithAsset({
         initialContent,
         learningContextId,
@@ -323,7 +324,7 @@ export const editorConfig = ({
   } = pluginConfig({ placeholder, editorType, enableImageUpload });
   const isLocaleRtl = isRtl(getLocale());
   return {
-    onInit: (evt, editor) => {
+    onInit: (_evt, editor) => {
       setEditorRef(editor);
       if (editorType === 'text') {
         initializeEditor();
@@ -338,7 +339,7 @@ export const editorConfig = ({
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',
-      directionality: isLocaleRtl ? 'rtl' : 'ltr',
+      directionality: isLocaleRtl ? 'rtl' as const : 'ltr' as const,
       document_base_url: baseURL,
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
@@ -350,6 +351,7 @@ export const editorConfig = ({
         openSourceCodeModal,
         lmsEndpointUrl,
         setImage: setSelection,
+        // @ts-ignore FIXME: 'content' is not an accepted parameter of setupCustomBehavior()
         content,
         images,
         learningContextId,
@@ -361,7 +363,8 @@ export const editorConfig = ({
       plugins,
       valid_children: '+body[style]',
       valid_elements: '*[*]',
-      entity_encoding: 'utf-8',
+      // FIXME: this is passing 'utf-8', which is not a valid entity_encoding value. It should be 'named' etc.
+      entity_encoding: 'utf-8' as any,
     },
   };
 };
@@ -486,7 +489,7 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
     content = updatedContent;
   });
 
-  const updatedStaticUrls = [];
+  const updatedStaticUrls: string[] = [];
   assetSrcs.filter(src => src.startsWith('static/')).forEach(src => {
     // Before storing assets we make sure that library static assets points again to
     // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`

@@ -85,7 +85,7 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
         branding: false,
         height: '100%',
         menubar: false,
-        toolbar_mode: 'sliding',
+        toolbar_mode: /** @type {'sliding'} */('sliding'),
         toolbar_sticky: true,
         toolbar_sticky_offset: hasStudioHeader ? 0 : 76,
         relative_urls: true,
