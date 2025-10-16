@@ -26,7 +26,6 @@ import Randomization from './settingsComponents/Randomization';
 // This widget should be connected, grab all settings from store, update them as needed.
 const SettingsWidget = ({
   problemType,
-  editorRef,
   // redux
   answers,
   groupFeedbackList,
@@ -161,12 +160,12 @@ const SettingsWidget = ({
             </div>
           )}
           <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="advanced" editorRef={editorRef} />
+            <SwitchEditorCard problemType={problemType} editorType="advanced" />
           </div>
           { (showMarkdownEditorButton && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
           && (
           <div className="my-3">
-            <SwitchEditorCard problemType={problemType} editorType="markdown" editorRef={editorRef} />
+            <SwitchEditorCard problemType={problemType} editorType="markdown" />
           </div>
           )}
         </Collapsible.Body>
@@ -195,8 +194,6 @@ SettingsWidget.propTypes = {
   blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  editorRef: PropTypes.object.isRequired,
   setBlockTitle: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,

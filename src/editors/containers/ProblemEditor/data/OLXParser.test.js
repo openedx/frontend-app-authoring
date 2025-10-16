@@ -57,16 +57,6 @@ describe('OLXParser', () => {
     describe('when settings attributes are on problem tags', () => {
       it('should throw error and contain message regarding opening advanced editor', () => {
         try {
-          labelDescriptionQuestionOlxParser.getParsedOLXData();
-        } catch (e) {
-          expect(e).toBeInstanceOf(Error);
-          expect(e.message).toBe('Unrecognized attribute "markdown" associated with problem, opening in advanced editor');
-        }
-      });
-    });
-    describe('when settings attributes are on problem tags', () => {
-      it('should throw error and contain message regarding opening advanced editor', () => {
-        try {
           shuffleOlxParser.getParsedOLXData();
         } catch (e) {
           expect(e).toBeInstanceOf(Error);

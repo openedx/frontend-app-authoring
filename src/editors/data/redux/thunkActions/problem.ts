@@ -18,9 +18,8 @@ const selectors = { app: appSelectors };
 
 export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
   const { problem } = getState();
-  const editorObject = fetchEditorContent({ format: '' });
-
   let rawOLX;
+
   if (problem.isMarkdownEditorEnabled) {
     // Convert current markdown from CodeMirror editor
     if (editorRef?.current?.state?.doc) {
@@ -31,6 +30,7 @@ export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
       rawOLX = problem.rawOLX;
     }
   } else {
+    const editorObject = fetchEditorContent({ format: '' });
     rawOLX = new ReactStateOLXParser({ problem, editorObject }).buildOLX();
   }
 

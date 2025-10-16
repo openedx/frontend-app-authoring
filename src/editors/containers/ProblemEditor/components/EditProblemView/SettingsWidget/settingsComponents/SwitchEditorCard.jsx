@@ -9,14 +9,15 @@ import Button from '@src/editors/sharedComponents/Button';
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import messages from '../messages';
 import { handleConfirmEditorSwitch } from '../hooks';
+import { useProblemEditorContext } from '../../ProblemEditorContext';
 
 const SwitchEditorCard = ({
   editorType,
   problemType,
-  editorRef,
 }) => {
   const [isConfirmOpen, setConfirmOpen] = React.useState(false);
   const dispatch = useDispatch();
+  const { editorRef } = useProblemEditorContext();
   if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
 
   return (
@@ -56,8 +57,6 @@ const SwitchEditorCard = ({
 SwitchEditorCard.propTypes = {
   problemType: PropTypes.string.isRequired,
   editorType: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  editorRef: PropTypes.object.isRequired,
 };
 
 export default SwitchEditorCard;

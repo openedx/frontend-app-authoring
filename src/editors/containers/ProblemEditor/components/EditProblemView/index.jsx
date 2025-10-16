@@ -28,6 +28,7 @@ import ExplanationWidget from './ExplanationWidget';
 import { saveBlock } from '../../../../hooks';
 
 import { selectors } from '../../../../data/redux';
+import { ProblemEditorContextProvider } from './ProblemEditorContext';
 
 const EditProblemView = ({ returnFunction }) => {
   const intl = useIntl();
@@ -58,18 +59,19 @@ const EditProblemView = ({ returnFunction }) => {
   };
 
   return (
-    <EditorContainer
-      getContent={() => getContent({
-        problemState,
-        openSaveWarningModal,
-        isAdvancedProblemType,
-        isMarkdownEditorEnabled,
-        editorRef,
-        lmsEndpointUrl,
-      })}
-      isDirty={checkIfDirty}
-      returnFunction={returnFunction}
-    >
+    <ProblemEditorContextProvider editorRef={editorRef}>
+      <EditorContainer
+        getContent={() => getContent({
+          problemState,
+          openSaveWarningModal,
+          isAdvancedProblemType,
+          isMarkdownEditorEnabled,
+          editorRef,
+          lmsEndpointUrl,
+        })}
+        isDirty={checkIfDirty}
+        returnFunction={returnFunction}
+      >
       <AlertModal
         title={isAdvancedProblemType
           ? intl.formatMessage(messages.olxSettingDiscrepancyTitle)
@@ -133,10 +135,11 @@ const EditProblemView = ({ returnFunction }) => {
         )}
 
         <span className="editProblemView-settingsColumn">
-          <SettingsWidget problemType={problemType} editorRef={editorRef} />
+          <SettingsWidget problemType={problemType} />
         </span>
       </div>
-    </EditorContainer>
+      </EditorContainer>
+    </ProblemEditorContextProvider>
   );
 };
 EditProblemView.defaultProps = {
