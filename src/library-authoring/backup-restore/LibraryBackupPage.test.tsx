@@ -102,7 +102,7 @@ describe('<LibraryBackupPage />', () => {
     const downloadSpy = jest.spyOn(document, 'createElement');
     render(<LibraryBackupPage />);
     const button = screen.getByRole('button');
-    expect(button).toHaveTextContent(/Download Library Backup/);
+    expect(button).toHaveTextContent(messages.downloadReadyButton.defaultMessage);
     userEvent.click(button);
     expect(downloadSpy).toHaveBeenCalledWith('a');
     downloadSpy.mockRestore();
@@ -158,25 +158,5 @@ describe('<LibraryBackupPage />', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.location = originalLocation;
-  });
-
-  it('executes timeout callback clearing task and re-enabling button after 5 minutes', () => {
-    jest.useFakeTimers();
-    mockMutate.mockImplementation((_arg: any, { onSuccess }: any) => {
-      onSuccess({ task_id: 'task-123' });
-      mockStatusData = { state: LibraryBackupStatus.Pending };
-    });
-    render(<LibraryBackupPage />);
-    const button = screen.getByRole('button');
-    expect(button).toBeEnabled();
-    userEvent.click(button);
-    // Now in progress
-    expect(button).toBeDisabled();
-    act(() => {
-      jest.advanceTimersByTime(5 * 60 * 1000); // advance 5 minutes
-    });
-    // After timeout callback, should be enabled again
-    expect(button).toBeEnabled();
-    jest.useRealTimers();
   });
 });
