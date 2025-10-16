@@ -89,32 +89,32 @@ export const useSettingMenuItems = courseId => {
   return items;
 };
 
-export const useToolsMenuItems = (courseId, isLibrary = false) => {
+export const useToolsMenuItems = (itemId, isLibrary = false) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
 
   const items = [
     {
-      href: waffleFlags.useNewImportPage ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
+      href: waffleFlags.useNewImportPage ? `/course/${itemId}/import` : `${studioBaseUrl}/import/${itemId}`,
       title: intl.formatMessage(messages['header.links.import']),
     },
     {
-      href: waffleFlags.useNewExportPage ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
+      href: waffleFlags.useNewExportPage ? `/course/${itemId}/export` : `${studioBaseUrl}/export/${itemId}`,
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
       ? [{
-        href: `${studioBaseUrl}/course/${courseId}#export-tags`,
+        href: `${studioBaseUrl}/course/${itemId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
       }] : []
     ),
     {
-      href: `/course/${courseId}/checklists`,
+      href: `/course/${itemId}/checklists`,
       title: intl.formatMessage(messages['header.links.checklists']),
     },
     ...(waffleFlags.enableCourseOptimizer ? [{
-      href: `/course/${courseId}/optimizer`,
+      href: `/course/${itemId}/optimizer`,
       title: (
         <>
           {intl.formatMessage(messages['header.links.optimizer'])}
@@ -126,7 +126,7 @@ export const useToolsMenuItems = (courseId, isLibrary = false) => {
 
   const libraryItems = [
     {
-      href: `/library/${courseId}/backup`,
+      href: `/library/${itemId}/backup`,
       title: intl.formatMessage(messages['header.links.exportLibrary']),
     },
   ];
