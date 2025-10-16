@@ -31,7 +31,7 @@ describe('SwitchEditorCard - markdown', () => {
     mockWaffleFlags({ useReactMarkdownEditor: true });
     // The markdown editor is not currently active (default)
 
-  renderSwitchEditorCard();
+    renderSwitchEditorCard();
     const user = userEvent.setup();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
@@ -46,7 +46,7 @@ describe('SwitchEditorCard - markdown', () => {
     mockWaffleFlags({ useReactMarkdownEditor: true });
     // The markdown editor is not currently active (default)
 
-  renderSwitchEditorCard();
+    renderSwitchEditorCard();
     const user = userEvent.setup();
     const switchButton = screen.getByRole('button', { name: 'Switch to markdown editor' });
     expect(switchButton).toBeInTheDocument();
@@ -57,12 +57,12 @@ describe('SwitchEditorCard - markdown', () => {
     expect(confirmButton).toBeInTheDocument();
     expect(switchEditorSpy).not.toHaveBeenCalled();
     await user.click(confirmButton);
-  expect(switchEditorSpy).toHaveBeenCalledWith('markdown', editorRef);
+    expect(switchEditorSpy).toHaveBeenCalledWith('markdown', editorRef);
     // Markdown editor would now be active.
   });
 
   test('renders nothing for advanced problemType', () => {
-  const { container } = renderSwitchEditorCard({ problemType: 'advanced' });
+    const { container } = renderSwitchEditorCard({ problemType: 'advanced' });
     const reduxWrapper = (container.firstChild as HTMLElement | null);
     expect(reduxWrapper?.innerHTML).toBe('');
   });

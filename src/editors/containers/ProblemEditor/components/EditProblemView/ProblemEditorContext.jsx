@@ -1,15 +1,19 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 const ProblemEditorContext = createContext({
   editorRef: null,
 });
 
-export const ProblemEditorContextProvider = ({ editorRef, children }) => (
-  <ProblemEditorContext.Provider value={{ editorRef }}>
-    {children}
-  </ProblemEditorContext.Provider>
-);
+export const ProblemEditorContextProvider = ({ editorRef, children }) => {
+  const contextValue = useMemo(() => ({ editorRef }), [editorRef]);
+
+  return (
+    <ProblemEditorContext.Provider value={contextValue}>
+      {children}
+    </ProblemEditorContext.Provider>
+  );
+};
 
 ProblemEditorContextProvider.propTypes = {
   children: PropTypes.node.isRequired,
