@@ -80,10 +80,12 @@ const TinyMceWidget = ({
         disabled={disabled}
         onEditorChange={onChange}
         {
+          // @ts-ignore FIXME: this will have type errors until `editorConfig` gets proper type definitions.
           ...hooks.editorConfig({
             openImgModal,
             openSourceCodeModal,
             editorType,
+            // @ts-ignore FIXME: 'editorRef' is not an accepted parameter of editorConfig()
             editorRef,
             enableImageUpload: isLibraryV1Key(learningContextId) ? false : enableImageUpload,
             learningContextId,
@@ -108,7 +110,6 @@ TinyMceWidget.defaultProps = {
   id: null,
   disabled: false,
   editorContentHtml: undefined,
-  updateContent: undefined,
   enableImageUpload: true,
   onChange: () => ({}),
   ...editorConfigDefaultProps,
@@ -124,7 +125,6 @@ TinyMceWidget.propTypes = {
   id: PropTypes.string,
   disabled: PropTypes.bool,
   editorContentHtml: PropTypes.string,
-  updateContent: PropTypes.func,
   enableImageUpload: PropTypes.bool,
   onChange: PropTypes.func,
   ...editorConfigPropTypes,
