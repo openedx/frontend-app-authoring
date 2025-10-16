@@ -1,9 +1,9 @@
 import {
-  fireEvent,
   initializeMocks,
   render,
   screen,
 } from '@src/testUtils';
+import userEvent from '@testing-library/user-event';
 import { act } from '@testing-library/react';
 import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
@@ -78,7 +78,7 @@ describe('<LibraryBackupPage />', () => {
     render(<LibraryBackupPage />);
     const initialButton = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
     expect(initialButton).toBeEnabled();
-    fireEvent.click(initialButton);
+    await userEvent.click(initialButton);
     const pendingText = await screen.findByText(messages.backupPending.defaultMessage);
     const pendingButton = pendingText.closest('button');
     expect(pendingButton).toBeDisabled();
@@ -91,7 +91,7 @@ describe('<LibraryBackupPage />', () => {
     });
     render(<LibraryBackupPage />);
     const initialButton = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
-    fireEvent.click(initialButton);
+    await userEvent.click(initialButton);
     const exportingText = await screen.findByText(messages.backupExporting.defaultMessage);
     const exportingButton = exportingText.closest('button');
     expect(exportingButton).toBeDisabled();
@@ -103,7 +103,7 @@ describe('<LibraryBackupPage />', () => {
     render(<LibraryBackupPage />);
     const button = screen.getByRole('button');
     expect(button).toHaveTextContent(/Download Library Backup/);
-    fireEvent.click(button);
+    userEvent.click(button);
     expect(downloadSpy).toHaveBeenCalledWith('a');
     downloadSpy.mockRestore();
   });
@@ -123,7 +123,7 @@ describe('<LibraryBackupPage />', () => {
     });
     const { unmount } = render(<LibraryBackupPage />);
     const button = screen.getByRole('button');
-    fireEvent.click(button);
+    userEvent.click(button);
     unmount();
     // No assertion needed, just coverage for cleanup
   });
@@ -151,7 +151,7 @@ describe('<LibraryBackupPage />', () => {
     window.location = { href: '' };
     render(<LibraryBackupPage />);
     const button = screen.getByRole('button');
-    fireEvent.click(button);
+    userEvent.click(button);
     expect(window.location.href).toContain('/fake/path.tar.gz');
     // restore
     createSpy.mockRestore();
@@ -169,7 +169,7 @@ describe('<LibraryBackupPage />', () => {
     render(<LibraryBackupPage />);
     const button = screen.getByRole('button');
     expect(button).toBeEnabled();
-    fireEvent.click(button);
+    userEvent.click(button);
     // Now in progress
     expect(button).toBeDisabled();
     act(() => {
