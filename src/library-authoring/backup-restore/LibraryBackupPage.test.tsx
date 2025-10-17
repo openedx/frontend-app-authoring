@@ -181,4 +181,65 @@ describe('<LibraryBackupPage />', () => {
     expect(button).toBeEnabled();
     jest.useRealTimers();
   });
+
+  it('shows pending message when mutation is in progress but no backup state yet', async () => {
+    // Mock mutation to trigger onSuccess but don't immediately set backup state
+    mockMutate.mockImplementation((_arg: any, { onSuccess }: any) => {
+      onSuccess({ task_id: 'task-123' });
+      // Don't set mockStatusData.state immediately to simulate the state
+      // before the status API has returned any backup state
+    });
+
+    render(<LibraryBackupPage />);
+    const button = screen.getByRole('button');
+
+    await userEvent.click(button);
+
+    // This should trigger the specific line: return intl.formatMessage(messages.backupPending);
+    // when isMutationInProgress is true but !backupState
+    expect(screen.getByText(messages.backupPending.defaultMessage)).toBeVisible();
+    expect(button).toBeDisabled();
+  });
+
+  it('downloads backup immediately when clicking button with already succeeded backup', async () => {
+    // Set up a scenario where backup is already succeeded with a URL
+    mockStatusData = {
+      state: LibraryBackupStatus.Succeeded,
+      url: '/api/libraries/v2/backup/download/test-backup.tar.gz',
+    };
+
+    render(<LibraryBackupPage />);
+
+    // Spy on handleDownload function call
+    const createElementSpy = jest.spyOn(document, 'createElement');
+    const mockAnchor = {
+      href: '',
+      download: '',
+      click: jest.fn(),
+    };
+    createElementSpy.mockReturnValue(mockAnchor as any);
+    const appendChildSpy = jest.spyOn(document.body, 'appendChild').mockImplementation();
+    const removeChildSpy = jest.spyOn(document.body, 'removeChild').mockImplementation();
+
+    const button = screen.getByRole('button');
+
+    // Click the button - this should trigger the early return in handleDownloadBackup
+    await userEvent.click(button);
+
+    // Verify the download was triggered
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+    expect(mockAnchor.href).toContain('/api/libraries/v2/backup/download/test-backup.tar.gz');
+    expect(mockAnchor.download).toBe('test-lib-backup.tar.gz');
+    expect(mockAnchor.click).toHaveBeenCalled();
+    expect(appendChildSpy).toHaveBeenCalledWith(mockAnchor);
+    expect(removeChildSpy).toHaveBeenCalledWith(mockAnchor);
+
+    // Verify mutate was NOT called since backup already exists
+    expect(mockMutate).not.toHaveBeenCalled();
+
+    // Clean up spies
+    createElementSpy.mockRestore();
+    appendChildSpy.mockRestore();
+    removeChildSpy.mockRestore();
+  });
 });
