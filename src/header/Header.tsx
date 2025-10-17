@@ -1,11 +1,13 @@
+import { StudioHeader } from '@edx/frontend-component-header';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { StudioHeader } from '@edx/frontend-component-header';
 import { type Container, useToggle } from '@openedx/paragon';
 
 import { useWaffleFlags } from '../data/apiHooks';
 import { SearchModal } from '../search-modal';
-import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
+import {
+  useContentMenuItems, useLibraryToolsMenuItems, useSettingMenuItems, useToolsMenuItems,
+} from './hooks';
 import messages from './messages';
 
 type ContainerPropsType = React.ComponentProps<typeof Container>;
@@ -39,7 +41,8 @@ const Header = ({
 
   const contentMenuItems = useContentMenuItems(contextId);
   const settingMenuItems = useSettingMenuItems(contextId);
-  const toolsMenuItems = useToolsMenuItems(contextId, isLibrary);
+  const toolsMenuItems = useToolsMenuItems(contextId);
+  const libraryToolsMenuItems = useLibraryToolsMenuItems(contextId);
   const mainMenuDropdowns = !isLibrary ? [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
@@ -59,7 +62,7 @@ const Header = ({
   ] : [{
     id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
     buttonTitle: intl.formatMessage(messages['header.links.tools']),
-    items: toolsMenuItems,
+    items: libraryToolsMenuItems,
   }];
 
   const getOutlineLink = () => {

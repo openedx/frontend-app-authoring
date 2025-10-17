@@ -89,32 +89,32 @@ export const useSettingMenuItems = courseId => {
   return items;
 };
 
-export const useToolsMenuItems = (itemId, isLibrary = false) => {
+export const useToolsMenuItems = (courseId) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
 
   const items = [
     {
-      href: waffleFlags.useNewImportPage ? `/course/${itemId}/import` : `${studioBaseUrl}/import/${itemId}`,
+      href: waffleFlags.useNewImportPage ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
       title: intl.formatMessage(messages['header.links.import']),
     },
     {
-      href: waffleFlags.useNewExportPage ? `/course/${itemId}/export` : `${studioBaseUrl}/export/${itemId}`,
+      href: waffleFlags.useNewExportPage ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
       ? [{
-        href: `${studioBaseUrl}/course/${itemId}#export-tags`,
+        href: `${studioBaseUrl}/course/${courseId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
       }] : []
     ),
     {
-      href: `/course/${itemId}/checklists`,
+      href: `/course/${courseId}/checklists`,
       title: intl.formatMessage(messages['header.links.checklists']),
     },
     ...(waffleFlags.enableCourseOptimizer ? [{
-      href: `/course/${itemId}/optimizer`,
+      href: `/course/${courseId}/optimizer`,
       title: (
         <>
           {intl.formatMessage(messages['header.links.optimizer'])}
@@ -124,12 +124,19 @@ export const useToolsMenuItems = (itemId, isLibrary = false) => {
     }] : []),
   ];
 
-  const libraryItems = [
+  return items;
+};
+
+export const useLibraryToolsMenuItems = itemId => {
+  const intl = useIntl();
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+
+  const items = [
     {
-      href: `/library/${itemId}/backup`,
+      href: `${studioBaseUrl}/library/${itemId}/backup`,
       title: intl.formatMessage(messages['header.links.exportLibrary']),
     },
   ];
 
-  return isLibrary ? libraryItems : items;
+  return items;
 };
