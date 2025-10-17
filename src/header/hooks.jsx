@@ -129,11 +129,10 @@ export const useToolsMenuItems = (courseId) => {
 
 export const useLibraryToolsMenuItems = itemId => {
   const intl = useIntl();
-  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const items = [
     {
-      href: `${studioBaseUrl}/library/${itemId}/backup`,
+      href: `/library/${itemId}/backup`,
       title: intl.formatMessage(messages['header.links.exportLibrary']),
     },
   ];
