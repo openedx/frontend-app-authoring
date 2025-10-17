@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
@@ -11,31 +11,32 @@ import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import messages from '../messages';
 import { handleConfirmEditorSwitch } from '../hooks';
 
-const SwitchEditorCard = ({
-  editorType,
-  problemType,
-}) => {
-  const [isConfirmOpen, setConfirmOpen] = React.useState(false);
+const SwitchEditorCard = ({ editorType, problemType }) => {
+  const dispatch = useDispatch();
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+
   const { isMarkdownEditorEnabledForContext } = useEditorContext();
   const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
-  const dispatch = useDispatch();
 
   const isMarkdownEditorActive = isMarkdownEditorEnabled && isMarkdownEditorEnabledForContext;
-  if (isMarkdownEditorActive || problemType === ProblemTypeKeys.ADVANCED) { return null; }
+
+  const switchEditor = useCallback(() => {
+    dispatch(thunkActions.problem.switchEditor(editorType));
+  }, [dispatch, editorType]);
+
+  if (isMarkdownEditorActive || problemType === ProblemTypeKeys.ADVANCED) {
+    return null;
+  }
 
   return (
     <Card className="border border-light-700 shadow-none">
       <BaseModal
         isOpen={isConfirmOpen}
-        close={() => { setConfirmOpen(false); }}
+        close={() => setConfirmOpen(false)}
         title={<FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />}
         confirmAction={(
           <Button
-            /* istanbul ignore next */
-            onClick={() => handleConfirmEditorSwitch({
-              switchEditor: () => dispatch(thunkActions.problem.switchEditor(editorType)),
-              setConfirmOpen,
-            })}
+            onClick={() => handleConfirmEditorSwitch({ switchEditor, setConfirmOpen })}
             variant="primary"
           >
             <FormattedMessage {...messages[`ConfirmSwitchButtonLabel-${editorType}`]} />
@@ -45,11 +46,12 @@ const SwitchEditorCard = ({
       >
         <FormattedMessage {...messages[`ConfirmSwitchMessage-${editorType}`]} />
       </BaseModal>
+
       <Button
         className="my-3 ml-2 py-0"
         variant="link"
         size="sm"
-        onClick={() => { setConfirmOpen(true); }}
+        onClick={() => setConfirmOpen(true)}
       >
         <FormattedMessage {...messages[`SwitchButtonLabel-${editorType}`]} />
       </Button>
