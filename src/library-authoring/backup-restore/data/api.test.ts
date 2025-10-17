@@ -1,37 +1,29 @@
-// We will load the actual platform module to mutate its exported config object without mocking getConfig itself.
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { getLibraryBackupApiUrl, getLibraryBackupStatusApiUrl } from '@src/library-authoring/data/api';
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { initializeMocks } from '@src/testUtils';
 import { createLibraryBackup, getLibraryBackupStatus } from './api';
 
-// Provide a controlled mock for the authenticated HTTP client without touching getConfig
-const mockPost = jest.fn();
-const mockGet = jest.fn();
-
-jest.mock('@edx/frontend-platform/auth', () => ({
-  getAuthenticatedHttpClient: () => ({
-    post: (...args) => mockPost(...args),
-    get: (...args) => mockGet(...args),
-  }),
-}));
+mockContentLibrary.applyMock();
+const { axiosMock } = initializeMocks();
 
 afterEach(() => {
-  mockPost.mockReset();
-  mockGet.mockReset();
+  axiosMock.reset();
 });
-
-// Internal helper for URL construction
-const getApiUrl = (path) => `http://studio.test/${path || ''}`;
 
 describe('backup-restore api', () => {
   it('should call createLibraryBackup and return a promise', async () => {
-    await expect(createLibraryBackup('test-library-id')).rejects.toBeDefined();
+    await expect(createLibraryBackup(mockContentLibrary.libraryId)).rejects.toBeDefined();
   });
 
   it('should build correct URL and call post for createLibraryBackup', async () => {
-    mockPost.mockResolvedValue({ data: { success: true } });
-    const result = await createLibraryBackup('abc');
-    expect(mockPost).toHaveBeenCalledTimes(1);
-    expect(mockPost.mock.calls[0][0]).toMatch(/\/api\/libraries\/v2\/abc\/backup\/$/);
-    expect(result).toEqual({ success: true });
+    const libraryUrl = getLibraryBackupApiUrl(mockContentLibrary.libraryId);
+    axiosMock.onPost(libraryUrl).reply(200, { success: true, taskId: 'task123' });
+    const result = await createLibraryBackup(mockContentLibrary.libraryId);
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].url).toMatch(libraryUrl);
+    expect(result).toEqual({ success: true, taskId: 'task123' });
   });
 
   it('should call getLibraryBackupStatus and return a promise', async () => {
@@ -39,10 +31,10 @@ describe('backup-restore api', () => {
   });
 
   it('should build correct URL and call get for getLibraryBackupStatus', async () => {
-    mockGet.mockResolvedValue({ data: { status: 'ok' } });
-    const result = await getLibraryBackupStatus('abc', 'task123');
-    expect(mockGet).toHaveBeenCalledTimes(1);
-    expect(mockGet.mock.calls[0][0]).toMatch(/\/api\/libraries\/v2\/abc\/backup\/\?task_id=task123$/);
+    axiosMock.onGet().reply(200, { status: 'ok' });
+    const result = await getLibraryBackupStatus(mockContentLibrary.libraryId, 'task123');
+    expect(axiosMock.history.get.length).toBe(1);
+    expect(axiosMock.history.get[0].url).toMatch(getLibraryBackupStatusApiUrl(mockContentLibrary.libraryId, 'task123'));
     expect(result).toEqual({ status: 'ok' });
   });
 
@@ -55,11 +47,6 @@ describe('backup-restore api', () => {
     // @ts-expect-error
     await expect(getLibraryBackupStatus()).rejects.toBeDefined();
     // @ts-expect-error
-    await expect(getLibraryBackupStatus('test-library-id')).rejects.toBeDefined();
-  });
-
-  it('should build correct URL for backup', () => {
-    expect(getApiUrl('api/libraries/v2/abc/backup/')).toBe('http://studio.test/api/libraries/v2/abc/backup/');
-    expect(getApiUrl('')).toBe('http://studio.test/');
+    await expect(getLibraryBackupStatus(mockContentLibrary.libraryId)).rejects.toBeDefined();
   });
 });
