@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Alert } from '@openedx/paragon';
+import EditFileErrorAlertsSlot from '../../plugin-slots/EditFileErrorAlertsSlot';
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
@@ -76,6 +77,7 @@ const EditFileErrors = ({
           ))}
         </ul>
       </ErrorAlert>
+      <EditFileErrorAlertsSlot />
     </>
   );
 };

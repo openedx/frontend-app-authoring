@@ -13,6 +13,8 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
@@ -50,8 +52,17 @@ jest.mock('file-saver');
 const renderComponent = () => {
   render(
     <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <VideosPage courseId={courseId} />
+      <AppProvider store={store} wrapWithRouter={false}>
+        <MemoryRouter initialEntries={[`/course/${courseId}/videos`]}>
+          <Routes>
+            <Route
+              path="/course/:courseId/*"
+              element={
+                <VideosPage courseId={courseId} />
+          }
+            />
+          </Routes>
+        </MemoryRouter>
       </AppProvider>
     </IntlProvider>,
   );
