@@ -11,9 +11,12 @@ import {
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
+import { type ContainerHit, Highlight, PublishStatus } from '@src/search-manager';
 import { ToastContext } from '@src/generic/toast-context';
-import { type ContainerHit, Highlight, PublishStatus } from '../../search-manager';
+import { useRunOnNextRender } from '@src/utils';
+
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
@@ -22,7 +25,6 @@ import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
-import { useRunOnNextRender } from '../../utils';
 import BaseCard from '../components/BaseCard';
 import AddComponentWidget from '../components/AddComponentWidget';
 
@@ -39,6 +41,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+  const { copyToClipboard } = useClipboard();
 
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
@@ -87,6 +90,10 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
     navigateTo({ containerId: containerKey });
   }, [navigateTo, containerKey]);
 
+  const handleCopy = useCallback(() => {
+    copyToClipboard(containerKey);
+  }, [copyToClipboard, containerKey]);
+
   const containerType = containerId ? getBlockType(containerId) : 'collection';
 
   return (
@@ -104,6 +111,9 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
         <Dropdown.Menu>
           <Dropdown.Item onClick={openContainer}>
             <FormattedMessage {...messages.menuOpen} />
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleCopy}>
+            <FormattedMessage {...messages.menuCopyContainer} />
           </Dropdown.Item>
           <Dropdown.Item onClick={confirmDelete}>
             <FormattedMessage {...messages.menuDeleteContainer} />

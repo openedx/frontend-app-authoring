@@ -1,7 +1,9 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import isEmpty from 'lodash/isEmpty';
 
-import { convertObjectToSnakeCase } from '../../utils';
+import { getLibraryContainerCopyApiUrl } from '@src/library-authoring/data/api';
+import { convertObjectToSnakeCase } from '@src/utils';
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCreateOrRerunCourseUrl = () => new URL('course/', getApiBaseUrl()).href;
@@ -77,11 +79,19 @@ export async function getClipboard(): Promise<ClipboardStatus> {
 /**
  * Updates user's clipboard.
  */
-export async function updateClipboard(usageKey: string): Promise<ClipboardStatus> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getClipboardUrl(), { usage_key: usageKey });
+export async function updateClipboard(usageKey: string): Promise<ClipboardStatus | undefined> {
+  let response;
+  if (usageKey.startsWith('lct:')) {
+    response = await getAuthenticatedHttpClient().post(getLibraryContainerCopyApiUrl(usageKey));
+  } else {
+    response = await getAuthenticatedHttpClient().post(getClipboardUrl(), { usage_key: usageKey });
+  }
 
-  return camelCaseObject(data);
+  if (isEmpty(response.data)) {
+    return undefined;
+  }
+
+  return camelCaseObject(response.data);
 }
 
 /**

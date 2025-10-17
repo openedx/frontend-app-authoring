@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Open',
     description: 'Menu item for open a collection/container.',
   },
+  menuCopyContainer: {
+    id: 'course-authoring.library-authoring.container.copy-menu-text',
+    defaultMessage: 'Copy to clipboard',
+    description: 'Menu item to copy a container.',
+  },
   menuDeleteContainer: {
     id: 'course-authoring.library-authoring.container.delete-menu-text',
     defaultMessage: 'Delete',
