@@ -84,10 +84,7 @@ const ProctoringSettings = ({ onClose }) => {
     } else if (name === 'proctoringProvider') {
       const newFormValues = { ...formValues, proctoringProvider: value };
 
-      if (value === 'proctortrack') {
-        setFormValues({ ...newFormValues, createZendeskTickets: false });
-        setShowEscalationEmail(true);
-      } else if (value === 'software_secure') {
+      if (value === 'software_secure') {
         setFormValues({ ...newFormValues, createZendeskTickets: true });
         setShowEscalationEmail(false);
       } else if (isLtiProvider(value)) {
