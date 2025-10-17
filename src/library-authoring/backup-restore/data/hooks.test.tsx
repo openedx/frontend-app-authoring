@@ -1,23 +1,14 @@
-import React from 'react';
+import { initializeMocks, renderHook, waitFor } from '@src/testUtils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
-import { initializeMocks } from '@src/testUtils';
+import React from 'react';
+import * as api from '@src/library-authoring/backup-restore/data/api';
 import { LibraryBackupStatus } from './constants';
-import { useGetLibraryBackupStatus, useCreateLibraryBackup } from './hooks';
-
-// Mock API functions
-jest.mock('@src/library-authoring/backup-restore/data/api', () => ({
-  createLibraryBackup: jest.fn(async () => ({ task_id: 'task-abc' })),
-  getLibraryBackupStatus: jest.fn(async () => ({
-    state: LibraryBackupStatus.Pending,
-    url: '',
-  })),
-}));
-
-const { createLibraryBackup, getLibraryBackupStatus } = jest.requireMock('@src/library-authoring/backup-restore/data/api');
+import { useCreateLibraryBackup, useGetLibraryBackupStatus } from './hooks';
 
 describe('backup-restore hooks', () => {
   const libraryId = 'lib:Org:example';
+  let createLibraryBackupSpy: jest.SpyInstance;
+  let getLibraryBackupStatusSpy: jest.SpyInstance;
 
   const createWrapper = () => {
     const queryClient = new QueryClient({
@@ -30,13 +21,22 @@ describe('backup-restore hooks', () => {
 
   beforeEach(() => {
     initializeMocks();
-    jest.clearAllMocks();
+    createLibraryBackupSpy = jest.spyOn(api, 'createLibraryBackup').mockImplementation(async () => ({ task_id: 'task-abc' }));
+    getLibraryBackupStatusSpy = jest.spyOn(api, 'getLibraryBackupStatus').mockImplementation(async () => ({
+      state: LibraryBackupStatus.Pending,
+      url: '',
+    }));
+  });
+
+  afterEach(() => {
+    createLibraryBackupSpy.mockRestore();
+    getLibraryBackupStatusSpy.mockRestore();
   });
 
   it('useGetLibraryBackupStatus does not fetch when taskId is empty', async () => {
     const wrapper = createWrapper();
     renderHook(() => useGetLibraryBackupStatus(libraryId, ''), { wrapper });
-    expect(getLibraryBackupStatus).not.toHaveBeenCalled();
+    expect(getLibraryBackupStatusSpy).not.toHaveBeenCalled();
   });
 
   it('useGetLibraryBackupStatus fetches when taskId provided and sets data to Pending', async () => {
@@ -44,7 +44,7 @@ describe('backup-restore hooks', () => {
     const taskId = 'task-123';
     const { result } = renderHook(() => useGetLibraryBackupStatus(libraryId, taskId), { wrapper });
     await waitFor(() => {
-      expect(getLibraryBackupStatus).toHaveBeenCalledWith(libraryId, taskId);
+      expect(getLibraryBackupStatusSpy).toHaveBeenCalledWith(libraryId, taskId);
       expect(result.current.data).toBeDefined();
     });
     expect(result.current.data?.state).toBe(LibraryBackupStatus.Pending);
@@ -54,6 +54,6 @@ describe('backup-restore hooks', () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useCreateLibraryBackup(libraryId), { wrapper });
     await result.current.mutateAsync();
-    expect(createLibraryBackup).toHaveBeenCalledWith(libraryId);
+    expect(createLibraryBackupSpy).toHaveBeenCalledWith(libraryId);
   });
 });
