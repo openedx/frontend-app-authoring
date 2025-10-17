@@ -1,7 +1,9 @@
+import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import {
   act,
+  render as baseRender,
   initializeMocks,
-  render,
   screen,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
@@ -9,22 +11,19 @@ import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
 import messages from './messages';
 
-// Mock the hooks/context used by the page so we can render it in isolation.
-jest.mock('@src/library-authoring/common/context/LibraryContext', () => ({
-  useLibraryContext: () => ({ libraryId: 'lib:TestOrg:test-lib' }),
-}));
+mockContentLibrary.applyMock();
+const mockLibraryId = mockContentLibrary.libraryId;
+const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryBackupPage />, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+  ),
+});
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
   useIntl: () => ({
     formatMessage: (message) => message.defaultMessage,
   }),
-}));
-
-const mockLibraryData: { data: any } = { data: {} };
-
-jest.mock('@src/library-authoring/data/apiHooks', () => ({
-  useContentLibrary: () => (mockLibraryData),
 }));
 
 // Mutable mocks varied per test
@@ -46,25 +45,20 @@ describe('<LibraryBackupPage />', () => {
     initializeMocks();
     mockMutate.mockReset();
     mockStatusData = {};
-    mockLibraryData.data = {
-      title: 'My Test Library',
-      slug: 'test-lib',
-      org: 'TestOrg',
-    };
     mockMutationError = null;
   });
 
   it('returns NotFoundAlert if no libraryData', () => {
-    mockLibraryData.data = undefined;
+    mockContentLibrary.libraryData = null as any;
 
-    render(<LibraryBackupPage />);
+    render();
 
     expect(screen.getByText(/Not Found/i)).toBeVisible();
   });
 
   it('renders the backup page title and initial download button', () => {
     mockStatusData = {};
-    render(<LibraryBackupPage />);
+    render();
     expect(screen.getByText(messages.backupPageTitle.defaultMessage)).toBeVisible();
     const button = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
     expect(button).toBeEnabled();
@@ -75,7 +69,7 @@ describe('<LibraryBackupPage />', () => {
       onSuccess({ task_id: 'task-123' });
       mockStatusData = { state: LibraryBackupStatus.Pending };
     });
-    render(<LibraryBackupPage />);
+    render();
     const initialButton = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
     expect(initialButton).toBeEnabled();
     await userEvent.click(initialButton);
@@ -89,7 +83,7 @@ describe('<LibraryBackupPage />', () => {
       onSuccess({ task_id: 'task-123' });
       mockStatusData = { state: LibraryBackupStatus.Exporting };
     });
-    render(<LibraryBackupPage />);
+    render();
     const initialButton = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
     await userEvent.click(initialButton);
     const exportingText = await screen.findByText(messages.backupExporting.defaultMessage);
@@ -100,7 +94,7 @@ describe('<LibraryBackupPage />', () => {
   it('shows succeeded state uses ready text and triggers download', () => {
     mockStatusData = { state: 'Succeeded', url: '/fake/path.tar.gz' };
     const downloadSpy = jest.spyOn(document, 'createElement');
-    render(<LibraryBackupPage />);
+    render();
     const button = screen.getByRole('button');
     expect(button).toHaveTextContent(messages.downloadReadyButton.defaultMessage);
     userEvent.click(button);
@@ -110,7 +104,7 @@ describe('<LibraryBackupPage />', () => {
 
   it('shows failed state and error alert', () => {
     mockStatusData = { state: LibraryBackupStatus.Failed };
-    render(<LibraryBackupPage />);
+    render();
     expect(screen.getByText(messages.backupFailedError.defaultMessage)).toBeVisible();
     const button = screen.getByRole('button');
     expect(button).toBeEnabled();
@@ -121,7 +115,7 @@ describe('<LibraryBackupPage />', () => {
       onSuccess({ task_id: 'task-123' });
       mockStatusData = { state: LibraryBackupStatus.Pending };
     });
-    const { unmount } = render(<LibraryBackupPage />);
+    const { unmount } = render();
     const button = screen.getByRole('button');
     userEvent.click(button);
     unmount();
@@ -149,7 +143,7 @@ describe('<LibraryBackupPage />', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.location = { href: '' };
-    render(<LibraryBackupPage />);
+    render();
     const button = screen.getByRole('button');
     userEvent.click(button);
     expect(window.location.href).toContain('/fake/path.tar.gz');
@@ -167,7 +161,7 @@ describe('<LibraryBackupPage />', () => {
       onSuccess({ task_id: 'task-123' });
       mockStatusData = { state: LibraryBackupStatus.Pending };
     });
-    render(<LibraryBackupPage />);
+    render();
     const button = screen.getByRole('button');
     expect(button).toBeEnabled();
     await user.click(button);
@@ -190,7 +184,7 @@ describe('<LibraryBackupPage />', () => {
       // before the status API has returned any backup state
     });
 
-    render(<LibraryBackupPage />);
+    render();
     const button = screen.getByRole('button');
 
     await userEvent.click(button);
@@ -208,7 +202,7 @@ describe('<LibraryBackupPage />', () => {
       url: '/api/libraries/v2/backup/download/test-backup.tar.gz',
     };
 
-    render(<LibraryBackupPage />);
+    render();
 
     // Spy on handleDownload function call
     const createElementSpy = jest.spyOn(document, 'createElement');
