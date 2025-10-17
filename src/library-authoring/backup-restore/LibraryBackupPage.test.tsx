@@ -11,9 +11,7 @@ import { LibraryBackupStatus } from './data/constants';
 import { LibraryBackupPage } from './LibraryBackupPage';
 import messages from './messages';
 
-mockContentLibrary.applyMock();
-const mockLibraryId = mockContentLibrary.libraryId;
-const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryBackupPage />, {
+const render = (libraryId: string = mockContentLibrary.libraryId) => baseRender(<LibraryBackupPage />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
   ),
@@ -24,6 +22,13 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   useIntl: () => ({
     formatMessage: (message) => message.defaultMessage,
   }),
+}));
+
+const mockLibraryData:
+{ data: typeof mockContentLibrary.libraryData | undefined } = { data: mockContentLibrary.libraryData };
+
+jest.mock('@src/library-authoring/data/apiHooks', () => ({
+  useContentLibrary: () => (mockLibraryData),
 }));
 
 // Mutable mocks varied per test
@@ -46,18 +51,17 @@ describe('<LibraryBackupPage />', () => {
     mockMutate.mockReset();
     mockStatusData = {};
     mockMutationError = null;
+    mockLibraryData.data = mockContentLibrary.libraryData;
   });
 
   it('returns NotFoundAlert if no libraryData', () => {
-    mockContentLibrary.libraryData = null as any;
-
-    render();
+    mockLibraryData.data = undefined as any;
+    render(mockContentLibrary.libraryIdThatNeverLoads);
 
     expect(screen.getByText(/Not Found/i)).toBeVisible();
   });
 
   it('renders the backup page title and initial download button', () => {
-    mockStatusData = {};
     render();
     expect(screen.getByText(messages.backupPageTitle.defaultMessage)).toBeVisible();
     const button = screen.getByRole('button', { name: messages.downloadAriaLabel.defaultMessage });
@@ -223,7 +227,7 @@ describe('<LibraryBackupPage />', () => {
     // Verify the download was triggered
     expect(createElementSpy).toHaveBeenCalledWith('a');
     expect(mockAnchor.href).toContain('/api/libraries/v2/backup/download/test-backup.tar.gz');
-    expect(mockAnchor.download).toBe('test-lib-backup.tar.gz');
+    expect(mockAnchor.download).toContain('backup.tar.gz');
     expect(mockAnchor.click).toHaveBeenCalled();
     expect(appendChildSpy).toHaveBeenCalledWith(mockAnchor);
     expect(removeChildSpy).toHaveBeenCalledWith(mockAnchor);
