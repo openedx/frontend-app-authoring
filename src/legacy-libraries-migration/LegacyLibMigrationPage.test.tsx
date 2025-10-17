@@ -14,9 +14,11 @@ import { getContentLibraryV2CreateApiUrl } from '@src/library-authoring/create-l
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 
 import { LegacyLibMigrationPage } from './LegacyLibMigrationPage';
+import { bulkMigrateLegacyLibrariesUrl } from './data/api';
 
 const path = '/libraries-v1/migrate/*';
 let axiosMock: MockAdapter;
+let mockShowToast;
 
 mockGetStudioHomeLibraries.applyMock();
 mockGetContentLibraryV2List.applyMock();
@@ -41,7 +43,9 @@ const renderPage = () => (
 
 describe('<LegacyLibMigrationPage />', () => {
   beforeEach(() => {
-    axiosMock = initializeMocks().axiosMock;
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
   });
 
   it('should render legacy library migration page', async () => {
@@ -49,9 +53,9 @@ describe('<LegacyLibMigrationPage />', () => {
     // Should render the title
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     // Should render the Migration Steps Viewer
-    expect(screen.getByText(/select legacy libraries/i)).toBeInTheDocument();
-    expect(screen.getByText(/select destination/i)).toBeInTheDocument();
-    expect(screen.getByText(/confirm/i)).toBeInTheDocument();
+    expect(screen.getByText('Select Legacy Libraries')).toBeInTheDocument();
+    expect(screen.getByText('Select Destination')).toBeInTheDocument();
+    expect(screen.getByText('Confirm')).toBeInTheDocument();
   });
 
   it('should cancel the migration', async () => {
@@ -82,12 +86,22 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should select legacy libraries', async () => {
+    const user = userEvent.setup();
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
     // The next button is disabled
     expect(nextButton).toBeDisabled();
+
+    // The filter is Unmigrated by default
+    const filterButton = await screen.findByRole('button', { name: /unmigrated/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Clear filter to show all
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
 
     expect(await screen.findByText('MBA')).toBeInTheDocument();
     expect(await screen.findByText('Legacy library 1')).toBeInTheDocument();
@@ -114,6 +128,37 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(library1).toBeChecked();
     expect(library2).not.toBeChecked();
     expect(nextButton).not.toBeDisabled();
+  });
+
+  it('should select all legacy libraries', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+
+    // The filter is Unmigrated by default
+    const filterButton = await screen.findByRole('button', { name: /unmigrated/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Clear filter to show all
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
+
+    const selectAll = screen.getByRole('checkbox', { name: /select all/i });
+    await user.click(selectAll);
+
+    const library1 = screen.getByRole('checkbox', { name: 'MBA' });
+    const library2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
+    const library3 = screen.getByRole('checkbox', { name: 'MBA 1' });
+
+    expect(library1).toBeChecked();
+    expect(library2).toBeChecked();
+    expect(library3).toBeChecked();
+
+    await user.click(selectAll);
+    expect(library1).not.toBeChecked();
+    expect(library2).not.toBeChecked();
+    expect(library3).not.toBeChecked();
   });
 
   it('should back to select legacy libraries', async () => {
@@ -250,9 +295,18 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should confirm migration', async () => {
+    const user = userEvent.setup();
+    axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(200);
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    // The filter is 'unmigrated' by default.
+    // Clear the filter to select all libraries
+    const filterButton = screen.getByRole('button', { name: /unmigrated/i });
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
 
     const legacyLibrary1 = screen.getByRole('checkbox', { name: 'MBA' });
     const legacyLibrary2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
@@ -285,6 +339,74 @@ describe('<LegacyLibMigrationPage />', () => {
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
     confirmButton.click();
 
-    // TODO: expect call migrate API
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(axiosMock.history.post[0].data).toBe(
+      '{"sources":["library-v1:MBA+123","library-v1:UNIX+LG1","library-v1:MBA+1234"],"target":"lib:SampleTaxonomyOrg1:TL1","create_collections":true,"repeat_handling_strategy":"fork"}',
+    );
+    expect(mockShowToast).toHaveBeenCalledWith('3 legacy libraries are being migrated.');
+  });
+
+  it('should show error when confirm migration', async () => {
+    const user = userEvent.setup();
+    axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(400);
+    renderPage();
+    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    expect(await screen.findByText('MBA')).toBeInTheDocument();
+
+    // The filter is 'unmigrated' by default.
+    // Clear the filter to select all libraries
+    const filterButton = screen.getByRole('button', { name: /unmigrated/i });
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
+
+    const legacyLibrary1 = screen.getByRole('checkbox', { name: 'MBA' });
+    const legacyLibrary2 = screen.getByRole('checkbox', { name: /legacy library 1 imported library/i });
+    const legacyLibrary3 = screen.getByRole('checkbox', { name: 'MBA 1' });
+
+    legacyLibrary1.click();
+    legacyLibrary2.click();
+    legacyLibrary3.click();
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    nextButton.click();
+
+    // Should show alert of SelectDestinationView
+    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    const radioButton = screen.getByRole('radio', { name: /test library 1/i });
+    radioButton.click();
+
+    nextButton.click();
+
+    // Should show alert of ConfirmationView
+    expect(await screen.findByText(/these 3 legacy libraries will be migrated to/i)).toBeInTheDocument();
+    expect(screen.getByText('MBA')).toBeInTheDocument();
+    expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
+    expect(screen.getByText('MBA 1')).toBeInTheDocument();
+    expect(screen.getByText(
+      /Previously migrated library. Any problem bank links were already moved will be migrated to/i,
+    )).toBeInTheDocument();
+
+    const confirmButton = screen.getByRole('button', { name: /confirm/i });
+    confirmButton.click();
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(axiosMock.history.post[0].data).toBe(
+      '{"sources":["library-v1:MBA+123","library-v1:UNIX+LG1","library-v1:MBA+1234"],"target":"lib:SampleTaxonomyOrg1:TL1","create_collections":true,"repeat_handling_strategy":"fork"}',
+    );
+    expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.');
+  });
+
+  it('should show help sidebar', async () => {
+    renderPage();
+    expect(await screen.findByText('Help & Support')).toBeInTheDocument();
+    expect(screen.getByText('What’s different in the new Content Libraries experience?')).toBeInTheDocument();
+    expect(screen.getByText('What happens when I migrate my Legacy Libraries?')).toBeInTheDocument();
+    expect(screen.getByText('How do I migrate my Legacy Libraries?')).toBeInTheDocument();
   });
 });

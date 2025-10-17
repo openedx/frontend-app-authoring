@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import * as tinyMCEKeys from '../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
@@ -204,4 +203,4 @@ ImageUploadModal.propTypes = {
 };
 
 export const ImageUploadModalInternal = ImageUploadModal; // For testing only
-export default injectIntl(ImageUploadModal);
+export default ImageUploadModal;

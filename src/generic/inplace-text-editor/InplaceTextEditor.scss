@@ -4,3 +4,14 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.inplace-text-editor-with-edit-input {
+  width: 100%;
+}
+
+.inplace-text-editor-with-edit-input:focus-within {
+  :has(&) {
+    width: 100%;
+  }
+}
+

@@ -145,6 +145,10 @@ export const getLibraryBackupApiUrl = (libraryId: string) => `${getApiBaseUrl()}
  * Get the URL for the API endpoint to get the status of a library backup task.
  */
 export const getLibraryBackupStatusApiUrl = (libraryId: string, taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/backup/?task_id=${taskId}`;
+/**
+ * Get the URL for the API endpoint to copy a single container.
+ */
+export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
 
 export interface ContentLibrary {
   id: string;

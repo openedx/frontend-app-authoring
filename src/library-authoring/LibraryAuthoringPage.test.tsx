@@ -10,8 +10,12 @@ import {
   within,
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { mockGetMigrationStatus } from '@src/legacy-libraries-migration/data/api.mocks';
+import mockEmptyResult from '@src/search-modal/__mocks__/empty-search-result.json';
+import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
+
 import mockResult from './__mocks__/library-search.json';
-import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
@@ -19,8 +23,6 @@ import {
   mockGetLibraryTeam,
   mockXBlockFields,
 } from './data/api.mocks';
-import { mockContentSearchConfig } from '../search-manager/data/api.mock';
-import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';
 
@@ -33,6 +35,7 @@ mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetLibraryTeam.applyMock();
 mockXBlockFields.applyMock();
+mockGetMigrationStatus.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -1061,5 +1064,31 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This page cannot be shown: Libraries v2 are disabled.',
     );
+  });
+
+  it('Should show success in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationId}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The migration of legacy libraries has been completed successfully.'));
+  });
+
+  it('Should show fail in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdFailed}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.'));
   });
 });

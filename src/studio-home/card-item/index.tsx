@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Card,
@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COURSE_CREATOR_STATES } from '@src/constants';
 import { parseLibraryKey } from '@src/generic/key-utils';
+import classNames from 'classnames';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
@@ -141,7 +142,9 @@ interface BaseProps {
   migratedToTitle?: string;
   migratedToCollectionKey?: string | null;
   selectMode?: 'single' | 'multiple';
+  isSelected?: boolean;
   itemId?: string;
+  scrollIntoView?: boolean;
 }
 
 type Props = BaseProps & (
@@ -167,6 +170,7 @@ const CardItem: React.FC<Props> = ({
   isLibraries = false,
   courseKey = '',
   selectMode,
+  isSelected = false,
   itemId = '',
   path,
   url,
@@ -174,6 +178,7 @@ const CardItem: React.FC<Props> = ({
   migratedToKey,
   migratedToTitle,
   migratedToCollectionKey,
+  scrollIntoView = false,
 }) => {
   const intl = useIntl();
   const {
@@ -182,6 +187,7 @@ const CardItem: React.FC<Props> = ({
     rerunCreatorStatus,
   } = useSelector(getStudioHomeData);
   const waffleFlags = useWaffleFlags();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const destinationUrl: string = path ?? (
     waffleFlags.useNewCourseOutlinePage && !isLibraries
@@ -217,66 +223,78 @@ const CardItem: React.FC<Props> = ({
     return libUrl;
   };
 
+  useEffect(() => {
+    /* istanbul ignore next */
+    if (scrollIntoView && cardRef.current && 'scrollIntoView' in cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [scrollIntoView]);
+
   return (
-    <Card className="card-item">
-      <Card.Header
-        size="sm"
-        title={(
-          <CardTitle
-            readOnlyItem={readOnlyItem}
-            selectMode={selectMode}
-            destinationUrl={destinationUrl}
-            title={title}
-            itemId={itemId}
-            isMigrated={isMigrated}
-            migratedToTitle={migratedToTitle}
-            migratedToKey={migratedToKey}
-          />
-        )}
-        subtitle={getSubtitle()}
-        actions={showActions && (
-        <Dropdown>
-          <Dropdown.Toggle
-            as={IconButton}
-            iconAs={MoreHoriz}
-            variant="primary"
-            aria-label={intl.formatMessage(messages.btnDropDownText)}
-          />
-          <Dropdown.Menu>
-            {isShowRerunLink && (
-              <Dropdown.Item
-                as={Link}
-                to={rerunLink ?? ''}
-              >
-                {messages.btnReRunText.defaultMessage}
+    <div ref={cardRef} className="w-100">
+      <Card className={classNames('card-item', {
+        selected: isSelected,
+      })}
+      >
+        <Card.Header
+          size="sm"
+          title={(
+            <CardTitle
+              readOnlyItem={readOnlyItem}
+              selectMode={selectMode}
+              destinationUrl={destinationUrl}
+              title={title}
+              itemId={itemId}
+              isMigrated={isMigrated}
+              migratedToTitle={migratedToTitle}
+              migratedToKey={migratedToKey}
+            />
+          )}
+          subtitle={getSubtitle()}
+          actions={showActions && (
+          <Dropdown>
+            <Dropdown.Toggle
+              as={IconButton}
+              iconAs={MoreHoriz}
+              variant="primary"
+              aria-label={intl.formatMessage(messages.btnDropDownText)}
+            />
+            <Dropdown.Menu>
+              {isShowRerunLink && (
+                <Dropdown.Item
+                  as={Link}
+                  to={rerunLink ?? ''}
+                >
+                  {messages.btnReRunText.defaultMessage}
+                </Dropdown.Item>
+              )}
+              <Dropdown.Item href={lmsLink}>
+                {intl.formatMessage(messages.viewLiveBtnText)}
               </Dropdown.Item>
-            )}
-            <Dropdown.Item href={lmsLink}>
-              {intl.formatMessage(messages.viewLiveBtnText)}
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        )}
-      />
-      {isMigrated && migratedToKey
-        && (
-        <Card.Status className="bg-white pt-0 text-gray-500">
-          <Stack direction="horizontal" gap={2}>
-            <Icon src={AccessTime} size="sm" className="mb-1" />
-            {intl.formatMessage(messages.libraryMigrationStatusText)}
-            <b>
-              <MakeLinkOrSpan
-                when={!readOnlyItem}
-                to={collectionLink()}
-                className="text-info-500"
-              >
-                {migratedToTitle}
-              </MakeLinkOrSpan>
-            </b>
-          </Stack>
-        </Card.Status>
-        )}
-    </Card>
+            </Dropdown.Menu>
+          </Dropdown>
+          )}
+        />
+        {isMigrated && migratedToKey
+          && (
+          <Card.Status className="bg-white pt-0 text-gray-500">
+            <Stack direction="horizontal" gap={2}>
+              <Icon src={AccessTime} size="sm" className="mb-1" />
+              {intl.formatMessage(messages.libraryMigrationStatusText)}
+              <b>
+                <MakeLinkOrSpan
+                  when={!readOnlyItem}
+                  to={collectionLink()}
+                  className="text-info-500"
+                >
+                  {migratedToTitle}
+                </MakeLinkOrSpan>
+              </b>
+            </Stack>
+          </Card.Status>
+          )}
+      </Card>
+    </div>
   );
 };
 
