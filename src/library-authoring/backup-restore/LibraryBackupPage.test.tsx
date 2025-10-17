@@ -17,6 +17,8 @@ const render = (libraryId: string = mockContentLibrary.libraryId) => baseRender(
   ),
 });
 
+// Mocking i18n to prevent having to generate all dynamic translations for this specific test file
+// Other tests can still use the real implementation as needed
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
   useIntl: () => ({
@@ -27,6 +29,8 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 const mockLibraryData:
 { data: typeof mockContentLibrary.libraryData | undefined } = { data: mockContentLibrary.libraryData };
 
+// TODO: consider using the usual mockContentLibrary.applyMocks pattern after figuring out 
+// why it doesn't work here as expected 
 jest.mock('@src/library-authoring/data/apiHooks', () => ({
   useContentLibrary: () => (mockLibraryData),
 }));
