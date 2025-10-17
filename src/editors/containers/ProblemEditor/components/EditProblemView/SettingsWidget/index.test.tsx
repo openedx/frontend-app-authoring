@@ -2,10 +2,11 @@ import React from 'react';
 
 import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import { screen, initializeMocks } from '@src/testUtils';
-import { editorRender } from '@src/editors/editorTestRender';
+import { editorRender, type PartialEditorState } from '@src/editors/editorTestRender';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import * as hooks from './hooks';
 import { SettingsWidgetInternal as SettingsWidget } from '.';
+import { ProblemEditorContextProvider } from '../ProblemEditorContext';
 
 jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
@@ -23,7 +24,6 @@ describe('SettingsWidget', () => {
   const showAdvancedSettingsCardsBaseProps = {
     isAdvancedCardsVisible: false,
     showAdvancedCards: jest.fn().mockName('showAdvancedSettingsCards.showAdvancedCards'),
-    setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
   };
 
   const props = {
@@ -49,6 +49,18 @@ describe('SettingsWidget', () => {
 
   };
 
+  const editorRef = { current: null };
+
+  const renderSettingsWidget = (
+    overrideProps = {},
+    options = {},
+  ) => editorRender(
+    <ProblemEditorContextProvider editorRef={editorRef}>
+      <SettingsWidget {...props} {...overrideProps} />
+    </ProblemEditorContextProvider>,
+    options,
+  );
+
   beforeEach(() => {
     initializeMocks();
   });
@@ -56,7 +68,7 @@ describe('SettingsWidget', () => {
   describe('behavior', () => {
     it('calls showAdvancedSettingsCards when initialized', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      editorRender(<SettingsWidget {...props} />);
+      renderSettingsWidget();
       expect(hooks.showAdvancedSettingsCards).toHaveBeenCalled();
     });
   });
@@ -64,7 +76,7 @@ describe('SettingsWidget', () => {
   describe('renders', () => {
     test('renders Settings widget page', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      editorRender(<SettingsWidget {...props} />);
+      renderSettingsWidget();
       expect(screen.getByText('Show advanced settings')).toBeInTheDocument();
     });
 
@@ -74,7 +86,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = editorRender(<SettingsWidget {...props} />);
+      const { container } = renderSettingsWidget();
       expect(screen.queryByText('Show advanced settings')).not.toBeInTheDocument();
       expect(container.querySelector('showanswercard')).toBeInTheDocument();
       expect(container.querySelector('resetcard')).toBeInTheDocument();
@@ -86,10 +98,47 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = editorRender(
-        <SettingsWidget {...props} problemType={ProblemTypeKeys.ADVANCED} />,
-      );
+      const { container } = renderSettingsWidget({ problemType: ProblemTypeKeys.ADVANCED });
       expect(container.querySelector('randomization')).toBeInTheDocument();
+    });
+  });
+  describe('SwitchEditorCard rendering (markdown vs advanced)', () => {
+    test('shows two SwitchEditorCard components when markdown is available and not currently enabled', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null, // non-advanced problem
+          isMarkdownEditorEnabled: false, // currently in advanced/raw (or standard) editor
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '## Problem', // markdown content exists so button should appear
+          isDirty: false,
+        },
+      };
+      const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
+      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(2);
+    });
+
+    test('shows only the advanced SwitchEditorCard when already in markdown mode', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null,
+          isMarkdownEditorEnabled: true, // already in markdown editor, so markdown button hidden
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '## Problem',
+          isDirty: false,
+        },
+      };
+      const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
+      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
     });
   });
 
@@ -100,7 +149,7 @@ describe('SettingsWidget', () => {
     };
     test('renders Settings widget page', () => {
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsBaseProps);
-      const { container } = editorRender(<SettingsWidget {...libraryProps} />);
+      const { container } = renderSettingsWidget(libraryProps);
       expect(container.querySelector('timercard')).not.toBeInTheDocument();
       expect(container.querySelector('resetcard')).not.toBeInTheDocument();
       expect(container.querySelector('typecard')).toBeInTheDocument();
@@ -114,7 +163,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = editorRender(<SettingsWidget {...libraryProps} />);
+      const { container } = renderSettingsWidget(libraryProps);
       expect(screen.queryByText('Show advanced settings')).not.toBeInTheDocument();
       expect(container.querySelector('showanswearscard')).not.toBeInTheDocument();
       expect(container.querySelector('resetcard')).not.toBeInTheDocument();
@@ -128,7 +177,7 @@ describe('SettingsWidget', () => {
         isAdvancedCardsVisible: true,
       };
       jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
-      const { container } = editorRender(<SettingsWidget {...libraryProps} problemType={ProblemTypeKeys.ADVANCED} />);
+      const { container } = renderSettingsWidget({ ...libraryProps, problemType: ProblemTypeKeys.ADVANCED });
       expect(container.querySelector('randomization')).toBeInTheDocument();
     });
   });

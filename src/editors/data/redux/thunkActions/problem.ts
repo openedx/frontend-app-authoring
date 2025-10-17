@@ -1,4 +1,5 @@
 import { get, isEmpty } from 'lodash';
+import { camelizeKeys, convertMarkdownToXml } from '@src/editors/utils';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
@@ -8,7 +9,6 @@ import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
 import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
 import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
-import { camelizeKeys } from '../../../utils';
 import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 import { RequestKeys } from '../../constants/requests';
 
@@ -16,21 +16,38 @@ import { RequestKeys } from '../../constants/requests';
 const actions = { problem: problemActions, requests: requestActions };
 const selectors = { app: appSelectors };
 
-export const switchToAdvancedEditor = () => (dispatch, getState) => {
-  const state = getState();
-  const editorObject = fetchEditorContent({ format: '' });
-  const reactOLXParser = new ReactStateOLXParser({ problem: state.problem, editorObject });
-  const rawOLX = reactOLXParser.buildOLX();
-  dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX }));
+export const switchToAdvancedEditor = (editorRef) => (dispatch, getState) => {
+  const { problem } = getState();
+  let rawOLX;
+
+  if (problem.isMarkdownEditorEnabled) {
+    // Convert current markdown from CodeMirror editor
+    if (editorRef?.current?.state?.doc) {
+      const markdownContent = editorRef.current.state.doc.toString();
+      rawOLX = convertMarkdownToXml(markdownContent);
+    } else {
+      // Fallback to previously saved olx
+      rawOLX = problem.rawOLX;
+    }
+  } else {
+    const editorObject = fetchEditorContent({ format: '' });
+    rawOLX = new ReactStateOLXParser({ problem, editorObject }).buildOLX();
+  }
+
+  dispatch(actions.problem.updateField({
+    problemType: ProblemTypeKeys.ADVANCED,
+    rawOLX,
+    isMarkdownEditorEnabled: false,
+  }));
 };
 
 export const switchToMarkdownEditor = () => (dispatch) => {
   dispatch(actions.problem.updateField({ isMarkdownEditorEnabled: true }));
 };
 
-export const switchEditor = (editorType) => (dispatch, getState) => {
+export const switchEditor = (editorType, editorRef) => (dispatch, getState) => {
   if (editorType === 'advanced') {
-    switchToAdvancedEditor()(dispatch, getState);
+    switchToAdvancedEditor(editorRef)(dispatch, getState);
   } else {
     switchToMarkdownEditor()(dispatch);
   }
