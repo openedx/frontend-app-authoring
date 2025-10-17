@@ -137,6 +137,14 @@ export const getLibraryContainerCollectionsUrl = (containerId: string) => `${get
  * Get the URL for the API endpoint to publish a single container (+ children).
  */
 export const getLibraryContainerPublishApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}publish/`;
+/**
+ * Get the URL for the API endpoint to create a backup of a v2 library.
+ */
+export const getLibraryBackupApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/backup/`;
+/**
+ * Get the URL for the API endpoint to get the status of a library backup task.
+ */
+export const getLibraryBackupStatusApiUrl = (libraryId: string, taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/backup/?task_id=${taskId}`;
 
 export interface ContentLibrary {
   id: string;
