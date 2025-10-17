@@ -89,7 +89,7 @@ export const useSettingMenuItems = courseId => {
   return items;
 };
 
-export const useToolsMenuItems = courseId => {
+export const useToolsMenuItems = (courseId) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
@@ -123,5 +123,19 @@ export const useToolsMenuItems = courseId => {
       ),
     }] : []),
   ];
+
+  return items;
+};
+
+export const useLibraryToolsMenuItems = itemId => {
+  const intl = useIntl();
+
+  const items = [
+    {
+      href: `/library/${itemId}/backup`,
+      title: intl.formatMessage(messages['header.links.exportLibrary']),
+    },
+  ];
+
   return items;
 };

@@ -101,6 +101,11 @@ const messages = defineMessages({
     defaultMessage: 'Export Course',
     description: 'Link to Studio Export page',
   },
+  'header.links.exportLibrary': {
+    id: 'header.links.exportLibrary',
+    defaultMessage: 'Backup to local archive',
+    description: 'Link to Studio Backup Library page',
+  },
   'header.links.optimizer': {
     id: 'header.links.optimizer',
     defaultMessage: 'Course Optimizer',
