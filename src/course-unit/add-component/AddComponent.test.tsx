@@ -14,7 +14,7 @@ import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import AddComponent from './AddComponent';
+import AddComponent, { AddComponentProps } from './AddComponent';
 import messages from './messages';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { messageTypes } from '../constants';
@@ -56,13 +56,11 @@ jest.mock('../../generic/hooks/context/hooks', () => ({
   }),
 }));
 
-const renderComponent = (props) => render(
+const renderComponent = (props?: AddComponentProps) => render(
   <IframeProvider>
     <AddComponent
-      blockId={blockId}
       isUnitVerticalType
       parentLocator={blockId}
-      addComponentTemplateData={{}}
       handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
       {...props}
     />
@@ -94,7 +92,7 @@ describe('<AddComponent />', () => {
         ),
       });
       expect(btn).toBeInTheDocument();
-      if (component.beta) {
+      if (componentTemplates[component].beta) {
         expect(within(btn).queryByText('Beta')).toBeInTheDocument();
       }
     });

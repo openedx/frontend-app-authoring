@@ -50,6 +50,7 @@ const CourseUnit = ({ courseId }) => {
     isUnitVerticalType,
     isUnitLibraryType,
     isSplitTestType,
+    isProblemBankType,
     staticFileNotices,
     currentlyVisibleToStudents,
     unitXBlockActions,
@@ -219,6 +220,7 @@ const CourseUnit = ({ courseId }) => {
                   parentLocator={blockId}
                   isSplitTestType={isSplitTestType}
                   isUnitVerticalType={isUnitVerticalType}
+                  isProblemBankType={isProblemBankType}
                   handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
                   addComponentTemplateData={addComponentTemplateData}
                 />

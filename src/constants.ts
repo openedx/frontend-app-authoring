@@ -62,6 +62,8 @@ export const COURSE_BLOCK_NAMES = ({
   libraryContent: { id: 'library_content', name: 'Library content' },
   splitTest: { id: 'split_test', name: 'Split Test' },
   component: { id: 'component', name: 'Component' },
+  itembank: { id: 'itembank', name: 'Problem Bank' },
+  legacyLibraryContent: { id: 'library_content', name: 'Randomized Content Block' },
 });
 
 export const STUDIO_CLIPBOARD_CHANNEL = 'studio_clipboard_channel';

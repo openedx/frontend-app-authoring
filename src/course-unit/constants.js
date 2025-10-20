@@ -41,6 +41,7 @@ export const getXBlockSupportMessages = (intl) => ({
 
 export const messageTypes = {
   refreshXBlock: 'refreshXBlock',
+  refreshIframe: 'refreshIframe',
   showMoveXBlockModal: 'showMoveXBlockModal',
   completeXBlockMoving: 'completeXBlockMoving',
   rollbackMovedXBlock: 'rollbackMovedXBlock',
