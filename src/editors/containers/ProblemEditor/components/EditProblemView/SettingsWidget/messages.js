@@ -169,13 +169,13 @@ const messages = defineMessages({
   },
   'ConfirmSwitchMessage-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.advanced',
-    defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor.',
+    defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX. Depending on what edits you make to the OLX, you may not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   'ConfirmSwitchMessage-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.markdown',
-    defaultMessage: 'If you use the markdown editor, this problem will be converted to markdown and you will not be able to return to the simple editor.',
-    description: 'message to confirm that a user wants to use the advanced editor',
+    defaultMessage: 'Some edits that are possible with the markdown editor are not supported by the simple editor, so you may not be able to change back to the simple editor.',
+    description: 'message to confirm that a user wants to use the markdown editor',
   },
   'ConfirmSwitchMessageTitle-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessageTitle.advanced',
