@@ -69,7 +69,17 @@ const CompareContainersWidgetInner = ({
     if ((!data || !libData) && !['added', 'removed'].includes(state || '')) {
       return [undefined, undefined];
     }
-    return diffPreviewContainerChildren(data?.children || [], libData as ContainerChildBase[] || []);
+
+    let libChildren = libData as ContainerChildBase[] || [];
+    if (state === 'removed') {
+      // There is the case in which the item is removed, but it still exists
+      // in the library, in that case the query will bring its children,
+      // but we must put it empty so that the status of all the children of
+      // the downstream are 'removed'
+      libChildren = [];
+    }
+
+    return diffPreviewContainerChildren(data?.children || [], libChildren);
   }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {

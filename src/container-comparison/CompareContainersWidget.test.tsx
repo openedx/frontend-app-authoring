@@ -125,7 +125,6 @@ describe('CompareContainersWidget', () => {
     const blocks = await screen.findAllByText('This subsection will be added in the new version');
     await user.click(blocks[0]);
 
-    screen.logTestingPlaygroundURL();
     expect(await screen.findByText(/this subsection is new/i)).toBeInTheDocument();
   });
 

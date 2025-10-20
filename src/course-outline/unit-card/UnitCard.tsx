@@ -105,6 +105,7 @@ const UnitCard = ({
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
       isReadyToSyncIndividually: upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
+      blockType: 'unit',
     };
   }, [upstreamInfo]);
 
