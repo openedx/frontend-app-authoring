@@ -29,8 +29,8 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 const mockLibraryData:
 { data: typeof mockContentLibrary.libraryData | undefined } = { data: mockContentLibrary.libraryData };
 
-// TODO: consider using the usual mockContentLibrary.applyMocks pattern after figuring out 
-// why it doesn't work here as expected 
+// TODO: consider using the usual mockContentLibrary.applyMocks pattern after figuring out
+// why it doesn't work here as expected
 jest.mock('@src/library-authoring/data/apiHooks', () => ({
   useContentLibrary: () => (mockLibraryData),
 }));
