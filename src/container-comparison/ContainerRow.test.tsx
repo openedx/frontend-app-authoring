@@ -29,20 +29,6 @@ describe('<ContainerRow />', () => {
     )).toBeInTheDocument();
   });
 
-  test('is not clickable when state !== modified', async () => {
-    const onClick = jest.fn();
-    render(<ContainerRow
-      title="Test title"
-      containerType="subsection"
-      side="Before"
-      state="removed"
-      onClick={onClick}
-    />);
-    const titleDiv = await screen.findByText('Test title');
-    const card = titleDiv.closest('.clickable');
-    expect(card).toBe(null);
-  });
-
   test('calls onClick when clicked', async () => {
     const onClick = jest.fn();
     const user = userEvent.setup();

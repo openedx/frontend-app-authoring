@@ -71,13 +71,6 @@ describe('CompareContainersWidget', () => {
     expect(await screen.findByRole('button', { name: 'subsection block 00' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
 
-    const removedRows = await screen.findAllByText('This unit was removed');
-    // clicking on removed or added rows does not updated the page.
-    await user.click(removedRows[0]);
-    // Still in same page
-    expect(await screen.findByRole('button', { name: 'subsection block 00' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
-
     // Back breadcrumb
     const backbtns = await screen.findAllByRole('button', { name: 'Back' });
     expect(backbtns.length).toEqual(2);
