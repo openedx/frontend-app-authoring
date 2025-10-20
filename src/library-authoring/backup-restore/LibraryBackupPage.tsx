@@ -59,8 +59,7 @@ export const LibraryBackupPage = () => {
   const handleDownloadBackup = useCallback(() => {
     // If backup is ready, download it immediately
     if (backupStatus.data?.state === LibraryBackupStatus.Succeeded && backupStatus.data.url) {
-      const fullUrl = `${getConfig().STUDIO_BASE_URL}${backupStatus.data.url}`;
-      handleDownload(fullUrl);
+      handleDownload(backupStatus.data.url);
       return;
     }
 
@@ -87,8 +86,7 @@ export const LibraryBackupPage = () => {
   // Auto-download when backup becomes ready
   useEffect(() => {
     if (backupStatus.data?.state === LibraryBackupStatus.Succeeded && backupStatus.data.url) {
-      const fullUrl = `${getConfig().STUDIO_BASE_URL}${backupStatus.data.url}`;
-      handleDownload(fullUrl);
+      handleDownload(backupStatus.data.url);
       setIsMutationInProgress(false);
     }
   }, [backupStatus.data?.state, backupStatus.data?.url, handleDownload]);
