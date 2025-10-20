@@ -1,5 +1,5 @@
 import {
-  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
+  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath, APP_AUTH_INITIALIZED,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { StrictMode, useEffect } from 'react';
@@ -14,6 +14,7 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import messages from './i18n';
 
 import {
@@ -151,6 +152,30 @@ subscribe(APP_INIT_ERROR, (error) => {
       <ErrorPage message={error.message} />
     </StrictMode>,
   );
+});
+
+subscribe(APP_AUTH_INITIALIZED, () => {
+  getAuthenticatedHttpClient().interceptors.request.use(async (requestConfig) => {
+    const methodsToIntercept = ['post', 'put', 'delete', 'patch'];
+
+    if (methodsToIntercept.includes(requestConfig.method?.toLowerCase())) {
+      try {
+        await getAuthenticatedHttpClient().get(getConfig().STUDIO_BASE_URL, {
+          withCredentials: true,
+        });
+      } catch (e) {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = getConfig().STUDIO_BASE_URL;
+        document.body.appendChild(iframe);
+
+        iframe.onload = () => {
+          setTimeout(() => document.body.removeChild(iframe), 2000);
+        };
+      }
+    }
+    return requestConfig;
+  });
 });
 
 initialize({
