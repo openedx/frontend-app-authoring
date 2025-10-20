@@ -40,6 +40,8 @@ export const ROUTES = {
   // LibraryUnitPage route:
   // * with a selected containerId and/or an optionally selected componentId.
   UNIT: '/unit/:containerId/:selectedItemId?',
+  // LibraryBackupPage route:
+  BACKUP: '/backup',
 };
 
 export enum ContentType {
