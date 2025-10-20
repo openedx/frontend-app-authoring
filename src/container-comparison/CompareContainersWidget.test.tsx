@@ -87,6 +87,48 @@ describe('CompareContainersWidget', () => {
     expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
   });
 
+  test('should show removed container diff state', async () => {
+    // mocks title
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(
+      getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
+    ).reply(200, { publishedDisplayName: 'subsection block 0' });
+
+    const user = userEvent.setup();
+    render(<CompareContainersWidget
+      upstreamBlockId={mockGetContainerMetadata.sectionId}
+      downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+    />);
+    expect((await screen.findAllByText('Test Title')).length).toEqual(2);
+    // left i.e. before side block
+    const block = await screen.findByText('subsection block 00');
+    await user.click(block);
+
+    const removedRows = await screen.findAllByText('This unit was removed');
+    await user.click(removedRows[0]);
+
+    expect(await screen.findByText('This unit has been removed')).toBeInTheDocument();
+  });
+
+  test('should show new added container diff state', async () => {
+    // mocks title
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(
+      getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
+    ).reply(200, { publishedDisplayName: 'subsection block 0' });
+
+    const user = userEvent.setup();
+    render(<CompareContainersWidget
+      upstreamBlockId={mockGetContainerMetadata.sectionId}
+      downstreamBlockId="block-v1:UNIX+UX1+2025_T3+type@section+block@0-new"
+    />);
+    const blocks = await screen.findAllByText('This subsection will be added in the new version');
+    await user.click(blocks[0]);
+
+    screen.logTestingPlaygroundURL();
+    expect(await screen.findByText(/this subsection is new/i)).toBeInTheDocument();
+  });
+
   test('should show alert if the only change is a single text component with local overrides', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
