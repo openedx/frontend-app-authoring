@@ -1,4 +1,3 @@
-import { getConfig } from '@edx/frontend-platform';
 import {
   Alert,
   Button,
@@ -14,14 +13,14 @@ import { Helmet } from 'react-helmet';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Download, Loop, Newsstand } from '@openedx/paragon/icons';
+import NotFoundAlert from '@src/generic/NotFoundAlert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import Header from '@src/header';
 import { LibraryBackupStatus } from '@src/library-authoring/backup-restore/data/constants';
 import { useCreateLibraryBackup, useGetLibraryBackupStatus } from '@src/library-authoring/backup-restore/data/hooks';
-import NotFoundAlert from '@src/generic/NotFoundAlert';
-import Header from '@src/header';
+import messages from '@src/library-authoring/backup-restore/messages';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useContentLibrary } from '@src/library-authoring/data/apiHooks';
-import messages from '@src/library-authoring/backup-restore/messages';
 
 export const LibraryBackupPage = () => {
   const intl = useIntl();
