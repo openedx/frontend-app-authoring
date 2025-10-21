@@ -97,6 +97,7 @@ export const createCodeMirrorDomNode = ({
   initialText,
   upstreamRef,
   lang,
+  onReady,
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
@@ -117,6 +118,7 @@ export const createCodeMirrorDomNode = ({
     const view = new EditorView({ state: newState, parent: ref.current });
     // eslint-disable-next-line no-param-reassign
     upstreamRef.current = view;
+    onReady?.(view);
     view.focus();
 
     return () => {
