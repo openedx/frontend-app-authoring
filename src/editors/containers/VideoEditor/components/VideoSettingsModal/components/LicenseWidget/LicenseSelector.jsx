@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -21,14 +21,15 @@ import { LicenseLevel, LicenseNames, LicenseTypes } from '../../../../../../data
 const LicenseSelector = ({
   license,
   level,
-  // redux
-  courseLicenseType,
-  updateField,
 }) => {
   const intl = useIntl();
-  const { levelDescription } = hooks.determineText({ level });
-  const onLicenseChange = hooks.onSelectLicense({ dispatch: useDispatch() });
+  const dispatch = useDispatch();
   const ref = React.useRef();
+
+  const courseLicenseType = useSelector(selectors.video.courseLicenseType);
+  const { levelDescription } = hooks.determineText({ level });
+  const onLicenseChange = hooks.onSelectLicense({ dispatch });
+
   return (
     <>
       <ActionRow>
@@ -42,9 +43,25 @@ const LicenseSelector = ({
           onChange={(e) => onLicenseChange(e.target.value)}
         >
           {Object.entries(LicenseNames).map(([key, text]) => {
-            if (license === key) { return (<option value={LicenseTypes[key]} selected>{text}</option>); }
-            if (key === LicenseTypes.select) { return (<option hidden>{text}</option>); }
-            return (<option value={LicenseTypes[key]}>{text}</option>);
+            if (license === key) {
+              return (
+                <option key={key} value={LicenseTypes[key]} selected>
+                  {text}
+                </option>
+              );
+            }
+            if (key === LicenseTypes.select) {
+              return (
+                <option key={key} hidden>
+                  {text}
+                </option>
+              );
+            }
+            return (
+              <option key={key} value={LicenseTypes[key]}>
+                {text}
+              </option>
+            );
           })}
         </Form.Control>
         {level !== LicenseLevel.course ? (
@@ -55,7 +72,10 @@ const LicenseSelector = ({
               src={DeleteOutline}
               onClick={() => {
                 ref.current.value = courseLicenseType;
-                updateField({ licenseType: '', licenseDetails: {} });
+                dispatch(actions.video.updateField({
+                  licenseType: '',
+                  licenseDetails: {},
+                }));
               }}
               tooltipPlacement="top"
               tooltipContent={<FormattedMessage {...messages.deleteLicenseSelection} />}
@@ -72,18 +92,7 @@ const LicenseSelector = ({
 LicenseSelector.propTypes = {
   license: PropTypes.string.isRequired,
   level: PropTypes.string.isRequired,
-  // redux
-  courseLicenseType: PropTypes.string.isRequired,
-  updateField: PropTypes.func.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  courseLicenseType: selectors.video.courseLicenseType(state),
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
-});
-
-export const LicenseSelectorInternal = LicenseSelector; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(LicenseSelector);
+export const LicenseSelectorInternal = LicenseSelector; // For testing
+export default LicenseSelector;

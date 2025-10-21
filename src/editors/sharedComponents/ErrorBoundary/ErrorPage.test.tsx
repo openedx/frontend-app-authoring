@@ -1,14 +1,7 @@
 import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
-import { ErrorPageInternal as ErrorPage } from './ErrorPage';
-
-jest.mock('../../data/redux', () => ({
-  selectors: {
-    app: {
-      unitUrl: jest.fn(state => ({ unitUrl: state })),
-    },
-  },
-}));
+import ErrorPage from './ErrorPage';
+import { editorRender } from '../../editorTestRender';
 
 describe('Editor Page', () => {
   const emptyProps = {
@@ -20,9 +13,13 @@ describe('Editor Page', () => {
     studioEndpointUrl: 'fakeurl.com',
     message: 'cUStomMEssagE',
   };
-  const unitData = {
-    data: {
-      ancestors: [{ id: 'SomeID' }],
+  const initialState = {
+    app: {
+      unitUrl: {
+        data: {
+          ancestors: [{ id: 'SomeID' }],
+        },
+      },
     },
   };
 
@@ -40,14 +37,22 @@ describe('Editor Page', () => {
   describe('rendered with pass through props defined', () => {
     describe('shows two buttons', () => {
       it('the first button should correspond to returning to the course outline', () => {
-        render(<ErrorPage {...passedProps} />);
+        const modifiedInitialState = {
+          ...initialState,
+          app: {
+            unitUrl: {
+
+            },
+          },
+        };
+        editorRender(<ErrorPage {...passedProps} />, { initialState: modifiedInitialState });
         const firstButton = screen.getByRole('button', { name: 'Return to course outline' });
         const secondButton = screen.getByRole('button', { name: 'Try again' });
         expect(firstButton).toBeInTheDocument();
         expect(secondButton).toBeInTheDocument();
       });
       it('the first button should correspond to returning to the unit page', () => {
-        render(<ErrorPage {...passedProps} unitData={unitData} />);
+        editorRender(<ErrorPage {...passedProps} />, { initialState });
         const firstButton = screen.getByRole('button', { name: 'Return to unit page' });
         const secondButton = screen.getByRole('button', { name: 'Try again' });
         expect(firstButton).toBeInTheDocument();
@@ -55,7 +60,7 @@ describe('Editor Page', () => {
       });
     });
     it('should have custom message', () => {
-      render(<ErrorPage {...passedProps} />);
+      editorRender(<ErrorPage {...passedProps} />, { initialState });
       expect(screen.getByText('cUStomMEssagE')).toBeInTheDocument();
     });
   });

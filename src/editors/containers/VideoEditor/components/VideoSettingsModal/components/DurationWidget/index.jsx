@@ -1,12 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { Col, Form } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import { actions, selectors } from '../../../../../../data/redux';
-import { keyStore } from '../../../../../../utils';
+import { actions, selectors } from '@src/editors/data/redux';
+import { keyStore } from '@src/editors/utils';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import * as hooks from './hooks';
 import messages from '../messages';
@@ -14,22 +13,27 @@ import messages from '../messages';
 import './index.scss';
 
 /**
- * Collapsible Form widget controlling video start and end times
+ * Collapsible Form widget controlling video start and end times.
  * Also displays the total run time of the video.
  */
-const DurationWidget = ({
-  // redux
-  duration,
-  updateField,
-}) => {
+const DurationWidget = () => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
+  // ✅ Select data from Redux
+  const duration = useSelector(selectors.video.duration);
+
+  // ✅ Hooks logic (same as before)
   const {
     unsavedDuration,
     onBlur,
     onChange,
     onKeyDown,
     getTotalLabel,
-  } = hooks.durationWidget({ duration, updateField });
+  } = hooks.durationWidget({
+    duration,
+    updateField: (payload) => dispatch(actions.video.updateField(payload)),
+  });
 
   const timeKeys = keyStore(duration);
 
@@ -84,18 +88,9 @@ const DurationWidget = ({
 };
 
 DurationWidget.propTypes = {
-  // redux
-  duration: PropTypes.objectOf(PropTypes.number).isRequired,
-  updateField: PropTypes.func.isRequired,
+  // ⚠️ Not required anymore because Redux handles these internally
+  duration: PropTypes.objectOf(PropTypes.number),
+  updateField: PropTypes.func,
 };
 
-export const mapStateToProps = (state) => ({
-  duration: selectors.video.duration(state),
-});
-
-export const mapDispatchToProps = {
-  updateField: actions.video.updateField,
-};
-
-export const DurationWidgetInternal = DurationWidget; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(DurationWidget);
+export default DurationWidget;
