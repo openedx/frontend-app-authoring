@@ -225,7 +225,20 @@ const LibraryAuthoringPage = ({
   if (migrationId) {
     let deleteMigrationIdParam = false;
     if (migrationStatusData?.state === 'Succeeded') {
-      showToast(intl.formatMessage(migrationMessages.migrationSuccess));
+      // Verify if there is some failed libraries
+      const failedMigrations = migrationStatusData.parameters.filter(item => item.isFailed);
+      if (failedMigrations.length > 1) {
+        showToast(intl.formatMessage(migrationMessages.migrationFailedMultiple));
+      } else if (failedMigrations.length === 1) {
+        showToast(intl.formatMessage(
+          migrationMessages.migrationFailedOneLibrary,
+          {
+            key: failedMigrations[0].source,
+          },
+        ));
+      } else {
+        showToast(intl.formatMessage(migrationMessages.migrationSuccess));
+      }
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       deleteMigrationIdParam = true;
     } else if (migrationStatusData?.state === 'Failed') {

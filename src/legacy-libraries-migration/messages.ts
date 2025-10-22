@@ -141,8 +141,18 @@ const messages = defineMessages({
   },
   migrationFailed: {
     id: 'legacy-libraries-migration.confirmation-step.toast.migration-failed',
-    defaultMessage: 'Legacy libraries migration failed.',
+    defaultMessage: 'Legacy libraries migration have failed',
     description: 'Toast message that indicates the migration of legacy libraries is failed',
+  },
+  migrationFailedMultiple: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-multiple-failed',
+    defaultMessage: 'Multiple legacy libraries have failed',
+    description: 'Toast message that indicates the migration of legacy libraries is failed',
+  },
+  migrationFailedOneLibrary: {
+    id: 'legacy-libraries-migration.confirmation-step.toast.migration-one-failed',
+    defaultMessage: 'The legacy library with this key has failed: {key}',
+    description: 'Toast message that indicates that one legacy library has failed in the migration',
   },
   migrationSuccess: {
     id: 'legacy-libraries-migration.confirmation-step.toast.migration-success',

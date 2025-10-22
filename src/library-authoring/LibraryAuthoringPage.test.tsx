@@ -1089,6 +1089,32 @@ describe('<LibraryAuthoringPage />', () => {
       },
     });
 
-    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.'));
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration have failed'));
+  });
+
+  it('Should show fail multiple legacy libraries in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdMultiple}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Multiple legacy libraries have failed'));
+  });
+
+  it('Should show fail one legacy library in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdOneLibrary}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The legacy library with this key has failed: legacy-lib-1'));
   });
 });

@@ -399,7 +399,7 @@ describe('<LegacyLibMigrationPage />', () => {
     expect(axiosMock.history.post[0].data).toBe(
       '{"sources":["library-v1:MBA+123","library-v1:UNIX+LG1","library-v1:MBA+1234"],"target":"lib:SampleTaxonomyOrg1:TL1","create_collections":true,"repeat_handling_strategy":"fork"}',
     );
-    expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration failed.');
+    expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration have failed');
   });
 
   it('should show help sidebar', async () => {

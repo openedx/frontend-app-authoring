@@ -21,6 +21,7 @@ export interface MigrateArtifacts {
   preserveUrlSlugs: boolean;
   targetCollectionSlug: string;
   forwardSourceToTarget: boolean;
+  isFailed: boolean;
 }
 
 export interface MigrateTaskStatusData {
