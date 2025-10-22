@@ -1,11 +1,10 @@
-import React from 'react';
 import {
-  render, fireEvent, waitFor,
+  render, screen, waitFor,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { courseDetailsMock } from '../../__mocks__';
-import gradeRequirementsMessages from '../grade-requirements/messages';
 import messages from './messages';
 import EntranceExam from '.';
 
@@ -42,18 +41,20 @@ describe('<EntranceExam />', () => {
   });
 
   it('should toggle grade requirements after checkbox click', async () => {
-    const { getByText, queryAllByText, getAllByRole } = render(
-      <RootWrapper {...props} />,
-    );
-    const checkbox = getAllByRole('checkbox')[0];
-    expect(
-      getByText(gradeRequirementsMessages.requirementsEntranceCollapseLabel.defaultMessage),
-    ).toBeInTheDocument();
-    fireEvent.click(checkbox);
+    onChangeMock.mockClear();
+    const ui = render(<RootWrapper {...props} />);
+    const user = userEvent.setup();
+    const checkbox = screen.getByRole('checkbox', { name: 'Require students to pass an exam before beginning the course.' });
+
+    expect(checkbox).toBeChecked();
+    expect(screen.queryByText('Grade requirements')).toBeInTheDocument();
+
+    await user.click(checkbox);
+    expect(onChangeMock).toHaveBeenCalledWith('false', 'entranceExamEnabled');
+    ui.rerender(<RootWrapper {...props} isCheckedString="false" />);
     await waitFor(() => {
-      expect(
-        queryAllByText(gradeRequirementsMessages.requirementsEntranceCollapseLabel.defaultMessage).length,
-      ).toBe(0);
+      expect(checkbox).not.toBeChecked();
+      expect(screen.queryByText('Grade requirements')).not.toBeInTheDocument();
     });
   });
 });
