@@ -88,6 +88,46 @@ const messages = defineMessages({
     defaultMessage: 'Cancel',
     description: 'Button text to cancel creating a new library.',
   },
+  createFromArchiveButton: {
+    id: 'course-authoring.library-authoring.create-library.form.create-from-archive.button',
+    defaultMessage: 'Create from Archive',
+    description: 'Button text to create library from archive.',
+  },
+  dropzoneTitle: {
+    id: 'course-authoring.library-authoring.create-library.form.dropzone.title',
+    defaultMessage: 'Drag and drop your local backup archive file here to upload',
+    description: 'Title for the dropzone area.',
+  },
+  dropzoneSubtitle: {
+    id: 'course-authoring.library-authoring.create-library.form.dropzone.subtitle',
+    defaultMessage: 'Upload .zip or .tar.gz files (5 GB max)',
+    description: 'Subtitle for the dropzone area.',
+  },
+  uploadSuccess: {
+    id: 'course-authoring.library-authoring.create-library.form.upload.success',
+    defaultMessage: 'File uploaded successfully',
+    description: 'Success message when file is uploaded.',
+  },
+  restoreInProgress: {
+    id: 'course-authoring.library-authoring.create-library.form.restore.in-progress',
+    defaultMessage: 'Restoring library...',
+    description: 'Message shown while library is being restored.',
+  },
+  restoreError: {
+    id: 'course-authoring.library-authoring.create-library.form.restore.error',
+    defaultMessage: 'Library restore failed. See error log for details.',
+    description: 'Error message when library restore fails.',
+  },
+  createLibraryFromArchiveButton: {
+    id: 'course-authoring.library-authoring.create-library.form.create-from-archive-final.button',
+    defaultMessage: 'Create Library from Archive',
+    description: 'Button text to finalize library creation from archive.',
+  },
+  createLibraryFromArchiveButtonPending: {
+    id: 'course-authoring.library-authoring.create-library.form.create-from-archive-final.button.pending',
+    defaultMessage: 'Creating from Archive...',
+    description: 'Button text while the library is being created from archive.',
+  },
 });
 
 export default messages;
