@@ -121,7 +121,7 @@ export const CreateLibrary = ({
       const validExtensions = ['.zip', '.tar.gz', '.tar'];
       const fileName = file.name.toLowerCase();
       const isValidFile = validExtensions.some(ext => fileName.endsWith(ext));
-      
+
       if (isValidFile) {
         setUploadedFile(file);
         // Immediately start the restore process
@@ -165,7 +165,7 @@ export const CreateLibrary = ({
             ) : null}
           />
         )}
-        
+
         {/* Archive upload section - shown above form when in archive mode */}
         {isFromArchive && (
           <div className="mb-4">
@@ -292,12 +292,12 @@ export const CreateLibrary = ({
           }
           onSubmit={(values) => {
             const submitData = { ...values } as CreateContentLibraryArgs;
-            
+
             // If we're creating from archive and have a successful restore, include the learning_package_id
             if (isFromArchive && restoreStatus?.state === LibraryRestoreStatus.Succeeded && restoreStatus.result) {
               submitData.learning_package = restoreStatus.result.learning_package_id;
             }
-            
+
             mutate(submitData);
           }}
         >
