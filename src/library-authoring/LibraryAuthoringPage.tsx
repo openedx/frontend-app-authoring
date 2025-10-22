@@ -225,7 +225,8 @@ const LibraryAuthoringPage = ({
   if (migrationId) {
     let deleteMigrationIdParam = false;
     if (migrationStatusData?.state === 'Succeeded') {
-      // Verify if there is some failed libraries
+      // Check if any library migrations failed.
+      // A `Succeeded` state means that the bulk migration ended, but some libraries might have failed.
       const failedMigrations = migrationStatusData.parameters.filter(item => item.isFailed);
       if (failedMigrations.length > 1) {
         showToast(intl.formatMessage(migrationMessages.migrationFailedMultiple));
@@ -242,6 +243,7 @@ const LibraryAuthoringPage = ({
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       deleteMigrationIdParam = true;
     } else if (migrationStatusData?.state === 'Failed') {
+      // A `Failed` state means that the entire bulk migration has failed.
       showToast(intl.formatMessage(migrationMessages.migrationFailed));
       deleteMigrationIdParam = true;
     } else if (migrationStatusData?.state === 'Canceled') {
