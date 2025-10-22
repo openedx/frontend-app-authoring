@@ -4,10 +4,10 @@ import {
   Alert,
   Breadcrumb, Button, Card, Icon, Stack,
 } from '@openedx/paragon';
-import { ArrowBack } from '@openedx/paragon/icons';
+import { ArrowBack, Add, Delete } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
-import { ContainerType } from '@src/generic/key-utils';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import ErrorAlert from '@src/generic/alert-error';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
@@ -16,7 +16,9 @@ import { BoldText } from '@src/utils';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
-import { ContainerChild, ContainerChildBase, WithState } from './types';
+import {
+  ContainerChild, ContainerChildBase, ContainerState, WithState,
+} from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
 
@@ -30,6 +32,7 @@ interface Props extends ContainerInfoProps {
   parent: ContainerInfoProps[];
   onRowClick: (row: WithState<ContainerChild>) => void;
   onBackBtnClick: () => void;
+  state?: ContainerState;
   // This two props are used to show an alert for the changes to text components with local overrides.
   // They may be removed in the future.
   localUpdateAlertCount: number;
@@ -43,6 +46,7 @@ const CompareContainersWidgetInner = ({
   upstreamBlockId,
   downstreamBlockId,
   parent,
+  state,
   onRowClick,
   onBackBtnClick,
   localUpdateAlertCount,
@@ -50,11 +54,13 @@ const CompareContainersWidgetInner = ({
 }: Props) => {
   const intl = useIntl();
   const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, parent.length === 0);
+  // There is the case in which the item is removed, but it still exists
+  // in the library, for that case, we avoid bringing the children.
   const {
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren(upstreamBlockId, true);
+  } = useContainerChildren(state === 'removed' ? undefined : upstreamBlockId, true);
   const {
     data: containerData,
     isError: isContainerTitleError,
@@ -62,15 +68,30 @@ const CompareContainersWidgetInner = ({
   } = useContainer(upstreamBlockId);
 
   const result = useMemo(() => {
-    if (!data || !libData) {
+    if ((!data || !libData) && !['added', 'removed'].includes(state || '')) {
       return [undefined, undefined];
     }
-    return diffPreviewContainerChildren(data.children, libData as ContainerChildBase[]);
+
+    return diffPreviewContainerChildren(data?.children || [], libData as ContainerChildBase[] || []);
   }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {
-    if (!result[0]) {
+    if (!result[0] && state !== 'added') {
       return <div className="m-auto"><LoadingSpinner /></div>;
+    }
+
+    if (state === 'added') {
+      return (
+        <Stack className="align-items-center justify-content-center bg-light-200 text-gray-800">
+          <Icon src={Add} className="big-icon" />
+          <FormattedMessage
+            {...messages.newContainer}
+            values={{
+              containerType: getBlockType(upstreamBlockId),
+            }}
+          />
+        </Stack>
+      );
     }
 
     return result[0]?.map((child) => (
@@ -87,8 +108,22 @@ const CompareContainersWidgetInner = ({
   }, [result]);
 
   const renderAfterChildren = useCallback(() => {
-    if (!result[1]) {
+    if (!result[1] && state !== 'removed') {
       return <div className="m-auto"><LoadingSpinner /></div>;
+    }
+
+    if (state === 'removed') {
+      return (
+        <Stack className="align-items-center justify-content-center bg-light-200 text-gray-800">
+          <Icon src={Delete} className="big-icon" />
+          <FormattedMessage
+            {...messages.deletedContainer}
+            values={{
+              containerType: getBlockType(upstreamBlockId),
+            }}
+          />
+        </Stack>
+      );
     }
 
     return result[1]?.map((child) => (
@@ -134,12 +169,21 @@ const CompareContainersWidgetInner = ({
     );
   }, [parent]);
 
-  if (isError || isLibError || isContainerTitleError) {
+  let beforeTitle: string | undefined | null = data?.displayName;
+  let afterTitle = containerData?.publishedDisplayName;
+  if (!data && state === 'added') {
+    beforeTitle = containerData?.publishedDisplayName;
+  }
+  if (!containerData && state === 'removed') {
+    afterTitle = data?.displayName;
+  }
+
+  if (isError || (isLibError && state !== 'removed') || (isContainerTitleError && state !== 'removed')) {
     return <ErrorAlert error={error || libError || containerTitleError} />;
   }
 
   return (
-    <div className="row justify-content-center">
+    <div className="compare-changes-widget row justify-content-center">
       {localUpdateAlertCount > 0 && (
         <Alert variant="info">
           <FormattedMessage
@@ -153,15 +197,15 @@ const CompareContainersWidgetInner = ({
         </Alert>
       )}
       <div className="col col-6 p-1">
-        <Card className="p-4">
-          <ChildrenPreview title={getTitleComponent(data?.displayName)} side="Before">
+        <Card className="compare-card p-4">
+          <ChildrenPreview title={getTitleComponent(beforeTitle)} side="Before">
             {renderBeforeChildren()}
           </ChildrenPreview>
         </Card>
       </div>
       <div className="col col-6 p-1">
-        <Card className="p-4">
-          <ChildrenPreview title={getTitleComponent(containerData?.publishedDisplayName)} side="After">
+        <Card className="compare-card p-4">
+          <ChildrenPreview title={getTitleComponent(afterTitle)} side="After">
             {renderAfterChildren()}
           </ChildrenPreview>
         </Card>
@@ -181,12 +225,14 @@ export const CompareContainersWidget = ({
   isReadyToSyncIndividually = false,
 }: ContainerInfoProps) => {
   const [currentContainerState, setCurrentContainerState] = useState<ContainerInfoProps & {
-    parent: ContainerInfoProps[];
+    state?: ContainerState;
+    parent:(ContainerInfoProps & { state?: ContainerState })[];
   }>({
-    upstreamBlockId,
-    downstreamBlockId,
-    parent: [],
-  });
+        upstreamBlockId,
+        downstreamBlockId,
+        parent: [],
+        state: 'modified',
+      });
 
   const { data } = useCourseContainerChildren(downstreamBlockId, true);
   let localUpdateAlertBlockName = '';
@@ -213,9 +259,11 @@ export const CompareContainersWidget = ({
     setCurrentContainerState((prev) => ({
       upstreamBlockId: row.id!,
       downstreamBlockId: row.downstreamId!,
+      state: row.state,
       parent: [...prev.parent, {
         upstreamBlockId: prev.upstreamBlockId,
         downstreamBlockId: prev.downstreamBlockId,
+        state: prev.state,
       }],
     }));
   };
@@ -230,6 +278,7 @@ export const CompareContainersWidget = ({
       return {
         upstreamBlockId: prevParent!.upstreamBlockId,
         downstreamBlockId: prevParent!.downstreamBlockId,
+        state: prevParent!.state,
         parent: prev.parent.slice(0, -1),
       };
     });
@@ -240,6 +289,7 @@ export const CompareContainersWidget = ({
       upstreamBlockId={currentContainerState.upstreamBlockId}
       downstreamBlockId={currentContainerState.downstreamBlockId}
       parent={currentContainerState.parent}
+      state={currentContainerState.state}
       onRowClick={onRowClick}
       onBackBtnClick={onBackBtnClick}
       localUpdateAlertCount={localUpdateAlertCount}
