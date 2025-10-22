@@ -4,7 +4,6 @@ import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
 } from '@openedx/paragon';
 import { Error, FilterList } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
 
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
@@ -227,7 +226,7 @@ export const LibrariesList = ({
 
   return (
     <>
-      {!hideMigationAlert && getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
+      {!hideMigationAlert && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
           {inSelectMode && (

@@ -393,10 +393,6 @@ describe('<TabsSection />', () => {
     });
 
     it('should open migration library page from v1 libraries tab', async () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_LEGACY_LIBRARY_MIGRATOR: 'true',
-      });
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
       render({ librariesV2Enabled: false });
@@ -422,10 +418,6 @@ describe('<TabsSection />', () => {
     });
 
     it('should open migration library page from v2 libraries tab', async () => {
-      setConfig({
-        ...getConfig(),
-        ENABLE_LEGACY_LIBRARY_MIGRATOR: 'true',
-      });
       const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map(
         library => ({
           ...library,
@@ -542,10 +534,6 @@ describe('<TabsSection />', () => {
 
     [true, false].forEach((isMigrated) => {
       it(`should render v2 libraries migration alert when the libraries have isMigrated=${isMigrated}`, async () => {
-        setConfig({
-          ...getConfig(),
-          ENABLE_LEGACY_LIBRARY_MIGRATOR: 'true',
-        });
         const libraries = generateGetStudioHomeLibrariesApiResponse().libraries.map(
           library => ({
             ...library,
