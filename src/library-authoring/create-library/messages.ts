@@ -128,6 +128,31 @@ const messages = defineMessages({
     defaultMessage: 'Creating from Archive...',
     description: 'Button text while the library is being created from archive.',
   },
+  archiveComponentsCount: {
+    id: 'course-authoring.library-authoring.create-library.form.archive.components-count',
+    defaultMessage: 'Contains {count} Components',
+    description: 'Text showing the number of components in the restored archive.',
+  },
+  archiveBackupDate: {
+    id: 'course-authoring.library-authoring.create-library.form.archive.backup-date',
+    defaultMessage: 'Backed up {date} at {time}',
+    description: 'Text showing when the archive was backed up.',
+  },
+  dropzoneMultipleDraggedError: {
+    id: 'course-authoring.library-authoring.create-library.form.dropzone.multiple-dragged-error',
+    defaultMessage: 'Please upload only one archive file.',
+    description: 'Error message when multiple files are dragged to the dropzone.',
+  },
+  uploadingStatus: {
+    id: 'course-authoring.library-authoring.create-library.form.uploading.status',
+    defaultMessage: 'Uploading...',
+    description: 'Status message shown while file is uploading.',
+  },
+  invalidFileTypeError: {
+    id: 'course-authoring.library-authoring.create-library.form.invalid-file-type.error',
+    defaultMessage: 'Invalid file type. Please upload a .zip, .tar.gz, or .tar file.',
+    description: 'Error message when user uploads an unsupported file type.',
+  },
 });
 
 export default messages;
