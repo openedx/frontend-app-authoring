@@ -1,12 +1,12 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon, Stack } from '@openedx/paragon';
 import { Question } from '@openedx/paragon/icons';
-import { Div, Paragraph } from '@src/utils';
+import { Paragraph } from '@src/utils';
 
 import messages from './messages';
 
-export const LegacyMigrationHelpSidebar = () => (
-  <div className="legacy-libraries-migration-help bg-white pt-3 mt-1">
+export const HelpSidebar = () => (
+  <div className="course-migration-help pt-3 border-left">
     <Stack gap={1} direction="horizontal" className="pl-4 h4 text-primary-700">
       <Icon src={Question} />
       <span>
@@ -20,7 +20,10 @@ export const LegacyMigrationHelpSidebar = () => (
           <FormattedMessage {...messages.helpAndSupportFirstQuestionTitle} />
         </span>
         <span className="x-small">
-          <FormattedMessage {...messages.helpAndSupportFirstQuestionBody} />
+          <FormattedMessage
+            {...messages.helpAndSupportFirstQuestionBody}
+            values={{ p: Paragraph }}
+          />
         </span>
       </Stack>
       <hr />
@@ -29,21 +32,13 @@ export const LegacyMigrationHelpSidebar = () => (
           <FormattedMessage {...messages.helpAndSupportSecondQuestionTitle} />
         </span>
         <span className="x-small">
-          <FormattedMessage {...messages.helpAndSupportSecondQuestionBody} />
-        </span>
-      </Stack>
-      <hr />
-      <Stack>
-        <span className="h5">
-          <FormattedMessage {...messages.helpAndSupportThirdQuestionTitle} />
-        </span>
-        <span className="x-small">
           <FormattedMessage
-            {...messages.helpAndSupportThirdQuestionBody}
-            values={{ div: Div, p: Paragraph }}
+            {...messages.helpAndSupportSecondQuestionBody}
+            values={{ p: Paragraph }}
           />
         </span>
       </Stack>
+      <hr />
     </Stack>
   </div>
 );
