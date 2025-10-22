@@ -70,7 +70,7 @@ export enum Filter {
   unmigrated = 'unmigrated',
 }
 
-const BaseFilterState = Object.values(Filter);
+export const BaseFilterState = Object.values(Filter);
 
 interface MigrationFilterProps {
   filters: Filter[];
@@ -146,7 +146,12 @@ interface LibrariesListProps {
   handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
   setSelectedLibraries?: (libraries: LibraryV1Data[]) => void;
   hideMigationAlert?: boolean;
-  initialFilter?: Filter[];
+  // We lift `migrationFilter` and `setMigrationFilter` into props
+  // so that the filter state is maintained consistently across different
+  // steps of the legacy libraries migration flow, and to allow
+  // parent components to control and persist the filter context.
+  migrationFilter: Filter[];
+  setMigrationFilter: React.Dispatch<React.SetStateAction<Filter[]>>;
 }
 
 export const LibrariesList = ({
@@ -154,13 +159,13 @@ export const LibrariesList = ({
   handleCheck,
   setSelectedLibraries,
   hideMigationAlert = false,
-  initialFilter = BaseFilterState,
+  migrationFilter,
+  setMigrationFilter,
 }: LibrariesListProps) => {
   const intl = useIntl();
   const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(initialFilter);
 
   let filteredData = findInValues(data?.libraries, search || '') || [];
   if (migrationFilter.length === 1) {

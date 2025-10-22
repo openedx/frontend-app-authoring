@@ -72,8 +72,9 @@ const messages = defineMessages({
   confirmationViewAlert: {
     id: 'legacy-libraries-migration.select-destination.alert.text',
     defaultMessage: 'These {count, plural, one {{count} legacy library} other {{count} legacy libraries}}'
-      + ' will be migrated to <b>{libraryName}</b> and organized as collections. Any legacy libraries that are used in'
-      + ' problem banks will maintain their link with migrated content the first time they are migrated.',
+      + ' will be migrated to <b>{libraryName}</b> and organized as collections. Legacy library content used'
+      + ' in courses will continue to work as-is. To receive any future changes to migrated content,'
+      + ' you must update these references within your course.',
     description: 'Alert text in the confirmation step of the legacy libraries migration page.',
   },
   previouslyMigratedAlert: {

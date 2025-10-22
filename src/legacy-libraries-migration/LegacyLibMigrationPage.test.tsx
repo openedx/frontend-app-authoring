@@ -162,9 +162,20 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should back to select legacy libraries', async () => {
+    const user = userEvent.setup();
     renderPage();
-    expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
+    // The filter is Unmigrated by default
+    const filterButton = await screen.findByRole('button', { name: /unmigrated/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Clear filter to show all
+    await user.click(filterButton);
+    const clearButton = await screen.findByRole('button', { name: /clear filter/i });
+    await user.click(clearButton);
+
     expect(await screen.findByText('MBA')).toBeInTheDocument();
+    expect(await screen.findByText('Legacy library 1')).toBeInTheDocument();
+    expect(await screen.findByText('MBA 1')).toBeInTheDocument();
 
     const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
     legacyLibrary.click();
@@ -178,7 +189,13 @@ describe('<LegacyLibMigrationPage />', () => {
     const backButton = screen.getByRole('button', { name: /back/i });
     backButton.click();
 
+    // The selected legacy library remains checked
+    expect(legacyLibrary).toBeChecked();
+
+    // The filter remains the same
     expect(await screen.findByText('MBA')).toBeInTheDocument();
+    expect(await screen.findByText('Legacy library 1')).toBeInTheDocument();
+    expect(await screen.findByText('MBA 1')).toBeInTheDocument();
   });
 
   it('should select a library destination', async () => {
@@ -230,6 +247,8 @@ describe('<LegacyLibMigrationPage />', () => {
     backButton.click();
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    // The selected v2 library remains checked
+    expect(radioButton).toBeChecked();
   });
 
   it('should open the create new library modal', async () => {
