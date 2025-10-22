@@ -3,13 +3,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { Badge } from '@openedx/paragon';
 
-import { getPagePath } from '../utils';
-import { useWaffleFlags } from '../data/apiHooks';
-import { getStudioHomeData } from '../studio-home/data/selectors';
+import { getPagePath } from '@src/utils';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import messages from './messages';
-import courseOptimizerMessages from '../optimizer-page/messages';
+import courseOptimizerMessages from '@src/optimizer-page/messages';
+import { LibQueryParamKeys, SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
 
-export const useContentMenuItems = courseId => {
+export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
@@ -50,7 +51,7 @@ export const useContentMenuItems = courseId => {
   return items;
 };
 
-export const useSettingMenuItems = courseId => {
+export const useSettingMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const { canAccessAdvancedSettings } = useSelector(getStudioHomeData);
@@ -89,7 +90,7 @@ export const useSettingMenuItems = courseId => {
   return items;
 };
 
-export const useToolsMenuItems = (courseId) => {
+export const useToolsMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
@@ -127,13 +128,33 @@ export const useToolsMenuItems = (courseId) => {
   return items;
 };
 
-export const useLibraryToolsMenuItems = itemId => {
+export const useLibraryToolsMenuItems = (itemId: string) => {
   const intl = useIntl();
 
   const items = [
     {
       href: `/library/${itemId}/backup`,
       title: intl.formatMessage(messages['header.links.exportLibrary']),
+    },
+  ];
+
+  return items;
+};
+
+export const useLibrarySettingsMenuItems = () => {
+  const intl = useIntl();
+
+  const openTeamAccessModalUrl = () => {
+    const url = new URL(window.location.href);
+    // Set ?sa=manage-team in url which in turn opens team access modal
+    url.searchParams.set(LibQueryParamKeys.SidebarActions, SidebarActions.ManageTeam);
+    return url.toString();
+  }
+
+  const items = [
+    {
+      title: intl.formatMessage(messages['header.menu.teamAccess']),
+      href: openTeamAccessModalUrl(),
     },
   ];
 

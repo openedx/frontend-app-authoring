@@ -63,6 +63,7 @@ const slice = createSlice({
       studioShortName?: string;
       techSupportEmail?: string;
       userIsActive?: boolean;
+      canAccessAdvancedSettings?: boolean;
     },
     studioHomeCoursesRequestParams: studioHomeCoursesRequestParamsDefault,
   },

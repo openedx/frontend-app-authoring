@@ -106,6 +106,11 @@ const messages = defineMessages({
     defaultMessage: 'Backup to local archive',
     description: 'Link to Studio Backup Library page',
   },
+  'header.menu.teamAccess': {
+    id: 'header.links.teamAccess',
+    defaultMessage: 'Team Access',
+    description: 'Menu item to open team access popup',
+  },
   'header.links.optimizer': {
     id: 'header.links.optimizer',
     defaultMessage: 'Course Optimizer',

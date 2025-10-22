@@ -81,6 +81,11 @@ export enum SidebarActions {
   None = '',
 }
 
+export enum LibQueryParamKeys {
+  SidebarActions = 'sa',
+  SidebarTab = 'st',
+}
+
 export type SidebarContextData = {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
@@ -129,14 +134,14 @@ export const SidebarProvider = ({
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
     defaultTab.component,
-    'st',
+    LibQueryParamKeys.SidebarTab,
     (value: string) => toSidebarInfoTab(value),
     (value: SidebarInfoTab) => value.toString(),
   );
 
   const [sidebarAction, setSidebarAction] = useStateWithUrlSearchParam<SidebarActions>(
     SidebarActions.None,
-    'sa',
+    LibQueryParamKeys.SidebarActions,
     (value: string) => Object.values(SidebarActions).find((enumValue) => value === enumValue),
     (value: SidebarActions) => value.toString(),
   );
