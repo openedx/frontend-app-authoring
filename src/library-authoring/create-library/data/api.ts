@@ -14,6 +14,7 @@ export interface CreateContentLibraryArgs {
   title: string,
   org: string,
   slug: string,
+  learning_package?: number,
 }
 
 /**
