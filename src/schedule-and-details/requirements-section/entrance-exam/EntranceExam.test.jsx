@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, fireEvent, act, waitFor,
+  render, fireEvent, waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 

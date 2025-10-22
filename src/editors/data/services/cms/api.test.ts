@@ -470,9 +470,9 @@ describe('cms api', () => {
       });
     });
     describe('transcript get', () => {
-      it('should call get with urls.videoTranscripts and transcript data', () => {
+      it('should call get with urls.videoTranscripts and transcript data', async () => {
         const mockJSON = { data: { lang: language, edx_video_id: videoId } };
-        apiMethods.getTranscript({
+        await apiMethods.getTranscript({
           blockId,
           studioEndpointUrl,
           videoId,

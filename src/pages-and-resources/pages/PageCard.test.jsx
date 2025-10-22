@@ -60,7 +60,7 @@ describe('LiveSettings', () => {
 
   it('should render three cards', async () => {
     renderComponent();
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryAllByRole(container, 'button')).toHaveLength(3);
     });
   });
@@ -68,7 +68,7 @@ describe('LiveSettings', () => {
   it('should navigate to legacyLink', async () => {
     renderComponent();
     const textbookPagePath = mockPageConfig[0][1];
-    waitFor(() => {
+    await waitFor(() => {
       const textbookSettingsButton = screen.queryAllByRole(container, 'link')[1];
       expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
     });

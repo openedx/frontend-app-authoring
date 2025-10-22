@@ -128,7 +128,7 @@ describe('ORASettings', () => {
     renderComponent();
     await mockStore({ apiStatus: 200, enabled: true });
 
-    waitFor(() => {
+    await waitFor(() => {
       const label = screen.getByText(messages.enableFlexPeerGradeLabel.defaultMessage);
       const enableBadge = screen.getByTestId('enable-badge');
 

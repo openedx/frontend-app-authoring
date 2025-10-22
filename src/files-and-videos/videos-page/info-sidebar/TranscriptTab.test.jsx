@@ -196,7 +196,7 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(204);
         await act(async () => {
           fireEvent.click(confirmButton);
-          executeThunk(deleteVideoTranscript({
+          await executeThunk(deleteVideoTranscript({
             language: 'ar',
             videoId: updatedProps.id,
             transcripts: updatedProps.transcripts,
@@ -215,7 +215,7 @@ describe('TranscriptTab', () => {
         axiosMock.onDelete(`${getApiBaseUrl()}/transcript_delete/${courseId}/mOckID0/ar`).reply(404);
         await act(async () => {
           fireEvent.click(confirmButton);
-          executeThunk(deleteVideoTranscript({
+          await executeThunk(deleteVideoTranscript({
             language: 'ar',
             videoId: updatedProps.id,
             transcripts: updatedProps.transcripts,
