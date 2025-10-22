@@ -86,7 +86,7 @@ describe('<SettingCard />', () => {
     await waitFor(() => {
       expect(inputBox).toHaveValue('3, 2, 1');
     });
-    await (async () => {
+    await waitFor(() => {
       expect(setEdited).toHaveBeenCalled();
       expect(handleBlur).toHaveBeenCalled();
     });

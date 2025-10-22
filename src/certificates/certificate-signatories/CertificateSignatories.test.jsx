@@ -105,7 +105,7 @@ describe('CertificateSignatories', () => {
 
     await user.click(deleteIcons[0]);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(mockArrayHelpers.remove).toHaveBeenCalledWith(0);
     });
   });

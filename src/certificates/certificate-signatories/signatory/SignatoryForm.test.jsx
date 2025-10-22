@@ -68,7 +68,7 @@ describe('Signatory Component', () => {
 
     await user.type(input, newInputValue, { name: 'signatories[0].name' });
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(handleChange).toHaveBeenCalledWith(expect.anything());
       expect(input.value).toBe(newInputValue);
     });

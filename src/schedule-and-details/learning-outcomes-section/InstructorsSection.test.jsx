@@ -28,20 +28,20 @@ describe('<LearningOutcomesSection />', () => {
     expect(getByRole('button', { name: messages.outcomesAdd.defaultMessage })).toBeInTheDocument();
   });
 
-  it('should create another learning outcome form on click Add learning outcome', () => {
+  it('should create another learning outcome form on click Add learning outcome', async () => {
     const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
     const addButton = getByRole('button', { name: messages.outcomesAdd.defaultMessage });
     act(() => {
       fireEvent.click(addButton);
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
       expect(deleteButtons.length).toBe(2);
     });
   });
 
-  it('should delete learning outcome form on click Delete', () => {
+  it('should delete learning outcome form on click Delete', async () => {
     const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
     const deleteButton = getByRole('button', { name: messages.outcomesDelete.defaultMessage });
     act(() => {
@@ -49,7 +49,7 @@ describe('<LearningOutcomesSection />', () => {
     });
 
     expect(onChangeMock).toHaveBeenCalledWith([], 'learningInfo');
-    waitFor(() => {
+    await waitFor(() => {
       const deleteButtons = getAllByRole('button', { name: messages.outcomesDelete.defaultMessage });
       expect(deleteButtons.length).toBe(0);
     });

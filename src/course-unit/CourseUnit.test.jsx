@@ -2218,7 +2218,7 @@ describe('<CourseUnit />', () => {
       const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
       const helpLinkUrl = 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components';
 
-      waitFor(() => {
+      await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');
         expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
@@ -2321,7 +2321,7 @@ describe('<CourseUnit />', () => {
       });
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       simulatePostMessageEvent(messageTypes.duplicateXBlock, {});
       simulatePostMessageEvent(messageTypes.newXBlockEditor, {});
       expect(mockedUsedNavigate)

@@ -65,7 +65,7 @@ describe('<UnlinkModal />', () => {
 
     const okButton = screen.getByRole('button', { name: messages.unlinkButton.defaultMessage });
     fireEvent.click(okButton);
-    waitFor(() => {
+    await waitFor(() => {
       expect(onUnlinkSubmitMock).toHaveBeenCalledTimes(1);
     });
   });

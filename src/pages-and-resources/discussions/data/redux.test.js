@@ -363,7 +363,7 @@ describe('Data layer integration tests', () => {
         mockedNavigator,
       ), store.dispatch);
 
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(
           expect.objectContaining({
@@ -458,7 +458,7 @@ describe('Data layer integration tests', () => {
         pagesAndResourcesPath,
         mockedNavigator,
       ), store.dispatch);
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
         expect(store.getState().discussions).toEqual(
           expect.objectContaining({

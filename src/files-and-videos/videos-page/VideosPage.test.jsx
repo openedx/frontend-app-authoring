@@ -546,7 +546,7 @@ describe('Videos page', () => {
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
 
-          const transcriptTab = await screen.getAllByRole('tab')[1];
+          const transcriptTab = screen.getAllByRole('tab')[1];
           fireEvent.click(transcriptTab);
 
           expect(screen.getByText('Transcript (1)')).toBeVisible();
@@ -721,7 +721,7 @@ describe('Videos page', () => {
         expect(actionsButton).toBeVisible();
 
         fireEvent.click(actionsButton);
-        const downloadButton = await screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);

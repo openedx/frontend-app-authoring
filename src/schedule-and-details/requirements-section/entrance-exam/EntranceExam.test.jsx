@@ -41,7 +41,7 @@ describe('<EntranceExam />', () => {
     expect(checkboxList[0].checked).toBeTruthy();
   });
 
-  it('should toggle grade requirements after checkbox click', () => {
+  it('should toggle grade requirements after checkbox click', async () => {
     const { getByText, queryAllByText, getAllByRole } = render(
       <RootWrapper {...props} />,
     );
@@ -49,10 +49,8 @@ describe('<EntranceExam />', () => {
     expect(
       getByText(gradeRequirementsMessages.requirementsEntranceCollapseLabel.defaultMessage),
     ).toBeInTheDocument();
-    act(() => {
-      fireEvent.click(checkbox);
-    });
-    waitFor(() => {
+    fireEvent.click(checkbox);
+    await waitFor(() => {
       expect(
         queryAllByText(gradeRequirementsMessages.requirementsEntranceCollapseLabel.defaultMessage).length,
       ).toBe(0);

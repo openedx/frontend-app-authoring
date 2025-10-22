@@ -99,13 +99,13 @@ describe('<LibraryBackupPage />', () => {
     expect(exportingButton).toBeDisabled();
   });
 
-  it('shows succeeded state uses ready text and triggers download', () => {
+  it('shows succeeded state uses ready text and triggers download', async () => {
     mockStatusData = { state: 'Succeeded', url: '/fake/path.tar.gz' };
     const downloadSpy = jest.spyOn(document, 'createElement');
     render();
     const button = screen.getByRole('button');
     expect(button).toHaveTextContent(messages.downloadReadyButton.defaultMessage);
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(downloadSpy).toHaveBeenCalledWith('a');
     downloadSpy.mockRestore();
   });
@@ -118,19 +118,19 @@ describe('<LibraryBackupPage />', () => {
     expect(button).toBeEnabled();
   });
 
-  it('covers timeout cleanup on unmount', () => {
+  it('covers timeout cleanup on unmount', async () => {
     mockMutate.mockImplementation((_arg: any, { onSuccess }: any) => {
       onSuccess({ task_id: 'task-123' });
       mockStatusData = { state: LibraryBackupStatus.Pending };
     });
     const { unmount } = render();
     const button = screen.getByRole('button');
-    userEvent.click(button);
+    await userEvent.click(button);
     unmount();
     // No assertion needed, just coverage for cleanup
   });
 
-  it('covers fallback download logic', () => {
+  it('covers fallback download logic', async () => {
     mockStatusData = { state: LibraryBackupStatus.Succeeded, url: '/fake/path.tar.gz' };
     // Spy on createElement to force click failure for anchor
     const originalCreate = document.createElement.bind(document);
@@ -153,7 +153,7 @@ describe('<LibraryBackupPage />', () => {
     window.location = { href: '' };
     render();
     const button = screen.getByRole('button');
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(window.location.href).toContain('/fake/path.tar.gz');
     // restore
     createSpy.mockRestore();

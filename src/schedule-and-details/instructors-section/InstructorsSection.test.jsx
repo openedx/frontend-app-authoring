@@ -52,20 +52,20 @@ describe('<InstructorsSection />', () => {
     expect(getByRole('button', { name: messages.instructorAdd.defaultMessage })).toBeInTheDocument();
   });
 
-  it('should create another instructor form on click Add new instructor', () => {
+  it('should create another instructor form on click Add new instructor', async () => {
     const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
     const addButton = getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
     act(() => {
       fireEvent.click(addButton);
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       const deleteButtons = getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
       expect(deleteButtons.length).toBe(2);
     });
   });
 
-  it('should delete instructor form on click Delete', () => {
+  it('should delete instructor form on click Delete', async () => {
     const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
     const deleteButton = getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
     act(() => {
@@ -73,7 +73,7 @@ describe('<InstructorsSection />', () => {
     });
 
     expect(onChangeMock).toHaveBeenCalledWith({ instructors: [] }, 'instructorInfo');
-    waitFor(() => {
+    await waitFor(() => {
       const deleteButtons = getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
       expect(deleteButtons.length).toBe(0);
     });

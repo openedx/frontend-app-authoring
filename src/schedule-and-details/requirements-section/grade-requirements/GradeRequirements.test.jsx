@@ -40,13 +40,13 @@ describe('<GradeRequirements />', () => {
     expect(props.onChange).toHaveBeenCalledWith('31', 'entranceExamMinimumScorePct');
   });
 
-  it('should show feedback error', () => {
+  it('should show feedback error', async () => {
     const { getByDisplayValue, getByText } = render(<RootWrapper {...props} />);
     const input = getByDisplayValue(props.entranceExamMinimumScorePct);
     act(() => {
       fireEvent.change(input, { target: { valueAsNumber: '123' } });
     });
-    waitFor(() => {
+    await waitFor(() => {
       expect(getByText(scheduleMessage.errorMessage8.defaultMessage)).toBeInTheDocument();
     });
   });

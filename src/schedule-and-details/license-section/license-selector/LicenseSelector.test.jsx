@@ -36,14 +36,14 @@ describe('<LicenseSelector />', () => {
     expect(anotherButton).toHaveClass('btn btn-outline-primary');
   });
 
-  it('should call onChangeLicenseType if button clicked', () => {
+  it('should call onChangeLicenseType if button clicked', async () => {
     const { getByRole } = render(<RootWrapper {...props} />);
     const button = getByRole('button', { name: messages.licenseChoice2.defaultMessage });
     expect(button).toHaveClass('btn btn-outline-primary');
     act(() => {
       fireEvent.click(button);
     });
-    waitFor(() => {
+    await waitFor(() => {
       expect(button).toHaveClass('btn btn-primary');
     });
     expect(props.onChangeLicenseType).toHaveBeenCalledWith(

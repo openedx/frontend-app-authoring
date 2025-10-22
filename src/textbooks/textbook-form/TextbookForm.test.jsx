@@ -174,11 +174,11 @@ describe('<TextbookForm />', () => {
     const { findByTestId, findByRole } = renderComponent();
 
     const button = await findByTestId('chapter-upload-button');
-    await await user.click(button);
+    await user.click(button);
     const modalBackdrop = await findByTestId('modal-backdrop');
 
     const cancelButton = await within(await findByRole('dialog')).findByText('Cancel');
-    await await user.click(cancelButton);
+    await user.click(cancelButton);
     await waitFor(() => {
       expect(modalBackdrop).not.toBeInTheDocument();
     });

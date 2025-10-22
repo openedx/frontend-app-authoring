@@ -211,7 +211,7 @@ describe('<CreateOrRerunCourseForm />', () => {
 
     fireEvent.change(numberInput, { target: { value: 'long-name-which-is-longer-than-65-characters-to-check-for-errors' } });
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText(messages.totalLengthError)).toBeInTheDocument();
     });
   });
@@ -279,7 +279,7 @@ describe('<CreateOrRerunCourseForm />', () => {
 
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText(messages.noSpaceError)).toBeInTheDocument();
     });
   });

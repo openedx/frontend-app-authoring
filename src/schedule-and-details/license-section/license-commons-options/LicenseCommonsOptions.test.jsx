@@ -44,14 +44,14 @@ describe('<LicenseCommonsOptions />', () => {
     expect(checkboxList[3].checked).toBeFalsy();
   });
 
-  it('should call onToggleCheckbox event onClick', () => {
+  it('should call onToggleCheckbox event onClick', async () => {
     const { getAllByRole } = render(<RootWrapper {...props} />);
     const checkboxList = getAllByRole('checkbox');
     act(() => {
       fireEvent.click(checkboxList[1]);
     });
     expect(props.onToggleCheckbox).toHaveBeenCalledWith(LICENSE_COMMONS_OPTIONS.nonCommercial);
-    waitFor(() => {
+    await waitFor(() => {
       expect(checkboxList[1].checked).toBeFalsy();
     });
   });
