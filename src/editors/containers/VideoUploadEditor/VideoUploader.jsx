@@ -72,7 +72,7 @@ export const VideoUploader = ({ setLoading, onUpload, onClose }) => {
   };
 
   return (
-    <div className="d-flex flex-column">
+    <div className="video-uploader d-flex flex-column">
       <div className="d-flex justify-content-end flex-row">
         <IconButton
           className="position-absolute mr-2 mt-2"
