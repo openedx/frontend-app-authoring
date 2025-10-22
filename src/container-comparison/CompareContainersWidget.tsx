@@ -54,11 +54,13 @@ const CompareContainersWidgetInner = ({
 }: Props) => {
   const intl = useIntl();
   const { data, isError, error } = useCourseContainerChildren(downstreamBlockId, parent.length === 0);
+  // There is the case in which the item is removed, but it still exists
+  // in the library, for that case, we avoid bringing the children.
   const {
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren(upstreamBlockId, true);
+  } = useContainerChildren(state === 'removed' ? undefined : upstreamBlockId, true);
   const {
     data: containerData,
     isError: isContainerTitleError,
@@ -70,16 +72,7 @@ const CompareContainersWidgetInner = ({
       return [undefined, undefined];
     }
 
-    let libChildren = libData as ContainerChildBase[] || [];
-    if (state === 'removed') {
-      // There is the case in which the item is removed, but it still exists
-      // in the library, in that case the query will bring its children,
-      // but we must put it empty so that the status of all the children of
-      // the downstream are 'removed'
-      libChildren = [];
-    }
-
-    return diffPreviewContainerChildren(data?.children || [], libChildren);
+    return diffPreviewContainerChildren(data?.children || [], libData as ContainerChildBase[] || []);
   }, [data, libData]);
 
   const renderBeforeChildren = useCallback(() => {
