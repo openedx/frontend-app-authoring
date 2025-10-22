@@ -1,10 +1,10 @@
 import { StandardModal } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import { useCallback } from 'react';
+import { SidebarActions, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import LibraryTeam from './LibraryTeam';
 import messages from './messages';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useCallback } from 'react';
 
 export const LibraryTeamModal = () => {
   const intl = useIntl();

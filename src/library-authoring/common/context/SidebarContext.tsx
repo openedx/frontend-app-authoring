@@ -7,10 +7,10 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { useStateWithUrlSearchParam } from '../../../hooks';
+import { useStateWithUrlSearchParam } from '@src/hooks';
+import { LibQueryParamKeys, useLibraryRoutes } from '@src/library-authoring/routes';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
-import { useLibraryRoutes } from '../../routes';
 
 export enum SidebarBodyItemId {
   AddContent = 'add-content',
@@ -79,11 +79,6 @@ export enum SidebarActions {
   JumpToManageTags = 'jump-to-manage-tags',
   ManageTeam = 'manage-team',
   None = '',
-}
-
-export enum LibQueryParamKeys {
-  SidebarActions = 'sa',
-  SidebarTab = 'st',
 }
 
 export type SidebarContextData = {

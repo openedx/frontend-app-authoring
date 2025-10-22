@@ -6,9 +6,10 @@ import { Badge } from '@openedx/paragon';
 import { getPagePath } from '@src/utils';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
-import messages from './messages';
 import courseOptimizerMessages from '@src/optimizer-page/messages';
-import { LibQueryParamKeys, SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
+import { SidebarActions } from '@src/library-authoring/common/context/SidebarContext';
+import { LibQueryParamKeys } from '@src/library-authoring/routes';
+import messages from './messages';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
@@ -153,7 +154,7 @@ export const useLibrarySettingsMenuItems = () => {
     // Set ?sa=manage-team in url which in turn opens team access modal
     url.searchParams.set(LibQueryParamKeys.SidebarActions, SidebarActions.ManageTeam);
     return url.toString();
-  }
+  };
 
   const items = [
     {

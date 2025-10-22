@@ -2,7 +2,9 @@ import { useSelector } from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { renderHook } from '@testing-library/react';
 import messages from './messages';
-import { useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems } from './hooks';
+import {
+  useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems,
+} from './hooks';
 import { mockWaffleFlags } from '../data/apiHooks.mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -150,7 +152,7 @@ describe('header utils', () => {
       const items = renderHook(() => useLibraryToolsMenuItems('course-123')).result.current;
       expect(items).toContainEqual({
         href: '/library/course-123/backup',
-        title: 'Backup to local archive'
+        title: 'Backup to local archive',
       });
       expect(items).toContainEqual({ href: '/library/course-123/import', title: 'Import' });
     });

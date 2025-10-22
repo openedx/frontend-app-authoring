@@ -11,9 +11,13 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { ContainerType, getBlockType } from '../generic/key-utils';
-import { LibQueryParamKeys } from './common/context/SidebarContext';
 
 export const BASE_ROUTE = '/library/:libraryId';
+
+export enum LibQueryParamKeys {
+  SidebarActions = 'sa',
+  SidebarTab = 'st',
+}
 
 export const ROUTES = {
   // LibraryAuthoringPage routes:
