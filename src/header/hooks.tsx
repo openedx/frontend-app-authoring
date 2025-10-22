@@ -136,6 +136,10 @@ export const useLibraryToolsMenuItems = (itemId: string) => {
       href: `/library/${itemId}/backup`,
       title: intl.formatMessage(messages['header.links.exportLibrary']),
     },
+    {
+      href: `/library/${itemId}/import`,
+      title: intl.formatMessage(messages['header.links.lib.import']),
+    },
   ];
 
   return items;

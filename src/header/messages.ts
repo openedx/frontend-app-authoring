@@ -96,6 +96,11 @@ const messages = defineMessages({
     defaultMessage: 'Import',
     description: 'Link to Studio Import page',
   },
+  'header.links.lib.import': {
+    id: 'header.links.lib.import',
+    defaultMessage: 'Import',
+    description: 'Link to Course Import page in library',
+  },
   'header.links.exportCourse': {
     id: 'header.links.exportCourse',
     defaultMessage: 'Export Course',
