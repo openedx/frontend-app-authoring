@@ -132,7 +132,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 }
 
 export function isRowClickable(state?: ContainerState, blockType?: ContainerType) {
-  return state === 'modified' && blockType && [
+  return state && blockType && ['modified', 'added', 'removed'].includes(state) && [
     ContainerType.Section,
     ContainerType.Subsection,
     ContainerType.Unit,

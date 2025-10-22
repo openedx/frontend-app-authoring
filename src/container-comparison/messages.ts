@@ -86,6 +86,16 @@ const messages = defineMessages({
     defaultMessage: 'The only change is to {count, plural, one {text block <b>{blockName}</b> which has been edited} other {<b>{count} text blocks</b> which have been edited}} in this course. Accepting will not remove local edits.',
     description: 'Alert to show if the only change is on text components with local overrides.',
   },
+  newContainer: {
+    id: 'course-authoring.container-comparison.new-container.text',
+    defaultMessage: 'This {containerType} is new',
+    description: 'Text to show in the comparison when a container is new.',
+  },
+  deletedContainer: {
+    id: 'course-authoring.container-comparison.deleted-container.text',
+    defaultMessage: 'This {containerType} has been removed',
+    description: 'Text to show in the comparison when a container is removed.',
+  },
 });
 
 export default messages;

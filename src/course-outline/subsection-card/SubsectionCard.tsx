@@ -128,6 +128,7 @@ const SubsectionCard = ({
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
       isReadyToSyncIndividually: upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
+      blockType: 'subsection',
     };
   }, [upstreamInfo]);
 

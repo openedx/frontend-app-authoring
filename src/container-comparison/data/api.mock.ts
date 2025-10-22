@@ -8,7 +8,7 @@ import * as unitApi from '@src/course-unit/data/api';
  * This mock returns a fixed response for the given container ID.
  */
 export async function mockGetCourseContainerChildren(containerId: string): Promise<CourseContainerChildrenData> {
-  const numChildren: number = 3;
+  let numChildren: number = 3;
   let blockType: string;
   let displayName: string;
   let upstreamReadyToSyncChildrenInfo: UpstreamReadyToSyncChildrenInfo[] = [];
@@ -61,8 +61,9 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     case mockGetCourseContainerChildren.subsectionIdLoading:
       return new Promise(() => { });
     default:
-      blockType = 'unit';
-      displayName = 'subsection block 00';
+      blockType = 'section';
+      displayName = 'section block 00';
+      numChildren = 0;
       break;
   }
   const children = Array(numChildren).fill(mockGetCourseContainerChildren.childTemplate).map((child, idx) => (

@@ -146,6 +146,7 @@ const SectionCard = ({
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
       isReadyToSyncIndividually: upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
+      blockType: 'section',
     };
   }, [upstreamInfo]);
 
