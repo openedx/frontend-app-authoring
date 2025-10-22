@@ -12,7 +12,11 @@ import {
   Icon,
   Alert,
 } from '@openedx/paragon';
-import { Upload, InsertDriveFile, CheckCircle } from '@openedx/paragon/icons';
+import {
+  Upload,
+  LibraryBooks,
+  AccessTime,
+} from '@openedx/paragon/icons';
 import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -135,7 +139,7 @@ export const CreateLibrary = ({
         });
       } else {
         // Call handleError for invalid file types
-        handleError(new Error('Invalid file type. Please upload a .zip, .tar.gz, or .tar file.'));
+        handleError(new Error(intl.formatMessage(messages.invalidFileTypeError)));
       }
     }
   }, [restoreMutation]);
@@ -169,7 +173,7 @@ export const CreateLibrary = ({
         {/* Archive upload section - shown above form when in archive mode */}
         {isFromArchive && (
           <div className="mb-4">
-            {!uploadedFile && (
+            {!uploadedFile && !restoreMutation.isPending && (
               <Dropzone
                 data-testid="library-archive-dropzone"
                 accept={{
@@ -182,7 +186,7 @@ export const CreateLibrary = ({
                 style={{ height: '300px' }}
                 errorMessages={{
                   invalidSize: intl.formatMessage(messages.dropzoneSubtitle),
-                  multipleDragged: 'Please upload only one archive file.',
+                  multipleDragged: intl.formatMessage(messages.dropzoneMultipleDraggedError),
                 }}
               >
                 <Stack direction="vertical" gap={3} className="text-center">
@@ -195,46 +199,53 @@ export const CreateLibrary = ({
               </Dropzone>
             )}
 
+            {/* Loading state - show spinner in DropZone-like container */}
+            {restoreMutation.isPending && (
+              <div
+                className="border border-2 border-dashed border-light-400 d-flex align-items-center justify-content-center"
+                style={{
+                  height: '300px',
+                  borderRadius: '8px',
+                  backgroundColor: '#f8f9fa',
+                }}
+              >
+                <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+                  <span className="sr-only">{intl.formatMessage(messages.uploadingStatus)}</span>
+                </div>
+              </div>
+            )}
+
             {uploadedFile && restoreStatus?.state === LibraryRestoreStatus.Succeeded && restoreStatus.result && (
               // Show restore result data when succeeded
               <Card className="mb-4">
                 <Card.Body>
-                  <Stack direction="horizontal" gap={3} className="align-items-center">
-                    <Icon src={CheckCircle} style={{ height: '40px', width: '40px', color: 'green' }} />
+                  <div className="d-flex justify-content-between align-items-start p-4">
                     <div className="flex-grow-1">
-                      <h5 className="mb-1">{restoreStatus.result.title}</h5>
-                      <p className="text-muted mb-1">
+                      <h4 className="mb-2">{restoreStatus.result.title}</h4>
+                      <p className="text-muted mb-0">
                         {restoreStatus.result.org} / {restoreStatus.result.slug}
                       </p>
-                      <p className="text-muted mb-0 small">
-                        Contains {restoreStatus.result.components} Components •
-                        Backed up {new Date(restoreStatus.result.created_at).toLocaleDateString()} at{' '}
-                        {new Date(restoreStatus.result.created_at).toLocaleTimeString()}
-                      </p>
                     </div>
-                  </Stack>
-                </Card.Body>
-              </Card>
-            )}
-
-            {uploadedFile && restoreStatus?.state !== LibraryRestoreStatus.Succeeded && (
-              // Show uploaded file info during processing
-              <Card className="mb-4">
-                <Card.Body>
-                  <Stack direction="horizontal" gap={3} className="align-items-center">
-                    <Icon src={InsertDriveFile} style={{ height: '40px', width: '40px' }} />
-                    <div className="flex-grow-1">
-                      <h5 className="mb-1">{uploadedFile.name}</h5>
-                      <p className="text-muted mb-0">
-                        {(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB
-                      </p>
-                    </div>
-                    {restoreMutation.isPending && (
-                      <div className="spinner-border spinner-border-sm text-primary" role="status">
-                        <span className="sr-only">Processing...</span>
+                    <div className="d-flex flex-column gap-2 align-items-end">
+                      <div className="d-flex align-items-center gap-2">
+                        <Icon src={LibraryBooks} style={{ width: '20px', height: '20px' }} />
+                        <span>
+                          {intl.formatMessage(messages.archiveComponentsCount, {
+                            count: restoreStatus.result.components,
+                          })}
+                        </span>
                       </div>
-                    )}
-                  </Stack>
+                      <div className="d-flex align-items-center gap-2">
+                        <Icon src={AccessTime} style={{ width: '20px', height: '20px' }} />
+                        <span>
+                          {intl.formatMessage(messages.archiveBackupDate, {
+                            date: new Date(restoreStatus.result.created_at).toLocaleDateString(),
+                            time: new Date(restoreStatus.result.created_at).toLocaleTimeString(),
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </Card.Body>
               </Card>
             )}
