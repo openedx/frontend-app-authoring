@@ -1072,3 +1072,64 @@ mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
   'getEntityLinks',
 ).mockImplementation(mockGetEntityLinks);
+
+export async function mockGetCourseMigrations(libraryId: string): ReturnType<typeof api.getCourseMigrations> {
+  switch (libraryId) {
+    case mockContentLibrary.libraryId:
+      return [
+        mockGetCourseMigrations.succeedMigration,
+        mockGetCourseMigrations.succeedMigrationWithCollection,
+        mockGetCourseMigrations.failMigration,
+        mockGetCourseMigrations.inProgressMigration,
+      ];
+    case mockGetCourseMigrations.emptyLibraryId:
+      return [];
+    default:
+      throw new Error(`mockGetCourseMigrations doesn't know how to mock ${JSON.stringify(libraryId)}`);
+  }
+}
+mockGetCourseMigrations.libraryId = mockContentLibrary.libraryId;
+mockGetCourseMigrations.emptyLibraryId = mockContentLibrary.libraryId2;
+mockGetCourseMigrations.succeedMigration = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T1',
+    displayName: 'DemoX 2025 T1',
+  },
+  targetCollection: null,
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseMigration;
+mockGetCourseMigrations.succeedMigrationWithCollection = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T2',
+    displayName: 'DemoX 2025 T2',
+  },
+  targetCollection: {
+    key: 'sample-collection',
+    title: 'DemoX 2025 T1 (2)',
+  },
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseMigration;
+mockGetCourseMigrations.failMigration = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T3',
+    displayName: 'DemoX 2025 T3',
+  },
+  targetCollection: null,
+  state: 'Failed',
+  progress: 0.30,
+} satisfies api.CourseMigration;
+mockGetCourseMigrations.inProgressMigration = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T4',
+    displayName: 'DemoX 2025 T4',
+  },
+  targetCollection: null,
+  state: 'InProgress',
+  progress: 0.5012,
+} satisfies api.CourseMigration;
+mockGetCourseMigrations.applyMock = () => jest.spyOn(
+  api,
+  'getCourseMigrations',
+).mockImplementation(mockGetCourseMigrations);

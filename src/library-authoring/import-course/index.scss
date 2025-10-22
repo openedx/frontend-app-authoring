@@ -1,0 +1,29 @@
+.course-migration-help {
+  z-index: 1000; // same as header
+  flex: 350px 0 0;
+  position: sticky;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  hr {
+    width: 100%;
+  }
+}
+
+.status-border-imported {
+  border-left: 8px solid #5690BB;
+}
+
+.status-border-failed {
+  border-left: 8px solid var(--pgn-color-danger-500);
+}
+
+.status-border-partial {
+  border-left: 8px solid var(--pgn-color-warning-500);
+}
+
+.status-border-in-progress {
+  border-left: 8px solid #F4B57B;
+}

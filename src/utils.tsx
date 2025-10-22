@@ -349,3 +349,5 @@ export const skipIfUnwantedTarget = (
 };
 
 export const BoldText = (chunk: string[]) => <b>{chunk}</b>;
+export const Div = (chunk: string[]) => <div>{chunk}</div>;
+export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;
