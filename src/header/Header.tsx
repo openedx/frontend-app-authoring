@@ -6,7 +6,7 @@ import { type Container, useToggle } from '@openedx/paragon';
 import { useWaffleFlags } from '../data/apiHooks';
 import { SearchModal } from '../search-modal';
 import {
-  useContentMenuItems, useLibraryToolsMenuItems, useSettingMenuItems, useToolsMenuItems,
+  useContentMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems, useSettingMenuItems, useToolsMenuItems,
 } from './hooks';
 import messages from './messages';
 
@@ -43,6 +43,7 @@ const Header = ({
   const settingMenuItems = useSettingMenuItems(contextId);
   const toolsMenuItems = useToolsMenuItems(contextId);
   const libraryToolsMenuItems = useLibraryToolsMenuItems(contextId);
+  const libraryToolsSettingsItems = useLibrarySettingsMenuItems();
   const mainMenuDropdowns = !isLibrary ? [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
@@ -59,11 +60,18 @@ const Header = ({
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
       items: toolsMenuItems,
     },
-  ] : [{
-    id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
-    buttonTitle: intl.formatMessage(messages['header.links.tools']),
-    items: libraryToolsMenuItems,
-  }];
+  ] : [
+    {
+      id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
+      buttonTitle: intl.formatMessage(messages['header.links.settings']),
+      items: libraryToolsSettingsItems,
+    },
+    {
+      id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+      buttonTitle: intl.formatMessage(messages['header.links.tools']),
+      items: libraryToolsMenuItems,
+    },
+  ];
 
   const getOutlineLink = () => {
     if (isLibrary) {

@@ -11,6 +11,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { ContainerType, getBlockType } from '../generic/key-utils';
+import { LibQueryParamKeys } from './common/context/SidebarContext';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
@@ -231,7 +232,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     }
 
     // Also remove the `sa` (sidebar action) search param if it exists.
-    searchParams.delete('sa');
+    searchParams.delete(LibQueryParamKeys.SidebarActions);
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
     // Prevent unnecessary navigation if the path is the same.

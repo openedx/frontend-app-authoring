@@ -18,6 +18,7 @@ import { CreateContainerModal } from './create-container';
 import { ROUTES } from './routes';
 import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
 import { LibraryUnitPage } from './units';
+import { LibraryTeamModal } from './library-team';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
@@ -48,6 +49,7 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
         <CreateCollectionModal />
         <CreateContainerModal />
         <ComponentEditorModal />
+        <LibraryTeamModal />
       </SidebarProvider>
     </LibraryProvider>
   );
