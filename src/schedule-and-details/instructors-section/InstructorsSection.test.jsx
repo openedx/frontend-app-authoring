@@ -53,12 +53,23 @@ describe('<InstructorsSection />', () => {
   });
 
   it('should create another instructor form on click Add new instructor', async () => {
-    const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
-    const addButton = getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
-    act(() => {
-      fireEvent.click(addButton);
-    });
+    const { getAllByRole, getByRole, rerender } = render(<RootWrapper {...props} />);
+    const addButton = getByRole('button', { name: messages.instructorAdd.defaultMessage });
+    fireEvent.click(addButton);
 
+    const newInstructors = [
+      props.instructors[0],
+      {
+        bio: '',
+        image: '',
+        name: '',
+        organization: '',
+        title: '',
+      },
+    ];
+    expect(onChangeMock).toHaveBeenCalledWith({ instructors: newInstructors }, 'instructorInfo');
+
+    rerender(<RootWrapper {...props} instructors={newInstructors} />);
     await waitFor(() => {
       const deleteButtons = getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
       expect(deleteButtons.length).toBe(2);
@@ -66,15 +77,14 @@ describe('<InstructorsSection />', () => {
   });
 
   it('should delete instructor form on click Delete', async () => {
-    const { getAllByRole, getByRole } = render(<RootWrapper {...props} />);
+    const { queryAllByRole, getByRole, rerender } = render(<RootWrapper {...props} />);
     const deleteButton = getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
-    act(() => {
-      fireEvent.click(deleteButton);
-    });
+    fireEvent.click(deleteButton);
 
     expect(onChangeMock).toHaveBeenCalledWith({ instructors: [] }, 'instructorInfo');
+    rerender(<RootWrapper {...props} instructors={[]} />);
     await waitFor(() => {
-      const deleteButtons = getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
+      const deleteButtons = queryAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
       expect(deleteButtons.length).toBe(0);
     });
   });

@@ -11,7 +11,6 @@ import { getApiWaffleFlagsUrl } from '../../data/api';
 
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
-let container;
 let axiosMock;
 const courseId = '123';
 const mockPageConfig = [
@@ -36,12 +35,11 @@ const mockPageConfig = [
 ];
 
 const renderComponent = () => {
-  const wrapper = render(
+  render(
     <PagesAndResourcesProvider courseId={courseId}>
       <PageGrid pages={mockPageConfig} />
     </PagesAndResourcesProvider>,
   );
-  container = wrapper.container;
 };
 
 describe('LiveSettings', () => {
@@ -61,7 +59,7 @@ describe('LiveSettings', () => {
   it('should render three cards', async () => {
     renderComponent();
     await waitFor(() => {
-      expect(screen.queryAllByRole(container, 'button')).toHaveLength(3);
+      expect(screen.queryAllByRole('button')).toHaveLength(3);
     });
   });
 
@@ -69,7 +67,7 @@ describe('LiveSettings', () => {
     renderComponent();
     const textbookPagePath = mockPageConfig[0][1];
     await waitFor(() => {
-      const textbookSettingsButton = screen.queryAllByRole(container, 'link')[1];
+      const textbookSettingsButton = screen.queryAllByRole('link')[1];
       expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
     });
   });
