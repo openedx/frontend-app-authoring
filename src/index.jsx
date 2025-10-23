@@ -157,6 +157,7 @@ subscribe(APP_INIT_ERROR, (error) => {
 subscribe(APP_AUTH_INITIALIZED, () => {
   getAuthenticatedHttpClient().interceptors.request.use(async (requestConfig) => {
     const methodsToIntercept = ['post', 'put', 'delete', 'patch'];
+    const csrfTokenUrl = getConfig().STUDIO_BASE_URL + getConfig().CSRF_TOKEN_API_PATH;
 
     if (methodsToIntercept.includes(requestConfig.method?.toLowerCase())) {
       try {
@@ -169,8 +170,15 @@ subscribe(APP_AUTH_INITIALIZED, () => {
         iframe.src = getConfig().STUDIO_BASE_URL;
         document.body.appendChild(iframe);
 
-        iframe.onload = () => {
-          setTimeout(() => document.body.removeChild(iframe), 2000);
+        iframe.onload = async () => {
+          setTimeout(async () => {
+            document.body.removeChild(iframe);
+            try {
+              await getAuthenticatedHttpClient().get(csrfTokenUrl, { withCredentials: true });
+            } catch (csrfErr) {
+              logError('Failed to fetch CSRF token after iframe load', csrfErr);
+            }
+          }, 2000);
         };
       }
     }
