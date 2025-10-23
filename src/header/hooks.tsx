@@ -150,6 +150,9 @@ export const useLibrarySettingsMenuItems = () => {
   const intl = useIntl();
 
   const openTeamAccessModalUrl = () => {
+    if (!window.location.href) {
+      return null;
+    }
     const url = new URL(window.location.href);
     // Set ?sa=manage-team in url which in turn opens team access modal
     url.searchParams.set(LibQueryParamKeys.SidebarActions, SidebarActions.ManageTeam);
