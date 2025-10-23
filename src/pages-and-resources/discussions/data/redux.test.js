@@ -326,9 +326,10 @@ describe('Data layer integration tests', () => {
     test('successfully saves an LTI configuration', async () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
+      // the expected data in the mock below.
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
-        enabled: true,
         lti_configuration: {
           lti_1p1_client_key: 'new_consumer_key',
           lti_1p1_client_secret: 'new_consumer_secret',
@@ -388,9 +389,10 @@ describe('Data layer integration tests', () => {
     test('successfully saves a Legacy configuration', async () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
+      // Note: if this test is failing, it's likely because the POSTed data has changed and no longer exactly matches
+      // the expected data in the mock below.
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
-        enabled: true,
         lti_configuration: {},
         plugin_configuration: {
           allow_anonymous: true,
