@@ -1,5 +1,5 @@
 import {
-  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath, APP_AUTH_INITIALIZED,
+  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { StrictMode, useEffect } from 'react';
@@ -14,7 +14,6 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import messages from './i18n';
 
 import {
@@ -152,38 +151,6 @@ subscribe(APP_INIT_ERROR, (error) => {
       <ErrorPage message={error.message} />
     </StrictMode>,
   );
-});
-
-subscribe(APP_AUTH_INITIALIZED, () => {
-  getAuthenticatedHttpClient().interceptors.request.use(async (requestConfig) => {
-    const methodsToIntercept = ['post', 'put', 'delete', 'patch'];
-    const csrfTokenUrl = getConfig().STUDIO_BASE_URL + getConfig().CSRF_TOKEN_API_PATH;
-
-    if (methodsToIntercept.includes(requestConfig.method?.toLowerCase())) {
-      try {
-        await getAuthenticatedHttpClient().get(getConfig().STUDIO_BASE_URL, {
-          withCredentials: true,
-        });
-      } catch (e) {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = getConfig().STUDIO_BASE_URL;
-        document.body.appendChild(iframe);
-
-        iframe.onload = async () => {
-          setTimeout(async () => {
-            document.body.removeChild(iframe);
-            try {
-              await getAuthenticatedHttpClient().get(csrfTokenUrl, { withCredentials: true });
-            } catch (csrfErr) {
-              logError('Failed to fetch CSRF token after iframe load', csrfErr);
-            }
-          }, 2000);
-        };
-      }
-    }
-    return requestConfig;
-  });
 });
 
 initialize({
