@@ -1,6 +1,5 @@
-import React from 'react';
 import {
-  act, fireEvent, render, waitFor,
+  fireEvent, render, screen, waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -46,15 +45,15 @@ const props = {
 
 describe('<InstructorsSection />', () => {
   it('renders section successfully', () => {
-    const { getByText, getByRole } = render(<RootWrapper {...props} />);
-    expect(getByText(messages.instructorsTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.instructorsDescription.defaultMessage)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.instructorAdd.defaultMessage })).toBeInTheDocument();
+    render(<RootWrapper {...props} />);
+    expect(screen.getByText(messages.instructorsTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(messages.instructorsDescription.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.instructorAdd.defaultMessage })).toBeInTheDocument();
   });
 
   it('should create another instructor form on click Add new instructor', async () => {
-    const { getAllByRole, getByRole, rerender } = render(<RootWrapper {...props} />);
-    const addButton = getByRole('button', { name: messages.instructorAdd.defaultMessage });
+    const { rerender } = render(<RootWrapper {...props} />);
+    const addButton = screen.getByRole('button', { name: messages.instructorAdd.defaultMessage });
     fireEvent.click(addButton);
 
     const newInstructors = [
@@ -71,30 +70,31 @@ describe('<InstructorsSection />', () => {
 
     rerender(<RootWrapper {...props} instructors={newInstructors} />);
     await waitFor(() => {
-      const deleteButtons = getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
+      const deleteButtons = screen.getAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
       expect(deleteButtons.length).toBe(2);
     });
   });
 
   it('should delete instructor form on click Delete', async () => {
-    const { queryAllByRole, getByRole, rerender } = render(<RootWrapper {...props} />);
-    const deleteButton = getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
+    const { rerender } = render(<RootWrapper {...props} />);
+    const deleteButton = screen.getByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
     fireEvent.click(deleteButton);
 
     expect(onChangeMock).toHaveBeenCalledWith({ instructors: [] }, 'instructorInfo');
     rerender(<RootWrapper {...props} instructors={[]} />);
     await waitFor(() => {
-      const deleteButtons = queryAllByRole('button', { name: instructorMessages.instructorDelete.defaultMessage });
+      const deleteButtons = screen.queryAllByRole(
+        'button',
+        { name: instructorMessages.instructorDelete.defaultMessage },
+      );
       expect(deleteButtons.length).toBe(0);
     });
   });
 
   it('should call onChange if input value changed', () => {
-    const { getByPlaceholderText } = render(<RootWrapper {...props} />);
-    const inputName = getByPlaceholderText(instructorMessages.instructorNameInputPlaceholder.defaultMessage);
-    act(() => {
-      fireEvent.change(inputName, { target: { value: 'abc' } });
-    });
+    render(<RootWrapper {...props} />);
+    const inputName = screen.getByPlaceholderText(instructorMessages.instructorNameInputPlaceholder.defaultMessage);
+    fireEvent.change(inputName, { target: { value: 'abc' } });
 
     expect(onChangeMock).toHaveBeenCalledWith({
       instructors: [{
