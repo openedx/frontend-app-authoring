@@ -47,6 +47,7 @@ const CardList = ({
           url={url}
           itemId={libraryKey}
           selectMode={inSelectMode ? 'multiple' : undefined}
+          selectPosition={inSelectMode ? 'title' : undefined}
           isSelected={selectedIds?.includes(libraryKey)}
           isMigrated={isMigrated}
           migratedToKey={migratedToKey}

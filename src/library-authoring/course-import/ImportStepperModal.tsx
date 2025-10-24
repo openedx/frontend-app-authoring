@@ -4,6 +4,7 @@ import {
   ActionRow, Button, ModalDialog, Stepper,
 } from '@openedx/paragon';
 
+import { CoursesList } from '@src/studio-home/tabs-section/courses-tab';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from './messages';
 
@@ -18,6 +19,7 @@ export const ImportStepperModal = ({
 }) => {
   const intl = useIntl();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
+  const [selectedCourseId, setSelectedCourseId] = useState<string>();
 
   return (
     <ModalDialog
@@ -41,7 +43,10 @@ export const ImportStepperModal = ({
             eventKey="select-course"
             title={intl.formatMessage(messages.importCourseSelectCourseStep)}
           >
-            1
+            <CoursesList
+              selectedCourseId={selectedCourseId}
+              handleSelect={setSelectedCourseId}
+            />
           </Stepper.Step>
           <Stepper.Step
             eventKey="review-details"
