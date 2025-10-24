@@ -146,6 +146,14 @@ export const getLibraryBackupApiUrl = (libraryId: string) => `${getApiBaseUrl()}
  */
 export const getLibraryBackupStatusApiUrl = (libraryId: string, taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/backup/?task_id=${taskId}`;
 /**
+ * Get the URL for the API endpoint to restore a library from an archive.
+ */
+export const getLibraryRestoreApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/restore/`;
+/**
+ * Get the URL for the API endpoint to get the status of a library restore task.
+ */
+export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUrl()}/api/libraries/v2/restore/?task_id=${taskId}`;
+/**
  * Get the URL for the API endpoint to copy a single container.
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
