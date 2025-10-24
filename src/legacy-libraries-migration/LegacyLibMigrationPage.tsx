@@ -80,6 +80,7 @@ export const LegacyLibMigrationPage = () => {
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-libraries');
   const [isExitModalOpen, openExitModal, closeExitModal] = useToggle(false);
   const [legacyLibraries, setLegacyLibraries] = useState<LibraryV1Data[]>([]);
+  const [migrationFilter, setMigrationFilter] = useState<Filter[]>([Filter.unmigrated]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
   const migrate = useUpdateContainerCollections();
@@ -127,7 +128,6 @@ export const LegacyLibMigrationPage = () => {
         openExitModal();
         break;
       case 'select-destination':
-        setDestination(undefined);
         setCurrentStep('select-libraries');
         break;
       case 'confirmation-view':
@@ -193,7 +193,8 @@ export const LegacyLibMigrationPage = () => {
                         selectedIds={legacyLibrariesIds}
                         handleCheck={handleUpdateLegacyLibraries}
                         hideMigationAlert
-                        initialFilter={[Filter.unmigrated]}
+                        migrationFilter={migrationFilter}
+                        setMigrationFilter={setMigrationFilter}
                         setSelectedLibraries={setLegacyLibraries}
                       />
                     </Stepper.Step>
@@ -221,7 +222,7 @@ export const LegacyLibMigrationPage = () => {
                   </Stepper>
                 </div>
               </Container>
-              <div className="content-buttons d-flex justify-content-between pl-6 pr-6 bg-white">
+              <div className="content-buttons d-flex justify-content-between pl-6 pr-6 bg-white box-shadow-up-1">
                 <Button className="mt-2 mb-2" variant="outline-primary" onClick={handleBack}>
                   {currentStep === 'select-libraries'
                     ? intl.formatMessage(messages.cancel)

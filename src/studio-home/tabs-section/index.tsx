@@ -14,7 +14,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { RequestStatus } from '@src/data/constants';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
-import { LibrariesList } from './libraries-tab';
+import { BaseFilterState, Filter, LibrariesList } from './libraries-tab';
 import LibrariesV2List from './libraries-v2-tab/index';
 import CoursesTab from './courses-tab';
 import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
@@ -29,6 +29,7 @@ const TabsSection = ({
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(BaseFilterState);
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
@@ -121,7 +122,10 @@ const TabsSection = ({
               : messages.librariesTabTitle,
           )}
         >
-          <LibrariesList />
+          <LibrariesList
+            migrationFilter={migrationFilter}
+            setMigrationFilter={setMigrationFilter}
+          />
         </Tab>,
       );
     }
@@ -137,7 +141,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [showNewCourseContainer, isLoadingCourses]);
+  }, [showNewCourseContainer, isLoadingCourses, migrationFilter]);
 
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {

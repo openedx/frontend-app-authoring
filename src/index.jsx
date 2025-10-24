@@ -19,6 +19,7 @@ import messages from './i18n';
 import {
   ComponentPicker,
   CreateLibrary,
+  CreateLegacyLibrary,
   LibraryLayout,
   PreviewChangesEmbed,
 } from './library-authoring';
@@ -67,6 +68,7 @@ const App = () => {
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/libraries-v1/migrate" element={<LegacyLibMigrationPage />} />
+        <Route path="/libraries-v1/create" element={<CreateLegacyLibrary />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route
@@ -173,7 +175,6 @@ initialize({
         ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'false',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
-        ENABLE_LEGACY_LIBRARY_MIGRATOR: process.env.ENABLE_LEGACY_LIBRARY_MIGRATOR || 'false',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
         LIBRARY_UNSUPPORTED_BLOCKS: (process.env.LIBRARY_UNSUPPORTED_BLOCKS || 'conditional,step-builder,problem-builder').split(','),
         COURSE_TEAM_SUPPORT_EMAIL: process.env.COURSE_TEAM_SUPPORT_EMAIL || null,

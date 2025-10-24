@@ -4,7 +4,6 @@ import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
 } from '@openedx/paragon';
 import { Error, FilterList } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
 
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
@@ -70,7 +69,7 @@ export enum Filter {
   unmigrated = 'unmigrated',
 }
 
-const BaseFilterState = Object.values(Filter);
+export const BaseFilterState = Object.values(Filter);
 
 interface MigrationFilterProps {
   filters: Filter[];
@@ -146,7 +145,12 @@ interface LibrariesListProps {
   handleCheck?: (library: LibraryV1Data, action: 'add' | 'remove') => void;
   setSelectedLibraries?: (libraries: LibraryV1Data[]) => void;
   hideMigationAlert?: boolean;
-  initialFilter?: Filter[];
+  // We lift `migrationFilter` and `setMigrationFilter` into props
+  // so that the filter state is maintained consistently across different
+  // steps of the legacy libraries migration flow, and to allow
+  // parent components to control and persist the filter context.
+  migrationFilter: Filter[];
+  setMigrationFilter: React.Dispatch<React.SetStateAction<Filter[]>>;
 }
 
 export const LibrariesList = ({
@@ -154,13 +158,13 @@ export const LibrariesList = ({
   handleCheck,
   setSelectedLibraries,
   hideMigationAlert = false,
-  initialFilter = BaseFilterState,
+  migrationFilter,
+  setMigrationFilter,
 }: LibrariesListProps) => {
   const intl = useIntl();
   const { isPending, data, isError } = useLibrariesV1Data();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [migrationFilter, setMigrationFilter] = useState<Filter[]>(initialFilter);
 
   let filteredData = findInValues(data?.libraries, search || '') || [];
   if (migrationFilter.length === 1) {
@@ -222,7 +226,7 @@ export const LibrariesList = ({
 
   return (
     <>
-      {!hideMigationAlert && getConfig().ENABLE_LEGACY_LIBRARY_MIGRATOR === 'true' && (<MigrateLegacyLibrariesAlert />)}
+      {!hideMigationAlert && (<MigrateLegacyLibrariesAlert />)}
       <div className="courses-tab">
         <ActionRow className="my-3">
           {inSelectMode && (
