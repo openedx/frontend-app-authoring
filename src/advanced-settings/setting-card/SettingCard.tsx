@@ -30,7 +30,7 @@ const SettingCard = ({
   const { deprecated, help, displayName } = settingData;
   const initialValue = JSON.stringify(settingData.value, null, 4);
   const [isOpen, open, close] = useToggle(false);
-  const [target, setTarget] = useState(null);
+  const [target, setTarget] = useState<HTMLButtonElement | null>(null);
   const [newValue, setNewValue] = useState(initialValue);
 
   const handleSettingChange = (e) => {
@@ -118,7 +118,7 @@ SettingCard.propTypes = {
     deprecated: PropTypes.bool,
     help: PropTypes.string,
     displayName: PropTypes.string,
-    value: PropTypes.PropTypes.oneOfType([
+    value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.bool,
       PropTypes.number,

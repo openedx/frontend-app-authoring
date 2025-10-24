@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -22,7 +21,6 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea
     {...props}
     onFocus={() => {}}
-    onBlur={() => {}}
   />
 )));
 
@@ -86,10 +84,10 @@ describe('<SettingCard />', () => {
     await waitFor(() => {
       expect(inputBox).toHaveValue('3, 2, 1');
     });
+    await user.tab(); // blur off of the input.
     await waitFor(() => {
       expect(setEdited).toHaveBeenCalled();
       expect(handleBlur).toHaveBeenCalled();
     });
-    fireEvent.focusOut(inputBox);
   });
 });
