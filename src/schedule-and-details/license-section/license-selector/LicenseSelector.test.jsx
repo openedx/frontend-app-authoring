@@ -1,7 +1,4 @@
-import React from 'react';
-import {
-  act, fireEvent, render, waitFor,
-} from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { LICENSE_TYPE } from '../constants';
@@ -40,16 +37,17 @@ describe('<LicenseSelector />', () => {
     const { getByRole } = render(<RootWrapper {...props} />);
     const button = getByRole('button', { name: messages.licenseChoice2.defaultMessage });
     expect(button).toHaveClass('btn btn-outline-primary');
-    act(() => {
-      fireEvent.click(button);
-    });
-    await waitFor(() => {
-      expect(button).toHaveClass('btn btn-primary');
-    });
+    fireEvent.click(button);
     expect(props.onChangeLicenseType).toHaveBeenCalledWith(
       LICENSE_TYPE.creativeCommons,
       'license',
     );
+    // FIXME: the following doesn't happen, because this is a controlled component and only changes
+    // when the props change (in response to 'onChange'). This needs to be tested at a higher level,
+    // e.g. testing the whole page together, not just this component.
+    // await waitFor(() => {
+    //   expect(button).toHaveClass('btn btn-primary');
+    // });
   });
 
   it('should show disabled buttons if license is null', () => {
