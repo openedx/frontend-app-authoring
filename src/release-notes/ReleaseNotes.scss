@@ -1,6 +1,6 @@
 .pgn__pageBanner__accentA {
     background-color: #5DE3BF;
-    color: #000000;
+    color: var(--pgn-color-black);
     text-align: center;
     font-size: 14px;
     font-style: normal;
@@ -8,7 +8,7 @@
     line-height: 20px;
 
     a {
-        color: #000000;
+        color: var(--pgn-color-black);
         font-size: 14px;
         font-style: normal;
         font-weight: 600;
@@ -33,4 +33,138 @@
 
 .release-notes-page-content {
     min-height: 780px;
+}
+
+.release-notes-sidebar {
+    .font-weight-bold {
+        font-weight: 700;
+    }
+
+    ul {
+        li {
+            line-height: 1.4;
+        }
+    }
+}
+
+.release-notes-page {
+    color: var(--pgn-color-black);
+
+    h1, h2, h3, h4, h5, h6,
+    p, span, small, li, a,
+    .text-muted, .text-gray-800,
+    .pgn__sub-header,
+    .release-notes-list,
+    .release-note-item {
+        color: var(--pgn-color-black);
+    }
+
+    .sub-header {
+        border-bottom: 2px solid black;
+    }
+
+    .pgn__icon {
+        max-width: 20px !important;
+        max-height: 20px !important;
+    }
+}
+
+.release-note-item {
+    & > .d-flex {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+
+    & > .d-flex > div:first-child {
+        flex: 1 1 auto;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    & > .d-flex > .d-flex {
+        flex: 0 0 auto;
+        align-self: flex-start;
+    }
+
+    img,
+    video,
+    iframe {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    table {
+        max-width: 100%;
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+
+    pre,
+    code {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+}
+
+.post-description {
+    font-size: 14px;
+}
+
+.scheduled-icon:hover,
+.scheduled-icon:focus,
+.scheduled-icon:focus-visible,
+.scheduled-icon:active {
+    background: none;
+    border: none;
+}
+
+.edit-notes-hover:hover {
+    background-color: #D3D3D3;
+}
+
+.delete-notes-hover:hover {
+    background-color: #D3D3D3;
+}
+
+.post-title {
+    font-size: 22px;
+}
+
+.post-scheduled {
+    line-height: 0;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.tooltip.scheduled-tooltip .tooltip-inner {
+    max-width: 350px !important;
+}
+
+.new-post-button .pgn__icon {
+    color: inherit;
+}
+
+.pgn__modal-header .pgn__modal-title {
+	color: #00262B;
+    font-size: 24px;
+}
+
+.pgn__form-text-default {
+    color: #00262B;
+    font-weight: bold;
+}
+
+.notes-label input {
+    border-radius: 0 !important;
+}
+
+.sub-header-title {
+    font-size: 40px;
+}
+
+.pgn__modal.pgn__modal-xl.pgn__modal-default {
+    max-height: unset;
 }

@@ -3,9 +3,12 @@ import { buttons, plugins } from '../../data/constants/tinyMCE';
 
 const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(' | ');
 
-const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
-  const image = enableImageUpload ? plugins.image : '';
+const pluginConfig = ({
+  placeholder, editorType, enableImageUpload, showImageButton = false,
+}) => {
+  const image = (enableImageUpload || showImageButton) ? plugins.image : '';
   const imageTools = enableImageUpload ? plugins.imagetools : '';
+  const imageButton = showImageButton ? 'image' : '';
   const imageUploadButton = enableImageUpload ? buttons.imageUploadButton : '';
   const editImageSettings = enableImageUpload ? buttons.editImageSettings : '';
   const codePlugin = editorType === 'text' ? plugins.code : '';
@@ -55,7 +58,7 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
           buttons.outdent,
           buttons.indent,
         ],
-        [imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
+        [imageButton, imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
         [buttons.table, buttons.emoticons, buttons.charmap, buttons.hr],
         [buttons.removeFormat, codeButton, buttons.a11ycheck, buttons.embediframe],
       ]) : false,

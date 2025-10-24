@@ -29,6 +29,7 @@ import { reducer as accessibilityPageReducer } from './accessibility-page/data/s
 import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
+import { reducer as releaseNotesReducer } from './release-notes/data/slice';
 
 type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 
@@ -63,6 +64,7 @@ export interface DeprecatedReduxState {
   certificates: Record<string, any>;
   groupConfigurations: InferState<typeof groupConfigurationsReducer>;
   textbooks: Record<string, any>;
+  releaseNotes: Record<string, any>;
 }
 
 export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
@@ -94,6 +96,7 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       certificates: certificatesReducer,
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
+      releaseNotes: releaseNotesReducer,
     },
     preloadedState,
   });
