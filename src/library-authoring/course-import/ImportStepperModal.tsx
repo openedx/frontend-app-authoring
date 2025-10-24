@@ -4,6 +4,7 @@ import {
   ActionRow, Button, ModalDialog, Stepper,
 } from '@openedx/paragon';
 
+import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from './messages';
 
 type MigrationStep = 'select-course' | 'review-details';
@@ -46,7 +47,7 @@ export const ImportStepperModal = ({
             eventKey="review-details"
             title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
           >
-            2
+            <ReviewImportDetails />
           </Stepper.Step>
         </Stepper>
       </ModalDialog.Body>
