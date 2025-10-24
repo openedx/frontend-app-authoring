@@ -409,7 +409,7 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage();
 
     // Wait for the unit cards to load
-    waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
 
     // open sidebar
     fireEvent.click(await screen.findByText(displayName));

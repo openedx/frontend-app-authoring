@@ -129,7 +129,7 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection stats', async () => {
-    mockGetBlockTypes('someBlocks');
+    await mockGetBlockTypes('someBlocks');
     render();
     expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
@@ -148,7 +148,7 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection stats for empty collection', async () => {
-    mockGetBlockTypes('noBlocks');
+    await mockGetBlockTypes('noBlocks');
     render();
     expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
@@ -157,7 +157,7 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection stats for big collection', async () => {
-    mockGetBlockTypes('moreBlocks');
+    await mockGetBlockTypes('moreBlocks');
     render();
     expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 

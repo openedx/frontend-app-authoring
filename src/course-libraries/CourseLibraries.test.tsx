@@ -114,7 +114,7 @@ describe('<CourseLibraries />', () => {
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     await user.click(dismissBtn);
     expect(allTab).toHaveAttribute('aria-selected', 'true');
-    waitFor(() => expect(alert).not.toBeInTheDocument());
+    await waitFor(() => expect(alert).not.toBeInTheDocument());
     // review updates button
     const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
     await user.click(reviewActionBtn);

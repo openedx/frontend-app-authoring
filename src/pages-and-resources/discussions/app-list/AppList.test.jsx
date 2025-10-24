@@ -63,7 +63,7 @@ describe('AppList', () => {
         },
       });
 
-      store = await initializeStore();
+      store = initializeStore();
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       await mockStore(piazzaApiResponse);
     });
@@ -163,7 +163,7 @@ describe('AppList', () => {
         },
       });
 
-      store = await initializeStore();
+      store = initializeStore();
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       await mockStore(legacyApiResponse, 'legacy');
     });

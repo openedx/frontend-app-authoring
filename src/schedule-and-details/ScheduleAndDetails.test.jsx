@@ -125,9 +125,7 @@ describe('<ScheduleAndDetails />', () => {
 
   it('should display a success message when course details saves', async () => {
     const { getByText } = render(<ScheduleAndDetails courseId={courseId} />);
-    await waitFor(() => {
-      executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
-    });
+    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
     expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
   });
 

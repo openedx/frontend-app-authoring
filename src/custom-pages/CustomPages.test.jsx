@@ -100,7 +100,7 @@ describe('CustomPages', () => {
   it('should update page order on drag', async () => {
     renderComponent();
     await mockStore(RequestStatus.SUCCESSFUL);
-    const buttons = await screen.queryAllByRole('button');
+    const buttons = screen.queryAllByRole('button');
     const draggableButton = buttons[9];
     expect(draggableButton).toBeVisible();
     await act(async () => {

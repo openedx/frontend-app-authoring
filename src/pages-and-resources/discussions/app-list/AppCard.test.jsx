@@ -38,7 +38,7 @@ describe('AppCard', () => {
       },
     });
 
-    store = await initializeStore();
+    store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 

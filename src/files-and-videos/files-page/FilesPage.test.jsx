@@ -280,7 +280,7 @@ describe('FilesAndUploads', () => {
       it('should have disabled action buttons', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
 
-        const actionsButton = await screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         fireEvent.click(actionsButton);
         expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
 
@@ -401,7 +401,7 @@ describe('FilesAndUploads', () => {
       it('should open asset info', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
 
-        const [assetMenuButton] = await screen.getAllByTestId('file-menu-dropdown-mOckID1');
+        const [assetMenuButton] = screen.getAllByTestId('file-menu-dropdown-mOckID1');
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
           .reply(201, {
@@ -465,7 +465,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(await screen.getByText('Unlock'));
+        fireEvent.click(screen.getByText('Unlock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID1',
@@ -484,7 +484,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(await screen.getByText('Lock'));
+        fireEvent.click(screen.getByText('Lock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID3',
@@ -513,7 +513,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        const confirmDelete = screen.getByTestId('open-delete-confirmation-button');
         fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID1')).toBeVisible();
@@ -600,7 +600,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        const confirmDelete = screen.getByTestId('open-delete-confirmation-button');
         fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID3')).toBeVisible();

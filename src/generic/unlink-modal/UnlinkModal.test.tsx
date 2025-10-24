@@ -19,7 +19,7 @@ const renderforContainer = () => defaultRender(
       close={closeMock}
       category="chapter"
       displayName="Introduction to Testing"
-      onDeleteSubmit={onUnlinkSubmitMock}
+      onUnlinkSubmit={onUnlinkSubmitMock}
     />
   </IntlProvider>,
 );
@@ -30,7 +30,7 @@ const renderforComponent = () => defaultRender(
       isOpen
       close={closeMock}
       category="component"
-      onDeleteSubmit={onUnlinkSubmitMock}
+      onUnlinkSubmit={onUnlinkSubmitMock}
     />
   </IntlProvider>,
 );
@@ -65,7 +65,7 @@ describe('<UnlinkModal />', () => {
 
     const okButton = screen.getByRole('button', { name: messages.unlinkButton.defaultMessage });
     fireEvent.click(okButton);
-    waitFor(() => {
+    await waitFor(() => {
       expect(onUnlinkSubmitMock).toHaveBeenCalledTimes(1);
     });
   });

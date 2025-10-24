@@ -211,7 +211,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       // Click on Copy Item
       const copyMenuItem = await screen.findByRole('button', { name: 'Copy to clipboard' });
       expect(copyMenuItem).toBeInTheDocument();
-      user.click(copyMenuItem);
+      await user.click(copyMenuItem);
 
       await waitFor(() => {
         expect(axiosMock.history.post.length).toBe(1);

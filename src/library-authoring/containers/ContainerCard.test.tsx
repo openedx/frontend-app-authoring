@@ -486,7 +486,7 @@ describe('<ContainerCard />', () => {
     // Click on Copy Item
     const copyMenuItem = screen.getByRole('button', { name: 'Copy to clipboard' });
     expect(copyMenuItem).toBeInTheDocument();
-    user.click(copyMenuItem);
+    await user.click(copyMenuItem);
 
     await waitFor(() => {
       expect(axiosMock.history.post.length).toBe(1);

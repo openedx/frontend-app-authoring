@@ -1,6 +1,5 @@
-import React from 'react';
 import {
-  render, fireEvent, act, waitFor,
+  render, fireEvent, screen, waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -34,20 +33,15 @@ describe('<GradeRequirements />', () => {
   it('should call onChange on input change', () => {
     const { getByDisplayValue } = render(<RootWrapper {...props} />);
     const input = getByDisplayValue(props.entranceExamMinimumScorePct);
-    act(() => {
-      fireEvent.change(input, { target: { valueAsNumber: '31' } });
-    });
+    fireEvent.change(input, { target: { valueAsNumber: '31' } });
     expect(props.onChange).toHaveBeenCalledWith('31', 'entranceExamMinimumScorePct');
   });
 
-  it('should show feedback error', () => {
-    const { getByDisplayValue, getByText } = render(<RootWrapper {...props} />);
-    const input = getByDisplayValue(props.entranceExamMinimumScorePct);
-    act(() => {
-      fireEvent.change(input, { target: { valueAsNumber: '123' } });
-    });
-    waitFor(() => {
-      expect(getByText(scheduleMessage.errorMessage8.defaultMessage)).toBeInTheDocument();
+  it('should show feedback error', async () => {
+    const errorMessage = scheduleMessage.errorMessage8.defaultMessage;
+    render(<RootWrapper {...props} entranceExamMinimumScorePct="123" errorEffort={errorMessage} />);
+    await waitFor(() => {
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
   });
 });

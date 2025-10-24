@@ -2218,7 +2218,7 @@ describe('<CourseUnit />', () => {
       const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
       const helpLinkUrl = 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components';
 
-      waitFor(() => {
+      await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');
         expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
@@ -2291,19 +2291,17 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders and navigates to the new HTML XBlock editor after xblock duplicating', async () => {
-    render(<RootWrapper />);
     const updatedCourseVerticalChildrenMock = JSON.parse(JSON.stringify(courseVerticalChildrenMock));
-    const targetBlockId = updatedCourseVerticalChildrenMock.children[1].block_id;
-
-    updatedCourseVerticalChildrenMock.children = updatedCourseVerticalChildrenMock.children
-      .map((child) => (child.block_id === targetBlockId
-        ? { ...child, block_type: 'html' }
-        : child));
+    // Convert the second child from drag and drop to HTML:
+    const targetChild = updatedCourseVerticalChildrenMock.children[1];
+    targetChild.block_type = 'html';
+    targetChild.name = 'Test HTML Block';
+    targetChild.block_id = 'block-v1:OpenedX+L153+3T2023+type@html+block@test123original';
 
     axiosMock
       .onPost(postXBlockBaseApiUrl({
         parent_locator: blockId,
-        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
+        duplicate_source_locator: targetChild.block_id,
       }))
       .replyOnce(200, { locator: '1234567890' });
 
@@ -2311,21 +2309,20 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
       .reply(200, updatedCourseVerticalChildrenMock);
 
+    render(<RootWrapper />);
     await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
 
     await waitFor(() => {
       const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
       expect(iframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.currentXBlockId, {
-        id: targetBlockId,
-      });
     });
 
-    waitFor(() => {
-      simulatePostMessageEvent(messageTypes.duplicateXBlock, {});
-      simulatePostMessageEvent(messageTypes.newXBlockEditor, {});
-      expect(mockedUsedNavigate)
-        .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
+    // After duplicating, the editor modal will open:
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.duplicateXBlock, { usageId: targetChild.block_id });
+    simulatePostMessageEvent(messageTypes.newXBlockEditor, { blockType: 'html', usageId: targetChild.block_id });
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeInTheDocument();
     });
   });
 
