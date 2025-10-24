@@ -7,17 +7,16 @@ import {
 import { COURSE_CREATOR_STATES } from '@src/constants';
 import { type DeprecatedReduxState } from '@src/store';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { RequestStatus } from '@src/data/constants';
 import { initialState } from '../../factories/mockApiResponses';
 
-import CoursesTab from '.';
+import { CoursesList } from '.';
 import { studioHomeCoursesRequestParamsDefault } from '../../data/slice';
 
 type StudioHomeState = DeprecatedReduxState['studioHome'];
 
 const onClickNewCourse = jest.fn();
 const isShowProcessing = false;
-const isLoading = false;
-const isFailed = false;
 const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
 const showNewCourseContainer = true;
@@ -28,6 +27,15 @@ const renderComponent = (overrideProps = {}, studioHomeState: Partial<StudioHome
     ...initialState,
     studioHome: {
       ...initialState.studioHome,
+      studioHomeData: {
+        courses: studioHomeMock.courses,
+        numPages,
+        coursesCount,
+      },
+      loadingStatuses: {
+        ...initialState.studioHome.loadingStatuses,
+        courseLoadingStatus: RequestStatus.SUCCESSFUL,
+      },
       ...studioHomeState,
     },
   };
@@ -37,15 +45,10 @@ const renderComponent = (overrideProps = {}, studioHomeState: Partial<StudioHome
 
   return {
     ...render(
-      <CoursesTab
-        coursesDataItems={studioHomeMock.courses}
+      <CoursesList
         showNewCourseContainer={showNewCourseContainer}
         onClickNewCourse={onClickNewCourse}
         isShowProcessing={isShowProcessing}
-        isLoading={isLoading}
-        isFailed={isFailed}
-        numPages={numPages}
-        coursesCount={coursesCount}
         {...overrideProps}
       />,
     ),
@@ -67,25 +70,41 @@ describe('<CoursesTab />', () => {
   });
 
   it('should render loading spinner when isLoading is true and isFiltered is false', () => {
-    const props = { isLoading: true, coursesDataItems: [] };
-    const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
-    renderComponent(props, customStoreData);
+    const customStoreData = {
+      loadingStatuses: {
+        ...initialState.studioHome.loadingStatuses,
+        courseLoadingStatus: RequestStatus.IN_PROGRESS,
+      },
+      studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true },
+    };
+    renderComponent({}, customStoreData);
     const loadingSpinner = screen.getByRole('status');
     expect(loadingSpinner).toBeInTheDocument();
   });
 
   it('should render an error message when something went wrong', () => {
-    const props = { isFailed: true };
-    const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: false } };
-    renderComponent(props, customStoreData);
+    const customStoreData = {
+      loadingStatuses: {
+        ...initialState.studioHome.loadingStatuses,
+        courseLoadingStatus: RequestStatus.FAILED,
+      },
+      studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: false },
+    };
+    renderComponent({}, customStoreData);
     const alertErrorFailed = screen.queryByTestId('error-failed-message');
     expect(alertErrorFailed).toBeInTheDocument();
   });
 
   it('should render an alert message when there is not courses found', () => {
-    const props = { isLoading: false, coursesDataItems: [] };
-    const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
-    renderComponent(props, customStoreData);
+    const customStoreData = {
+      studioHomeData: {
+        courses: [],
+        numPages: 0,
+        coursesCount: 0,
+      },
+      studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true },
+    };
+    renderComponent({}, customStoreData);
     const alertCoursesNotFound = screen.queryByTestId('courses-not-found-alert');
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
@@ -120,9 +139,15 @@ describe('<CoursesTab />', () => {
   });
 
   it('should reset filters when in pressed the button to clean them', () => {
-    const props = { isLoading: false, coursesDataItems: [] };
-    const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
-    const { store } = renderComponent(props, customStoreData);
+    const customStoreData = {
+      studioHomeData: {
+        courses: [],
+        numPages: 0,
+        coursesCount: 0,
+      },
+      studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true },
+    };
+    const { store } = renderComponent({}, customStoreData);
     const cleanFiltersButton = screen.getByRole('button', { name: /clear filters/i });
     expect(cleanFiltersButton).toBeInTheDocument();
 
