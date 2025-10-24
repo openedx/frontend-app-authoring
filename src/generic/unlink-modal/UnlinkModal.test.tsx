@@ -19,7 +19,7 @@ const renderforContainer = () => defaultRender(
       close={closeMock}
       category="chapter"
       displayName="Introduction to Testing"
-      onDeleteSubmit={onUnlinkSubmitMock}
+      onUnlinkSubmit={onUnlinkSubmitMock}
     />
   </IntlProvider>,
 );
@@ -30,7 +30,7 @@ const renderforComponent = () => defaultRender(
       isOpen
       close={closeMock}
       category="component"
-      onDeleteSubmit={onUnlinkSubmitMock}
+      onUnlinkSubmit={onUnlinkSubmitMock}
     />
   </IntlProvider>,
 );
