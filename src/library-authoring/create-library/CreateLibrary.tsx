@@ -232,7 +232,6 @@ export const CreateLibrary = ({
           </div>
         )}
 
-        {/* Error alerts - shown for both archive and regular creation */}
         {(restoreTaskId || isError || restoreMutation.isError) && (
           <div className="mb-4">
             {restoreStatus?.state === LibraryRestoreStatus.Pending && (
@@ -265,7 +264,6 @@ export const CreateLibrary = ({
           </div>
         )}
 
-        {/* Regular form - always shown */}
         <Formik
           initialValues={{
             title: '',
