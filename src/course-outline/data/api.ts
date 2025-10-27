@@ -1,13 +1,15 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { XBlock } from '@src/data/types';
-import { CourseOutline } from './types';
+import { CourseOutline, CourseDetails } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
+
+export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
 
 export const getCourseBestPracticesApiUrl = ({
   courseId,
@@ -46,11 +48,23 @@ export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl
 /**
  * Get course outline index.
  * @param {string} courseId
- * @returns {Promise<courseOutline>}
+ * @returns {Promise<CourseOutline>}
  */
 export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseOutlineIndexApiUrl(courseId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Get course details.
+ * @param {string} courseId
+ * @returns {Promise<CourseDetails>}
+ */
+export async function getCourseDetails(courseId: string): Promise<CourseDetails> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseDetailsApiUrl(courseId));
 
   return camelCaseObject(data);
 }

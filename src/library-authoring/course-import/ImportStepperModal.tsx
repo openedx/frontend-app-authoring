@@ -52,7 +52,7 @@ export const ImportStepperModal = ({
             eventKey="review-details"
             title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
           >
-            <ReviewImportDetails />
+            <ReviewImportDetails courseId={selectedCourseId} />
           </Stepper.Step>
         </Stepper>
       </ModalDialog.Body>
