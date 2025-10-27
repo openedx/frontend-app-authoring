@@ -90,18 +90,8 @@ const messages = defineMessages({
   },
   createFromArchiveButton: {
     id: 'course-authoring.library-authoring.create-library.form.create-from-archive.button',
-    defaultMessage: 'Create from Archive',
+    defaultMessage: 'Create from archive',
     description: 'Button text to create library from archive.',
-  },
-  dropzoneTitle: {
-    id: 'course-authoring.library-authoring.create-library.form.dropzone.title',
-    defaultMessage: 'Drag and drop your local backup archive file here to upload',
-    description: 'Title for the dropzone area.',
-  },
-  dropzoneSubtitle: {
-    id: 'course-authoring.library-authoring.create-library.form.dropzone.subtitle',
-    defaultMessage: 'Upload .zip or .tar.gz files (5 GB max)',
-    description: 'Subtitle for the dropzone area.',
   },
   uploadSuccess: {
     id: 'course-authoring.library-authoring.create-library.form.upload.success',
@@ -138,11 +128,6 @@ const messages = defineMessages({
     defaultMessage: 'Backed up {date} at {time}',
     description: 'Text showing when the archive was backed up.',
   },
-  dropzoneMultipleDraggedError: {
-    id: 'course-authoring.library-authoring.create-library.form.dropzone.multiple-dragged-error',
-    defaultMessage: 'Please upload only one archive file.',
-    description: 'Error message when multiple files are dragged to the dropzone.',
-  },
   uploadingStatus: {
     id: 'course-authoring.library-authoring.create-library.form.uploading.status',
     defaultMessage: 'Uploading...',
@@ -152,6 +137,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.create-library.form.invalid-file-type.error',
     defaultMessage: 'Invalid file type. Please upload a .zip, .tar.gz, or .tar file.',
     description: 'Error message when user uploads an unsupported file type.',
+  },
+  viewErrorLogText: {
+    id: 'course-authoring.library-authoring.create-library.form.view-error-log.text',
+    defaultMessage: 'View error log',
+    description: 'Link text to view the error log when restore fails.',
+  },
+  genericErrorMessage: {
+    id: 'course-authoring.library-authoring.create-library.form.generic-error.message',
+    defaultMessage: 'An error occurred',
+    description: 'Generic error message when a specific error is not available.',
   },
 });
 

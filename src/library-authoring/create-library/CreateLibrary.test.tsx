@@ -14,6 +14,8 @@ import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
 import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
+import { LibraryRestoreStatus } from './data/restoreConstants';
+import messages from './messages';
 
 const mockNavigate = jest.fn();
 let axiosMock: MockAdapter;
@@ -31,12 +33,32 @@ jest.mock('@src/generic/data/apiHooks', () => ({
   }),
 }));
 
+// Mock restore hooks
+const mockRestoreMutate = jest.fn();
+let mockRestoreStatusData: any = {};
+let mockRestoreMutationError: any = null;
+jest.mock('./data/restoreHooks', () => ({
+  useCreateLibraryRestore: () => ({
+    mutate: mockRestoreMutate,
+    error: mockRestoreMutationError,
+    isPending: false,
+    isError: !!mockRestoreMutationError,
+  }),
+  useGetLibraryRestoreStatus: () => ({
+    data: mockRestoreStatusData,
+  }),
+}));
+
 describe('<CreateLibrary />', () => {
   beforeEach(() => {
     axiosMock = initializeMocks().axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(undefined))
       .reply(200, {});
+    // Reset restore mocks
+    mockRestoreMutate.mockReset();
+    mockRestoreStatusData = {};
+    mockRestoreMutationError = null;
   });
 
   afterEach(() => {
@@ -66,7 +88,7 @@ describe('<CreateLibrary />', () => {
     await user.click(slugInput);
     await user.type(slugInput, 'test_library_slug');
 
-    fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
     await waitFor(() => {
       expect(axiosMock.history.post.length).toBe(1);
       expect(axiosMock.history.post[0].data).toBe(
@@ -104,7 +126,7 @@ describe('<CreateLibrary />', () => {
     await user.click(slugInput);
     await user.type(slugInput, 'test_library_slug');
 
-    fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
     await waitFor(() => {
       expect(axiosMock.history.post.length).toBe(0);
     });
@@ -141,7 +163,7 @@ describe('<CreateLibrary />', () => {
     await user.click(slugInput);
     await user.type(slugInput, 'test_library_slug');
 
-    fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
     await waitFor(() => {
       expect(axiosMock.history.post.length).toBe(1);
       expect(axiosMock.history.post[0].data).toBe(
@@ -172,7 +194,7 @@ describe('<CreateLibrary />', () => {
     await user.click(slugInput);
     await user.type(slugInput, 'test_library_slug');
 
-    fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
     await waitFor(async () => {
       expect(axiosMock.history.post.length).toBe(1);
       expect(axiosMock.history.post[0].data).toBe(
@@ -190,6 +212,332 @@ describe('<CreateLibrary />', () => {
     fireEvent.click(await screen.findByRole('button', { name: /cancel/i }));
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/libraries');
+    });
+  });
+
+  describe('Archive Upload Functionality', () => {
+    test('shows create from archive button and switches to archive mode', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      render(<CreateLibrary />);
+
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      expect(createFromArchiveBtn).toBeInTheDocument();
+
+      await user.click(createFromArchiveBtn);
+
+      // Should show dropzone after switching to archive mode
+      expect(screen.getByTestId('library-archive-dropzone')).toBeInTheDocument();
+    });
+
+    test('handles file upload and starts restore process', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ task_id: 'task-123' });
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Create a mock file
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      // Mock file selection
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      // Trigger file change
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(mockRestoreMutate).toHaveBeenCalledWith(
+          file,
+          expect.objectContaining({
+            onSuccess: expect.any(Function),
+            onError: expect.any(Function),
+          }),
+        );
+      });
+    });
+
+    test('shows loading state during restore', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ task_id: 'task-123' });
+        mockRestoreStatusData = { state: LibraryRestoreStatus.Pending };
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload file
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.restoreInProgress.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    test('shows success state with archive details after upload', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      const mockResult = {
+        learning_package_id: 123,
+        title: 'Test Archive Library',
+        org: 'TestOrg',
+        slug: 'test-archive',
+        key: 'TestOrg/test-archive',
+        archive_key: 'archive-key',
+        containers: 5,
+        components: 15,
+        collections: 3,
+        sections: 8,
+        subsections: 12,
+        units: 20,
+        created_on_server: '2025-01-01T10:00:00Z',
+        created_at: '2025-01-01T10:00:00Z',
+        created_by: {
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+      };
+
+      // Mock the restore mutation to simulate successful upload and restore
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ task_id: 'task-123' });
+        // Simulate successful restore completion
+        mockRestoreStatusData = {
+          state: LibraryRestoreStatus.Succeeded,
+          result: mockResult,
+          error: null,
+          error_log: null,
+        };
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload a file to trigger the restore process
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      // Wait for the restore to complete and archive details to be shown
+      await waitFor(() => {
+        expect(screen.getByText('Test Archive Library')).toBeInTheDocument();
+        expect(screen.getByText('TestOrg / test-archive')).toBeInTheDocument();
+        expect(screen.getByText(/Contains 15 Components/i)).toBeInTheDocument();
+      });
+    });
+
+    test('shows error state with error message and link after failed upload', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      // Mock the restore mutation to simulate upload starting then failing
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ task_id: 'task-456' });
+        // Simulate restore failure
+        mockRestoreStatusData = {
+          state: LibraryRestoreStatus.Failed,
+          result: null,
+          error: 'Library restore failed. See error log for details.',
+          error_log: 'http://example.com/error.log',
+        };
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload a file to trigger the restore process
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      // Wait for the error to be shown
+      await waitFor(() => {
+        expect(screen.getByText(messages.restoreError.defaultMessage)).toBeInTheDocument();
+      });
+
+      // Should show error log link
+      const errorLink = screen.getByText(messages.viewErrorLogText.defaultMessage);
+      expect(errorLink).toBeInTheDocument();
+      expect(errorLink.closest('a')).toHaveAttribute('href', 'http://example.com/error.log');
+    });
+
+    test('validates file types and shows error for invalid files', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Try to upload invalid file type
+      const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      // Should not call restore mutation for invalid file
+      expect(mockRestoreMutate).not.toHaveBeenCalled();
+    });
+
+    test('creates library from archive with learning package ID', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+      axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+        id: 'library-from-archive-id',
+      });
+
+      const mockResult = {
+        learning_package_id: 456,
+        title: 'Restored Library',
+        org: 'RestoredOrg',
+        slug: 'restored-lib',
+        key: 'RestoredOrg/restored-lib',
+        archive_key: 'archive-key',
+        containers: 3,
+        components: 10,
+        collections: 2,
+        sections: 5,
+        subsections: 8,
+        units: 15,
+        created_on_server: '2025-01-01T12:00:00Z',
+        created_at: '2025-01-01T12:00:00Z',
+        created_by: {
+          username: 'restoreuser',
+          email: 'restore@example.com',
+        },
+      };
+
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: mockResult,
+        error: null,
+        error_log: null,
+      };
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Fill in form fields
+      const titleInput = await screen.findByRole('textbox', { name: /library name/i });
+      await user.click(titleInput);
+      await user.type(titleInput, 'New Library from Archive');
+
+      const orgInput = await screen.findByRole('combobox', { name: /organization/i });
+      await user.click(orgInput);
+      await user.type(orgInput, 'org1');
+      await user.tab();
+
+      const slugInput = await screen.findByRole('textbox', { name: /library id/i });
+      await user.click(slugInput);
+      await user.type(slugInput, 'new_library_slug');
+
+      // Submit form
+      fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+        const postData = JSON.parse(axiosMock.history.post[0].data);
+        expect(postData).toEqual({
+          description: '',
+          title: 'New Library from Archive',
+          org: 'org1',
+          slug: 'new_library_slug',
+          learning_package: 456, // Should include the learning_package_id from restore
+        });
+        expect(mockNavigate).toHaveBeenCalledWith('/library/library-from-archive-id');
+      });
+    });
+
+    test('handles restore mutation error', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      mockRestoreMutationError = new Error('Upload failed');
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Should show error alert with the specific error message
+      expect(screen.getByText('Upload failed')).toBeInTheDocument();
+    });
+
+    test('shows generic error when no specific error message available', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      mockRestoreMutationError = {}; // Error without message
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Should show generic error message
+      expect(screen.getByText(messages.genericErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
 });

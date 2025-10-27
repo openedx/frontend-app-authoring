@@ -1,43 +1,49 @@
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container,
-  Form,
-  Button,
-  StatefulButton,
   ActionRow,
-  Dropzone,
-  Card,
-  Stack,
-  Icon,
   Alert,
+  Button,
+  Card,
+  Container,
+  Dropzone,
+  Form,
+  Icon,
+  StatefulButton
 } from '@openedx/paragon';
 import {
-  Upload,
-  LibraryBooks,
   AccessTime,
+  Widgets
 } from '@openedx/paragon/icons';
+import AlertError from '@src/generic/alert-error';
+import classNames from 'classnames';
 import { Formik } from 'formik';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import classNames from 'classnames';
-import { useState, useCallback } from 'react';
 
 import { REGEX_RULES } from '@src/constants';
 import { useOrganizationListData } from '@src/generic/data/apiHooks';
-import { useStudioHome } from '@src/studio-home/hooks';
-import Header from '@src/header';
-import SubHeader from '@src/generic/sub-header/SubHeader';
 import FormikControl from '@src/generic/FormikControl';
 import FormikErrorFeedback from '@src/generic/FormikErrorFeedback';
-import AlertError from '@src/generic/alert-error';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import Header from '@src/header';
+import { useStudioHome } from '@src/studio-home/hooks';
 
-import { useCreateLibraryV2 } from './data/apiHooks';
-import { CreateContentLibraryArgs } from './data/api';
-import { useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/restoreHooks';
-import { LibraryRestoreStatus } from './data/restoreConstants';
-import messages from './messages';
 import type { ContentLibrary } from '../data/api';
+import { CreateContentLibraryArgs } from './data/api';
+import { useCreateLibraryV2 } from './data/apiHooks';
+import { LibraryRestoreStatus } from './data/restoreConstants';
+import { useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/restoreHooks';
+import messages from './messages';
+
+// Valid file extensions for library archive uploads
+const VALID_ARCHIVE_EXTENSIONS = ['.zip', '.tar.gz', '.tar'];
+const DROPZONE_ACCEPT_TYPES = {
+  'application/zip': ['.zip'],
+  'application/gzip': ['.tar.gz'],
+  'application/x-tar': ['.tar'],
+};
 
 /**
  * Renders the form and logic to create a new library.
@@ -121,10 +127,9 @@ export const CreateLibrary = ({
   }) => {
     const file = fileData.get('file') as File;
     if (file) {
-      // Validate file type
-      const validExtensions = ['.zip', '.tar.gz', '.tar'];
+      // Validate file type using the same extensions as the dropzone
       const fileName = file.name.toLowerCase();
-      const isValidFile = validExtensions.some(ext => fileName.endsWith(ext));
+      const isValidFile = VALID_ARCHIVE_EXTENSIONS.some(ext => fileName.endsWith(ext));
 
       if (isValidFile) {
         setUploadedFile(file);
@@ -142,7 +147,7 @@ export const CreateLibrary = ({
         handleError(new Error(intl.formatMessage(messages.invalidFileTypeError)));
       }
     }
-  }, [restoreMutation]);
+  }, [restoreMutation, intl]);
 
   if (data) {
     if (handlePostCreate) {
@@ -155,7 +160,7 @@ export const CreateLibrary = ({
   return (
     <>
       {!showInModal && (<Header isHiddenMainMenu />)}
-      <Container size="xl" className="p-4 mt-3">
+      <Container size="md" className="p-4 mt-3">
         {!showInModal && (
           <SubHeader
             title={intl.formatMessage(messages.createLibrary)}
@@ -176,27 +181,11 @@ export const CreateLibrary = ({
             {!uploadedFile && !restoreMutation.isPending && (
               <Dropzone
                 data-testid="library-archive-dropzone"
-                accept={{
-                  'application/zip': ['.zip'],
-                  'application/gzip': ['.tar.gz'],
-                  'application/x-tar': ['.tar'],
-                }}
+                accept={DROPZONE_ACCEPT_TYPES}
                 onProcessUpload={handleFileUpload}
                 maxSize={5 * 1024 * 1024 * 1024} // 5GB
                 style={{ height: '300px' }}
-                errorMessages={{
-                  invalidSize: intl.formatMessage(messages.dropzoneSubtitle),
-                  multipleDragged: intl.formatMessage(messages.dropzoneMultipleDraggedError),
-                }}
-              >
-                <Stack direction="vertical" gap={3} className="text-center">
-                  <Icon src={Upload} style={{ height: '64px', width: '64px' }} />
-                  <div>
-                    <h4>{intl.formatMessage(messages.dropzoneTitle)}</h4>
-                    <p className="text-muted">{intl.formatMessage(messages.dropzoneSubtitle)}</p>
-                  </div>
-                </Stack>
-              </Dropzone>
+              />
             )}
 
             {/* Loading state - show spinner in DropZone-like container */}
@@ -219,25 +208,25 @@ export const CreateLibrary = ({
               // Show restore result data when succeeded
               <Card className="mb-4">
                 <Card.Body>
-                  <div className="d-flex justify-content-between align-items-start p-4">
-                    <div className="flex-grow-1">
-                      <h4 className="mb-2">{restoreStatus.result.title}</h4>
-                      <p className="text-muted mb-0">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start p-4 text-primary-700">
+                    <div className="flex-grow-1 mb-4 mb-md-0">
+                      <span className="mb-2">{restoreStatus.result.title}</span>
+                      <p className="small mb-0">
                         {restoreStatus.result.org} / {restoreStatus.result.slug}
                       </p>
                     </div>
-                    <div className="d-flex flex-column gap-2 align-items-end">
-                      <div className="d-flex align-items-center gap-2">
-                        <Icon src={LibraryBooks} style={{ width: '20px', height: '20px' }} />
-                        <span>
+                    <div className="d-flex flex-column gap-2 align-items-md-end">
+                      <div className="d-flex align-items-md-center gap-2">
+                        <Icon src={Widgets} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <span className="x-small">
                           {intl.formatMessage(messages.archiveComponentsCount, {
                             count: restoreStatus.result.components,
                           })}
                         </span>
                       </div>
-                      <div className="d-flex align-items-center gap-2">
-                        <Icon src={AccessTime} style={{ width: '20px', height: '20px' }} />
-                        <span>
+                      <div className="d-flex align-items-md-center gap-2">
+                        <Icon src={AccessTime} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <span className="x-small">
                           {intl.formatMessage(messages.archiveBackupDate, {
                             date: new Date(restoreStatus.result.created_at).toLocaleDateString(),
                             time: new Date(restoreStatus.result.created_at).toLocaleTimeString(),
@@ -249,28 +238,38 @@ export const CreateLibrary = ({
                 </Card.Body>
               </Card>
             )}
+          </div>
+        )}
 
-            {/* Archive restore status */}
-            {restoreTaskId && (
-              <div className="mb-4">
-                {restoreStatus?.state === LibraryRestoreStatus.Pending && (
-                  <Alert variant="info">
-                    {intl.formatMessage(messages.restoreInProgress)}
-                  </Alert>
-                )}
+        {/* Error alerts - shown for both archive and regular creation */}
+        {(restoreTaskId || isError || restoreMutation.isError) && (
+          <div className="mb-4">
+            {restoreStatus?.state === LibraryRestoreStatus.Pending && (
+              <Alert variant="info">
+                {intl.formatMessage(messages.restoreInProgress)}
+              </Alert>
+            )}
+            {(restoreStatus?.state === LibraryRestoreStatus.Failed || restoreMutation.isError) && (
+              <Alert variant="danger">
                 {restoreStatus?.state === LibraryRestoreStatus.Failed && (
-                  <Alert variant="danger">
+                  <div>
                     {intl.formatMessage(messages.restoreError)}
                     {restoreStatus.error_log && (
                       <div>
                         <a href={restoreStatus.error_log} target="_blank" rel="noopener noreferrer">
-                          View error log
+                          {intl.formatMessage(messages.viewErrorLogText)}
                         </a>
                       </div>
                     )}
-                  </Alert>
+                  </div>
                 )}
-              </div>
+                {restoreMutation.isError && (
+                  <div>
+                    {restoreMutation.error?.message
+                      || intl.formatMessage(messages.genericErrorMessage)}
+                  </div>
+                )}
+              </Alert>
             )}
           </div>
         )}
@@ -383,9 +382,8 @@ export const CreateLibrary = ({
             </Form>
           )}
         </Formik>
-        {(isError || restoreMutation.isError) && (
-          <AlertError error={error || restoreMutation.error} />
-        )}
+        {isError && (<AlertError error={error} />)}
+
       </Container>
       {!showInModal && (<StudioFooterSlot />)}
     </>
