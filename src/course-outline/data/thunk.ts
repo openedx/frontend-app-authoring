@@ -62,36 +62,12 @@ import {
  * @param {string} courseId - ID of the course
  * @returns {Object} - Object containing fetch course outline index query success or failure status
  */
-async function retryOnNotReady<T>(
-  apiCall: () => Promise<T>,
-  maxRetries: number = 5,
-  delay: number = 2000
-): Promise<T> {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await apiCall();
-    } catch (error: any) {
-      // Check if it's a 202 "not ready" response
-      if (error?.response?.status === 202 && i < maxRetries - 1) {
-        console.log(`Course not ready, retrying in ${delay}ms... (attempt ${i + 1}/${maxRetries})`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
-      }
-      throw error; // Re-throw if not a retry-able error or out of retries
-    }
-  }
-  throw new Error('Max retries exceeded');
-}
-
-// Then modify your function to wrap the API call
 export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) => Promise<void> {
-  alert("allllllllllllllllll");
   return async (dispatch) => {
     dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
-    try {
-      // Wrap the API call with retry logic
-      const outlineIndex = await retryOnNotReady(() => getCourseOutlineIndex(courseId));
 
+    try {
+      const outlineIndex = await getCourseOutlineIndex(courseId);
       const {
         courseReleaseDate,
         courseStructure: {
@@ -109,6 +85,7 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
         videoSharingEnabled,
       }));
       dispatch(updateCourseActions(actions));
+
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error: any) {
       if (error.response && error.response.status === 403) {
