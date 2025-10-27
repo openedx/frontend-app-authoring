@@ -31,10 +31,6 @@
     }
 }
 
-.release-notes-page-content {
-    min-height: 780px;
-}
-
 .release-notes-sidebar {
     .font-weight-bold {
         font-weight: 700;
@@ -59,13 +55,17 @@
         color: var(--pgn-color-black);
     }
 
-    .sub-header {
-        border-bottom: 2px solid black;
+    > div:first-child {
+        border-bottom: 2px solid black !important;
     }
 
     .pgn__icon {
         max-width: 20px !important;
         max-height: 20px !important;
+    }
+
+    .row {
+        min-height: 675px;
     }
 }
 
@@ -167,4 +167,8 @@
 
 .pgn__modal.pgn__modal-xl.pgn__modal-default {
     max-height: unset;
+}
+
+.no-release-notes-container {
+    min-height: 675px;
 }
