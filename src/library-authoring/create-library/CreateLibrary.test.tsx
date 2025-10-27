@@ -216,6 +216,68 @@ describe('<CreateLibrary />', () => {
     });
   });
 
+  test('calls handleCancel when used in modal', async () => {
+    const mockHandleCancel = jest.fn();
+    const mockHandlePostCreate = jest.fn();
+
+    render(
+      <CreateLibrary
+        showInModal
+        handleCancel={mockHandleCancel}
+        handlePostCreate={mockHandlePostCreate}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: /cancel/i }));
+    await waitFor(() => {
+      expect(mockHandleCancel).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  test('calls handlePostCreate when used in modal and library is created', async () => {
+    const mockHandleCancel = jest.fn();
+    const mockHandlePostCreate = jest.fn();
+    const user = userEvent.setup();
+
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+      id: 'library-id',
+      title: 'Test Library',
+    });
+
+    render(
+      <CreateLibrary
+        showInModal
+        handleCancel={mockHandleCancel}
+        handlePostCreate={mockHandlePostCreate}
+      />,
+    );
+
+    const titleInput = await screen.findByRole('textbox', { name: /library name/i });
+    await user.click(titleInput);
+    await user.type(titleInput, 'Test Library Name');
+
+    const orgInput = await screen.findByRole('combobox', { name: /organization/i });
+    await user.click(orgInput);
+    await user.type(orgInput, 'org1');
+    await user.tab();
+
+    const slugInput = await screen.findByRole('textbox', { name: /library id/i });
+    await user.click(slugInput);
+    await user.type(slugInput, 'test_library_slug');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
+
+    await waitFor(() => {
+      expect(mockHandlePostCreate).toHaveBeenCalledWith({
+        id: 'library-id',
+        title: 'Test Library',
+      });
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Archive Upload Functionality', () => {
     test('shows create from archive button and switches to archive mode', async () => {
       const user = userEvent.setup();
@@ -269,6 +331,51 @@ describe('<CreateLibrary />', () => {
           }),
         );
       });
+    });
+
+    test('triggers onError callback when restore mutation fails during file upload', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      // Mock console.error to capture the call
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
+      // Mock the restore mutation to trigger onError callback immediately
+      mockRestoreMutate.mockImplementation((_file: File, { onError }: any) => {
+        const restoreError = new Error('Restore mutation failed');
+        // Call onError immediately to trigger the handleError(restoreError) line
+        onError(restoreError);
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload a valid file that will trigger the restore process and its onError callback
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      await waitFor(() => {
+        expect(mockRestoreMutate).toHaveBeenCalledWith(
+          file,
+          expect.objectContaining({
+            onSuccess: expect.any(Function),
+            onError: expect.any(Function),
+          }),
+        );
+      });
+
+      consoleSpy.mockRestore();
     });
 
     test('shows loading state during restore', async () => {
@@ -439,6 +546,73 @@ describe('<CreateLibrary />', () => {
       // Should show error message for invalid file type (Dropzone shows generic error)
       await waitFor(() => {
         expect(screen.getByText(/A problem occured while uploading your file/i)).toBeInTheDocument();
+      });
+    });
+
+    test('shows archive preview only when all conditions are met', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      const mockResult = {
+        learning_package_id: 123,
+        title: 'Test Archive Library',
+        org: 'TestOrg',
+        slug: 'test-archive',
+        key: 'TestOrg/test-archive',
+        archive_key: 'archive-key',
+        containers: 5,
+        components: 15,
+        collections: 3,
+        sections: 8,
+        subsections: 12,
+        units: 20,
+        created_on_server: '2025-01-01T10:00:00Z',
+        created_at: '2025-01-01T10:00:00Z',
+        created_by: {
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+      };
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Initially no archive preview should be shown (no uploaded file)
+      expect(screen.queryByText('Test Archive Library')).not.toBeInTheDocument();
+
+      // Set state to have uploadedFile but no successful restore status
+      mockRestoreStatusData = { state: LibraryRestoreStatus.Pending };
+
+      // Mock successful file upload and restore
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ task_id: 'task-123' });
+        // Update restore status to succeeded with result
+        mockRestoreStatusData = {
+          state: LibraryRestoreStatus.Succeeded,
+          result: mockResult,
+        };
+      });
+
+      // Upload file
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      // Now archive preview should be shown because:
+      // uploadedFile && restoreStatus?.state === LibraryRestoreStatus.Succeeded && restoreStatus.result
+      await waitFor(() => {
+        expect(screen.getByText('Test Archive Library')).toBeInTheDocument();
+        expect(screen.getByText('TestOrg / test-archive')).toBeInTheDocument();
       });
     });
 
