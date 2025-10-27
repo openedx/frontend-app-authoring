@@ -1,4 +1,5 @@
 import type MockAdapter from 'axios-mock-adapter';
+import { mergeConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -27,7 +28,7 @@ const {
 } = mockContentLibrary;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
+  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
 });
 
 let axiosMock: MockAdapter;
@@ -269,5 +270,14 @@ describe('<LibraryInfo />', () => {
 
     expect(publishButton).not.toBeInTheDocument();
     expect(discardButton).not.toBeInTheDocument();
+  });
+
+  it('display a redirection button when ADMIN_CONSOLE_URL is setted', async () => {
+    const ADMIN_CONSOLE_URL = 'http://localhost:2025/admin-console';
+    mergeConfig({ ADMIN_CONSOLE_URL });
+    render();
+    const manageTeam = await screen.getByText('Manage Access');
+    expect(manageTeam).toBeInTheDocument();
+    expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz/libraries/${libraryData.id}`);
   });
 });

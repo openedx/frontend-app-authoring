@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { Button, Stack } from '@openedx/paragon';
+import { Button, Hyperlink, Stack } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -10,9 +11,17 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 
 const LibraryInfo = () => {
   const intl = useIntl();
-  const { libraryData, readOnly } = useLibraryContext();
+  const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { sidebarAction, setSidebarAction, resetSidebarAction } = useSidebarContext();
   const isLibraryTeamModalOpen = (sidebarAction === SidebarActions.ManageTeam);
+  const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
+
+  // always show link to admin console MFE if it is being used
+  const shouldShowAdminConsoleLink = !!adminConsoleUrl;
+
+  // if the admin console MFE isn't being used, show team modal button for non–read-only users
+  const shouldShowTeamModalButton = !adminConsoleUrl && !readOnly;
+
   const openLibraryTeamModal = useCallback(() => {
     setSidebarAction(SidebarActions.ManageTeam);
   }, [setSidebarAction]);
@@ -30,8 +39,13 @@ const LibraryInfo = () => {
         <span>
           {libraryData?.org}
         </span>
-        {!readOnly && (
+        {shouldShowTeamModalButton && (
           <Button variant="outline-primary" onClick={openLibraryTeamModal}>
+            {intl.formatMessage(messages.libraryTeamButtonTitle)}
+          </Button>
+        )}
+        {shouldShowAdminConsoleLink && (
+          <Button as={Hyperlink} variant="outline-primary" destination={`${adminConsoleUrl}/authz/libraries/${libraryId}`} target="_blank">
             {intl.formatMessage(messages.libraryTeamButtonTitle)}
           </Button>
         )}
