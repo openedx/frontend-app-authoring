@@ -21,7 +21,7 @@ async function retryOnNotReady<T>(
       return await apiCall();
     } catch (error: any) {
       const isNotReady = error?.response?.status === 202 || 
-                        (error?.response?.status === 404 && i < 3); 
+                        (error?.response?.status === 404 && i < 10); 
       if (isNotReady && i < maxRetries - 1) {
         console.log(`[CourseDetail] Course not ready, retrying in ${delay}ms... (attempt ${i + 1}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
