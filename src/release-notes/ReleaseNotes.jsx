@@ -228,8 +228,8 @@ const ReleaseNotes = () => {
               </Layout.Element>
             </Layout>
           ) : (
-            <div className="text-center py-5">
-              <span className="small">{intl.formatMessage(messages.noReleaseNotes)}</span>
+            <div className="text-center py-5 d-flex justify-content-center align-items-center no-release-notes-container">
+              <span className="medium">{intl.formatMessage(messages.noReleaseNotes)}</span>
             </div>
           )
         )}
