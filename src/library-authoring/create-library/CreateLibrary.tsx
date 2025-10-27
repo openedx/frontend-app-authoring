@@ -33,16 +33,8 @@ import { useStudioHome } from '@src/studio-home/hooks';
 import type { ContentLibrary } from '../data/api';
 import { CreateContentLibraryArgs } from './data/api';
 import { useCreateLibraryV2, useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/apiHooks';
-import { LibraryRestoreStatus } from './data/restoreConstants';
+import { DROPZONE_ACCEPT_TYPES, LibraryRestoreStatus, VALID_ARCHIVE_EXTENSIONS } from './data/restoreConstants';
 import messages from './messages';
-
-// Valid file extensions for library archive uploads
-const VALID_ARCHIVE_EXTENSIONS = ['.zip', '.tar.gz', '.tar'];
-const DROPZONE_ACCEPT_TYPES = {
-  'application/zip': ['.zip'],
-  'application/gzip': ['.tar.gz'],
-  'application/x-tar': ['.tar'],
-};
 
 /**
  * Renders the form and logic to create a new library.

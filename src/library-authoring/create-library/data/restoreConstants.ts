@@ -41,3 +41,11 @@ export const libraryRestoreQueryKeys = {
   restoreStatus: (taskId: string) => [...libraryRestoreQueryKeys.all, 'status', taskId],
   restoreMutation: () => [...libraryRestoreQueryKeys.all, 'create-restore'],
 };
+
+// Valid file extensions for library archive uploads
+export const VALID_ARCHIVE_EXTENSIONS = ['.zip', '.tar.gz', '.tar'];
+export const DROPZONE_ACCEPT_TYPES = {
+  'application/zip': ['.zip'],
+  'application/gzip': ['.tar.gz'],
+  'application/x-tar': ['.tar'],
+};
