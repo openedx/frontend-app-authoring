@@ -9,11 +9,11 @@ import {
   Dropzone,
   Form,
   Icon,
-  StatefulButton
+  StatefulButton,
 } from '@openedx/paragon';
 import {
   AccessTime,
-  Widgets
+  Widgets,
 } from '@openedx/paragon/icons';
 import AlertError from '@src/generic/alert-error';
 import classNames from 'classnames';

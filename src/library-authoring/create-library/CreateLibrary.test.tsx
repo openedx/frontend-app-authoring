@@ -420,8 +420,8 @@ describe('<CreateLibrary />', () => {
       const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
       await user.click(createFromArchiveBtn);
 
-      // Try to upload invalid file type
-      const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+      // Try to upload a file with correct MIME type but wrong extension to trigger our custom validation
+      const file = new File(['test content'], 'test-file.doc', { type: 'application/zip' });
       const dropzone = screen.getByTestId('library-archive-dropzone');
       const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
 
@@ -434,6 +434,11 @@ describe('<CreateLibrary />', () => {
 
       // Should not call restore mutation for invalid file
       expect(mockRestoreMutate).not.toHaveBeenCalled();
+
+      // Should show error message for invalid file type (Dropzone shows generic error)
+      await waitFor(() => {
+        expect(screen.getByText(/A problem occured while uploading your file/i)).toBeInTheDocument();
+      });
     });
 
     test('creates library from archive with learning package ID', async () => {
