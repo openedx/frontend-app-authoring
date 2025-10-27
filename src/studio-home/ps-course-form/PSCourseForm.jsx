@@ -53,6 +53,11 @@ import ModalNotification from '../../generic/modal-notification';
 import LearningOutcomesSection from '../../schedule-and-details/learning-outcomes-section';
 import InstructorsSection from '../../schedule-and-details/instructors-section';
 import { WysiwygEditor } from '../../generic/WysiwygEditor';
+import AIButton from './AIButton';
+import Copilot from '../../copilot/Copilot';
+import { CopilotProvider, useCopilot } from '../../copilot/CopilotContext';
+
+const BASE_API_URL = 'https://tenesha-fortifiable-jana.ngrok-free.dev'; // AI service base URL
 
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
@@ -64,6 +69,11 @@ function getUserTimezoneString() {
   const hours = pad(offset / 60);
   const minutes = pad(offset % 60);
   return `${tz} GMT${sign}${hours}:${minutes}`;
+}
+
+// Utility function to validate if a string is a valid image URL
+function isValidImageUrl(url) {
+  return typeof url === 'string' && url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i);
 }
 
 const PSCourseForm = ({
@@ -97,6 +107,67 @@ const PSCourseForm = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // copilotcode
+  const {
+    openCopilot,
+    isOpen,
+    title,
+    shortDescription,
+    description,
+    cardImage,
+    bannerImage,
+    updateTitle,
+    updateShortDescription,
+    updateDescription,
+    updateCardImage,
+    updateBannerImage,
+    setAiResponse,
+    setButtons
+  } = useCopilot();
+
+  useEffect(() => {
+    if (title && title !== editedValues.title) {
+      handleInputChange('title', title);
+    }
+  }, [title, editedValues.title]);
+
+  useEffect(() => {
+    if (shortDescription && shortDescription !== editedValues.shortDescription) {
+      handleInputChange('shortDescription', shortDescription);
+    }
+  }, [shortDescription, editedValues.shortDescription]);
+
+  useEffect(() => {
+    if (description && description !== editedValues.description) {
+      handleInputChange('description', description);
+    }
+  }, [description, editedValues.description]);
+
+  useEffect(() => {
+    if (cardImage && cardImage !== editedValues.courseImageAssetPath) {
+      console.log('Updating courseImageAssetPath with:', cardImage);
+      handleInputChange('courseImageAssetPath', cardImage);
+      // Simulate image upload to ensure preview updates
+      if (isValidImageUrl(cardImage)) {
+        handleValuesChange?.(cardImage, 'courseImageAssetPath');
+        onFieldChange?.(cardImage, 'courseImageAssetPath');
+      }
+    }
+  }, [cardImage, editedValues.courseImageAssetPath]);
+
+  useEffect(() => {
+    if (bannerImage && bannerImage !== editedValues.bannerImageAssetPath) {
+      console.log('Updating bannerImageAssetPath with:', bannerImage);
+      handleInputChange('bannerImageAssetPath', bannerImage);
+      if (isValidImageUrl(bannerImage)) {
+        handleValuesChange?.(bannerImage, 'bannerImageAssetPath');
+        onFieldChange?.(bannerImage, 'bannerImageAssetPath');
+      }
+    }
+  }, [bannerImage, editedValues.bannerImageAssetPath]);
+  //end
+
   //   const { allowedOrganizations } = useSelector(getStudioHomeData);
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -149,6 +220,8 @@ const PSCourseForm = ({
     learningInfo: [],
     instructorInfo: { instructors: [] },
     overview: '',
+    courseImageAssetPath: '',
+    bannerImageAssetPath: '',
   };
 
   const [activeTab, setActiveTab] = useState(hideGeneralTab ? 'schedule' : 'general');
@@ -170,6 +243,7 @@ const PSCourseForm = ({
   } = useLicenseDetails(editedValues?.license || null, (value, field) => handleInputChange(field, value));
 
   const userTimezone = useMemo(getUserTimezoneString, []);
+
 
   useEffect(() => {
     // Only make API calls for new UI to prevent infinite calls in old UI
@@ -214,6 +288,98 @@ const PSCourseForm = ({
     }
   }, [imageErrors, onImageValidationErrorChange]);
 
+
+  //copilotcode
+
+  const handleAIButtonClick = async (fieldName, fieldValue) => {
+    let effectiveValue = fieldValue?.trim() || "";
+    if (!effectiveValue && fieldName !== 'cardImage' && fieldName !== 'bannerImage') {
+      return; // No call if empty for text fields
+    }
+
+    if (fieldName === 'cardImage' || fieldName === 'bannerImage') {
+      effectiveValue = editedValues.title?.trim() || "";
+      if (!effectiveValue) return;
+    }
+    try {
+      // STEP 1: Generate token
+      const tokenResponse = await fetch(
+          `${BASE_API_URL}/oauth2/access_token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "password",
+            client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
+            username: "admin",
+            password: "admin",
+          }),
+        }
+      );
+
+      if (!tokenResponse.ok) {
+        throw new Error("Failed to get token");
+      }
+
+      const tokenData = await tokenResponse.json();
+      const token = tokenData.access_token;
+
+      // Determine API endpoint and body key based on fieldName
+      let apiUrl = "";
+      let bodyKey = "";
+      switch (fieldName) {
+        case "title":
+          apiUrl = `${BASE_API_URL}/chat/v1/suggest-titles/`;
+          bodyKey = "title";
+          break;
+        case "shortDescription":
+          apiUrl = `${BASE_API_URL}/chat/v1/suggest-descriptions/`;
+          bodyKey = "user_short_description";
+          break;
+        case "description":
+          apiUrl = `${BASE_API_URL}/chat/v1/suggest-full-descriptions/`;
+          bodyKey = "user_long_description";
+          break;
+        case "cardImage":
+        case "bannerImage":
+          apiUrl = `${BASE_API_URL}/chat/v1/suggest-images/`;
+          bodyKey = "title";
+          break;
+        default:
+          return;
+      }
+
+      // If fieldValue is empty, use title as fallback
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          [bodyKey]: effectiveValue,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch suggestions");
+      }
+
+      const data = await response.json();
+      console.log(data)
+      openCopilot(fieldName, fieldValue);
+      setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
+      setButtons(data.btns || []);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  // end
+
   // Validate form when editedValues change (e.g., when form loads with existing data)
   useEffect(() => {
     if (editedValues && Object.keys(editedValues).length > 0) {
@@ -232,6 +398,18 @@ const PSCourseForm = ({
 
       if (onFieldChange) {
         onFieldChange(value, field);
+      }
+      // New: Update CopilotContext title when form title changes
+      if (field === 'title') {
+        updateTitle(value);
+      } else if (field === 'shortDescription') {
+        updateShortDescription(value);
+      } else if (field === 'description') {
+        updateDescription(value);
+      } else if (field === 'courseImageAssetPath') {
+        updateCardImage(value);
+      } else if (field === 'bannerImageAssetPath') {
+        updateBannerImage(value);
       }
     }
 
@@ -600,25 +778,44 @@ const PSCourseForm = ({
     const errorField = field === 'courseImageAssetPath' ? 'cardImage' : 'bannerImage';
     const error = imageErrors?.[errorField];
 
+    // Added AIButton-related logic
+    const isCardImage = field === 'courseImageAssetPath';
+    const hasTitle = !!editedValues.title?.trim();
+    const disabled = field === 'courseImageAssetPath' ? !hasTitle : !hasTitle;
+
+    let previewSrc = editedValues[field] || preview || '';
+    const hasPreviewImage = isValidImageUrl(previewSrc);
+
     return (
-      <Form.Group className="mb-4 custom-image-upload-section-ps-form">
-        <div className="d-flex align-items-center mb-2">
+      <Form.Group className="mb-4 custom-image-upload-section-ps-form" >
+        <div className="d-flex justify-content-between align-items-center mb-2">
           <Form.Label className="mb-0">{label}</Form.Label>
+          <AIButton
+            disabled={!editedValues.description?.trim()}
+            onClick={handleAIButtonClick}
+            fieldName={isCardImage ? 'cardImage' : 'bannerImage'}
+            fieldValue={editedValues.title || ''}
+          />
         </div>
         <div
           className={`upload-box border rounded${error ? ' border-danger' : ''}`}
         >
-          {hasImage ? (
+          {hasPreviewImage ? (
             <div className="image-preview-container">
               <Image
-                src={file ? URL.createObjectURL(file) : preview}
-                className="preview-image"
-                fluid
-              />
+              src={previewSrc}
+              className="preview-image"
+              fluid
+            />
               <Button
                 variant="icon"
                 className="remove-image-overlay"
-                onClick={() => onRemoveImage(field)}
+                onClick={() => {
+                  onRemoveImage(field)
+                  handleInputChange(field, ''); // Clear the field
+                  if (isCardImage) updateCardImage('');
+                  else updateBannerImage('');
+                }}
                 aria-label={`Remove ${label.toLowerCase()}`}
               >
                 <Icon src={Close} />
@@ -650,24 +847,24 @@ const PSCourseForm = ({
                   onChange={(e) => onUpload(field, e)}
                 />
                 {isImageUploading && uploadProgress > 0 && (
-                <div className="progress mt-2 w-100">
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    style={{ width: `${uploadProgress}%` }}
-                    aria-valuenow={uploadProgress}
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  >
-                    {uploadProgress}%
+                  <div className="progress mt-2 w-100">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: `${uploadProgress}%` }}
+                      aria-valuenow={uploadProgress}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    >
+                      {uploadProgress}%
+                    </div>
                   </div>
-                </div>
                 )}
                 {error && (
-                <div className="text-danger mt-2 d-flex align-items-center font-small">
-                  <Icon src={Warning} className="me-1" />
-                  <span>{error}</span>
-                </div>
+                  <div className="text-danger mt-2 d-flex align-items-center font-small">
+                    <Icon src={Warning} className="me-1" />
+                    <span>{error}</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -821,762 +1018,792 @@ const PSCourseForm = ({
   };
 
   return (
-    <div className="ps-course-form">
+    <div className="coursepage">
+      <div className="ps-course-form" >
 
-      {showSuccessAlert && (
-        <div className="alert-container mb-4">
-          <AlertMessage
-            variant="success"
-            icon={CheckCircle}
-            title="Course has been created successfully"
-            className="success-alert"
-            aria-hidden="true"
-          />
-        </div>
-      )}
+        {showSuccessAlert && (
+          <div className="alert-container mb-4">
+            <AlertMessage
+              variant="success"
+              icon={CheckCircle}
+              title="Course has been created successfully"
+              className="success-alert"
+              aria-hidden="true"
+            />
+          </div>
+        )}
 
-      <ModalNotification
-        isOpen={showErrorModal}
-        title="Course Creation Failed"
-        message={errorMessage}
-        handleCancel={handleErrorModalClose}
-        handleAction={handleErrorModalClose}
-        cancelButtonText=""
-        actionButtonText="OK"
-        variant="danger"
-        icon={Warning}
-      />
-      <Container size="xl" className="pl-3">
-        <Row>
-          <Col xs={12} className="pr-0 pb-0">
-            <Form className="course-form" onSubmit={handleSubmit}>
-              <Row>
-                <Col xs={12} md={8} className="col-cs">
-                  <div>
-                    {children}
-                  </div>
-                  <div className="title-section">
-                    {!hideTitleField && (
-                    <Form.Group className="mb-2">
-                      <Form.Label><>Title <span className="required-asterisk">*</span></></Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="title"
-                        value={editedValues.title || ''}
-                        onChange={(e) => handleInputChange('title', e.target.value)}
-                        onBlur={() => handleBlur('title')}
-                        isInvalid={!!errors.title && touched.title}
-                      />
-                      {errors.title && touched.title && (
-                      <Form.Control.Feedback type="invalid">
-                        {errors.title}
-                      </Form.Control.Feedback>
+        <ModalNotification
+          isOpen={showErrorModal}
+          title="Course Creation Failed"
+          message={errorMessage}
+          handleCancel={handleErrorModalClose}
+          handleAction={handleErrorModalClose}
+          cancelButtonText=""
+          actionButtonText="OK"
+          variant="danger"
+          icon={Warning}
+        />
+        <Container size="xl" className="pl-3">
+          <Row>
+            <Col xs={12} className="pr-0 pb-0">
+              <Form className="course-form" onSubmit={handleSubmit}>
+                <Row>
+                  <Col xs={12} md={8} className="col-cs">
+                    <div>
+                      {children}
+                    </div>
+                    <div className="title-section">
+                      {!hideTitleField && (
+                        <Form.Group className="mb-2">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <Form.Label className="mb-0"><>Title <span className="required-asterisk">*</span></></Form.Label>
+                            <AIButton
+                              disabled={!editedValues.title?.trim()}
+                              onClick={handleAIButtonClick}
+                              fieldName="title"
+                              fieldValue={editedValues.title || ''}
+                            />
+                          </div>
+                          <Form.Control
+                            type="text"
+                            name="title"
+                            value={editedValues.title || ''}
+                            onChange={(e) => handleInputChange('title', e.target.value)}
+                            onBlur={() => handleBlur('title')}
+                            isInvalid={!!errors.title && touched.title}
+                          />
+                          {errors.title && touched.title && (
+                            <Form.Control.Feedback type="invalid">
+                              {errors.title}
+                            </Form.Control.Feedback>
+                          )}
+                        </Form.Group>
                       )}
-                    </Form.Group>
-                    )}
-                    <Form.Group className="mb-1">
-                      <Form.Label><>Short Description <span className="required-asterisk">*</span></></Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={4}
-                        name="shortDescription"
-                        value={editedValues.shortDescription || ''}
-                        onChange={(e) => handleInputChange('shortDescription', e.target.value)}
-                        onBlur={() => handleBlur('shortDescription')}
-                        maxLength={150}
-                        isInvalid={!!errors.shortDescription && touched.shortDescription}
-                        className="short-description"
-                      />
-                      <Form.Text>A short description that will be displayed on the course card. Limit to 150 characters.</Form.Text>
-                      {errors.shortDescription && touched.shortDescription && (
-                        <Form.Control.Feedback type="invalid">
-                          {errors.shortDescription}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-
-                    <Form.Group className={scheduleSettings ? 'mb-1' : 'mb-3'}>
-                      <Form.Label><>Description</></Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={8}
-                        name="description"
-                        value={editedValues.description || ''}
-                        onChange={(e) => handleInputChange('description', e.target.value)}
-                        onBlur={() => handleBlur('description')}
-                        isInvalid={!!errors.description && touched.description}
-                      />
-                      {errors.description && touched.description && (
-                        <Form.Control.Feedback type="invalid">
-                          {errors.description}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-
-                    {scheduleSettings && (
-                      <Form.Group className="mb-3">
-                        <Form.Label><>Course overview</></Form.Label>
-                        <WysiwygEditor
-                          initialValue={editedValues.overview || ''}
-                          onChange={(value) => handleInputChange('overview', value)}
+                      <Form.Group className="mb-1">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Form.Label className="mb-0"><>Short Description <span className="required-asterisk">*</span></></Form.Label>
+                          <AIButton
+                            disabled={!editedValues.title?.trim()}
+                            onClick={handleAIButtonClick}
+                            fieldName="shortDescription"
+                            fieldValue={editedValues.shortDescription || ''}
+                          />
+                        </div>
+                        <Form.Control
+                          as="textarea"
+                          rows={4}
+                          name="shortDescription"
+                          value={editedValues.shortDescription || ''}
+                          onChange={(e) => handleInputChange('shortDescription', e.target.value)}
+                          onBlur={() => handleBlur('shortDescription')}
+                          maxLength={150}
+                          isInvalid={!!errors.shortDescription && touched.shortDescription}
+                          className="short-description"
                         />
-                        <Form.Control.Feedback>
-                          Provide a detailed overview of your course content and objectives.
-                        </Form.Control.Feedback>
+                        <Form.Text>A short description that will be displayed on the course card. Limit to 150 characters.</Form.Text>
+                        {errors.shortDescription && touched.shortDescription && (
+                          <Form.Control.Feedback type="invalid">
+                            {errors.shortDescription}
+                          </Form.Control.Feedback>
+                        )}
                       </Form.Group>
-                    )}
 
-                  </div>
-                  <div className="options-container">
-                    <Row>
-                      <Col xs={12} md={3} className="sidebar">
-                        <Nav className="nav-tabs flex-column border-0">
-                          {tabList.map((tab) => (
-                            <Nav.Item key={tab.key}>
-                              <Nav.Link
-                                className={activeTab === tab.key ? 'active' : ''}
-                                onClick={() => {
-                                  console.log('Edited Values:', editedValues);
-                                  setActiveTab(tab.key);
-                                }}
-                              >
-                                <Icon className="icon" src={tab.icon} />
-                                <span>{tab.label}</span>
-                              </Nav.Link>
-                            </Nav.Item>
-                          ))}
-                        </Nav>
-                      </Col>
+                      <Form.Group className={scheduleSettings ? 'mb-1' : 'mb-3'}>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Form.Label className="mb-0"><>Description</></Form.Label>
+                          <AIButton
+                            disabled={!(editedValues.title?.trim() && editedValues.shortDescription?.trim())}
+                            onClick={handleAIButtonClick}
+                            fieldName="description"
+                            fieldValue={editedValues.description || ''}
+                          />
+                        </div>
+                        <Form.Control
+                          as="textarea"
+                          rows={8}
+                          name="description"
+                          value={editedValues.description || ''}
+                          onChange={(e) => handleInputChange('description', e.target.value)}
+                          onBlur={() => handleBlur('description')}
+                          isInvalid={!!errors.description && touched.description}
+                        />
+                        {errors.description && touched.description && (
+                          <Form.Control.Feedback type="invalid">
+                            {errors.description}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
 
-                      <Col xs={12} md={9} className="content-area">
-                        {activeTab === 'general' && (
-                        <div className="form-section">
-                          <Stack>
-                            <Row className="custom-padding">
-                              <Col xs={12} md={12}>
-                                <Form.Group>
-                                  <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
-                                  {canCreateNewOrganization ? (
-                                    <CustomTypeaheadDropdown
-                                      readOnly={false}
-                                      name="organization"
-                                      value={editedValues.organization || ''}
-                                      controlClassName={errors.organization ? 'is-invalid' : ''}
-                                      options={allowedOrganizations}
-                                      placeholder="Select an organization"
-                                      handleChange={(value) => handleInputChange('organization', value)}
-                                      handleBlur={handleCustomBlurForDropdown}
-                                      noOptionsMessage="No organizations available"
-                                      required
-                                    />
-                                  ) : (
-                                    <div className="read-only-organization-dropdown">
+                      {scheduleSettings && (
+                        <Form.Group className="mb-3">
+                          <Form.Label><>Course overview</></Form.Label>
+                          <WysiwygEditor
+                            initialValue={editedValues.overview || ''}
+                            onChange={(value) => handleInputChange('overview', value)}
+                          />
+                          <Form.Control.Feedback>
+                            Provide a detailed overview of your course content and objectives.
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      )}
+
+                    </div>
+                    <div className="options-container">
+                      <Row>
+                        <Col xs={12} md={3} className="sidebar">
+                          <Nav className="nav-tabs flex-column border-0">
+                            {tabList.map((tab) => (
+                              <Nav.Item key={tab.key}>
+                                <Nav.Link
+                                  className={activeTab === tab.key ? 'active' : ''}
+                                  onClick={() => {
+                                    console.log('Edited Values:', editedValues);
+                                    setActiveTab(tab.key);
+                                  }}
+                                >
+                                  <Icon className="icon" src={tab.icon} />
+                                  <span>{tab.label}</span>
+                                </Nav.Link>
+                              </Nav.Item>
+                            ))}
+                          </Nav>
+                        </Col>
+
+                        <Col xs={12} md={9} className="content-area">
+                          {activeTab === 'general' && (
+                            <div className="form-section">
+                              <Stack>
+                                <Row className="custom-padding">
+                                  <Col xs={12} md={12}>
+                                    <Form.Group>
+                                      <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
+                                      {canCreateNewOrganization ? (
+                                        <CustomTypeaheadDropdown
+                                          readOnly={false}
+                                          name="organization"
+                                          value={editedValues.organization || ''}
+                                          controlClassName={errors.organization ? 'is-invalid' : ''}
+                                          options={allowedOrganizations}
+                                          placeholder="Select an organization"
+                                          handleChange={(value) => handleInputChange('organization', value)}
+                                          handleBlur={handleCustomBlurForDropdown}
+                                          noOptionsMessage="No organizations available"
+                                          required
+                                        />
+                                      ) : (
+                                        <div className="read-only-organization-dropdown">
+                                          <Dropdown>
+                                            <Dropdown.Toggle
+                                              id="organization-dropdown"
+                                              variant="outline-primary"
+                                              className={`form-control ${errors.organization && touched.organization ? 'is-invalid' : ''}`}
+                                              onBlur={() => handleBlur('organization')}
+                                            >
+                                              {editedValues.organization || 'Select an organization'}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                              {allowedOrganizations && allowedOrganizations.length > 0 ? (
+                                                allowedOrganizations.map((org) => (
+                                                  <Dropdown.Item
+                                                    key={org}
+                                                    onClick={() => {
+                                                      handleInputChange('organization', org);
+                                                      handleBlur('organization');
+                                                    }}
+                                                  >
+                                                    {org}
+                                                  </Dropdown.Item>
+                                                ))
+                                              ) : (
+                                                <Dropdown.Item disabled>
+                                                  No Organizations available
+                                                </Dropdown.Item>
+                                              )}
+                                            </Dropdown.Menu>
+                                          </Dropdown>
+                                        </div>
+                                      )}
+                                      <Form.Text>
+                                        The name of the organization sponsoring the course.
+                                      </Form.Text>
+                                      {errors.organization && touched.organization && (
+                                        <Form.Control.Feedback type="invalid" className="d-block">
+                                          {errors.organization}
+                                        </Form.Control.Feedback>
+                                      )}
+                                    </Form.Group>
+                                  </Col>
+                                  <Col xs={12} md={12}>
+                                    <Form.Group>
+                                      <Form.Label><>Course Number <span className="required-asterisk">*</span></></Form.Label>
+                                      <Form.Control
+                                        type="text"
+                                        name="courseNumber"
+                                        value={editedValues.courseNumber || ''}
+                                        onChange={(e) => handleInputChange('courseNumber', e.target.value)}
+                                        onBlur={() => handleBlur('courseNumber')}
+                                        placeholder="e.g. CS101"
+                                        isInvalid={!!errors.courseNumber && touched.courseNumber}
+                                        required
+                                      />
+                                      <Form.Text>
+                                        The unique number that identifies your course within your organization.
+                                      </Form.Text>
+                                      {errors.courseNumber && touched.courseNumber && (
+                                        <Form.Control.Feedback type="invalid">
+                                          {errors.courseNumber}
+                                        </Form.Control.Feedback>
+                                      )}
+                                    </Form.Group>
+                                  </Col>
+                                </Row>
+                                <Row className="pt-0 custom-padding">
+                                  <Col xs={12} md={6}>
+                                    <Form.Group>
+                                      <Form.Label><>Course Run <span className="required-asterisk">*</span></></Form.Label>
+                                      <Form.Control
+                                        type="text"
+                                        name="courseRun"
+                                        value={editedValues.courseRun || ''}
+                                        onChange={(e) => handleInputChange('courseRun', e.target.value)}
+                                        onBlur={() => handleBlur('courseRun')}
+                                        placeholder="e.g. 2014_T1"
+                                        isInvalid={!!errors.courseRun && touched.courseRun}
+                                        required
+                                      />
+                                      <Form.Text>
+                                        The term in which your course will run.
+                                      </Form.Text>
+                                      {errors.courseRun && touched.courseRun && (
+                                        <Form.Control.Feedback type="invalid">
+                                          {errors.courseRun}
+                                        </Form.Control.Feedback>
+                                      )}
+                                    </Form.Group>
+                                  </Col>
+                                  <Col xs={12} md={6}>
+                                    <Form.Group>
+                                      <Form.Label>Course Pacing</Form.Label>
+                                      <div className="pacing-style">
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name="coursePacing"
+                                            value="instructor"
+                                            checked={editedValues.coursePacing === 'instructor'}
+                                            onChange={() => handleInputChange('coursePacing', 'instructor')}
+                                          />
+                                          Instructor-paced
+                                        </label>
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name="coursePacing"
+                                            value="self"
+                                            checked={editedValues.coursePacing === 'self'}
+                                            onChange={() => handleInputChange('coursePacing', 'self')}
+                                          />
+                                          Self-paced
+                                        </label>
+                                      </div>
+                                    </Form.Group>
+                                  </Col>
+                                </Row>
+                              </Stack>
+                            </div>
+                          )}
+                          {activeTab === 'schedule' && (
+                            <div className="form-section">
+                              <Stack gap={4}>
+                                <div className="schedule-section">
+                                  <ul className="schedule-date-list">
+                                    <li className="schedule-date-item">
+                                      <div>
+                                        <Row className="pl-0 pr-0 pb-0 pt-0">
+                                          <Col xs={12} md={6}>
+                                            <div className="datepicker-control">
+                                              <Form.Label>
+                                                Course start date{' '}
+                                                <span className="required-asterisk">*</span>
+                                              </Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.date}
+                                                value={editedValues.startDate || ''}
+                                                label={null}
+                                                helpText="Enter the date when your course will start"
+                                                isInvalid={!!errors.startDate && touched.startDate}
+                                                controlName="start-date"
+                                                onChange={(value) => handleInputChange('startDate', value)}
+                                                onBlur={() => handleBlur('startDate')}
+                                                placeholder="MM/DD/YYYY"
+                                              />
+                                              {errors.startDate && touched.startDate && (
+                                                <Form.Text className="text-danger">
+                                                  {errors.startDate}
+                                                </Form.Text>
+                                              )}
+                                            </div>
+                                          </Col>
+                                          <Col xs={12} md={6}>
+                                            <div className="time-field">
+                                              <Form.Label>Course start time</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.time}
+                                                value={editedValues.startTime || ''}
+                                                label={null}
+                                                isInvalid={!!errors.startTime && touched.startTime}
+                                                controlName="start-time"
+                                                onChange={(value) => handleInputChange('startTime', value)}
+                                                onBlur={() => handleBlur('startTime')}
+                                              />
+                                              <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                ({userTimezone})
+                                              </span>
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    </li>
+                                    <li className="schedule-date-item">
+                                      <div>
+                                        <Row className="pl-0 pr-0 pb-0 pt-0">
+                                          <Col xs={12} md={6}>
+                                            <div className="datepicker-control">
+                                              <Form.Label>Course end date</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.date}
+                                                value={editedValues.endDate || ''}
+                                                label={null}
+                                                helpText="Enter the date when your course will end"
+                                                isInvalid={!!errors.endDate}
+                                                controlName="end-date"
+                                                onChange={(value) => handleInputChange('endDate', value)}
+                                                onBlur={() => handleBlur('endDate')}
+                                                placeholder="MM/DD/YYYY"
+                                              />
+                                              {errors.endDate && (
+                                                <Form.Text className="text-danger">
+                                                  {errors.endDate}
+                                                </Form.Text>
+                                              )}
+                                            </div>
+                                          </Col>
+                                          <Col xs={12} md={6}>
+                                            <div className="time-field">
+                                              <Form.Label>Course end time</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.time}
+                                                value={editedValues.endTime || ''}
+                                                label={null}
+                                                isInvalid={!!errors.endTime && touched.endTime}
+                                                controlName="end-time"
+                                                onChange={(value) => handleInputChange('endTime', value)}
+                                                onBlur={() => handleBlur('endTime')}
+                                              />
+                                              <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                ({userTimezone})
+                                              </span>
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    </li>
+                                    <li className="schedule-date-item">
+                                      <div>
+                                        <Row className="pl-0 pr-0 pb-0 pt-0">
+                                          <Col xs={12} md={6}>
+                                            <div className="datepicker-control">
+                                              <Form.Label>
+                                                Enrollment start date{' '}
+                                                {/* <span className="required-asterisk">*</span> */}
+                                              </Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.date}
+                                                value={editedValues.enrollmentStart || ''}
+                                                label={null}
+                                                helpText="Enter the date when enrollment will start"
+                                                isInvalid={!!errors.enrollmentStart && touched.enrollmentStart}
+                                                controlName="enrollment-start-date"
+                                                onChange={(value) => handleInputChange('enrollmentStart', value)}
+                                                onBlur={() => handleBlur('enrollmentStart')}
+                                                placeholder="MM/DD/YYYY"
+                                              />
+                                              {errors.enrollmentStart && touched.enrollmentStart && (
+                                                <Form.Text className="text-danger">
+                                                  {errors.enrollmentStart}
+                                                </Form.Text>
+                                              )}
+                                            </div>
+                                          </Col>
+                                          <Col xs={12} md={6}>
+                                            <div className="time-field">
+                                              <Form.Label>Enrollment start time</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.time}
+                                                value={editedValues.enrollmentStartTime || ''}
+                                                label={null}
+                                                isInvalid={!!errors.enrollmentStartTime && touched.enrollmentStartTime}
+                                                controlName="enrollment-start-time"
+                                                onChange={(value) => handleInputChange('enrollmentStartTime', value)}
+                                                onBlur={() => handleBlur('enrollmentStartTime')}
+                                              />
+                                              <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                ({userTimezone})
+                                              </span>
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    </li>
+                                    <li className="schedule-date-item">
+                                      <div>
+                                        <Row className="pl-0 pr-0 pb-0 pt-0">
+                                          <Col xs={12} md={6}>
+                                            <div className="datepicker-control">
+                                              <Form.Label>Enrollment end date</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.date}
+                                                value={editedValues.enrollmentEnd || ''}
+                                                label={null}
+                                                helpText="Enter the date when enrollment will end"
+                                                isInvalid={!!errors.enrollmentEnd && touched.enrollmentEnd}
+                                                controlName="enrollment-end-date"
+                                                onChange={(value) => handleInputChange('enrollmentEnd', value)}
+                                                onBlur={() => handleBlur('enrollmentEnd')}
+                                                placeholder="MM/DD/YYYY"
+                                              />
+                                              {errors.enrollmentEnd && touched.enrollmentEnd && (
+                                                <Form.Text className="text-danger">
+                                                  {errors.enrollmentEnd}
+                                                </Form.Text>
+                                              )}
+                                            </div>
+                                          </Col>
+                                          <Col xs={12} md={6}>
+                                            <div className="time-field">
+                                              <Form.Label>Enrollment end time</Form.Label>
+                                              <DatepickerControl
+                                                type={DATEPICKER_TYPES.time}
+                                                value={editedValues.enrollmentEndTime || ''}
+                                                label={null}
+                                                isInvalid={!!errors.enrollmentEndTime && touched.enrollmentEndTime}
+                                                controlName="enrollment-end-time"
+                                                onChange={(value) => handleInputChange('enrollmentEndTime', value)}
+                                                onBlur={() => handleBlur('enrollmentEndTime')}
+                                              />
+                                              <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
+                                                ({userTimezone})
+                                              </span>
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    </li>
+                                    <li className="certificate-display-row">
+                                      <CertificateDisplayRow
+                                        certificateAvailableDate={editedValues.certificateAvailableDate || ''}
+                                        availableDateErrorFeedback={errors.certificateAvailableDate || ''}
+                                        certificatesDisplayBehavior={editedValues.certificatesDisplayBehavior || ''}
+                                        displayBehaviorErrorFeedback={errors.certificatesDisplayBehavior || ''}
+                                        onChange={handleCertificateChange}
+                                      />
+                                    </li>
+                                  </ul>
+                                </div>
+                              </Stack>
+                            </div>
+                          )}
+                          {activeTab === 'requirements' && (
+                            <div className="form-section">
+                              <Stack gap={2}>
+                                <Row className="custom-padding">
+                                  <Col xs={12} md={6}>
+                                    <Form.Group>
+                                      <Form.Label>Hours of effort per week</Form.Label>
+                                      <Form.Control
+                                        type="text"
+                                        name="effort"
+                                        value={editedValues.effort || ''}
+                                        onChange={(e) => handleInputChange('effort', e.target.value)}
+                                        onBlur={() => handleBlur('effort')}
+                                        isInvalid={!!errors.effort && touched.effort}
+                                      />
+                                      <Form.Text>Time spent on all course work</Form.Text>
+                                    </Form.Group>
+                                  </Col>
+                                  <Col xs={12} md={6}>
+                                    <Form.Group>
+                                      <Form.Label>Prerequisite course</Form.Label>
                                       <Dropdown>
-                                        <Dropdown.Toggle
-                                          id="organization-dropdown"
-                                          variant="outline-primary"
-                                          className={`form-control ${errors.organization && touched.organization ? 'is-invalid' : ''}`}
-                                          onBlur={() => handleBlur('organization')}
-                                        >
-                                          {editedValues.organization || 'Select an organization'}
+                                        <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary">
+                                          {editedValues.prerequisiteCourse || 'None'}
                                         </Dropdown.Toggle>
                                         <Dropdown.Menu>
-                                          {allowedOrganizations && allowedOrganizations.length > 0 ? (
-                                            allowedOrganizations.map((org) => (
-                                              <Dropdown.Item
-                                                key={org}
-                                                onClick={() => {
-                                                  handleInputChange('organization', org);
-                                                  handleBlur('organization');
-                                                }}
-                                              >
-                                                {org}
-                                              </Dropdown.Item>
-                                            ))
-                                          ) : (
-                                            <Dropdown.Item disabled>
-                                              No Organizations available
+                                          <Dropdown.Item
+                                            key="None"
+                                            onClick={() => handleInputChange('prerequisiteCourse', '')}
+                                          >
+                                            None
+                                          </Dropdown.Item>
+                                          {possiblePreRequisiteCourses?.map((course) => (
+                                            <Dropdown.Item
+                                              key={course.courseKey}
+                                              onClick={() => handleInputChange('prerequisiteCourse', course.courseKey)}
+                                            >
+                                              {course.displayName}
                                             </Dropdown.Item>
-                                          )}
+                                          ))}
                                         </Dropdown.Menu>
                                       </Dropdown>
+                                      <Form.Text>Course that students must complete before beginning this course</Form.Text>
+                                    </Form.Group>
+                                  </Col>
+                                </Row>
+                                <Form.Group className="entrance-exam-group">
+                                  <div className="entrance-exam-label mb-2">Entrance exam</div>
+                                  <div className="entrance-exam-card">
+                                    <div className="pb-2">
+                                      <Form.Check
+                                        type="checkbox"
+                                        className="entrance-exam-checkbox"
+                                        label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
+                                        checked={editedValues.entranceExamEnabled === 'true'}
+                                        onChange={(e) => handleInputChange('entranceExamEnabled', e.target.checked ? 'true' : 'false')}
+                                      />
                                     </div>
-                                  )}
-                                  <Form.Text>
-                                    The name of the organization sponsoring the course.
-                                  </Form.Text>
-                                  {errors.organization && touched.organization && (
-                                  <Form.Control.Feedback type="invalid" className="d-block">
-                                    {errors.organization}
-                                  </Form.Control.Feedback>
-                                  )}
-                                </Form.Group>
-                              </Col>
-                              <Col xs={12} md={12}>
-                                <Form.Group>
-                                  <Form.Label><>Course Number <span className="required-asterisk">*</span></></Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    name="courseNumber"
-                                    value={editedValues.courseNumber || ''}
-                                    onChange={(e) => handleInputChange('courseNumber', e.target.value)}
-                                    onBlur={() => handleBlur('courseNumber')}
-                                    placeholder="e.g. CS101"
-                                    isInvalid={!!errors.courseNumber && touched.courseNumber}
-                                    required
-                                  />
-                                  <Form.Text>
-                                    The unique number that identifies your course within your organization.
-                                  </Form.Text>
-                                  {errors.courseNumber && touched.courseNumber && (
-                                  <Form.Control.Feedback type="invalid">
-                                    {errors.courseNumber}
-                                  </Form.Control.Feedback>
-                                  )}
-                                </Form.Group>
-                              </Col>
-                            </Row>
-                            <Row className="pt-0 custom-padding">
-                              <Col xs={12} md={6}>
-                                <Form.Group>
-                                  <Form.Label><>Course Run <span className="required-asterisk">*</span></></Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    name="courseRun"
-                                    value={editedValues.courseRun || ''}
-                                    onChange={(e) => handleInputChange('courseRun', e.target.value)}
-                                    onBlur={() => handleBlur('courseRun')}
-                                    placeholder="e.g. 2014_T1"
-                                    isInvalid={!!errors.courseRun && touched.courseRun}
-                                    required
-                                  />
-                                  <Form.Text>
-                                    The term in which your course will run.
-                                  </Form.Text>
-                                  {errors.courseRun && touched.courseRun && (
-                                  <Form.Control.Feedback type="invalid">
-                                    {errors.courseRun}
-                                  </Form.Control.Feedback>
-                                  )}
-                                </Form.Group>
-                              </Col>
-                              <Col xs={12} md={6}>
-                                <Form.Group>
-                                  <Form.Label>Course Pacing</Form.Label>
-                                  <div className="pacing-style">
-                                    <label>
-                                      <input
-                                        type="radio"
-                                        name="coursePacing"
-                                        value="instructor"
-                                        checked={editedValues.coursePacing === 'instructor'}
-                                        onChange={() => handleInputChange('coursePacing', 'instructor')}
-                                      />
-                                      Instructor-paced
-                                    </label>
-                                    <label>
-                                      <input
-                                        type="radio"
-                                        name="coursePacing"
-                                        value="self"
-                                        checked={editedValues.coursePacing === 'self'}
-                                        onChange={() => handleInputChange('coursePacing', 'self')}
-                                      />
-                                      Self-paced
-                                    </label>
+                                    {editedValues.entranceExamEnabled === 'true' && (
+                                      <div className="entrance-exam-content p-1">
+                                        <div className="form-group-custom">
+                                          <Form.Label>Grade requirements</Form.Label>
+                                          <div className="d-flex">
+                                            <Form.Control
+                                              type="number"
+                                              min={0}
+                                              max={100}
+                                              className=""
+                                              value={editedValues.entranceExamMinimumScorePct || 40}
+                                              onChange={(e) => handleInputChange('entranceExamMinimumScorePct', e.target.value)}
+                                              onBlur={() => handleBlur('entranceExamMinimumScorePct')}
+                                            />
+                                            <span className="pgn__form-control-trailing">%</span>
+                                          </div>
+                                          <div className="form-control-feedback">
+                                            The score student must meet in order to successfully complete the entrance exam.
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 </Form.Group>
-                              </Col>
-                            </Row>
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'schedule' && (
-                        <div className="form-section">
-                          <Stack gap={4}>
-                            <div className="schedule-section">
-                              <ul className="schedule-date-list">
-                                <li className="schedule-date-item">
-                                  <div>
-                                    <Row className="pl-0 pr-0 pb-0 pt-0">
-                                      <Col xs={12} md={6}>
-                                        <div className="datepicker-control">
-                                          <Form.Label>
-                                            Course start date{' '}
-                                            <span className="required-asterisk">*</span>
-                                          </Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.date}
-                                            value={editedValues.startDate || ''}
-                                            label={null}
-                                            helpText="Enter the date when your course will start"
-                                            isInvalid={!!errors.startDate && touched.startDate}
-                                            controlName="start-date"
-                                            onChange={(value) => handleInputChange('startDate', value)}
-                                            onBlur={() => handleBlur('startDate')}
-                                            placeholder="MM/DD/YYYY"
-                                          />
-                                          {errors.startDate && touched.startDate && (
-                                          <Form.Text className="text-danger">
-                                            {errors.startDate}
-                                          </Form.Text>
-                                          )}
-                                        </div>
-                                      </Col>
-                                      <Col xs={12} md={6}>
-                                        <div className="time-field">
-                                          <Form.Label>Course start time</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.time}
-                                            value={editedValues.startTime || ''}
-                                            label={null}
-                                            isInvalid={!!errors.startTime && touched.startTime}
-                                            controlName="start-time"
-                                            onChange={(value) => handleInputChange('startTime', value)}
-                                            onBlur={() => handleBlur('startTime')}
-                                          />
-                                          <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                            ({userTimezone})
-                                          </span>
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </li>
-                                <li className="schedule-date-item">
-                                  <div>
-                                    <Row className="pl-0 pr-0 pb-0 pt-0">
-                                      <Col xs={12} md={6}>
-                                        <div className="datepicker-control">
-                                          <Form.Label>Course end date</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.date}
-                                            value={editedValues.endDate || ''}
-                                            label={null}
-                                            helpText="Enter the date when your course will end"
-                                            isInvalid={!!errors.endDate}
-                                            controlName="end-date"
-                                            onChange={(value) => handleInputChange('endDate', value)}
-                                            onBlur={() => handleBlur('endDate')}
-                                            placeholder="MM/DD/YYYY"
-                                          />
-                                          {errors.endDate && (
-                                          <Form.Text className="text-danger">
-                                            {errors.endDate}
-                                          </Form.Text>
-                                          )}
-                                        </div>
-                                      </Col>
-                                      <Col xs={12} md={6}>
-                                        <div className="time-field">
-                                          <Form.Label>Course end time</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.time}
-                                            value={editedValues.endTime || ''}
-                                            label={null}
-                                            isInvalid={!!errors.endTime && touched.endTime}
-                                            controlName="end-time"
-                                            onChange={(value) => handleInputChange('endTime', value)}
-                                            onBlur={() => handleBlur('endTime')}
-                                          />
-                                          <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                            ({userTimezone})
-                                          </span>
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </li>
-                                <li className="schedule-date-item">
-                                  <div>
-                                    <Row className="pl-0 pr-0 pb-0 pt-0">
-                                      <Col xs={12} md={6}>
-                                        <div className="datepicker-control">
-                                          <Form.Label>
-                                            Enrollment start date{' '}
-                                            {/* <span className="required-asterisk">*</span> */}
-                                          </Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentStart || ''}
-                                            label={null}
-                                            helpText="Enter the date when enrollment will start"
-                                            isInvalid={!!errors.enrollmentStart && touched.enrollmentStart}
-                                            controlName="enrollment-start-date"
-                                            onChange={(value) => handleInputChange('enrollmentStart', value)}
-                                            onBlur={() => handleBlur('enrollmentStart')}
-                                            placeholder="MM/DD/YYYY"
-                                          />
-                                          {errors.enrollmentStart && touched.enrollmentStart && (
-                                          <Form.Text className="text-danger">
-                                            {errors.enrollmentStart}
-                                          </Form.Text>
-                                          )}
-                                        </div>
-                                      </Col>
-                                      <Col xs={12} md={6}>
-                                        <div className="time-field">
-                                          <Form.Label>Enrollment start time</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.time}
-                                            value={editedValues.enrollmentStartTime || ''}
-                                            label={null}
-                                            isInvalid={!!errors.enrollmentStartTime && touched.enrollmentStartTime}
-                                            controlName="enrollment-start-time"
-                                            onChange={(value) => handleInputChange('enrollmentStartTime', value)}
-                                            onBlur={() => handleBlur('enrollmentStartTime')}
-                                          />
-                                          <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                            ({userTimezone})
-                                          </span>
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </li>
-                                <li className="schedule-date-item">
-                                  <div>
-                                    <Row className="pl-0 pr-0 pb-0 pt-0">
-                                      <Col xs={12} md={6}>
-                                        <div className="datepicker-control">
-                                          <Form.Label>Enrollment end date</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.date}
-                                            value={editedValues.enrollmentEnd || ''}
-                                            label={null}
-                                            helpText="Enter the date when enrollment will end"
-                                            isInvalid={!!errors.enrollmentEnd && touched.enrollmentEnd}
-                                            controlName="enrollment-end-date"
-                                            onChange={(value) => handleInputChange('enrollmentEnd', value)}
-                                            onBlur={() => handleBlur('enrollmentEnd')}
-                                            placeholder="MM/DD/YYYY"
-                                          />
-                                          {errors.enrollmentEnd && touched.enrollmentEnd && (
-                                          <Form.Text className="text-danger">
-                                            {errors.enrollmentEnd}
-                                          </Form.Text>
-                                          )}
-                                        </div>
-                                      </Col>
-                                      <Col xs={12} md={6}>
-                                        <div className="time-field">
-                                          <Form.Label>Enrollment end time</Form.Label>
-                                          <DatepickerControl
-                                            type={DATEPICKER_TYPES.time}
-                                            value={editedValues.enrollmentEndTime || ''}
-                                            label={null}
-                                            isInvalid={!!errors.enrollmentEndTime && touched.enrollmentEndTime}
-                                            controlName="enrollment-end-time"
-                                            onChange={(value) => handleInputChange('enrollmentEndTime', value)}
-                                            onBlur={() => handleBlur('enrollmentEndTime')}
-                                          />
-                                          <span className="h6 font-weight-normal text-gray-500 mb-0 mt-2">
-                                            ({userTimezone})
-                                          </span>
-                                        </div>
-                                      </Col>
-                                    </Row>
-                                  </div>
-                                </li>
-                                <li className="certificate-display-row">
-                                  <CertificateDisplayRow
-                                    certificateAvailableDate={editedValues.certificateAvailableDate || ''}
-                                    availableDateErrorFeedback={errors.certificateAvailableDate || ''}
-                                    certificatesDisplayBehavior={editedValues.certificatesDisplayBehavior || ''}
-                                    displayBehaviorErrorFeedback={errors.certificatesDisplayBehavior || ''}
-                                    onChange={handleCertificateChange}
-                                  />
-                                </li>
-                              </ul>
+                              </Stack>
                             </div>
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'requirements' && (
-                        <div className="form-section">
-                          <Stack gap={2}>
-                            <Row className="custom-padding">
-                              <Col xs={12} md={6}>
-                                <Form.Group>
-                                  <Form.Label>Hours of effort per week</Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    name="effort"
-                                    value={editedValues.effort || ''}
-                                    onChange={(e) => handleInputChange('effort', e.target.value)}
-                                    onBlur={() => handleBlur('effort')}
-                                    isInvalid={!!errors.effort && touched.effort}
-                                  />
-                                  <Form.Text>Time spent on all course work</Form.Text>
-                                </Form.Group>
-                              </Col>
-                              <Col xs={12} md={6}>
-                                <Form.Group>
-                                  <Form.Label>Prerequisite course</Form.Label>
-                                  <Dropdown>
-                                    <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary">
-                                      {editedValues.prerequisiteCourse || 'None'}
+                          )}
+                          {activeTab === 'additional' && (
+                            <div className="form-section pl-12-pr-12">
+                              <Stack gap={1}>
+                                <Form.Group className="form-group-custom dropdown-language">
+                                  <Form.Label>Language</Form.Label>
+                                  <Dropdown className="bg-white">
+                                    <Dropdown.Toggle variant="outline-primary" id="languageDropdown">
+                                      {formattedLanguage()}
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                      <Dropdown.Item
-                                        key="None"
-                                        onClick={() => handleInputChange('prerequisiteCourse', '')}
-                                      >
-                                        None
-                                      </Dropdown.Item>
-                                      {possiblePreRequisiteCourses?.map((course) => (
+                                      {languageOptions.map((option) => (
                                         <Dropdown.Item
-                                          key={course.courseKey}
-                                          onClick={() => handleInputChange('prerequisiteCourse', course.courseKey)}
+                                          key={option[0]}
+                                          onClick={() => handleInputChange('language', option[0])}
                                         >
-                                          {course.displayName}
+                                          {option[1]}
                                         </Dropdown.Item>
                                       ))}
                                     </Dropdown.Menu>
                                   </Dropdown>
-                                  <Form.Text>Course that students must complete before beginning this course</Form.Text>
+                                  <Form.Control.Feedback>
+                                    The primary language of your course.
+                                  </Form.Control.Feedback>
                                 </Form.Group>
-                              </Col>
-                            </Row>
-                            <Form.Group className="entrance-exam-group">
-                              <div className="entrance-exam-label mb-2">Entrance exam</div>
-                              <div className="entrance-exam-card">
-                                <div className="pb-2">
-                                  <Form.Check
-                                    type="checkbox"
-                                    className="entrance-exam-checkbox"
-                                    label={<span className="entrance-exam-checkbox-label">Require students to pass an exam before beginning the course.</span>}
-                                    checked={editedValues.entranceExamEnabled === 'true'}
-                                    onChange={(e) => handleInputChange('entranceExamEnabled', e.target.checked ? 'true' : 'false')}
+                                <Form.Group>
+                                  <Form.Label>Duration</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    name="duration"
+                                    value={editedValues.duration || ''}
+                                    onChange={(e) => handleInputChange('duration', e.target.value)}
+                                    onBlur={() => handleBlur('duration')}
+                                    placeholder="e.g. 8 weeks"
+                                    isInvalid={!!errors.duration && touched.duration}
+                                  />
+                                  <Form.Text>
+                                    The expected duration of your course.
+                                  </Form.Text>
+                                </Form.Group>
+                              </Stack>
+                            </div>
+                          )}
+                          {activeTab === 'pricing' && (
+                            <div className="form-section pl-12-pr-12">
+                              <Stack gap={1}>
+                                <Form.Group>
+                                  <Form.Label>Pricing Model</Form.Label>
+                                  <div className="d-flex radio-button-options">
+                                    <RadioButton
+                                      name="pricingModel"
+                                      value="free"
+                                      checked={editedValues.pricingModel === 'free'}
+                                      onChange={() => handleInputChange('pricingModel', 'free')}
+                                    >
+                                      Free
+                                    </RadioButton>
+                                    <RadioButton
+                                      name="pricingModel"
+                                      value="paid"
+                                      checked={editedValues.pricingModel === 'paid'}
+                                      onChange={() => handleInputChange('pricingModel', 'paid')}
+                                    >
+                                      Paid
+                                    </RadioButton>
+                                  </div>
+                                  <Form.Text className="mt-1">Choose whether your course will be free or paid.</Form.Text>
+                                </Form.Group>
+
+                                {editedValues.pricingModel === 'paid' && (
+                                  <Form.Group>
+                                    <Form.Label>Price</Form.Label>
+                                    <Form.Control
+                                      type="number"
+                                      value={editedValues.price}
+                                      onChange={(e) => handleInputChange('price', e.target.value)}
+                                      onBlur={() => handleBlur('price')}
+                                      placeholder="Enter course price"
+                                      min="0"
+                                      step="0.01"
+                                    />
+                                    <Form.Text>Set the price for your course in your local currency.</Form.Text>
+                                  </Form.Group>
+                                )}
+                              </Stack>
+                            </div>
+                          )}
+                          {activeTab === 'license' && (
+                            <div className="form-section license-section pl-12-pr-12">
+                              <Stack gap={1}>
+                                <div>
+                                  <p className="mb-8">{intl.formatMessage(licenseMessages.licenseDescription)}</p>
+                                </div>
+                                <LicenseSelector
+                                  licenseType={licenseType}
+                                  onChangeLicenseType={handleChangeLicenseType}
+                                />
+                                {licenseType === LICENSE_TYPE.creativeCommons && (
+                                  <LicenseCommonsOptions
+                                    licenseDetails={licenseDetails}
+                                    onToggleCheckbox={handleToggleCheckbox}
+                                  />
+                                )}
+                                <div>
+                                  <p className="fw-bold mb-1">License display</p>
+                                  <p className="small text-gray-700 mb-2">
+                                    The following message will be displayed at the bottom of the courseware pages within your course:
+                                  </p>
+                                  <LicenseIcons
+                                    licenseType={licenseType}
+                                    licenseDetails={licenseDetails}
+                                    licenseURL={licenseURL}
                                   />
                                 </div>
-                                {editedValues.entranceExamEnabled === 'true' && (
-                                <div className="entrance-exam-content p-1">
-                                  <div className="form-group-custom">
-                                    <Form.Label>Grade requirements</Form.Label>
-                                    <div className="d-flex">
-                                      <Form.Control
-                                        type="number"
-                                        min={0}
-                                        max={100}
-                                        className=""
-                                        value={editedValues.entranceExamMinimumScorePct || 40}
-                                        onChange={(e) => handleInputChange('entranceExamMinimumScorePct', e.target.value)}
-                                        onBlur={() => handleBlur('entranceExamMinimumScorePct')}
-                                      />
-                                      <span className="pgn__form-control-trailing">%</span>
-                                    </div>
-                                    <div className="form-control-feedback">
-                                      The score student must meet in order to successfully complete the entrance exam.
-                                    </div>
-                                  </div>
-                                </div>
-                                )}
-                              </div>
-                            </Form.Group>
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'additional' && (
-                        <div className="form-section pl-12-pr-12">
-                          <Stack gap={1}>
-                            <Form.Group className="form-group-custom dropdown-language">
-                              <Form.Label>Language</Form.Label>
-                              <Dropdown className="bg-white">
-                                <Dropdown.Toggle variant="outline-primary" id="languageDropdown">
-                                  {formattedLanguage()}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  {languageOptions.map((option) => (
-                                    <Dropdown.Item
-                                      key={option[0]}
-                                      onClick={() => handleInputChange('language', option[0])}
-                                    >
-                                      {option[1]}
-                                    </Dropdown.Item>
-                                  ))}
-                                </Dropdown.Menu>
-                              </Dropdown>
-                              <Form.Control.Feedback>
-                                The primary language of your course.
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group>
-                              <Form.Label>Duration</Form.Label>
-                              <Form.Control
-                                type="text"
-                                name="duration"
-                                value={editedValues.duration || ''}
-                                onChange={(e) => handleInputChange('duration', e.target.value)}
-                                onBlur={() => handleBlur('duration')}
-                                placeholder="e.g. 8 weeks"
-                                isInvalid={!!errors.duration && touched.duration}
-                              />
-                              <Form.Text>
-                                The expected duration of your course.
-                              </Form.Text>
-                            </Form.Group>
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'pricing' && (
-                        <div className="form-section pl-12-pr-12">
-                          <Stack gap={1}>
-                            <Form.Group>
-                              <Form.Label>Pricing Model</Form.Label>
-                              <div className="d-flex radio-button-options">
-                                <RadioButton
-                                  name="pricingModel"
-                                  value="free"
-                                  checked={editedValues.pricingModel === 'free'}
-                                  onChange={() => handleInputChange('pricingModel', 'free')}
-                                >
-                                  Free
-                                </RadioButton>
-                                <RadioButton
-                                  name="pricingModel"
-                                  value="paid"
-                                  checked={editedValues.pricingModel === 'paid'}
-                                  onChange={() => handleInputChange('pricingModel', 'paid')}
-                                >
-                                  Paid
-                                </RadioButton>
-                              </div>
-                              <Form.Text className="mt-1">Choose whether your course will be free or paid.</Form.Text>
-                            </Form.Group>
-
-                            {editedValues.pricingModel === 'paid' && (
-                            <Form.Group>
-                              <Form.Label>Price</Form.Label>
-                              <Form.Control
-                                type="number"
-                                value={editedValues.price}
-                                onChange={(e) => handleInputChange('price', e.target.value)}
-                                onBlur={() => handleBlur('price')}
-                                placeholder="Enter course price"
-                                min="0"
-                                step="0.01"
-                              />
-                              <Form.Text>Set the price for your course in your local currency.</Form.Text>
-                            </Form.Group>
-                            )}
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'license' && (
-                        <div className="form-section license-section pl-12-pr-12">
-                          <Stack gap={1}>
-                            <div>
-                              <p className="mb-8">{intl.formatMessage(licenseMessages.licenseDescription)}</p>
+                              </Stack>
                             </div>
-                            <LicenseSelector
-                              licenseType={licenseType}
-                              onChangeLicenseType={handleChangeLicenseType}
-                            />
-                            {licenseType === LICENSE_TYPE.creativeCommons && (
-                            <LicenseCommonsOptions
-                              licenseDetails={licenseDetails}
-                              onToggleCheckbox={handleToggleCheckbox}
-                            />
-                            )}
-                            <div>
-                              <p className="fw-bold mb-1">License display</p>
-                              <p className="small text-gray-700 mb-2">
-                                The following message will be displayed at the bottom of the courseware pages within your course:
-                              </p>
-                              <LicenseIcons
-                                licenseType={licenseType}
-                                licenseDetails={licenseDetails}
-                                licenseURL={licenseURL}
+                          )}
+                          {activeTab === 'learningOutcomes' && (
+                            <div className="form-section learning-outcomes-section pl-12-pr-12">
+                              <LearningOutcomesSection
+                                learningInfo={editedValues.learningInfo || []}
+                                onChange={handleLearningOutcomesChange}
                               />
                             </div>
-                          </Stack>
-                        </div>
-                        )}
-                        {activeTab === 'learningOutcomes' && (
-                          <div className="form-section learning-outcomes-section pl-12-pr-12">
-                            <LearningOutcomesSection
-                              learningInfo={editedValues.learningInfo || []}
-                              onChange={handleLearningOutcomesChange}
-                            />
-                          </div>
-                        )}
-                        {activeTab === 'instructors' && (
-                          <div className="form-section instructors-section pl-12-pr-12">
-                            <InstructorsSection
-                              instructors={editedValues.instructorInfo?.instructors || []}
-                              onChange={handleInstructorsChange}
-                            />
-                          </div>
-                        )}
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
+                          )}
+                          {activeTab === 'instructors' && (
+                            <div className="form-section instructors-section pl-12-pr-12">
+                              <InstructorsSection
+                                instructors={editedValues.instructorInfo?.instructors || []}
+                                onChange={handleInstructorsChange}
+                              />
+                            </div>
+                          )}
+                        </Col>
+                      </Row>
+                    </div>
+                  </Col>
 
-                <Col xs={12} md={4}>
-                  <div className="media-section">
-                    <Stack gap={1}>
-                      {renderImageUploadSection(
-                        'courseImageAssetPath',
-                        'Course Card Image',
-                        cardImagePreview,
-                        cardImageFile,
-                        hasCardImage,
-                        onImageUpload,
-                      )}
-                      {renderImageUploadSection(
-                        'bannerImageAssetPath',
-                        'Course Banner Image',
-                        bannerImagePreview,
-                        bannerImageFile,
-                        hasBannerImage,
-                        onBannerImageUpload,
-                      )}
-                      <Form.Group>
-                        <IntroductionVideo
-                          intl={intl}
-                          introVideo={editedValues.introVideo}
-                          onChange={(value) => handleVideoChange(value, 'introVideo')}
-                        />
-                      </Form.Group>
-                    </Stack>
-                  </div>
-                </Col>
-              </Row>
+                  <Col xs={12} md={4}>
+                    <div className="media-section">
+                      <Stack gap={1}>
+                        {renderImageUploadSection(
+                          'courseImageAssetPath',
+                          'Course Card Image',
+                          cardImagePreview,
+                          cardImageFile,
+                          hasCardImage,
+                          onImageUpload,
+                        )}
+                        {renderImageUploadSection(
+                          'bannerImageAssetPath',
+                          'Course Banner Image',
+                          bannerImagePreview,
+                          bannerImageFile,
+                          hasBannerImage,
+                          onBannerImageUpload,
+                        )}
+                        <Form.Group>
+                          <IntroductionVideo
+                            intl={intl}
+                            introVideo={editedValues.introVideo}
+                            onChange={(value) => handleVideoChange(value, 'introVideo')}
+                          />
+                        </Form.Group>
+                      </Stack>
+                    </div>
+                  </Col>
+                </Row>
 
-              {!hideCreateNewCourseButton && (
-                <div className="ps-courseform-footer-bar">
-                  <div className="footer-cancel">
-                    <Button variant="outline-primary" onClick={handleCancel}>Cancel</Button>
+                {!hideCreateNewCourseButton && (
+                  <div className="ps-courseform-footer-bar">
+                    <div className="footer-cancel">
+                      <Button variant="outline-primary" onClick={handleCancel}>Cancel</Button>
+                    </div>
+                    <div className="footer-create">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        disabled={
+                          isSubmitting
+                          || Object.keys(errors).length > 0
+                          || !!imageErrors.cardImage
+                          || !!imageErrors.bannerImage
+                        }
+                      >
+                        {isSubmitting ? (
+                          <span>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+                            Creating...
+                          </span>
+                        ) : (
+                          'Create'
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                  <div className="footer-create">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={
-            isSubmitting
-            || Object.keys(errors).length > 0
-            || !!imageErrors.cardImage
-            || !!imageErrors.bannerImage
-        }
-                    >
-                      {isSubmitting ? (
-                        <span>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
-                          Creating...
-                        </span>
-                      ) : (
-                        'Create'
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+                )}
+              </Form>
+            </Col>
+          </Row>
+        </Container>
+
+      </div >
+      <div className="copilot">
+        {isOpen && <Copilot />}
+      </div>
     </div>
   );
 };
@@ -1634,4 +1861,8 @@ PSCourseForm.defaultProps = {
   courseSettings: {},
 };
 
-export default PSCourseForm;
+export default (props) => (
+  <CopilotProvider initialConfig={{ width: 350, height: 83, position: 'right' }}>
+    <PSCourseForm {...props} />
+  </CopilotProvider>
+);

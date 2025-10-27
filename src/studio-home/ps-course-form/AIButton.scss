@@ -1,0 +1,30 @@
+.ai-button {
+  background: none;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  
+  .ai-button-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+
+  /* Enabled state */
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8; /* subtle feedback */
+    }
+  }
+
+  /* Disabled state */
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
