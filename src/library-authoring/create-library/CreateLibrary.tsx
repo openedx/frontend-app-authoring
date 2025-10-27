@@ -32,9 +32,8 @@ import { useStudioHome } from '@src/studio-home/hooks';
 
 import type { ContentLibrary } from '../data/api';
 import { CreateContentLibraryArgs } from './data/api';
-import { useCreateLibraryV2 } from './data/apiHooks';
+import { useCreateLibraryV2, useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/apiHooks';
 import { LibraryRestoreStatus } from './data/restoreConstants';
-import { useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/restoreHooks';
 import messages from './messages';
 
 // Valid file extensions for library archive uploads

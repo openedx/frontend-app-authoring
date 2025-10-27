@@ -37,7 +37,8 @@ jest.mock('@src/generic/data/apiHooks', () => ({
 const mockRestoreMutate = jest.fn();
 let mockRestoreStatusData: any = {};
 let mockRestoreMutationError: any = null;
-jest.mock('./data/restoreHooks', () => ({
+jest.mock('./data/apiHooks', () => ({
+  ...jest.requireActual('./data/apiHooks'),
   useCreateLibraryRestore: () => ({
     mutate: mockRestoreMutate,
     error: mockRestoreMutationError,
