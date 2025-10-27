@@ -11,7 +11,7 @@ import { RequestStatus } from './constants';
 async function retryOnNotReady<T>(
   apiCall: () => Promise<T>,
   maxRetries: number = 10,
-  initialDelay: number = 2000,
+  initialDelay: number = 10000,
   backoffMultiplier: number = 1.5
 ): Promise<T> {
   let delay = initialDelay;
@@ -43,7 +43,7 @@ export function fetchCourseDetail(courseId) {
       const courseDetail = await retryOnNotReady(
         () => getCourseDetail(courseId, getAuthenticatedUser().username),
         10,  // maxRetries
-        2000 // initialDelay (2 segundos)
+        10000 // initialDelay (2 segundos)
       );
       dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       dispatch(addModel({ modelType: 'courseDetails', model: courseDetail }));
