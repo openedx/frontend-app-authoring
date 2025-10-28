@@ -54,26 +54,29 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
-      const displayName = oldVersion.upstreamLink.isModified ? oldVersion.name : newVersion.displayName;
+      const displayName = oldVersion.upstreamLink.downstreamCustomized?.includes('display_name') ? oldVersion.name : newVersion.displayName;
       let originalName: string | undefined;
       // FIXME: This logic doesn't work when the content is updated locally and the upstream display name is updated.
       // `isRenamed` becomes true.
       // We probably need to differentiate between `contentModified` and `rename` in the backend or
       // send `downstream_customized` field to the frontend and use it here.
       const isRenamed = displayName !== newVersion.displayName && displayName === oldVersion.name;
+      const isContentModified = oldVersion.upstreamLink.downstreamCustomized?.includes('data');
       if (index !== oldVersion.index) {
         // has moved from its position
         state = 'moved';
       }
-      if (oldVersion.upstreamLink.isModified && !isRenamed) {
-        // The content is updated, not the name.
-        state = 'locallyContentUpdated';
-      } else if (isRenamed) {
-        // Has been renamed.
-        // TODO: At this point we can't know if the content is updated or not
-        // because `upstreamLink.isModified` is also true when renaming.
-        state = 'locallyRenamed';
-        originalName = newVersion.displayName;
+      if ((oldVersion.upstreamLink.downstreamCustomized?.length || 0) > 0) {
+        if (isRenamed) {
+          state = 'locallyRenamed';
+          originalName = newVersion.displayName;
+        }
+        if (isContentModified) {
+          state = 'locallyContentUpdated';
+        }
+        if (isRenamed && isContentModified) {
+          state = 'locallyRenamedAndContentUpdated';
+        }
       } else if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = 'modified';

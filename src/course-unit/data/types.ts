@@ -43,7 +43,7 @@ export interface UpstreamReadyToSyncChildrenInfo {
   name: string;
   upstream: string;
   blockType: string;
-  isModified: boolean;
+  downstreamCustomized: string[];
 }
 
 export interface CourseContainerChildrenData {

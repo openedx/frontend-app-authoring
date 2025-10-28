@@ -17,7 +17,7 @@ export const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true,
+              downstreamCustomized: ['display_name'],
             },
           },
           {
@@ -29,7 +29,7 @@ export const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -41,7 +41,7 @@ export const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -53,7 +53,7 @@ export const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
         ],
@@ -87,7 +87,7 @@ export const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true,
+              downstreamCustomized: ['display_name'],
             },
           },
           {
@@ -99,7 +99,7 @@ export const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -111,7 +111,7 @@ export const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -123,7 +123,7 @@ export const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
         ],
@@ -162,7 +162,7 @@ export const getMockCourseContainerData = (
               versionSynced: 11,
               versionAvailable: 11,
               versionDeclined: null,
-              isModified: true,
+              downstreamCustomized: ['display_name'],
             },
           },
           {
@@ -174,7 +174,7 @@ export const getMockCourseContainerData = (
               versionSynced: 7,
               versionAvailable: 7,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -186,7 +186,7 @@ export const getMockCourseContainerData = (
               versionSynced: 2,
               versionAvailable: 2,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
           {
@@ -198,7 +198,7 @@ export const getMockCourseContainerData = (
               versionSynced: 1,
               versionAvailable: 1,
               versionDeclined: null,
-              isModified: false,
+              downstreamCustomized: [],
             },
           },
         ],

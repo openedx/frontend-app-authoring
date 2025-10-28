@@ -243,7 +243,7 @@ export const CompareContainersWidget = ({
   // the alert would disappear. By keeping this call in CompareContainersWidget,
   // the alert remains in the modal regardless of whether you navigate within the children.
   if (!isReadyToSyncIndividually && data?.upstreamReadyToSyncChildrenInfo
-      && data.upstreamReadyToSyncChildrenInfo.every(value => value.isModified && value.blockType === 'html')
+      && data.upstreamReadyToSyncChildrenInfo.every(value => value.downstreamCustomized.length > 0 && value.blockType === 'html')
   ) {
     localUpdateAlertCount = data.upstreamReadyToSyncChildrenInfo.length;
     if (localUpdateAlertCount === 1) {
