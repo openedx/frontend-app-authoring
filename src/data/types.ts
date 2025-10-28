@@ -61,7 +61,7 @@ export interface UpstreamInfo {
   versionAvailable: number | null,
   versionDeclined: number | null,
   errorMessage: string | null,
-  downstreamCustomized?: string[],
+  downstreamCustomized: string[],
   hasTopLevelParent?: boolean,
   readyToSyncChildren?: UpstreamChildrenInfo[],
   isReadyToSyncIndividually?: boolean,

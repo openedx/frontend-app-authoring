@@ -54,19 +54,19 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
-      const displayName = oldVersion.upstreamLink.downstreamCustomized?.includes('display_name') ? oldVersion.name : newVersion.displayName;
+      const displayName = oldVersion.upstreamLink.downstreamCustomized.includes('display_name') ? oldVersion.name : newVersion.displayName;
       let originalName: string | undefined;
       // FIXME: This logic doesn't work when the content is updated locally and the upstream display name is updated.
       // `isRenamed` becomes true.
       // We probably need to differentiate between `contentModified` and `rename` in the backend or
       // send `downstream_customized` field to the frontend and use it here.
       const isRenamed = displayName !== newVersion.displayName && displayName === oldVersion.name;
-      const isContentModified = oldVersion.upstreamLink.downstreamCustomized?.includes('data');
+      const isContentModified = oldVersion.upstreamLink.downstreamCustomized.includes('data');
       if (index !== oldVersion.index) {
         // has moved from its position
         state = 'moved';
       }
-      if ((oldVersion.upstreamLink.downstreamCustomized?.length || 0) > 0) {
+      if ((oldVersion.upstreamLink.downstreamCustomized.length || 0) > 0) {
         if (isRenamed) {
           state = 'locallyRenamed';
           originalName = newVersion.displayName;
