@@ -73,25 +73,20 @@ async function retryOnNotReady<T>(
   backoffMultiplier: number = 1.5
 ): Promise<T> {
   let delay = initialDelay;
-  
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await apiCall();
     } catch (error: any) {
-      // Solo reintentar si recibimos 202 (Accepted - still processing)
       const isProcessing = error?.response?.status === 202;
-      
-      // También reintentar si obtenemos error de "course_does_not_exist" en los primeros intentos
+
       const isCourseNotExist = error?.response?.data?.error_code === 'course_does_not_exist' && i < 5;
-      
       if ((isProcessing || isCourseNotExist) && i < maxRetries - 1) {
         console.log(`[CourseOutline] Course still processing, retrying in ${delay}ms... (attempt ${i + 1}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, delay));
         delay *= backoffMultiplier;
         continue;
       }
-      
-      // Para cualquier otro error, lanzar inmediatamente
       throw error;
     }
   }
@@ -109,14 +104,13 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
     dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      // Usar retry logic para esperar a que el curso esté listo
       const outlineIndex = await retryOnNotReady(
         () => getCourseOutlineIndex(courseId),
-        10,   // maxRetries
+        10, // maxRetries
         2000, // initialDelay (2 segundos)
-        1.5   // backoffMultiplier
+        1.5, // backoffMultiplier
       );
-      
+
       const {
         courseReleaseDate,
         courseStructure: {
@@ -126,7 +120,7 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
           actions,
         },
       } = outlineIndex;
-      
+
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
       dispatch(updateStatusBar({
         courseReleaseDate,
@@ -136,11 +130,10 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
       }));
       dispatch(updateCourseActions(actions));
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-      
+
       console.log('[CourseOutline] Successfully loaded course outline');
     } catch (error: any) {
       console.error('[CourseOutline] Failed to fetch course outline:', error);
-      
       if (error.response && error.response.status === 403) {
         dispatch(updateOutlineIndexLoadingStatus({
           status: RequestStatus.DENIED,
