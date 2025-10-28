@@ -471,26 +471,44 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   };
 
+  const getReadableFieldName = (fieldName) => {
+    switch (fieldName) {
+      case 'title':
+        return 'Title';
+      case 'shortDescription':
+        return 'Short Description';
+      case 'description':
+        return 'Description';
+      case 'cardImage':
+        return 'Course Card Image';
+      case 'bannerImage':
+        return 'Banner Image';
+      default:
+        return fieldName;
+    }
+  };
+
   const handleSelectSuggestion = (sug) => {
     setSelectedSuggestion(sug);
     insertSuggestion(sug, true);
+    const readableName = getReadableFieldName(fieldData.name);
 
     // Add thank you message
     setChatHistory((prev) => [
       ...prev,
-      { type: 'text', sender: 'ai', content: `The ${fieldData.name} you selected has been successfully inserted!` },
+      { type: 'text', sender: 'ai', content: `The ${readableName} you selected has been successfully inserted!` },
     ]);
 
     // Add recommendation and continue button
     let recommendMsg = '';
     if (fieldData.name === 'title') {
-      recommendMsg = 'Do you want to create a Short Description for your course with Copilot? Click on Continue!';
+      recommendMsg = 'Create a Short Description for your course using Copilot. Click Continue to proceed.';
     } else if (fieldData.name === 'shortDescription') {
-      recommendMsg = 'Do you want to create a Description for your course with Copilot? Click on Continue!';
+      recommendMsg = 'Generate a detailed Course Description with Copilot. Click Continue to continue';
     } else if (fieldData.name === 'description') {
-      recommendMsg = 'Do you want to create a Course Card Image for your course with Copilot? Click on Continue!';
+      recommendMsg = 'Design a professional Course Card Image using Copilot. Click Continue to begin.';
     } else if (fieldData.name === 'cardImage') {
-      recommendMsg = 'Do you want to create a Course Banner Image for your course with Copilot? Click on Continue!';
+      recommendMsg = 'Create an engaging Course Banner Image with Copilot. Click Continue to start.';
     }
 
     if (recommendMsg) {

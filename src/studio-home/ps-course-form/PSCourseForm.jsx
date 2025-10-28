@@ -234,6 +234,17 @@ const PSCourseForm = ({
   const [allowedOrganizations, setAllowedOrganizations] = useState([]);
   const [canCreateNewOrganization, setCanCreateNewOrganization] = useState(false);
 
+  // New loading state for AI buttons
+  const [aiLoading, setAiLoading] = useState({
+    title: false,
+    shortDescription: false,
+    description: false,
+    cardImage: false,
+    bannerImage: false,
+  });
+
+  // end
+
   const {
     licenseURL,
     licenseType,
@@ -301,10 +312,11 @@ const PSCourseForm = ({
       effectiveValue = editedValues.title?.trim() || "";
       if (!effectiveValue) return;
     }
+    setAiLoading((prev) => ({ ...prev, [fieldName]: true }));
     try {
       // STEP 1: Generate token
       const tokenResponse = await fetch(
-          `${BASE_API_URL}/oauth2/access_token`,
+        `${BASE_API_URL}/oauth2/access_token`,
         {
           method: "POST",
           headers: {
@@ -375,6 +387,8 @@ const PSCourseForm = ({
       setButtons(data.btns || []);
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setAiLoading((prev) => ({ ...prev, [fieldName]: false }));
     }
   };
 
@@ -790,12 +804,20 @@ const PSCourseForm = ({
       <Form.Group className="mb-4 custom-image-upload-section-ps-form" >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Form.Label className="mb-0">{label}</Form.Label>
-          <AIButton
-            disabled={!editedValues.description?.trim()}
-            onClick={handleAIButtonClick}
-            fieldName={isCardImage ? 'cardImage' : 'bannerImage'}
-            fieldValue={editedValues.title || ''}
-          />
+          {aiLoading[isCardImage ? 'cardImage' : 'bannerImage'] ? (
+            <span style={{
+              fontSize: "0.875rem",
+              color: "var(--primary)",
+              animation: "pulse 1.5s infinite",
+            }}>Loading...</span>
+          ) : (
+            <AIButton
+              disabled={!editedValues.description?.trim()}
+              onClick={handleAIButtonClick}
+              fieldName={isCardImage ? 'cardImage' : 'bannerImage'}
+              fieldValue={editedValues.title || ''}
+            />
+          )}
         </div>
         <div
           className={`upload-box border rounded${error ? ' border-danger' : ''}`}
@@ -803,10 +825,10 @@ const PSCourseForm = ({
           {hasPreviewImage ? (
             <div className="image-preview-container">
               <Image
-              src={previewSrc}
-              className="preview-image"
-              fluid
-            />
+                src={previewSrc}
+                className="preview-image"
+                fluid
+              />
               <Button
                 variant="icon"
                 className="remove-image-overlay"
@@ -1058,12 +1080,20 @@ const PSCourseForm = ({
                         <Form.Group className="mb-2">
                           <div className="d-flex justify-content-between align-items-center">
                             <Form.Label className="mb-0"><>Title <span className="required-asterisk">*</span></></Form.Label>
-                            <AIButton
-                              disabled={!editedValues.title?.trim()}
-                              onClick={handleAIButtonClick}
-                              fieldName="title"
-                              fieldValue={editedValues.title || ''}
-                            />
+                            {aiLoading.title ? (
+                              <span style={{
+                                fontSize: "0.875rem",
+                                color: "var(--primary)",
+                                animation: "pulse 1.5s infinite",
+                              }}>Loading...</span>
+                            ) : (
+                              <AIButton
+                                disabled={!editedValues.title?.trim()}
+                                onClick={handleAIButtonClick}
+                                fieldName="title"
+                                fieldValue={editedValues.title || ''}
+                              />
+                            )}
                           </div>
                           <Form.Control
                             type="text"
@@ -1083,12 +1113,20 @@ const PSCourseForm = ({
                       <Form.Group className="mb-1">
                         <div className="d-flex justify-content-between align-items-center">
                           <Form.Label className="mb-0"><>Short Description <span className="required-asterisk">*</span></></Form.Label>
-                          <AIButton
-                            disabled={!editedValues.title?.trim()}
-                            onClick={handleAIButtonClick}
-                            fieldName="shortDescription"
-                            fieldValue={editedValues.shortDescription || ''}
-                          />
+                          {aiLoading.shortDescription ? (
+                            <span style={{
+                              fontSize: "0.875rem",
+                              color: "var(--primary)",
+                              animation: "pulse 1.5s infinite",
+                            }}>Loading...</span>
+                          ) : (
+                            <AIButton
+                              disabled={!editedValues.title?.trim()}
+                              onClick={handleAIButtonClick}
+                              fieldName="shortDescription"
+                              fieldValue={editedValues.shortDescription || ''}
+                            />
+                          )}
                         </div>
                         <Form.Control
                           as="textarea"
@@ -1112,12 +1150,20 @@ const PSCourseForm = ({
                       <Form.Group className={scheduleSettings ? 'mb-1' : 'mb-3'}>
                         <div className="d-flex justify-content-between align-items-center">
                           <Form.Label className="mb-0"><>Description</></Form.Label>
-                          <AIButton
-                            disabled={!(editedValues.title?.trim() && editedValues.shortDescription?.trim())}
-                            onClick={handleAIButtonClick}
-                            fieldName="description"
-                            fieldValue={editedValues.description || ''}
-                          />
+                          {aiLoading.description ? (
+                            <span style={{
+                              fontSize: "0.875rem",
+                              color: "var(--primary)",
+                              animation: "pulse 1.5s infinite",
+                            }}>Loading...</span>
+                          ) : (
+                            <AIButton
+                              disabled={!(editedValues.title?.trim() && editedValues.shortDescription?.trim())}
+                              onClick={handleAIButtonClick}
+                              fieldName="description"
+                              fieldValue={editedValues.description || ''}
+                            />
+                          )}
                         </div>
                         <Form.Control
                           as="textarea"

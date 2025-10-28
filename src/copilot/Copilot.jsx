@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Button, Icon, Form } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight, Close, ArrowForward, Fullscreen, FullscreenExit, Send } from '@openedx/paragon/icons';
 import { useCopilot } from './CopilotContext';
@@ -43,6 +43,14 @@ const Copilot = () => {
   } = useCopilot();
 
   const ref = useRef(null);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [chatHistory]);
 
   if (!isOpen) return null;
 
@@ -67,6 +75,7 @@ const Copilot = () => {
   };
 
   const contentStyle = { display: isMinimized && !isFullScreen ? 'none' : 'block' };
+  const chatContainerRef = useRef(null);
 
   // return (
   //   <div className={`copilot-wrapper ${isDocked ? 'docked' : 'inline'}`}>
@@ -331,7 +340,7 @@ const Copilot = () => {
           </div>
         </div>
         <div className="copilot-content" style={contentStyle}>
-          <div className="chat-messages">
+          <div className="chat-messages" ref={chatContainerRef}>
             {chatHistory.map((item, index) => (
               <div key={index} className={`message-container ${item.sender}`}>
                 {item.type === 'text' && (
