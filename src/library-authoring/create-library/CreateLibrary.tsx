@@ -171,7 +171,6 @@ export const CreateLibrary = ({
           <div className="mb-4">
             {!uploadedFile && !restoreMutation.isPending && (
               <Dropzone
-                data-testid="library-archive-dropzone"
                 accept={DROPZONE_ACCEPT_TYPES}
                 onProcessUpload={handleFileUpload}
                 maxSize={5 * 1024 * 1024 * 1024} // 5GB

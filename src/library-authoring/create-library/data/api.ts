@@ -1,9 +1,9 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import type { ContentLibrary } from '../../data/api';
+import { getLibraryRestoreApiUrl, getLibraryRestoreStatusApiUrl } from '@src/library-authoring/data/api';
+import type { ContentLibrary } from '@src/library-authoring/data/api';
 import { CreateLibraryRestoreResponse, GetLibraryRestoreStatusResponse } from './restoreConstants';
-import { getLibraryRestoreApiUrl, getLibraryRestoreStatusApiUrl } from '../../data/api';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
