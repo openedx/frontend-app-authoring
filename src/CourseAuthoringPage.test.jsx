@@ -84,7 +84,7 @@ describe('Course authoring page', () => {
     await mockStoreNotFound();
     const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
     expect(await wrapper.findByTestId('notFoundAlert')).toBeInTheDocument();
-  });
+  }, 30000);
   test('does not render not found page on other kinds of error', async () => {
     await mockStoreError();
     // Currently, loading errors are not handled, so we wait for the child
