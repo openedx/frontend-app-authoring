@@ -42,9 +42,7 @@ export const libraryRestoreQueryKeys = {
   restoreMutation: () => [...libraryRestoreQueryKeys.all, 'create-restore'],
 };
 
-export const VALID_ARCHIVE_EXTENSIONS = ['.zip', '.tar.gz', '.tar'];
+export const VALID_ARCHIVE_EXTENSIONS = ['.zip'];
 export const DROPZONE_ACCEPT_TYPES = {
   'application/zip': ['.zip'],
-  'application/gzip': ['.tar.gz'],
-  'application/x-tar': ['.tar'],
 };
