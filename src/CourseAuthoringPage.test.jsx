@@ -43,8 +43,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = render(
       <CourseAuthoringPage courseId={courseId}>
         <PagesAndResources courseId={courseId} />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).not.toBeInTheDocument();
   });
@@ -54,8 +53,7 @@ describe('Editor Pages Load no header', () => {
     const wrapper = render(
       <CourseAuthoringPage courseId={courseId}>
         <PagesAndResources courseId={courseId} />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(wrapper.queryByRole('status')).toBeInTheDocument();
   });
@@ -95,7 +93,7 @@ describe('Course authoring page', () => {
     await mockStoreNotFound();
     const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
     expect(await wrapper.findByTestId('notFoundAlert')).toBeInTheDocument();
-  }); // Removido el timeout de 30000, ya no es necesario
+  });
 
   test('does not render not found page on other kinds of error', async () => {
     await mockStoreError();
@@ -129,5 +127,105 @@ describe('Course authoring page', () => {
 
     const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
     expect(await wrapper.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+  });
+});
+
+// New test suite for retry logic
+describe('fetchCourseDetail retry logic', () => {
+  const lmsApiBaseUrl = getConfig().LMS_BASE_URL;
+  const courseDetailApiUrl = `${lmsApiBaseUrl}/api/courses/v1/courses`;
+
+  beforeAll(() => {
+    retryConfig.enabled = true;
+    retryConfig.maxRetries = 3;
+    retryConfig.initialDelay = 10;
+  });
+
+  afterAll(() => {
+    retryConfig.enabled = false;
+  });
+
+  test('retries on 404 and eventually succeeds', async () => {
+    const courseDetail = {
+      id: courseId,
+      name: 'Test Course',
+      start: new Date().toISOString(),
+    };
+
+    axiosMock
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .replyOnce(404)
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .replyOnce(200, courseDetail);
+
+    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
+
+    const state = store.getState();
+    expect(state.courseDetail.courseId).toBe(courseId);
+    expect(state.courseDetail.status).toBe('successful');
+  });
+
+  test('retries on 202 and eventually succeeds', async () => {
+    const courseDetail = {
+      id: courseId,
+      name: 'Test Course',
+      start: new Date().toISOString(),
+    };
+
+    axiosMock
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .replyOnce(202, { error: 'course_not_ready' })
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .replyOnce(200, courseDetail);
+
+    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
+
+    const state = store.getState();
+    expect(state.courseDetail.status).toBe('successful');
+  });
+
+  test('gives up after max retries on persistent 404', async () => {
+    axiosMock
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .reply(404);
+
+    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
+
+    const state = store.getState();
+    expect(state.courseDetail.status).toBe('not-found');
+  });
+
+  test('does not retry on 500 errors', async () => {
+    axiosMock
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .reply(500);
+
+    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
+
+    const state = store.getState();
+    expect(state.courseDetail.status).toBe('failed');
+
+    expect(axiosMock.history.get.filter(
+      req => req.url.includes(courseId),
+    ).length).toBe(1);
+  });
+
+  test('respects retryConfig.enabled flag', async () => {
+    retryConfig.enabled = false;
+
+    axiosMock
+      .onGet(`${courseDetailApiUrl}/${courseId}?username=abc123`)
+      .reply(404);
+
+    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
+
+    const state = store.getState();
+    expect(state.courseDetail.status).toBe('not-found');
+
+    expect(axiosMock.history.get.filter(
+      req => req.url.includes(courseId),
+    ).length).toBe(1);
+
+    retryConfig.enabled = true;
   });
 });
