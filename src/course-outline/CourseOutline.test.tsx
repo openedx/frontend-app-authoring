@@ -27,6 +27,7 @@ import {
   getXBlockBaseApiUrl,
   exportTags,
   createDiscussionsTopicsUrl,
+  getCourseOutlineIndex,
 } from './data/api';
 import {
   fetchCourseBestPracticesQuery,
@@ -2482,5 +2483,40 @@ describe('<CourseOutline />', () => {
       expect(axiosMock.history.delete).toHaveLength(1);
     });
     expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
+  });
+});
+
+describe('retryOnNotReady coverage', () => {
+  it('retries on 202 and eventually succeeds', async () => {
+    const mockDispatch = jest.fn();
+
+    (getCourseOutlineIndex as jest.Mock)
+      .mockRejectedValueOnce({ response: { status: 202 } })
+      .mockRejectedValueOnce({ response: { status: 404 } })
+      .mockResolvedValueOnce({
+        courseReleaseDate: '2025-10-29',
+        courseStructure: {
+          highlightsEnabledForMessaging: true,
+          videoSharingEnabled: true,
+          videoSharingOptions: [],
+          actions: {},
+        },
+      });
+
+    await fetchCourseOutlineIndexQuery(courseId)(mockDispatch);
+
+    expect(getCourseOutlineIndex).toHaveBeenCalledTimes(3);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({ type: expect.stringContaining('SUCCESS') }),
+    );
+  });
+
+  it('stops retrying after maxRetries', async () => {
+    const mockDispatch = jest.fn();
+    (getCourseOutlineIndex as jest.Mock).mockRejectedValue({ response: { status: 202 } });
+
+    await expect(
+      fetchCourseOutlineIndexQuery(courseId)(mockDispatch),
+    ).rejects.toBeDefined();
   });
 });
