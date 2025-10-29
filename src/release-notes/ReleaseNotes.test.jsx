@@ -215,19 +215,6 @@ describe('ReleaseNotes', () => {
       expect(screen.getByText(messages.scheduledLabel.defaultMessage)).toBeInTheDocument();
     });
 
-    test('displays created_by email if present', () => {
-      const noteWithCreator = {
-        ...mockReleaseNotes[0],
-        created_by: 'test@example.com',
-      };
-      useReleaseNotes.mockReturnValue({
-        ...mockUseReleaseNotes,
-        notes: [noteWithCreator],
-      });
-      renderReleaseNotes();
-      expect(screen.getByText(/test@example.com/)).toBeInTheDocument();
-    });
-
     test('displays multiple notes grouped by date', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,

@@ -228,15 +228,6 @@ const ReleaseNotes = () => {
                                 </div>
                                 {/* eslint-disable-next-line react/no-danger */}
                                 <div className="post-description" dangerouslySetInnerHTML={{ __html: post.description }} />
-                                {post.created_by && (
-                                  <div className="mt-3">
-                                    <small>
-                                      {intl.formatMessage(messages.questionsContact, {
-                                        email: post.created_by,
-                                      })}
-                                    </small>
-                                  </div>
-                                )}
                               </div>
 
                             </div>
