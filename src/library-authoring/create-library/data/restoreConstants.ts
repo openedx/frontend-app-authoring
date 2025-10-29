@@ -1,23 +1,23 @@
 export interface CreateLibraryRestoreResponse {
-  task_id: string;
+  taskId: string;
 }
 
 export interface LibraryRestoreResult {
-  learning_package_id: number;
+  learningPackageId: number;
   title: string;
   org: string;
   slug: string;
   key: string;
-  archive_key: string;
+  archiveKey: string;
   containers: number;
   components: number;
   collections: number;
   sections: number;
   subsections: number;
   units: number;
-  created_on_server: string;
-  created_at: string;
-  created_by: {
+  createdOnServer: string;
+  createdAt: string;
+  createdBy: {
     username: string;
     email: string;
   };
@@ -27,7 +27,7 @@ export interface GetLibraryRestoreStatusResponse {
   state: LibraryRestoreStatus;
   result: LibraryRestoreResult | null;
   error: string | null;
-  error_log: string | null;
+  errorLog: string | null;
 }
 
 export enum LibraryRestoreStatus {

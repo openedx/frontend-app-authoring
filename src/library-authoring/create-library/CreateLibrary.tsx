@@ -9,6 +9,7 @@ import {
   Dropzone,
   Form,
   Icon,
+  Spinner,
   StatefulButton,
 } from '@openedx/paragon';
 import {
@@ -127,7 +128,7 @@ export const CreateLibrary = ({
         // Immediately start the restore process
         restoreMutation.mutate(file, {
           onSuccess: (response) => {
-            setRestoreTaskId(response.task_id);
+            setRestoreTaskId(response.taskId);
           },
           onError: (restoreError) => {
             handleError(restoreError);
@@ -189,9 +190,10 @@ export const CreateLibrary = ({
                   backgroundColor: '#f8f9fa',
                 }}
               >
-                <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
-                  <span className="sr-only">{intl.formatMessage(messages.uploadingStatus)}</span>
-                </div>
+                <Spinner
+                  animation="border"
+                  screenReaderText={intl.formatMessage(messages.uploadingStatus)}
+                />
               </div>
             )}
 
@@ -219,8 +221,8 @@ export const CreateLibrary = ({
                         <Icon src={AccessTime} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                         <span className="x-small">
                           {intl.formatMessage(messages.archiveBackupDate, {
-                            date: new Date(restoreStatus.result.created_at).toLocaleDateString(),
-                            time: new Date(restoreStatus.result.created_at).toLocaleTimeString(),
+                            date: new Date(restoreStatus.result.createdAt).toLocaleDateString(),
+                            time: new Date(restoreStatus.result.createdAt).toLocaleTimeString(),
                           })}
                         </span>
                       </div>
@@ -244,9 +246,9 @@ export const CreateLibrary = ({
                 {restoreStatus?.state === LibraryRestoreStatus.Failed && (
                   <div>
                     {intl.formatMessage(messages.restoreError)}
-                    {restoreStatus.error_log && (
+                    {restoreStatus.errorLog && (
                       <div>
-                        <a href={restoreStatus.error_log} target="_blank" rel="noopener noreferrer">
+                        <a href={restoreStatus.errorLog} target="_blank" rel="noopener noreferrer">
                           {intl.formatMessage(messages.viewErrorLogText)}
                         </a>
                       </div>
@@ -292,9 +294,9 @@ export const CreateLibrary = ({
           onSubmit={(values) => {
             const submitData = { ...values } as CreateContentLibraryArgs;
 
-            // If we're creating from archive and have a successful restore, include the learning_package_id
+            // If we're creating from archive and have a successful restore, include the learningPackageId
             if (isFromArchive && restoreStatus?.state === LibraryRestoreStatus.Succeeded && restoreStatus.result) {
-              submitData.learning_package = restoreStatus.result.learning_package_id;
+              submitData.learning_package = restoreStatus.result.learningPackageId;
             }
 
             mutate(submitData);

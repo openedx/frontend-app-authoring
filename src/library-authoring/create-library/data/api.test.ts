@@ -1,22 +1,13 @@
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
-import { createLibraryV2, createLibraryRestore, getLibraryRestoreStatus } from './api';
+import { initializeMocks } from '@src/testUtils';
+import type MockAdapter from 'axios-mock-adapter';
+import { createLibraryRestore, createLibraryV2, getLibraryRestoreStatus } from './api';
 
 let axiosMock: MockAdapter;
 
 describe('create library api', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
   });
 
   afterEach(() => {
@@ -51,9 +42,10 @@ describe('create library api', () => {
 
   it('should restore library from file', async () => {
     const file = new File(['test content'], 'test.tar.gz', { type: 'application/gzip' });
-    const expectedResult = { task_id: 'test-task-id' };
+    const response = { task_id: 'test-task-id' };
+    const expectedResult = { taskId: 'test-task-id' };
 
-    axiosMock.onPost().reply(200, expectedResult);
+    axiosMock.onPost().reply(200, response);
 
     const result = await createLibraryRestore(file);
 
@@ -64,12 +56,16 @@ describe('create library api', () => {
 
   it('should get library restore status', async () => {
     const taskId = 'test-task-id';
-    const expectedResult = {
+    const response = {
       state: 'success',
       result: { learning_package_id: 123 },
     };
+    const expectedResult = {
+      state: 'success',
+      result: { learningPackageId: 123 },
+    };
 
-    axiosMock.onGet().reply(200, expectedResult);
+    axiosMock.onGet().reply(200, response);
 
     const result = await getLibraryRestoreStatus(taskId);
 

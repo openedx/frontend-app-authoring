@@ -37,12 +37,13 @@ jest.mock('@src/generic/data/apiHooks', () => ({
 const mockRestoreMutate = jest.fn();
 let mockRestoreStatusData: any = {};
 let mockRestoreMutationError: any = null;
+let mockRestoreMutationPending = false;
 jest.mock('./data/apiHooks', () => ({
   ...jest.requireActual('./data/apiHooks'),
   useCreateLibraryRestore: () => ({
     mutate: mockRestoreMutate,
     error: mockRestoreMutationError,
-    isPending: false,
+    isPending: mockRestoreMutationPending,
     isError: !!mockRestoreMutationError,
   }),
   useGetLibraryRestoreStatus: () => ({
@@ -60,11 +61,7 @@ describe('<CreateLibrary />', () => {
     mockRestoreMutate.mockReset();
     mockRestoreStatusData = {};
     mockRestoreMutationError = null;
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    axiosMock.restore();
+    mockRestoreMutationPending = false;
   });
 
   test('call api data with correct data', async () => {
@@ -299,7 +296,7 @@ describe('<CreateLibrary />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
       mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
-        onSuccess({ task_id: 'task-123' });
+        onSuccess({ taskId: 'task-123' });
       });
 
       render(<CreateLibrary />);
@@ -378,13 +375,24 @@ describe('<CreateLibrary />', () => {
       consoleSpy.mockRestore();
     });
 
-    test('shows loading state during restore', async () => {
+    test('shows restore in progress alert when status is pending', async () => {
       const user = userEvent.setup();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
+      // Set task ID so the restore status hook is enabled
+      const mockTaskId = 'test-task-123';
+
+      // Pre-set the restore status to pending
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Pending,
+        result: null,
+        error: null,
+        errorLog: null,
+      };
+
+      // Mock the mutation to return a task ID
       mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
-        onSuccess({ task_id: 'task-123' });
-        mockRestoreStatusData = { state: LibraryRestoreStatus.Pending };
+        onSuccess({ taskId: mockTaskId });
       });
 
       render(<CreateLibrary />);
@@ -393,7 +401,7 @@ describe('<CreateLibrary />', () => {
       const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
       await user.click(createFromArchiveBtn);
 
-      // Upload file
+      // Upload a file to trigger the restore process
       const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
       const dropzone = screen.getByTestId('library-archive-dropzone');
       const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
@@ -405,6 +413,7 @@ describe('<CreateLibrary />', () => {
 
       fireEvent.change(input);
 
+      // Should show the restore in progress alert
       await waitFor(() => {
         expect(screen.getByText(messages.restoreInProgress.defaultMessage)).toBeInTheDocument();
       });
@@ -415,36 +424,37 @@ describe('<CreateLibrary />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
       const mockResult = {
-        learning_package_id: 123,
+        learningPackageId: 123,
         title: 'Test Archive Library',
         org: 'TestOrg',
         slug: 'test-archive',
         key: 'TestOrg/test-archive',
-        archive_key: 'archive-key',
+        archiveKey: 'archive-key',
         containers: 5,
         components: 15,
         collections: 3,
         sections: 8,
         subsections: 12,
         units: 20,
-        created_on_server: '2025-01-01T10:00:00Z',
-        created_at: '2025-01-01T10:00:00Z',
-        created_by: {
+        createdOnServer: '2025-01-01T10:00:00Z',
+        createdAt: '2025-01-01T10:00:00Z',
+        createdBy: {
           username: 'testuser',
           email: 'test@example.com',
         },
       };
 
-      // Mock the restore mutation to simulate successful upload and restore
+      // Pre-set the restore status to succeeded
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: mockResult,
+        error: null,
+        errorLog: null,
+      };
+
+      // Mock the restore mutation to return a task ID
       mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
-        onSuccess({ task_id: 'task-123' });
-        // Simulate successful restore completion
-        mockRestoreStatusData = {
-          state: LibraryRestoreStatus.Succeeded,
-          result: mockResult,
-          error: null,
-          error_log: null,
-        };
+        onSuccess({ taskId: 'task-123' });
       });
 
       render(<CreateLibrary />);
@@ -477,16 +487,17 @@ describe('<CreateLibrary />', () => {
       const user = userEvent.setup();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
-      // Mock the restore mutation to simulate upload starting then failing
+      // Pre-set the restore status to failed
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Failed,
+        result: null,
+        error: 'Library restore failed. See error log for details.',
+        errorLog: 'http://example.com/error.log',
+      };
+
+      // Mock the restore mutation to return a task ID
       mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
-        onSuccess({ task_id: 'task-456' });
-        // Simulate restore failure
-        mockRestoreStatusData = {
-          state: LibraryRestoreStatus.Failed,
-          result: null,
-          error: 'Library restore failed. See error log for details.',
-          error_log: 'http://example.com/error.log',
-        };
+        onSuccess({ taskId: 'task-456' });
       });
 
       render(<CreateLibrary />);
@@ -554,21 +565,21 @@ describe('<CreateLibrary />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
       const mockResult = {
-        learning_package_id: 123,
+        learningPackageId: 123,
         title: 'Test Archive Library',
         org: 'TestOrg',
         slug: 'test-archive',
         key: 'TestOrg/test-archive',
-        archive_key: 'archive-key',
+        archiveKey: 'archive-key',
         containers: 5,
         components: 15,
         collections: 3,
         sections: 8,
         subsections: 12,
         units: 20,
-        created_on_server: '2025-01-01T10:00:00Z',
-        created_at: '2025-01-01T10:00:00Z',
-        created_by: {
+        createdOnServer: '2025-01-01T10:00:00Z',
+        createdAt: '2025-01-01T10:00:00Z',
+        createdBy: {
           username: 'testuser',
           email: 'test@example.com',
         },
@@ -583,17 +594,15 @@ describe('<CreateLibrary />', () => {
       // Initially no archive preview should be shown (no uploaded file)
       expect(screen.queryByText('Test Archive Library')).not.toBeInTheDocument();
 
-      // Set state to have uploadedFile but no successful restore status
-      mockRestoreStatusData = { state: LibraryRestoreStatus.Pending };
+      // Pre-set the final restore status to succeeded
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: mockResult,
+      };
 
-      // Mock successful file upload and restore
+      // Mock successful file upload
       mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
-        onSuccess({ task_id: 'task-123' });
-        // Update restore status to succeeded with result
-        mockRestoreStatusData = {
-          state: LibraryRestoreStatus.Succeeded,
-          result: mockResult,
-        };
+        onSuccess({ taskId: 'task-123' });
       });
 
       // Upload file
@@ -624,21 +633,21 @@ describe('<CreateLibrary />', () => {
       });
 
       const mockResult = {
-        learning_package_id: 456,
+        learningPackageId: 456, // Fixed: use camelCase to match actual API response
         title: 'Restored Library',
         org: 'RestoredOrg',
         slug: 'restored-lib',
         key: 'RestoredOrg/restored-lib',
-        archive_key: 'archive-key',
+        archiveKey: 'archive-key', // Fixed: use camelCase
         containers: 3,
         components: 10,
         collections: 2,
         sections: 5,
         subsections: 8,
         units: 15,
-        created_on_server: '2025-01-01T12:00:00Z',
-        created_at: '2025-01-01T12:00:00Z',
-        created_by: {
+        createdOnServer: '2025-01-01T12:00:00Z', // Fixed: use camelCase
+        createdAt: '2025-01-01T12:00:00Z',
+        createdBy: { // Fixed: use camelCase
           username: 'restoreuser',
           email: 'restore@example.com',
         },
@@ -648,7 +657,7 @@ describe('<CreateLibrary />', () => {
         state: LibraryRestoreStatus.Succeeded,
         result: mockResult,
         error: null,
-        error_log: null,
+        errorLog: null,
       };
 
       render(<CreateLibrary />);
@@ -718,6 +727,178 @@ describe('<CreateLibrary />', () => {
 
       // Should show generic error message
       expect(screen.getByText(messages.genericErrorMessage.defaultMessage)).toBeInTheDocument();
+    });
+
+    test('includes learning_package field when creating from successful archive restore', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+      axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+        id: 'library-from-archive-id',
+      });
+
+      // Set up successful restore state with learningPackageId
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: {
+          learningPackageId: 789,
+          title: 'Archive Library',
+          org: 'ArchiveOrg',
+          slug: 'archive-slug',
+          key: 'ArchiveOrg/archive-slug',
+          archiveKey: 'test-archive-key',
+          containers: 2,
+          components: 8,
+          collections: 1,
+          sections: 4,
+          subsections: 6,
+          units: 10,
+          createdOnServer: '2025-01-01T15:00:00Z',
+          createdAt: '2025-01-01T15:00:00Z',
+          createdBy: {
+            username: 'archiveuser',
+            email: 'archive@example.com',
+          },
+        },
+        error: null,
+        errorLog: null,
+      };
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Fill in form fields
+      const titleInput = await screen.findByRole('textbox', { name: /library name/i });
+      await user.type(titleInput, 'My New Library');
+
+      const orgInput = await screen.findByRole('combobox', { name: /organization/i });
+      await user.click(orgInput);
+      await user.type(orgInput, 'org1');
+      await user.tab();
+
+      const slugInput = await screen.findByRole('textbox', { name: /library id/i });
+      await user.type(slugInput, 'my_new_library');
+
+      // Submit the form - this should trigger the code path that includes learning_package
+      fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+        const postData = JSON.parse(axiosMock.history.post[0].data);
+
+        // Verify that the learning_package field is included with the correct value
+        expect(postData).toEqual({
+          description: '',
+          title: 'My New Library',
+          org: 'org1',
+          slug: 'my_new_library',
+          learning_package: 789, // Tests: submitData.learning_package = restoreStatus.result.learningPackageId
+        });
+      });
+    });
+
+    test('does not include learning_package when creating from archive but restore failed', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+      axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+        id: 'library-from-failed-restore-id',
+      });
+
+      // Set up failed restore state
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Failed,
+        result: null,
+        error: 'Restore failed',
+        errorLog: null,
+      };
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Fill in form fields
+      const titleInput = await screen.findByRole('textbox', { name: /library name/i });
+      await user.type(titleInput, 'Library from Failed Restore');
+
+      const orgInput = await screen.findByRole('combobox', { name: /organization/i });
+      await user.click(orgInput);
+      await user.type(orgInput, 'org1');
+      await user.tab();
+
+      const slugInput = await screen.findByRole('textbox', { name: /library id/i });
+      await user.type(slugInput, 'failed_restore_lib');
+
+      // Submit the form - this should NOT include learning_package since restore failed
+      fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+        const postData = JSON.parse(axiosMock.history.post[0].data);
+
+        // Verify that learning_package field is NOT included since restore failed
+        expect(postData).toEqual({
+          description: '',
+          title: 'Library from Failed Restore',
+          org: 'org1',
+          slug: 'failed_restore_lib',
+        });
+        expect(postData).not.toHaveProperty('learning_package');
+      });
+    });
+
+    test('does not include learning_package when creating from archive but result is null', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+      axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+        id: 'library-from-null-result-id',
+      });
+
+      // Set up successful restore state but with null result
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: null,
+        error: null,
+        errorLog: null,
+      };
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Fill in form fields
+      const titleInput = await screen.findByRole('textbox', { name: /library name/i });
+      await user.type(titleInput, 'Library with Null Result');
+
+      const orgInput = await screen.findByRole('combobox', { name: /organization/i });
+      await user.click(orgInput);
+      await user.type(orgInput, 'org1');
+      await user.tab();
+
+      const slugInput = await screen.findByRole('textbox', { name: /library id/i });
+      await user.type(slugInput, 'null_result_lib');
+
+      // Submit the form - this should NOT include learning_package since result is null
+      fireEvent.click(await screen.findByRole('button', { name: /create/i }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+        const postData = JSON.parse(axiosMock.history.post[0].data);
+
+        // Verify that learning_package field is NOT included since result is null
+        expect(postData).toEqual({
+          description: '',
+          title: 'Library with Null Result',
+          org: 'org1',
+          slug: 'null_result_lib',
+        });
+        expect(postData).not.toHaveProperty('learning_package');
+      });
     });
   });
 });

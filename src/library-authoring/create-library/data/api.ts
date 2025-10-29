@@ -41,10 +41,10 @@ export const createLibraryRestore = async (archiveFile: File): Promise<CreateLib
       'Content-Type': 'multipart/form-data',
     },
   });
-  return data;
+  return camelCaseObject(data);
 };
 
 export const getLibraryRestoreStatus = async (taskId: string): Promise<GetLibraryRestoreStatusResponse> => {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryRestoreStatusApiUrl(taskId));
-  return data;
+  return camelCaseObject(data);
 };
