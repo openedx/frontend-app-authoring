@@ -8,16 +8,31 @@ import {
 import { RequestStatus } from './constants';
 
 /**
+ * Retry configuration - can be overridden in tests
+ */
+export const retryConfig = {
+  maxRetries: 10,
+  initialDelay: 2000,
+  backoffMultiplier: 1.5,
+  enabled: true,
+};
+
+/**
  * Retry an API call if the course is not ready yet (202 or 404 status).
  * Uses exponential backoff for retries.
  */
 async function retryOnNotReady<T>(
   apiCall: () => Promise<T>,
-  maxRetries: number = 10,
-  delayMs: number = 2000,
+  maxRetries: number = retryConfig.maxRetries,
+  delayMs: number = retryConfig.initialDelay,
   attempt: number = 1,
-  backoffMultiplier: number = 1.5,
+  backoffMultiplier: number = retryConfig.backoffMultiplier,
 ): Promise<T> {
+  // Skip retries if disabled (useful for tests)
+  if (!retryConfig.enabled) {
+    return apiCall();
+  }
+
   try {
     return await apiCall();
   } catch (error: any) {

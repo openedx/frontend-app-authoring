@@ -4,7 +4,7 @@ import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
 import { executeThunk } from './utils';
 import { fetchCourseApps } from './pages-and-resources/data/thunks';
-import { fetchCourseDetail } from './data/thunks';
+import { fetchCourseDetail, retryConfig } from './data/thunks';
 import { getApiWaffleFlagsUrl } from './data/api';
 import { initializeMocks, render } from './testUtils';
 
@@ -64,6 +64,15 @@ describe('Editor Pages Load no header', () => {
 describe('Course authoring page', () => {
   const lmsApiBaseUrl = getConfig().LMS_BASE_URL;
   const courseDetailApiUrl = `${lmsApiBaseUrl}/api/courses/v1/courses`;
+
+  beforeAll(() => {
+    retryConfig.enabled = false;
+  });
+
+  afterAll(() => {
+    retryConfig.enabled = true;
+  });
+
   const mockStoreNotFound = async () => {
     axiosMock.onGet(
       `${courseDetailApiUrl}/${courseId}?username=abc123`,
@@ -72,6 +81,7 @@ describe('Course authoring page', () => {
     });
     await executeThunk(fetchCourseDetail(courseId), store.dispatch);
   };
+
   const mockStoreError = async () => {
     axiosMock.onGet(
       `${courseDetailApiUrl}/${courseId}?username=abc123`,
@@ -80,11 +90,13 @@ describe('Course authoring page', () => {
     });
     await executeThunk(fetchCourseDetail(courseId), store.dispatch);
   };
+
   test('renders not found page on non-existent course key', async () => {
     await mockStoreNotFound();
     const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
     expect(await wrapper.findByTestId('notFoundAlert')).toBeInTheDocument();
-  }, 30000);
+  }); // Removido el timeout de 30000, ya no es necesario
+
   test('does not render not found page on other kinds of error', async () => {
     await mockStoreError();
     // Currently, loading errors are not handled, so we wait for the child
@@ -95,12 +107,12 @@ describe('Course authoring page', () => {
     const wrapper = render(
       <CourseAuthoringPage courseId={courseId}>
         <div data-testid={contentTestId} />
-      </CourseAuthoringPage>
-      ,
+      </CourseAuthoringPage>,
     );
     expect(await wrapper.findByTestId(contentTestId)).toBeInTheDocument();
     expect(wrapper.queryByTestId('notFoundAlert')).not.toBeInTheDocument();
   });
+
   const mockStoreDenied = async () => {
     const studioApiBaseUrl = getConfig().STUDIO_BASE_URL;
     const courseAppsApiUrl = `${studioApiBaseUrl}/api/course_apps/v1/apps`;
@@ -110,6 +122,7 @@ describe('Course authoring page', () => {
     ).reply(403);
     await executeThunk(fetchCourseApps(courseId), store.dispatch);
   };
+
   test('renders PermissionDeniedAlert when courseAppsApiStatus is DENIED', async () => {
     mockPathname = '/editor/';
     await mockStoreDenied();
