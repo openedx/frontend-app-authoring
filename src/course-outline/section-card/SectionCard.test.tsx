@@ -74,6 +74,7 @@ const section = {
     versionAvailable: 2,
     versionDeclined: null,
     errorMessage: null,
+    downstreamCustomized: [] as string[],
   },
 } satisfies Partial<XBlock> as XBlock;
 

@@ -74,6 +74,12 @@ describe('<ContainerRow />', () => {
     expect(await screen.findByText(messages.locallyContentUpdatedBeforeMessage.defaultMessage.replace('{blockType}', 'html'))).toBeInTheDocument();
   });
 
+  test('renders with rename and local content update', async () => {
+    render(<ContainerRow title="Test title" containerType="html" side="Before" state="locallyRenamedAndContentUpdated" originalName="Modified name" />);
+    expect(await screen.findByText(messages.renamedDiffBeforeMessage.defaultMessage.replace('{name}', 'Modified name'))).toBeInTheDocument();
+    expect(await screen.findByText(messages.locallyContentUpdatedBeforeMessage.defaultMessage.replace('{blockType}', 'html'))).toBeInTheDocument();
+  });
+
   test('renders with moved state', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="After" state="moved" />);
     expect(await screen.findByText(
