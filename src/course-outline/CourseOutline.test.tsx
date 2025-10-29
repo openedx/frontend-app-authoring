@@ -2490,8 +2490,13 @@ describe('<CourseOutline />', () => {
   });
 });
 
-describe('retryOnNotReady coverage', () => {
-  it('retries on 202 and eventually succeeds', async () => {
+describe('retryOnNotReady lightweight coverage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  it('retries on 202 then succeeds', async () => {
     const mockDispatch = jest.fn();
 
     (getCourseOutlineIndex as jest.Mock)
@@ -2507,20 +2512,29 @@ describe('retryOnNotReady coverage', () => {
         },
       });
 
-    await fetchCourseOutlineIndexQuery(courseId)(mockDispatch);
+    const thunk = fetchCourseOutlineIndexQuery(courseId);
+    const promise = thunk(mockDispatch);
+
+    jest.runAllTimers();
+    await promise;
 
     expect(getCourseOutlineIndex).toHaveBeenCalledTimes(3);
+    // Verifica que terminó con éxito
     expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({ type: expect.stringContaining('SUCCESS') }),
+      expect.objectContaining({
+        payload: expect.objectContaining({ status: RequestStatus.SUCCESSFUL }),
+      }),
     );
   });
 
-  it('stops retrying after maxRetries', async () => {
+  it('throws after max retries', async () => {
     const mockDispatch = jest.fn();
     (getCourseOutlineIndex as jest.Mock).mockRejectedValue({ response: { status: 202 } });
 
-    await expect(
-      fetchCourseOutlineIndexQuery(courseId)(mockDispatch),
-    ).rejects.toBeDefined();
+    const thunk = fetchCourseOutlineIndexQuery(courseId);
+    const promise = thunk(mockDispatch);
+
+    jest.runAllTimers();
+    await expect(promise).rejects.toBeDefined();
   });
 });
