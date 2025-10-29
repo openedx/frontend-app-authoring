@@ -99,6 +99,30 @@ const ReleaseNotes = () => {
 
   const groups = useMemo(() => groupNotesByDate(notes, intl), [notes, intl]);
 
+  // Track active note by scroll and click
+  const [activeNoteId, setActiveNoteId] = React.useState();
+
+  // Scroll tracking: highlight the note whose heading is in view
+  useEffect(() => {
+    const handleScroll = () => {
+      const noteEls = document.querySelectorAll('.release-note-item');
+      let foundId = false;
+      for (const el of noteEls) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < window.innerHeight) {
+          foundId = el.id.replace('note-', '');
+          break;
+        }
+      }
+      if (foundId) {
+        setActiveNoteId(foundId);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // initial
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
       <Header isHiddenMainMenu />
@@ -224,7 +248,11 @@ const ReleaseNotes = () => {
                 </article>
               </Layout.Element>
               <Layout.Element>
-                <ReleaseNotesSidebar notes={notes} />
+                <ReleaseNotesSidebar
+                  notes={notes}
+                  activeNoteId={activeNoteId}
+                  onNoteClick={setActiveNoteId}
+                />
               </Layout.Element>
             </Layout>
           ) : (

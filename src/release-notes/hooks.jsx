@@ -83,9 +83,7 @@ const useReleaseNotes = () => {
         break;
     }
 
-    // Only close form if the operation was successful
     if (result?.success) {
-      closeForm();
       setCurrentNote(initialNote);
     }
   };

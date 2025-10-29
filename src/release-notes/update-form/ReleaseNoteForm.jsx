@@ -8,7 +8,7 @@ import {
   Spinner,
   StatefulButton,
 } from '@openedx/paragon';
-import { Check as CheckIcon } from '@openedx/paragon/icons';
+import { CheckCircleOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -98,10 +98,6 @@ const ReleaseNoteForm = ({
       status = createStatus || editStatus;
     }
 
-    if (status === previousStatusRef.current) {
-      return undefined;
-    }
-
     if (!status) {
       previousStatusRef.current = status;
       return undefined;
@@ -116,7 +112,7 @@ const ReleaseNoteForm = ({
       previousStatusRef.current = status;
       const timer = setTimeout(() => {
         close();
-      }, 500);
+      }, 1000);
       return () => clearTimeout(timer);
     } else if (status === RequestStatus.FAILED && previousStatusRef.current === RequestStatus.PENDING) {
       setButtonState(STATEFUL_BUTTON_STATES.default);
@@ -136,7 +132,7 @@ const ReleaseNoteForm = ({
     icons: {
       default: null,
       pending: <Spinner animation="border" size="sm" />,
-      complete: <Icon src={CheckIcon} />,
+      complete: <Icon src={CheckCircleOutline} />,
     },
     disabledStates: [STATEFUL_BUTTON_STATES.pending, 'complete'],
   };
@@ -341,7 +337,7 @@ const ReleaseNoteForm = ({
                   {intl.formatMessage(messages.cancelButton)}
                 </Button>
                 <StatefulButton
-                  variant="primary"
+                  variant="danger"
                   onClick={handleSubmit}
                   type="submit"
                   state={buttonState}

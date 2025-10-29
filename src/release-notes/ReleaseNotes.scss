@@ -32,6 +32,12 @@
 }
 
 .release-notes-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    width: 320px;
+
     .font-weight-bold {
         font-weight: 700;
     }
