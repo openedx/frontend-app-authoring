@@ -33,7 +33,6 @@ jest.mock('@src/generic/data/apiHooks', () => ({
   }),
 }));
 
-// Mock restore hooks
 const mockRestoreMutate = jest.fn();
 let mockRestoreStatusData: any = {};
 let mockRestoreMutationError: any = null;
