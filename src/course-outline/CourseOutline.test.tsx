@@ -133,6 +133,10 @@ jest.mock('@src/studio-home/data/selectors', () => ({
   }),
 }));
 
+jest.mock('./data/api', () => ({
+  getCourseOutlineIndex: jest.fn(),
+}));
+
 // eslint-disable-next-line no-promise-executor-return
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
