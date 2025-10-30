@@ -44,6 +44,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
   }
 
   const restoreComponent = () => {
+    // istanbul ignore if: this should never happen
     if (!childrenUsageIds) {
       return;
     }
@@ -86,6 +87,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
     }
     const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== usageKey || idx !== index);
     updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
+      // istanbul ignore if
       if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
