@@ -408,7 +408,11 @@ const LibraryAuthoringPage = ({
           <LibrarySidebar />
         </div>
       )}
-      <ImportStepperModal isOpen={importModalIsOpen} onClose={closeImportModal} />
+      <ImportStepperModal
+        isOpen={importModalIsOpen}
+        onClose={closeImportModal}
+        libraryKey={libraryId}
+      />
     </div>
   );
 };

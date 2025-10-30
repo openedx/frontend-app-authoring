@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -9,6 +9,7 @@ import {
   Alert,
   Button,
   Form,
+  Chip,
 } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
@@ -22,6 +23,7 @@ import ProcessingCourses from '@src/studio-home/processing-courses';
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import { RequestStatus } from '@src/data/constants';
+import { useMigrationInfo } from '@src/studio-home/data/apiHooks';
 import messages from '../messages';
 import CoursesFilters from './courses-filters';
 import ContactAdministrator from './contact-administrator';
@@ -39,6 +41,7 @@ interface CardListProps {
   onClickNewCourse?: () => void;
   inSelectMode?: boolean;
   selectedCourseId?: string;
+  currentLibraryId?: string;
 }
 
 const CardList = ({
@@ -53,6 +56,7 @@ const CardList = ({
   onClickNewCourse = () => {},
   inSelectMode = false,
   selectedCourseId,
+  currentLibraryId,
 }: CardListProps) => {
   const {
     courses,
@@ -60,8 +64,28 @@ const CardList = ({
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
 
+  const {
+    data: migrationInfoData,
+  } = useMigrationInfo(courses?.map(item => item.courseKey) || [], true);
+
+  const processedMigrationInfo = useMemo(() => {
+    const result = {};
+    if (migrationInfoData) {
+      for (const libraries of Object.values(migrationInfoData)) {
+        // The map key in `migrationInfoData` is in camelCase.
+        // In the processed map, we use the key in its original form.
+        result[libraries[0].sourceKey] = libraries.map(item => item.targetKey);
+      }
+    }
+    return result;
+  }, [migrationInfoData]);
+
   const isNotFilteringCourses = !isFiltered && !isLoading;
   const hasCourses = courses?.length > 0;
+
+  const isPreviouslyMigrated = useCallback((courseKey: string) => (
+    courseKey in processedMigrationInfo && processedMigrationInfo[courseKey].includes(currentLibraryId)
+  ), [processedMigrationInfo]);
 
   return (
     <>
@@ -79,7 +103,8 @@ const CardList = ({
               url,
             }) => (
               <CardItem
-                key={courseKey}
+                // Add `-migrated` to force re-render of the Chip
+                key={`${courseKey}${isPreviouslyMigrated(courseKey) ? '-migrated' : ''}`}
                 courseKey={courseKey}
                 onClick={() => onClickCard?.(courseKey)}
                 itemId={courseKey}
@@ -93,6 +118,16 @@ const CardList = ({
                 selectMode={inSelectMode ? 'single' : undefined}
                 selectPosition={inSelectMode ? 'card' : undefined}
                 isSelected={inSelectMode && selectedCourseId === courseKey}
+                subtitleBeforeComponent={isPreviouslyMigrated(courseKey) && (
+                  <div
+                    key={`${courseKey}-${processedMigrationInfo[courseKey].join('-')}`}
+                    className="previously-migrated-chip"
+                  >
+                    <Chip>
+                      <FormattedMessage {...messages.previouslyImported} />
+                    </Chip>
+                  </div>
+                )}
               />
             ),
           )}
@@ -139,6 +174,7 @@ interface Props {
   isShowProcessing?: boolean;
   selectedCourseId?: string;
   handleSelect?: (courseId: string) => void;
+  currentLibraryId?: string;
 }
 
 export const CoursesList: React.FC<Props> = ({
@@ -147,6 +183,7 @@ export const CoursesList: React.FC<Props> = ({
   isShowProcessing = false,
   selectedCourseId,
   handleSelect,
+  currentLibraryId,
 }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
@@ -243,6 +280,7 @@ export const CoursesList: React.FC<Props> = ({
               isFiltered={isFiltered || false}
               inSelectMode
               selectedCourseId={selectedCourseId}
+              currentLibraryId={currentLibraryId}
             />
           </Form.RadioSet>
         ) : (

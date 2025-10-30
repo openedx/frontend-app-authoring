@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useRef,
+} from 'react';
 import { useSelector } from 'react-redux';
 import {
   Card,
@@ -208,6 +210,7 @@ interface BaseProps {
   migratedToKey?: string;
   migratedToTitle?: string;
   migratedToCollectionKey?: string | null;
+  subtitleBeforeComponent?: ReactElement | null;
   selectMode?: 'single' | 'multiple';
   selectPosition?: 'card' | 'title';
   isSelected?: boolean;
@@ -248,6 +251,7 @@ const CardItem: React.FC<Props> = ({
   migratedToKey,
   migratedToTitle,
   migratedToCollectionKey,
+  subtitleBeforeComponent,
   scrollIntoView = false,
 }) => {
   const intl = useIntl();
@@ -280,6 +284,14 @@ const CardItem: React.FC<Props> = ({
           from={subtitle}
           to={<>{migratedToKeyObj.org} / {migratedToKeyObj.lib}</>}
         />
+      );
+    }
+    if (subtitleBeforeComponent) {
+      subtitle = (
+        <Stack direction="horizontal" gap={2}>
+          {subtitleBeforeComponent}
+          {subtitle}
+        </Stack>
       );
     }
     return subtitle;

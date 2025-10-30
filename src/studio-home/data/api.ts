@@ -1,4 +1,3 @@
-// @ts-check
 import { camelCaseObject, snakeCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -50,6 +49,14 @@ export interface LibrariesV1ListData {
   libraries: LibraryV1Data[];
 }
 
+export interface MigrationInfo {
+  sourceKey: string;
+  targetCollectionKey: string;
+  targetCollectionTitle: string;
+  targetKey: string;
+  targetTitle: string;
+}
+
 export async function getStudioHomeLibraries(): Promise<LibrariesV1ListData> {
   const { data } = await getAuthenticatedHttpClient().get(`${getStudioHomeApiUrl()}/libraries`);
   return camelCaseObject(data);
@@ -68,5 +75,18 @@ export async function handleCourseNotification(url: string): Promise<object> {
  */
 export async function sendRequestForCourseCreator(): Promise<object> {
   const { data } = await getAuthenticatedHttpClient().post(getRequestCourseCreatorUrl());
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the migration info data for a list of source keys
+ */
+export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<string, MigrationInfo[]>> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  sourceKeys.forEach(key => params.append('source_keys', key));
+
+  const { data } = await client.get(`${getApiBaseUrl()}/api/modulestore_migrator/v1/migration_info/`, { params });
   return camelCaseObject(data);
 }

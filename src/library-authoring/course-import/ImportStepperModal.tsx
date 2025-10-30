@@ -11,9 +11,11 @@ import messages from './messages';
 type MigrationStep = 'select-course' | 'review-details';
 
 export const ImportStepperModal = ({
+  libraryKey,
   isOpen,
   onClose,
 }: {
+  libraryKey: string,
   isOpen: boolean,
   onClose: () => void,
 }) => {
@@ -46,6 +48,7 @@ export const ImportStepperModal = ({
             <CoursesList
               selectedCourseId={selectedCourseId}
               handleSelect={setSelectedCourseId}
+              currentLibraryId={libraryKey}
             />
           </Stepper.Step>
           <Stepper.Step
