@@ -4,17 +4,17 @@ import { Warning } from '@openedx/paragon/icons';
 
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import {
   useContainer,
   useRemoveContainerChildren,
   useLibraryBlockMetadata,
   useContainerChildren,
   useUpdateContainerChildren,
-} from '../data/apiHooks';
+} from '@src/library-authoring/data/apiHooks';
+import { LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import messages from './messages';
-import { LibraryBlockMetadata } from '../data/api';
 
 interface Props {
   usageKey: string;
