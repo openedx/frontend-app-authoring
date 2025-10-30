@@ -7,13 +7,13 @@ import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { getBlockType } from '@src/generic/key-utils';
 
-import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import {
   useContainer, useContainerChildren, useRemoveContainerChildren, useUpdateContainerChildren,
-} from '../data/apiHooks';
-import messages from '../components/messages';
-import { Container } from '../data/api';
+} from '@src/library-authoring/data/apiHooks';
+import messages from '@src/library-authoring/components/messages';
+import { Container } from '@src/library-authoring/data/api';
 
 type ContainerRemoverProps = {
   close: () => void,
