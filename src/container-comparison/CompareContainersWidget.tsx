@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
 import { BoldText } from '@src/utils';
 
+import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -21,7 +22,6 @@ import {
 } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
-import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api';
 
 interface ContainerInfoProps {
   upstreamBlockId: string;

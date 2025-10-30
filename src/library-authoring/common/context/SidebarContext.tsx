@@ -204,7 +204,7 @@ export const SidebarProvider = ({
     if (selectedItemId) {
       // if a item is selected that means we have list of items displayed
       // which means we can get the index from url and set it.
-      const indexNumber = indexParam ? Number(indexParam): undefined;
+      const indexNumber = indexParam ? Number(indexParam) : undefined;
       if (selectedItemId.startsWith('lct:')) {
         openContainerInfoSidebar(selectedItemId, indexNumber);
       } else if (selectedItemId.startsWith('lb:')) {

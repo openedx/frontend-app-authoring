@@ -635,7 +635,7 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
     name = blockType;
     typeNamespace = 'lct';
   }
-  let result =Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
+  let result = Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
     {
       ...child,
       // Generate a unique ID for each child block to avoid "duplicate key" errors in tests

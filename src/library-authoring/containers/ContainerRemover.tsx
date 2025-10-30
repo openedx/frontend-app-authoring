@@ -9,7 +9,9 @@ import { getBlockType } from '@src/generic/key-utils';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useContainer, useContainerChildren, useRemoveContainerChildren, useUpdateContainerChildren } from '../data/apiHooks';
+import {
+  useContainer, useContainerChildren, useRemoveContainerChildren, useUpdateContainerChildren,
+} from '../data/apiHooks';
 import messages from '../components/messages';
 import { Container } from '../data/api';
 
