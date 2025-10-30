@@ -126,7 +126,9 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, readOnly, isDragging, index }: ComponentBlockProps) => {
+const ComponentBlock = ({
+  block, readOnly, isDragging, index,
+}: ComponentBlockProps) => {
   const { showOnlyPublished, openComponentEditor } = useLibraryContext();
 
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();

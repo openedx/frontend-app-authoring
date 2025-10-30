@@ -42,7 +42,9 @@ interface ContainerRowProps extends LibraryContainerChildrenProps {
   index?: number;
 }
 
-const ContainerRow = ({ containerKey, container, readOnly, index }: ContainerRowProps) => {
+const ContainerRow = ({
+  containerKey, container, readOnly, index,
+}: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
@@ -166,7 +168,11 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number, index: number) => {
+  const handleChildClick = useCallback((
+    child: LibraryContainerMetadataWithUniqueId,
+    numberOfClicks: number,
+    index: number,
+  ) => {
     if (readOnly) {
       // don't allow interaction if rendered as preview
       return;

@@ -86,7 +86,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
       });
     };
     updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
-      if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index  === index) {
+      if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -102,7 +102,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
     });
 
     close();
-  }
+  };
 
   const removeText = intl.formatMessage(messages.removeComponentConfirm, {
     componentName: <b>{component?.displayName}</b>,
@@ -117,7 +117,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
       title={intl.formatMessage(messages.removeComponentWarningTitle)}
       icon={Warning}
       description={removeText}
-      onDeleteSubmit={hasDuplicates ? excludeOneInstance: removeFromContainer}
+      onDeleteSubmit={hasDuplicates ? excludeOneInstance : removeFromContainer}
       btnLabel={intl.formatMessage(messages.componentRemoveButtonLabel)}
       buttonVariant="primary"
     />

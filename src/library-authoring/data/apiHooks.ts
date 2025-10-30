@@ -736,29 +736,32 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = <T extends { id: string, isNew?: boolean }>(containerId?: string, published: boolean = false) => (
-  useQuery({
-    enabled: !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-    queryFn: () => api.getLibraryContainerChildren<T>(containerId!, published),
-    structuralSharing: (oldData: T[], newData: T[]) => {
+export const useContainerChildren = <T extends { id: string, isNew?: boolean }>(
+  containerId?: string,
+  published: boolean = false,
+) => (
+    useQuery({
+      enabled: !!containerId,
+      queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
+      queryFn: () => api.getLibraryContainerChildren<T>(containerId!, published),
+      structuralSharing: (oldData: T[], newData: T[]) => {
       // This just sets `isNew` flag to new children components
-      if (oldData) {
-        const oldDataIds = oldData.map((obj) => obj.id);
-        // eslint-disable-next-line no-param-reassign
-        newData = newData.map((newObj) => {
-          if (!oldDataIds.includes(newObj.id)) {
+        if (oldData) {
+          const oldDataIds = oldData.map((obj) => obj.id);
+          // eslint-disable-next-line no-param-reassign
+          newData = newData.map((newObj) => {
+            if (!oldDataIds.includes(newObj.id)) {
             // Set isNew = true if we have new child on refetch
             // eslint-disable-next-line no-param-reassign
-            newObj.isNew = true;
-          }
-          return newObj;
-        });
-      }
-      return replaceEqualDeep(oldData, newData);
-    },
-  })
-);
+              newObj.isNew = true;
+            }
+            return newObj;
+          });
+        }
+        return replaceEqualDeep(oldData, newData);
+      },
+    })
+  );
 
 /**
  * If you work with `useContentFromSearchIndex`, you can use this
