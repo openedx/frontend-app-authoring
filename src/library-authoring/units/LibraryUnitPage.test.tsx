@@ -390,7 +390,7 @@ describe('<LibraryUnitPage />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
   });
 
-  it('should remove only one instance of component even if it is present multiple times in library', async () => {
+  it('should remove only one instance of component even if it is present multiple times in this page', async () => {
     const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerChildren.unitIdWithDuplicate);
     axiosMock.onPatch(url).reply(200);
