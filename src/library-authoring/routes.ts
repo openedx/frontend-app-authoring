@@ -233,6 +233,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.HOME;
     }
 
+    // Since index is just the order number of the selectedItemId
+    // clear index if selectedItemId is undefined
     if (routeParams.selectedItemId === undefined) {
       routeParams.index = undefined;
     }
