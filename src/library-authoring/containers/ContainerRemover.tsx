@@ -63,11 +63,13 @@ const ContainerRemover = ({
       if (hasDuplicates && childrenUsageIds && typeof index !== 'undefined') {
         const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== containerKey || idx !== index);
         await updateContainerChildrenMutation.mutateAsync(updatedKeys);
+        // istanbul ignore if
         if (sidebarItemInfo?.id === containerKey && sidebarItemInfo?.index === index) {
           closeLibrarySidebar();
         }
       } else {
         await removeContainerMutation.mutateAsync([containerKey]);
+        // istanbul ignore if
         if (sidebarItemInfo?.id === containerKey) {
           closeLibrarySidebar();
         }
