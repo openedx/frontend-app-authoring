@@ -9,26 +9,33 @@ import { useSidebarContext } from '../common/context/SidebarContext';
 import {
   useContainer,
   useRemoveContainerChildren,
-  useAddItemsToContainer,
   useLibraryBlockMetadata,
+  useContainerChildren,
+  useUpdateContainerChildren,
 } from '../data/apiHooks';
 import messages from './messages';
+import { LibraryBlockMetadata } from '../data/api';
 
 interface Props {
   usageKey: string;
+  index?: number;
   close: () => void;
 }
 
-const ComponentRemover = ({ usageKey, close }: Props) => {
+const ComponentRemover = ({ usageKey, index, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
-  const { containerId } = useLibraryContext();
+  const { containerId, showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);
-  const addItemToContainerMutation = useAddItemsToContainer(containerId);
+  const updateContainerChildrenMutation = useUpdateContainerChildren(containerId);
   const { data: container, isPending: isPendingParentContainer } = useContainer(containerId);
   const { data: component, isPending } = useLibraryBlockMetadata(usageKey);
+  // Use update api for children if duplicates are present to avoid removing all instances of the child
+  const { data: children } = useContainerChildren<LibraryBlockMetadata>(containerId, showOnlyPublished);
+  const childrenUsageIds = children?.map((child) => child.id);
+  const hasDuplicates = (childrenUsageIds?.filter((child) => child === usageKey).length || 0) > 1;
 
   // istanbul ignore if: loading state
   if (isPending || isPendingParentContainer) {
@@ -37,8 +44,11 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
   }
 
   const removeFromContainer = () => {
+    if (!childrenUsageIds) {
+      return;
+    }
     const restoreComponent = () => {
-      addItemToContainerMutation.mutateAsync([usageKey]).then(() => {
+      updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
       }).catch(() => {
         showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
@@ -63,6 +73,37 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
     close();
   };
 
+  const excludeOneInstance = () => {
+    if (!childrenUsageIds || typeof index === 'undefined') {
+      return;
+    }
+    const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== usageKey || idx !== index);
+    const restoreComponent = () => {
+      updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
+        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
+      });
+    };
+    updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
+      if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index  === index) {
+        // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      showToast(
+        intl.formatMessage(messages.removeComponentFromContainerSuccess),
+        {
+          label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
+          onClick: restoreComponent,
+        },
+      );
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+    });
+
+    close();
+  }
+
   const removeText = intl.formatMessage(messages.removeComponentConfirm, {
     componentName: <b>{component?.displayName}</b>,
     parentContainerName: <b>{container?.displayName}</b>,
@@ -76,7 +117,7 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
       title={intl.formatMessage(messages.removeComponentWarningTitle)}
       icon={Warning}
       description={removeText}
-      onDeleteSubmit={removeFromContainer}
+      onDeleteSubmit={hasDuplicates ? excludeOneInstance: removeFromContainer}
       btnLabel={intl.formatMessage(messages.componentRemoveButtonLabel)}
       buttonVariant="primary"
     />

@@ -702,10 +702,10 @@ export async function restoreContainer(containerId: string) {
 /**
  * Fetch a library container's children's metadata.
  */
-export async function getLibraryContainerChildren(
+export async function getLibraryContainerChildren<T>(
   containerId: string,
   published: boolean = false,
-): Promise<LibraryBlockMetadata[] | Container[]> {
+): Promise<T[]> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerChildrenApiUrl(containerId, published),
   );

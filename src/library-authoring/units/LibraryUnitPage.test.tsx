@@ -381,13 +381,42 @@ describe('<LibraryUnitPage />', () => {
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
     const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
-    axiosMock.onPost(restoreUrl).reply(200);
+    axiosMock.onPatch(restoreUrl).reply(200);
     // restore collection
     restoreFn();
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.patch.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
+  });
+
+  it('should remove only one instance of component even if it is present multiple times in library', async () => {
+    const user = userEvent.setup();
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerChildren.unitIdWithDuplicate);
+    axiosMock.onPatch(url).reply(200);
+    renderLibraryUnitPage(mockGetContainerChildren.unitIdWithDuplicate);
+
+    expect((await screen.findAllByText('text block 0')).length).toEqual(2);
+    const menu = (await screen.findAllByRole('button', { name: /component actions menu/i }))[0];
+    await user.click(menu);
+
+    const removeButton = await screen.findByText('Remove from unit');
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
+    const result = await mockGetContainerChildren(mockGetContainerChildren.unitIdWithDuplicate);
+    const resultIds = result.map((obj) => obj.id);
+
+    await waitFor(() => {
+      expect(axiosMock.history.patch[0].url).toEqual(url);
+      // Only the first element is removed even though the last element has the same id.
+      expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
   });
 
   it('should show error on remove a component', async () => {
@@ -444,11 +473,11 @@ describe('<LibraryUnitPage />', () => {
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
     const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
-    axiosMock.onPost(restoreUrl).reply(404);
+    axiosMock.onPatch(restoreUrl).reply(404);
     // restore collection
     restoreFn();
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.patch.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Failed to undo remove component operation');
   });

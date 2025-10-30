@@ -21,6 +21,7 @@ import {
 } from './types';
 import { diffPreviewContainerChildren, isRowClickable } from './utils';
 import messages from './messages';
+import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api';
 
 interface ContainerInfoProps {
   upstreamBlockId: string;
@@ -60,7 +61,7 @@ const CompareContainersWidgetInner = ({
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren(state === 'removed' ? undefined : upstreamBlockId, true);
+  } = useContainerChildren<Container | LibraryBlockMetadata>(state === 'removed' ? undefined : upstreamBlockId, true);
   const {
     data: containerData,
     isError: isContainerTitleError,

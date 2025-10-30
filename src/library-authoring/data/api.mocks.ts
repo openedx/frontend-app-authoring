@@ -603,6 +603,7 @@ mockGetContainerMetadata.applyMock = () => {
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
   let blockType = 'html';
+  let addDuplicate = false;
   switch (containerId) {
     case mockGetContainerMetadata.unitId:
     case mockGetContainerMetadata.sectionId:
@@ -614,6 +615,10 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       break;
     case mockGetContainerChildren.sixChildren:
       numChildren = 6;
+      break;
+    case mockGetContainerChildren.unitIdWithDuplicate:
+      numChildren = 3;
+      addDuplicate = true;
       break;
     default:
       numChildren = 0;
@@ -630,19 +635,22 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
     name = blockType;
     typeNamespace = 'lct';
   }
-  return Promise.resolve(
-    Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
-      {
-        ...child,
-        // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
-        displayName: `${name} block ${idx}`,
-        publishedDisplayName: `${name} block published ${idx}`,
-        blockType,
-      }
-    )),
-  );
+  let result =Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
+    {
+      ...child,
+      // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
+      id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
+      displayName: `${name} block ${idx}`,
+      publishedDisplayName: `${name} block published ${idx}`,
+      blockType,
+    }
+  ));
+  if (addDuplicate) {
+    result = [...result, result[0]];
+  }
+  return Promise.resolve(result);
 }
+mockGetContainerChildren.unitIdWithDuplicate = 'lct:org1:Demo_Course:unit:unit-duplicate';
 mockGetContainerChildren.fiveChildren = 'lct:org1:Demo_Course:unit:unit-5';
 mockGetContainerChildren.sixChildren = 'lct:org1:Demo_Course:unit:unit-6';
 mockGetContainerChildren.childTemplate = {
