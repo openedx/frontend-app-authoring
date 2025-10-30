@@ -109,7 +109,7 @@ describe('<CoursesTab />', () => {
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
 
-  it('should render processing courses component when isEnabledPagination is false and isShowProcessing is true', () => {
+  it('should render processing courses component when isEnabledPagination is false and isShowProcessing is true', async () => {
     const props = { isShowProcessing: true, isEnabledPagination: false };
     const customStoreData = {
       studioHomeData: {
@@ -121,7 +121,7 @@ describe('<CoursesTab />', () => {
       },
     };
     renderComponent(props, customStoreData);
-    const alertCoursesNotFound = screen.queryByTestId('processing-courses-title');
+    const alertCoursesNotFound = await screen.findByTestId('processing-courses-title');
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
 
