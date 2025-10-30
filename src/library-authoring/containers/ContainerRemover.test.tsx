@@ -1,19 +1,14 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
-import { QueryClient } from '@tanstack/react-query';
 
-import { act } from 'react';
 import {
   initializeMocks,
-  fireEvent,
   render,
   screen,
   waitFor,
 } from '../../testUtils';
 import {
-  getLibraryContainerApiUrl,
   getLibraryContainerChildrenApiUrl,
-  getLibraryContainersApiUrl,
 } from '../data/api';
 import {
   mockContentLibrary,
@@ -22,21 +17,13 @@ import {
   mockGetContainerChildren,
   mockLibraryBlockMetadata,
 } from '../data/api.mocks';
-import { mockContentSearchConfig, mockGetBlockTypes, mockSearchResult } from '../../search-manager/data/api.mock';
+import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
-import LibraryLayout from '../LibraryLayout';
-import { ToastActionData, ToastProvider } from '../../generic/toast-context';
-import mockResult from '../__mocks__/subsection-single.json';
-import { ContainerType } from '../../generic/key-utils';
+import { ToastProvider } from '../../generic/toast-context';
 import ContainerRemover from './ContainerRemover';
 import { LibraryProvider } from '../common/context/LibraryContext';
 
-const path = '/library/:libraryId/*';
-const libraryTitle = mockContentLibrary.libraryData.title;
-
 let axiosMock: MockAdapter;
-let queryClient: QueryClient;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 mockClipboardEmpty.applyMock();
 mockGetContainerMetadata.applyMock();
@@ -57,8 +44,8 @@ const renderModal = (element: React.ReactNode) => {
         {element}
       </LibraryProvider>
     </ToastProvider>,
-  )
-}
+  );
+};
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -69,7 +56,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('<ContainerRemover />', () => {
   beforeEach(() => {
-    ({ axiosMock, mockShowToast, queryClient } = initializeMocks());
+    ({ axiosMock } = initializeMocks());
   });
 
   afterEach(() => {
@@ -88,7 +75,7 @@ describe('<ContainerRemover />', () => {
       containerKey={result[0].id}
       displayName="Title"
       index={0}
-    />)
+    />);
     const btn = await screen.findByRole('button', { name: 'Remove' });
     await user.click(btn);
 
