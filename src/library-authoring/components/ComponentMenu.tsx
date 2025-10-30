@@ -23,7 +23,12 @@ import containerMessages from '../containers/messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
 
-export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
+interface Props {
+  usageKey: string;
+  index?: number;
+}
+
+export const ComponentMenu = ({ usageKey, index }: Props) => {
   const intl = useIntl();
   const {
     libraryId,
@@ -135,6 +140,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       {isRemoveModalOpen && (
         <ComponentRemover
           usageKey={usageKey}
+          index={index}
           close={closeRemoveModal}
         />
       )}

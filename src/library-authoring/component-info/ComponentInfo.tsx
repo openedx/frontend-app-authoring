@@ -111,6 +111,8 @@ const ComponentActions = ({
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
   const canEdit = canEditComponent(componentId);
 
+  const { sidebarItemInfo } = useSidebarContext();
+
   if (isPublisherOpen) {
     return (
       <ComponentPublisher
@@ -141,7 +143,7 @@ const ComponentActions = ({
         )}
       </div>
       <div className="mt-2">
-        <ComponentMenu usageKey={componentId} />
+        <ComponentMenu usageKey={componentId} index={sidebarItemInfo?.index} />
       </div>
     </div>
   );
