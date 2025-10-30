@@ -43,31 +43,38 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
     return null;
   }
 
-  const removeFromContainer = () => {
+  const restoreComponent = () => {
     if (!childrenUsageIds) {
       return;
     }
-    const restoreComponent = () => {
-      updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
-      });
-    };
+    updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
+      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
+    });
+  };
+
+  const showSuccessToast = () => {
+    showToast(
+      intl.formatMessage(messages.removeComponentFromContainerSuccess),
+      {
+        label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
+        onClick: restoreComponent,
+      },
+    );
+  };
+
+  const showFailureToast = () => showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+
+  const removeFromContainer = () => {
     removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
       if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(
-        intl.formatMessage(messages.removeComponentFromContainerSuccess),
-        {
-          label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
-          onClick: restoreComponent,
-        },
-      );
+      showSuccessToast();
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+      showFailureToast();
     });
 
     close();
@@ -78,27 +85,18 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
       return;
     }
     const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== usageKey || idx !== index);
-    const restoreComponent = () => {
-      updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
-      });
-    };
     updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
       if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(
-        intl.formatMessage(messages.removeComponentFromContainerSuccess),
-        {
-          label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
-          onClick: restoreComponent,
-        },
-      );
+      // Already tested as part of removeFromContainer
+      // istanbul ignore next
+      showSuccessToast();
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+      // Already tested as part of removeFromContainer
+      // istanbul ignore next
+      showFailureToast();
     });
 
     close();

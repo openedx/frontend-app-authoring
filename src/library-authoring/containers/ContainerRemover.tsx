@@ -81,12 +81,16 @@ const ContainerRemover = ({
   }, [
     containerKey,
     removeContainerMutation,
+    updateContainerChildrenMutation,
     sidebarItemInfo,
     closeLibrarySidebar,
     showToast,
     removeSuccess,
     removeError,
     close,
+    hasDuplicates,
+    childrenUsageIds,
+    index,
   ]);
 
   // istanbul ignore if: loading state
