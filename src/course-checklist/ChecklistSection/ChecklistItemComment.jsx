@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage, FormattedNumber } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, FormattedNumber } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 import { ModeComment } from '@openedx/paragon/icons';
@@ -127,4 +127,4 @@ ChecklistItemComment.propTypes = {
   ]).isRequired,
 };
 
-export default injectIntl(ChecklistItemComment);
+export default ChecklistItemComment;

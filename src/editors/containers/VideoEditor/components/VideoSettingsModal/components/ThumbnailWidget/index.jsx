@@ -3,8 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 import {
   Image,
@@ -32,14 +31,13 @@ import { ErrorContext } from '../../../../hooks';
  * Collapsible Form widget controlling video thumbnail
  */
 const ThumbnailWidget = ({
-  // injected
-  intl,
   // redux
   isLibrary,
   allowThumbnailUpload,
   thumbnail,
   videoId,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
   const [error] = React.useContext(ErrorContext).thumbnail;
   const imgRef = React.useRef();
@@ -126,8 +124,6 @@ const ThumbnailWidget = ({
 };
 
 ThumbnailWidget.propTypes = {
-  // injected
-  intl: intlShape.isRequired,
   // redux
   isLibrary: PropTypes.bool.isRequired,
   allowThumbnailUpload: PropTypes.bool.isRequired,
@@ -144,4 +140,4 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = {};
 
 export const ThumbnailWidgetInternal = ThumbnailWidget; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ThumbnailWidget));
+export default connect(mapStateToProps, mapDispatchToProps)(ThumbnailWidget);

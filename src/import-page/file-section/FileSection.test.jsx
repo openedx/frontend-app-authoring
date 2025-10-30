@@ -1,6 +1,6 @@
 import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
@@ -14,7 +14,7 @@ const courseId = '123';
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <FileSection intl={injectIntl} courseId={courseId} />
+      <FileSection courseId={courseId} />
     </IntlProvider>
   </AppProvider>
 );
