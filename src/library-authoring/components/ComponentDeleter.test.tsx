@@ -35,7 +35,7 @@ const renderArgs = {
   ),
 };
 
-let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
 
 describe('<ComponentDeleter />', () => {
   beforeEach(() => {
