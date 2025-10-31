@@ -293,6 +293,7 @@ const CardItem: React.FC<Props> = ({
             </Stack>
           </Card.Status>
           )}
+        <Card.Footer />
       </Card>
     </div>
   );

@@ -58,26 +58,9 @@
 .card-item {
   margin-bottom: 1.5rem;
 
-  .pgn__card-header {
-    padding: .9375rem 1.25rem;
-
-    .pgn__card-header-content {
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .pgn__card-header-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0;
-    }
-  }
-
   .card-item-title {
     font: normal var(--pgn-typography-font-weight-semi-bold) 1.125rem/1.75rem var(--pgn-typography-font-family-base);
     color: var(--pgn-color-black);
-    margin-bottom: .1875rem;
   }
 
   .pgn__card-header-subtitle-md {
