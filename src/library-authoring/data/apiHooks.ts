@@ -736,15 +736,18 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = <T extends { id: string, isNew?: boolean }>(
-  containerId?: string,
-  published: boolean = false,
-) => (
+export const useContainerChildren = <ChildType extends {
+  id: string;
+  isNew?: boolean;
+} = api.LibraryBlockMetadata | api.Container>(
+    containerId?: string,
+    published: boolean = false,
+  ) => (
     useQuery({
       enabled: !!containerId,
       queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-      queryFn: () => api.getLibraryContainerChildren<T>(containerId!, published),
-      structuralSharing: (oldData: T[], newData: T[]) => {
+      queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+      structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
         if (oldData) {
           const oldDataIds = oldData.map((obj) => obj.id);
