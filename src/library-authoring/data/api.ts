@@ -157,6 +157,10 @@ export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUr
  * Get the URL for the API endpoint to copy a single container.
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
+/**
+ * Get the url for the API endpoint to list library course migrations.
+ */
+export const getCourseMigrationsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/modulestore_migrator/v1/library/${libraryId}/migrations/courses/`;
 
 export interface ContentLibrary {
   id: string;
@@ -783,4 +787,25 @@ export async function getLibraryContainerHierarchy(
  */
 export async function publishContainer(containerId: string) {
   await getAuthenticatedHttpClient().post(getLibraryContainerPublishApiUrl(containerId));
+}
+
+export interface CourseMigration {
+  source: {
+    key: string;
+    displayName: string;
+  };
+  targetCollection: {
+    key: string;
+    title: string;
+  } | null;
+  state: 'Succeeded' | 'Failed' | 'InProgress';
+  progress: number;
+}
+
+/**
+ * Returns the course migrations which had this library as destination.
+ */
+export async function getCourseMigrations(libraryId: string): Promise<CourseMigration[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseMigrationsApiUrl(libraryId));
+  return camelCaseObject(data);
 }
