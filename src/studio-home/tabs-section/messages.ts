@@ -136,6 +136,11 @@ const messages = defineMessages({
     defaultMessage: 'Select All',
     description: 'Button to select all libraries when migrate legacy libraries.',
   },
+  previouslyImported: {
+    id: 'studio-home.course-list.card.previously-imported.text',
+    defaultMessage: 'Previously Imported',
+    description: 'Chip that indicates that the course has been previously imported.',
+  },
 });
 
 export default messages;

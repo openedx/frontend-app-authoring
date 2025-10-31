@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useRef,
+} from 'react';
 import { useSelector } from 'react-redux';
 import {
   Card,
@@ -9,7 +11,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { AccessTime, ArrowForward, MoreHoriz } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
 
@@ -128,8 +130,75 @@ const CardTitle: React.FC<CardTitleProps> = ({
   return getTitle();
 };
 
+interface CardMenuProps {
+  showMenu: boolean;
+  isShowRerunLink?: boolean;
+  rerunLink: string | null;
+  lmsLink: string | null;
+}
+
+const CardMenu = ({
+  showMenu,
+  isShowRerunLink,
+  rerunLink,
+  lmsLink,
+}: CardMenuProps) => {
+  const intl = useIntl();
+
+  if (!showMenu) {
+    return null;
+  }
+
+  return (
+    <Dropdown>
+      <Dropdown.Toggle
+        as={IconButton}
+        iconAs={MoreHoriz}
+        variant="primary"
+        aria-label={intl.formatMessage(messages.btnDropDownText)}
+      />
+      <Dropdown.Menu>
+        {isShowRerunLink && (
+          <Dropdown.Item
+            as={Link}
+            to={rerunLink ?? ''}
+          >
+            {messages.btnReRunText.defaultMessage}
+          </Dropdown.Item>
+        )}
+        <Dropdown.Item href={lmsLink}>
+          <FormattedMessage {...messages.viewLiveBtnText} />
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
+
+const SelectAction = ({
+  itemId,
+  selectMode,
+}: {
+  itemId: string,
+  selectMode: 'single' | 'multiple';
+}) => {
+  if (selectMode === 'single') {
+    return (
+      <Form.Radio
+        value={itemId}
+        name={`select-card-item-${itemId}`}
+      />
+    );
+  }
+
+  // Multiple
+  return (
+    <Form.Checkbox value={itemId} />
+  );
+};
+
 interface BaseProps {
   displayName: string;
+  onClick?: () => void;
   org: string;
   number: string;
   run?: string;
@@ -141,7 +210,9 @@ interface BaseProps {
   migratedToKey?: string;
   migratedToTitle?: string;
   migratedToCollectionKey?: string | null;
+  subtitleBeforeComponent?: ReactElement | null;
   selectMode?: 'single' | 'multiple';
+  selectPosition?: 'card' | 'title';
   isSelected?: boolean;
   itemId?: string;
   scrollIntoView?: boolean;
@@ -162,6 +233,7 @@ type Props = BaseProps & (
  */
 const CardItem: React.FC<Props> = ({
   displayName,
+  onClick,
   lmsLink = '',
   rerunLink = '',
   org,
@@ -170,6 +242,7 @@ const CardItem: React.FC<Props> = ({
   isLibraries = false,
   courseKey = '',
   selectMode,
+  selectPosition,
   isSelected = false,
   itemId = '',
   path,
@@ -178,6 +251,7 @@ const CardItem: React.FC<Props> = ({
   migratedToKey,
   migratedToTitle,
   migratedToCollectionKey,
+  subtitleBeforeComponent,
   scrollIntoView = false,
 }) => {
   const intl = useIntl();
@@ -195,7 +269,7 @@ const CardItem: React.FC<Props> = ({
       : new URL(url, getConfig().STUDIO_BASE_URL).toString()
   );
   const readOnlyItem = !(lmsLink || rerunLink || url || path);
-  const showActions = !(readOnlyItem || isLibraries);
+  const showActionsMenu = !(readOnlyItem || isLibraries || selectMode !== undefined);
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus
     && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
@@ -210,6 +284,14 @@ const CardItem: React.FC<Props> = ({
           from={subtitle}
           to={<>{migratedToKeyObj.org} / {migratedToKeyObj.lib}</>}
         />
+      );
+    }
+    if (subtitleBeforeComponent) {
+      subtitle = (
+        <Stack direction="horizontal" gap={2}>
+          {subtitleBeforeComponent}
+          {subtitle}
+        </Stack>
       );
     }
     return subtitle;
@@ -232,16 +314,18 @@ const CardItem: React.FC<Props> = ({
 
   return (
     <div ref={cardRef} className="w-100">
-      <Card className={classNames('card-item', {
-        selected: isSelected,
-      })}
+      <Card
+        onClick={onClick}
+        className={classNames('card-item', {
+          selected: isSelected,
+        })}
       >
         <Card.Header
           size="sm"
           title={(
             <CardTitle
-              readOnlyItem={readOnlyItem}
-              selectMode={selectMode}
+              readOnlyItem={readOnlyItem || selectMode !== undefined}
+              selectMode={selectPosition === 'title' ? selectMode : undefined}
               destinationUrl={destinationUrl}
               title={title}
               itemId={itemId}
@@ -251,28 +335,18 @@ const CardItem: React.FC<Props> = ({
             />
           )}
           subtitle={getSubtitle()}
-          actions={showActions && (
-          <Dropdown>
-            <Dropdown.Toggle
-              as={IconButton}
-              iconAs={MoreHoriz}
-              variant="primary"
-              aria-label={intl.formatMessage(messages.btnDropDownText)}
+          actions={(selectMode && selectPosition === 'card') ? (
+            <SelectAction
+              itemId={itemId}
+              selectMode={selectMode}
             />
-            <Dropdown.Menu>
-              {isShowRerunLink && (
-                <Dropdown.Item
-                  as={Link}
-                  to={rerunLink ?? ''}
-                >
-                  {messages.btnReRunText.defaultMessage}
-                </Dropdown.Item>
-              )}
-              <Dropdown.Item href={lmsLink}>
-                {intl.formatMessage(messages.viewLiveBtnText)}
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          ) : (
+            <CardMenu
+              showMenu={showActionsMenu}
+              isShowRerunLink={isShowRerunLink}
+              rerunLink={rerunLink}
+              lmsLink={lmsLink}
+            />
           )}
         />
         {isMigrated && migratedToKey

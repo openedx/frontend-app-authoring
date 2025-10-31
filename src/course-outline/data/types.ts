@@ -24,6 +24,15 @@ export interface CourseOutline {
   rerunNotificationId: null;
 }
 
+// TODO: This interface has only basic data, all the rest needs to be added.
+export interface CourseDetails {
+  courseId: string;
+  title: string;
+  subtitle?: string;
+  org: string;
+  description?: string;
+}
+
 export interface CourseOutlineState {
   loadingStatus: {
     outlineIndexLoadingStatus: string;
