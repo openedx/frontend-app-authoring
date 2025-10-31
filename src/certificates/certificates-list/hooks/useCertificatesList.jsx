@@ -25,7 +25,7 @@ const useCertificatesList = (courseId) => {
   }));
 
   const handleSubmit = async (values) => {
-    await dispatch(updateCourseCertificate(courseId, values));
+    dispatch(updateCourseCertificate(courseId, values));
     setEditModes({});
     dispatch(setMode(MODE_STATES.view));
   };

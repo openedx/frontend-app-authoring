@@ -71,7 +71,7 @@ const LiveSettings = ({
   };
 
   const handleSettingsSave = async (values) => {
-    await dispatch(saveLiveConfiguration(courseId, values, navigate));
+    dispatch(saveLiveConfiguration(courseId, values, navigate));
   };
 
   useEffect(() => {
