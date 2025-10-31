@@ -160,7 +160,7 @@ export function deleteVideoFile(courseId, id) {
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'delete',
@@ -184,7 +184,7 @@ export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }
           'Upload failed',
           'upload_failed',
         );
-      } catch (error) {
+      } catch {
         // eslint-disable-next-line no-console
         console.error(`Failed to send "Failed" upload status for ${edxVideoId} onbeforeunload`);
       }
@@ -207,7 +207,7 @@ const addVideoToEdxVal = async (courseId, file, dispatch) => {
       createUrlResponse.data,
     ).files;
     return { uploadUrl, edxVideoId };
-  } catch (error) {
+  } catch {
     dispatch(failAddVideo({ fileName: file.name }));
     return {};
   }
@@ -471,7 +471,7 @@ export function deleteVideoTranscript({
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'transcript',
@@ -515,7 +515,7 @@ export function downloadVideoTranscript({
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'transcript',
@@ -638,7 +638,7 @@ export function getUsagePaths({ video, courseId }) {
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'usageMetrics',
@@ -682,7 +682,7 @@ export function fetchVideoDownload({ selectedRows, courseId }) {
           }),
         );
       }
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'download',
@@ -717,7 +717,7 @@ export function clearAutomatedTranscript({ courseId }) {
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'transcript',
@@ -756,7 +756,7 @@ export function updateTranscriptCredentials({ courseId, data }) {
           status: RequestStatus.SUCCESSFUL,
         }),
       );
-    } catch (error) {
+    } catch {
       dispatch(
         updateErrors({
           error: 'transcript',

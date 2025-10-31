@@ -93,7 +93,7 @@ export function parseArrayOrObjectValues(obj: { [s: string]: string; } | ArrayLi
       } else {
         result[key] = JSON.parse(value);
       }
-    } catch (e) {
+    } catch {
       result[key] = value;
     }
   });

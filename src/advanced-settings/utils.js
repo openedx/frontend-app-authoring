@@ -17,7 +17,7 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields,
   Object.entries(settingObj).forEach(([settingName, settingValue]) => {
     try {
       JSON.parse(settingValue);
-    } catch (e) {
+    } catch {
       let targetSettingValue = settingValue;
       const firstNonWhite = settingValue.substring(0, 1);
       const isValid = !['{', '[', "'"].includes(firstNonWhite);
@@ -30,7 +30,7 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields,
             ...prevEditedSettings,
             [settingName]: targetSettingValue,
           }));
-        } catch (quotedE) { /* empty */ }
+        } catch { /* empty */ }
       }
 
       pushDataToErrorArray(settingName);

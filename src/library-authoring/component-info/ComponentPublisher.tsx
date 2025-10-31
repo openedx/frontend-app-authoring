@@ -30,7 +30,7 @@ export const ComponentPublisher = ({
     try {
       await publishComponent.mutateAsync();
       showToast(intl.formatMessage(messages.publishSuccessMsg));
-    } catch (error) {
+    } catch {
       showToast(intl.formatMessage(messages.publishErrorMsg));
     }
     handleClose();

@@ -68,7 +68,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         },
       });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
     }
   };
@@ -246,7 +246,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     try {
       await orderMutator.mutateAsync(usageKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);

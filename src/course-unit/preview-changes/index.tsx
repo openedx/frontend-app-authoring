@@ -177,7 +177,7 @@ export const PreviewLibraryXBlockChanges = ({
         overrideCustomizations,
       });
       postChange(accept);
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(failureMsg));
     } finally {
       closeModal();

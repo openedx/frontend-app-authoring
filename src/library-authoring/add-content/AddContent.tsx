@@ -297,7 +297,7 @@ export const parseErrorMsg = (
     if (detail) {
       return intl.formatMessage(detailedMessage, { detail });
     }
-  } catch (_err) {
+  } catch {
     // ignore
   }
   return intl.formatMessage(defaultMessage);

@@ -32,7 +32,7 @@ const CollectionInfoHeader = () => {
         title: newTitle,
       });
       showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateCollectionErrorMsg));
     }
   };

@@ -59,7 +59,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
     setState('pending');
     try {
       await onClick(e);
-    } catch (err) {
+    } catch {
       // Do nothing
     } finally {
       if (componentMounted.current) {
