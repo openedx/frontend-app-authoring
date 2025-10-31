@@ -59,11 +59,6 @@ describe('<ContainerRemover />', () => {
     ({ axiosMock } = initializeMocks());
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-    axiosMock.restore();
-  });
-
   it('triggers update container children api call when duplicates are present', async () => {
     const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerChildren.unitIdWithDuplicate);
