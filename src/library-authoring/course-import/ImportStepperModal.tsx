@@ -65,7 +65,10 @@ export const ImportStepperModal = ({
             <ModalDialog.CloseButton variant="tertiary">
               <FormattedMessage {...messages.importCourseCalcel} />
             </ModalDialog.CloseButton>
-            <Button onClick={() => setCurrentStep('review-details')}>
+            <Button
+              onClick={() => setCurrentStep('review-details')}
+              disabled={selectedCourseId === undefined}
+            >
               <FormattedMessage {...messages.importCourseNext} />
             </Button>
           </ActionRow>

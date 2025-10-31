@@ -66,7 +66,7 @@ const CardList = ({
 
   const {
     data: migrationInfoData,
-  } = useMigrationInfo(courses?.map(item => item.courseKey) || [], true);
+  } = useMigrationInfo(courses?.map(item => item.courseKey) || [], currentLibraryId !== undefined);
 
   const processedMigrationInfo = useMemo(() => {
     const result = {};
