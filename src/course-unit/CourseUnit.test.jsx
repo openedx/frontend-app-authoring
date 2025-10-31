@@ -2371,4 +2371,59 @@ describe('<CourseUnit />', () => {
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
   });
+
+  it('resets XBlock publish state after discarding changes', async () => {
+    render(<RootWrapper />);
+    let courseUnitSidebar;
+    let discardChangesBtn;
+
+    await waitFor(() => {
+      courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+      // Ensure we are in the draft/unpublished state
+      expect(within(courseUnitSidebar)
+        .getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
+      discardChangesBtn = within(courseUnitSidebar)
+        .queryByRole('button', { name: sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage });
+      expect(discardChangesBtn).toBeInTheDocument();
+      userEvent.click(discardChangesBtn);
+    });
+
+    // Confirm discard in modal
+    const modalNotification = await screen.findByRole('dialog');
+    const actionBtn = within(modalNotification)
+      .getByRole('button', { name: sidebarMessages.modalDiscardUnitChangesActionButtonText.defaultMessage });
+    userEvent.click(actionBtn);
+
+    // Mock API responses for discard
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.discardChanges,
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          published: true,
+          has_changes: false,
+        },
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(
+      blockId,
+      PUBLISH_TYPES.discardChanges,
+      true,
+    ), store.dispatch);
+
+    // Now the sidebar should reflect the published state (no draft/unpublished changes)
+    await waitFor(() => {
+      expect(within(courseUnitSidebar)
+        .getByText(sidebarMessages.sidebarTitlePublishedNotYetReleased.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).queryByRole('button', { name: sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
