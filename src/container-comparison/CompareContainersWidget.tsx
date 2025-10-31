@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useContainer, useContainerChildren } from '@src/library-authoring/data/apiHooks';
 import { BoldText } from '@src/utils';
 
+import { Container, LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import ChildrenPreview from './ChildrenPreview';
 import ContainerRow from './ContainerRow';
 import { useCourseContainerChildren } from './data/apiHooks';
@@ -60,7 +61,7 @@ const CompareContainersWidgetInner = ({
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren(state === 'removed' ? undefined : upstreamBlockId, true);
+  } = useContainerChildren<Container | LibraryBlockMetadata>(state === 'removed' ? undefined : upstreamBlockId, true);
   const {
     data: containerData,
     isError: isContainerTitleError,
