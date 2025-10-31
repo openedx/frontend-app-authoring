@@ -28,7 +28,7 @@ mockUseLibBlockMetadata.applyMock();
 
 const searchParamsGetMock = jest.fn();
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 let queryClient: QueryClient;
 
 jest.mock('../studio-home/hooks', () => ({

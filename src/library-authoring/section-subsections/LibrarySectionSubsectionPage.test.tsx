@@ -34,7 +34,7 @@ const libraryTitle = mockContentLibrary.libraryData.title;
 
 let axiosMock: MockAdapter;
 let queryClient: QueryClient;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 
 mockClipboardEmpty.applyMock();
 mockGetContainerMetadata.applyMock();

@@ -68,7 +68,7 @@ const renderWithContainer = (containerId: string, containerType: 'unit' | 'secti
 };
 
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 
 describe('<AddContent />', () => {
   beforeEach(() => {

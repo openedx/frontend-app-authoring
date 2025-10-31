@@ -48,7 +48,7 @@ const render = (eventData?: LibraryChangesMessageData) => {
 };
 
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 
 describe('<IframePreviewLibraryXBlockChanges />', () => {
   beforeEach(() => {
