@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
@@ -13,7 +14,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Spinner } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import EditorContainer from '../EditorContainer';
 // This 'module' self-import hack enables mocking during tests.
@@ -30,7 +31,7 @@ export const hooks = {
   }),
 };
 
-export const thumbEditor = ({
+export const ThumbEditor = ({
   onClose,
   // redux
   blockValue,
@@ -38,44 +39,46 @@ export const thumbEditor = ({
   blockFailed,
   blockFinished,
   initializeEditor,
+  // eslint-disable-next-line react/prop-types
   exampleValue,
-  // inject
-  intl,
-}) => (
-  <EditorContainer
-    getContent={module.hooks.getContent}
-    onClose={onClose}
-  >
-    <div>
-      {exampleValue}
-    </div>
-    <div className="editor-body h-75 overflow-auto">
-      {!blockFinished
-        ? (
-          <div className="text-center p-6">
-            <Spinner
-              animation="border"
-              className="m-3"
-              // Use a messages.js file for intl messages.
-              screenreadertext={intl.formatMessage('Loading Spinner')}
-            />
-          </div>
-        )
-        : (
-          <p>
-            Your Editor Goes here.
-            You can get at the xblock data with the blockValue field.
-            here is what is in your xblock:  {JSON.stringify(blockValue)}
-          </p>
-        )}
-    </div>
-  </EditorContainer>
-);
-thumbEditor.defaultProps = {
+}) => {
+  const intl = useIntl();
+  return (
+    <EditorContainer
+      getContent={module.hooks.getContent}
+      onClose={onClose}
+    >
+      <div>
+        {exampleValue}
+      </div>
+      <div className="editor-body h-75 overflow-auto">
+        {!blockFinished
+          ? (
+            <div className="text-center p-6">
+              <Spinner
+                animation="border"
+                className="m-3"
+                // Use a messages.js file for intl messages.
+                screenreadertext={intl.formatMessage('Loading Spinner')}
+              />
+            </div>
+          )
+          : (
+            <p>
+              Your Editor Goes here.
+              You can get at the xblock data with the blockValue field.
+              here is what is in your xblock:  {JSON.stringify(blockValue)}
+            </p>
+          )}
+      </div>
+    </EditorContainer>
+  );
+};
+ThumbEditor.defaultProps = {
   blockValue: null,
   lmsEndpointUrl: null,
 };
-thumbEditor.propTypes = {
+ThumbEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
   // redux
   blockValue: PropTypes.shape({
@@ -85,8 +88,6 @@ thumbEditor.propTypes = {
   blockFailed: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
-  // inject
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -103,4 +104,4 @@ export const mapDispatchToProps = {
   // TODO fill with dispatches here if needed
 };
 
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(thumbEditor));
+export default connect(mapStateToProps, mapDispatchToProps)(ThumbEditor);

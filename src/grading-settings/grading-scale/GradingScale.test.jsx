@@ -1,5 +1,5 @@
 import React from 'react';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { render, waitFor, fireEvent } from '@testing-library/react';
 
@@ -19,7 +19,6 @@ const sortedGrades = [
 const RootWrapper = () => (
   <IntlProvider locale="en" messages={{}}>
     <GradingScale
-      intl={injectIntl}
       gradeCutoffs={gradeCutoffs}
       gradeLetters={gradeLetters}
       sortedGrades={sortedGrades}
@@ -103,7 +102,6 @@ describe('<GradingScale />', () => {
     const { getAllByTestId } = render(
       <IntlProvider locale="en" messages={{}}>
         <GradingScale
-          intl={injectIntl}
           gradeCutoffs={shortGradeCutoffs}
           gradeLetters={['A']}
           sortedGrades={shortSortedGrades}
@@ -128,7 +126,6 @@ describe('<GradingScale />', () => {
     const { getAllByTestId } = render(
       <IntlProvider locale="en" messages={{}}>
         <GradingScale
-          intl={injectIntl}
           gradeCutoffs={gradeCutoffs}
           gradeLetters={gradeLetters}
           sortedGrades={sortedGrades}

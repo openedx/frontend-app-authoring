@@ -1,6 +1,6 @@
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { injectIntl, IntlProvider } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
@@ -25,7 +25,7 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <GradingSettings intl={injectIntl} courseId={courseId} />
+        <GradingSettings courseId={courseId} />
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>

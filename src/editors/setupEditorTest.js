@@ -15,13 +15,9 @@ import 'jest-canvas-mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => {
   const i18n = jest.requireActual('@edx/frontend-platform/i18n');
-  const PropTypes = jest.requireActual('prop-types');
   return {
     ...i18n,
     useIntl: () => ({ formatMessage: mockFormatMessage }),
-    intlShape: PropTypes.shape({
-      formatMessage: PropTypes.func,
-    }),
     defineMessages: m => m,
     getLocale: () => 'getLocale',
     FormattedDate: () => 'FormattedDate',
