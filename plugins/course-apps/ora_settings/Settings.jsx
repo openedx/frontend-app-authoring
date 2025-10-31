@@ -48,7 +48,7 @@ const ORASettings = ({ onClose }) => {
     event.preventDefault();
 
     success = success && await handleSettingsSave(formValues);
-    await setSaveError(!success);
+    setSaveError(!success);
     if ((initialFormValues.enableFlexiblePeerGrade !== formValues.enableFlexiblePeerGrade) && success) {
       success = await dispatch(updateModel({
         modelType: 'courseApps',

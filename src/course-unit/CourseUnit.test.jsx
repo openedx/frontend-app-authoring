@@ -7,7 +7,14 @@ import {
 import { cloneDeep, set } from 'lodash';
 
 import {
-  act, fireEvent, render, waitFor, within, screen, initializeMocks,
+  act,
+  cleanup,
+  fireEvent,
+  initializeMocks,
+  render,
+  waitFor,
+  within,
+  screen,
 } from '@src/testUtils';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
@@ -790,9 +797,10 @@ describe('<CourseUnit />', () => {
       .reply(200, {
         ...updatedCourseSectionVerticalData,
       });
+    cleanup(); // clear the first render before we create the second.
     render(<RootWrapper />);
     // to wait for loading
-    screen.findByTestId('unit-header-title');
+    await screen.findByTestId('unit-header-title');
     // The new unit button should not be visible when childAddable is false
     expect(
       screen.queryByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage }),
