@@ -26,7 +26,7 @@ export interface CourseOutline {
 
 // TODO: This interface has only basic data, all the rest needs to be added.
 export interface CourseDetails {
-  course_id: string;
+  courseId: string;
   title: string;
   subtitle?: string;
   org: string;

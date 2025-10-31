@@ -7,12 +7,12 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 
 export const ReviewImportDetails = ({ courseId }: { courseId?: string }) => {
-  const { data } = useCourseDetails(courseId);
+  const { data, isPending } = useCourseDetails(courseId);
 
   return (
     <Stack gap={4}>
       <Card>
-        {data ? (
+        {data && !isPending ? (
           <Card.Section>
             <h4><FormattedMessage {...messages.importCourseInProgressStatusTitle} /></h4>
             <p>

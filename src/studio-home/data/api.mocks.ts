@@ -2,7 +2,7 @@ import { camelCaseObject } from '@edx/frontend-platform';
 
 import { createAxiosError } from '@src/testUtils';
 import * as api from './api';
-import { generateGetStudioHomeLibrariesApiResponse } from '../factories/mockApiResponses';
+import { generateGetStudioHomeLibrariesApiResponse, generateGetMigrationInfo } from '../factories/mockApiResponses';
 
 /**
  * Mock for `getContentLibraryV2List()`
@@ -20,4 +20,10 @@ export const mockGetStudioHomeLibraries = {
   applyMockEmpty: () => jest.spyOn(api, 'getStudioHomeLibraries').mockResolvedValue({
     libraries: [],
   }),
+};
+
+export const mockGetMigrationInfo = {
+  applyMock: () => jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
+    camelCaseObject(generateGetMigrationInfo()),
+  ),
 };

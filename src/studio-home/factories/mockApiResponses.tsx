@@ -166,3 +166,13 @@ export const generateNewVideoApiResponse = () => ({
     upload_url: 'http://testing.org',
   }],
 });
+
+export const generateGetMigrationInfo = () => ({
+  'course-v1:HarvardX+123+2023': [{
+    sourceKey: 'course-v1:HarvardX+123+2023',
+    targetCollectionKey: 'ltc:org:coll-1',
+    targetCollectionTitle: 'Collection 1',
+    targetKey: 'lib:org:lib1',
+    targetTitle: 'Library 1',
+  }],
+});
