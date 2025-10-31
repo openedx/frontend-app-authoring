@@ -6,6 +6,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { mockGetContentLibraryV2List } from '@src/library-authoring/data/api.mocks';
@@ -184,7 +185,7 @@ describe('<LegacyLibMigrationPage />', () => {
     nextButton.click();
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
 
     const backButton = screen.getByRole('button', { name: /back/i });
     backButton.click();
@@ -210,7 +211,7 @@ describe('<LegacyLibMigrationPage />', () => {
     nextButton.click();
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
 
     // The next button is disabled
     expect(nextButton).toBeDisabled();
@@ -224,24 +225,31 @@ describe('<LegacyLibMigrationPage />', () => {
   });
 
   it('should back to select library destination', async () => {
+    const user = userEvent.setup();
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
 
     const legacyLibrary = screen.getByRole('checkbox', { name: 'MBA' });
-    legacyLibrary.click();
+    await user.click(legacyLibrary);
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
-    nextButton.click();
+    const nextButton = await screen.findByRole('button', { name: /next/i });
+    await user.click(nextButton);
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     const radioButton = screen.getByRole('radio', { name: /test library 1/i });
-    radioButton.click();
+    await user.click(radioButton);
 
-    nextButton.click();
-    expect(await screen.findByText(/these 1 legacy library will be migrated to/i)).toBeInTheDocument();
+    await user.click(nextButton);
+    const alert = await screen.findByRole('alert');
+    expect(await within(alert).findByText(
+      /All content from the 1 legacy library you selected will be migrated to/i,
+    )).toBeInTheDocument();
+    expect(await within(alert).findByText(
+      /test library 1/i,
+    )).toBeInTheDocument();
 
     const backButton = screen.getByRole('button', { name: /back/i });
     backButton.click();
@@ -269,7 +277,7 @@ describe('<LegacyLibMigrationPage />', () => {
     nextButton.click();
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
 
     const createButton = await screen.findByRole('button', { name: /create new library/i });
     expect(createButton).toBeInTheDocument();
@@ -336,18 +344,24 @@ describe('<LegacyLibMigrationPage />', () => {
     legacyLibrary3.click();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
-    nextButton.click();
+    await user.click(nextButton);
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     const radioButton = screen.getByRole('radio', { name: /test library 1/i });
-    radioButton.click();
+    await user.click(radioButton);
 
-    nextButton.click();
+    await user.click(nextButton);
 
     // Should show alert of ConfirmationView
-    expect(await screen.findByText(/these 3 legacy libraries will be migrated to/i)).toBeInTheDocument();
+    const alert = await screen.findByRole('alert');
+    expect(await within(alert).findByText(
+      /All content from the 3 legacy libraries you selected will be migrated to/i,
+    )).toBeInTheDocument();
+    expect(await within(alert).findByText(
+      /test library 1/i,
+    )).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();
@@ -390,18 +404,26 @@ describe('<LegacyLibMigrationPage />', () => {
     legacyLibrary3.click();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
-    nextButton.click();
+    await user.click(nextButton);
 
     // Should show alert of SelectDestinationView
-    expect(await screen.findByText(/any legacy libraries that are used/i)).toBeInTheDocument();
+    expect(await screen.findByText(/you selected will be migrated to this new library/i)).toBeInTheDocument();
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     const radioButton = screen.getByRole('radio', { name: /test library 1/i });
-    radioButton.click();
+    await user.click(radioButton);
 
-    nextButton.click();
+    await user.click(nextButton);
 
     // Should show alert of ConfirmationView
-    expect(await screen.findByText(/these 3 legacy libraries will be migrated to/i)).toBeInTheDocument();
+    const alert = await screen.findByRole('alert');
+    expect(await within(alert).findByText(
+      /All content from the 3 legacy libraries you selected will be migrated to /i,
+      { exact: false },
+    )).toBeInTheDocument();
+    expect(await within(alert).findByText(
+      /test library 1/i,
+      { exact: false },
+    )).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
     expect(screen.getByText('MBA 1')).toBeInTheDocument();
