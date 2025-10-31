@@ -61,7 +61,7 @@ export function updateAppStatus(courseId, appId, state) {
       dispatch(updateModel({ modelType: 'courseApps', model: { id: appId, enabled: state } }));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -95,7 +95,7 @@ export function updateCourseAppSetting(courseId, setting, value) {
       dispatch(updateCourseAppsSettingsSuccess(settingValues));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

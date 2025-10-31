@@ -58,7 +58,7 @@ export function updateCourseAppSetting(courseId, settings) {
       try {
         const { customAttributes: { httpErrorResponseData } } = error;
         errorData = JSON.parse(httpErrorResponseData);
-      } catch (err) {
+      } catch {
         errorData = {};
       }
 
@@ -77,7 +77,7 @@ export function fetchProctoringExamErrors(courseId) {
       const settingValues = await getProctoringExamErrors(courseId);
       dispatch(fetchProctoringExamErrorsSuccess(settingValues));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

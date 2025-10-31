@@ -494,7 +494,7 @@ const ScanResults: FC<Props> = ({
           } else if (onErrorStateChange) {
             onErrorStateChange(null);
           }
-        } catch (error) {
+        } catch {
           setIsUpdateAllInProgress(false);
           setUpdateAllCompleted(false);
           setUpdateAllTrigger(t => t + 1);
@@ -717,7 +717,7 @@ const ScanResults: FC<Props> = ({
       };
 
       return await pollForSingleLinkResult();
-    } catch (error) {
+    } catch {
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinkError));
       }
@@ -758,7 +758,7 @@ const ScanResults: FC<Props> = ({
       await dispatch(updateAllPreviousRunLinks(courseId));
 
       return true;
-    } catch (error) {
+    } catch {
       setIsUpdateAllInProgress(false); // Reset on error
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinksError));

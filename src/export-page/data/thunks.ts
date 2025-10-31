@@ -49,7 +49,7 @@ export function startExportingCourse(courseId) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

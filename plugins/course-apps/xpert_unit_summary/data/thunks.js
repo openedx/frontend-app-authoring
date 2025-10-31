@@ -19,7 +19,7 @@ export function updateXpertSettings(courseId, state) {
       }
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -33,7 +33,7 @@ export function fetchXpertPluginConfigurable(courseId) {
     try {
       const { response } = await getXpertPluginConfigurable(courseId);
       enabled = response?.enabled;
-    } catch (e) {
+    } catch {
       enabled = undefined;
     }
 
@@ -55,7 +55,7 @@ export function fetchXpertSettings(courseId) {
     try {
       const { response } = await getXpertSettings(courseId);
       enabled = response?.enabled;
-    } catch (e) {
+    } catch {
       enabled = undefined;
     }
 
@@ -86,7 +86,7 @@ export function removeXpertSettings(courseId) {
       }
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -105,7 +105,7 @@ export function resetXpertSettings(courseId, state) {
       }
       dispatch(updateResetStatus({ status: RequestStatus.FAILED }));
       return false;
-    } catch (error) {
+    } catch {
       dispatch(updateResetStatus({ status: RequestStatus.FAILED }));
       return false;
     }

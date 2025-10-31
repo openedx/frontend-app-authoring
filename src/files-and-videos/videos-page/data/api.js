@@ -105,7 +105,7 @@ export async function getDownload(selectedRows, courseId) {
         const url = video.downloadLink;
         const name = video.displayName;
         return { url, name };
-      } catch (error) {
+      } catch {
         downloadErrors.push(`Cannot find download file for ${video?.displayName || 'video'}.`);
         return null;
       }
@@ -129,7 +129,7 @@ export async function getDownload(selectedRows, courseId) {
       } else {
         downloadErrors.push(`Cannot find download file for ${video?.displayName}.`);
       }
-    } catch (error) {
+    } catch {
       downloadErrors.push('Failed to download video.');
     }
   } else {

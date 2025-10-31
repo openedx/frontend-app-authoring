@@ -24,7 +24,7 @@ const LibraryPublishStatus = () => {
       try {
         await commitLibraryChanges.mutateAsync(libraryData.id);
         showToast(intl.formatMessage(messages.publishSuccessMsg));
-      } catch (e) {
+      } catch {
         showToast(intl.formatMessage(messages.publishErrorMsg));
       }
     }
@@ -35,7 +35,7 @@ const LibraryPublishStatus = () => {
       try {
         await revertLibraryChanges.mutateAsync(libraryData.id);
         showToast(intl.formatMessage(messages.revertSuccessMsg));
-      } catch (e) {
+      } catch {
         showToast(intl.formatMessage(messages.revertErrorMsg));
       } finally {
         closeConfirmModal();

@@ -30,7 +30,7 @@ export const ContainerPublisher = ({
     try {
       await publishContainer.mutateAsync();
       showToast(intl.formatMessage(messages.publishContainerSuccess));
-    } catch (error) {
+    } catch {
       showToast(intl.formatMessage(messages.publishContainerFailed));
     }
     handleClose();

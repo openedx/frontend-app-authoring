@@ -66,7 +66,7 @@ export function changeRoleTeamUserQuery(courseId, email, role) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch ({ message }) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -83,7 +83,7 @@ export function deleteCourseTeamQuery(courseId, email) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

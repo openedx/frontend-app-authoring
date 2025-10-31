@@ -34,7 +34,7 @@ const ComponentInfoHeader = () => {
         },
       });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
     }
   };

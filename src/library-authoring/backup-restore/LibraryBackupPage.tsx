@@ -49,7 +49,7 @@ export const LibraryBackupPage = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error) {
+    } catch {
       // Fallback to window.location.href if the above fails
       window.location.href = url;
     }

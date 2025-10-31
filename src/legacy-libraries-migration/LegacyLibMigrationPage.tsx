@@ -98,7 +98,7 @@ export const LegacyLibMigrationPage = () => {
           count: legacyLibraries.length,
         }));
         navigate(`/library/${destinationLibrary.id}?migration_task=${migrationTask.uuid}`);
-      } catch (error) {
+      } catch {
         showToast(intl.formatMessage(messages.migrationFailed));
       }
     }

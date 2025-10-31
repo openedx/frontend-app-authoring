@@ -58,7 +58,7 @@ export function createCourseUpdateQuery(courseId, data) {
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { creatingUpdate: false },
       }));
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
@@ -80,7 +80,7 @@ export function editCourseUpdateQuery(courseId, data) {
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { savingUpdates: false },
       }));
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
@@ -102,7 +102,7 @@ export function deleteCourseUpdateQuery(courseId, updateId) {
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { deletingUpdates: false },
       }));
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
@@ -150,7 +150,7 @@ export function editCourseHandoutsQuery(courseId, data) {
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
         error: { savingHandouts: false },
       }));
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },

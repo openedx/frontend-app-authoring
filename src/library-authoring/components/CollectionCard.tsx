@@ -63,7 +63,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
           onClick: restoreCollection,
         },
       );
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.deleteCollectionFailed));
     } finally {
       closeDeleteModal();

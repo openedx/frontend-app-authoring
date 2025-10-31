@@ -148,7 +148,7 @@ export function fetchCourseBestPracticesQuery({
       dispatch(fetchStatusBarChecklistSuccess(getCourseBestPracticesChecklist(data)));
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };
@@ -165,7 +165,7 @@ export function enableCourseHighlightsEmailsQuery(courseId: string) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(hideProcessingNotification());
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
@@ -182,7 +182,7 @@ export function setVideoSharingOptionQuery(courseId: string, option: string) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(hideProcessingNotification());
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       dispatch(hideProcessingNotification());
     }
@@ -260,7 +260,7 @@ export function updateCourseSectionHighlightsQuery(sectionId: string, highlights
           dispatch(hideProcessingNotification());
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -280,7 +280,7 @@ export function publishCourseItemQuery(itemId: string, sectionId: string) {
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -300,7 +300,7 @@ export function configureCourseItemQuery(sectionId: string, configureFn: () => P
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -390,7 +390,7 @@ export function editCourseItemQuery(itemId: string, sectionId: string, displayNa
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -412,7 +412,7 @@ function deleteCourseItemQuery(itemId: string, deleteItemFn: () => {}) {
       dispatch(deleteItemFn());
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -469,7 +469,7 @@ function duplicateCourseItemQuery(
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -541,7 +541,7 @@ function addNewCourseItemQuery(
           dispatch(hideProcessingNotification());
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -612,7 +612,7 @@ export function addUnitFromLibrary(body: {
           callback(result.locator);
         }
       });
-    } catch (error) /* istanbul ignore next */ {
+    } catch /* istanbul ignore next */ {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -643,7 +643,7 @@ function setBlockOrderListQuery(
           dispatch(hideProcessingNotification());
         }
       });
-    } catch (error) {
+    } catch {
       restoreCallback();
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
@@ -728,7 +728,7 @@ export function pasteClipboardContent(parentLocator: string, sectionId: string) 
           dispatch(setPasteFileNotices(result?.staticFileNotices));
         }
       });
-    } catch (error) {
+    } catch {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
@@ -743,7 +743,7 @@ export function dismissNotificationQuery(url: string) {
       await dismissNotification(url).then(async () => {
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       });
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
