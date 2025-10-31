@@ -460,7 +460,7 @@ const ScanResults: FC<Props> = ({
     const handleUpdateCompletion = async () => {
       if (rerunLinkUpdateInProgress === false && isUpdateAllInProgress) {
         try {
-          const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
+          const updateStatusResponse = dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
 
           if (!updateStatusResponse) {
             setIsUpdateAllInProgress(false);
@@ -590,14 +590,14 @@ const ScanResults: FC<Props> = ({
     try {
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
-      await dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
+      dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
         if (attempts > 30) { // Max 30 attempts (60 seconds)
           throw new Error('Timeout waiting for link update result');
         }
 
-        const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
+        const updateStatusResponse = dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
         const pollStatus = updateStatusResponse?.status || updateStatusResponse?.updateStatus;
 
         if (!updateStatusResponse || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus)) {
@@ -755,7 +755,7 @@ const ScanResults: FC<Props> = ({
     try {
       setProcessedResponseIds(new Set());
       setIsUpdateAllInProgress(true);
-      await dispatch(updateAllPreviousRunLinks(courseId));
+      dispatch(updateAllPreviousRunLinks(courseId));
 
       return true;
     } catch (error) {

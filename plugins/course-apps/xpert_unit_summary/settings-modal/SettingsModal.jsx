@@ -238,9 +238,9 @@ const SettingsModal = ({
     const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
 
     if (enabled) {
-      success = await dispatch(updateXpertSettings(courseId, values));
+      success = dispatch(updateXpertSettings(courseId, values));
     } else {
-      success = await dispatch(removeXpertSettings(courseId));
+      success = dispatch(removeXpertSettings(courseId));
     }
 
     if (onSettingsSave) {

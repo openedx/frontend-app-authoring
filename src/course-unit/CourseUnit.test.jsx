@@ -838,7 +838,7 @@ describe('<CourseUnit />', () => {
       });
     render(<RootWrapper />);
     // to wait for loading
-    screen.findByTestId('unit-header-title');
+    await screen.findByTestId('unit-header-title');
     // The new unit button should not be visible when childAddable is false
     expect(
       screen.queryByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage }),
