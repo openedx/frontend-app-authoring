@@ -4,7 +4,6 @@ frontend-app-authoring
 |license-badge| |status-badge| |codecov-badge|
 
 
-
 Purpose
 *******
 
