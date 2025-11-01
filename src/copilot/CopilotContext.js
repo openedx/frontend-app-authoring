@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 
-const BASE_API_URL = 'https://tenesha-fortifiable-jana.ngrok-free.dev';
+const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/';
 
 const isValidImageUrl = (url) => {
-  return typeof url === 'string' && url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i);
+  return typeof url === 'string' && (url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i) || url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i));
 };
 
 const CopilotContext = createContext(null);
@@ -45,6 +45,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [prompt, setPrompt] = useState('');
   const [buttons, setButtons] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
+  const [userAnswers, setUserAnswers] = useState({});
 
   const startData = useRef({ x: 0, y: 0, w: 0, h: 0, mouseX: 0, mouseY: 0 });
 
@@ -69,6 +72,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       setSelectedSuggestion(null);
       setPrompt('');
       setButtons([]);
+      setQuestions([]);
+      setCurrentQuestionIndex(-1);
+      setUserAnswers({});
     }
   };
 
@@ -78,6 +84,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       setIsFullScreen(false);
       setSavedState(null);
     }
+    setQuestions([]);
+    setCurrentQuestionIndex(-1);
+    setUserAnswers({});
   };
 
   const toggleMinimize = () => {
@@ -159,11 +168,104 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   };
 
-  const fetchSuggestions = async (effectivePrompt, field = fieldData.name) => {
+
+  const getCurrentFieldValue = (field) => {
+    switch (field) {
+      case 'title':
+        return title?.trim() || "";
+      case 'shortDescription':
+        return shortDescription?.trim() || '';
+      case 'description':
+        return description?.trim() || title?.trim() || '';
+      case 'cardImage':
+        return title?.trim() || '';
+      case 'bannerImage':
+        return title?.trim() || '';
+      default:
+        return '';
+    }
+  };
+
+  const fetchQuestions = async (field) => {
+    setChatHistory((prev) => [
+      ...prev,
+      { type: 'text', sender: 'user', content: 'Requesting for Customize...' },
+    ]);
+    try {
+      const tokenResponse = await fetch(
+        // "https://staging.titaned.com/oauth2/access_token",
+        `${BASE_API_URL}/oauth2/access_token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "password",
+            client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
+            username: "admin",
+            password: "admin",
+          }),
+        });
+      const tokenData = await tokenResponse.json();
+      if (!tokenData.access_token) {
+        throw new Error('Failed to obtain access token');
+      }
+      const token = tokenData.access_token;
+
+      const response = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch questions: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Questions Response:', data);
+      setQuestions(data.questions || []);
+      setCurrentQuestionIndex(0);
+      setChatHistory((prev) => [
+        ...prev,
+        { type: 'text', sender: 'ai', content: data.messages?.[0]?.text },
+      ]);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      setChatHistory((prev) => [
+        ...prev,
+        { type: 'text', sender: 'ai', content: 'Error fetching customization questions. Please try again.' },
+      ]);
+    }
+  };
+
+  const fetchSuggestions = async (effectivePrompt, field = fieldData.name, isMoreSuggestions = false) => {
+    let requestValue = effectivePrompt;
+    if (isMoreSuggestions) {
+      requestValue = getCurrentFieldValue(field);
+      if (!requestValue) {
+        console.error(`No valid value for field ${field} when requesting more suggestions`);
+        setChatHistory((prev) => [
+          ...prev,
+          { type: 'text', sender: 'ai', content: `Please provide a valid ${getReadableFieldName(field)} to generate more suggestions.` },
+        ]);
+        return;
+      }
+    } else if (!effectivePrompt || typeof effectivePrompt !== 'string' || effectivePrompt.trim() === '') {
+      console.error('Invalid effectivePrompt:', effectivePrompt, 'for field:', field);
+      setChatHistory((prev) => [
+        ...prev,
+        { type: 'text', sender: 'ai', content: `Please provide a valid ${getReadableFieldName(field)} to generate suggestions.` },
+      ]);
+      return;
+    }
+
     setChatHistory((prev) => [
       ...prev,
       { type: 'text', sender: 'ai', content: 'Your requirement is generating ...' },
     ]);
+
     try {
       const tokenResponse = await fetch(
         // "https://staging.titaned.com/oauth2/access_token",
@@ -185,17 +287,21 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       const token = tokenData.access_token;
 
       const config = getApiConfig(field);
+      const baseValue = getCurrentFieldValue(field);
       // const apiUrl = `https://staging.titaned.com/chat/v1/${config.url}`;
       const apiUrl = `${BASE_API_URL}/chat/v1/${config.url}`;
+      const body = {
+        [config.bodyKey]: baseValue || requestValue.trim(),
+        ...(isMoreSuggestions && { "more_suggestions": true }),
+      };
+      console.log(body);
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          [config.bodyKey]: effectivePrompt,
-        }),
+        body: JSON.stringify(body),
       });
       const data = await response.json();
       setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
@@ -203,10 +309,85 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       console.error("Error:", error);
       setChatHistory((prev) => [
         ...prev,
-        { type: 'text', sender: 'ai', content: 'Error fetching suggestions. Please try again.' },
+        { type: 'text', sender: 'ai', content: `Error fetching suggestions: ${error.message} . Please try again.` },
       ]);
     }
   };
+
+  const submitCustomAnswers = async (field = fieldData.name) => {
+    setChatHistory((prev) => [
+      ...prev,
+      { type: 'text', sender: 'ai', content: 'Your requirement is generating ...' },
+    ]);
+    try {
+      const tokenResponse = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'password',
+          client_id: 'mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ',
+          username: 'admin',
+          password: 'admin',
+        }),
+      });
+      const tokenData = await tokenResponse.json();
+      if (!tokenData.access_token) {
+        throw new Error('Failed to obtain access token');
+      }
+      const token = tokenData.access_token;
+      const config = getApiConfig(field);
+      const baseValue = getCurrentFieldValue(field);
+
+
+      const body = {
+        [config.bodyKey]: baseValue,
+        ...userAnswers,
+        custom_flow: true,
+      };
+      console.log('Submit Custom Answers Body:', body);
+      const response = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to submit answers: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Custom Suggestions Response:', data);
+      setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
+      setQuestions([]);
+      setCurrentQuestionIndex(-1);
+      setUserAnswers({});
+    } catch (error) {
+      console.error('Error submitting custom answers:', error);
+      setChatHistory((prev) => [
+        ...prev,
+        { type: 'text', sender: 'ai', content: `Error submitting answers: ${error.message}. Please try again.` },
+      ]);
+    }
+  };
+
+  const handleAnswer = (answer, field) => {
+    setUserAnswers((prev) => ({
+      ...prev,
+      [questions[currentQuestionIndex].key]: answer,
+    }));
+    setChatHistory((prev) => [
+      ...prev,
+      { type: 'text', sender: 'user', content: answer },
+    ]);
+
+    if (currentQuestionIndex + 1 < questions.length) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    } else {
+      submitCustomAnswers(field);
+    }
+  };
+
 
   const sendPrompt = async () => {
     let effectivePrompt = prompt.trim();
@@ -233,7 +414,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
           ...prev,
           { type: 'text', sender: 'user', content: 'Requesting more suggestions...' },
         ]);
-        fetchSuggestions(getPreviousValue(fieldData.name) || prompt || '');
+        fetchSuggestions(getPreviousValue(fieldData.name), fieldData.name, true);
         break;
       case 'customize':
         handleCustomize();
@@ -263,6 +444,10 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       default:
         console.warn(`No action defined for button ID: ${buttonId}`);
     }
+  };
+
+  const handleCustomize = () => {
+    fetchQuestions(fieldData.name);
   };
 
   const handleMouseDownDrag = (ref) => (e) => {
@@ -425,16 +610,58 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
           button: latestResponse.l3.customize,
         });
       }
+      // Handle l4 if present (for more suggestions response)
+      if (latestResponse.l4) {
+        newHistory.push({ type: 'text', sender: 'ai', content: latestResponse.l4.text, id: latestResponse.l4.id });
+      }
+      // Handle more_suggestions if present
+      if (latestResponse.more_suggestions) {
+        newHistory.push({ type: 'suggestions', sender: 'ai', content: latestResponse.more_suggestions });
+      }
       setChatHistory((prev) => [...prev, ...newHistory]);
       setButtons(latestResponse.btns || []);
 
-      if (latestResponse.suggestions && latestResponse.suggestions.length > 0) {
+      // if (latestResponse.suggestions && latestResponse.suggestions.length > 0) {
+      //   const firstSug = latestResponse.suggestions[0];
+      //   setSelectedSuggestion(firstSug);
+      //   insertSuggestion(firstSug, false);
+      // }
+      // Auto-insert first suggestion only for initial suggestions, not more_suggestions
+      if (latestResponse.suggestions && !latestResponse.more_suggestions && latestResponse.suggestions.length > 0) {
         const firstSug = latestResponse.suggestions[0];
         setSelectedSuggestion(firstSug);
         insertSuggestion(firstSug, false);
       }
     }
   }, [aiResponse]);
+
+  useEffect(() => {
+  if (
+    questions.length > 0 &&
+    currentQuestionIndex >= 0 &&
+    currentQuestionIndex < questions.length
+  ) {
+    const currentQ = questions[currentQuestionIndex];
+
+    // Prevent duplicate question
+    const lastMessage = chatHistory[chatHistory.length - 1];
+    if (lastMessage?.type === 'question' && lastMessage.id === currentQ.key) {
+      return;
+    }
+
+    const questionMessage = {
+      type: 'question',
+      sender: 'ai',
+      id: currentQ.key,
+      content: currentQ.text,
+      options: currentQ.options || null,
+      questionIndex: currentQuestionIndex + 1,
+      totalQuestions: questions.length,
+    };
+
+    setChatHistory(prev => [...prev, questionMessage]);
+  }
+}, [questions, currentQuestionIndex]);
 
   const insertSuggestion = (sug, addToHistory = true) => {
     const { name } = fieldData;
@@ -526,11 +753,11 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   };
 
-  const handleCustomize = () => {
-    setChatHistory((prev) => [...prev, { type: 'text', sender: 'user', content: 'Customizing...' }]);
-    // Add customization logic if needed
-    fetchSuggestions(prompt || getPreviousValue(fieldData.name) || '');
-  };
+  // const handleCustomize = () => {
+  //   setChatHistory((prev) => [...prev, { type: 'text', sender: 'user', content: 'Customizing...' }]);
+  //   // Add customization logic if needed
+  //   fetchSuggestions(prompt || getPreviousValue(fieldData.name) || '');
+  // };
 
   const value = {
     isOpen,
@@ -585,6 +812,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     buttons,
     setButtons,
     handleButtonAction,
+    questions,
+    currentQuestionIndex,
+    handleAnswer,
   };
 
   return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;

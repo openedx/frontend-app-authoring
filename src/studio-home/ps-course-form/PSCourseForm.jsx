@@ -57,7 +57,7 @@ import AIButton from './AIButton';
 import Copilot from '../../copilot/Copilot';
 import { CopilotProvider, useCopilot } from '../../copilot/CopilotContext';
 
-const BASE_API_URL = 'https://tenesha-fortifiable-jana.ngrok-free.dev'; // AI service base URL
+const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/'; // AI service base URL
 
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
@@ -72,9 +72,14 @@ function getUserTimezoneString() {
 }
 
 // Utility function to validate if a string is a valid image URL
-function isValidImageUrl(url) {
-  return typeof url === 'string' && url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i);
-}
+const isValidImageUrl = (url) => {
+  return (
+    typeof url === 'string' &&
+    (url.match(/\.(jpeg|jpg|png|gif|webp|bmp|svg)(?=\?|$)/i) ||
+     url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i))
+  );
+};
+
 
 const PSCourseForm = ({
   children,

@@ -131,6 +131,14 @@
                         width: auto;
                     }
 
+                    .customQuestion {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 5px;
+                        font-weight: bold;
+                        margin-bottom: 0.5rem;
+                    }
+
 
 
                     .suggestion {

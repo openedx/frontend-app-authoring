@@ -5,8 +5,13 @@ import { useCopilot } from './CopilotContext';
 import './copilot.scss';
 
 const isValidImageUrl = (url) => {
-  return typeof url === 'string' && url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i);
+  return (
+    typeof url === 'string' &&
+    (url.match(/\.(jpeg|jpg|png|gif|webp|bmp|svg)(?=\?|$)/i) ||
+      url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i))
+  );
 };
+
 
 const TAB_WIDTH = 60;
 
@@ -40,9 +45,18 @@ const Copilot = () => {
     sendPrompt,
     buttons,
     handleButtonAction,
+    questions,
+    currentQuestionIndex,
+    handleAnswer,
   } = useCopilot();
 
   const ref = useRef(null);
+  const handleSendAnswer = () => {
+    if (prompt.trim()) {
+      handleAnswer(prompt.trim(), fieldData.name);
+      setPrompt('');
+    }
+  };
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -50,7 +64,7 @@ const Copilot = () => {
         behavior: "smooth",
       });
     }
-  }, [chatHistory]);
+  }, [chatHistory, questions, currentQuestionIndex]);
 
   if (!isOpen) return null;
 
@@ -77,223 +91,6 @@ const Copilot = () => {
   const contentStyle = { display: isMinimized && !isFullScreen ? 'none' : 'block' };
   const chatContainerRef = useRef(null);
 
-  // return (
-  //   <div className={`copilot-wrapper ${isDocked ? 'docked' : 'inline'}`}>
-  //     <div ref={ref} style={panelStyle} className={`copilot-panel ${isFullScreen ? 'fullscreen' : ''} ${(isDocked && !isFullScreen) ? 'isDocked' : ''}`}>
-  //       <div className="copilot-header">
-  //         <div className="header-left" style={{ display: isMinimized && !isFullScreen ? 'none' : 'flex' }}>
-  //           <span className="title">Copilot</span>
-  //         </div>
-  //         <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>
-  //         <div className="header-right">
-  //           {isDocked && !isFullScreen && (
-  //             <Button variant="tertiary" size="sm" onClick={toggleMinimize} className="minimize-icon">
-  //               <Icon src={isMinimized ? ChevronLeft : ChevronRight} />
-  //             </Button>
-  //           )}
-  //           {!isMinimized && !isFullScreen && !isFloating && (
-  //             <div className="drag-handle" onClick={handleFloating}>
-  //               <div className="dots">
-  //                 <span /><span /><span />
-  //                 <span /><span /><span />
-  //               </div>
-  //             </div>
-  //           )}
-  //           {!isMinimized && (
-  //             <Button variant="tertiary" size="sm" onClick={toggleFullScreen}>
-  //               <Icon src={isFullScreen ? FullscreenExit : Fullscreen} />
-  //             </Button>
-  //           )}
-  //           {!isMinimized && !isDocked && !isFullScreen && (
-  //             <Button
-  //               variant="tertiary"
-  //               size="sm"
-  //               onClick={() => {
-  //                 dock();
-  //               }}
-  //             >
-  //               <Icon src={ArrowForward} />
-  //             </Button>
-  //           )}
-  //           {!isMinimized && (
-  //             <Button variant="tertiary" size="sm" onClick={closeCopilot}>
-  //               <Icon src={Close} />
-  //             </Button>
-  //           )}
-  //         </div>
-  //       </div>
-  //       <div className="copilot-content" style={contentStyle}>
-  //         <div className="chat-messages" >
-  //           {chatHistory.map((item, index) => (
-  //             <div key={index} className={`message-container ${item.sender}`}>
-  //               {item.type === 'text' && (
-  //                 <div className="message">{item.content}</div>
-  //               )}
-  //               {item.type === ('suggestions') && (
-  //                 item.content.map((sug) => {
-  //                   const isImageSuggestion = isValidImageUrl(sug);
-  //                   if (isImageSuggestion) {
-  //                     return (
-  //                       <img
-  //                         key={sug}
-  //                         src={sug}
-  //                         alt="Suggested image"
-  //                         className={`suggestion image-suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
-  //                         onClick={() => handleSelectSuggestion(sug)}
-  //                       />
-  //                     );
-  //                   }
-  //                   return (
-  //                     <div
-  //                       key={sug}
-  //                       className={`suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
-  //                       onClick={() => handleSelectSuggestion(sug)}
-  //                     >
-  //                       {sug}
-  //                     </div>
-  //                   );
-  //                 })
-  //               )}
-  //               {item.type === 'image' && (
-  //                 <img
-  //                   src={item.content}
-  //                   alt="Inserted image"
-  //                   className="message image-message"
-  //                 />
-  //               )}
-  //               {item.type === 'customize' && (
-  //                 <div className="message">
-  //                   {item.content}
-  //                 </div>
-  //               )}
-  //             </div>
-  //           ))}
-  //         </div>
-  //         <div className="copilot-content-bottom">
-  //           <div className="copilot-content-bottom-button" >
-  //             {buttons.map((button) => (
-  //               <Button
-  //                 key={button.id}
-  //                 variant={button.status === 'active' ? 'primary' : 'outline-primary'}
-  //                 onClick={() => handleButtonAction(button.id)}
-  //                 size="sm"
-  //               >
-  //                 {button.label}
-  //               </Button>
-  //             ))}
-  //           </div>
-  //           <div className="input-container" >
-  //             <Form.Control
-  //               type="text"
-  //               value={prompt}
-  //               onChange={(e) => setPrompt(e.target.value)}
-  //               placeholder="Type your message..."
-  //               onKeyPress={(e) => e.key === 'Enter' && sendPrompt()}
-  //             />
-  //             <Button variant="primary" size="sm" onClick={sendPrompt}>
-  //               <Icon src={Send} />
-  //             </Button>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     {/* {!isFullScreen && (
-  //       <>
-  //         {isDocked ? (
-  //           <div className="resize-indicator left-indicator" title="Resize"></div>
-  //         ) : (
-  //           <div className="resize-indicator bottom-right-indicator" title="Resize"></div>
-  //         )}
-  //       </>
-  //     )}
-  //     {!isFullScreen && (
-  //       isDocked ? (
-  //         <div className="resizer resizer-left" onMouseDown={handleMouseDownResize('width')} />
-  //       ) : (
-  //         <div className="resizer resizer-bottom-right" onMouseDown={handleMouseDownResize('both')} />
-  //       )
-  //     )} */}
-  //     {/* {!isFullScreen && (
-  //       <>
-  //         {isDocked ? (
-  //           <div
-  //             className="resize-indicator left-indicator"
-  //             title="Resize"
-  //             onMouseDown={(e) => {
-  //               console.log('Left resizer clicked'); // Debug log
-  //               handleMouseDownResize('width')(e);
-  //             }}
-  //           ></div>
-  //         ) : (
-  //           <div
-  //             className="resize-indicator bottom-right-indicator"
-  //             title="Resize"
-  //             onMouseDown={(e) => {
-  //               console.log('Bottom-right resizer clicked'); // Debug log
-  //               handleMouseDownResize('both')(e);
-  //             }}
-  //           ></div>
-  //         )}
-  //       </>
-  //     )}
-  //     {!isFullScreen && (
-  //       isDocked ? (
-  //         <div
-  //           className="resizer resizer-left"
-  //           onMouseDown={(e) => {
-  //             console.log('Left resizer mousedown'); // Debug log
-  //             handleMouseDownResize('width')(e);
-  //           }}
-  //         />
-  //       ) : (
-  //         <div
-  //           className="resizer resizer-bottom-right"
-  //           onMouseDown={(e) => {
-  //             console.log('Bottom-right resizer mousedown'); // Debug log
-  //             handleMouseDownResize('both')(e);
-  //           }}
-  //         />
-  //       )
-  //     )} */}
-
-  //     {!isFullScreen && (
-  //       <>
-  //         {isDocked ? (
-  //           <div
-  //             className="resize-indicator left-indicator"
-  //             title="Resize"
-  //           // Remove onMouseDown from indicator (redundant; use resizer for interaction)
-  //           ></div>
-  //         ) : (
-  //           <div
-  //             className="resize-indicator bottom-right-indicator"
-  //             title="Resize"
-  //           // Remove onMouseDown from indicator
-  //           ></div>
-  //         )}
-  //       </>
-  //     )}
-  //     {!isFullScreen && (
-  //       isDocked ? (
-  //         <div
-  //           className="resizer resizer-left"
-  //           onMouseDown={(e) => {
-  //             // Remove console.log for production
-  //             handleMouseDownResize('width')(e);
-  //           }}
-  //         />
-  //       ) : (
-  //         <div
-  //           className="resizer resizer-bottom-right"
-  //           onMouseDown={(e) => {
-  //             // Remove console.log for production
-  //             handleMouseDownResize('both')(e);
-  //           }}
-  //         />
-  //       )
-  //     )}
-  //   </div>
-  // );
   return (
     <div className={`copilot-wrapper ${isDocked ? 'docked' : 'inline'}`}>
       <div ref={ref} style={panelStyle} className={`copilot-panel ${isFullScreen ? 'fullscreen' : ''} ${(isDocked && !isFullScreen) ? 'isDocked' : ''}`}>
@@ -349,7 +146,7 @@ const Copilot = () => {
                 {item.type === 'suggestions' && (
                   item.content.map((sug) => {
                     const isImageSuggestion = isValidImageUrl(sug);
-                    if (isImageSuggestion) {
+                    if (isImageSuggestion || item.type === 'image') {
                       return (
                         <img
                           key={sug}
@@ -383,8 +180,49 @@ const Copilot = () => {
                     {item.content}
                   </div>
                 )}
+                {item.type === 'question' && (
+                  <div className="message-container ai">
+                    <div className="customQuestion">
+                      <div className="question-counter message">
+                        Q{item.questionIndex}/{item.totalQuestions}
+                      </div>
+                      <div className="message">{item.content}</div>
+                    </div>
+                    {item.options ? (
+                      item.options.map((option) => (
+                        <div
+                          key={option}
+                          className={`suggestion ${selectedSuggestion === option ? 'selected' : ''}`}
+                          onClick={() => handleAnswer(option, fieldData.name)}
+                        >
+                          {option}
+                        </div>
+                      ))
+                    ) : null}
+                  </div>
+                )}
               </div>
             ))}
+            {/* {questions.length > 0 && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length && (
+              <div className="message-container ai">
+                <div className="question-counter">
+                  Q{currentQuestionIndex + 1}/{questions.length}
+                </div>
+                <div className="message">{questions[currentQuestionIndex].text}</div>
+                {questions[currentQuestionIndex].options ? (
+                  questions[currentQuestionIndex].options.map((option) => (
+                    <div
+                      key={option}
+                      className={`suggestion ${selectedSuggestion === option ? 'selected' : ''}`}
+                      onClick={() => handleAnswer(option, fieldData.name)}
+                    >
+                      {option}
+                    </div>
+                  ))
+                ) : null}
+              </div>
+            )} */}
+
           </div>
           <div className="copilot-content-bottom">
             <div className="copilot-content-bottom-button">
@@ -404,10 +242,28 @@ const Copilot = () => {
                 type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Type your message..."
-                onKeyPress={(e) => e.key === 'Enter' && sendPrompt()}
+                placeholder={questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex].options ? 'Type your answer...' : 'Type your message...'}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    if (questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex].options) {
+                      handleSendAnswer();
+                    } else {
+                      sendPrompt();
+                    }
+                  }
+                }}
               />
-              <Button variant="primary" size="sm" onClick={sendPrompt}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  if (questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex].options) {
+                    handleSendAnswer();
+                  } else {
+                    sendPrompt();
+                  }
+                }}
+              >
                 <Icon src={Send} />
               </Button>
             </div>
