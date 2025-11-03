@@ -14,6 +14,11 @@ import { ContainerType, getBlockType } from '../generic/key-utils';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
+export enum LibQueryParamKeys {
+  SidebarActions = 'sa',
+  SidebarTab = 'st',
+}
+
 export const ROUTES = {
   // LibraryAuthoringPage routes:
   // * Components tab, with an optionally selected component in the sidebar.
@@ -240,7 +245,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     }
 
     // Also remove the `sa` (sidebar action) search param if it exists.
-    searchParams.delete('sa');
+    searchParams.delete(LibQueryParamKeys.SidebarActions);
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
     // Prevent unnecessary navigation if the path is the same.

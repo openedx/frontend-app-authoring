@@ -7,10 +7,10 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { useStateWithUrlSearchParam } from '../../../hooks';
+import { useStateWithUrlSearchParam } from '@src/hooks';
+import { LibQueryParamKeys, useLibraryRoutes } from '@src/library-authoring/routes';
 import { useComponentPickerContext } from './ComponentPickerContext';
 import { useLibraryContext } from './LibraryContext';
-import { useLibraryRoutes } from '../../routes';
 
 export enum SidebarBodyItemId {
   AddContent = 'add-content',
@@ -130,14 +130,14 @@ export const SidebarProvider = ({
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
     defaultTab.component,
-    'st',
+    LibQueryParamKeys.SidebarTab,
     (value: string) => toSidebarInfoTab(value),
     (value: SidebarInfoTab) => value.toString(),
   );
 
   const [sidebarAction, setSidebarAction] = useStateWithUrlSearchParam<SidebarActions>(
     SidebarActions.None,
-    'sa',
+    LibQueryParamKeys.SidebarActions,
     (value: string) => Object.values(SidebarActions).find((enumValue) => value === enumValue),
     (value: SidebarActions) => value.toString(),
   );

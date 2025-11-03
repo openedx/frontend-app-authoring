@@ -5,15 +5,13 @@ import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
-import { LibraryTeamModal } from '../library-team';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 const LibraryInfo = () => {
   const intl = useIntl();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
-  const { sidebarAction, setSidebarAction, resetSidebarAction } = useSidebarContext();
-  const isLibraryTeamModalOpen = (sidebarAction === SidebarActions.ManageTeam);
+  const { setSidebarAction } = useSidebarContext();
   const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
 
   // always show link to admin console MFE if it is being used
@@ -25,9 +23,6 @@ const LibraryInfo = () => {
   const openLibraryTeamModal = useCallback(() => {
     setSidebarAction(SidebarActions.ManageTeam);
   }, [setSidebarAction]);
-  const closeLibraryTeamModal = useCallback(() => {
-    resetSidebarAction();
-  }, [resetSidebarAction]);
 
   return (
     <Stack direction="vertical" gap={2.5}>
@@ -81,7 +76,6 @@ const LibraryInfo = () => {
           </span>
         </Stack>
       </Stack>
-      {isLibraryTeamModalOpen && <LibraryTeamModal onClose={closeLibraryTeamModal} />}
     </Stack>
   );
 };

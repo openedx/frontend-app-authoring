@@ -2,7 +2,9 @@ import { useSelector } from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { renderHook } from '@testing-library/react';
 import messages from './messages';
-import { useContentMenuItems, useToolsMenuItems, useSettingMenuItems } from './hooks';
+import {
+  useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems,
+} from './hooks';
 import { mockWaffleFlags } from '../data/apiHooks.mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -28,7 +30,7 @@ jest.mock('react-redux', () => ({
 describe('header utils', () => {
   describe('getContentMenuItems', () => {
     it('when video upload page enabled should include Video Uploads option', () => {
-      useSelector.mockReturnValue({
+      jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
       });
       setConfig({
@@ -39,7 +41,7 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(5);
     });
     it('when video upload page disabled should not include Video Uploads option', () => {
-      useSelector.mockReturnValue({
+      jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: false,
       });
       setConfig({
@@ -50,7 +52,7 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(4);
     });
     it('adds course libraries link to content menu when libraries v2 is enabled', () => {
-      useSelector.mockReturnValue({
+      jest.mocked(useSelector).mockReturnValue({
         librariesV2Enabled: true,
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123')).result.current;
@@ -60,7 +62,7 @@ describe('header utils', () => {
 
   describe('getSettingsMenuitems', () => {
     beforeEach(() => {
-      useSelector.mockReturnValue({
+      jest.mocked(useSelector).mockReturnValue({
         canAccessAdvancedSettings: true,
       });
     });
@@ -86,7 +88,7 @@ describe('header utils', () => {
       expect(actualItemsTitle).toContain('Advanced Settings');
     });
     it('when user has no access to advanced settings should not include advanced settings option', () => {
-      useSelector.mockReturnValue({ canAccessAdvancedSettings: false });
+      jest.mocked(useSelector).mockReturnValue({ canAccessAdvancedSettings: false });
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123')).result.current.map((item) => item.title);
       expect(actualItemsTitle).not.toContain('Advanced Settings');
     });
@@ -135,6 +137,46 @@ describe('header utils', () => {
       });
       const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123')).result.current.map((item) => item.title);
       expect(actualItemsTitle).not.toContain(messages['header.links.optimizer'].defaultMessage);
+    });
+  });
+
+  describe('useLibrarySettingsMenuItems', () => {
+    it('should contain team access url', () => {
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
+      expect(items).toContainEqual({ title: 'Team Access', href: 'http://localhost/?sa=manage-team' });
+    });
+    it('should contain admin console url if set', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.com',
+      });
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
+      expect(items).toContainEqual({
+        title: 'Team Access',
+        href: 'http://admin-console.com/authz/libraries/library-123',
+      });
+    });
+    it('should contain admin console url if set and readOnly is true', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.com',
+      });
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', true)).result.current;
+      expect(items).toContainEqual({
+        title: 'Team Access',
+        href: 'http://admin-console.com/authz/libraries/library-123',
+      });
+    });
+  });
+
+  describe('useLibraryToolsMenuItems', () => {
+    it('should contain backup and import url', () => {
+      const items = renderHook(() => useLibraryToolsMenuItems('course-123')).result.current;
+      expect(items).toContainEqual({
+        href: '/library/course-123/backup',
+        title: 'Backup to local archive',
+      });
+      expect(items).toContainEqual({ href: '/library/course-123/import', title: 'Import' });
     });
   });
 });

@@ -96,6 +96,11 @@ const messages = defineMessages({
     defaultMessage: 'Import',
     description: 'Link to Studio Import page',
   },
+  'header.links.lib.import': {
+    id: 'header.links.lib.import',
+    defaultMessage: 'Import',
+    description: 'Link to Course Import page in library',
+  },
   'header.links.exportCourse': {
     id: 'header.links.exportCourse',
     defaultMessage: 'Export Course',
@@ -105,6 +110,11 @@ const messages = defineMessages({
     id: 'header.links.exportLibrary',
     defaultMessage: 'Backup to local archive',
     description: 'Link to Studio Backup Library page',
+  },
+  'header.menu.teamAccess': {
+    id: 'header.links.teamAccess',
+    defaultMessage: 'Team Access',
+    description: 'Menu item to open team access popup',
   },
   'header.links.optimizer': {
     id: 'header.links.optimizer',
