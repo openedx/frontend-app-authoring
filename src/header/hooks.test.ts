@@ -145,6 +145,28 @@ describe('header utils', () => {
       const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
       expect(items).toContainEqual({ title: 'Team Access', href: 'http://localhost/?sa=manage-team' });
     });
+    it('should contain admin console url if set', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.com',
+      });
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
+      expect(items).toContainEqual({
+        title: 'Team Access',
+        href: 'http://admin-console.com/authz/libraries/library-123',
+      });
+    });
+    it('should contain admin console url if set and readOnly is true', () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.com',
+      });
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', true)).result.current;
+      expect(items).toContainEqual({
+        title: 'Team Access',
+        href: 'http://admin-console.com/authz/libraries/library-123',
+      });
+    });
   });
 
   describe('useLibraryToolsMenuItems', () => {

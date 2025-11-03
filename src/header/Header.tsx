@@ -62,13 +62,11 @@ const Header = ({
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
       items: toolsMenuItems,
     },
-  ] : [
-    {
-      id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: libraryToolsMenuItems,
-    },
-  ];
+  ] : [{
+    id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+    buttonTitle: intl.formatMessage(messages['header.links.tools']),
+    items: libraryToolsMenuItems,
+  }];
 
   // Include settings menu only if user is allowed to see them.
   if (isLibrary && libraryToolsSettingsItems.length > 0) {
