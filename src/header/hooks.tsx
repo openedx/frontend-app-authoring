@@ -146,25 +146,40 @@ export const useLibraryToolsMenuItems = (itemId: string) => {
   return items;
 };
 
-export const useLibrarySettingsMenuItems = () => {
+export const useLibrarySettingsMenuItems = (itemId: string, readOnly: boolean) => {
   const intl = useIntl();
 
   const openTeamAccessModalUrl = () => {
-    if (!window.location.href) {
-      return null;
+    const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
+    // always show link to admin console MFE if it is being used
+    const shouldShowAdminConsoleLink = !!adminConsoleUrl;
+
+    // if the admin console MFE isn't being used, show team modal button for non–read-only users
+    const shouldShowTeamModalButton = !adminConsoleUrl && !readOnly;
+    if (shouldShowTeamModalButton) {
+      if (!window.location.href) {
+        return null;
+      }
+      const url = new URL(window.location.href);
+      // Set ?sa=manage-team in url which in turn opens team access modal
+      url.searchParams.set(LibQueryParamKeys.SidebarActions, SidebarActions.ManageTeam);
+      return url.toString();
     }
-    const url = new URL(window.location.href);
-    // Set ?sa=manage-team in url which in turn opens team access modal
-    url.searchParams.set(LibQueryParamKeys.SidebarActions, SidebarActions.ManageTeam);
-    return url.toString();
+    if (shouldShowAdminConsoleLink) {
+      return `${adminConsoleUrl}/authz/libraries/${itemId}`;
+    }
+    return null;
   };
 
-  const items = [
-    {
+  const items: { title: string; href: string }[] = [];
+
+  const teamAccessUrl = openTeamAccessModalUrl();
+  if (teamAccessUrl) {
+    items.push({
       title: intl.formatMessage(messages['header.menu.teamAccess']),
-      href: openTeamAccessModalUrl(),
-    },
-  ];
+      href: teamAccessUrl,
+    });
+  }
 
   return items;
 };

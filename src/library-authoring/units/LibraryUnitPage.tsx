@@ -23,10 +23,7 @@ import { ContainerEditableTitle, FooterActions, HeaderActions } from '../contain
 export const LibraryUnitPage = () => {
   const intl = useIntl();
 
-  const {
-    libraryId,
-    containerId,
-  } = useLibraryContext();
+  const { libraryId, containerId, readOnly } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
   if (!containerId) {
@@ -71,6 +68,7 @@ export const LibraryUnitPage = () => {
           org={libraryData.org}
           contextId={libraryId}
           isLibrary
+          readOnly={readOnly}
           containerProps={{
             size: undefined,
           }}

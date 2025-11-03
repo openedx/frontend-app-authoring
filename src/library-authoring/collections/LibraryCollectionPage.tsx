@@ -107,6 +107,7 @@ const LibraryCollectionPage = () => {
     showOnlyPublished,
     extraFilter: contextExtraFilter,
     setCollectionId,
+    readOnly,
   } = useLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
@@ -194,6 +195,7 @@ const LibraryCollectionPage = () => {
             title={libraryData.title}
             org={libraryData.org}
             contextId={libraryId}
+            readOnly={readOnly}
             isLibrary
             containerProps={{
               size: undefined,

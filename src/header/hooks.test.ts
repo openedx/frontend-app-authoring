@@ -142,7 +142,7 @@ describe('header utils', () => {
 
   describe('useLibrarySettingsMenuItems', () => {
     it('should contain team access url', () => {
-      const items = renderHook(() => useLibrarySettingsMenuItems()).result.current;
+      const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
       expect(items).toContainEqual({ title: 'Team Access', href: 'http://localhost/?sa=manage-team' });
     });
   });
