@@ -72,6 +72,7 @@ export interface DefaultTabs {
 export interface SidebarItemInfo {
   type: SidebarBodyItemId;
   id: string;
+  index?: number;
 }
 
 export enum SidebarActions {
@@ -88,7 +89,7 @@ export type SidebarContextData = {
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   openContainerInfoSidebar: (usageKey: string) => void;
-  openItemSidebar: (selectedItemId: string, type: SidebarBodyItemId) => void;
+  openItemSidebar: (selectedItemId: string, type: SidebarBodyItemId, index?: number) => void;
   sidebarItemInfo?: SidebarItemInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
@@ -154,35 +155,38 @@ export const SidebarProvider = ({
     setSidebarItemInfo({ id: '', type: SidebarBodyItemId.Info });
   }, []);
 
-  const openComponentInfoSidebar = useCallback((usageKey: string) => {
+  const openComponentInfoSidebar = useCallback((usageKey: string, index?: number) => {
     setSidebarItemInfo({
       id: usageKey,
       type: SidebarBodyItemId.ComponentInfo,
+      index,
     });
   }, []);
 
-  const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
+  const openCollectionInfoSidebar = useCallback((newCollectionId: string, index?: number) => {
     setSidebarItemInfo({
       id: newCollectionId,
       type: SidebarBodyItemId.CollectionInfo,
+      index,
     });
   }, []);
 
-  const openContainerInfoSidebar = useCallback((usageKey: string) => {
+  const openContainerInfoSidebar = useCallback((usageKey: string, index?: number) => {
     setSidebarItemInfo({
       id: usageKey,
       type: SidebarBodyItemId.ContainerInfo,
+      index,
     });
   }, []);
 
   const { navigateTo } = useLibraryRoutes();
-  const openItemSidebar = useCallback((selectedItemId: string, type: SidebarBodyItemId) => {
-    navigateTo({ selectedItemId });
-    setSidebarItemInfo({ id: selectedItemId, type });
+  const openItemSidebar = useCallback((selectedItemId: string, type: SidebarBodyItemId, index?: number) => {
+    navigateTo({ selectedItemId, index });
+    setSidebarItemInfo({ id: selectedItemId, type, index });
   }, [navigateTo, setSidebarItemInfo]);
 
   // Set the initial sidebar state based on the URL parameters and context.
-  const { selectedItemId } = useParams();
+  const { selectedItemId, index: indexParam } = useParams();
   const { collectionId, containerId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
@@ -198,12 +202,15 @@ export const SidebarProvider = ({
 
     // Handle selected item id changes
     if (selectedItemId) {
+      // if a item is selected that means we have list of items displayed
+      // which means we can get the index from url and set it.
+      const indexNumber = indexParam ? Number(indexParam) : undefined;
       if (selectedItemId.startsWith('lct:')) {
-        openContainerInfoSidebar(selectedItemId);
+        openContainerInfoSidebar(selectedItemId, indexNumber);
       } else if (selectedItemId.startsWith('lb:')) {
-        openComponentInfoSidebar(selectedItemId);
+        openComponentInfoSidebar(selectedItemId, indexNumber);
       } else {
-        openCollectionInfoSidebar(selectedItemId);
+        openCollectionInfoSidebar(selectedItemId, indexNumber);
       }
     } else if (collectionId) {
       openCollectionInfoSidebar(collectionId);

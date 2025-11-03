@@ -4,31 +4,38 @@ import { Warning } from '@openedx/paragon/icons';
 
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import {
   useContainer,
   useRemoveContainerChildren,
-  useAddItemsToContainer,
   useLibraryBlockMetadata,
-} from '../data/apiHooks';
+  useContainerChildren,
+  useUpdateContainerChildren,
+} from '@src/library-authoring/data/apiHooks';
+import { LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import messages from './messages';
 
 interface Props {
   usageKey: string;
+  index?: number;
   close: () => void;
 }
 
-const ComponentRemover = ({ usageKey, close }: Props) => {
+const ComponentRemover = ({ usageKey, index, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
-  const { containerId } = useLibraryContext();
+  const { containerId, showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);
-  const addItemToContainerMutation = useAddItemsToContainer(containerId);
+  const updateContainerChildrenMutation = useUpdateContainerChildren(containerId);
   const { data: container, isPending: isPendingParentContainer } = useContainer(containerId);
   const { data: component, isPending } = useLibraryBlockMetadata(usageKey);
+  // Use update api for children if duplicates are present to avoid removing all instances of the child
+  const { data: children } = useContainerChildren<LibraryBlockMetadata>(containerId, showOnlyPublished);
+  const childrenUsageIds = children?.map((child) => child.id);
+  const hasDuplicates = (childrenUsageIds?.filter((child) => child === usageKey).length || 0) > 1;
 
   // istanbul ignore if: loading state
   if (isPending || isPendingParentContainer) {
@@ -36,28 +43,62 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
     return null;
   }
 
+  const restoreComponent = () => {
+    // istanbul ignore if: this should never happen
+    if (!childrenUsageIds) {
+      return;
+    }
+    updateContainerChildrenMutation.mutateAsync(childrenUsageIds).then(() => {
+      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
+    });
+  };
+
+  const showSuccessToast = () => {
+    showToast(
+      intl.formatMessage(messages.removeComponentFromContainerSuccess),
+      {
+        label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
+        onClick: restoreComponent,
+      },
+    );
+  };
+
+  const showFailureToast = () => showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+
   const removeFromContainer = () => {
-    const restoreComponent = () => {
-      addItemToContainerMutation.mutateAsync([usageKey]).then(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.undoRemoveComponentFromContainerToastFailed));
-      });
-    };
     removeContainerItemMutation.mutateAsync([usageKey]).then(() => {
       if (sidebarItemInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(
-        intl.formatMessage(messages.removeComponentFromContainerSuccess),
-        {
-          label: intl.formatMessage(messages.undoRemoveComponentFromContainerToastAction),
-          onClick: restoreComponent,
-        },
-      );
+      showSuccessToast();
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFromContainerFailure));
+      showFailureToast();
+    });
+
+    close();
+  };
+
+  const excludeOneInstance = () => {
+    if (!childrenUsageIds || typeof index === 'undefined') {
+      return;
+    }
+    const updatedKeys = childrenUsageIds.filter((childId, idx) => childId !== usageKey || idx !== index);
+    updateContainerChildrenMutation.mutateAsync(updatedKeys).then(() => {
+      // istanbul ignore if
+      if (sidebarItemInfo?.id === usageKey && sidebarItemInfo?.index === index) {
+        // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      // Already tested as part of removeFromContainer
+      // istanbul ignore next
+      showSuccessToast();
+    }).catch(() => {
+      // Already tested as part of removeFromContainer
+      // istanbul ignore next
+      showFailureToast();
     });
 
     close();
@@ -76,7 +117,7 @@ const ComponentRemover = ({ usageKey, close }: Props) => {
       title={intl.formatMessage(messages.removeComponentWarningTitle)}
       icon={Warning}
       description={removeText}
-      onDeleteSubmit={removeFromContainer}
+      onDeleteSubmit={hasDuplicates ? excludeOneInstance : removeFromContainer}
       btnLabel={intl.formatMessage(messages.componentRemoveButtonLabel)}
       buttonVariant="primary"
     />
