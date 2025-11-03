@@ -817,6 +817,8 @@ export const useAddItemsToContainer = (containerId?: string) => {
       // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
       queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
+      // Invalidate the container to update its publish status
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
 
       const containerType = getBlockType(containerId);
       if (containerType === 'section') {

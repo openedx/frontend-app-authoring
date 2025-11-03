@@ -329,10 +329,11 @@ describe('library api hooks', () => {
     // Keys should be invalidated:
     // 1. library
     // 2. containerChildren
-    // 3. containerHierarchy
-    // 4 & 5. subsections
-    // 6 all hierarchies
-    expect(spy).toHaveBeenCalledTimes(6);
+    // 3. container
+    // 4. containerHierarchy
+    // 5 & 6. subsections
+    // 7 all hierarchies
+    expect(spy).toHaveBeenCalledTimes(7);
   });
 
   describe('publishContainer', () => {
