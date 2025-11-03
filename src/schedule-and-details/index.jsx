@@ -117,7 +117,6 @@ const ScheduleAndDetails = ({ courseId }) => {
     license,
     language,
     subtitle,
-    overview,
     duration,
     selfPaced,
     startDate,
@@ -128,7 +127,6 @@ const ScheduleAndDetails = ({ courseId }) => {
     instructorInfo,
     enrollmentStart,
     shortDescription,
-    aboutSidebarHtml,
     preRequisiteCourses,
     entranceExamEnabled,
     courseImageAssetPath,
@@ -140,6 +138,12 @@ const ScheduleAndDetails = ({ courseId }) => {
   } = editedValues;
 
   useScrollToHashElement({ isLoading });
+  // No need to get overview and aboutSidebarHtml from editedValues
+  // As updating them re-renders TinyMCE
+  // Which causes issues with TinyMCE editor cursor position
+  // https://www.tiny.cloud/docs/tinymce/5/react/#initialvalue
+  const { overview: initialOverview } = courseDetails || {};
+  const { aboutSidebarHtml: initialAboutSidebarHtml } = courseDetails || {};
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -277,12 +281,12 @@ const ScheduleAndDetails = ({ courseId }) => {
                   )}
                   <IntroducingSection
                     title={title}
-                    overview={overview}
+                    overview={initialOverview}
                     duration={duration}
                     subtitle={subtitle}
                     introVideo={introVideo}
                     description={description}
-                    aboutSidebarHtml={aboutSidebarHtml}
+                    aboutSidebarHtml={initialAboutSidebarHtml}
                     shortDescription={shortDescription}
                     aboutPageEditable={aboutPageEditable}
                     sidebarHtmlEnabled={sidebarHtmlEnabled}
