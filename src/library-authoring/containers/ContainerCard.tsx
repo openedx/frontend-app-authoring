@@ -17,23 +17,24 @@ import { type ContainerHit, Highlight, PublishStatus } from '@src/search-manager
 import { ToastContext } from '@src/generic/toast-context';
 import { useRunOnNextRender } from '@src/utils';
 
-import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveItemsFromCollection } from '../data/apiHooks';
-import { useLibraryRoutes } from '../routes';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
+import { useLibraryRoutes } from '@src/library-authoring/routes';
+import BaseCard from '@src/library-authoring/components/BaseCard';
+import AddComponentWidget from '@src/library-authoring/components/AddComponentWidget';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
-import BaseCard from '../components/BaseCard';
-import AddComponentWidget from '../components/AddComponentWidget';
 
 type ContainerMenuProps = {
   containerKey: string;
   displayName: string;
+  index?: number;
 };
 
-export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps) => {
+export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMenuProps) => {
   const intl = useIntl();
   const { libraryId, collectionId, containerId } = useLibraryContext();
   const {
@@ -144,6 +145,7 @@ export const ContainerMenu = ({ containerKey, displayName } : ContainerMenuProps
           close={cancelRemove}
           containerKey={containerKey}
           displayName={displayName}
+          index={index}
         />
       )}
     </>

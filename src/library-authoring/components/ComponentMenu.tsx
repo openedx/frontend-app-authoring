@@ -12,18 +12,23 @@ import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveItemsFromCollection } from '../data/apiHooks';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
+import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
+import containerMessages from '@src/library-authoring/containers/messages';
+import { useLibraryRoutes } from '@src/library-authoring/routes';
+import { useRunOnNextRender } from '@src/utils';
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import ComponentRemover from './ComponentRemover';
 import messages from './messages';
-import containerMessages from '../containers/messages';
-import { useLibraryRoutes } from '../routes';
-import { useRunOnNextRender } from '../../utils';
 
-export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
+interface Props {
+  usageKey: string;
+  index?: number;
+}
+
+export const ComponentMenu = ({ usageKey, index }: Props) => {
   const intl = useIntl();
   const {
     libraryId,
@@ -135,6 +140,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       {isRemoveModalOpen && (
         <ComponentRemover
           usageKey={usageKey}
+          index={index}
           close={closeRemoveModal}
         />
       )}
