@@ -413,9 +413,9 @@ describe('<LibraryUnitPage />', () => {
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
-      // Only the first element is removed even though the last element has the same id.
-      expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
     });
+    // Only the first element is removed even though the last element has the same id.
+    expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
     await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
   });
 

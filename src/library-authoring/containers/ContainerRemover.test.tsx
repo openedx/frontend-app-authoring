@@ -6,33 +6,22 @@ import {
   render,
   screen,
   waitFor,
-} from '../../testUtils';
+} from '@src/testUtils';
+import { ToastProvider } from '@src/generic/toast-context';
 import {
   getLibraryContainerChildrenApiUrl,
 } from '../data/api';
 import {
   mockContentLibrary,
-  mockXBlockFields,
-  mockGetContainerMetadata,
   mockGetContainerChildren,
-  mockLibraryBlockMetadata,
 } from '../data/api.mocks';
-import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { mockClipboardEmpty } from '../../generic/data/api.mock';
-import { ToastProvider } from '../../generic/toast-context';
 import ContainerRemover from './ContainerRemover';
 import { LibraryProvider } from '../common/context/LibraryContext';
 
 let axiosMock: MockAdapter;
 
-mockClipboardEmpty.applyMock();
-mockGetContainerMetadata.applyMock();
 mockGetContainerChildren.applyMock();
-mockContentSearchConfig.applyMock();
-mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
-mockXBlockFields.applyMock();
-mockLibraryBlockMetadata.applyMock();
 
 const mockClose = jest.fn();
 
@@ -76,9 +65,9 @@ describe('<ContainerRemover />', () => {
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
-      // Only the first element is removed even though the last element has the same id.
-      expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
     });
+    // Only the first element is removed even though the last element has the same id.
+    expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
     expect(mockClose).toHaveBeenCalled();
   });
 });
