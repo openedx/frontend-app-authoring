@@ -167,6 +167,7 @@ const LibraryAuthoringPage = ({
     isLoadingLibraryData,
     showOnlyPublished,
     extraFilter: contextExtraFilter,
+    readOnly,
   } = useLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
@@ -342,6 +343,7 @@ const LibraryAuthoringPage = ({
             title={libraryData.title}
             org={libraryData.org}
             contextId={libraryId}
+            readOnly={readOnly}
             isLibrary
             containerProps={{
               size: undefined,
