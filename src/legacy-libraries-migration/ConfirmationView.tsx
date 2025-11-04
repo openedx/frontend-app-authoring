@@ -74,7 +74,6 @@ export const ConfirmationView = ({
         {...messages.confirmationViewAlert}
         values={{
           count: legacyLibraries.length,
-          libraryName: destination.title,
           b: BoldText,
         }}
       />
