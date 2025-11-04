@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { getStudioHomeLibraries, getMigrationInfo } from './api';
 
 export const studioHomeQueryKeys = {
@@ -21,7 +21,6 @@ export const useLibrariesV1Data = (enabled: boolean = true) => (
 export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true) => (
   useQuery({
     queryKey: studioHomeQueryKeys.migrationInfo(sourcesKeys),
-    queryFn: () => getMigrationInfo(sourcesKeys),
-    enabled,
+    queryFn: enabled ? () => getMigrationInfo(sourcesKeys) : skipToken,
   })
 );

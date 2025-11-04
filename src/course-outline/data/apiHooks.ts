@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
 import { getCourseDetails, getCourseItem } from './api';
 
@@ -37,7 +37,6 @@ export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
 export const useCourseDetails = (courseId?: string) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseDetails(courseId),
-    queryFn: () => getCourseDetails(courseId!),
-    enabled: courseId !== undefined,
+    queryFn: courseId ? () => getCourseDetails(courseId) : skipToken,
   })
 );
