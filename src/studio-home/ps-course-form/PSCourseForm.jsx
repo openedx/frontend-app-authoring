@@ -57,7 +57,7 @@ import AIButton from './AIButton';
 import Copilot from '../../copilot/Copilot';
 import { CopilotProvider, useCopilot } from '../../copilot/CopilotContext';
 
-const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/'; // AI service base URL
+// const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/'; // AI service base URL
 
 // Utility function to get user's timezone string
 function getUserTimezoneString() {
@@ -128,7 +128,9 @@ const PSCourseForm = ({
     updateCardImage,
     updateBannerImage,
     setAiResponse,
-    setButtons
+    setButtons,
+    handleAIButtonClick,
+    aiLoading,
   } = useCopilot();
 
   useEffect(() => {
@@ -239,17 +241,6 @@ const PSCourseForm = ({
   const [allowedOrganizations, setAllowedOrganizations] = useState([]);
   const [canCreateNewOrganization, setCanCreateNewOrganization] = useState(false);
 
-  // New loading state for AI buttons
-  const [aiLoading, setAiLoading] = useState({
-    title: false,
-    shortDescription: false,
-    description: false,
-    cardImage: false,
-    bannerImage: false,
-  });
-
-  // end
-
   const {
     licenseURL,
     licenseType,
@@ -307,95 +298,95 @@ const PSCourseForm = ({
 
   //copilotcode
 
-  const handleAIButtonClick = async (fieldName, fieldValue) => {
-    let effectiveValue = fieldValue?.trim() || "";
-    if (!effectiveValue && fieldName !== 'cardImage' && fieldName !== 'bannerImage') {
-      return; // No call if empty for text fields
-    }
+  // const handleAIButtonClick = async (fieldName, fieldValue) => {
+  //   let effectiveValue = fieldValue?.trim() || "";
+  //   if (!effectiveValue && fieldName !== 'cardImage' && fieldName !== 'bannerImage') {
+  //     return; // No call if empty for text fields
+  //   }
 
-    if (fieldName === 'cardImage' || fieldName === 'bannerImage') {
-      effectiveValue = editedValues.title?.trim() || "";
-      if (!effectiveValue) return;
-    }
-    setAiLoading((prev) => ({ ...prev, [fieldName]: true }));
-    try {
-      // STEP 1: Generate token
-      const tokenResponse = await fetch(
-        `${BASE_API_URL}/oauth2/access_token`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            grant_type: "password",
-            client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-            username: "admin",
-            password: "admin",
-          }),
-        }
-      );
+  //   if (fieldName === 'cardImage' || fieldName === 'bannerImage') {
+  //     effectiveValue = editedValues.title?.trim() || "";
+  //     if (!effectiveValue) return;
+  //   }
+  //   setAiLoading((prev) => ({ ...prev, [fieldName]: true }));
+  //   try {
+  //     // STEP 1: Generate token
+  //     const tokenResponse = await fetch(
+  //       `${BASE_API_URL}/oauth2/access_token`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded",
+  //         },
+  //         body: new URLSearchParams({
+  //           grant_type: "password",
+  //           client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
+  //           username: "admin",
+  //           password: "admin",
+  //         }),
+  //       }
+  //     );
 
-      if (!tokenResponse.ok) {
-        throw new Error("Failed to get token");
-      }
+  //     if (!tokenResponse.ok) {
+  //       throw new Error("Failed to get token");
+  //     }
 
-      const tokenData = await tokenResponse.json();
-      const token = tokenData.access_token;
+  //     const tokenData = await tokenResponse.json();
+  //     const token = tokenData.access_token;
 
-      // Determine API endpoint and body key based on fieldName
-      let apiUrl = "";
-      let bodyKey = "";
-      switch (fieldName) {
-        case "title":
-          apiUrl = `${BASE_API_URL}/chat/v1/suggest-titles/`;
-          bodyKey = "title";
-          break;
-        case "shortDescription":
-          apiUrl = `${BASE_API_URL}/chat/v1/suggest-descriptions/`;
-          bodyKey = "user_short_description";
-          break;
-        case "description":
-          apiUrl = `${BASE_API_URL}/chat/v1/suggest-full-descriptions/`;
-          bodyKey = "user_long_description";
-          break;
-        case "cardImage":
-        case "bannerImage":
-          apiUrl = `${BASE_API_URL}/chat/v1/suggest-images/`;
-          bodyKey = "title";
-          break;
-        default:
-          return;
-      }
+  //     // Determine API endpoint and body key based on fieldName
+  //     let apiUrl = "";
+  //     let bodyKey = "";
+  //     switch (fieldName) {
+  //       case "title":
+  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-titles/`;
+  //         bodyKey = "title";
+  //         break;
+  //       case "shortDescription":
+  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-descriptions/`;
+  //         bodyKey = "user_short_description";
+  //         break;
+  //       case "description":
+  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-full-descriptions/`;
+  //         bodyKey = "user_long_description";
+  //         break;
+  //       case "cardImage":
+  //       case "bannerImage":
+  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-images/`;
+  //         bodyKey = "title";
+  //         break;
+  //       default:
+  //         return;
+  //     }
 
-      // If fieldValue is empty, use title as fallback
+  //     // If fieldValue is empty, use title as fallback
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          [bodyKey]: effectiveValue,
-        }),
-      });
+  //     const response = await fetch(apiUrl, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({
+  //         [bodyKey]: effectiveValue,
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch suggestions");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch suggestions");
+  //     }
 
-      const data = await response.json();
-      console.log(data)
-      openCopilot(fieldName, fieldValue);
-      setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
-      setButtons(data.btns || []);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setAiLoading((prev) => ({ ...prev, [fieldName]: false }));
-    }
-  };
+  //     const data = await response.json();
+  //     console.log(data)
+  //     openCopilot(fieldName, fieldValue);
+  //     setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
+  //     setButtons(data.btns || []);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   } finally {
+  //     setAiLoading((prev) => ({ ...prev, [fieldName]: false }));
+  //   }
+  // };
 
   // end
 

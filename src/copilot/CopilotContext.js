@@ -1,16 +1,19 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
+
+const CopilotContext = createContext(null);
+export const useCopilot = () => useContext(CopilotContext);
 
 const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/';
 
 const isValidImageUrl = (url) => {
-  return typeof url === 'string' && (url.match(/\.(jpeg|jpg|png|gif)(?=\?|$)/i) || url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i));
+  return typeof url === 'string' && (
+    url.match(/\.(jpeg|jpg|png|gif|webp|bmp|svg)(?=\?|$)/i) ||
+    url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i)
+  );
 };
 
-const CopilotContext = createContext(null);
-
-export const useCopilot = () => useContext(CopilotContext);
-
-// Utility function to debounce callbacks
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -20,6 +23,9 @@ const debounce = (func, wait) => {
 };
 
 export const CopilotProvider = ({ children, initialConfig = { width: 400, height: 83, position: 'right' } }) => {
+  const { formatMessage } = useIntl();
+  const t = (msg, values) => formatMessage(msg, values);
+
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
   const [isDocked, setIsDocked] = useState(true);
@@ -48,54 +54,129 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
   const [userAnswers, setUserAnswers] = useState({});
+  const [pinnedSuggestions, setPinnedSuggestions] = useState([]);
+  const [aiLoading, setAiLoading] = useState({
+    title: false, shortDescription: false, description: false, cardImage: false, bannerImage: false,
+  });
+  const [lastFailedAction, setLastFailedAction] = useState(null);
 
   const startData = useRef({ x: 0, y: 0, w: 0, h: 0, mouseX: 0, mouseY: 0 });
 
-  const updateTitle = (value) => setTitle(value);
-  const updateShortDescription = (value) => setShortDescription(value);
-  const updateDescription = (value) => setDescription(value);
-  const updateCardImage = (value) => setCardImage(value);
-  const updateBannerImage = (value) => setBannerImage(value);
+  const addErrorToChat = (retryAction) => {
+    setChatHistory(prev => [...prev, {
+      type: 'error',
+      sender: 'ai',
+      content: t(messages.error),
+      retryAction
+    }]);
+  };
+
+  const retryLastAction = () => {
+    if (lastFailedAction) {
+      lastFailedAction();
+      setLastFailedAction(null);
+    }
+  };
+
+  const safeApiCall = async (apiCall, actionName) => {
+    try {
+      setLastFailedAction(() => () => safeApiCall(apiCall, actionName));
+      return await apiCall();
+    } catch (err) {
+      console.error(`API Error [${actionName}]:`, err);
+      addErrorToChat(() => safeApiCall(apiCall, actionName));
+      return null;
+    }
+  };
+
+  const getToken = async () => {
+    const res = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "password",
+        client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
+        username: "admin",
+        password: "admin",
+      }),
+    });
+    if (!res.ok) throw new Error("Token fetch failed");
+    const data = await res.json();
+    return data.access_token;
+  };
+
+  const handleAIButtonClick = async (fieldName, fieldValue) => {
+    let effectiveValue = fieldValue?.trim() || "";
+    if (!effectiveValue && !['cardImage', 'bannerImage'].includes(fieldName)) return;
+    if (['cardImage', 'bannerImage'].includes(fieldName)) {
+      effectiveValue = title?.trim() || "";
+      if (!effectiveValue) return;
+    }
+
+    setAiLoading(prev => ({ ...prev, [fieldName]: true }));
+    setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
+
+    const action = async () => {
+      const token = await getToken();
+      const config = {
+        title: { url: 'suggest-titles/', key: 'title' },
+        shortDescription: { url: 'suggest-descriptions/', key: 'user_short_description' },
+        description: { url: 'suggest-full-descriptions/', key: 'user_long_description' },
+        cardImage: { url: 'suggest-images/', key: 'title' },
+        bannerImage: { url: 'suggest-images/', key: 'title' },
+      }[fieldName];
+
+      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ [config.key]: effectiveValue }),
+      });
+      if (!res.ok) throw new Error("Suggestion failed");
+      return await res.json();
+    };
+
+    const data = await safeApiCall(action, `AI_${fieldName}`);
+    if (data) {
+      openCopilot(fieldName, effectiveValue);
+      setAiResponse(prev => [...prev, data]);
+      setButtons(data.btns || []);
+    }
+    setAiLoading(prev => ({ ...prev, [fieldName]: false }));
+  };
+
+  const updateTitle = (v) => setTitle(v);
+  const updateShortDescription = (v) => setShortDescription(v);
+  const updateDescription = (v) => setDescription(v);
+  const updateCardImage = (v) => setCardImage(v);
+  const updateBannerImage = (v) => setBannerImage(v);
+
+  const getReadableFieldName = (field) => t(messages[`field${field.charAt(0).toUpperCase() + field.slice(1)}`]);
 
   const openCopilot = (name, value) => {
+    setPinnedSuggestions([]);
     setFieldData({ name, value });
-    setIsDocked(true);
-    setIsMinimized(true);
+    setIsDocked(true); setIsMinimized(true);
     setSize({ w: initialConfig.width, h: initialConfig.height });
     setPos({ x: window.innerWidth - initialConfig.width, y: 0 });
-    setIsOpen(true);
-    setIsFloating(false);
+    setIsOpen(true); setIsFloating(false);
     setTimeout(() => setIsMinimized(false), 10);
     if (!isOpen) {
-      setChatHistory([]);
-      setAiResponse([]);
-      setSelectedSuggestion(null);
-      setPrompt('');
-      setButtons([]);
-      setQuestions([]);
-      setCurrentQuestionIndex(-1);
-      setUserAnswers({});
+      setChatHistory([]); setAiResponse([]); setSelectedSuggestion(null);
+      setPrompt(''); setButtons([]); setQuestions([]); setCurrentQuestionIndex(-1); setUserAnswers({});
     }
   };
 
   const closeCopilot = () => {
+    setPinnedSuggestions([]);
     setIsOpen(false);
-    if (isFullScreen) {
-      setIsFullScreen(false);
-      setSavedState(null);
-    }
-    setQuestions([]);
-    setCurrentQuestionIndex(-1);
-    setUserAnswers({});
+    if (isFullScreen) { setIsFullScreen(false); setSavedState(null); }
+    setQuestions([]); setCurrentQuestionIndex(-1); setUserAnswers({});
   };
 
-  const toggleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
+  const toggleMinimize = () => setIsMinimized(!isMinimized);
 
   const dock = () => {
-    setIsDocked(true);
-    setIsMinimized(false);
+    setIsDocked(true); setIsMinimized(false);
     setSize({ w: initialConfig.width, h: initialConfig.height });
     setPos({ x: window.innerWidth - initialConfig.width, y: 0 });
     setIsFloating(false);
@@ -103,14 +184,15 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
   const toggleFullScreen = () => {
     if (!isFullScreen) {
-      setSavedState({
-        size,
-        pos,
-        isDocked,
-        isMinimized,
+      setSavedState({ size, pos, isDocked, isMinimized });
+      setSize({
+        w: window.innerWidth - sidebarWidth - 40,
+        h: window.innerHeight - feedbackBannerHeight - navbarHeight - 16
       });
-      setSize({ w: window.innerWidth - sidebarWidth - 40, h: window.innerHeight - feedbackBannerHeight - navbarHeight - 16 });
-      setPos({ x: sidebarWidth + 20, y: feedbackBannerHeight + navbarHeight + 15 });
+      setPos({
+        x: sidebarWidth + 20,
+        y: feedbackBannerHeight + navbarHeight + 15
+      });
       setIsDocked(false);
       setIsMinimized(false);
       setIsFullScreen(true);
@@ -125,283 +207,132 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   };
 
   const handleFloating = () => {
-    setIsFloating(true);
-    setIsDocked(false);
-    const w = 400;
-    const h = 450;
-    setPos({
-      x: window.innerWidth / 2 - w / 2,
-      y: window.innerHeight / 2 - h / 2,
-    });
+    setIsFloating(true); setIsDocked(false);
+    const w = 400, h = 450;
+    setPos({ x: window.innerWidth / 2 - w / 2, y: window.innerHeight / 2 - h / 2 });
     setSize({ w, h });
   };
 
-  const getApiConfig = (field) => {
-    switch (field) {
-      case 'title':
-        return { url: 'suggest-titles/', bodyKey: 'title' };
-      case 'shortDescription':
-        return { url: 'suggest-descriptions/', bodyKey: 'user_short_description' };
-      case 'description':
-        return { url: 'suggest-full-descriptions/', bodyKey: 'user_long_description' };
-      case 'cardImage':
-        return { url: 'suggest-images/', bodyKey: 'title' };
-      case 'bannerImage':
-        return { url: 'suggest-images/', bodyKey: 'title' };
-      default:
-        return { url: 'suggest-titles/', bodyKey: 'title' };
+  const pinSuggestion = (sug) => {
+    if (!pinnedSuggestions.includes(sug)) {
+      setPinnedSuggestions(prev => [...prev, sug]);
     }
+  };
+
+  const unpinSuggestion = (sug) => {
+    setPinnedSuggestions(prev => prev.filter(s => s !== sug));
+  };
+
+  const insertPinnedSuggestion = (sug) => {
+    handleSelectSuggestion(sug);
+    // setPinnedSuggestions([]); // Clear all pinned
+  };
+
+  const getApiConfig = (field) => {
+    const map = {
+      title: { url: 'suggest-titles/', bodyKey: 'title' },
+      shortDescription: { url: 'suggest-descriptions/', bodyKey: 'user_short_description' },
+      description: { url: 'suggest-full-descriptions/', bodyKey: 'user_long_description' },
+      cardImage: { url: 'suggest-images/', bodyKey: 'title' },
+      bannerImage: { url: 'suggest-images/', bodyKey: 'title' },
+    };
+    return map[field] || map.title;
   };
 
   const getPreviousValue = (field) => {
-    switch (field) {
-      case 'shortDescription':
-        return title?.trim() || '';
-      case 'description':
-        return shortDescription?.trim() || title?.trim() || '';
-      case 'cardImage':
-        return title?.trim() || '';
-      case 'bannerImage':
-        return title?.trim() || '';
-      default:
-        return '';
-    }
+    const map = { shortDescription: title, description: shortDescription || title, cardImage: title, bannerImage: title };
+    return (map[field] || '')?.trim();
   };
 
-
   const getCurrentFieldValue = (field) => {
-    switch (field) {
-      case 'title':
-        return title?.trim() || "";
-      case 'shortDescription':
-        return shortDescription?.trim() || '';
-      case 'description':
-        return description?.trim() || title?.trim() || '';
-      case 'cardImage':
-        return title?.trim() || '';
-      case 'bannerImage':
-        return title?.trim() || '';
-      default:
-        return '';
-    }
+    const map = { title, shortDescription, description, cardImage: title, bannerImage: title };
+    return (map[field] || '')?.trim();
   };
 
   const fetchQuestions = async (field) => {
-    setChatHistory((prev) => [
-      ...prev,
-      { type: 'text', sender: 'user', content: 'Requesting for Customize...' },
-    ]);
-    try {
-      const tokenResponse = await fetch(
-        // "https://staging.titaned.com/oauth2/access_token",
-        `${BASE_API_URL}/oauth2/access_token`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            grant_type: "password",
-            client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-            username: "admin",
-            password: "admin",
-          }),
-        });
-      const tokenData = await tokenResponse.json();
-      if (!tokenData.access_token) {
-        throw new Error('Failed to obtain access token');
-      }
-      const token = tokenData.access_token;
-
-      const response = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
+    setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: t(messages.customizeRequest) }]);
+    const action = async () => {
+      const token = await getToken();
+      const res = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch questions: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('Questions Response:', data);
+      if (!res.ok) throw new Error("Failed to fetch questions");
+      return await res.json();
+    };
+    const data = await safeApiCall(action, 'fetchQuestions');
+    if (data) {
       setQuestions(data.questions || []);
       setCurrentQuestionIndex(0);
-      setChatHistory((prev) => [
-        ...prev,
-        { type: 'text', sender: 'ai', content: data.messages?.[0]?.text },
-      ]);
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-      setChatHistory((prev) => [
-        ...prev,
-        { type: 'text', sender: 'ai', content: 'Error fetching customization questions. Please try again.' },
-      ]);
+      setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: data.messages?.[0]?.text }]);
     }
   };
 
-  const fetchSuggestions = async (effectivePrompt, field = fieldData.name, isMoreSuggestions = false) => {
-    let requestValue = effectivePrompt;
-    if (isMoreSuggestions) {
-      requestValue = getCurrentFieldValue(field);
-      if (!requestValue) {
-        console.error(`No valid value for field ${field} when requesting more suggestions`);
-        setChatHistory((prev) => [
-          ...prev,
-          { type: 'text', sender: 'ai', content: `Please provide a valid ${getReadableFieldName(field)} to generate more suggestions.` },
-        ]);
-        return;
-      }
-    } else if (!effectivePrompt || typeof effectivePrompt !== 'string' || effectivePrompt.trim() === '') {
-      console.error('Invalid effectivePrompt:', effectivePrompt, 'for field:', field);
-      setChatHistory((prev) => [
-        ...prev,
-        { type: 'text', sender: 'ai', content: `Please provide a valid ${getReadableFieldName(field)} to generate suggestions.` },
-      ]);
+  const fetchSuggestions = async (prompt, field = fieldData.name, more = false) => {
+    const value = more ? getCurrentFieldValue(field) : prompt;
+    if (!value) {
+      setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.noValue, { field: getReadableFieldName(field) }) }]);
       return;
     }
 
-    setChatHistory((prev) => [
-      ...prev,
-      { type: 'text', sender: 'ai', content: 'Your requirement is generating ...' },
-    ]);
+    setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
 
-    try {
-      const tokenResponse = await fetch(
-        // "https://staging.titaned.com/oauth2/access_token",
-        `${BASE_API_URL}/oauth2/access_token`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            grant_type: "password",
-            client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-            username: "admin",
-            password: "admin",
-          }),
-        }
-      );
-      const tokenData = await tokenResponse.json();
-      const token = tokenData.access_token;
-
+    const action = async () => {
+      const token = await getToken();
       const config = getApiConfig(field);
-      const baseValue = getCurrentFieldValue(field);
-      // const apiUrl = `https://staging.titaned.com/chat/v1/${config.url}`;
-      const apiUrl = `${BASE_API_URL}/chat/v1/${config.url}`;
-      const body = {
-        [config.bodyKey]: baseValue || requestValue.trim(),
-        ...(isMoreSuggestions && { "more_suggestions": true }),
-      };
-      console.log(body);
-      const response = await fetch(apiUrl, {
+      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ [config.bodyKey]: value, ...(more && { more_suggestions: true }) }),
       });
-      const data = await response.json();
-      setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
-    } catch (error) {
-      console.error("Error:", error);
-      setChatHistory((prev) => [
-        ...prev,
-        { type: 'text', sender: 'ai', content: `Error fetching suggestions: ${error.message} . Please try again.` },
-      ]);
-    }
+      if (!res.ok) throw new Error("Failed to fetch suggestions");
+      return await res.json();
+    };
+
+    const data = await safeApiCall(action, 'fetchSuggestions');
+    if (data) setAiResponse(prev => [...prev, data]);
   };
 
   const submitCustomAnswers = async (field = fieldData.name) => {
-    setChatHistory((prev) => [
-      ...prev,
-      { type: 'text', sender: 'ai', content: 'Your requirement is generating ...' },
-    ]);
-    try {
-      const tokenResponse = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          grant_type: 'password',
-          client_id: 'mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ',
-          username: 'admin',
-          password: 'admin',
-        }),
-      });
-      const tokenData = await tokenResponse.json();
-      if (!tokenData.access_token) {
-        throw new Error('Failed to obtain access token');
-      }
-      const token = tokenData.access_token;
+    setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
+    const action = async () => {
+      const token = await getToken();
       const config = getApiConfig(field);
-      const baseValue = getCurrentFieldValue(field);
-
-
-      const body = {
-        [config.bodyKey]: baseValue,
-        ...userAnswers,
-        custom_flow: true,
-      };
-      console.log('Submit Custom Answers Body:', body);
-      const response = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ [config.bodyKey]: getCurrentFieldValue(field), ...userAnswers, custom_flow: true }),
       });
-      if (!response.ok) {
-        throw new Error(`Failed to submit answers: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('Custom Suggestions Response:', data);
-      setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
-      setQuestions([]);
-      setCurrentQuestionIndex(-1);
-      setUserAnswers({});
-    } catch (error) {
-      console.error('Error submitting custom answers:', error);
-      setChatHistory((prev) => [
-        ...prev,
-        { type: 'text', sender: 'ai', content: `Error submitting answers: ${error.message}. Please try again.` },
-      ]);
+      if (!res.ok) throw new Error("Failed to submit answers");
+      return await res.json();
+    };
+    const data = await safeApiCall(action, 'submitCustomAnswers');
+    if (data) {
+      setAiResponse(prev => [...prev, data]);
+      setQuestions([]); setCurrentQuestionIndex(-1); setUserAnswers({});
     }
   };
 
   const handleAnswer = (answer, field) => {
-    setUserAnswers((prev) => ({
-      ...prev,
-      [questions[currentQuestionIndex].key]: answer,
-    }));
-    setChatHistory((prev) => [
-      ...prev,
-      { type: 'text', sender: 'user', content: answer },
-    ]);
-
+    setUserAnswers(prev => ({ ...prev, [questions[currentQuestionIndex].key]: answer }));
+    setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: answer }]);
     if (currentQuestionIndex + 1 < questions.length) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     } else {
       submitCustomAnswers(field);
     }
   };
-
 
   const sendPrompt = async () => {
     let effectivePrompt = prompt.trim();
     if (!effectivePrompt) {
       effectivePrompt = getPreviousValue(fieldData.name);
       if (!effectivePrompt) {
-        setChatHistory((prev) => [
-          ...prev,
-          { type: 'text', sender: 'ai', content: `Please provide a ${fieldData.name} to generate suggestions.` },
-        ]);
+        setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.noValue, { field: getReadableFieldName(fieldData.name) }) }]);
         return;
       }
     } else {
-      setChatHistory((prev) => [...prev, { type: 'text', sender: 'user', content: prompt }]);
+      setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: prompt }]);
     }
     setPrompt('');
     await fetchSuggestions(effectivePrompt);
@@ -410,61 +341,34 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const handleButtonAction = (buttonId) => {
     switch (buttonId) {
       case 'more_suggestions':
-        setChatHistory((prev) => [
-          ...prev,
-          { type: 'text', sender: 'user', content: 'Requesting more suggestions...' },
-        ]);
+        setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: t(messages.buttonMore) }]);
         fetchSuggestions(getPreviousValue(fieldData.name), fieldData.name, true);
         break;
       case 'customize':
         handleCustomize();
         break;
       case 'continue':
-        let nextField = '';
-        let nextPrompt = '';
-        if (fieldData.name === 'title') {
-          nextField = 'shortDescription';
-          nextPrompt = title?.trim() || '';
-        } else if (fieldData.name === 'shortDescription') {
-          nextField = 'description';
-          nextPrompt = shortDescription?.trim() || '';
-        } else if (fieldData.name === 'description') {
-          nextField = 'cardImage';
-          nextPrompt = title?.trim() || '';
-        } else if (fieldData.name === 'cardImage') {
-          nextField = 'bannerImage';
-          nextPrompt = title?.trim() || '';
-        }
-        if (nextField && nextPrompt) {
+        const next = { title: 'shortDescription', shortDescription: 'description', description: 'cardImage', cardImage: 'bannerImage' };
+        const nextField = next[fieldData.name];
+        if (nextField) {
           setFieldData({ name: nextField, value: '' });
           setPrompt('');
-          fetchSuggestions(nextPrompt, nextField);
+          fetchSuggestions(getCurrentFieldValue(fieldData.name), nextField);
         }
         break;
-      default:
-        console.warn(`No action defined for button ID: ${buttonId}`);
     }
   };
 
-  const handleCustomize = () => {
-    fetchQuestions(fieldData.name);
-  };
+  const handleCustomize = () => fetchQuestions(fieldData.name);
 
   const handleMouseDownDrag = (ref) => (e) => {
     if (isMinimized || isFullScreen) return;
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
-    startData.current = {
-      x: rect.left,
-      y: rect.top,
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-    };
+    startData.current = { x: rect.left, y: rect.top, mouseX: e.clientX, mouseY: e.clientY };
     if (isDocked) {
-      setIsDocked(false);
-      setIsFloating(true);
+      setIsDocked(false); setIsFloating(true);
       setSize({ w: 400, h: window.innerHeight * 0.83 });
       setPos({ x: rect.left, y: rect.top });
     }
@@ -473,348 +377,217 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
   const handleMouseDownResize = (type) => (e) => {
     if (isMinimized || isFullScreen) return;
-    e.preventDefault();
-    e.stopPropagation();
-    startData.current = {
-      w: size.w,
-      h: size.h,
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-    };
-    setResizing(true);
-    setResizeType(type);
+    e.preventDefault(); e.stopPropagation();
+    startData.current = { w: size.w, h: size.h, mouseX: e.clientX, mouseY: e.clientY };
+    setResizing(true); setResizeType(type);
   };
 
   const handleMouseMove = (e) => {
     if (dragging) {
       const dx = e.clientX - startData.current.mouseX;
       const dy = e.clientY - startData.current.mouseY;
-      // const newX = Math.max(sidebarWidth + 20, Math.min(window.innerWidth - size.w - 20, startData.current.x + dx));
-      // const newY = Math.max(navbarHeight + feedbackBannerHeight + 15, Math.min(window.innerHeight - size.h - 20, startData.current.y + dy));
       const newX = Math.max(0, Math.min(window.innerWidth - size.w, startData.current.x + dx));
       const newY = Math.max(0, Math.min(window.innerHeight - size.h, startData.current.y + dy));
       setPos({ x: newX, y: newY });
-      return;
     }
     if (resizing) {
       const dx = e.clientX - startData.current.mouseX;
       const dy = e.clientY - startData.current.mouseY;
-      let newW = startData.current.w;
-      let newH = startData.current.h;
-      if (resizeType === 'width') {
-        newW = Math.max(isFloating ? 300 : 300, Math.min(600, startData.current.w - dx));
-      } else if (resizeType === 'both') {
-        newW = Math.max(isFloating ? 300 : 200, Math.min(800, startData.current.w + dx));
-        newH = Math.max(isFloating ? 450 : 200, Math.min(800, startData.current.h + dy));
+      let newW = size.w, newH = size.h;
+      if (resizeType === 'width') newW = Math.max(300, Math.min(600, size.w - dx));
+      if (resizeType === 'both') {
+        newW = Math.max(300, Math.min(800, size.w + dx));
+        newH = Math.max(450, Math.min(800, size.h + dy));
       }
       setSize({ w: newW, h: newH });
     }
   };
 
   const handleMouseUp = () => {
-    setDragging(false);
-    setResizing(false);
-    setResizeType('');
+    setDragging(false); setResizing(false); setResizeType('');
   };
 
   useEffect(() => {
-    const handleEvents = (e) => {
-      if (dragging || resizing) {
-        e.preventDefault();
-        handleMouseMove(e);
-      }
-    };
-
+    const handle = (e) => { if (dragging || resizing) { e.preventDefault(); handleMouseMove(e); } };
     if (dragging || resizing) {
-      document.addEventListener('mousemove', handleEvents, { passive: false });
+      document.addEventListener('mousemove', handle, { passive: false });
       document.addEventListener('mouseup', handleMouseUp, { passive: false });
       document.body.style.userSelect = 'none';
       return () => {
-        document.removeEventListener('mousemove', handleEvents);
+        document.removeEventListener('mousemove', handle);
         document.removeEventListener('mouseup', handleMouseUp);
         document.body.style.userSelect = '';
       };
     }
-    return () => { };
   }, [dragging, resizing]);
 
   useEffect(() => {
-    const sidebar = document.querySelector('.sidebar');
-    if (!sidebar) return;
+    // SELECTORS — Adjust if your app uses different classes
+    const sidebar = document.querySelector('.sidebar, [data-testid="sidebar"], #sidebar, .pgn__sidebar');
+    const navbar = document.querySelector('.navbar, header, [data-testid="navbar"], .pgn__navbar');
+    const feedbackBanner = document.querySelector('.feedback-banner, .alert, .toast, [data-testid="feedback-banner"], .pgn__alert');
 
-    const updateSidebarWidth = debounce(() => {
-      setSidebarWidth(sidebar.offsetWidth || 0);
-    }, 100);
-    updateSidebarWidth();
-    const resizeObserver = new ResizeObserver(updateSidebarWidth);
-    resizeObserver.observe(sidebar);
-    return () => resizeObserver.disconnect();
-  }, []);
+    // Avoid running if elements don't exist
+    if (!sidebar && !navbar && !feedbackBanner) return;
 
-  useEffect(() => {
-    const feedbackBanner = document.querySelector('.feedback_banner');
-    if (!feedbackBanner) return;
+    let latestSidebar = 0;
+    let latestNavbar = 0;
+    let latestFeedback = 0;
 
-    const updateFeedbackBannerHeight = () => {
-      setFeedbackBannerHeight(feedbackBanner.offsetHeight || 0);
+    const updateLayout = () => {
+      const sidebarRect = sidebar?.getBoundingClientRect();
+      const navbarRect = navbar?.getBoundingClientRect();
+      const feedbackRect = feedbackBanner?.getBoundingClientRect();
+
+      const newSidebar = sidebarRect ? sidebarRect.width : 0;
+      const newNavbar = navbarRect ? navbarRect.height : 0;
+      const newFeedback = feedbackRect ? feedbackRect.height : 0;
+
+      if (
+        newSidebar !== latestSidebar ||
+        newNavbar !== latestNavbar ||
+        newFeedback !== latestFeedback
+      ) {
+        latestSidebar = newSidebar;
+        latestNavbar = newNavbar;
+        latestFeedback = newFeedback;
+
+        setSidebarWidth(newSidebar);
+        setNavbarHeight(newNavbar);
+        setFeedbackBannerHeight(newFeedback);
+
+        // Auto-resize fullscreen
+        if (isFullScreen) {
+          setSize({
+            w: window.innerWidth - newSidebar - 40,
+            h: window.innerHeight - newFeedback - newNavbar - 16
+          });
+          setPos({
+            x: newSidebar + 20,
+            y: newFeedback + newNavbar + 15
+          });
+        }
+      }
     };
-    updateFeedbackBannerHeight();
-    const resizeObserver = new ResizeObserver(updateFeedbackBannerHeight);
-    resizeObserver.observe(feedbackBanner);
-    return () => resizeObserver.disconnect();
-  }, []);
 
-  useEffect(() => {
-    const navbar = document.querySelector('.navbarContainer');
-    if (!navbar) return;
+    // ResizeObserver for size changes
+    const resizeObserver = new ResizeObserver(debounce(updateLayout, 50));
 
-    const updateNavbarHeight = () => {
-      setNavbarHeight(navbar.offsetHeight || 0);
+    if (sidebar) resizeObserver.observe(sidebar);
+    if (navbar) resizeObserver.observe(navbar);
+    if (feedbackBanner) resizeObserver.observe(feedbackBanner);
+
+    // MutationObserver for show/hide (class changes, etc.)
+    const mutationObserver = new MutationObserver(debounce(updateLayout, 100));
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+
+    // Initial measure
+    updateLayout();
+
+    // Cleanup
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
     };
-    updateNavbarHeight();
-    const resizeObserver = new ResizeObserver(updateNavbarHeight);
-    resizeObserver.observe(navbar);
-    return () => resizeObserver.disconnect();
-  }, []);
+  }, [isFullScreen]); // Re-run if fullscreen state changes
 
   useEffect(() => {
     if (isFullScreen) {
-      const handleResize = debounce(() => {
+      const resize = debounce(() => {
         setSize({ w: window.innerWidth - sidebarWidth - 40, h: window.innerHeight - feedbackBannerHeight - navbarHeight - 16 });
         setPos({ x: sidebarWidth + 20, y: feedbackBannerHeight + navbarHeight + 15 });
       }, 100);
-      window.addEventListener('resize', handleResize);
-      handleResize();
-      return () => window.removeEventListener('resize', handleResize);
+      window.addEventListener('resize', resize); resize();
+      return () => window.removeEventListener('resize', resize);
     }
-    return () => { };
   }, [isFullScreen, sidebarWidth, feedbackBannerHeight, navbarHeight]);
 
   useEffect(() => {
-    if (aiResponse && Array.isArray(aiResponse) && aiResponse.length > 0) {
-      const latestResponse = aiResponse[aiResponse.length - 1];
-      const newHistory = [];
-      if (latestResponse.msg) {
-        latestResponse.msg.forEach((m) => {
-          newHistory.push({ type: 'text', sender: 'ai', content: m.text, id: m.id });
-        });
-      }
-      if (latestResponse.suggestions) {
-        newHistory.push({ type: 'suggestions', sender: 'ai', content: latestResponse.suggestions });
-      }
-      if (latestResponse.l3) {
-        newHistory.push({
-          type: 'customize',
-          sender: 'ai',
-          content: latestResponse.l3.text,
-          button: latestResponse.l3.customize,
-        });
-      }
-      // Handle l4 if present (for more suggestions response)
-      if (latestResponse.l4) {
-        newHistory.push({ type: 'text', sender: 'ai', content: latestResponse.l4.text, id: latestResponse.l4.id });
-      }
-      // Handle more_suggestions if present
-      if (latestResponse.more_suggestions) {
-        newHistory.push({ type: 'suggestions', sender: 'ai', content: latestResponse.more_suggestions });
-      }
-      setChatHistory((prev) => [...prev, ...newHistory]);
-      setButtons(latestResponse.btns || []);
-
-      // if (latestResponse.suggestions && latestResponse.suggestions.length > 0) {
-      //   const firstSug = latestResponse.suggestions[0];
-      //   setSelectedSuggestion(firstSug);
-      //   insertSuggestion(firstSug, false);
-      // }
-      // Auto-insert first suggestion only for initial suggestions, not more_suggestions
-      if (latestResponse.suggestions && !latestResponse.more_suggestions && latestResponse.suggestions.length > 0) {
-        const firstSug = latestResponse.suggestions[0];
-        setSelectedSuggestion(firstSug);
-        insertSuggestion(firstSug, false);
+    if (aiResponse.length > 0) {
+      const latest = aiResponse[aiResponse.length - 1];
+      const history = [];
+      latest.msg?.forEach(m => history.push({ type: 'text', sender: 'ai', content: m.text, id: m.id }));
+      if (latest.suggestions) history.push({ type: 'suggestions', sender: 'ai', content: latest.suggestions });
+      if (latest.l3) history.push({ type: 'customize', sender: 'ai', content: latest.l3.text });
+      if (latest.l4) history.push({ type: 'text', sender: 'ai', content: latest.l4.text });
+      if (latest.more_suggestions) history.push({ type: 'suggestions', sender: 'ai', content: latest.more_suggestions });
+      setChatHistory(prev => [...prev, ...history]);
+      setButtons(latest.btns || []);
+      if (latest.suggestions && !latest.more_suggestions && latest.suggestions.length > 0) {
+        const first = latest.suggestions[0];
+        setSelectedSuggestion(first);
+        insertSuggestion(first, false);
       }
     }
   }, [aiResponse]);
 
   useEffect(() => {
-  if (
-    questions.length > 0 &&
-    currentQuestionIndex >= 0 &&
-    currentQuestionIndex < questions.length
-  ) {
-    const currentQ = questions[currentQuestionIndex];
-
-    // Prevent duplicate question
-    const lastMessage = chatHistory[chatHistory.length - 1];
-    if (lastMessage?.type === 'question' && lastMessage.id === currentQ.key) {
-      return;
+    if (questions.length > 0 && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length) {
+      const q = questions[currentQuestionIndex];
+      if (chatHistory[chatHistory.length - 1]?.id === q.key) return;
+      setChatHistory(prev => [...prev, {
+        type: 'question', sender: 'ai', id: q.key, content: q.text, options: q.options || null,
+        questionIndex: currentQuestionIndex + 1, totalQuestions: questions.length
+      }]);
     }
+  }, [questions, currentQuestionIndex]);
 
-    const questionMessage = {
-      type: 'question',
-      sender: 'ai',
-      id: currentQ.key,
-      content: currentQ.text,
-      options: currentQ.options || null,
-      questionIndex: currentQuestionIndex + 1,
-      totalQuestions: questions.length,
-    };
-
-    setChatHistory(prev => [...prev, questionMessage]);
-  }
-}, [questions, currentQuestionIndex]);
-
-  const insertSuggestion = (sug, addToHistory = true) => {
-    const { name } = fieldData;
-    switch (name) {
-      case 'title':
-        updateTitle(sug);
-        break;
-      case 'shortDescription':
-        updateShortDescription(sug);
-        break;
-      case 'description':
-        updateDescription(sug);
-        break;
-      case 'cardImage':
-        updateCardImage(sug);
-        break;
-      case 'bannerImage':
-        updateBannerImage(sug);
-        break;
-      default:
-        break;
-    }
-
-    if (addToHistory) {
-      const isImage = isValidImageUrl(sug);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          type: isImage ? 'image' : 'text',
-          sender: 'user',
-          content: sug,
-        },
-      ]);
-    }
-  };
-
-  const getReadableFieldName = (fieldName) => {
-    switch (fieldName) {
-      case 'title':
-        return 'Title';
-      case 'shortDescription':
-        return 'Short Description';
-      case 'description':
-        return 'Description';
-      case 'cardImage':
-        return 'Course Card Image';
-      case 'bannerImage':
-        return 'Banner Image';
-      default:
-        return fieldName;
+  const insertSuggestion = (sug, add = true) => {
+    const map = { title: updateTitle, shortDescription: updateShortDescription, description: updateDescription, cardImage: updateCardImage, bannerImage: updateBannerImage };
+    map[fieldData.name]?.(sug);
+    if (add) {
+      setChatHistory(prev => [...prev, { type: isValidImageUrl(sug) ? 'image' : 'text', sender: 'user', content: sug }]);
     }
   };
 
   const handleSelectSuggestion = (sug) => {
+    setPinnedSuggestions([]);
     setSelectedSuggestion(sug);
     insertSuggestion(sug, true);
-    const readableName = getReadableFieldName(fieldData.name);
 
-    // Add thank you message
-    setChatHistory((prev) => [
+    const field = fieldData.name;
+    const readableName = getReadableFieldName(field);
+
+    // Success message
+    setChatHistory(prev => [
       ...prev,
-      { type: 'text', sender: 'ai', content: `The ${readableName} you selected has been successfully inserted!` },
+      { type: 'text', sender: 'ai', content: t(messages.inserted, { field: readableName }) },
     ]);
 
-    // Add recommendation and continue button
-    let recommendMsg = '';
-    if (fieldData.name === 'title') {
-      recommendMsg = 'Create a Short Description for your course using Copilot. Click Continue to proceed.';
-    } else if (fieldData.name === 'shortDescription') {
-      recommendMsg = 'Generate a detailed Course Description with Copilot. Click Continue to continue';
-    } else if (fieldData.name === 'description') {
-      recommendMsg = 'Design a professional Course Card Image using Copilot. Click Continue to begin.';
-    } else if (fieldData.name === 'cardImage') {
-      recommendMsg = 'Create an engaging Course Banner Image with Copilot. Click Continue to start.';
-    }
+    // Recommendation + Continue button (only if not last field)
+    const nextFieldMap = {
+      title: 'shortDescription',
+      shortDescription: 'description',
+      description: 'cardImage',
+      cardImage: 'bannerImage',
+    };
 
-    if (recommendMsg) {
-      setChatHistory((prev) => [...prev, { type: 'text', sender: 'ai', content: recommendMsg }]);
-      setButtons([{ id: 'continue', label: 'Continue', status: 'active' }]);
+    const nextField = nextFieldMap[field];
+    if (nextField) {
+      setChatHistory(prev => [
+        ...prev,
+        { type: 'text', sender: 'ai', content: t(messages[`continue${field.charAt(0).toUpperCase() + field.slice(1)}`]) }
+      ]);
+      setButtons([{ id: 'continue', label: t(messages.buttonContinue), status: 'active' }]);
     } else {
-      setButtons([]);
+      setButtons([]); // Last field → no continue
     }
   };
-
-  const handleInsert = () => {
-    if (selectedSuggestion) {
-      insertSuggestion(selectedSuggestion, true);
-      setSelectedSuggestion(null);
-    }
-  };
-
-  // const handleCustomize = () => {
-  //   setChatHistory((prev) => [...prev, { type: 'text', sender: 'user', content: 'Customizing...' }]);
-  //   // Add customization logic if needed
-  //   fetchSuggestions(prompt || getPreviousValue(fieldData.name) || '');
-  // };
 
   const value = {
-    isOpen,
-    fieldData,
-    isDocked,
-    isMinimized,
-    size,
-    pos,
-    openCopilot,
-    closeCopilot,
-    toggleMinimize,
-    dock,
-    setSize,
-    setPos,
-    setIsDocked,
-    isFullScreen,
-    toggleFullScreen,
-    dragging,
-    setDragging,
-    resizing,
-    setResizing,
-    resizeType,
-    setResizeType,
-    sidebarWidth,
-    feedbackBannerHeight,
-    navbarHeight,
-    isFloating,
-    setIsFloating,
-    handleMouseDownDrag,
-    handleMouseDownResize,
-    handleFloating,
-    title,
-    updateTitle,
-    shortDescription,
-    updateShortDescription,
-    description,
-    updateDescription,
-    cardImage,
-    updateCardImage,
-    bannerImage,
-    updateBannerImage,
-    aiResponse,
-    setAiResponse,
-    chatHistory,
-    selectedSuggestion,
-    prompt,
-    setPrompt,
-    handleSelectSuggestion,
-    handleInsert,
-    handleCustomize,
-    sendPrompt,
-    buttons,
-    setButtons,
-    handleButtonAction,
-    questions,
-    currentQuestionIndex,
-    handleAnswer,
+    isOpen, fieldData, isDocked, isMinimized, size, pos, openCopilot, closeCopilot, toggleMinimize, dock,
+    isFullScreen, toggleFullScreen, isFloating, handleFloating, handleMouseDownDrag, handleMouseDownResize,
+    title, shortDescription, description, cardImage, bannerImage,
+    updateTitle, updateShortDescription, updateDescription, updateCardImage, updateBannerImage,
+    chatHistory, selectedSuggestion, prompt, setPrompt, buttons, questions, currentQuestionIndex,
+    handleSelectSuggestion, sendPrompt, handleButtonAction, handleAnswer, handleAIButtonClick, aiLoading,
+    t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight,pinnedSuggestions, 
+    pinSuggestion, unpinSuggestion, insertPinnedSuggestion,
   };
 
   return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;

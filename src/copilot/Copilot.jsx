@@ -1,7 +1,10 @@
 import { useRef, useEffect } from 'react';
 import { Button, Icon, Form } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight, Close, ArrowForward, Fullscreen, FullscreenExit, Send } from '@openedx/paragon/icons';
+import { Bookmark, BookmarkBorder } from '@openedx/paragon/icons';
 import { useCopilot } from './CopilotContext';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 import './copilot.scss';
 
 const isValidImageUrl = (url) => {
@@ -16,6 +19,8 @@ const isValidImageUrl = (url) => {
 const TAB_WIDTH = 60;
 
 const Copilot = () => {
+  const { formatMessage } = useIntl();
+  const t = (msg, values) => formatMessage(msg, values);
   const {
     isOpen,
     fieldData,
@@ -38,8 +43,6 @@ const Copilot = () => {
     chatHistory,
     selectedSuggestion,
     handleSelectSuggestion,
-    handleInsert,
-    handleCustomize,
     prompt,
     setPrompt,
     sendPrompt,
@@ -48,9 +51,53 @@ const Copilot = () => {
     questions,
     currentQuestionIndex,
     handleAnswer,
+    retryLastAction,
+    pinnedSuggestions,
+    pinSuggestion,
+    unpinSuggestion,
+    insertPinnedSuggestion,
   } = useCopilot();
 
   const ref = useRef(null);
+  const panelRef = useRef(null);
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    const chat = chatContainerRef.current;
+    if (!panel || !chat) return;
+
+    let rafId = null;
+
+    const updateChatHeight = () => {
+      const panelHeight = panel.getBoundingClientRect().height;
+      const percentage = panelHeight <= 615 ? 75 : 85;
+      chat.style.height = `${percentage}%`;
+      chat.style.maxHeight = `${percentage}%`;
+      chat.style.flex = 'none'; // Prevent flex from overriding
+      rafId = null;
+    };
+
+    const scheduleUpdate = () => {
+      if (!rafId) rafId = requestAnimationFrame(updateChatHeight);
+    };
+
+    // Initial
+    scheduleUpdate();
+
+    // ResizeObserver for panel size changes
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(panel);
+
+    // Window resize
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', scheduleUpdate);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isOpen, isFullScreen, size, pos, isDocked, isMinimized]);
   const handleSendAnswer = () => {
     if (prompt.trim()) {
       handleAnswer(prompt.trim(), fieldData.name);
@@ -89,14 +136,16 @@ const Copilot = () => {
   };
 
   const contentStyle = { display: isMinimized && !isFullScreen ? 'none' : 'block' };
-  const chatContainerRef = useRef(null);
 
   return (
     <div className={`copilot-wrapper ${isDocked ? 'docked' : 'inline'}`}>
-      <div ref={ref} style={panelStyle} className={`copilot-panel ${isFullScreen ? 'fullscreen' : ''} ${(isDocked && !isFullScreen) ? 'isDocked' : ''}`}>
+      <div ref={(el) => {
+        ref.current = el;
+        panelRef.current = el;
+      }} style={panelStyle} className={`copilot-panel ${isFullScreen ? 'fullscreen' : ''} ${(isDocked && !isFullScreen) ? 'isDocked' : ''}`}>
         <div className="copilot-header">
           <div className="header-left" style={{ display: isMinimized && !isFullScreen ? 'none' : 'flex' }}>
-            <span className="title">Copilot</span>
+            <span className="title">{t(messages.copilotTitle)}</span>
           </div>
           <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>
           <div className="header-right">
@@ -137,13 +186,50 @@ const Copilot = () => {
           </div>
         </div>
         <div className="copilot-content" style={contentStyle}>
+           <div className={`${pinnedSuggestions.length === 0 ? 'none' : 'pined-suggestion'}`}>
+            {pinnedSuggestions.map((sug) => {
+              const isImage = isValidImageUrl(sug);
+              return (
+                <div
+                  key={sug}
+                  className={`pinned-item ${isImage ? 'image' : 'text'}`}
+                  onClick={() => insertPinnedSuggestion(sug)}
+                  title="Click to insert"
+                >
+                  {isImage ? (
+                    <img src={sug} alt="Pinned" />
+                  ) : (
+                    <div>{sug}</div>
+                  )}
+                  <button
+                    className="unpin-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      unpinSuggestion(sug);
+                    }}
+                    title='Remove'
+                  >
+                    <Icon src={Close} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
           <div className="chat-messages" ref={chatContainerRef}>
             {chatHistory.map((item, index) => (
               <div key={index} className={`message-container ${item.sender}`}>
                 {item.type === 'text' && (
                   <div className="message">{item.content}</div>
                 )}
-                {item.type === 'suggestions' && (
+                {item.type === 'error' && (
+                  <div className="message error">
+                    <div>{item.content}</div>
+                    <Button onClick={item.retryAction || retryLastAction} size="sm" variant="outline-danger">
+                      {t(messages.retry)}
+                    </Button>
+                  </div>
+                )}
+                {/* {item.type === 'suggestions' && (
                   item.content.map((sug) => {
                     const isImageSuggestion = isValidImageUrl(sug);
                     if (isImageSuggestion || item.type === 'image') {
@@ -167,6 +253,47 @@ const Copilot = () => {
                       </div>
                     );
                   })
+                )} */}
+
+                {item.type === 'suggestions' && (
+                  item.content.map((sug) => {
+                    const isImage = isValidImageUrl(sug);
+                    const isPinned = pinnedSuggestions.includes(sug);
+
+                    const suggestionEl = isImage ? (
+                      <img
+                        key={sug}
+                        src={sug}
+                        alt="Suggestion"
+                        className={`suggestion image-suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
+                        onClick={() => handleSelectSuggestion(sug)}
+                      />
+                    ) : (
+                      <div
+                        key={sug}
+                        className={`suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
+                        onClick={() => handleSelectSuggestion(sug)}
+                      >
+                        {sug}
+                      </div>
+                    );
+
+                    return (
+                      <div key={sug} className="suggestion-wrapper">
+                        {suggestionEl}
+                        <button
+                          className={`pin-btn ${isPinned ? 'pinned' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            isPinned ? unpinSuggestion(sug) : pinSuggestion(sug);
+                          }}
+                          title={isPinned ? 'Remove' : 'Bookmark'}
+                        >
+                          <Icon src={isPinned ? Bookmark : BookmarkBorder} />
+                        </button>
+                      </div>
+                    );
+                  })
                 )}
                 {item.type === 'image' && (
                   <img
@@ -175,18 +302,19 @@ const Copilot = () => {
                     className="message image-message"
                   />
                 )}
+
+
                 {item.type === 'customize' && (
                   <div className="message">
                     {item.content}
                   </div>
                 )}
+
+
                 {item.type === 'question' && (
                   <div className="message-container ai">
                     <div className="customQuestion">
-                      <div className="question-counter message">
-                        Q{item.questionIndex}/{item.totalQuestions}
-                      </div>
-                      <div className="message">{item.content}</div>
+                      {t(messages.questionCounter, { current: item.questionIndex, total: item.totalQuestions })} {item.content}
                     </div>
                     {item.options ? (
                       item.options.map((option) => (
@@ -203,25 +331,6 @@ const Copilot = () => {
                 )}
               </div>
             ))}
-            {/* {questions.length > 0 && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length && (
-              <div className="message-container ai">
-                <div className="question-counter">
-                  Q{currentQuestionIndex + 1}/{questions.length}
-                </div>
-                <div className="message">{questions[currentQuestionIndex].text}</div>
-                {questions[currentQuestionIndex].options ? (
-                  questions[currentQuestionIndex].options.map((option) => (
-                    <div
-                      key={option}
-                      className={`suggestion ${selectedSuggestion === option ? 'selected' : ''}`}
-                      onClick={() => handleAnswer(option, fieldData.name)}
-                    >
-                      {option}
-                    </div>
-                  ))
-                ) : null}
-              </div>
-            )} */}
 
           </div>
           <div className="copilot-content-bottom">
@@ -242,7 +351,11 @@ const Copilot = () => {
                 type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder={questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex].options ? 'Type your answer...' : 'Type your message...'}
+                placeholder={
+                  questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex]?.options
+                    ? t(messages.placeholderAnswer)
+                    : t(messages.placeholderMessage)
+                }
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     if (questions.length > 0 && currentQuestionIndex >= 0 && !questions[currentQuestionIndex].options) {
@@ -271,7 +384,7 @@ const Copilot = () => {
         </div>
 
         {/* Resizers and indicators moved here, inside .copilot-panel */}
-        {!isFullScreen && (
+        {!isFullScreen && !isMinimized && (
           <>
             {isDocked ? (
               <div className="resize-indicator left-indicator" title="Resize"></div>
