@@ -245,14 +245,11 @@ describe('<LegacyLibMigrationPage />', () => {
     await user.click(nextButton);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      /All content from the 1 legacy library you selected will be migrated to/i,
-    )).toBeInTheDocument();
-    expect(await within(alert).findByText(
-      /test library 1/i,
+      /All content from the legacy library you selected will be migrated to the Content Library you select/i,
     )).toBeInTheDocument();
 
     const backButton = screen.getByRole('button', { name: /back/i });
-    backButton.click();
+    await user.click(backButton);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     // The selected v2 library remains checked
@@ -357,10 +354,7 @@ describe('<LegacyLibMigrationPage />', () => {
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to/i,
-    )).toBeInTheDocument();
-    expect(await within(alert).findByText(
-      /test library 1/i,
+      /All content from the 3 legacy libraries you selected will be migrated to the Content Library you select/i,
     )).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
     expect(screen.getByText('Legacy library 1')).toBeInTheDocument();
@@ -417,11 +411,7 @@ describe('<LegacyLibMigrationPage />', () => {
     // Should show alert of ConfirmationView
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
-      /All content from the 3 legacy libraries you selected will be migrated to /i,
-      { exact: false },
-    )).toBeInTheDocument();
-    expect(await within(alert).findByText(
-      /test library 1/i,
+      /All content from the 3 legacy libraries you selected will be migrated to the Content Library you select/i,
       { exact: false },
     )).toBeInTheDocument();
     expect(screen.getByText('MBA')).toBeInTheDocument();
