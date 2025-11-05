@@ -64,7 +64,7 @@ const messages = defineMessages({
   selectDestinationAlert: {
     id: 'legacy-libraries-migration.select-destination.alert.text',
     defaultMessage: 'All content from the'
-      + ' {count, plural, one {{count} legacy library} other {{count} legacy libraries}} you selected will'
+      + ' {count, plural, one {legacy library} other {{count} legacy libraries}} you selected will'
       + ' be migrated to this new library, organized into collections. Legacy library content used in courses will'
       + ' continue to work as-is. To receive any future changes to migrated content, you must update these'
       + ' references within your course.',
@@ -73,8 +73,8 @@ const messages = defineMessages({
   confirmationViewAlert: {
     id: 'legacy-libraries-migration.select-destination.alert.text',
     defaultMessage: 'All content from the'
-      + ' {count, plural, one {{count} legacy library} other {{count} legacy libraries}} you selected will'
-      + ' be migrated to <b>{libraryName}</b>, organized into collections. Legacy library content used in courses will'
+      + ' {count, plural, one {legacy library} other {{count} legacy libraries}} you selected will'
+      + ' be migrated to the Content Library you select, organized into collections. Legacy library content used in courses will'
       + ' continue to work as-is. To receive any future changes to migrated content, you must update these'
       + ' references within your course.',
     description: 'Alert text in the confirmation step of the legacy libraries migration page.',
