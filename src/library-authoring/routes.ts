@@ -33,13 +33,13 @@ export const ROUTES = {
   COLLECTION: '/collection/:collectionId/:selectedItemId?',
   // LibrarySectionPage route:
   // * with a selected containerId and an optionally selected subsection.
-  SECTION: '/section/:containerId/:selectedItemId?',
+  SECTION: '/section/:containerId/:selectedItemId?/:index?',
   // LibrarySubsectionPage route:
   // * with a selected containerId and an optionally selected unit.
-  SUBSECTION: '/subsection/:containerId/:selectedItemId?',
+  SUBSECTION: '/subsection/:containerId/:selectedItemId?/:index?',
   // LibraryUnitPage route:
   // * with a selected containerId and/or an optionally selected componentId.
-  UNIT: '/unit/:containerId/:selectedItemId?',
+  UNIT: '/unit/:containerId/:selectedItemId?/:index?',
   // LibraryBackupPage route:
   BACKUP: '/backup',
 };
@@ -60,6 +60,7 @@ export type NavigateToData = {
   collectionId?: string,
   containerId?: string,
   contentType?: ContentType,
+  index?: number,
 };
 
 export type LibraryRoutesData = {
@@ -122,6 +123,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     collectionId,
     containerId,
     contentType,
+    index,
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
@@ -129,6 +131,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       ...((selectedItemId !== undefined) && { selectedItemId }),
       ...((containerId !== undefined) && { containerId }),
       ...((collectionId !== undefined) && { collectionId }),
+      ...((index !== undefined) && { index }),
     };
     let route: string;
 
@@ -228,6 +231,12 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.SECTIONS;
     } else {
       route = ROUTES.HOME;
+    }
+
+    // Since index is just the order number of the selectedItemId
+    // clear index if selectedItemId is undefined
+    if (routeParams.selectedItemId === undefined) {
+      routeParams.index = undefined;
     }
 
     // Also remove the `sa` (sidebar action) search param if it exists.

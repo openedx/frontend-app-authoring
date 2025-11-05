@@ -736,32 +736,35 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId?: string, published: boolean = false) => (
-  useQuery({
-    enabled: !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-    queryFn: () => api.getLibraryContainerChildren(containerId!, published),
-    structuralSharing: (
-      oldData: api.LibraryBlockMetadata[] | api.Container[],
-      newData: api.LibraryBlockMetadata[] | api.Container[],
-    ) => {
+export const useContainerChildren = <ChildType extends {
+  id: string;
+  isNew?: boolean;
+} = api.LibraryBlockMetadata | api.Container>(
+    containerId?: string,
+    published: boolean = false,
+  ) => (
+    useQuery({
+      enabled: !!containerId,
+      queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
+      queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+      structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
-      if (oldData) {
-        const oldDataIds = oldData.map((obj) => obj.id);
-        // eslint-disable-next-line no-param-reassign
-        newData = newData.map((newObj) => {
-          if (!oldDataIds.includes(newObj.id)) {
+        if (oldData) {
+          const oldDataIds = oldData.map((obj) => obj.id);
+          // eslint-disable-next-line no-param-reassign
+          newData = newData.map((newObj) => {
+            if (!oldDataIds.includes(newObj.id)) {
             // Set isNew = true if we have new child on refetch
             // eslint-disable-next-line no-param-reassign
-            newObj.isNew = true;
-          }
-          return newObj;
-        });
-      }
-      return replaceEqualDeep(oldData, newData);
-    },
-  })
-);
+              newObj.isNew = true;
+            }
+            return newObj;
+          });
+        }
+        return replaceEqualDeep(oldData, newData);
+      },
+    })
+  );
 
 /**
  * If you work with `useContentFromSearchIndex`, you can use this
@@ -814,6 +817,8 @@ export const useAddItemsToContainer = (containerId?: string) => {
       // It would be complex to bring the entire hierarchy and only update the items within that hierarchy.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerHierarchy(undefined) });
       queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentHierarchy(undefined) });
+      // Invalidate the container to update its publish status
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
 
       const containerType = getBlockType(containerId);
       if (containerType === 'section') {
