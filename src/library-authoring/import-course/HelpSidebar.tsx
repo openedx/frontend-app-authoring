@@ -6,7 +6,7 @@ import { Paragraph } from '@src/utils';
 import messages from './messages';
 
 export const HelpSidebar = () => (
-  <div className="course-migration-help pt-3 border-left">
+  <div className="pt-3 border-left h-100">
     <Stack gap={1} direction="horizontal" className="pl-4 h4 text-primary-700">
       <Icon src={Question} />
       <span>
@@ -38,7 +38,7 @@ export const HelpSidebar = () => (
           />
         </span>
       </Stack>
-      <hr />
     </Stack>
+    <hr className="w-100" />
   </div>
 );
