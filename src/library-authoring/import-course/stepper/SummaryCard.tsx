@@ -7,45 +7,89 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import messages from '../messages';
 
-// TODO: The SummaryCard is always in loading state
-export const SummaryCard = () => (
-  <Card>
-    <Card.Section>
-      <Stack direction="horizontal">
-        <Stack className="align-items-center" gap={2}>
-          <FormattedMessage {...messages.importCourseTotalBlocks} />
-          <LoadingSpinner />
-        </Stack>
-        <div className="border-light-400" style={{ borderLeft: '2px solid', height: '50px' }} />
-        <Stack className="align-items-center" gap={2}>
-          <FormattedMessage {...messages.importCourseSections} />
-          <Stack className="justify-content-center" direction="horizontal" gap={3}>
-            <Icon src={getItemIcon('section')} />
-            <LoadingSpinner />
+interface DisplayNumberProps {
+  count?: number;
+  isPending?: boolean;
+}
+
+const DisplayNumber = ({ count, isPending }: DisplayNumberProps) => {
+  if (isPending) {
+    return <LoadingSpinner />
+  }
+  return (
+    <span className='lead'>{count}</span>
+  )
+}
+
+interface Props {
+  totalBlocks?: number;
+  totalComponents?: number;
+  sections?: number;
+  subsections?: number;
+  units?: number;
+  unsupportedBlocks?: number;
+  isPending?: boolean;
+}
+
+export const SummaryCard = ({
+  totalBlocks,
+  totalComponents,
+  sections,
+  subsections,
+  units,
+  unsupportedBlocks,
+  isPending,
+}: Props) => {
+  return (
+    <Card>
+      <Card.Section>
+        <Stack direction="horizontal" gap={3}>
+          <Stack className="align-items-center border-right py-3" gap={1}>
+            <FormattedMessage {...messages.importCourseTotalBlocks} />
+            <div>
+              <DisplayNumber count={totalBlocks} isPending={isPending} />
+              {unsupportedBlocks && <span className='lead'>
+                /
+                <DisplayNumber count={(totalBlocks || 0) + unsupportedBlocks} />
+              </span>}
+            </div>
+          </Stack>
+          <Stack className="ml-3 py-3" gap={1}>
+            <FormattedMessage {...messages.importCourseSections} />
+            <Stack direction="horizontal" gap={3}>
+              <Icon src={getItemIcon('section')} />
+              <DisplayNumber count={sections} isPending={isPending} />
+            </Stack>
+          </Stack>
+          <Stack className="py-3" gap={1}>
+            <FormattedMessage {...messages.importCourseSubsections} />
+            <Stack direction="horizontal" gap={3}>
+              <Icon src={getItemIcon('subsection')} />
+              <DisplayNumber count={subsections} isPending={isPending} />
+            </Stack>
+          </Stack>
+          <Stack className="py-3" gap={1}>
+            <FormattedMessage {...messages.importCourseUnits} />
+            <Stack direction="horizontal" gap={3}>
+              <Icon src={getItemIcon('unit')} />
+              <DisplayNumber count={units} isPending={isPending} />
+            </Stack>
+          </Stack>
+          <Stack className="py-3" gap={1}>
+            <FormattedMessage {...messages.importCourseComponents} />
+            <Stack direction="horizontal" gap={3}>
+              <Icon src={Widgets} />
+            <div>
+              <DisplayNumber count={totalComponents} isPending={isPending} />
+              {unsupportedBlocks && <span className='lead'>
+                /
+                <DisplayNumber count={(totalComponents || 0) + unsupportedBlocks} />
+              </span>}
+            </div>
+            </Stack>
           </Stack>
         </Stack>
-        <Stack className="align-items-center" gap={2}>
-          <FormattedMessage {...messages.importCourseSubsections} />
-          <Stack className="justify-content-center" direction="horizontal" gap={3}>
-            <Icon src={getItemIcon('subsection')} />
-            <LoadingSpinner />
-          </Stack>
-        </Stack>
-        <Stack className="align-items-center" gap={2}>
-          <FormattedMessage {...messages.importCourseUnits} />
-          <Stack className="justify-content-center" direction="horizontal" gap={3}>
-            <Icon src={getItemIcon('unit')} />
-            <LoadingSpinner />
-          </Stack>
-        </Stack>
-        <Stack className="align-items-center" gap={2}>
-          <FormattedMessage {...messages.importCourseComponents} />
-          <Stack className="justify-content-center" direction="horizontal" gap={3}>
-            <Icon src={Widgets} />
-            <LoadingSpinner />
-          </Stack>
-        </Stack>
-      </Stack>
-    </Card.Section>
-  </Card>
-);
+      </Card.Section>
+    </Card>
+  )
+};
