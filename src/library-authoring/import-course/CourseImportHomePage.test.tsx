@@ -11,7 +11,6 @@ import {
 } from '../data/api.mocks';
 import { CourseImportHomePage } from './CourseImportHomePage';
 
-initializeMocks();
 mockContentLibrary.applyMock();
 mockGetCourseImports.applyMock();
 
@@ -37,6 +36,10 @@ const render = (libraryId: string) => (
 );
 
 describe('<CourseImportHomePage>', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('should render the library course import home page', async () => {
     render(mockGetCourseImports.libraryId);
     expect(await screen.findByRole('heading', { name: /Tools.*Import/ })).toBeInTheDocument(); // Header

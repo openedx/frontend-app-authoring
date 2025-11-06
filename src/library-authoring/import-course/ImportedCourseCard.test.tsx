@@ -15,7 +15,6 @@ import {
 import { type CourseImport } from '../data/api';
 import { ImportedCourseCard } from './ImportedCourseCard';
 
-initializeMocks();
 mockContentLibrary.applyMock();
 const { libraryId } = mockContentLibrary;
 
@@ -41,6 +40,10 @@ const render = (courseImport: CourseImport) => (
 );
 
 describe('<ImportedCourseCard>', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('should render a card for a successful import', () => {
     const { succeedImport } = mockGetCourseImports;
     render(succeedImport);
