@@ -64,15 +64,13 @@ describe('<ImportedCourseCard>', () => {
     expect(courseLink).toHaveAttribute('href', `/course/${succeedImportWithCollection.source.key}`);
 
     const collectionLink = await screen.findByText(succeedImportWithCollection.targetCollection.title);
-    userEvent.click(collectionLink);
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(
-        {
-          pathname: `/library/${libraryId}/collection/${succeedImportWithCollection.targetCollection.key}`,
-          search: '',
-        },
-      );
-    });
+    await userEvent.click(collectionLink);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      {
+        pathname: `/library/${libraryId}/collection/${succeedImportWithCollection.targetCollection.key}`,
+        search: '',
+      },
+    );
   });
 
   it('should render a card for a failed import', () => {
