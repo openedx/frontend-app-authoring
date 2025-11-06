@@ -1073,24 +1073,24 @@ mockGetEntityLinks.applyMock = () => jest.spyOn(
   'getEntityLinks',
 ).mockImplementation(mockGetEntityLinks);
 
-export async function mockGetCourseMigrations(libraryId: string): ReturnType<typeof api.getCourseMigrations> {
+export async function mockGetCourseImports(libraryId: string): ReturnType<typeof api.getCourseImports> {
   switch (libraryId) {
     case mockContentLibrary.libraryId:
       return [
-        mockGetCourseMigrations.succeedMigration,
-        mockGetCourseMigrations.succeedMigrationWithCollection,
-        mockGetCourseMigrations.failMigration,
-        mockGetCourseMigrations.inProgressMigration,
+        mockGetCourseImports.succeedImport,
+        mockGetCourseImports.succeedImportWithCollection,
+        mockGetCourseImports.failImport,
+        mockGetCourseImports.inProgressImport,
       ];
-    case mockGetCourseMigrations.emptyLibraryId:
+    case mockGetCourseImports.emptyLibraryId:
       return [];
     default:
-      throw new Error(`mockGetCourseMigrations doesn't know how to mock ${JSON.stringify(libraryId)}`);
+      throw new Error(`mockGetCourseImports doesn't know how to mock ${JSON.stringify(libraryId)}`);
   }
 }
-mockGetCourseMigrations.libraryId = mockContentLibrary.libraryId;
-mockGetCourseMigrations.emptyLibraryId = mockContentLibrary.libraryId2;
-mockGetCourseMigrations.succeedMigration = {
+mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
+mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
+mockGetCourseImports.succeedImport = {
   source: {
     key: 'course-v1:edX+DemoX+2025_T1',
     displayName: 'DemoX 2025 T1',
@@ -1098,8 +1098,8 @@ mockGetCourseMigrations.succeedMigration = {
   targetCollection: null,
   state: 'Succeeded',
   progress: 1,
-} satisfies api.CourseMigration;
-mockGetCourseMigrations.succeedMigrationWithCollection = {
+} satisfies api.CourseImport;
+mockGetCourseImports.succeedImportWithCollection = {
   source: {
     key: 'course-v1:edX+DemoX+2025_T2',
     displayName: 'DemoX 2025 T2',
@@ -1110,8 +1110,8 @@ mockGetCourseMigrations.succeedMigrationWithCollection = {
   },
   state: 'Succeeded',
   progress: 1,
-} satisfies api.CourseMigration;
-mockGetCourseMigrations.failMigration = {
+} satisfies api.CourseImport;
+mockGetCourseImports.failImport = {
   source: {
     key: 'course-v1:edX+DemoX+2025_T3',
     displayName: 'DemoX 2025 T3',
@@ -1119,8 +1119,8 @@ mockGetCourseMigrations.failMigration = {
   targetCollection: null,
   state: 'Failed',
   progress: 0.30,
-} satisfies api.CourseMigration;
-mockGetCourseMigrations.inProgressMigration = {
+} satisfies api.CourseImport;
+mockGetCourseImports.inProgressImport = {
   source: {
     key: 'course-v1:edX+DemoX+2025_T4',
     displayName: 'DemoX 2025 T4',
@@ -1128,8 +1128,8 @@ mockGetCourseMigrations.inProgressMigration = {
   targetCollection: null,
   state: 'InProgress',
   progress: 0.5012,
-} satisfies api.CourseMigration;
-mockGetCourseMigrations.applyMock = () => jest.spyOn(
+} satisfies api.CourseImport;
+mockGetCourseImports.applyMock = () => jest.spyOn(
   api,
-  'getCourseMigrations',
-).mockImplementation(mockGetCourseMigrations);
+  'getCourseImports',
+).mockImplementation(mockGetCourseImports);

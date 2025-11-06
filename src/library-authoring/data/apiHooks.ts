@@ -89,9 +89,9 @@ export const libraryAuthoringQueryKeys = {
     }
     return ['hierarchy'];
   },
-  migrations: (libraryId: string) => [
+  courseImports: (libraryId: string) => [
     ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
-    'migrations',
+    'courseImports',
   ],
 };
 
@@ -957,11 +957,11 @@ export const useContentFromSearchIndex = (contentIds: string[]) => {
 };
 
 /**
- * Returns the course migrations which had this library as destination.
+ * Returns the course imports which had this library as destination.
  */
-export const useCourseMigrations = (libraryId: string) => (
+export const useCourseImports = (libraryId: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.migrations(libraryId),
-    queryFn: () => api.getCourseMigrations(libraryId),
+    queryKey: libraryAuthoringQueryKeys.courseImports(libraryId),
+    queryFn: () => api.getCourseImports(libraryId),
   })
 );

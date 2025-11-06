@@ -14,9 +14,9 @@ import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';
 
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useCourseMigrations } from '../data/apiHooks';
+import { useCourseImports } from '../data/apiHooks';
 import { HelpSidebar } from './HelpSidebar';
-import { MigratedCourseCard } from './MigratedCourseCard';
+import { ImportedCourseCard } from './ImportedCourseCard';
 import messages from './messages';
 
 const EmptyState = () => (
@@ -35,9 +35,9 @@ const EmptyState = () => (
 export const CourseImportHomePage = () => {
   const intl = useIntl();
   const { libraryId, libraryData } = useLibraryContext();
-  const { data: courseMigrations } = useCourseMigrations(libraryId);
+  const { data: courseImports } = useCourseImports(libraryId);
 
-  if (!courseMigrations || !libraryData) {
+  if (!courseImports || !libraryData) {
     return <Loading />;
   }
 
@@ -67,13 +67,13 @@ export const CourseImportHomePage = () => {
           </div>
           <Layout xs={[{ span: 9 }, { span: 3 }]}>
             <Layout.Element>
-              {courseMigrations.length ? (
+              {courseImports.length ? (
                 <Stack gap={3} className="pl-4 mt-4">
                   <h3>Previous Imports</h3>
-                  {courseMigrations.map((courseMigration) => (
-                    <MigratedCourseCard
-                      key={courseMigration.source.key}
-                      courseMigration={courseMigration}
+                  {courseImports.map((courseImport) => (
+                    <ImportedCourseCard
+                      key={courseImport.source.key}
+                      courseImport={courseImport}
                     />
                   ))}
                 </Stack>

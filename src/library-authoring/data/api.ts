@@ -158,9 +158,9 @@ export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUr
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
 /**
- * Get the url for the API endpoint to list library course migrations.
+ * Get the url for the API endpoint to list library course imports.
  */
-export const getCourseMigrationsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/modulestore_migrator/v1/library/${libraryId}/migrations/courses/`;
+export const getCourseImportsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/modulestore_migrator/v1/library/${libraryId}/migrations/courses/`;
 
 export interface ContentLibrary {
   id: string;
@@ -789,7 +789,7 @@ export async function publishContainer(containerId: string) {
   await getAuthenticatedHttpClient().post(getLibraryContainerPublishApiUrl(containerId));
 }
 
-export interface CourseMigration {
+export interface CourseImport {
   source: {
     key: string;
     displayName: string;
@@ -803,9 +803,9 @@ export interface CourseMigration {
 }
 
 /**
- * Returns the course migrations which had this library as destination.
+ * Returns the course imports which had this library as destination.
  */
-export async function getCourseMigrations(libraryId: string): Promise<CourseMigration[]> {
-  const { data } = await getAuthenticatedHttpClient().get(getCourseMigrationsApiUrl(libraryId));
+export async function getCourseImports(libraryId: string): Promise<CourseImport[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseImportsApiUrl(libraryId));
   return camelCaseObject(data);
 }

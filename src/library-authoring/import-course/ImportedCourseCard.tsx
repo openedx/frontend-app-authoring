@@ -10,12 +10,12 @@ import {
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import { type CourseMigration } from '../data/api';
+import { type CourseImport } from '../data/api';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 
-interface MigratedCourseCardProps {
-  courseMigration: CourseMigration;
+interface ImportedCourseCardProps {
+  courseImport: CourseImport;
 }
 
 const BORDER_CLASS = {
@@ -39,7 +39,7 @@ const STATE_ICON_COLOR_CLASS = {
   InProgress: undefined,
 };
 
-const StateIcon = ({ state }: { state: CourseMigration['state'] }) => (
+const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
   <Icon
     src={STATE_ICON[state]}
     size="sm"
@@ -47,33 +47,33 @@ const StateIcon = ({ state }: { state: CourseMigration['state'] }) => (
   />
 );
 
-export const MigratedCourseCard = ({ courseMigration }: MigratedCourseCardProps) => {
+export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) => {
   const { navigateTo } = useLibraryRoutes();
 
   return (
-    <Card className={BORDER_CLASS[courseMigration.state]}>
+    <Card className={BORDER_CLASS[courseImport.state]}>
       <Card.Section>
-        <Link to={`/course/${courseMigration.source.key}`}>
-          <h4>{courseMigration.source.displayName}</h4>
+        <Link to={`/course/${courseImport.source.key}`}>
+          <h4>{courseImport.source.displayName}</h4>
         </Link>
         <div className="d-inline-flex small align-items-center">
-          <StateIcon state={courseMigration.state} />
-          {courseMigration.state === 'Failed' ? (
+          <StateIcon state={courseImport.state} />
+          {courseImport.state === 'Failed' ? (
             <FormattedMessage {...messages.courseImportTextFailed} />
           ) : (
             <>
-              {Math.round(courseMigration.progress * 100)}
+              {Math.round(courseImport.progress * 100)}
               <FormattedMessage {...messages.courseImportTextProgress} />
             </>
           )}
-          {courseMigration.targetCollection && (
+          {courseImport.targetCollection && (
             <Button
               iconBefore={Folder}
               variant="link"
               className="ml-4"
-              onClick={() => navigateTo({ collectionId: courseMigration.targetCollection!.key })}
+              onClick={() => navigateTo({ collectionId: courseImport.targetCollection!.key })}
             >
-              {courseMigration.targetCollection.title}
+              {courseImport.targetCollection.title}
             </Button>
           )}
         </div>
