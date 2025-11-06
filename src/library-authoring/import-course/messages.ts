@@ -36,6 +36,11 @@ const messages = defineMessages({
     defaultMessage: 'Import Failed',
     description: 'Text for the course import failed state',
   },
+  courseImportNavigateAlt: {
+    id: 'course-authoring.library-authoring.import-course.course.navigate-alt',
+    defaultMessage: 'Navigate to course',
+    description: 'Alt text for the course import navigate button',
+  },
   helpAndSupportTitle: {
     id: 'course-authoring.library-authoring.import-course.help-and-support.title',
     defaultMessage: 'Help & Support',

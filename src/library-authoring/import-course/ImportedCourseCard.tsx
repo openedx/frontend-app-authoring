@@ -1,6 +1,11 @@
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Button, Card, Icon } from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Button,
+  Card,
+  Icon,
+} from '@openedx/paragon';
+import {
+  ArrowForwardIos,
   Check,
   Error,
   Folder,
@@ -48,34 +53,46 @@ const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
 );
 
 export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) => {
+  const intl = useIntl();
   const { navigateTo } = useLibraryRoutes();
 
   return (
     <Card className={BORDER_CLASS[courseImport.state]}>
-      <Card.Section>
-        <Link to={`/course/${courseImport.source.key}`}>
-          <h4>{courseImport.source.displayName}</h4>
-        </Link>
-        <div className="d-inline-flex small align-items-center">
-          <StateIcon state={courseImport.state} />
-          {courseImport.state === 'Failed' ? (
-            <FormattedMessage {...messages.courseImportTextFailed} />
-          ) : (
-            <>
-              {Math.round(courseImport.progress * 100)}
-              <FormattedMessage {...messages.courseImportTextProgress} />
-            </>
-          )}
-          {courseImport.targetCollection && (
-            <Button
-              iconBefore={Folder}
-              variant="link"
-              className="ml-4"
-              onClick={() => navigateTo({ collectionId: courseImport.targetCollection!.key })}
-            >
-              {courseImport.targetCollection.title}
-            </Button>
-          )}
+      <Card.Section className="d-flex flex-row">
+        <div>
+          <Link to={`/course/${courseImport.source.key}`}>
+            <h4>{courseImport.source.displayName}</h4>
+          </Link>
+          <div className="d-inline-flex small align-items-center">
+            <StateIcon state={courseImport.state} />
+            {courseImport.state === 'Failed' ? (
+              <FormattedMessage {...messages.courseImportTextFailed} />
+            ) : (
+              <>
+                {Math.round(courseImport.progress * 100)}
+                <FormattedMessage {...messages.courseImportTextProgress} />
+              </>
+            )}
+            {courseImport.targetCollection && (
+              <Button
+                iconBefore={Folder}
+                variant="link"
+                className="ml-4 text-black text-decoration-underline"
+                onClick={() => navigateTo({ collectionId: courseImport.targetCollection!.key })}
+              >
+                {courseImport.targetCollection.title}
+              </Button>
+            )}
+          </div>
+        </div>
+        <div className="d-flex align-items-center ml-auto">
+          <Link
+            to={`/course/${courseImport.source.key}`}
+            aria-label={intl.formatMessage(messages.courseImportNavigateAlt)}
+            className="text-primary-500"
+          >
+            <Icon src={ArrowForwardIos} />
+          </Link>
         </div>
       </Card.Section>
     </Card>
