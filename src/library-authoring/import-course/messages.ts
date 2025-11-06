@@ -21,6 +21,11 @@ const messages = defineMessages({
     defaultMessage: 'Import Course',
     description: 'Text for the  button to import a course into the library',
   },
+  courseImportPreviousImports: {
+    id: 'course-authoring.library-authoring.import-course.previous-imports',
+    defaultMessage: 'Previous Imports',
+    description: 'Title for the list of previous imports',
+  },
   courseImportTextProgress: {
     id: 'course-authoring.library-authoring.import-course.course.text',
     defaultMessage: '% Imported',

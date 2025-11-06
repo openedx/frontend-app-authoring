@@ -70,7 +70,9 @@ export const CourseImportHomePage = () => {
             <Layout.Element>
               {courseImports.length ? (
                 <Stack gap={3} className="pl-4 mt-4">
-                  <h3>Previous Imports</h3>
+                  <h3>
+                    <FormattedMessage {...messages.courseImportPreviousImports} />
+                  </h3>
                   {courseImports.map((courseImport) => (
                     <ImportedCourseCard
                       key={courseImport.source.key}
