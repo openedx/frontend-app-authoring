@@ -44,13 +44,13 @@ describe('<CourseImportHomePage>', () => {
     render(mockGetCourseImports.libraryId);
     expect(await screen.findByRole('heading', { name: /Tools.*Import/ })).toBeInTheDocument(); // Header
     expect(screen.getByRole('heading', { name: 'Previous Imports' })).toBeInTheDocument();
-    expect(screen.queryAllByRole('link', { name: /DemoX 2025 T[0-5]/ })).toHaveLength(4);
+    expect(screen.getAllByRole('link', { name: /DemoX 2025 T[0-5]/ })).toHaveLength(4);
   });
 
   it('should render the empty state', async () => {
     render(mockGetCourseImports.emptyLibraryId);
     expect(await screen.findByRole('heading', { name: /Tools.*Import/ })).toBeInTheDocument(); // Header
     expect(screen.queryByRole('heading', { name: 'Previous Imports' })).not.toBeInTheDocument();
-    expect(screen.queryByText('You have not imported any courses into this library.')).toBeInTheDocument();
+    expect(screen.getByText('You have not imported any courses into this library.')).toBeInTheDocument();
   });
 });
