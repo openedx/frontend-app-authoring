@@ -9,13 +9,12 @@ import { Add } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import NotFoundAlert from '@src/generic/NotFoundAlert';
 import Loading from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';
 
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useContentLibrary, useCourseMigrations } from '../data/apiHooks';
+import { useCourseMigrations } from '../data/apiHooks';
 import { HelpSidebar } from './HelpSidebar';
 import { MigratedCourseCard } from './MigratedCourseCard';
 import messages from './messages';
@@ -35,16 +34,11 @@ const EmptyState = () => (
 
 export const CourseImportHomePage = () => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
-  const { data: libraryData } = useContentLibrary(libraryId);
+  const { libraryId, libraryData } = useLibraryContext();
   const { data: courseMigrations } = useCourseMigrations(libraryId);
 
-  if (!courseMigrations) {
+  if (!courseMigrations || !libraryData) {
     return <Loading />;
-  }
-
-  if (!libraryData) {
-    return <NotFoundAlert />;
   }
 
   return (
