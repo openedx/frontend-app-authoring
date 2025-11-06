@@ -34,7 +34,7 @@ const EmptyState = () => (
 
 export const CourseImportHomePage = () => {
   const intl = useIntl();
-  const { libraryId, libraryData } = useLibraryContext();
+  const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { data: courseImports } = useCourseImports(libraryId);
 
   if (!courseImports || !libraryData) {
@@ -53,6 +53,7 @@ export const CourseImportHomePage = () => {
           org={libraryData.org}
           contextId={libraryId}
           isLibrary
+          readOnly={readOnly}
           containerProps={{
             size: undefined,
           }}
