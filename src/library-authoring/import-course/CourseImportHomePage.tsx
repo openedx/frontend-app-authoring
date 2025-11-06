@@ -58,7 +58,7 @@ export const CourseImportHomePage = () => {
             size: undefined,
           }}
         />
-        <Container className="px-0 mt-4 mb-5 library-authoring-page">
+        <Container className="mt-4 mb-5">
           <div className="px-4 bg-light-200 border-bottom">
             <SubHeader
               title={intl.formatMessage(messages.pageTitle)}
