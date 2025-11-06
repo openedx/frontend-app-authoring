@@ -798,7 +798,7 @@ export interface CourseImport {
     key: string;
     title: string;
   } | null;
-  state: 'Succeeded' | 'Failed' | 'InProgress';
+  state: 'Succeeded' | 'Failed' | 'In Progress';
   progress: number;
 }
 

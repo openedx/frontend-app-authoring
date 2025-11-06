@@ -1126,7 +1126,7 @@ mockGetCourseImports.inProgressImport = {
     displayName: 'DemoX 2025 T4',
   },
   targetCollection: null,
-  state: 'InProgress',
+  state: 'In Progress',
   progress: 0.5012,
 } satisfies api.CourseImport;
 mockGetCourseImports.applyMock = () => jest.spyOn(

@@ -27,21 +27,21 @@ const BORDER_CLASS = {
   Succeeded: 'status-border-imported',
   Failed: 'status-border-failed',
   Partial: 'status-border-partial',
-  InProgress: 'status-border-in-progress',
+  'In Progress': 'status-border-in-progress',
 };
 
 const STATE_ICON = {
   Succeeded: Check,
   Failed: Error,
   Partial: Warning,
-  InProgress: IncompleteCircle,
+  'In Progress': IncompleteCircle,
 };
 
 const STATE_ICON_COLOR_CLASS = {
   Succeeded: undefined,
   Failed: 'text-danger-500',
   Partial: 'text-warning-500',
-  InProgress: undefined,
+  'In Progress': undefined,
 };
 
 const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
