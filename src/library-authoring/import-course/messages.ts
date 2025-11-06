@@ -164,6 +164,41 @@ const messages = defineMessages({
     defaultMessage: 'Previously Imported',
     description: 'Chip that indicates that the course has been previously imported.',
   },
+  importCourseAnalysisCompleteAllContentTitle: {
+    id: 'library-authoring.import-course.review-details.in-progress.title',
+    defaultMessage: 'Import Analysis Complete',
+    description: 'Title of the info card when course import analysis is complete and all data can be imported.',
+  },
+  importCourseAnalysisCompleteAllContentBody: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
+    defaultMessage: 'All course content will imported into a collection in your library called {courseName}. See details below.',
+    description: 'Body of the info card when course import analysis is complete and all data can be imported.',
+  },
+  importCourseAnalysisCompleteSomeContentTitle: {
+    id: 'library-authoring.import-course.review-details.in-progress.title',
+    defaultMessage: 'Import Analysis Complete',
+    description: 'Title of the info card when course import analysis is complete and some data can be imported.',
+  },
+  importCourseAnalysisCompleteSomeContentBody: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
+    defaultMessage: '{unsupportedBlockPercentage}% of content cannot be imported. For details see below.',
+    description: 'Body of the info card when course import analysis is complete and some data can be imported.',
+  },
+  importCourseAnalysisDetailsUnsupportedBlocksBody: {
+    id: 'library-authoring.import-course.review-details.analysis-details.unsupportedBlocks.body',
+    defaultMessage: 'The following block types cannot be imported into your library because they\'re are not yet supported. These block types will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
+    description: 'Body of analysis details when some unsupported blocks are present',
+  },
+  importCourseComponentsUnsupportedInfo: {
+    id: 'library-authoring.import-course.review-details.analysis-summary.components.unsupportedInfo',
+    defaultMessage: '{count, plural, one {{count} block} other {{count} blocks}} unsupported',
+    description: 'Message to display on hovering over info icon near components number for unsupported blocks',
+  },
+  importCourseAnalysisDetails: {
+    id: 'library-authoring.import-course.review-details.analysis-details.title',
+    defaultMessage: 'Analysis Details',
+    description: 'Title of the card for the analysis details of a imported course.',
+  },
 });
 
 export default messages;

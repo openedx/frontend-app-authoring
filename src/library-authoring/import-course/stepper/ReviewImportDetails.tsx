@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Card, Stack } from '@openedx/paragon';
+import { Alert, Card, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
@@ -8,9 +8,78 @@ import messages from '../messages';
 import { SummaryCard } from './SummaryCard';
 import { useGetBlockTypes } from '../../search-manager';
 import { useMemo } from 'react';
+import { CheckCircle, Warning } from '@openedx/paragon/icons';
 
-export const ReviewImportDetails = ({ courseId }: { courseId?: string }) => {
+interface Props {
+  courseId?: string;
+}
+
+interface BannerProps extends Props {
+  isBlockDataPending?: boolean;
+  unsupportedBlockPercentage: number;
+}
+
+const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: BannerProps) => {
   const { data, isPending } = useCourseDetails(courseId);
+
+  if (isPending) {
+    return (
+      <Alert>
+        <div className="text-center p-3">
+          <LoadingSpinner />
+        </div>
+      </Alert>
+    )
+  }
+
+  if (isBlockDataPending) {
+    return (
+      <Alert>
+        <Alert.Heading><FormattedMessage {...messages.importCourseInProgressStatusTitle} /></Alert.Heading>
+        <p>
+          <FormattedMessage
+            {...messages.importCourseInProgressStatusBody}
+            values={{
+              courseName: data?.title || '',
+            }}
+          />
+        </p>
+      </Alert>
+    );
+  }
+
+  if (unsupportedBlockPercentage > 0) {
+    return (
+      <Alert variant='warning' icon={Warning}>
+        <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteSomeContentTitle} /></Alert.Heading>
+        <p>
+          <FormattedMessage
+            {...messages.importCourseAnalysisCompleteSomeContentBody}
+            values={{
+              unsupportedBlockPercentage: unsupportedBlockPercentage.toFixed(2),
+            }}
+          />
+        </p>
+      </Alert>
+    )
+  }
+
+  return (
+    <Alert variant='success' icon={CheckCircle}>
+      <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteAllContentTitle} /></Alert.Heading>
+      <p>
+        <FormattedMessage
+          {...messages.importCourseAnalysisCompleteAllContentBody}
+          values={{
+            courseName: data?.title || '',
+          }}
+        />
+      </p>
+    </Alert>
+  )
+}
+
+export const ReviewImportDetails = ({ courseId }: Props) => {
   const { data: blockTypes, isPending: isBlockDataPending } = useGetBlockTypes([
     `context_key = "${courseId}"`,
   ]);
@@ -52,27 +121,20 @@ export const ReviewImportDetails = ({ courseId }: { courseId?: string }) => {
     ) - totalUnsupportedBlocks;
   }, [blockTypes])
 
+  const unsupportedBlockPercentage = useMemo(() => {
+    if (!blockTypes || !totalBlocks) {
+      return 0;
+    }
+    return (totalUnsupportedBlocks / totalBlocks) * 100
+  }, [blockTypes]);
+
   return (
     <Stack gap={4}>
-      <Card>
-        {data && !isPending ? (
-          <Card.Section>
-            <h4><FormattedMessage {...messages.importCourseInProgressStatusTitle} /></h4>
-            <p>
-              <FormattedMessage
-                {...messages.importCourseInProgressStatusBody}
-                values={{
-                  courseName: data?.title || '',
-                }}
-              />
-            </p>
-          </Card.Section>
-        ) : (
-          <div className="text-center p-3">
-            <LoadingSpinner />
-          </div>
-        )}
-      </Card>
+      <Banner
+        courseId={courseId}
+        isBlockDataPending={isBlockDataPending}
+        unsupportedBlockPercentage={unsupportedBlockPercentage}
+      />
       <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
       <SummaryCard
         totalBlocks={totalBlocks}
@@ -83,13 +145,14 @@ export const ReviewImportDetails = ({ courseId }: { courseId?: string }) => {
         unsupportedBlocks={totalUnsupportedBlocks}
         isPending={isBlockDataPending}
       />
-      <h4><FormattedMessage {...messages.importCourseDetailsTitle} /></h4>
-      <Card className="p-6">
-        <Stack className="align-items-center" gap={3}>
-          <LoadingSpinner />
-          <FormattedMessage {...messages.importCourseDetailsLoadingBody} />
-        </Stack>
-      </Card>
+      {!isBlockDataPending && totalUnsupportedBlocks > 0 &&
+        <>
+          <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
+          <Stack className="align-items-center" gap={3}>
+            <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
+          </Stack>
+        </>
+      }
     </Stack>
   );
 };
