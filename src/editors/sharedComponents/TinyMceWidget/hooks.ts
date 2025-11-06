@@ -457,6 +457,9 @@ export const editorConfig = ({
       valid_elements: '*[*]',
       // FIXME: this is passing 'utf-8', which is not a valid entity_encoding value. It should be 'named' etc.
       entity_encoding: 'utf-8' as any,
+      // Protect self-closing <script /> tags from being mangled,
+      // to preserve backwards compatibility with content that relied on this behavior
+      protect: [/<script[^>]*\/>/g],
     },
   };
 };
