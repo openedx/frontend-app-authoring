@@ -11,6 +11,7 @@ import { WysiwygEditor } from '../../generic/WysiwygEditor';
 import SectionSubHeader from '../../generic/section-sub-header';
 import IntroductionVideo from './introduction-video';
 import ExtendedCourseDetails from './extended-course-details';
+import { determineEditorType } from './contentTypeUtils';
 import messages from './messages';
 
 const IntroducingSection = ({
@@ -112,6 +113,7 @@ const IntroducingSection = ({
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
             <WysiwygEditor
               initialValue={overview}
+              editorType={determineEditorType(overview)}
               onChange={(value) => onChange(value, 'overview')}
             />
             <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
@@ -121,6 +123,7 @@ const IntroducingSection = ({
               <Form.Label>{intl.formatMessage(messages.courseAboutSidebarLabel)}</Form.Label>
               <WysiwygEditor
                 initialValue={aboutSidebarHtml}
+                editorType={determineEditorType(aboutSidebarHtml)}
                 onChange={(value) => onChange(value, 'aboutSidebarHtml')}
               />
               <Form.Control.Feedback>{aboutSidebarHelpText}</Form.Control.Feedback>
