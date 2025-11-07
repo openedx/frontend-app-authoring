@@ -60,7 +60,7 @@ export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) =>
     <Card className={BORDER_CLASS[courseImport.state]}>
       <Card.Section className="d-flex flex-row">
         <div>
-          <Link to={`/course/${courseImport.source.key}`}>
+          <Link to={`/course/${courseImport.source.key}`} target="_blank">
             <h4>{courseImport.source.displayName}</h4>
           </Link>
           <div className="d-inline-flex small align-items-center">
