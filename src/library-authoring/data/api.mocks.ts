@@ -1072,3 +1072,64 @@ mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
   'getEntityLinks',
 ).mockImplementation(mockGetEntityLinks);
+
+export async function mockGetCourseImports(libraryId: string): ReturnType<typeof api.getCourseImports> {
+  switch (libraryId) {
+    case mockContentLibrary.libraryId:
+      return [
+        mockGetCourseImports.succeedImport,
+        mockGetCourseImports.succeedImportWithCollection,
+        mockGetCourseImports.failImport,
+        mockGetCourseImports.inProgressImport,
+      ];
+    case mockGetCourseImports.emptyLibraryId:
+      return [];
+    default:
+      throw new Error(`mockGetCourseImports doesn't know how to mock ${JSON.stringify(libraryId)}`);
+  }
+}
+mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
+mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
+mockGetCourseImports.succeedImport = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T1',
+    displayName: 'DemoX 2025 T1',
+  },
+  targetCollection: null,
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseImport;
+mockGetCourseImports.succeedImportWithCollection = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T2',
+    displayName: 'DemoX 2025 T2',
+  },
+  targetCollection: {
+    key: 'sample-collection',
+    title: 'DemoX 2025 T1 (2)',
+  },
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseImport;
+mockGetCourseImports.failImport = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T3',
+    displayName: 'DemoX 2025 T3',
+  },
+  targetCollection: null,
+  state: 'Failed',
+  progress: 0.30,
+} satisfies api.CourseImport;
+mockGetCourseImports.inProgressImport = {
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T4',
+    displayName: 'DemoX 2025 T4',
+  },
+  targetCollection: null,
+  state: 'In Progress',
+  progress: 0.5012,
+} satisfies api.CourseImport;
+mockGetCourseImports.applyMock = () => jest.spyOn(
+  api,
+  'getCourseImports',
+).mockImplementation(mockGetCourseImports);

@@ -89,6 +89,10 @@ export const libraryAuthoringQueryKeys = {
     }
     return ['hierarchy'];
   },
+  courseImports: (libraryId: string) => [
+    ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
+    'courseImports',
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -951,3 +955,13 @@ export const useContentFromSearchIndex = (contentIds: string[]) => {
     skipBlockTypeFetch: true,
   });
 };
+
+/**
+ * Returns the course imports which had this library as destination.
+ */
+export const useCourseImports = (libraryId: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.courseImports(libraryId),
+    queryFn: () => api.getCourseImports(libraryId),
+  })
+);

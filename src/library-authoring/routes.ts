@@ -47,6 +47,8 @@ export const ROUTES = {
   UNIT: '/unit/:containerId/:selectedItemId?/:index?',
   // LibraryBackupPage route:
   BACKUP: '/backup',
+  // LibraryImportPage route:
+  IMPORT: '/import',
 };
 
 export enum ContentType {
