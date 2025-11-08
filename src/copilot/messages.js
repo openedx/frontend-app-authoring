@@ -89,20 +89,24 @@ const messages = defineMessages({
   },
   continueTitle: {
     id: 'copilot.continue.title',
-    defaultMessage: 'Create a Short Description using Copilot. Click Continue.',
+    defaultMessage: 'Create a title using Copilot. Click Continue.',
   },
   continueShortDescription: {  
     id: 'copilot.continue.shortDescription',
-    defaultMessage: 'Generate a detailed Description. Click Continue.',
+    defaultMessage: 'Create a Short Description using Copilot. Click Continue.',
   },
   continueDescription: {  
     id: 'copilot.continue.description',
-    defaultMessage: 'Design a Course Card Image. Click Continue.',
+    defaultMessage: 'Generate a detailed Description. Click Continue.',
   },
   continueCardImage: {  
     id: 'copilot.continue.cardImage',
-    defaultMessage: 'Create a Banner Image. Click Continue.',
+    defaultMessage: 'Design a Course Card Image. Click Continue.',
   },
+  continueBannerImage:{
+    id: 'copilot.continue.bannerImage',
+    defaultMessage: 'Create a Banner Image. Click Continue.'
+  }
 });
 
 export default messages;

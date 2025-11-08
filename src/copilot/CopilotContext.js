@@ -24,7 +24,14 @@ const debounce = (func, wait) => {
 
 export const CopilotProvider = ({ children, initialConfig = { width: 400, height: 83, position: 'right' } }) => {
   const { formatMessage } = useIntl();
-  const t = (msg, values) => formatMessage(msg, values);
+  // const t = (msg, values) => formatMessage(msg, values);
+  const t = (msg, values) => {
+    if (!msg || !msg.id) {
+      console.warn('Missing message id in CopilotContext:', msg);
+      return ''; // or return msg?.defaultMessage || ''
+    }
+    return formatMessage(msg, values);
+  };
 
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
@@ -347,15 +354,41 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       case 'customize':
         handleCustomize();
         break;
-      case 'continue':
-        const next = { title: 'shortDescription', shortDescription: 'description', description: 'cardImage', cardImage: 'bannerImage' };
-        const nextField = next[fieldData.name];
-        if (nextField) {
-          setFieldData({ name: nextField, value: '' });
+      // case 'continue':
+      //   const next = { title: 'shortDescription', shortDescription: 'description', description: 'cardImage', cardImage: 'bannerImage' };
+      //   const nextField = next[fieldData.name];
+      //   if (nextField) {
+      //     setFieldData({ name: nextField, value: '' });
+      //     setPrompt('');
+      //     fetchSuggestions(getCurrentFieldValue(fieldData.name), nextField);
+      //   }
+      //   break;
+      case 'continue': {
+        const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage'];
+        const currentIndex = fieldOrder.indexOf(fieldData.name);
+        const remainingFields = fieldOrder.slice(currentIndex + 1);
+
+        // Find the first EMPTY field in the remaining sequence
+        const nextEmptyField = remainingFields.find(f => {
+          const value = {
+            title,
+            shortDescription,
+            description,
+            cardImage,
+            bannerImage,
+          }[f];
+          return !value || value.trim() === '';
+        });
+
+        const targetField = nextEmptyField;
+        if (targetField) {
+          setFieldData({ name: targetField, value: '' });
           setPrompt('');
-          fetchSuggestions(getCurrentFieldValue(fieldData.name), nextField);
+          fetchSuggestions(getCurrentFieldValue(fieldData.name), targetField);
         }
         break;
+      }
+
     }
   };
 
@@ -559,25 +592,36 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       { type: 'text', sender: 'ai', content: t(messages.inserted, { field: readableName }) },
     ]);
 
-    // Recommendation + Continue button (only if not last field)
-    const nextFieldMap = {
-      title: 'shortDescription',
-      shortDescription: 'description',
-      description: 'cardImage',
-      cardImage: 'bannerImage',
-    };
+    // ✅ Find next EMPTY field (same logic as your 'continue' case)
+    const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage'];
+    const currentIndex = fieldOrder.indexOf(field);
+    const remainingFields = fieldOrder.slice(currentIndex + 1);
 
-    const nextField = nextFieldMap[field];
+    const nextEmptyField = remainingFields.find(f => {
+      const value = {
+        title,
+        shortDescription,
+        description,
+        cardImage,
+        bannerImage,
+      }[f];
+      return !value || value.trim() === '';
+    });
+
+    const nextField = nextEmptyField; // may be undefined if all filled
+
     if (nextField) {
       setChatHistory(prev => [
         ...prev,
-        { type: 'text', sender: 'ai', content: t(messages[`continue${field.charAt(0).toUpperCase() + field.slice(1)}`]) }
+        { type: 'text', sender: 'ai', content: t(messages[`continue${nextField.charAt(0).toUpperCase() + nextField.slice(1)}`]) }
       ]);
       setButtons([{ id: 'continue', label: t(messages.buttonContinue), status: 'active' }]);
     } else {
       setButtons([]); // Last field → no continue
     }
   };
+
+
 
   const value = {
     isOpen, fieldData, isDocked, isMinimized, size, pos, openCopilot, closeCopilot, toggleMinimize, dock,
@@ -586,7 +630,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     updateTitle, updateShortDescription, updateDescription, updateCardImage, updateBannerImage,
     chatHistory, selectedSuggestion, prompt, setPrompt, buttons, questions, currentQuestionIndex,
     handleSelectSuggestion, sendPrompt, handleButtonAction, handleAnswer, handleAIButtonClick, aiLoading,
-    t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight,pinnedSuggestions, 
+    t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight, pinnedSuggestions,
     pinSuggestion, unpinSuggestion, insertPinnedSuggestion,
   };
 

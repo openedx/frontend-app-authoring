@@ -229,31 +229,7 @@ const Copilot = () => {
                     </Button>
                   </div>
                 )}
-                {/* {item.type === 'suggestions' && (
-                  item.content.map((sug) => {
-                    const isImageSuggestion = isValidImageUrl(sug);
-                    if (isImageSuggestion || item.type === 'image') {
-                      return (
-                        <img
-                          key={sug}
-                          src={sug}
-                          alt="Suggested image"
-                          className={`suggestion image-suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
-                          onClick={() => handleSelectSuggestion(sug)}
-                        />
-                      );
-                    }
-                    return (
-                      <div
-                        key={sug}
-                        className={`suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
-                        onClick={() => handleSelectSuggestion(sug)}
-                      >
-                        {sug}
-                      </div>
-                    );
-                  })
-                )} */}
+                
 
                 {item.type === 'suggestions' && (
                   item.content.map((sug) => {
