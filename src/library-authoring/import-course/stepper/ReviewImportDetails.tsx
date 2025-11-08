@@ -3,7 +3,7 @@ import { Card, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
-import messages from './messages';
+import messages from '../messages';
 import { SummaryCard } from './SummaryCard';
 
 export const ReviewImportDetails = ({ courseId }: { courseId?: string }) => {

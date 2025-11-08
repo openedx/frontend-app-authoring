@@ -5,8 +5,10 @@ import {
 } from '@openedx/paragon';
 
 import { CoursesList } from '@src/studio-home/tabs-section/courses-tab';
+import { useStudioHome } from '@src/studio-home/hooks';
+
 import { ReviewImportDetails } from './ReviewImportDetails';
-import messages from './messages';
+import messages from '../messages';
 
 type MigrationStep = 'select-course' | 'review-details';
 
@@ -22,6 +24,10 @@ export const ImportStepperModal = ({
   const intl = useIntl();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
+
+  // Load the courses list
+  // The loading state is handled in `CoursesList`
+  useStudioHome();
 
   return (
     <ModalDialog

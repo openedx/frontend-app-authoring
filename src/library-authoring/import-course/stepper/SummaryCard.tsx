@@ -5,7 +5,7 @@ import { Widgets } from '@openedx/paragon/icons';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { getItemIcon } from '@src/generic/block-type-utils';
 
-import messages from './messages';
+import messages from '../messages';
 
 // TODO: The SummaryCard is always in loading state
 export const SummaryCard = () => (

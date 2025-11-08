@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
-import { getConfig } from '@edx/frontend-platform';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -20,7 +19,6 @@ import {
   Stack,
   Tab,
   Tabs,
-  useToggle,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -51,10 +49,8 @@ import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
-import tempMessages from './course-import/messages';
 import LibraryFilterByPublished from './generic/filter-by-published';
 import { libraryQueryPredicate } from './data/apiHooks';
-import { ImportStepperModal } from './course-import/ImportStepperModal';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -151,7 +147,6 @@ const LibraryAuthoringPage = ({
   const params = new URLSearchParams(location.search);
   const { showToast } = useContext(ToastContext);
   const queryClient = useQueryClient();
-  const [importModalIsOpen, openImportModal, closeImportModal] = useToggle(false);
 
   // Get migration status every second if applicable
   const migrationId = params.get('migration_task');
@@ -360,11 +355,6 @@ const LibraryAuthoringPage = ({
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
           >
-            {getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY === 'true' && (
-              <Button onClick={openImportModal}>
-                {intl.formatMessage(tempMessages.importCourseButton)}
-              </Button>
-            )}
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} />}
               subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
@@ -408,11 +398,6 @@ const LibraryAuthoringPage = ({
           <LibrarySidebar />
         </div>
       )}
-      <ImportStepperModal
-        isOpen={importModalIsOpen}
-        onClose={closeImportModal}
-        libraryKey={libraryId}
-      />
     </div>
   );
 };
