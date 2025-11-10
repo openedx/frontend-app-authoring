@@ -20,6 +20,7 @@ import { ROUTES } from './routes';
 import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
 import { LibraryUnitPage } from './units';
 import { LibraryTeamModal } from './library-team';
+import { ImportStepperPage } from './import-course/stepper/ImportStepperPage';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
@@ -96,6 +97,10 @@ const LibraryLayout = () => (
       <Route
         path={ROUTES.IMPORT}
         Component={CourseImportHomePage}
+      />
+      <Route
+        path={ROUTES.IMPORT_COURSE}
+        Component={ImportStepperPage}
       />
     </Route>
   </Routes>

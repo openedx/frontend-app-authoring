@@ -1,5 +1,6 @@
 import { type DeprecatedReduxState } from '@src/store';
 import { RequestStatus } from '@src/data/constants';
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 
 export const courseId = 'course';
 
@@ -172,7 +173,7 @@ export const generateGetMigrationInfo = () => ({
     sourceKey: 'course-v1:HarvardX+123+2023',
     targetCollectionKey: 'ltc:org:coll-1',
     targetCollectionTitle: 'Collection 1',
-    targetKey: 'lib:org:lib1',
+    targetKey: mockContentLibrary.libraryId,
     targetTitle: 'Library 1',
   }],
 });

@@ -29,7 +29,7 @@ const render = (libraryId: string) => (
           {children}
         </LibraryProvider>
       ),
-      path: '/libraries/:libraryId/import-course',
+      path: '/libraries/:libraryId/import',
       params: { libraryId },
     },
   )

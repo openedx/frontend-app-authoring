@@ -73,8 +73,8 @@ const messages = defineMessages({
     + '<p>For additional details you can review the Library Import documentation.</p>',
     description: 'Body of the second question in the Help & Support sidebar',
   },
-  importCourseModalTitle: {
-    id: 'course-authoring.library-authoring.import-course.modal.title',
+  importCourseStepperTitle: {
+    id: 'course-authoring.library-authoring.import-course.stepper.title',
     defaultMessage: 'Import Course to Library',
     description: 'Title for the modal to import a course into a library.',
   },
@@ -84,27 +84,27 @@ const messages = defineMessages({
     description: 'Label of the button to open the modal to import a course into a library.',
   },
   importCourseSelectCourseStep: {
-    id: 'course-authoring.library-authoring.import-course.select-course.title',
+    id: 'course-authoring.library-authoring.import-course.stepper.select-course.title',
     defaultMessage: 'Select Course',
     description: 'Title for the step to select course in the modal to import a course into a library.',
   },
   importCourseReviewDetailsStep: {
-    id: 'course-authoring.library-authoring.import-course.review-details.title',
+    id: 'course-authoring.library-authoring.import-course.stepper.review-details.title',
     defaultMessage: 'Review Import Details',
     description: 'Title for the step to review import details in the modal to import a course into a library.',
   },
   importCourseCalcel: {
-    id: 'course-authoring.library-authoring.import-course.cancel.text',
+    id: 'course-authoring.library-authoring.import-course.stepper.cancel.text',
     defaultMessage: 'Cancel',
     description: 'Label of the button to cancel the course import.',
   },
   importCourseNext: {
-    id: 'course-authoring.library-authoring.import-course.next.text',
+    id: 'course-authoring.library-authoring.import-course.stepper.next.text',
     defaultMessage: 'Next step',
     description: 'Label of the button go to the next step in the course import modal.',
   },
   importCourseBack: {
-    id: 'course-authoring.library-authoring.import-course.back.text',
+    id: 'course-authoring.library-authoring.import-course.stepper.back.text',
     defaultMessage: 'Back',
     description: 'Label of the button to go to the previous step in the course import modal.',
   },

@@ -12,16 +12,24 @@ import { type DeprecatedReduxState } from '@src/store';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { mockGetMigrationInfo } from '@src/studio-home/data/api.mocks';
 import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
-import { ImportStepperModal } from './ImportStepperModal';
+import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;
 mockGetMigrationInfo.applyMock();
+mockContentLibrary.applyMock();
 type StudioHomeState = DeprecatedReduxState['studioHome'];
 
-const libraryKey = 'lib:org:lib1';
-const mockOnClose = jest.fn();
+const libraryKey = mockContentLibrary.libraryId;
 const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
   // Generate a custom initial state based on studioHomeCoursesRequestParams
@@ -49,11 +57,16 @@ const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
 
   return {
     ...render(
-      <ImportStepperModal
-        libraryKey={libraryKey}
-        onClose={mockOnClose}
-        isOpen
-      />,
+      <ImportStepperPage />,
+      {
+        extraWrapper: ({ children }: { children: React.ReactNode }) => (
+          <LibraryProvider libraryId={libraryKey}>
+            {children}
+          </LibraryProvider>
+        ),
+        path: '/libraries/:libraryId/import/course',
+        params: { libraryId: libraryKey },
+      },
     ),
     store,
   };
@@ -83,7 +96,7 @@ describe('<ImportStepperModal />', () => {
     const cancelButon = await screen.findByRole('button', { name: /cancel/i });
     await user.click(cancelButon);
 
-    expect(mockOnClose).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalled();
   });
 
   it('should go to review import details step', async () => {
