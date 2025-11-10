@@ -1,7 +1,7 @@
 import {
   screen, fireEvent, initializeMocks,
 } from '@src/testUtils';
-import editorRender from '@src/editors/editorTestRender';
+import { editorRender } from '@src/editors/editorTestRender';
 import VideoSettingsModal from '.';
 
 const defaultProps = {
@@ -14,7 +14,7 @@ const defaultProps = {
 const renderComponent = (overrideProps = {}) => {
   const customInitialState = {
     app: {
-      videos: [],
+      videos: {},
       learningContextId: 'course-v1:test+test+test',
       blockId: 'some-block-id',
       courseDetails: {},
