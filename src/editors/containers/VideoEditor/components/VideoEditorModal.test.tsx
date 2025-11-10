@@ -1,13 +1,13 @@
 import { thunkActions } from '@src/editors/data/redux';
 import { initializeMocks, waitFor, act } from '@src/testUtils';
-import editorRender, { getEditorStore, PartialEditorState } from '@src/editors/editorTestRender';
+import { editorRender, getEditorStore, PartialEditorState } from '@src/editors/editorTestRender';
 import VideoEditorModal from './VideoEditorModal';
 
 thunkActions.video.loadVideoData = jest.fn().mockImplementation(() => ({ type: 'MOCK_ACTION' }));
 
 const initialState: PartialEditorState = {
   app: {
-    videos: [],
+    videos: {},
     learningContextId: 'course-v1:test+test+test',
     blockId: 'some-block-id',
     courseDetails: {},
@@ -24,7 +24,7 @@ const initialState: PartialEditorState = {
     fallbackVideos: ['', ''],
     allowVideoDownloads: false,
     allowVideoSharing: { level: 'block', value: false },
-    thumbnail: null,
+    thumbnail: undefined,
     transcripts: [],
     selectedVideoTranscriptUrls: {},
     allowTranscriptDownloads: false,

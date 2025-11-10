@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
-import { render as baseRender, WrapperOptions } from '../testUtils';
+import { render as baseRender, RouteOptions, WrapperOptions } from '../testUtils';
 import { EditorContextProvider } from './EditorContext';
 import { createStore } from './data/store';
 import { type EditorState } from './data/redux'; // adjust path if needed
@@ -27,7 +27,7 @@ export const editorRender = (
     initialState = {},
     learningContextId = 'course-v1:Org+COURSE+RUN',
     ...options
-  }: Omit<WrapperOptions, 'extraWrapper'> & { initialState?: PartialEditorState, learningContextId?: string } = {},
+  }: WrapperOptions & RouteOptions & { initialState?: PartialEditorState, learningContextId?: string } = {},
 ) => {
   // We might need a way for the test cases to access this store directly. In that case we could allow either an
   // initialState parameter OR an editorStore parameter.
