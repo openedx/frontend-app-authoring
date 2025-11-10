@@ -58,14 +58,24 @@ const messages = defineMessages({
     description: 'Body of the info card when course import analysis is complete and all data can be imported.',
   },
   importCourseAnalysisCompleteSomeContentTitle: {
-    id: 'library-authoring.import-course.review-details.in-progress.title',
+    id: 'library-authoring.import-course.review-details.analysis-complete.some.title',
     defaultMessage: 'Import Analysis Complete',
     description: 'Title of the info card when course import analysis is complete and some data can be imported.',
   },
   importCourseAnalysisCompleteSomeContentBody: {
-    id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
+    id: 'library-authoring.import-course.review-details.analysis-complete.some.body',
     defaultMessage: '{unsupportedBlockPercentage}% of content cannot be imported. For details see below.',
     description: 'Body of the info card when course import analysis is complete and some data can be imported.',
+  },
+  importCourseAnalysisCompleteReimportTitle: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.reimport.title',
+    defaultMessage: 'Import Analysis Completed: Reimport',
+    description: 'Title of the info card when course import analysis is complete and it was already imported before.',
+  },
+  importCourseAnalysisCompleteReimportBody: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.reimport.body',
+    defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this secion is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
+    description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
   importCourseAnalysisSummary: {
     id: 'library-authoring.import-course.review-details.analysis-summary.title',

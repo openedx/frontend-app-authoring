@@ -1,6 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Alert, Card, Stack } from '@openedx/paragon';
+import { Alert, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
@@ -9,6 +9,8 @@ import { SummaryCard } from './SummaryCard';
 import { useGetBlockTypes } from '../../search-manager';
 import { useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
+import { useMigrationInfo } from '../../studio-home/data/apiHooks';
+import { useLibraryContext } from '../common/context/LibraryContext';
 
 interface Props {
   courseId?: string;
@@ -21,6 +23,15 @@ interface BannerProps extends Props {
 
 const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: BannerProps) => {
   const { data, isPending } = useCourseDetails(courseId);
+  const { libraryId } = useLibraryContext();
+  const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo([courseId!], (courseId !== undefined && libraryId !== undefined));
+
+  const currentMigrationInfo = useMemo(() => {
+    if (!migrationInfoData || !courseId) {
+      return undefined;
+    }
+    return Object.values(migrationInfoData)[0]?.find(info => info.targetKey === libraryId);
+  }, [migrationInfoData]);
 
   if (isPending) {
     return (
@@ -32,7 +43,7 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
     )
   }
 
-  if (isBlockDataPending) {
+  if (isBlockDataPending || migrationInfoIsPending) {
     return (
       <Alert>
         <Alert.Heading><FormattedMessage {...messages.importCourseInProgressStatusTitle} /></Alert.Heading>
@@ -46,6 +57,25 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
         </p>
       </Alert>
     );
+  }
+
+  if (currentMigrationInfo) {
+    return (
+      <>
+        <Alert variant='warning' icon={Warning}>
+          <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteReimportTitle} /></Alert.Heading>
+        </Alert>
+        <p>
+          <FormattedMessage
+            {...messages.importCourseAnalysisCompleteReimportBody}
+            values={{
+              courseName: data?.title || '',
+              libraryName: currentMigrationInfo?.targetTitle || '',
+            }}
+          />
+        </p>
+      </>
+    )
   }
 
   if (unsupportedBlockPercentage > 0) {
