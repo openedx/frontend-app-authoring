@@ -56,11 +56,13 @@ const Copilot = () => {
     pinSuggestion,
     unpinSuggestion,
     insertPinnedSuggestion,
+    getSortedPinnedSuggestions,
   } = useCopilot();
 
   const ref = useRef(null);
   const panelRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const pinnedContainerRef = useRef(null);
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -98,12 +100,14 @@ const Copilot = () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [isOpen, isFullScreen, size, pos, isDocked, isMinimized]);
+
   const handleSendAnswer = () => {
     if (prompt.trim()) {
       handleAnswer(prompt.trim(), fieldData.name);
       setPrompt('');
     }
   };
+  
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -112,6 +116,23 @@ const Copilot = () => {
       });
     }
   }, [chatHistory, questions, currentQuestionIndex]);
+  useEffect(() => {
+    if (!pinnedContainerRef.current || pinnedSuggestions.length === 0) return;
+
+    const lastPinned = pinnedSuggestions[pinnedSuggestions.length - 1];
+    const fieldGroup = pinnedContainerRef.current.querySelector(`[data-field="${lastPinned.field}"]`);
+
+    requestAnimationFrame(() => {
+      if (fieldGroup) {
+        fieldGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        pinnedContainerRef.current.scrollTo({
+          top: pinnedContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    });
+  }, [pinnedSuggestions]);
 
   if (!isOpen) return null;
 
@@ -147,7 +168,7 @@ const Copilot = () => {
           <div className="header-left" style={{ display: isMinimized && !isFullScreen ? 'none' : 'flex' }}>
             <span className="title">{t(messages.copilotTitle)}</span>
           </div>
-          <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>
+          {!isFullScreen && <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>}
           <div className="header-right">
             {isDocked && !isFullScreen && (
               <Button variant="tertiary" size="sm" onClick={toggleMinimize} className="minimize-icon">
@@ -155,7 +176,7 @@ const Copilot = () => {
               </Button>
             )}
             {!isMinimized && !isFullScreen && !isFloating && (
-              <div className="drag-handle" onClick={handleFloating}>
+              <div className="drag-handle" onClick={handleFloating} title={t(messages.tooltipDragToMove)}>
                 <div className="dots">
                   <span /><span /><span />
                   <span /><span /><span />
@@ -186,35 +207,64 @@ const Copilot = () => {
           </div>
         </div>
         <div className="copilot-content" style={contentStyle}>
-           <div className={`${pinnedSuggestions.length === 0 ? 'none' : 'pined-suggestion'}`}>
-            {pinnedSuggestions.map((sug) => {
-              const isImage = isValidImageUrl(sug);
-              return (
-                <div
-                  key={sug}
-                  className={`pinned-item ${isImage ? 'image' : 'text'}`}
-                  onClick={() => insertPinnedSuggestion(sug)}
-                  title="Click to insert"
-                >
-                  {isImage ? (
-                    <img src={sug} alt="Pinned" />
-                  ) : (
-                    <div>{sug}</div>
-                  )}
-                  <button
-                    className="unpin-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      unpinSuggestion(sug);
-                    }}
-                    title='Remove'
-                  >
-                    <Icon src={Close} />
-                  </button>
+          <div ref={ref => {
+            pinnedContainerRef.current = ref;
+          }} className={`${pinnedSuggestions.length === 0 ? 'none' : 'pined-suggestion'}`}>
+            {(() => {
+              const sorted = getSortedPinnedSuggestions();
+              const grouped = {};
+              sorted.forEach(sug => {
+                if (!grouped[sug.field]) grouped[sug.field] = [];
+                grouped[sug.field].push(sug);
+              });
+
+              const fieldLabels = {
+                title: t(messages.fieldTitle),
+                shortDescription: t(messages.fieldShortDescription),
+                description: t(messages.fieldDescription),
+                cardImage: t(messages.fieldCardImage),
+                bannerImage: t(messages.fieldBannerImage),
+              };
+
+              return Object.keys(grouped).map(field => (
+                <div key={field} className="pinned-group" data-field={field}>
+                  <div className="pinned-group-label">
+                    {fieldLabels[field] || field}
+                  </div>
+                  <div className="pinned-group-items">
+                    {grouped[field].map((sug) => {
+                      const isImage = isValidImageUrl(sug.value);
+                      return (
+                        <div
+                          key={`${sug.field}-${sug.value}`}
+                          className={`pinned-item ${isImage ? 'image' : 'text'}`}
+                          onClick={() => insertPinnedSuggestion(sug)}
+                          title={t(messages.tooltipClickToInsert)}
+                        >
+                          {isImage ? (
+                            <img src={sug.value} alt="Pinned" />
+                          ) : (
+                            <div>{sug.value}</div>
+                          )}
+                          <button
+                            className="unpin-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unpinSuggestion(sug);
+                            }}
+                            title={t(messages.tooltipRemovePinned)}
+                          >
+                            <Icon src={Close} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              );
-            })}
+              ));
+            })()}
           </div>
+
           <div className="chat-messages" ref={chatContainerRef}>
             {chatHistory.map((item, index) => (
               <div key={index} className={`message-container ${item.sender}`}>
@@ -229,33 +279,33 @@ const Copilot = () => {
                     </Button>
                   </div>
                 )}
-                
+
 
                 {item.type === 'suggestions' && (
                   item.content.map((sug) => {
-                    const isImage = isValidImageUrl(sug);
-                    const isPinned = pinnedSuggestions.includes(sug);
+                    const isImage = isValidImageUrl(sug.value);
+                    const isPinned = pinnedSuggestions.some(p => p.value === sug.value && p.field === sug.field);
 
                     const suggestionEl = isImage ? (
                       <img
-                        key={sug}
-                        src={sug}
-                        alt="Suggestion"
-                        className={`suggestion image-suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
+                        key={`${sug.field}-${sug.value}`}
+                        src={sug.value}
+                        alt={t(messages.altSuggestionImage)}
+                        className={`suggestion image-suggestion ${selectedSuggestion === sug.value ? 'selected' : ''}`}
                         onClick={() => handleSelectSuggestion(sug)}
                       />
                     ) : (
                       <div
-                        key={sug}
+                        key={`${sug.field}-${sug.value}`}
                         className={`suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
                         onClick={() => handleSelectSuggestion(sug)}
                       >
-                        {sug}
+                        {sug.value}
                       </div>
                     );
 
                     return (
-                      <div key={sug} className="suggestion-wrapper">
+                      <div key={`${sug.field}-${sug.value}`} className="suggestion-wrapper">
                         {suggestionEl}
                         <button
                           className={`pin-btn ${isPinned ? 'pinned' : ''}`}
@@ -263,7 +313,7 @@ const Copilot = () => {
                             e.stopPropagation();
                             isPinned ? unpinSuggestion(sug) : pinSuggestion(sug);
                           }}
-                          title={isPinned ? 'Remove' : 'Bookmark'}
+                          title={isPinned ? t(messages.tooltipUnpin) : t(messages.tooltipPin)}
                         >
                           <Icon src={isPinned ? Bookmark : BookmarkBorder} />
                         </button>
@@ -272,13 +322,14 @@ const Copilot = () => {
                   })
                 )}
                 {item.type === 'image' && (
-                  <img
-                    src={item.content}
-                    alt="Inserted image"
-                    className="message image-message"
-                  />
+                  <div className="message-container user">
+                    <img
+                      src={item.content?.value || item.content}
+                      alt={t(messages.altSelectedImage)}
+                      className="image-message"
+                    />
+                  </div>
                 )}
-
 
                 {item.type === 'customize' && (
                   <div className="message">
@@ -363,9 +414,9 @@ const Copilot = () => {
         {!isFullScreen && !isMinimized && (
           <>
             {isDocked ? (
-              <div className="resize-indicator left-indicator" title="Resize"></div>
+              <div className="resize-indicator left-indicator" title={t(messages.tooltipResize)}></div>
             ) : (
-              <div className="resize-indicator bottom-right-indicator" title="Resize"></div>
+              <div className="resize-indicator bottom-right-indicator" title={t(messages.tooltipResize)}></div>
             )}
           </>
         )}

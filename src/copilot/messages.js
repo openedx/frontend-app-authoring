@@ -106,7 +106,43 @@ const messages = defineMessages({
   continueBannerImage:{
     id: 'copilot.continue.bannerImage',
     defaultMessage: 'Create a Banner Image. Click Continue.'
-  }
+  },
+  tooltipClickToInsert: {
+    id: 'copilot.tooltip.clickToInsert',
+    defaultMessage: 'Click to insert',
+  },
+  tooltipRemovePinned: {
+    id: 'copilot.tooltip.removePinned',
+    defaultMessage: 'Remove',
+  },
+  tooltipPin: {
+    id: 'copilot.tooltip.pin',
+    defaultMessage: 'Pin',
+  },
+  tooltipUnpin: {
+    id: 'copilot.tooltip.unpin',
+    defaultMessage: 'Unpin',
+  },
+  altSelectedImage: {
+    id: 'copilot.alt.selectedImage',
+    defaultMessage: 'Selected image',
+  },
+  altSuggestionImage: {
+    id: 'copilot.alt.suggestionImage',
+    defaultMessage: 'Suggested image',
+  },
+  tooltipDragToMove: {
+    id: 'copilot.tooltip.dragToMove',
+    defaultMessage: 'click to Undocked',
+  },
+  tooltipResize: {
+    id: 'copilot.tooltip.resize',
+    defaultMessage: 'Drag to resize',
+  },
+  altPinnedImage: {
+  id: 'copilot.alt.pinnedImage',
+  defaultMessage: 'Pinned image',
+},
 });
 
 export default messages;

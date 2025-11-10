@@ -107,12 +107,17 @@
             justify-content: space-between;
             gap: 0.5rem;
 
-            .none{
+            .none {
                 display: none;
             }
 
             .pined-suggestion {
                 width: 100%;
+                max-height: 30%;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                scrollbar-width: thin;
+                scrollbar-color: var(--secondary-light) var(--bg-surface);
                 position: absolute;
                 top: 64px;
                 left: 0;
@@ -125,6 +130,30 @@
                 flex-wrap: wrap;
                 backdrop-filter: blur(8px);
                 -webkit-backdrop-filter: blur(8px);
+
+                .pinned-group {
+                    margin-bottom: 12px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .pinned-group-label {
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: var(--primary);
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        margin-bottom: 6px;
+                        padding: 0 4px;
+                    }
+
+                    .pinned-group-items {
+                        display: flex;
+                        gap: 8px;
+                        flex-wrap: wrap;
+                    }
+                }
 
                 .pinned-item {
                     // position: relative;
