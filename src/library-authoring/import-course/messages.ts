@@ -199,6 +199,16 @@ const messages = defineMessages({
     defaultMessage: 'Analysis Details',
     description: 'Title of the card for the analysis details of a imported course.',
   },
+  importCourseAnalysisCompleteReimportTitle: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.reimport.title',
+    defaultMessage: 'Import Analysis Completed: Reimport',
+    description: 'Title of the info card when course import analysis is complete and it was already imported before.',
+  },
+  importCourseAnalysisCompleteReimportBody: {
+    id: 'library-authoring.import-course.review-details.analysis-complete.reimport.body',
+    defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this secion is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
+    description: 'Body of the info card when course import analysis is complete and it was already imported before.',
+  },
 });
 
 export default messages;

@@ -6,11 +6,11 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
 import messages from '../messages';
 import { SummaryCard } from './SummaryCard';
-import { useGetBlockTypes } from '../../search-manager';
 import { useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
-import { useMigrationInfo } from '../../studio-home/data/apiHooks';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useLibraryContext } from '../../common/context/LibraryContext';
+import { useMigrationInfo } from '../../../studio-home/data/apiHooks';
+import { useGetBlockTypes } from '../../../search-manager';
 
 interface Props {
   courseId?: string;
