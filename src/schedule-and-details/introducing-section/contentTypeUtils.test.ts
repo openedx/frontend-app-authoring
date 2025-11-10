@@ -1,7 +1,7 @@
 /**
  * Tests for content type detection utilities
  */
-import { containsHtml, determineEditorType } from './contentTypeUtils';
+import { containsHtml, determineEditorType, type EditorType } from './contentTypeUtils';
 
 describe('contentTypeUtils', () => {
   describe('containsHtml', () => {
@@ -9,15 +9,13 @@ describe('contentTypeUtils', () => {
       test.each([
         ['empty string', ''],
         ['null', null],
-        ['undefined', undefined],
-        ['number', 123],
         ['plain text', 'This is just plain text'],
         ['text with special characters', 'Text with @#$%^&*()'],
         ['text with quotes', 'Text with "quotes" and \'apostrophes\''],
         ['text with newlines', 'Line 1\nLine 2\nLine 3'],
         ['text with angle brackets but not HTML', '5 < 10 and 10 > 5'],
         ['mathematical expressions', 'x = y < z > w'],
-      ])('for %s', (description, input) => {
+      ] as const)('for %s', (_description: string, input: string | null) => {
         expect(containsHtml(input)).toBe(false);
       });
     });
@@ -65,8 +63,22 @@ describe('contentTypeUtils', () => {
         // Edge cases
         ['unclosed tag', '<p>Unclosed paragraph'],
         ['tag with newlines', '<p>\nMultiline\ncontent\n</p>'],
-      ])('for %s', (description, input) => {
+      ] as const)('for %s', (_description: string, input: string) => {
         expect(containsHtml(input)).toBe(true);
+      });
+    });
+
+    describe('edge cases', () => {
+      test('should handle very long content', () => {
+        const longText = 'a'.repeat(10000);
+        expect(containsHtml(longText)).toBe(false);
+
+        const longHtml = `<p>${longText}</p>`;
+        expect(containsHtml(longHtml)).toBe(true);
+      });
+
+      test('should handle content with only whitespace', () => {
+        expect(containsHtml('   \n\t   ')).toBe(false);
       });
     });
   });
@@ -76,14 +88,12 @@ describe('contentTypeUtils', () => {
       test.each([
         ['empty string', ''],
         ['null', null],
-        ['undefined', undefined],
-        ['number', 123],
         ['plain text', 'This is just plain text content'],
         ['long plain text', 'Lorem ipsum '.repeat(100)],
         ['text with special chars', 'Email: test@example.com, Phone: (555) 123-4567'],
         ['mathematical content', '2 + 2 = 4, x < y, a > b'],
         ['code-like content', 'function() { return value < threshold; }'],
-      ])('for %s', (description, input) => {
+      ] as const)('for %s', (_description: string, input: string | null) => {
         expect(determineEditorType(input)).toBe('text');
       });
     });
@@ -108,7 +118,7 @@ describe('contentTypeUtils', () => {
         // HTML entities
         ['content with entities', 'Price: $100 &amp; includes shipping &ndash; 50% off!'],
         ['mixed content', 'Introduction <p>Main content with &copy; symbol</p> conclusion'],
-      ])('for %s', (description, input) => {
+      ] as const)('for %s', (_description: string, input: string) => {
         expect(determineEditorType(input)).toBe('html');
       });
     });
@@ -159,8 +169,65 @@ describe('contentTypeUtils', () => {
       test('should handle empty or minimal content', () => {
         expect(determineEditorType('')).toBe('text');
         expect(determineEditorType(' ')).toBe('text');
-        expect(determineEditorType(null)).toBe('text');
-        expect(determineEditorType(undefined)).toBe('text');
+        expect(determineEditorType(null as any)).toBe('text');
+        expect(determineEditorType(undefined as any)).toBe('text');
+      });
+    });
+
+    describe('type safety', () => {
+      test('should return correct EditorType', () => {
+        const result: EditorType = determineEditorType('<p>Test</p>');
+        expect(result).toBe('html');
+
+        const result2: EditorType = determineEditorType('Plain text');
+        expect(result2).toBe('text');
+      });
+    });
+
+    describe('performance considerations', () => {
+      test('should handle very large content efficiently', () => {
+        const largeContent = 'This is a large text content. '.repeat(1000);
+        const start = Date.now();
+        const result = determineEditorType(largeContent);
+        const end = Date.now();
+
+        expect(result).toBe('text');
+        expect(end - start).toBeLessThan(100); // Should complete in under 100ms
+      });
+
+      test('should handle large HTML content efficiently', () => {
+        const largeHtml = `<div>${'<p>Paragraph content. </p>'.repeat(1000)}</div>`;
+        const start = Date.now();
+        const result = determineEditorType(largeHtml);
+        const end = Date.now();
+
+        expect(result).toBe('html');
+        expect(end - start).toBeLessThan(100); // Should complete in under 100ms
+      });
+    });
+  });
+
+  describe('function integration', () => {
+    test('containsHtml and determineEditorType should be consistent', () => {
+      const testCases: Array<unknown> = [
+        'Plain text',
+        '<p>HTML content</p>',
+        'Text with &amp; entities',
+        '',
+        null,
+        undefined,
+        '<div><h1>Complex</h1><p>HTML</p></div>',
+      ];
+
+      testCases.forEach((content) => {
+        const hasHtml = containsHtml(content as any);
+        const editorType = determineEditorType(content as any);
+
+        if (hasHtml) {
+          expect(editorType).toBe('html');
+        } else {
+          expect(editorType).toBe('text');
+        }
       });
     });
   });
