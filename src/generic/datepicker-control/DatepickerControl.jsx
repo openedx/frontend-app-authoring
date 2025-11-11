@@ -17,7 +17,7 @@ const timeStepMinutes = 30;
 const scrollSelectedTimeIntoView = () => {
   const schedule = typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function'
     ? window.requestAnimationFrame
-    : ((cb) => setTimeout(cb, 0));
+    : ((cb) => setTimeout(() => cb(), 0));
 
   schedule(() => {
     const selectedItem = document.querySelector('.react-datepicker__time-list-item--selected');
