@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'release-notes.page.banner.link.text',
     defaultMessage: 'Explore release notes',
   },
+  releaseNotesBannerDismissAltText: {
+    id: 'release-notes.page.banner.dismiss.text',
+    defaultMessage: 'Close release notes',
+  },
   newPostButton: {
     id: 'course-authoring.release-notes.actions.new-post',
     defaultMessage: 'New post',
