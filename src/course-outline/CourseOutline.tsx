@@ -291,10 +291,11 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
       {showPageBanner
         && (
         <PageBanner
-          show={showPageBanner}
+          show={showPageBanner === 'true'}
           variant="accentA"
           dismissible
-          onDismiss={() => setShowPageBanner(false)}
+          onDismiss={() => setShowPageBanner('false')}
+          dismissAltText={intl.formatMessage(releaseNotesMessages.releaseNotesBannerDismissAltText)}
         >
           🎉 {intl.formatMessage(releaseNotesMessages.releaseNotesBannerText)}
           <Hyperlink
