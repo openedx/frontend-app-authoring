@@ -18,7 +18,7 @@ import { FeedbackBox } from './components/Feedback';
 import * as hooks from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
-import { answerRangeFormatRegex } from '../../../data/OLXParser';
+import { answerRangeFormatRegex, numericRegex } from '../../../data/OLXParser';
 
 const AnswerOption = ({
   answer,
@@ -53,6 +53,10 @@ const AnswerOption = ({
     const cleanedValue = value.replace(/^\s+|\s+$/g, '');
     return !cleanedValue.length || answerRangeFormatRegex.test(cleanedValue);
   };
+  const validateAnswerNumeric = (value) => {
+    const cleanedValue = (value ?? '').trim();
+    return !cleanedValue.length || numericRegex.test(cleanedValue);
+  }
 
   const getInputArea = () => {
     if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -70,16 +74,26 @@ const AnswerOption = ({
       );
     }
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
+     const isValidValue = validateAnswerNumeric(answer.title)
       return (
-        <Form.Control
-          as="textarea"
-          className="answer-option-textarea text-gray-500 small"
-          autoResize
-          rows={1}
-          value={answer.title}
-          onChange={setAnswerTitle}
-          placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
-        />
+        <Form.Group isInvalid={!isValidValue}>
+          <Form.Control
+            as="textarea"
+            className="answer-option-textarea text-gray-500 small"
+            autoResize
+            rows={1}
+            value={answer.title}
+            onChange={setAnswerTitle}
+            placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
+
+          />
+           {!isValidValue && (
+            <Form.Control.Feedback type="invalid">
+              <FormattedMessage {...messages.AnswerNumericErrorText} />
+            </Form.Control.Feedback>
+            )}
+        
+        </Form.Group>
       );
     }
     // Return Answer Range View

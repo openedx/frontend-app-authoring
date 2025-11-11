@@ -82,6 +82,11 @@ const messages = defineMessages({
     defaultMessage: 'Error: Invalid range format. Use brackets or parentheses with values separated by a comma.',
     description: 'Error text describing wrong format of answer ranges',
   },
+  AnswerNumericErrorText: {
+    id: 'authoring.answerwidget.answer.answerNumericErrorText',
+    defaultMessage: 'Error: This problem type only supports numeric answers. Did you mean to make a (Text/Math Expression) Input problem?',
+    description: 'Error numeric describing wrong format',
+  }
 });
 
 export default messages;
