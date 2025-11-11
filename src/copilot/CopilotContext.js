@@ -473,9 +473,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       const dx = e.clientX - startData.current.mouseX;
       const dy = e.clientY - startData.current.mouseY;
       let newW = size.w, newH = size.h;
-      if (resizeType === 'width') newW = Math.max(300, Math.min(600, size.w - dx));
+      if (resizeType === 'width') newW = Math.max(400, Math.min(600, size.w - dx));
       if (resizeType === 'both') {
-        newW = Math.max(300, Math.min(800, size.w + dx));
+        newW = Math.max(400, Math.min(800, size.w + dx));
         newH = Math.max(450, Math.min(800, size.h + dy));
       }
       setSize({ w: newW, h: newH });

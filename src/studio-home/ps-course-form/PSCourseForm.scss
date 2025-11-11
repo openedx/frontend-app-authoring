@@ -745,6 +745,9 @@ body {
     &:hover .remove-image-overlay {
         opacity: 1;
     }
+    &:hover .pgn__icon{
+        color: var(--text-white);
+    }
 }
 
 // Fix for date/time picker popups being cut off

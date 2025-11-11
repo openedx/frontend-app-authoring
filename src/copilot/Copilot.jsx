@@ -107,7 +107,7 @@ const Copilot = () => {
       setPrompt('');
     }
   };
-  
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -143,10 +143,10 @@ const Copilot = () => {
     top: isFullScreen ? `calc(${feedbackBannerHeight + navbarHeight + 15}px)` : (isDocked ? '0' : `${pos.y}px`),
     width: isFullScreen ? `calc(100vw - ${sidebarWidth + 40}px)` : (isMinimized ? `${TAB_WIDTH}px` : `${size.w}px`),
     height: isFullScreen ? `calc(100vh - ${feedbackBannerHeight + navbarHeight + 16}px)` : (isDocked ? '83vh' : `${size.h}px`),
-    backgroundColor: isFullScreen || !isDocked ? 'rgba(255, 255, 255, 0.6)' : 'var(--bg-surface)',
+    backgroundColor: isFullScreen || !isDocked ? 'color-mix(in srgb, var(--bg-surface) 80%, transparent)' : 'var(--bg-surface)',
     backdropFilter: isFullScreen || !isDocked ? 'blur(0) saturate(180%)' : 'none',
     WebkitBackdropFilter: isFullScreen || !isDocked ? 'blur(0) saturate(180%)' : 'none',
-    border: isFullScreen || !isDocked ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid var(--border-color)',
+    border: isFullScreen || !isDocked ? '1px solid color-mix(in srgb, var(--border-color) 20%, transparent)' : '1px solid var(--border-color)',
     boxShadow: isFullScreen || !isDocked ? '0 4px 30px rgba(0, 0, 0, 0.2)' : 'none',
     borderLeft: isFullScreen ? 'none' : '1px solid var(--border-color)',
     zIndex: isFullScreen ? 2000 : 999,
