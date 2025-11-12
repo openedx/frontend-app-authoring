@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -17,6 +17,9 @@ import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
+import { useBulkMigrate } from '@src/data/apiHooks';
+import { ToastContext } from '../../../generic/toast-context';
+import LoadingButton from '../../../generic/loading-button';
 
 type MigrationStep = 'select-course' | 'review-details';
 
@@ -68,13 +71,35 @@ export const ImportStepperPage = () => {
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
+  const { showToast } = useContext(ToastContext);
+  // Using bulk migrate as it allows us to create collection automatically
+  const migrate = useBulkMigrate();
 
   // Load the courses list
   // The loading state is handled in `CoursesList`
   useStudioHome();
 
-  const handleImportCourse = () => {
-    console.log("Imported");
+  const handleImportCourse = async () => {
+    if (!selectedCourseId) {
+      return;
+    }
+    try {
+      const migrationTask = await migrate.mutateAsync({
+        sources: [selectedCourseId],
+        target: libraryId,
+        createCollections: true,
+        repeatHandlingStrategy: 'fork',
+        compositionLevel: "section",
+      });
+      showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
+        courseName: selectedCourseId,
+      }));
+      navigate(`/library/${libraryId}?migration_task=${migrationTask.uuid}`);
+    } catch (error) {
+      showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
+        courseName: selectedCourseId,
+      }));
+    }
   }
 
   if (!libraryData) {
@@ -144,9 +169,11 @@ export const ImportStepperPage = () => {
                     <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
-                    <Button onClick={handleImportCourse}>
-                      <FormattedMessage {...messages.importCourseButton} />
-                    </Button>
+                    <LoadingButton
+                      onClick={handleImportCourse}
+                      label={intl.formatMessage(messages.importCourseButton)}
+                      variant="primary"
+                    />
                   </ActionRow>
                 )}
               </div>

@@ -11,7 +11,7 @@ export const getMigrationStatusUrl = (migrationId: string) => `${getStudioBaseUr
 /**
  * Get the URL for bulk migrate content to libraries
  */
-export const bulkMigrateLegacyLibrariesUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
+export const bulkMigrateContentToLibrariesUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
 
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
@@ -132,10 +132,10 @@ export async function getMigrationStatus(
 /**
  * Bulk migrate content to libraries
  */
-export async function bulkMigrateLegacyLibraries(
+export async function bulkMigrateContentToLibraries(
   requestData: BulkMigrateRequestData,
 ): Promise<MigrateTaskStatusData> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.post(bulkMigrateLegacyLibrariesUrl(), snakeCaseObject(requestData));
+  const { data } = await client.post(bulkMigrateContentToLibrariesUrl(), snakeCaseObject(requestData));
   return camelCaseObject(data);
 }

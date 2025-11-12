@@ -209,6 +209,16 @@ const messages = defineMessages({
     defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this secion is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
     description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
+  importCourseCompleteToastMessage: {
+    id: 'library-authoring.import-course.complete-import.in-progress.toast.message',
+    defaultMessage: '{courseName} is being migrated.',
+    description: 'Toast message that indicates a course is being migrated',
+  },
+  importCourseCompleteFailedToastMessage: {
+    id: 'library-authoring.import-course.complete-import.failed.toast.message',
+    defaultMessage: '{courseName} migration failed.',
+    description: 'Toast message that indicates course migration failed.',
+  },
 });
 
 export default messages;

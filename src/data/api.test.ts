@@ -21,9 +21,9 @@ describe('legacy libraries migration API', () => {
 
   describe('bulkMigrateLegacyLibraries', () => {
     it('should call bulk migrate legacy libraries', async () => {
-      const url = api.bulkMigrateLegacyLibrariesUrl();
+      const url = api.bulkMigrateContentToLibrariesUrl();
       axiosMock.onPost(url).reply(200);
-      await api.bulkMigrateLegacyLibraries({
+      await api.bulkMigrateContentToLibraries({
         sources: [],
         target: '1',
       });

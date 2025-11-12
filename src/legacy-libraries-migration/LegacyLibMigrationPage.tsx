@@ -29,7 +29,7 @@ import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
 import { LegacyMigrationHelpSidebar } from './LegacyMigrationHelpSidebar';
-import { useUpdateContainerCollections } from '@src/data/apiHooks';
+import { useBulkMigrate } from '@src/data/apiHooks';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 
@@ -83,7 +83,7 @@ export const LegacyLibMigrationPage = () => {
   const [migrationFilter, setMigrationFilter] = useState<Filter[]>([Filter.unmigrated]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
-  const migrate = useUpdateContainerCollections();
+  const migrate = useBulkMigrate();
 
   const handleMigrate = useCallback(async () => {
     if (destinationLibrary) {

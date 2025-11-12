@@ -1,8 +1,10 @@
 import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { libraryAuthoringQueryKeys } from '../library-authoring';
+import { studioHomeQueryKeys } from '../studio-home/data/apiHooks';
 import {
   getWaffleFlags,
   waffleFlagDefaults,
-  bulkMigrateLegacyLibraries,
+  bulkMigrateContentToLibraries,
   getMigrationStatus,
   BulkMigrateRequestData,
 } from './api';
@@ -46,13 +48,18 @@ export const useWaffleFlags = (courseId?: string) => {
 };
 
 /**
- * Use this mutation to update container collections
+ * Use this mutation to migrate multiple sources to a library
  */
-export const useUpdateContainerCollections = () => (
-  useMutation({
-    mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateLegacyLibraries(requestData),
+export const useBulkMigrate = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateContentToLibraries(requestData),
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({queryKey: libraryAuthoringQueryKeys.courseImports(variables.target)});
+      queryClient.invalidateQueries({queryKey: studioHomeQueryKeys.all});
+    }
   })
-);
+};
 
 /**
  * Get the migration status
