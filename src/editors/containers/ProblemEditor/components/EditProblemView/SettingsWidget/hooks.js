@@ -299,9 +299,9 @@ export const typeRowHooks = ({
     if (typeKey === ProblemTypeKeys.TEXTINPUT && RichTextProblems.includes(problemType)) {
       convertToPlainText();
     }
-    // Dropdown problems can only have one correct answer. When there is more than one correct answer
+    // Dropdown and single-select problems can only have one correct answer. When there is more than one correct answer
     // from a previous problem type, the correct attribute for selected answers need to be set to false.
-    if (typeKey === ProblemTypeKeys.DROPDOWN) {
+    if (typeKey === ProblemTypeKeys.DROPDOWN || typeKey === ProblemTypeKeys.SINGLESELECT) {
       if (correctAnswerCount > 1) {
         clearPreviouslySelectedAnswers();
       } else if (RichTextProblems.includes(problemType)) {
