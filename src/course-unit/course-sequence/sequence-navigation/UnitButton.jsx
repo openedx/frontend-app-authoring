@@ -37,7 +37,7 @@ UnitButton.propTypes = {
   className: PropTypes.string,
   showTitle: PropTypes.bool,
   unitId: PropTypes.string.isRequired,
-  isActive: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool,
 };
 
 UnitButton.defaultProps = {
