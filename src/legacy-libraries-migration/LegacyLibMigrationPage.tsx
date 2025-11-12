@@ -25,11 +25,11 @@ import type { LibraryV1Data } from '@src/studio-home/data/api';
 import { ToastContext } from '@src/generic/toast-context';
 import { Filter, LibrariesList } from '@src/studio-home/tabs-section/libraries-tab';
 
+import { useBulkMigrate } from '@src/data/apiHooks';
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
 import { LegacyMigrationHelpSidebar } from './LegacyMigrationHelpSidebar';
-import { useBulkMigrate } from '@src/data/apiHooks';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 

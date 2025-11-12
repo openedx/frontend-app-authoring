@@ -1,4 +1,6 @@
-import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  skipToken, useMutation, useQuery, useQueryClient,
+} from '@tanstack/react-query';
 import { libraryAuthoringQueryKeys } from '../library-authoring';
 import { studioHomeQueryKeys } from '../studio-home/data/apiHooks';
 import {
@@ -55,10 +57,10 @@ export const useBulkMigrate = () => {
   return useMutation({
     mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateContentToLibraries(requestData),
     onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({queryKey: libraryAuthoringQueryKeys.courseImports(variables.target)});
-      queryClient.invalidateQueries({queryKey: studioHomeQueryKeys.all});
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.courseImports(variables.target) });
+      queryClient.invalidateQueries({ queryKey: studioHomeQueryKeys.all });
+    },
+  });
 };
 
 /**

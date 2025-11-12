@@ -14,10 +14,10 @@ import Loading from '@src/generic/Loading';
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
+import { useBulkMigrate } from '@src/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
-import { useBulkMigrate } from '@src/data/apiHooks';
 import { ToastContext } from '../../../generic/toast-context';
 import LoadingButton from '../../../generic/loading-button';
 
@@ -89,7 +89,7 @@ export const ImportStepperPage = () => {
         target: libraryId,
         createCollections: true,
         repeatHandlingStrategy: 'fork',
-        compositionLevel: "section",
+        compositionLevel: 'section',
       });
       showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
         courseName: selectedCourseId,
@@ -100,7 +100,7 @@ export const ImportStepperPage = () => {
         courseName: selectedCourseId,
       }));
     }
-  }
+  };
 
   if (!libraryData) {
     return <Loading />;

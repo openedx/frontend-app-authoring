@@ -4,10 +4,10 @@ import { Alert, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
-import messages from '../messages';
-import { SummaryCard } from './SummaryCard';
 import { useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
+import messages from '../messages';
+import { SummaryCard } from './SummaryCard';
 import { useLibraryContext } from '../../common/context/LibraryContext';
 import { useMigrationInfo } from '../../../studio-home/data/apiHooks';
 import { useGetBlockTypes } from '../../../search-manager';
@@ -40,7 +40,7 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           <LoadingSpinner />
         </div>
       </Alert>
-    )
+    );
   }
 
   if (isBlockDataPending || migrationInfoIsPending) {
@@ -62,7 +62,7 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
   if (currentMigrationInfo) {
     return (
       <>
-        <Alert variant='warning' icon={Warning}>
+        <Alert variant="warning" icon={Warning}>
           <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteReimportTitle} /></Alert.Heading>
         </Alert>
         <p>
@@ -75,12 +75,12 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           />
         </p>
       </>
-    )
+    );
   }
 
   if (unsupportedBlockPercentage > 0) {
     return (
-      <Alert variant='warning' icon={Warning}>
+      <Alert variant="warning" icon={Warning}>
         <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteSomeContentTitle} /></Alert.Heading>
         <p>
           <FormattedMessage
@@ -91,11 +91,11 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           />
         </p>
       </Alert>
-    )
+    );
   }
 
   return (
-    <Alert variant='success' icon={CheckCircle}>
+    <Alert variant="success" icon={CheckCircle}>
       <Alert.Heading><FormattedMessage {...messages.importCourseAnalysisCompleteAllContentTitle} /></Alert.Heading>
       <p>
         <FormattedMessage
@@ -106,8 +106,8 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
         />
       </p>
     </Alert>
-  )
-}
+  );
+};
 
 export const ReviewImportDetails = ({ courseId }: Props) => {
   const { data: blockTypes, isPending: isBlockDataPending } = useGetBlockTypes([
@@ -126,14 +126,14 @@ export const ReviewImportDetails = ({ courseId }: Props) => {
       return total;
     }, 0);
     return unsupportedBlocks;
-  }, [blockTypes])
+  }, [blockTypes]);
 
   const totalBlocks = useMemo(() => {
     if (!blockTypes) {
       return undefined;
     }
     return Object.values(blockTypes).reduce((total, block) => total + block, 0) - totalUnsupportedBlocks;
-  }, [blockTypes])
+  }, [blockTypes]);
 
   const totalComponents = useMemo(() => {
     if (!blockTypes) {
@@ -141,21 +141,21 @@ export const ReviewImportDetails = ({ courseId }: Props) => {
     }
     return Object.entries(blockTypes).reduce(
       (total, [blockType, count]) => {
-        const isComponent = !["chapter", "sequential", "vertical"].includes(blockType);
+        const isComponent = !['chapter', 'sequential', 'vertical'].includes(blockType);
         if (isComponent) {
           return total + count;
         }
         return total;
       },
-      0
+      0,
     ) - totalUnsupportedBlocks;
-  }, [blockTypes])
+  }, [blockTypes]);
 
   const unsupportedBlockPercentage = useMemo(() => {
     if (!blockTypes || !totalBlocks) {
       return 0;
     }
-    return (totalUnsupportedBlocks / totalBlocks) * 100
+    return (totalUnsupportedBlocks / totalBlocks) * 100;
   }, [blockTypes]);
 
   return (
@@ -175,14 +175,15 @@ export const ReviewImportDetails = ({ courseId }: Props) => {
         unsupportedBlocks={totalUnsupportedBlocks}
         isPending={isBlockDataPending}
       />
-      {!isBlockDataPending && totalUnsupportedBlocks > 0 &&
+      {!isBlockDataPending && totalUnsupportedBlocks > 0
+        && (
         <>
           <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
           <Stack className="align-items-center" gap={3}>
             <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
           </Stack>
         </>
-      }
+        )}
     </Stack>
   );
 };
