@@ -14,7 +14,7 @@ export function fetchHelpUrls() {
 
       dispatch(updateLoadingHelpUrlsStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingHelpUrlsStatus({ status: RequestStatus.FAILED }));
 
       return false;

@@ -43,7 +43,7 @@ export function fetchCourseBestPracticesQuery({
       const data = await getCourseBestPractices({ courseId, excludeGraded, all });
       dispatch(fetchBestPracticeChecklistSuccess({ data }));
       dispatch(updateBestPracticeChecklisttStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateBestPracticeChecklisttStatus({ status: RequestStatus.FAILED }));
     }
   };

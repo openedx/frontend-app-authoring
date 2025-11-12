@@ -19,7 +19,7 @@ export function fetchOrganizationsQuery() {
       const organizations = await getOrganizations();
       dispatch(fetchOrganizations(organizations));
       dispatch(updateLoadingStatuses({ organizationLoadingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingStatuses({ organizationLoadingStatus: RequestStatus.FAILED }));
     }
   };
@@ -31,7 +31,7 @@ export function fetchCourseRerunQuery(courseId) {
       const courseRerun = await getCourseRerun(courseId);
       dispatch(updateCourseRerunData(courseRerun));
       dispatch(updateLoadingStatuses({ courseRerunLoadingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingStatuses({ courseRerunLoadingStatus: RequestStatus.FAILED }));
     }
   };
@@ -47,7 +47,7 @@ export function updateCreateOrRerunCourseQuery(courseData) {
       dispatch(updatePostErrors('errMsg' in response ? response : {}));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

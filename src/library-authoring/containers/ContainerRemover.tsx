@@ -75,7 +75,7 @@ const ContainerRemover = ({
         }
       }
       showToast(removeSuccess);
-    } catch (e) {
+    } catch {
       showToast(removeError);
     } finally {
       close();

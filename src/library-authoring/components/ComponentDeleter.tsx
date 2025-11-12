@@ -36,7 +36,7 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
     try {
       await restoreComponentMutation.mutateAsync({ usageKey });
       showToast(intl.formatMessage(messages.undoDeleteComponentToastSuccess));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.undoDeleteComponentToastFailed));
     }
   }, []);

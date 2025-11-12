@@ -57,7 +57,7 @@ const ContainerRow = ({
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
     }
   };
@@ -142,7 +142,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     try {
       await orderMutator.mutateAsync(childrenKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);

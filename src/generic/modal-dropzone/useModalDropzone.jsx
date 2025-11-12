@@ -106,7 +106,7 @@ const useModalDropzone = ({
         onSavingStatus({ status: RequestStatus.SUCCESSFUL });
         onClose();
       }
-    } catch (error) {
+    } catch {
       onSavingStatus({ status: RequestStatus.FAILED });
     } finally {
       setDisabledUploadBtn(true);

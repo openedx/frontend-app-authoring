@@ -117,7 +117,7 @@ export const SearchContextProvider: React.FC<{
       if (getBlockType(value)) {
         return value;
       }
-    } catch (error) {
+    } catch {
       // Error thrown if value cannot be parsed into a library usage key.
       // Pass through to return below.
     }

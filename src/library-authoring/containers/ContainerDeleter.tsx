@@ -146,7 +146,7 @@ const ContainerDeleter = ({
     try {
       await restoreContainerMutation.mutateAsync();
       showToast(intl.formatMessage(messages.undoDeleteContainerToastMessage));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messageMap.undoDeleteError));
     }
   }, [messageMap]);
