@@ -73,6 +73,10 @@ export const ImportStepperPage = () => {
   // The loading state is handled in `CoursesList`
   useStudioHome();
 
+  const handleImportCourse = () => {
+    console.log("Imported");
+  }
+
   if (!libraryData) {
     return <Loading />;
   }
@@ -140,7 +144,7 @@ export const ImportStepperPage = () => {
                     <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
-                    <Button disabled>
+                    <Button onClick={handleImportCourse}>
                       <FormattedMessage {...messages.importCourseButton} />
                     </Button>
                   </ActionRow>

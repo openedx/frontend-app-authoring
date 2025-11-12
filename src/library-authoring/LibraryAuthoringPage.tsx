@@ -24,7 +24,7 @@ import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useMigrationStatus } from '@src/legacy-libraries-migration/data/apiHooks';
+import { useMigrationStatus } from '@src/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';

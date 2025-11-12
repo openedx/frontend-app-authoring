@@ -1,4 +1,4 @@
-import { initializeMocks } from '../../testUtils';
+import { initializeMocks } from '../testUtils';
 import * as api from './api';
 
 let axiosMock;

@@ -29,7 +29,7 @@ import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
 import { LegacyMigrationHelpSidebar } from './LegacyMigrationHelpSidebar';
-import { useUpdateContainerCollections } from './data/apiHooks';
+import { useUpdateContainerCollections } from '@src/data/apiHooks';
 
 export type MigrationStep = 'select-libraries' | 'select-destination' | 'confirmation-view';
 

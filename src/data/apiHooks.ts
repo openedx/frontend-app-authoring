@@ -1,5 +1,19 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getWaffleFlags, waffleFlagDefaults } from './api';
+import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  getWaffleFlags,
+  waffleFlagDefaults,
+  bulkMigrateLegacyLibraries,
+  getMigrationStatus,
+  BulkMigrateRequestData,
+} from './api';
+
+export const migrationQueryKeys = {
+  all: ['contentLibrary'],
+  /**
+   * Base key for data specific to a migration task
+   */
+  migrationTask: (migrationId?: string | null) => [...migrationQueryKeys.all, migrationId],
+};
 
 /**
  * Get the waffle flags (which enable/disable specific features). They may
@@ -30,3 +44,23 @@ export const useWaffleFlags = (courseId?: string) => {
     isError,
   };
 };
+
+/**
+ * Use this mutation to update container collections
+ */
+export const useUpdateContainerCollections = () => (
+  useMutation({
+    mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateLegacyLibraries(requestData),
+  })
+);
+
+/**
+ * Get the migration status
+ */
+export const useMigrationStatus = (migrationId: string | null) => (
+  useQuery({
+    queryKey: migrationQueryKeys.migrationTask(migrationId),
+    queryFn: migrationId ? () => getMigrationStatus(migrationId!) : skipToken,
+    refetchInterval: 1000, // Refresh every second
+  })
+);
