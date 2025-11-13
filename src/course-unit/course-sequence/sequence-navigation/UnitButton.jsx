@@ -10,13 +10,13 @@ const UnitButton = ({
   unitId,
   className,
   showTitle,
+  isActive, // passed from parent (SequenceNavigationTabs)
 }) => {
   const courseId = useSelector(getCourseId);
   const sequenceId = useSelector(getSequenceId);
 
   const unit = useSelector((state) => state.models.units[unitId]);
-
-  const { title, contentType, isActive } = unit || {};
+  const { title, contentType } = unit || {};
 
   return (
     <Button
@@ -37,11 +37,13 @@ UnitButton.propTypes = {
   className: PropTypes.string,
   showTitle: PropTypes.bool,
   unitId: PropTypes.string.isRequired,
+  isActive: PropTypes.bool,
 };
 
 UnitButton.defaultProps = {
   className: undefined,
   showTitle: false,
+  isActive: false,
 };
 
 export default UnitButton;
