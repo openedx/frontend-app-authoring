@@ -15,11 +15,12 @@ import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useBulkMigrate } from '@src/data/apiHooks';
+import { ToastContext } from '@src/generic/toast-context';
+import LoadingButton from '@src/generic/loading-button';
+import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
-import { ToastContext } from '../../../generic/toast-context';
-import LoadingButton from '../../../generic/loading-button';
 
 type MigrationStep = 'select-course' | 'review-details';
 
@@ -70,6 +71,7 @@ export const ImportStepperPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
+  const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   // Using bulk migrate as it allows us to create collection automatically
@@ -92,12 +94,12 @@ export const ImportStepperPage = () => {
         compositionLevel: 'section',
       });
       showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
-        courseName: selectedCourseId,
+        courseName: courseData?.title,
       }));
       navigate(`/library/${libraryId}?migration_task=${migrationTask.uuid}`);
     } catch (error) {
       showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
-        courseName: selectedCourseId,
+        courseName: courseData?.title,
       }));
     }
   };

@@ -34,9 +34,10 @@ export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
   })
 );
 
-export const useCourseDetails = (courseId?: string) => (
+export const useCourseDetails = (courseId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseDetails(courseId),
     queryFn: courseId ? () => getCourseDetails(courseId) : skipToken,
+    enabled: enabled && courseId !== undefined,
   })
 );
