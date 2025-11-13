@@ -72,7 +72,7 @@ describe('<DatepickerControl />', () => {
 
   it('increments time value with arrow down and decrements with arrow up', () => {
     const incremented = convertToStringFromDate('2025-01-01T10:30:00Z');
-    const decremented = convertToStringFromDate('2025-01-01T09:30:00Z');
+    const restored = convertToStringFromDate('2025-01-01T10:00:00Z');
     const { getByPlaceholderText } = render(
       <RootWrapper
         {...props}
@@ -84,9 +84,9 @@ describe('<DatepickerControl />', () => {
     const input = getByPlaceholderText('HH:MM');
 
     fireEvent.keyDown(input, { key: 'ArrowDown', target: { value: '10:00' } });
-    expect(onChangeMock).toHaveBeenCalledWith(incremented);
+    expect(onChangeMock).toHaveBeenNthCalledWith(1, incremented);
 
     fireEvent.keyDown(input, { key: 'ArrowUp', target: { value: '10:30' } });
-    expect(onChangeMock).toHaveBeenCalledWith(decremented);
+    expect(onChangeMock).toHaveBeenNthCalledWith(2, restored);
   });
 });
