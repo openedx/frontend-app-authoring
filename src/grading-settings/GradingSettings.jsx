@@ -87,7 +87,7 @@ const GradingSettings = ({ courseId }) => {
       setIsQueryPending(!isQueryPending);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [savePending]);
+  }, [savePending, savingStatus]);
 
   if (isLoadingDenied) {
     return (
