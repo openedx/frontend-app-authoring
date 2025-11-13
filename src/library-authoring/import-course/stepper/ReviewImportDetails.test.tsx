@@ -1,10 +1,11 @@
-import { ReviewImportDetails } from './ReviewImportDetails';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { useMigrationInfo } from '@src/studio-home/data/apiHooks';
 import { useGetBlockTypes } from '@src/search-manager';
 import { render as baseRender, screen, initializeMocks } from '@src/testUtils';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { ReviewImportDetails } from './ReviewImportDetails';
+import messages from '../messages';
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
@@ -66,10 +67,12 @@ describe('ReviewImportDetails', () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
-      data: { 'test-course-id': [{
-        targetKey: libraryId,
-        targetTitle: 'Library title',
-      }]},
+      data: {
+        'test-course-id': [{
+          targetKey: libraryId,
+          targetTitle: 'Library title',
+        }],
+      },
     });
     (useGetBlockTypes as jest.Mock).mockReturnValue({
       isPending: false,
@@ -81,7 +84,9 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Completed: Reimport/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /Test Course has already been imported into the Library "Library Title". If this secion is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again./i
+      messages.importCourseAnalysisCompleteReimportBody.defaultMessage
+        .replace('{courseName}', 'Test Course')
+        .replace('{libraryName}', 'Library title'),
     )).toBeInTheDocument();
   });
 
@@ -107,18 +112,18 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /12.50% of content cannot be imported. For details see below./i
+      /12.50% of content cannot be imported. For details see below./i,
     )).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
-    expect(await screen.findByText("7/8")).toBeInTheDocument();
-    expect(await screen.findByText("Sections")).toBeInTheDocument();
-    expect(await screen.findByText("1")).toBeInTheDocument();
-    expect(await screen.findByText("Subsections")).toBeInTheDocument();
-    expect(await screen.findByText("2")).toBeInTheDocument();
-    expect(await screen.findByText("Units")).toBeInTheDocument();
-    expect(await screen.findByText("3")).toBeInTheDocument();
-    expect(await screen.findByText("Components")).toBeInTheDocument();
-    expect(await screen.findByText("1/2")).toBeInTheDocument();
+    expect(await screen.findByText('7/8')).toBeInTheDocument();
+    expect(await screen.findByText('Sections')).toBeInTheDocument();
+    expect(await screen.findByText('1')).toBeInTheDocument();
+    expect(await screen.findByText('Subsections')).toBeInTheDocument();
+    expect(await screen.findByText('2')).toBeInTheDocument();
+    expect(await screen.findByText('Units')).toBeInTheDocument();
+    expect(await screen.findByText('3')).toBeInTheDocument();
+    expect(await screen.findByText('Components')).toBeInTheDocument();
+    expect(await screen.findByText('1/2')).toBeInTheDocument();
   });
 
   it('renders success alert when no unsupported blocks', async () => {
@@ -142,17 +147,18 @@ describe('ReviewImportDetails', () => {
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(
-      /All course content will imported into a collection in your library called Test Course. See details below./i
+      messages.importCourseAnalysisCompleteAllContentBody.defaultMessage
+        .replace('{courseName}', 'Test Course'),
     )).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
-    expect(await screen.findByText("14")).toBeInTheDocument();
-    expect(await screen.findByText("Sections")).toBeInTheDocument();
-    expect(await screen.findByText("1")).toBeInTheDocument();
-    expect(await screen.findByText("Subsections")).toBeInTheDocument();
-    expect(await screen.findByText("2")).toBeInTheDocument();
-    expect(await screen.findByText("Units")).toBeInTheDocument();
-    expect(await screen.findByText("3")).toBeInTheDocument();
-    expect(await screen.findByText("Components")).toBeInTheDocument();
-    expect(await screen.findByText("8")).toBeInTheDocument();
+    expect(await screen.findByText('14')).toBeInTheDocument();
+    expect(await screen.findByText('Sections')).toBeInTheDocument();
+    expect(await screen.findByText('1')).toBeInTheDocument();
+    expect(await screen.findByText('Subsections')).toBeInTheDocument();
+    expect(await screen.findByText('2')).toBeInTheDocument();
+    expect(await screen.findByText('Units')).toBeInTheDocument();
+    expect(await screen.findByText('3')).toBeInTheDocument();
+    expect(await screen.findByText('Components')).toBeInTheDocument();
+    expect(await screen.findByText('8')).toBeInTheDocument();
   });
 });
