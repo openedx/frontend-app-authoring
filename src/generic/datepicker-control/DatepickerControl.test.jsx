@@ -16,6 +16,7 @@ describe('<DatepickerControl />', () => {
   );
 
   const props = {
+    intl: {},
     type: DATEPICKER_TYPES.date,
     label: 'fooLabel',
     value: '',
@@ -30,6 +31,7 @@ describe('<DatepickerControl />', () => {
   beforeEach(() => {
     onChangeMock.mockClear();
   });
+
   it('renders without crashing', () => {
     const { getByText, queryAllByText, getByPlaceholderText } = render(
       <RootWrapper {...props} />,
@@ -52,7 +54,7 @@ describe('<DatepickerControl />', () => {
   });
 
   it('renders time picker with accessibility hint', () => {
-    const { getByText, getByLabelText } = render(
+    const { getByText, getByPlaceholderText } = render(
       <RootWrapper
         {...props}
         type={DATEPICKER_TYPES.time}
@@ -60,17 +62,18 @@ describe('<DatepickerControl />', () => {
         helpText=""
       />,
     );
+    const input = getByPlaceholderText('HH:MM');
+
     expect(
       getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
     ).toBeInTheDocument();
-    expect(getByLabelText(messages.timepickerAriaLabel.defaultMessage))
-      .toBeInTheDocument();
+    expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
   });
 
   it('increments time value with arrow down and decrements with arrow up', () => {
     const incremented = convertToStringFromDate('2025-01-01T10:30:00Z');
     const decremented = convertToStringFromDate('2025-01-01T09:30:00Z');
-    const { getByLabelText } = render(
+    const { getByPlaceholderText } = render(
       <RootWrapper
         {...props}
         type={DATEPICKER_TYPES.time}
@@ -78,10 +81,11 @@ describe('<DatepickerControl />', () => {
         helpText=""
       />,
     );
-    const input = getByLabelText(messages.timepickerAriaLabel.defaultMessage);
-    expect(input).toHaveValue('10:00');
+    const input = getByPlaceholderText('HH:MM');
+
     fireEvent.keyDown(input, { key: 'ArrowDown', target: { value: '10:00' } });
     expect(onChangeMock).toHaveBeenCalledWith(incremented);
+
     fireEvent.keyDown(input, { key: 'ArrowUp', target: { value: '10:30' } });
     expect(onChangeMock).toHaveBeenCalledWith(decremented);
   });
