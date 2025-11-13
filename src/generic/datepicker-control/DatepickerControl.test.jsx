@@ -30,7 +30,6 @@ describe('<DatepickerControl />', () => {
   beforeEach(() => {
     onChangeMock.mockClear();
   });
-
   it('renders without crashing', () => {
     const { getByText, queryAllByText, getByPlaceholderText } = render(
       <RootWrapper {...props} />,
@@ -86,5 +85,4 @@ describe('<DatepickerControl />', () => {
     fireEvent.keyDown(input, { key: 'ArrowUp', target: { value: '10:30' } });
     expect(onChangeMock).toHaveBeenCalledWith(decremented);
   });
-
 });
