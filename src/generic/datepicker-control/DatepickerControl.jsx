@@ -88,6 +88,16 @@ const DatepickerControl = ({
     scrollSelectedTimeIntoView();
   };
 
+  const describedByIds = isTimePicker
+    ? [`${controlName}-timehint`, helpText ? `${controlName}-helptext` : null]
+      .filter(Boolean)
+      .join(' ') || undefined
+    : (helpText ? `${controlName}-helptext` : undefined);
+
+  const ariaLabel = isTimePicker
+    ? intl.formatMessage(messages.timepickerAriaLabel)
+    : undefined;
+
   return (
     <Form.Group className="form-group-custom datepicker-custom">
       <Form.Label className="d-flex justify-content-between">
@@ -123,6 +133,8 @@ const DatepickerControl = ({
           placeholderText={inputFormat[type].toLocaleUpperCase()}
           showPopperArrow={false}
           onKeyDown={isTimePicker ? handleTimeKeyDown : undefined}
+          ariaLabel={ariaLabel}
+          ariaDescribedBy={describedByIds}
           onChange={(date) => {
             if (isValidDate(date)) {
               onChange(convertToStringFromDate(date));
@@ -130,7 +142,18 @@ const DatepickerControl = ({
           }}
         />
       </div>
-      {helpText && <Form.Control.Feedback>{helpText}</Form.Control.Feedback>}
+      {isTimePicker && (
+        <Form.Text id={`${controlName}-timehint`} className="sr-only">
+          {intl.formatMessage(messages.timepickerScreenreaderHint, {
+            timeFormat: inputFormat[type].toLocaleUpperCase(),
+          })}
+        </Form.Text>
+      )}
+      {helpText && (
+        <Form.Control.Feedback id={`${controlName}-helptext`}>
+          {helpText}
+        </Form.Control.Feedback>
+      )}
     </Form.Group>
   );
 };
