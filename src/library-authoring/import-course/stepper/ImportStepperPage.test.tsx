@@ -114,7 +114,7 @@ describe('<ImportStepperModal />', () => {
 
     // Select a course
     const courseCard = screen.getAllByRole('radio')[0];
-    await fireEvent.click(courseCard);
+    await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
     // Click next

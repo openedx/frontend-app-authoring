@@ -8,9 +8,9 @@ import { useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 import messages from '../messages';
 import { SummaryCard } from './SummaryCard';
-import { useLibraryContext } from '../../common/context/LibraryContext';
-import { useMigrationInfo } from '../../../studio-home/data/apiHooks';
-import { useGetBlockTypes } from '../../../search-manager';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useMigrationInfo } from '@src/studio-home/data/apiHooks';
+import { useGetBlockTypes } from '@src/search-manager';
 
 interface Props {
   courseId?: string;
@@ -158,7 +158,7 @@ export const ReviewImportDetails = ({ courseId }: Props) => {
     if (!blockTypes || !totalBlocks) {
       return 0;
     }
-    return (totalUnsupportedBlocks / totalBlocks) * 100;
+    return (totalUnsupportedBlocks / (totalBlocks + totalUnsupportedBlocks)) * 100;
   }, [blockTypes]);
 
   return (
