@@ -21,8 +21,6 @@ import {
 } from '@openedx/paragon/icons';
 import NewsstandIcon from '../NewsstandIcon';
 
-export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
-
 export const COMPONENT_TYPES = {
   advanced: 'advanced',
   discussion: 'discussion',
