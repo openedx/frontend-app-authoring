@@ -17,7 +17,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import type { ContentLibrary, LibrariesV2Response } from '@src/library-authoring/data/api';
 
-import CardItem from '../../card-item';
+import { CardItem } from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
 

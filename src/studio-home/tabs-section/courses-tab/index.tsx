@@ -17,7 +17,7 @@ import { COURSE_CREATOR_STATES } from '@src/constants';
 import { getStudioHomeData, getStudioHomeCoursesParams, getLoadingStatuses } from '@src/studio-home/data/selectors';
 import { resetStudioHomeCoursesCustomParams, updateStudioHomeCoursesCustomParams } from '@src/studio-home/data/slice';
 import { fetchStudioHomeData } from '@src/studio-home/data/thunks';
-import CardItem from '@src/studio-home/card-item';
+import { CardItem } from '@src/studio-home/card-item';
 import CollapsibleStateWithAction from '@src/studio-home/collapsible-state-with-action';
 import ProcessingCourses from '@src/studio-home/processing-courses';
 import { LoadingSpinner } from '@src/generic/Loading';
@@ -118,7 +118,7 @@ const CardList = ({
                 selectMode={inSelectMode ? 'single' : undefined}
                 selectPosition={inSelectMode ? 'card' : undefined}
                 isSelected={inSelectMode && selectedCourseId === courseKey}
-                subtitleBeforeComponent={isPreviouslyMigrated(courseKey) && (
+                subtitleBeforeWidget={isPreviouslyMigrated(courseKey) && (
                   <div
                     key={`${courseKey}-${processedMigrationInfo[courseKey].join('-')}`}
                     className="previously-migrated-chip"

@@ -2,15 +2,17 @@ import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Icon, Menu, MenuItem, Pagination, Row, SearchField,
+  Stack,
 } from '@openedx/paragon';
-import { Error, FilterList } from '@openedx/paragon/icons';
+import { Error, FilterList, AccessTime } from '@openedx/paragon/icons';
 
 import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
-import CardItem from '@src/studio-home/card-item';
+import { CardItem, MakeLinkOrSpan, PrevToNextName } from '@src/studio-home/card-item';
 import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
 import type { LibraryV1Data } from '@src/studio-home/data/api';
+import { parseLibraryKey } from '@src/generic/key-utils';
 
 import messages from '../messages';
 import { MigrateLegacyLibrariesAlert } from './MigrateLegacyLibrariesAlert';
@@ -37,24 +39,64 @@ const CardList = ({
         migratedToTitle,
         migratedToCollectionKey,
         libraryKey,
-      }) => (
-        <CardItem
-          key={`${org}+${number}`}
-          isLibraries
-          displayName={displayName}
-          org={org}
-          number={number}
-          url={url}
-          itemId={libraryKey}
-          selectMode={inSelectMode ? 'multiple' : undefined}
-          selectPosition={inSelectMode ? 'title' : undefined}
-          isSelected={selectedIds?.includes(libraryKey)}
-          isMigrated={isMigrated}
-          migratedToKey={migratedToKey}
-          migratedToTitle={migratedToTitle}
-          migratedToCollectionKey={migratedToCollectionKey}
-        />
-      ))
+      }) => {
+        const collectionLink = () => {
+          let libUrl = `/library/${migratedToKey}`;
+          if (migratedToCollectionKey) {
+            libUrl += `/collection/${migratedToCollectionKey}`;
+          }
+          return libUrl;
+        };
+
+        const migratedToKeyObj = migratedToKey ? parseLibraryKey(migratedToKey) : undefined;
+
+        const subtitleWrapper = (subtitle) => (
+          <PrevToNextName
+            from={subtitle}
+            to={<>{migratedToKeyObj?.org} / {migratedToKeyObj?.lib}</>}
+          />
+        );
+
+        return (
+          <CardItem
+            key={`${org}+${number}`}
+            isLibraries
+            displayName={displayName}
+            org={org}
+            number={number}
+            url={url}
+            itemId={libraryKey}
+            selectMode={inSelectMode ? 'multiple' : undefined}
+            selectPosition={inSelectMode ? 'title' : undefined}
+            isSelected={selectedIds?.includes(libraryKey)}
+            subtitleWrapper={isMigrated ? subtitleWrapper : null}
+            titleSecondaryLink={(isMigrated && migratedToTitle) ? (
+              <MakeLinkOrSpan
+                when={!inSelectMode}
+                to={`/library/${migratedToKey}`}
+                className="card-item-title"
+              >
+                {migratedToTitle}
+              </MakeLinkOrSpan>
+            ) : null}
+            cardStatusWidget={(isMigrated && migratedToKey) ? (
+              <Stack direction="horizontal" gap={2}>
+                <Icon src={AccessTime} size="sm" className="mb-1" />
+                <FormattedMessage {...messages.libraryMigrationStatusText} />
+                <b>
+                  <MakeLinkOrSpan
+                    when
+                    to={collectionLink()}
+                    className="text-info-500"
+                  >
+                    {migratedToTitle}
+                  </MakeLinkOrSpan>
+                </b>
+              </Stack>
+            ) : null}
+          />
+        );
+      })
     }
   </>
 );

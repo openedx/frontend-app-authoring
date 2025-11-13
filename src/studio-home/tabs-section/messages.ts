@@ -141,6 +141,11 @@ const messages = defineMessages({
     defaultMessage: 'Previously Imported',
     description: 'Chip that indicates that the course has been previously imported.',
   },
+  libraryMigrationStatusText: {
+    id: 'course-authoring.studio-home.library-v1.card.status',
+    description: 'Status text in v1 library card in studio informing user of its migration status',
+    defaultMessage: 'Previously migrated library. Any problem bank links were already moved to',
+  },
 });
 
 export default messages;
