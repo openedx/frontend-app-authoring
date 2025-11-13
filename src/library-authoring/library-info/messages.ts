@@ -13,7 +13,7 @@ const messages = defineMessages({
   },
   libraryTeamButtonTitle: {
     id: 'course-authoring.library-authoring.sidebar.info.library-team.button.title',
-    defaultMessage: 'Manage Access',
+    defaultMessage: 'Library Team',
     description: 'Title to use for the button that allows viewing/editing the Library Team user access.',
   },
   libraryHistorySectionTitle: {

@@ -143,7 +143,7 @@ describe('header utils', () => {
   describe('useLibrarySettingsMenuItems', () => {
     it('should contain team access url', () => {
       const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
-      expect(items).toContainEqual({ title: 'Team Access', href: 'http://localhost/?sa=manage-team' });
+      expect(items).toContainEqual({ title: 'Library Team', href: 'http://localhost/?sa=manage-team' });
     });
     it('should contain admin console url if set', () => {
       setConfig({
@@ -152,7 +152,7 @@ describe('header utils', () => {
       });
       const items = renderHook(() => useLibrarySettingsMenuItems('library-123', false)).result.current;
       expect(items).toContainEqual({
-        title: 'Team Access',
+        title: 'Library Team',
         href: 'http://admin-console.com/authz/libraries/library-123',
       });
     });
@@ -163,7 +163,7 @@ describe('header utils', () => {
       });
       const items = renderHook(() => useLibrarySettingsMenuItems('library-123', true)).result.current;
       expect(items).toContainEqual({
-        title: 'Team Access',
+        title: 'Library Team',
         href: 'http://admin-console.com/authz/libraries/library-123',
       });
     });

@@ -113,7 +113,7 @@ const messages = defineMessages({
   },
   'header.menu.teamAccess': {
     id: 'header.links.teamAccess',
-    defaultMessage: 'Team Access',
+    defaultMessage: 'Library Team',
     description: 'Menu item to open team access popup',
   },
   'header.links.optimizer': {
