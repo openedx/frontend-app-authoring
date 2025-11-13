@@ -553,7 +553,8 @@ const ProctoringSettings = ({ onClose }) => {
             selectedProvider = proctoredExamSettings.proctoring_provider;
           }
 
-          const isEscalationEmailRequired = requiresEscalationEmailProviders.includes(selectedProvider);
+          const requiresEscalationEmailProvidersList = settingsResponse.data.requires_escalation_email_providers;
+          const isEscalationEmailRequired = requiresEscalationEmailProvidersList.includes(selectedProvider);
           const ltiProviderSelected = proctoringProvidersLti.some(p => p.name === selectedProvider);
 
           if (isEscalationEmailRequired || ltiProviderSelected) {
