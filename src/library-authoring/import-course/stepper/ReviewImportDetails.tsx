@@ -24,7 +24,10 @@ interface BannerProps extends Props {
 const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: BannerProps) => {
   const { data, isPending } = useCourseDetails(courseId);
   const { libraryId } = useLibraryContext();
-  const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo([courseId!], (courseId !== undefined && libraryId !== undefined));
+  const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo(
+    [courseId!],
+    (courseId !== undefined && libraryId !== undefined),
+  );
 
   const currentMigrationInfo = useMemo(() => {
     if (!migrationInfoData || !courseId) {
