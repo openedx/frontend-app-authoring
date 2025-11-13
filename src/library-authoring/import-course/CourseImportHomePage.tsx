@@ -20,14 +20,26 @@ import { HelpSidebar } from './HelpSidebar';
 import { ImportedCourseCard } from './ImportedCourseCard';
 import messages from './messages';
 
+const ImportCourseButton = () => {
+  const navigate = useNavigate();
+
+  if (getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY === 'true') {
+    return (
+      <Button iconBefore={Add} onClick={() => navigate('courses')}>
+        <FormattedMessage {...messages.importCourseButton} />
+      </Button>
+    );
+  }
+
+  return null;
+};
+
 const EmptyState = () => (
   <Container size="md" className="py-6">
     <Card>
       <Stack direction="horizontal" gap={3} className="my-6 justify-content-center">
         <FormattedMessage {...messages.emptyStateText} />
-        <Button iconBefore={Add} disabled>
-          <FormattedMessage {...messages.emptyStateButtonText} />
-        </Button>
+        <ImportCourseButton />
       </Stack>
     </Card>
   </Container>
@@ -35,7 +47,6 @@ const EmptyState = () => (
 
 export const CourseImportHomePage = () => {
   const intl = useIntl();
-  const navigate = useNavigate();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { data: courseImports } = useCourseImports(libraryId);
 
@@ -66,13 +77,7 @@ export const CourseImportHomePage = () => {
               title={intl.formatMessage(messages.pageTitle)}
               subtitle={intl.formatMessage(messages.pageSubtitle)}
               hideBorder
-              headerActions={
-                getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY === 'true' && (
-                  <Button onClick={() => navigate('courses')}>
-                    {intl.formatMessage(messages.importCourseButton)}
-                  </Button>
-                )
-              }
+              headerActions={<ImportCourseButton />}
             />
           </div>
           <Layout xs={[{ span: 9 }, { span: 3 }]}>

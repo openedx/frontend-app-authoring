@@ -176,15 +176,18 @@ const CardMenu = ({
 
 const SelectAction = ({
   itemId,
+  title,
   selectMode,
 }: {
   itemId: string,
+  title: string,
   selectMode: 'single' | 'multiple';
 }) => {
   if (selectMode === 'single') {
     return (
       <Form.Radio
         value={itemId}
+        aria-label={title}
         name={`select-card-item-${itemId}`}
       />
     );
@@ -192,7 +195,7 @@ const SelectAction = ({
 
   // Multiple
   return (
-    <Form.Checkbox value={itemId} />
+    <Form.Checkbox value={itemId} aria-label={title} />
   );
 };
 
@@ -339,6 +342,7 @@ const CardItem: React.FC<Props> = ({
             <SelectAction
               itemId={itemId}
               selectMode={selectMode}
+              title={title}
             />
           ) : (
             <CardMenu
