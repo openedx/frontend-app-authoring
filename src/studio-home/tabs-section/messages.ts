@@ -136,11 +136,6 @@ const messages = defineMessages({
     defaultMessage: 'Select All',
     description: 'Button to select all libraries when migrate legacy libraries.',
   },
-  previouslyImported: {
-    id: 'studio-home.course-list.card.previously-imported.text',
-    defaultMessage: 'Previously Imported',
-    description: 'Chip that indicates that the course has been previously imported.',
-  },
   libraryMigrationStatusText: {
     id: 'course-authoring.studio-home.library-v1.card.status',
     description: 'Status text in v1 library card in studio informing user of its migration status',

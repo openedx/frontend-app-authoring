@@ -159,6 +159,11 @@ const messages = defineMessages({
     defaultMessage: 'The selected course is being analyzed for import and review',
     description: 'Body of the card in loading state for the import details of a imported course.',
   },
+  previouslyImported: {
+    id: 'course-authoring.library-authoring.import-course.course-list.card.previously-imported.text',
+    defaultMessage: 'Previously Imported',
+    description: 'Chip that indicates that the course has been previously imported.',
+  },
 });
 
 export default messages;

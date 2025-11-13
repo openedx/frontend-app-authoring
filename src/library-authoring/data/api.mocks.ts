@@ -1133,3 +1133,17 @@ mockGetCourseImports.applyMock = () => jest.spyOn(
   api,
   'getCourseImports',
 ).mockImplementation(mockGetCourseImports);
+
+export const mockGetMigrationInfo = {
+  applyMock: () => jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
+    camelCaseObject({
+      'course-v1:HarvardX+123+2023': [{
+        sourceKey: 'course-v1:HarvardX+123+2023',
+        targetCollectionKey: 'ltc:org:coll-1',
+        targetCollectionTitle: 'Collection 1',
+        targetKey: mockContentLibrary.libraryId,
+        targetTitle: 'Library 1',
+      }],
+    }),
+  ),
+};

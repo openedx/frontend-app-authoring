@@ -10,10 +10,9 @@ import { initialState } from '@src/studio-home/factories/mockApiResponses';
 import { RequestStatus } from '@src/data/constants';
 import { type DeprecatedReduxState } from '@src/store';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
-import { mockGetMigrationInfo } from '@src/studio-home/data/api.mocks';
 import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
-import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
 import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;

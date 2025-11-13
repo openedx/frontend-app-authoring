@@ -809,3 +809,24 @@ export async function getCourseImports(libraryId: string): Promise<CourseImport[
   const { data } = await getAuthenticatedHttpClient().get(getCourseImportsApiUrl(libraryId));
   return camelCaseObject(data);
 }
+
+export interface MigrationInfo {
+  sourceKey: string;
+  targetCollectionKey: string;
+  targetCollectionTitle: string;
+  targetKey: string;
+  targetTitle: string;
+}
+
+/**
+ * Get the migration info data for a list of source keys
+ */
+export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<string, MigrationInfo[]>> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  sourceKeys.forEach(key => params.append('source_keys', key));
+
+  const { data } = await client.get(`${getApiBaseUrl()}/api/modulestore_migrator/v1/migration_info/`, { params });
+  return camelCaseObject(data);
+}

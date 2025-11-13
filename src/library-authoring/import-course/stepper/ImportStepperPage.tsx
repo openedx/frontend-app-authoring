@@ -1,23 +1,66 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Button, Container, Layout, Stepper,
+  ActionRow, Button, Chip, Container, Layout, Stepper,
 } from '@openedx/paragon';
 
-import { CoursesList } from '@src/studio-home/tabs-section/courses-tab';
+import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
 import { useStudioHome } from '@src/studio-home/hooks';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import Loading from '@src/generic/Loading';
 
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
 
 type MigrationStep = 'select-course' | 'review-details';
+
+export const MigrationStatus = ({
+  courseId,
+  allVisibleCourseIds,
+}: MigrationStatusProps) => {
+  const { libraryId } = useLibraryContext();
+
+  const {
+    data: migrationInfoData,
+  } = useMigrationInfo(allVisibleCourseIds);
+
+  const processedMigrationInfo = useMemo(() => {
+    const result = {};
+    if (migrationInfoData) {
+      for (const libraries of Object.values(migrationInfoData)) {
+        // The map key in `migrationInfoData` is in camelCase.
+        // In the processed map, we use the key in its original form.
+        result[libraries[0].sourceKey] = libraries.map(item => item.targetKey);
+      }
+    }
+    return result;
+  }, [migrationInfoData]);
+
+  const isPreviouslyMigrated = (
+    courseId in processedMigrationInfo && processedMigrationInfo[courseId].includes(libraryId)
+  );
+
+  if (!isPreviouslyMigrated) {
+    return null;
+  }
+
+  return (
+    <div
+      key={`${courseId}-${processedMigrationInfo[courseId].join('-')}`}
+      className="previously-migrated-chip"
+    >
+      <Chip>
+        <FormattedMessage {...messages.previouslyImported} />
+      </Chip>
+    </div>
+  );
+};
 
 export const ImportStepperPage = () => {
   const intl = useIntl();
@@ -69,7 +112,7 @@ export const ImportStepperPage = () => {
                   <CoursesList
                     selectedCourseId={selectedCourseId}
                     handleSelect={setSelectedCourseId}
-                    currentLibraryId={libraryId}
+                    cardMigrationStatusWidget={MigrationStatus}
                   />
                 </Stepper.Step>
                 <Stepper.Step

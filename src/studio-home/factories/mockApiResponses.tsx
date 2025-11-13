@@ -1,6 +1,5 @@
 import { type DeprecatedReduxState } from '@src/store';
 import { RequestStatus } from '@src/data/constants';
-import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 
 export const courseId = 'course';
 
@@ -165,15 +164,5 @@ export const generateNewVideoApiResponse = () => ({
   files: [{
     edx_video_id: 'mOckID4',
     upload_url: 'http://testing.org',
-  }],
-});
-
-export const generateGetMigrationInfo = () => ({
-  'course-v1:HarvardX+123+2023': [{
-    sourceKey: 'course-v1:HarvardX+123+2023',
-    targetCollectionKey: 'ltc:org:coll-1',
-    targetCollectionTitle: 'Collection 1',
-    targetKey: mockContentLibrary.libraryId,
-    targetTitle: 'Library 1',
   }],
 });
