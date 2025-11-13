@@ -88,11 +88,16 @@ const DatepickerControl = ({
     scrollSelectedTimeIntoView();
   };
 
-  const describedByIds = isTimePicker
-    ? [`${controlName}-timehint`, helpText ? `${controlName}-helptext` : null]
-      .filter(Boolean)
-      .join(' ') || undefined
-    : (helpText ? `${controlName}-helptext` : undefined);
+  let describedByIds;
+  if (isTimePicker) {
+    const ids = [`${controlName}-timehint`];
+    if (helpText) {
+      ids.push(`${controlName}-helptext`);
+    }
+    describedByIds = ids.filter(Boolean).join(' ') || undefined;
+  } else if (helpText) {
+    describedByIds = `${controlName}-helptext`;
+  }
 
   const ariaLabel = isTimePicker
     ? intl.formatMessage(messages.timepickerAriaLabel)
