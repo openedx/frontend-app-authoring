@@ -1,21 +1,29 @@
-import PropTypes from 'prop-types';
+import { type FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
+import { DeprecatedReduxState } from '@src/store';
+import { getCourseId, getSequenceId } from '@src/course-unit/data/selectors';
 import UnitIcon from './UnitIcon';
-import { getCourseId, getSequenceId } from '../../data/selectors';
 
-const UnitButton = ({
+interface Props {
+  unitId: string;
+  className?: string;
+  showTitle?: boolean;
+  isActive?: boolean;
+}
+
+const UnitButton: FC<Props> = ({
   unitId,
   className,
-  showTitle,
   isActive, // passed from parent (SequenceNavigationTabs)
+  showTitle = false,
 }) => {
   const courseId = useSelector(getCourseId);
   const sequenceId = useSelector(getSequenceId);
 
-  const unit = useSelector((state) => state.models.units[unitId]);
+  const unit = useSelector((state: DeprecatedReduxState) => state.models.units[unitId]);
   const { title, contentType } = unit || {};
 
   return (
@@ -31,19 +39,6 @@ const UnitButton = ({
       {showTitle && <span className="unit-title">{title}</span>}
     </Button>
   );
-};
-
-UnitButton.propTypes = {
-  className: PropTypes.string,
-  showTitle: PropTypes.bool,
-  unitId: PropTypes.string.isRequired,
-  isActive: PropTypes.bool,
-};
-
-UnitButton.defaultProps = {
-  className: undefined,
-  showTitle: false,
-  isActive: false,
 };
 
 export default UnitButton;
