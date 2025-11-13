@@ -16,7 +16,6 @@ describe('<DatepickerControl />', () => {
   );
 
   const props = {
-    intl: {},
     type: DATEPICKER_TYPES.date,
     label: 'fooLabel',
     value: '',
@@ -27,6 +26,10 @@ describe('<DatepickerControl />', () => {
     controlName: 'fooControlName',
     onChange: onChangeMock,
   };
+
+  beforeEach(() => {
+    onChangeMock.mockClear();
+  });
 
   it('renders without crashing', () => {
     const { getByText, queryAllByText, getByPlaceholderText } = render(
@@ -48,4 +51,40 @@ describe('<DatepickerControl />', () => {
       convertToStringFromDate('06/16/2023'),
     );
   });
+
+  it('renders time picker with accessibility hint', () => {
+    const { getByText, getByLabelText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText=""
+      />,
+    );
+    expect(
+      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
+    ).toBeInTheDocument();
+    expect(getByLabelText(messages.timepickerAriaLabel.defaultMessage))
+      .toBeInTheDocument();
+  });
+
+  it('increments time value with arrow down and decrements with arrow up', () => {
+    const incremented = convertToStringFromDate('2025-01-01T10:30:00Z');
+    const decremented = convertToStringFromDate('2025-01-01T09:30:00Z');
+    const { getByLabelText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText=""
+      />,
+    );
+    const input = getByLabelText(messages.timepickerAriaLabel.defaultMessage);
+    expect(input).toHaveValue('10:00');
+    fireEvent.keyDown(input, { key: 'ArrowDown', target: { value: '10:00' } });
+    expect(onChangeMock).toHaveBeenCalledWith(incremented);
+    fireEvent.keyDown(input, { key: 'ArrowUp', target: { value: '10:30' } });
+    expect(onChangeMock).toHaveBeenCalledWith(decremented);
+  });
+
 });
