@@ -44,7 +44,7 @@ interface CardListProps {
   onClickNewCourse?: () => void;
   inSelectMode?: boolean;
   selectedCourseId?: string;
-  migrationStatusWidget?: React.ComponentType<MigrationStatusProps> | null;
+  migrationStatusWidget?: React.ComponentType<MigrationStatusProps>;
 }
 
 const CardList = ({
@@ -152,7 +152,7 @@ interface Props {
   isShowProcessing?: boolean;
   selectedCourseId?: string;
   handleSelect?: (courseId: string) => void;
-  cardMigrationStatusWidget?: React.ComponentType<MigrationStatusProps> | null;
+  cardMigrationStatusWidget?: React.ComponentType<MigrationStatusProps>;
 }
 
 export const CoursesList: React.FC<Props> = ({
