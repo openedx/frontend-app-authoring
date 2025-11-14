@@ -56,7 +56,7 @@ const AnswerOption = ({
   const validateAnswerNumeric = (value) => {
     const cleanedValue = (value ?? '').trim();
     return !cleanedValue.length || numericRegex.test(cleanedValue);
-  }
+  };
 
   const getInputArea = () => {
     if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -74,7 +74,7 @@ const AnswerOption = ({
       );
     }
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
-     const isValidValue = validateAnswerNumeric(answer.title)
+      const isValidValue = validateAnswerNumeric(answer.title);
       return (
         <Form.Group isInvalid={!isValidValue}>
           <Form.Control
@@ -87,12 +87,11 @@ const AnswerOption = ({
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
           />
-           {!isValidValue && (
-            <Form.Control.Feedback type="invalid">
-              <FormattedMessage {...messages.AnswerNumericErrorText} />
-            </Form.Control.Feedback>
-            )}
-        
+          {!isValidValue && (
+          <Form.Control.Feedback type="invalid">
+            <FormattedMessage {...messages.answerNumericErrorText} />
+          </Form.Control.Feedback>
+          )}
         </Form.Group>
       );
     }
