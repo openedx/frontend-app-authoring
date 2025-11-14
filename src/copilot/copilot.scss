@@ -33,6 +33,21 @@
             background: var(--bg-body);
         }
 
+        .copilot-loading {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            span {
+                font-size: 1.2rem;
+                font-weight: 500;
+                color: var(--text-primary);
+                transform: rotate(45deg);
+            }
+        }
+
         .copilot-header {
             display: flex;
             align-items: center;

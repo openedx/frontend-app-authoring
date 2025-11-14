@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
 
 const CopilotContext = createContext(null);
 export const useCopilot = () => useContext(CopilotContext);
 
-const BASE_API_URL = 'https://gingery-xerographic-willette.ngrok-free.dev/';
+const BASE_API_URL = 'https://staging.titaned.com';
 
 const isValidImageUrl = (url) => {
   return typeof url === 'string' && (
@@ -33,6 +35,10 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     return formatMessage(msg, values);
   };
 
+
+  const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
+  const [enabledCopilot, setEnabledCopilot] = useState(null);
+  const [showCopilotIcon, setShowCopilotIcon] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
   const [isDocked, setIsDocked] = useState(true);
@@ -96,21 +102,23 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   };
 
-  const getToken = async () => {
-    const res = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "password",
-        client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-        username: "admin",
-        password: "admin",
-      }),
-    });
-    if (!res.ok) throw new Error("Token fetch failed");
-    const data = await res.json();
-    return data.access_token;
-  };
+  // const getToken = async () => {
+  //   const res = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  //     body: new URLSearchParams({
+  //       grant_type: "password",
+  //       client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
+  //       username: "admin",
+  //       password: "edx",
+  //     }),
+  //   });
+  //   if (!res.ok) throw new Error("Token fetch failed");
+  //   const data = await res.json();
+  //   return data.access_token;
+  // };
+
+  const client = getAuthenticatedHttpClient();
 
   const handleAIButtonClick = async (fieldName, fieldValue) => {
     let effectiveValue = fieldValue?.trim() || "";
@@ -124,7 +132,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
 
     const action = async () => {
-      const token = await getToken();
+      // const token = await getToken();
       const config = {
         title: { url: 'suggest-titles/', key: 'title' },
         shortDescription: { url: 'suggest-descriptions/', key: 'user_short_description' },
@@ -133,10 +141,13 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         bannerImage: { url: 'suggest-images/', key: 'title' },
       }[fieldName];
 
-      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ [config.key]: effectiveValue }),
+      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      //   body: JSON.stringify({ [config.key]: effectiveValue }),
+      // });
+      const res = await client.post(`${LMS_BASE}/chat/v1/${config.url}`, {
+        [config.key]: effectiveValue,
       });
       if (!res.ok) throw new Error("Suggestion failed");
       return await res.json();
@@ -159,6 +170,18 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
   const getReadableFieldName = (field) => t(messages[`field${field.charAt(0).toUpperCase() + field.slice(1)}`]);
 
+  const openCopilotReview = () => {
+    setPinnedSuggestions([]);
+    setIsDocked(true); setIsMinimized(true);
+    setSize({ w: initialConfig.width, h: initialConfig.height });
+    setPos({ x: window.innerWidth - initialConfig.width, y: 0 });
+    setIsOpen(true); setIsFloating(false);
+    setTimeout(() => setIsMinimized(false), 10);
+    if (!isOpen) {
+      setChatHistory([]); setAiResponse([]); setSelectedSuggestion(null);
+      setPrompt(''); setButtons([]); setQuestions([]); setCurrentQuestionIndex(-1); setUserAnswers({});
+    }
+  }
   const openCopilot = (name, value) => {
     setPinnedSuggestions([]);
     setFieldData({ name, value });
@@ -305,11 +328,12 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const fetchQuestions = async (field) => {
     setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: t(messages.customizeRequest) }]);
     const action = async () => {
-      const token = await getToken();
-      const res = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      });
+      // const token = await getToken();
+      // const res = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      // });
+      const res = await client.post(`${LMS_BASE}/chat/v1/prediction-questions/`, {});
       if (!res.ok) throw new Error("Failed to fetch questions");
       return await res.json();
     };
@@ -331,13 +355,19 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
 
     const action = async () => {
-      const token = await getToken();
-      const config = getApiConfig(field);
-      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ [config.bodyKey]: value, ...(more && { more_suggestions: true }) }),
-      });
+      // const token = await getToken();
+      // const config = getApiConfig(field);
+      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      //   body: JSON.stringify({ [config.bodyKey]: value, ...(more && { more_suggestions: true }) }),
+      // });
+
+      const cfg = getApiConfig(field);
+      const payload = { [cfg.bodyKey]: value };
+      if (more) payload.more_suggestions = true;
+
+      const res = await client.post(`${LMS_BASE}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to fetch suggestions");
       return await res.json();
     };
@@ -349,13 +379,20 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const submitCustomAnswers = async (field = fieldData.name) => {
     setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
     const action = async () => {
-      const token = await getToken();
-      const config = getApiConfig(field);
-      const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ [config.bodyKey]: getCurrentFieldValue(field), ...userAnswers, custom_flow: true }),
-      });
+      // const token = await getToken();
+      // const config = getApiConfig(field);
+      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      //   body: JSON.stringify({ [config.bodyKey]: getCurrentFieldValue(field), ...userAnswers, custom_flow: true }),
+      // });
+      const cfg = getApiConfig(field);
+      const payload = {
+        [cfg.bodyKey]: getCurrentFieldValue(field),
+        ...userAnswers,
+        custom_flow: true,
+      };
+      const res = await client.post(`${LMS_BASE}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to submit answers");
       return await res.json();
     };
@@ -485,6 +522,25 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const handleMouseUp = () => {
     setDragging(false); setResizing(false); setResizeType('');
   };
+
+  useEffect(() => {
+    const client = getAuthenticatedHttpClient();
+    const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
+
+    const fetchMenuConfig = async () => {
+      try {
+        const response = await client.get(`${STUDIO_BASE}/titaned/api/v1/menu-config/`);
+        const data = await response.json();
+
+        setEnabledCopilot(!!data.enable_copilot);
+        setShowCopilotIcon(!!data.show_copilot_icon);
+      } catch (err) {
+        console.error('Failed to load menu-config for Copilot:', err);
+      }
+    };
+
+    fetchMenuConfig();
+  }, []);
 
   useEffect(() => {
     const handle = (e) => { if (dragging || resizing) { e.preventDefault(); handleMouseMove(e); } };
@@ -791,7 +847,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     chatHistory, selectedSuggestion, prompt, setPrompt, buttons, questions, currentQuestionIndex,
     handleSelectSuggestion, sendPrompt, handleButtonAction, handleAnswer, handleAIButtonClick, aiLoading,
     t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight, pinnedSuggestions,
-    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions,
+    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions,enabledCopilot,showCopilotIcon,openCopilotReview,
   };
 
   return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;

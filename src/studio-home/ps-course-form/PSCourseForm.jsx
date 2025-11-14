@@ -131,6 +131,9 @@ const PSCourseForm = ({
     setButtons,
     handleAIButtonClick,
     aiLoading,
+    showCopilotIcon,
+    openCopilotReview,
+    enabledCopilot,
   } = useCopilot();
 
   useEffect(() => {
@@ -294,101 +297,6 @@ const PSCourseForm = ({
       onImageValidationErrorChange(hasError);
     }
   }, [imageErrors, onImageValidationErrorChange]);
-
-
-  //copilotcode
-
-  // const handleAIButtonClick = async (fieldName, fieldValue) => {
-  //   let effectiveValue = fieldValue?.trim() || "";
-  //   if (!effectiveValue && fieldName !== 'cardImage' && fieldName !== 'bannerImage') {
-  //     return; // No call if empty for text fields
-  //   }
-
-  //   if (fieldName === 'cardImage' || fieldName === 'bannerImage') {
-  //     effectiveValue = editedValues.title?.trim() || "";
-  //     if (!effectiveValue) return;
-  //   }
-  //   setAiLoading((prev) => ({ ...prev, [fieldName]: true }));
-  //   try {
-  //     // STEP 1: Generate token
-  //     const tokenResponse = await fetch(
-  //       `${BASE_API_URL}/oauth2/access_token`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded",
-  //         },
-  //         body: new URLSearchParams({
-  //           grant_type: "password",
-  //           client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-  //           username: "admin",
-  //           password: "admin",
-  //         }),
-  //       }
-  //     );
-
-  //     if (!tokenResponse.ok) {
-  //       throw new Error("Failed to get token");
-  //     }
-
-  //     const tokenData = await tokenResponse.json();
-  //     const token = tokenData.access_token;
-
-  //     // Determine API endpoint and body key based on fieldName
-  //     let apiUrl = "";
-  //     let bodyKey = "";
-  //     switch (fieldName) {
-  //       case "title":
-  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-titles/`;
-  //         bodyKey = "title";
-  //         break;
-  //       case "shortDescription":
-  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-descriptions/`;
-  //         bodyKey = "user_short_description";
-  //         break;
-  //       case "description":
-  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-full-descriptions/`;
-  //         bodyKey = "user_long_description";
-  //         break;
-  //       case "cardImage":
-  //       case "bannerImage":
-  //         apiUrl = `${BASE_API_URL}/chat/v1/suggest-images/`;
-  //         bodyKey = "title";
-  //         break;
-  //       default:
-  //         return;
-  //     }
-
-  //     // If fieldValue is empty, use title as fallback
-
-  //     const response = await fetch(apiUrl, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({
-  //         [bodyKey]: effectiveValue,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch suggestions");
-  //     }
-
-  //     const data = await response.json();
-  //     console.log(data)
-  //     openCopilot(fieldName, fieldValue);
-  //     setAiResponse((prev) => [...(Array.isArray(prev) ? prev : []), data]);
-  //     setButtons(data.btns || []);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   } finally {
-  //     setAiLoading((prev) => ({ ...prev, [fieldName]: false }));
-  //   }
-  // };
-
-  // end
 
   // Validate form when editedValues change (e.g., when form loads with existing data)
   useEffect(() => {
@@ -800,7 +708,7 @@ const PSCourseForm = ({
       <Form.Group className="mb-4 custom-image-upload-section-ps-form" >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Form.Label className="mb-0 d-flex justify-content-between align-items-center">{label}
-            <div className="aibutton">
+            {showCopilotIcon && <div className="aibutton">
               {aiLoading[isCardImage ? 'cardImage' : 'bannerImage'] ? (
                 <span style={{
                   fontSize: "0.875rem",
@@ -810,12 +718,12 @@ const PSCourseForm = ({
               ) : (
                 <AIButton
                   disabled={!editedValues.description?.trim()}
-                  onClick={handleAIButtonClick}
+                  onClick={enabledCopilot ? handleAIButtonClick : openCopilotReview}
                   fieldName={isCardImage ? 'cardImage' : 'bannerImage'}
                   fieldValue={editedValues.title || ''}
                 />
               )}
-            </div>
+            </div>}
           </Form.Label>
         </div>
         <div
@@ -1079,7 +987,7 @@ const PSCourseForm = ({
                         <Form.Group className="mb-2">
                           <div className="d-flex justify-content-between align-items-center">
                             <Form.Label className="mb-0 d-flex justify-content-between align-items-center"><>Title <span className="required-asterisk">*</span></>
-                              <div className="aibutton">
+                              {showCopilotIcon &&<div className="aibutton">
                                 {aiLoading.title ? (
                                   <span style={{
                                     fontSize: "0.875rem",
@@ -1089,12 +997,12 @@ const PSCourseForm = ({
                                 ) : (
                                   <AIButton
                                     disabled={!editedValues.title?.trim()}
-                                    onClick={handleAIButtonClick}
+                                    onClick={enabledCopilot ? handleAIButtonClick : openCopilotReview}
                                     fieldName="title"
                                     fieldValue={editedValues.title || ''}
                                   />
                                 )}
-                              </div>
+                              </div>}
                             </Form.Label>
                           </div>
                           <Form.Control
@@ -1115,7 +1023,7 @@ const PSCourseForm = ({
                       <Form.Group className="mb-1">
                         <div className="d-flex justify-content-between align-items-center">
                           <Form.Label className="mb-0 d-flex justify-content-between align-items-center"><>Short Description <span className="required-asterisk">*</span></>
-                            <div className="aibutton">
+                            {showCopilotIcon && <div className="aibutton">
                               {aiLoading.shortDescription ? (
                                 <span style={{
                                   fontSize: "0.875rem",
@@ -1125,12 +1033,12 @@ const PSCourseForm = ({
                               ) : (
                                 <AIButton
                                   disabled={!editedValues.title?.trim()}
-                                  onClick={handleAIButtonClick}
+                                  onClick={enabledCopilot ? handleAIButtonClick : openCopilotReview}
                                   fieldName="shortDescription"
                                   fieldValue={editedValues.shortDescription || ''}
                                 />
                               )}
-                            </div>
+                            </div>}
                           </Form.Label>
                         </div>
                         <Form.Control
@@ -1155,7 +1063,7 @@ const PSCourseForm = ({
                       <Form.Group className={scheduleSettings ? 'mb-1' : 'mb-3'}>
                         <div className="d-flex justify-content-between align-items-center">
                           <Form.Label className="mb-0 d-flex justify-content-between align-items-center"><>Description</>
-                            <div className="aibutton">
+                            {showCopilotIcon && <div className="aibutton">
                               {aiLoading.description ? (
                                 <span style={{
                                   fontSize: "0.875rem",
@@ -1165,12 +1073,12 @@ const PSCourseForm = ({
                               ) : (
                                 <AIButton
                                   disabled={!(editedValues.title?.trim() && editedValues.shortDescription?.trim())}
-                                  onClick={handleAIButtonClick}
+                                  onClick={enabledCopilot ? handleAIButtonClick : openCopilotReview}
                                   fieldName="description"
                                   fieldValue={editedValues.description || ''}
                                 />
                               )}
-                            </div>
+                            </div>}
                           </Form.Label>
                         </div>
                         <Form.Control
