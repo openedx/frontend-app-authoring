@@ -39,6 +39,9 @@ describe('<GradingSettings />', () => {
       },
     });
 
+    // jsdom doesn't implement scrollTo; mock to avoid noisy console errors.
+    Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
+
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
@@ -97,6 +100,26 @@ describe('<GradingSettings />', () => {
     const segmentInput = segmentInputs[1];
     fireEvent.change(segmentInput, { target: { value: 'Test' } });
     testSaving();
+  });
+
+  it('should show success alert and hide save prompt after successful save', async () => {
+    // Trigger change to show save prompt
+    const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
+    const segmentInput = segmentInputs[2];
+    fireEvent.change(segmentInput, { target: { value: 'PatchTest' } });
+    // Click save and verify pending state appears
+    const saveBtnInitial = screen.getByText(messages.buttonSaveText.defaultMessage);
+    fireEvent.click(saveBtnInitial);
+    expect(screen.getByText(messages.buttonSavingText.defaultMessage)).toBeInTheDocument();
+    // Wait for success alert to appear (mutation success)
+    const successAlert = await screen.findByText(messages.alertSuccess.defaultMessage);
+    expect(successAlert).toBeVisible();
+    // Pending label should disappear and save prompt should be hidden (button removed)
+    expect(screen.queryByText(messages.buttonSavingText.defaultMessage)).toBeNull();
+    const saveAlert = screen.queryByTestId('grading-settings-save-alert');
+    expect(saveAlert).toBeNull();
+    // Ensure original save button text is no longer present because the prompt closed
+    expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).toBeNull();
   });
 
   it('should handle being offline gracefully', async () => {
