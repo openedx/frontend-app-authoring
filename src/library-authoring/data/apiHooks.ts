@@ -93,6 +93,11 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
     'courseImports',
   ],
+  migrationInfo: (sourceKeys: string[]) => [
+    ...libraryAuthoringQueryKeys.all,
+    'migrationInfo',
+    ...sourceKeys,
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -963,5 +968,15 @@ export const useCourseImports = (libraryId: string) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.courseImports(libraryId),
     queryFn: () => api.getCourseImports(libraryId),
+  })
+);
+
+/**
+ * Returns the migration info of a given source list
+ */
+export const useMigrationInfo = (sourcesKeys: string[]) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
+    queryFn: () => api.getMigrationInfo(sourcesKeys),
   })
 );

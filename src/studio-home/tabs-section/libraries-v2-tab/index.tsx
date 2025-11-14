@@ -17,13 +17,13 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import AlertMessage from '@src/generic/alert-message';
 import type { ContentLibrary, LibrariesV2Response } from '@src/library-authoring/data/api';
 
-import CardItem from '../../card-item';
+import { CardItem } from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
 
 interface CardListProps {
   hasV2Libraries: boolean;
-  selectMode?: 'single' | 'multiple';
+  inSelectMode?: boolean;
   selectedLibraryId?: string;
   isFiltered: boolean;
   isLoading: boolean;
@@ -34,7 +34,7 @@ interface CardListProps {
 
 const CardList: React.FC<CardListProps> = ({
   hasV2Libraries,
-  selectMode,
+  inSelectMode,
   selectedLibraryId,
   isFiltered,
   isLoading,
@@ -56,7 +56,8 @@ const CardList: React.FC<CardListProps> = ({
               org={org}
               number={slug}
               path={`/library/${id}`}
-              selectMode={selectMode}
+              selectMode={inSelectMode ? 'single' : undefined}
+              selectPosition={inSelectMode ? 'title' : undefined}
               isSelected={selectedLibraryId === id}
               itemId={id}
               scrollIntoView={scrollIntoView && selectedLibraryId === id}
@@ -202,7 +203,7 @@ const LibrariesV2List: React.FC<Props> = ({
           >
             <CardList
               hasV2Libraries={hasV2Libraries}
-              selectMode={inSelectMode ? 'single' : undefined}
+              inSelectMode={inSelectMode}
               selectedLibraryId={selectedLibraryId}
               isFiltered={isFiltered}
               isLoading={isPending}

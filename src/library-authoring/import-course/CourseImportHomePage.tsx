@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import {
   Button,
   Card,
@@ -6,8 +8,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
-import { Helmet } from 'react-helmet';
-
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import Loading from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
@@ -19,14 +20,26 @@ import { HelpSidebar } from './HelpSidebar';
 import { ImportedCourseCard } from './ImportedCourseCard';
 import messages from './messages';
 
+const ImportCourseButton = () => {
+  const navigate = useNavigate();
+
+  if (getConfig().ENABLE_COURSE_IMPORT_IN_LIBRARY === 'true') {
+    return (
+      <Button iconBefore={Add} onClick={() => navigate('courses')}>
+        <FormattedMessage {...messages.importCourseButton} />
+      </Button>
+    );
+  }
+
+  return null;
+};
+
 const EmptyState = () => (
   <Container size="md" className="py-6">
     <Card>
       <Stack direction="horizontal" gap={3} className="my-6 justify-content-center">
         <FormattedMessage {...messages.emptyStateText} />
-        <Button iconBefore={Add} disabled>
-          <FormattedMessage {...messages.emptyStateButtonText} />
-        </Button>
+        <ImportCourseButton />
       </Stack>
     </Card>
   </Container>
@@ -64,6 +77,7 @@ export const CourseImportHomePage = () => {
               title={intl.formatMessage(messages.pageTitle)}
               subtitle={intl.formatMessage(messages.pageSubtitle)}
               hideBorder
+              headerActions={<ImportCourseButton />}
             />
           </div>
           <Layout xs={[{ span: 9 }, { span: 3 }]}>

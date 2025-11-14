@@ -49,6 +49,8 @@ export const ROUTES = {
   BACKUP: '/backup',
   // LibraryImportPage route:
   IMPORT: '/import',
+  // ImportStepperPage route:
+  IMPORT_COURSE: '/import/courses',
 };
 
 export enum ContentType {

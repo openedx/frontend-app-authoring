@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useRef,
+} from 'react';
 import { useSelector } from 'react-redux';
 import {
   Card,
@@ -8,19 +10,18 @@ import {
   IconButton,
   Stack,
 } from '@openedx/paragon';
-import { AccessTime, ArrowForward, MoreHoriz } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { ArrowForward, MoreHoriz } from '@openedx/paragon/icons';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COURSE_CREATOR_STATES } from '@src/constants';
-import { parseLibraryKey } from '@src/generic/key-utils';
 import classNames from 'classnames';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
-const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
+export const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
   <Stack direction="horizontal" gap={2}>
     <span>{from}</span>
     {to
@@ -33,7 +34,7 @@ const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactN
   </Stack>
 );
 
-const MakeLinkOrSpan = ({
+export const MakeLinkOrSpan = ({
   when, to, children, className,
 }: {
   when: boolean,
@@ -52,10 +53,8 @@ interface CardTitleProps {
   selectMode?: 'single' | 'multiple';
   destinationUrl: string;
   title: string;
+  secondaryLink?: ReactElement | null;
   itemId?: string;
-  isMigrated?: boolean;
-  migratedToKey?: string;
-  migratedToTitle?: string;
 }
 
 const CardTitle: React.FC<CardTitleProps> = ({
@@ -63,10 +62,8 @@ const CardTitle: React.FC<CardTitleProps> = ({
   selectMode,
   destinationUrl,
   title,
+  secondaryLink,
   itemId,
-  isMigrated,
-  migratedToTitle,
-  migratedToKey,
 }) => {
   const getTitle = useCallback(() => (
     <div style={{ marginTop: selectMode ? '-3px' : '' }}>
@@ -80,24 +77,12 @@ const CardTitle: React.FC<CardTitleProps> = ({
             {title}
           </MakeLinkOrSpan>
           )}
-        to={
-            isMigrated && migratedToTitle && (
-              <MakeLinkOrSpan
-                when={!readOnlyItem && !selectMode}
-                to={`/library/${migratedToKey}`}
-                className="card-item-title"
-              >
-                {migratedToTitle}
-              </MakeLinkOrSpan>
-            )
-          }
+        to={secondaryLink}
       />
     </div>
   ), [
     readOnlyItem,
-    isMigrated,
     destinationUrl,
-    migratedToTitle,
     title,
     selectMode,
   ]);
@@ -128,8 +113,78 @@ const CardTitle: React.FC<CardTitleProps> = ({
   return getTitle();
 };
 
+interface CardMenuProps {
+  showMenu: boolean;
+  isShowRerunLink?: boolean;
+  rerunLink: string | null;
+  lmsLink: string | null;
+}
+
+const CardMenu = ({
+  showMenu,
+  isShowRerunLink,
+  rerunLink,
+  lmsLink,
+}: CardMenuProps) => {
+  const intl = useIntl();
+
+  if (!showMenu) {
+    return null;
+  }
+
+  return (
+    <Dropdown>
+      <Dropdown.Toggle
+        as={IconButton}
+        iconAs={MoreHoriz}
+        variant="primary"
+        aria-label={intl.formatMessage(messages.btnDropDownText)}
+      />
+      <Dropdown.Menu>
+        {isShowRerunLink && (
+          <Dropdown.Item
+            as={Link}
+            to={rerunLink ?? ''}
+          >
+            {messages.btnReRunText.defaultMessage}
+          </Dropdown.Item>
+        )}
+        <Dropdown.Item href={lmsLink}>
+          <FormattedMessage {...messages.viewLiveBtnText} />
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
+
+const SelectAction = ({
+  itemId,
+  title,
+  selectMode,
+}: {
+  itemId: string,
+  title: string,
+  selectMode: 'single' | 'multiple';
+}) => {
+  if (selectMode === 'single') {
+    return (
+      <Form.Radio
+        value={itemId}
+        aria-label={title}
+        name={`select-card-item-${itemId}`}
+      />
+    );
+  }
+
+  // Multiple
+  return (
+    <Form.Checkbox value={itemId} aria-label={title} />
+  );
+};
+
 interface BaseProps {
   displayName: string;
+  onClick?: () => void;
   org: string;
   number: string;
   run?: string;
@@ -137,11 +192,12 @@ interface BaseProps {
   rerunLink?: string | null;
   courseKey?: string;
   isLibraries?: boolean;
-  isMigrated?: boolean;
-  migratedToKey?: string;
-  migratedToTitle?: string;
-  migratedToCollectionKey?: string | null;
+  subtitleWrapper?: ((subtitle: JSX.Element) => ReactElement) | null; // Wrapper for the default subtitle element
+  subtitleBeforeWidget?: ReactElement | null; // Adds a widget before the default subtitle element
+  cardStatusWidget?: ReactElement | null;
+  titleSecondaryLink?: ReactElement | null;
   selectMode?: 'single' | 'multiple';
+  selectPosition?: 'card' | 'title';
   isSelected?: boolean;
   itemId?: string;
   scrollIntoView?: boolean;
@@ -160,8 +216,9 @@ type Props = BaseProps & (
 /**
  * A card on the Studio home page that represents a Course or a Library
  */
-const CardItem: React.FC<Props> = ({
+export const CardItem: React.FC<Props> = ({
   displayName,
+  onClick,
   lmsLink = '',
   rerunLink = '',
   org,
@@ -170,17 +227,17 @@ const CardItem: React.FC<Props> = ({
   isLibraries = false,
   courseKey = '',
   selectMode,
+  selectPosition,
   isSelected = false,
   itemId = '',
   path,
   url,
-  isMigrated = false,
-  migratedToKey,
-  migratedToTitle,
-  migratedToCollectionKey,
+  subtitleWrapper,
+  subtitleBeforeWidget,
+  titleSecondaryLink,
+  cardStatusWidget,
   scrollIntoView = false,
 }) => {
-  const intl = useIntl();
   const {
     allowCourseReruns,
     courseCreatorStatus,
@@ -195,7 +252,7 @@ const CardItem: React.FC<Props> = ({
       : new URL(url, getConfig().STUDIO_BASE_URL).toString()
   );
   const readOnlyItem = !(lmsLink || rerunLink || url || path);
-  const showActions = !(readOnlyItem || isLibraries);
+  const showActionsMenu = !(readOnlyItem || isLibraries || selectMode !== undefined);
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus
     && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
@@ -203,25 +260,19 @@ const CardItem: React.FC<Props> = ({
 
   const getSubtitle = useCallback(() => {
     let subtitle = isLibraries ? <>{org} / {number}</> : <>{org} / {number} / {run}</>;
-    if (isMigrated && migratedToKey) {
-      const migratedToKeyObj = parseLibraryKey(migratedToKey);
+    if (subtitleWrapper) {
+      subtitle = subtitleWrapper(subtitle);
+    }
+    if (subtitleBeforeWidget) {
       subtitle = (
-        <PrevToNextName
-          from={subtitle}
-          to={<>{migratedToKeyObj.org} / {migratedToKeyObj.lib}</>}
-        />
+        <Stack direction="horizontal" gap={2}>
+          {subtitleBeforeWidget}
+          {subtitle}
+        </Stack>
       );
     }
     return subtitle;
-  }, [isLibraries, org, number, run, migratedToKey, isMigrated]);
-
-  const collectionLink = () => {
-    let libUrl = `/library/${migratedToKey}`;
-    if (migratedToCollectionKey) {
-      libUrl += `/collection/${migratedToCollectionKey}`;
-    }
-    return libUrl;
-  };
+  }, [isLibraries, org, number, run]);
 
   useEffect(() => {
     /* istanbul ignore next */
@@ -232,70 +283,46 @@ const CardItem: React.FC<Props> = ({
 
   return (
     <div ref={cardRef} className="w-100">
-      <Card className={classNames('card-item', {
-        selected: isSelected,
-      })}
+      <Card
+        onClick={onClick}
+        className={classNames('card-item', {
+          selected: isSelected,
+        })}
       >
         <Card.Header
           size="sm"
           title={(
             <CardTitle
-              readOnlyItem={readOnlyItem}
-              selectMode={selectMode}
+              readOnlyItem={readOnlyItem || selectMode !== undefined}
+              selectMode={selectPosition === 'title' ? selectMode : undefined}
               destinationUrl={destinationUrl}
               title={title}
               itemId={itemId}
-              isMigrated={isMigrated}
-              migratedToTitle={migratedToTitle}
-              migratedToKey={migratedToKey}
+              secondaryLink={titleSecondaryLink}
             />
           )}
           subtitle={getSubtitle()}
-          actions={showActions && (
-          <Dropdown>
-            <Dropdown.Toggle
-              as={IconButton}
-              iconAs={MoreHoriz}
-              variant="primary"
-              aria-label={intl.formatMessage(messages.btnDropDownText)}
+          actions={(selectMode && selectPosition === 'card') ? (
+            <SelectAction
+              itemId={itemId}
+              selectMode={selectMode}
+              title={title}
             />
-            <Dropdown.Menu>
-              {isShowRerunLink && (
-                <Dropdown.Item
-                  as={Link}
-                  to={rerunLink ?? ''}
-                >
-                  {messages.btnReRunText.defaultMessage}
-                </Dropdown.Item>
-              )}
-              <Dropdown.Item href={lmsLink}>
-                {intl.formatMessage(messages.viewLiveBtnText)}
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          ) : (
+            <CardMenu
+              showMenu={showActionsMenu}
+              isShowRerunLink={isShowRerunLink}
+              rerunLink={rerunLink}
+              lmsLink={lmsLink}
+            />
           )}
         />
-        {isMigrated && migratedToKey
-          && (
+        {cardStatusWidget && (
           <Card.Status className="bg-white pt-0 text-gray-500">
-            <Stack direction="horizontal" gap={2}>
-              <Icon src={AccessTime} size="sm" className="mb-1" />
-              {intl.formatMessage(messages.libraryMigrationStatusText)}
-              <b>
-                <MakeLinkOrSpan
-                  when={!readOnlyItem}
-                  to={collectionLink()}
-                  className="text-info-500"
-                >
-                  {migratedToTitle}
-                </MakeLinkOrSpan>
-              </b>
-            </Stack>
+            {cardStatusWidget}
           </Card.Status>
-          )}
+        )}
       </Card>
     </div>
   );
 };
-
-export default CardItem;
