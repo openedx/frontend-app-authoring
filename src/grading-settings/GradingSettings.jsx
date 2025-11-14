@@ -42,7 +42,7 @@ const GradingSettings = ({ courseId }) => {
   } = useCourseSettings(courseId);
   const {
     mutate: updateGradingSettings,
-    isLoading: savePending,
+    isPending: savePending,
     isSuccess: savingStatus,
     isError: savingFailed,
   } = useGradingSettingUpdater(courseId);
