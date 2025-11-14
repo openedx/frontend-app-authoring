@@ -314,21 +314,21 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
   });
 
-  it('should show "Manage Access" button in Library Info that opens the Library Team modal', async () => {
+  it('should show Library Team button in Library Info that opens the Library Team modal', async () => {
     await renderLibraryPage();
-    const manageAccess = screen.getByRole('button', { name: /manage access/i });
+    const manageAccess = await screen.findByRole('button', { name: /Library Team/i });
 
     expect(manageAccess).not.toBeDisabled();
     fireEvent.click(manageAccess);
 
-    expect(await screen.findByText('Library Team')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Library Team' })).toBeInTheDocument();
   });
 
-  it('should not show "Manage Access" button in Library Info to users who cannot edit the library', async () => {
+  it('should not show "Library Team" button in Library Info to users who cannot edit the library', async () => {
     const libraryId = mockContentLibrary.libraryIdReadOnly;
     render(<LibraryLayout />, { path, params: { libraryId } });
 
-    const manageAccess = screen.queryByRole('button', { name: /manage access/i });
+    const manageAccess = screen.queryByRole('button', { name: /Library Team/i });
     expect(manageAccess).not.toBeInTheDocument();
   });
 

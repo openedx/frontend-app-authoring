@@ -276,7 +276,7 @@ describe('<LibraryInfo />', () => {
     const ADMIN_CONSOLE_URL = 'http://localhost:2025/admin-console';
     mergeConfig({ ADMIN_CONSOLE_URL });
     render();
-    const manageTeam = await screen.getByText('Manage Access');
+    const manageTeam = await screen.findByText('Library Team');
     expect(manageTeam).toBeInTheDocument();
     expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz/libraries/${libraryData.id}`);
   });
