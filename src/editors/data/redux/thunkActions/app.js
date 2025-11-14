@@ -126,9 +126,9 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
     onSuccess: (response) => {
       dispatch(actions.app.setSaveResponse(response));
       const parsedData = JSON.parse(response.config.data);
-      if (parsedData?.has_changes) {
+      if (parsedData?.has_changes || !('has_changes' in parsedData)) {
         const storageKey = 'courseRefreshTriggerOnComponentEditSave';
-        localStorage.setItem(storageKey, Date.now());
+        sessionStorage.setItem(storageKey, Date.now());
 
         window.dispatchEvent(new StorageEvent('storage', {
           key: storageKey,
