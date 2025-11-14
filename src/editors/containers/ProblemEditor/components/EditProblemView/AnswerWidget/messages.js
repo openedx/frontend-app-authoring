@@ -84,7 +84,7 @@ const messages = defineMessages({
   },
   answerNumericErrorText: {
     id: 'authoring.answerwidget.answer.answerNumericErrorText',
-    defaultMessage: 'Error: This problem type only supports numeric answers. Did you mean to make a (Text/Math Expression) Input problem?',
+    defaultMessage: 'Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?',
     description: 'Error message when user provides wrong format',
   },
 });
