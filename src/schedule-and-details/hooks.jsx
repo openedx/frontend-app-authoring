@@ -3,30 +3,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
-import { getLoadingDetailsStatus, getLoadingSettingsStatus, getSavingStatus } from './data/selectors';
+import { getLoadingSettingsStatus, getSavingStatus } from './data/selectors';
 import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
 
 const useLoadValuesPrompt = (
   courseId,
-  fetchCourseDetailsQuery,
   fetchCourseSettingsQuery,
+  courseDetailsError,
 ) => {
   const dispatch = useDispatch();
-  const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
   const [showLoadFailedAlert, setShowLoadFailedAlert] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchCourseDetailsQuery(courseId));
     dispatch(fetchCourseSettingsQuery(courseId));
   }, [courseId]);
 
   useEffect(() => {
-    if (loadingDetailsStatus === RequestStatus.FAILED || loadingSettingsStatus === RequestStatus.FAILED) {
+    if (courseDetailsError || loadingSettingsStatus === RequestStatus.FAILED) {
       setShowLoadFailedAlert(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [loadingDetailsStatus, loadingSettingsStatus]);
+  }, [courseDetailsError, loadingSettingsStatus]);
 
   return {
     showLoadFailedAlert,
@@ -54,7 +52,7 @@ const useSaveValuesPrompt = (
     if (!isQueryPending && !isEditableState) {
       setEditedValues(initialEditedData);
     }
-  }, [initialEditedData]);
+  }, [initialEditedData.isLoading]);
 
   useEffect(() => {
     const errors = validateScheduleAndDetails(editedValues, canShowCertificateAvailableDateField, intl);
@@ -115,6 +113,8 @@ const useSaveValuesPrompt = (
       if (!isEditableState) {
         setShowModifiedAlert(false);
       }
+      // Refresh course data after successful save
+      initialEditedData.refetch();
     } else if (savingStatus === RequestStatus.FAILED) {
       setIsQueryPending(false);
       setShowSuccessfulAlert(false);
