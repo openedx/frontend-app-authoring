@@ -7,7 +7,7 @@ import { getConfig } from '@edx/frontend-platform';
 const CopilotContext = createContext(null);
 export const useCopilot = () => useContext(CopilotContext);
 
-const BASE_API_URL = 'https://staging.titaned.com';
+// const BASE_API_URL = 'https://staging.titaned.com';
 
 const isValidImageUrl = (url) => {
   return typeof url === 'string' && (
