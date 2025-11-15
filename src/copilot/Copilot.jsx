@@ -165,50 +165,51 @@ const Copilot = () => {
         ref.current = el;
         panelRef.current = el;
       }} style={panelStyle} className={`copilot-panel ${isFullScreen ? 'fullscreen' : ''} ${(isDocked && !isFullScreen) ? 'isDocked' : ''}`}>
+
+        <div className="copilot-header">
+          <div className="header-left" style={{ display: isMinimized && !isFullScreen ? 'none' : 'flex' }}>
+            <span className="title">{t(messages.copilotTitle)}</span>
+          </div>
+          {!isFullScreen && <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>}
+          <div className="header-right">
+            {isDocked && !isFullScreen && (
+              <Button variant="tertiary" size="sm" onClick={toggleMinimize} className="minimize-icon">
+                <Icon src={isMinimized ? ChevronLeft : ChevronRight} />
+              </Button>
+            )}
+            {!isMinimized && !isFullScreen && !isFloating && (
+              <div className="drag-handle" onClick={handleFloating} title={t(messages.tooltipDragToMove)}>
+                <div className="dots">
+                  <span /><span /><span />
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+            {!isMinimized && (
+              <Button variant="tertiary" size="sm" onClick={toggleFullScreen}>
+                <Icon src={isFullScreen ? FullscreenExit : Fullscreen} />
+              </Button>
+            )}
+            {!isMinimized && !isDocked && !isFullScreen && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                onClick={() => {
+                  dock();
+                }}
+              >
+                <Icon src={ArrowForward} />
+              </Button>
+            )}
+            {!isMinimized && (
+              <Button variant="tertiary" size="sm" onClick={closeCopilot}>
+                <Icon src={Close} />
+              </Button>
+            )}
+          </div>
+        </div>
         {enabledCopilot ? (
           <>
-            <div className="copilot-header">
-              <div className="header-left" style={{ display: isMinimized && !isFullScreen ? 'none' : 'flex' }}>
-                <span className="title">{t(messages.copilotTitle)}</span>
-              </div>
-              {!isFullScreen && <div className="header-mid" onMouseDown={handleMouseDownDrag(ref)}></div>}
-              <div className="header-right">
-                {isDocked && !isFullScreen && (
-                  <Button variant="tertiary" size="sm" onClick={toggleMinimize} className="minimize-icon">
-                    <Icon src={isMinimized ? ChevronLeft : ChevronRight} />
-                  </Button>
-                )}
-                {!isMinimized && !isFullScreen && !isFloating && (
-                  <div className="drag-handle" onClick={handleFloating} title={t(messages.tooltipDragToMove)}>
-                    <div className="dots">
-                      <span /><span /><span />
-                      <span /><span /><span />
-                    </div>
-                  </div>
-                )}
-                {!isMinimized && (
-                  <Button variant="tertiary" size="sm" onClick={toggleFullScreen}>
-                    <Icon src={isFullScreen ? FullscreenExit : Fullscreen} />
-                  </Button>
-                )}
-                {!isMinimized && !isDocked && !isFullScreen && (
-                  <Button
-                    variant="tertiary"
-                    size="sm"
-                    onClick={() => {
-                      dock();
-                    }}
-                  >
-                    <Icon src={ArrowForward} />
-                  </Button>
-                )}
-                {!isMinimized && (
-                  <Button variant="tertiary" size="sm" onClick={closeCopilot}>
-                    <Icon src={Close} />
-                  </Button>
-                )}
-              </div>
-            </div>
             <div className="copilot-content" style={contentStyle}>
               <div ref={ref => {
                 pinnedContainerRef.current = ref;
@@ -412,35 +413,35 @@ const Copilot = () => {
                 </div>
               </div>
             </div>
-
-            {/* Resizers and indicators moved here, inside .copilot-panel */}
-            {!isFullScreen && !isMinimized && (
-              <>
-                {isDocked ? (
-                  <div className="resize-indicator left-indicator" title={t(messages.tooltipResize)}></div>
-                ) : (
-                  <div className="resize-indicator bottom-right-indicator" title={t(messages.tooltipResize)}></div>
-                )}
-              </>
-            )}
-            {!isFullScreen && (
-              isDocked ? (
-                <div
-                  className="resizer resizer-left"
-                  onMouseDown={(e) => handleMouseDownResize('width')(e)}
-                />
-              ) : (
-                <div
-                  className="resizer resizer-bottom-right"
-                  onMouseDown={(e) => handleMouseDownResize('both')(e)}
-                />
-              )
-            )}
           </>
         ) : (
           <div className="copilot-loading"><span>{t(messages.loadingcopilot)}</span></div>
         )
         }
+        {/* Resizers and indicators moved here, inside .copilot-panel */}
+        {!isFullScreen && !isMinimized && (
+          <>
+            {isDocked ? (
+              <div className="resize-indicator left-indicator" title={t(messages.tooltipResize)}></div>
+            ) : (
+              <div className="resize-indicator bottom-right-indicator" title={t(messages.tooltipResize)}></div>
+            )}
+          </>
+        )}
+        {!isFullScreen && (
+          isDocked ? (
+            <div
+              className="resizer resizer-left"
+              onMouseDown={(e) => handleMouseDownResize('width')(e)}
+            />
+          ) : (
+            <div
+              className="resizer resizer-bottom-right"
+              onMouseDown={(e) => handleMouseDownResize('both')(e)}
+            />
+          )
+        )}
+
       </div>
     </div>
   );
