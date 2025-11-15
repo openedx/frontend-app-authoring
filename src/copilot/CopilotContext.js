@@ -36,7 +36,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   };
 
 
-  const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
+  const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
   const [enabledCopilot, setEnabledCopilot] = useState(null);
   const [showCopilotIcon, setShowCopilotIcon] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -146,7 +146,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       //   body: JSON.stringify({ [config.key]: effectiveValue }),
       // });
-      const res = await client.post(`${LMS_BASE}/chat/v1/${config.url}`, {
+      const res = await client.post(`${STUDIO_BASE}/chat/v1/${config.url}`, {
         [config.key]: effectiveValue,
       });
       if (!res.ok) throw new Error("Suggestion failed");
@@ -333,7 +333,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       // });
-      const res = await client.post(`${LMS_BASE}/chat/v1/prediction-questions/`, {});
+      const res = await client.post(`${STUDIO_BASE}/chat/v1/prediction-questions/`, {});
       if (!res.ok) throw new Error("Failed to fetch questions");
       return await res.json();
     };
@@ -367,7 +367,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       const payload = { [cfg.bodyKey]: value };
       if (more) payload.more_suggestions = true;
 
-      const res = await client.post(`${LMS_BASE}/chat/v1/${cfg.url}`, payload);
+      const res = await client.post(`${STUDIO_BASE}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to fetch suggestions");
       return await res.json();
     };
@@ -392,7 +392,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         ...userAnswers,
         custom_flow: true,
       };
-      const res = await client.post(`${LMS_BASE}/chat/v1/${cfg.url}`, payload);
+      const res = await client.post(`${STUDIO_BASE}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to submit answers");
       return await res.json();
     };
@@ -525,11 +525,11 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
   useEffect(() => {
     const client = getAuthenticatedHttpClient();
-    const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
+    const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
 
     const fetchMenuConfig = async () => {
       try {
-        const response = await client.get(`${STUDIO_BASE}/titaned/api/v1/menu-config/`);
+        const response = await client.get(`${LMS_BASE}/titaned/api/v1/menu-config/`);
         const data = await response.json();
 
         setEnabledCopilot(!!data.enable_copilot);
