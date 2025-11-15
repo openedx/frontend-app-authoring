@@ -27,6 +27,7 @@ import {
   getXBlockBaseApiUrl,
   exportTags,
   createDiscussionsTopicsUrl,
+  getCourseOutlineIndex,
 } from './data/api';
 import {
   fetchCourseBestPracticesQuery,
@@ -130,6 +131,10 @@ jest.mock('@src/studio-home/data/selectors', () => ({
   getStudioHomeData: jest.fn().mockReturnValue({
     librariesV2Enabled: true,
   }),
+}));
+
+jest.mock('./data/api', () => ({
+  getCourseOutlineIndex: jest.fn(),
 }));
 
 // eslint-disable-next-line no-promise-executor-return
@@ -2482,5 +2487,54 @@ describe('<CourseOutline />', () => {
       expect(axiosMock.history.delete).toHaveLength(1);
     });
     expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
+  });
+});
+
+describe('retryOnNotReady lightweight coverage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  it('retries on 202 then succeeds', async () => {
+    const mockDispatch = jest.fn();
+
+    (getCourseOutlineIndex as jest.Mock)
+      .mockRejectedValueOnce({ response: { status: 202 } })
+      .mockRejectedValueOnce({ response: { status: 404 } })
+      .mockResolvedValueOnce({
+        courseReleaseDate: '2025-10-29',
+        courseStructure: {
+          highlightsEnabledForMessaging: true,
+          videoSharingEnabled: true,
+          videoSharingOptions: [],
+          actions: {},
+        },
+      });
+
+    const thunk = fetchCourseOutlineIndexQuery(courseId);
+    const promise = thunk(mockDispatch);
+
+    jest.runAllTimers();
+    await promise;
+
+    expect(getCourseOutlineIndex).toHaveBeenCalledTimes(3);
+    // Verifica que terminó con éxito
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({ status: RequestStatus.SUCCESSFUL }),
+      }),
+    );
+  });
+
+  it('throws after max retries', async () => {
+    const mockDispatch = jest.fn();
+    (getCourseOutlineIndex as jest.Mock).mockRejectedValue({ response: { status: 202 } });
+
+    const thunk = fetchCourseOutlineIndexQuery(courseId);
+    const promise = thunk(mockDispatch);
+
+    jest.runAllTimers();
+    await expect(promise).rejects.toBeDefined();
   });
 });
