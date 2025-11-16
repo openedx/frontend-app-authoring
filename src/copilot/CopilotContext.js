@@ -36,9 +36,9 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   };
 
 
-  const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
-  const [enabledCopilot, setEnabledCopilot] = useState(null);
-  const [showCopilotIcon, setShowCopilotIcon] = useState(null);
+  // const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
+  const [enabledCopilot, setEnabledCopilot] = useState(false);
+  const [showCopilotIcon, setShowCopilotIcon] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
   const [isDocked, setIsDocked] = useState(true);
@@ -118,7 +118,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   //   return data.access_token;
   // };
 
-  const client = getAuthenticatedHttpClient();
+  // const client = getAuthenticatedHttpClient();
 
   const handleAIButtonClick = async (fieldName, fieldValue) => {
     let effectiveValue = fieldValue?.trim() || "";
@@ -146,7 +146,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       //   body: JSON.stringify({ [config.key]: effectiveValue }),
       // });
-      const res = await client.post(`${STUDIO_BASE}/chat/v1/${config.url}`, {
+      const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${config.url}`, {
         [config.key]: effectiveValue,
       });
       if (!res.ok) throw new Error("Suggestion failed");
@@ -333,7 +333,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       // });
-      const res = await client.post(`${STUDIO_BASE}/chat/v1/prediction-questions/`, {});
+      const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/prediction-questions/`, {});
       if (!res.ok) throw new Error("Failed to fetch questions");
       return await res.json();
     };
@@ -364,10 +364,10 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       // });
 
       const cfg = getApiConfig(field);
-      const payload = { [cfg.bodyKey]: value };
+      const payload = { [cfg.bodyKey]: value, };
       if (more) payload.more_suggestions = true;
 
-      const res = await client.post(`${STUDIO_BASE}/chat/v1/${cfg.url}`, payload);
+      const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to fetch suggestions");
       return await res.json();
     };
@@ -392,7 +392,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         ...userAnswers,
         custom_flow: true,
       };
-      const res = await client.post(`${STUDIO_BASE}/chat/v1/${cfg.url}`, payload);
+      const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${cfg.url}`, payload);
       if (!res.ok) throw new Error("Failed to submit answers");
       return await res.json();
     };
@@ -524,18 +524,26 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   };
 
   useEffect(() => {
-    const client = getAuthenticatedHttpClient();
-    const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
+    // const client = getAuthenticatedHttpClient();
+    // const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
 
     const fetchMenuConfig = async () => {
       try {
-        const response = await client.get(`${LMS_BASE}/titaned/api/v1/menu-config/`);
+        const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
+        // const response = await getAuthenticatedHttpClient().get('https://studio.staging.titaned.com/titaned/api/v1/menu-config/');
+        // const response = await client.get(`${LMS_BASE}/titaned/api/v1/mfe_context/`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
         const data = await response.json();
 
         setEnabledCopilot(!!data.enable_copilot);
         setShowCopilotIcon(!!data.show_copilot_icon);
       } catch (err) {
-        console.error('Failed to load menu-config for Copilot:', err);
+        console.log('Failed to load menu-config for Copilot:', err);
+        setEnabledCopilot(false);
+        setShowCopilotIcon(false);
       }
     };
 
@@ -847,7 +855,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     chatHistory, selectedSuggestion, prompt, setPrompt, buttons, questions, currentQuestionIndex,
     handleSelectSuggestion, sendPrompt, handleButtonAction, handleAnswer, handleAIButtonClick, aiLoading,
     t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight, pinnedSuggestions,
-    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions,enabledCopilot,showCopilotIcon,openCopilotReview,
+    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions, enabledCopilot, showCopilotIcon, openCopilotReview,
   };
 
   return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;

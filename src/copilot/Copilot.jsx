@@ -415,7 +415,7 @@ const Copilot = () => {
             </div>
           </>
         ) : (
-          <div className="copilot-loading"><span>{t(messages.loadingcopilot)}</span></div>
+          <div className="copilot-loading">{!isMinimized && (<span>{t(messages.loadingcopilot)}</span>)}</div>
         )
         }
         {/* Resizers and indicators moved here, inside .copilot-panel */}
