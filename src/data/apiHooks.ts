@@ -1,7 +1,7 @@
 import {
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
-import { libraryAuthoringQueryKeys } from '../library-authoring/data/apiHooks';
+import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks';
 import {
   getWaffleFlags,
   waffleFlagDefaults,

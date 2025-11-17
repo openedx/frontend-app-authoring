@@ -14,8 +14,8 @@ import { mockGetStudioHomeLibraries } from '@src/studio-home/data/api.mocks';
 import { getContentLibraryV2CreateApiUrl } from '@src/library-authoring/create-library/data/api';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 
+import { bulkMigrateContentToLibrariesUrl } from '@src/data/api';
 import { LegacyLibMigrationPage } from './LegacyLibMigrationPage';
-import { bulkMigrateContentToLibrariesUrl } from '../data/api';
 
 const path = '/libraries-v1/migrate/*';
 let axiosMock: MockAdapter;
