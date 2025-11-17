@@ -7,7 +7,7 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { useMigrationInfo } from '@src/studio-home/data/apiHooks';
+import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useGetBlockTypes } from '@src/search-manager';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';

@@ -2,7 +2,6 @@ import {
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
 import { libraryAuthoringQueryKeys } from '../library-authoring/data/apiHooks';
-import { studioHomeQueryKeys } from '../studio-home/data/apiHooks';
 import {
   getWaffleFlags,
   waffleFlagDefaults,
@@ -58,7 +57,7 @@ export const useBulkMigrate = () => {
     mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateContentToLibraries(requestData),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.courseImports(variables.target) });
-      queryClient.invalidateQueries({ queryKey: studioHomeQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.allMigrationInfo() });
     },
   });
 };
