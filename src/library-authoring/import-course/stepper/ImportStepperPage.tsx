@@ -71,6 +71,7 @@ export const ImportStepperPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
+  const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
   const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
@@ -151,7 +152,10 @@ export const ImportStepperPage = () => {
                   eventKey="review-details"
                   title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
                 >
-                  <ReviewImportDetails courseId={selectedCourseId} />
+                  <ReviewImportDetails
+                    markAnalysisComplete={setAnalysisCompleted}
+                    courseId={selectedCourseId}
+                  />
                 </Stepper.Step>
               </Stepper>
               <div className="mt-4">
@@ -176,6 +180,7 @@ export const ImportStepperPage = () => {
                       onClick={handleImportCourse}
                       label={intl.formatMessage(messages.importCourseButton)}
                       variant="primary"
+                      disabled={!analysisCompleted}
                     />
                   </ActionRow>
                 )}

@@ -9,6 +9,7 @@ import messages from '../messages';
 
 mockContentLibrary.applyMock();
 const { libraryId } = mockContentLibrary;
+const markAnalysisComplete = jest.fn();
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
@@ -47,10 +48,11 @@ describe('ReviewImportDetails', () => {
   });
 
   it('renders loading spinner when isPending is true', async () => {
-    render(<ReviewImportDetails courseId="test-course-id" />);
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
 
     const spinners = await screen.findAllByRole('status');
     spinners.every((spinner) => expect(spinner.textContent).toEqual('Loading...'));
+    expect(markAnalysisComplete).toHaveBeenCalledWith(false);
   });
 
   it('renders import progress status when isBlockDataPending or migrationInfoIsPending is true', async () => {
@@ -60,10 +62,11 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails courseId="test-course-id" />);
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis in Progress/i)).toBeInTheDocument();
+    expect(markAnalysisComplete).toHaveBeenCalledWith(false);
   });
 
   it('renders warning when reimport', async () => {
@@ -82,7 +85,7 @@ describe('ReviewImportDetails', () => {
       data: { html: 1 },
     });
 
-    render(<ReviewImportDetails courseId="test-course-id" />);
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Completed: Reimport/i)).toBeInTheDocument();
@@ -91,6 +94,7 @@ describe('ReviewImportDetails', () => {
         .replace('{courseName}', 'Test Course')
         .replace('{libraryName}', 'Library title'),
     )).toBeInTheDocument();
+    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
   it('renders warning when unsupportedBlockPercentage > 0', async () => {
@@ -110,7 +114,7 @@ describe('ReviewImportDetails', () => {
       },
     });
 
-    render(<ReviewImportDetails courseId="test-course-id" />);
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
@@ -127,6 +131,7 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText('3')).toBeInTheDocument();
     expect(await screen.findByText('Components')).toBeInTheDocument();
     expect(await screen.findByText('1/2')).toBeInTheDocument();
+    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
   it('renders success alert when no unsupported blocks', async () => {
@@ -146,7 +151,7 @@ describe('ReviewImportDetails', () => {
       },
     });
 
-    render(<ReviewImportDetails courseId="test-course-id" />);
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(
@@ -163,5 +168,6 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText('3')).toBeInTheDocument();
     expect(await screen.findByText('Components')).toBeInTheDocument();
     expect(await screen.findByText('8')).toBeInTheDocument();
+    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 });

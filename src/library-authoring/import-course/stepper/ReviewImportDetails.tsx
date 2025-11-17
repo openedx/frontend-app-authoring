@@ -4,7 +4,7 @@ import { Alert, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
@@ -14,9 +14,11 @@ import messages from '../messages';
 
 interface Props {
   courseId?: string;
+  markAnalysisComplete: (analysisCompleted: boolean) => void;
 }
 
-interface BannerProps extends Props {
+interface BannerProps {
+  courseId?: string;
   isBlockDataPending?: boolean;
   unsupportedBlockPercentage: number;
 }
@@ -112,10 +114,14 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
   );
 };
 
-export const ReviewImportDetails = ({ courseId }: Props) => {
+export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) => {
   const { data: blockTypes, isPending: isBlockDataPending } = useGetBlockTypes([
     `context_key = "${courseId}"`,
   ]);
+
+  useEffect(() => {
+    markAnalysisComplete(!isBlockDataPending);
+  }, [isBlockDataPending]);
 
   const totalUnsupportedBlocks = useMemo(() => {
     if (!blockTypes) {
