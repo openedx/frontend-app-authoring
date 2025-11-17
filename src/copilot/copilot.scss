@@ -44,7 +44,6 @@
                 font-size: 1.2rem;
                 font-weight: 500;
                 color: var(--text-primary);
-                transform: rotate(45deg);
             }
         }
 
@@ -323,17 +322,6 @@
                             line-height: 1.4;
                             position: relative;
 
-                            &::after {
-                                content: '';
-                                position: absolute;
-                                bottom: 0;
-                                left: 8px;
-                                width: 0;
-                                height: 0;
-                                border: 6px solid transparent;
-                                border-right-color: var(--secondary-light);
-                                border-left: 0;
-                            }
                         }
                     }
 
@@ -363,18 +351,6 @@
                             font-size: 1rem;
                             line-height: 1.4;
                             position: relative;
-
-                            &::after {
-                                content: '';
-                                position: absolute;
-                                bottom: 0;
-                                right: 8px;
-                                width: 0;
-                                height: 0;
-                                border: 6px solid transparent;
-                                border-left-color: var(--primary-light);
-                                border-right: 0;
-                            }
                         }
 
                         .image-message {
@@ -643,13 +619,6 @@ html[dir="rtl"] {
                 .message,
                 .customQuestion {
                     border-radius: 12px 12px 4px 12px;
-
-                    &::after {
-                        left: auto;
-                        right: 8px;
-                        border-right: 0;
-                        border-left-color: var(--secondary-light);
-                    }
                 }
             }
 
@@ -659,14 +628,6 @@ html[dir="rtl"] {
                 .message,
                 .suggestion {
                     border-radius: 12px 12px 12px 4px;
-
-
-                    &::after {
-                        right: auto;
-                        left: 8px;
-                        border-left: 0;
-                        border-right-color: var(--primary-light);
-                    }
                 }
             }
         }
