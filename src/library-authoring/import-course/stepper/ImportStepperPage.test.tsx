@@ -126,7 +126,7 @@ describe('<ImportStepperModal />', () => {
     )).toBeInTheDocument());
 
     expect(screen.getByText('Analysis Summary')).toBeInTheDocument();
-    expect(screen.getByText('Import Details')).toBeInTheDocument();
+    expect(screen.getByText('Analysis Details')).toBeInTheDocument();
     // The import details is loading
     expect(screen.getByText('The selected course is being analyzed for import and review')).toBeInTheDocument();
   });

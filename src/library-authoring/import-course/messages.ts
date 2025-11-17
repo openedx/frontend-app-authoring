@@ -151,8 +151,8 @@ const messages = defineMessages({
   },
   importCourseDetailsTitle: {
     id: 'course-authoring.library-authoring.import-course.review-details.import-details.title',
-    defaultMessage: 'Import Details',
-    description: 'Title of the card for the import details of a imported course.',
+    defaultMessage: 'Analysis Details',
+    description: 'Title of the card for the analysis details of a imported course.',
   },
   importCourseDetailsLoadingBody: {
     id: 'course-authoring.library-authoring.import-course.review-details.import-details.loading.body',
