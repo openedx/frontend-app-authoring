@@ -7,6 +7,9 @@ import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 
+mockContentLibrary.applyMock();
+const { libraryId } = mockContentLibrary;
+
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: true, data: null }),
@@ -15,6 +18,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 // Mock the useMigrationInfo hook
 jest.mock('@src/library-authoring/data/apiHooks', () => ({
   useMigrationInfo: jest.fn().mockReturnValue({ isPending: true, data: null }),
+  useContentLibrary: jest.fn().mockReturnValue({}),
 }));
 
 // Mock the useGetBlockTypes hook
@@ -22,7 +26,6 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
-const { libraryId } = mockContentLibrary;
 const render = (element: React.ReactElement) => {
   const params: { libraryId: string } = { libraryId };
   return baseRender(element, {
