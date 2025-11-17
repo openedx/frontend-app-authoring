@@ -1,5 +1,5 @@
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
-import { useMigrationInfo } from '@src/studio-home/data/apiHooks';
+import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useGetBlockTypes } from '@src/search-manager';
 import { render as baseRender, screen, initializeMocks } from '@src/testUtils';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
@@ -13,7 +13,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 }));
 
 // Mock the useMigrationInfo hook
-jest.mock('@src/studio-home/data/apiHooks', () => ({
+jest.mock('@src/library-authoring/data/apiHooks', () => ({
   useMigrationInfo: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
