@@ -161,6 +161,55 @@ describe('courseSettings API', () => {
       );
       expect(result).toEqual(expected);
     });
+
+    it('should be updated with the request data formatted in snake_case', async () => {
+      const fakeSettingData = {
+        advancedModules: ['poll', 'problem-builder', 'h5pxblock'],
+        testCamelCase: 'To come snake_case',
+        PascalCase: true,
+        'kebab-case': {
+          nestedOption: 'This key must not be formatted',
+        },
+        UPPER_CASE: 'To come snake_case',
+        lowercase: 'This key must not be formatted', // because snake_case in lowercase not formatted
+        UPPERCASE: 'To come lowercase', // because snake_case in UPPERCASE format to lowercase
+        'Title Case': 'To come snake_case',
+        'dot.case': 'To come snake_case',
+        SCREAMING_SNAKE_CASE: 'To come snake_case',
+        MixedCase: 'To come snake_case',
+        'Train-Case': 'To come snake_case',
+        nestedOption: {
+          anotherOption: 'This key must not be formatted',
+        },
+      };
+      const expected = {
+        advanced_modules: { value: ['poll', 'problem-builder', 'h5pxblock'] },
+        test_camel_case: { value: 'To come snake_case' },
+        pascal_case: { value: true },
+        kebab_case: {
+          value: { nestedOption: 'This key must not be formatted' },
+        },
+        upper_case: { value: 'To come snake_case' },
+        lowercase: { value: 'This key must not be formatted' }, // because snake_case in lowercase not formatted
+        uppercase: { value: 'To come lowercase' }, // because snake_case in UPPERCASE format to lowercase
+        title_case: { value: 'To come snake_case' },
+        dot_case: { value: 'To come snake_case' },
+        screaming_snake_case: { value: 'To come snake_case' },
+        mixed_case: { value: 'To come snake_case' },
+        train_case: { value: 'To come snake_case' },
+        nested_option: {
+          value: { anotherOption: 'This key must not be formatted' },
+        },
+      };
+
+      mockHttpClient.patch.mockResolvedValue({ data: {} });
+
+      await updateCourseAdvancedSettings('course-v1:Test+T101+2024', fakeSettingData);
+      expect(mockHttpClient.patch).toHaveBeenCalledWith(
+        `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024`,
+        expected,
+      );
+    });
   });
 
   describe('getProctoringExamErrors', () => {
