@@ -112,7 +112,7 @@ const messages = defineMessages({
   },
   'appName-openedx': {
     id: 'authoring.discussions.appConfigForm.appName-openedx',
-    defaultMessage: 'Open edX (new)',
+    defaultMessage: 'Open edX',
     description: 'The name of the new Open edX Discussions app.',
   },
   divisionByGroup: {
