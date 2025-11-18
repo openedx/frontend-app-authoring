@@ -5,8 +5,8 @@ import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks'
 import {
   getWaffleFlags,
   waffleFlagDefaults,
-  bulkMigrateContentToLibraries,
-  getMigrationStatus,
+  bulkModulestoreMigrate,
+  getModulestoreMigrationStatus,
   BulkMigrateRequestData,
 } from './api';
 
@@ -51,10 +51,10 @@ export const useWaffleFlags = (courseId?: string) => {
 /**
  * Use this mutation to migrate multiple sources to a library
  */
-export const useBulkMigrate = () => {
+export const useBulkModulestoreMigrate = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (requestData: BulkMigrateRequestData) => bulkMigrateContentToLibraries(requestData),
+    mutationFn: async (requestData: BulkMigrateRequestData) => bulkModulestoreMigrate(requestData),
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.courseImports(variables.target) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.allMigrationInfo() });
@@ -65,10 +65,10 @@ export const useBulkMigrate = () => {
 /**
  * Get the migration status
  */
-export const useMigrationStatus = (migrationId: string | null) => (
+export const useModulestoreMigrationStatus = (migrationId: string | null) => (
   useQuery({
     queryKey: migrationQueryKeys.migrationTask(migrationId),
-    queryFn: migrationId ? () => getMigrationStatus(migrationId!) : skipToken,
+    queryFn: migrationId ? () => getModulestoreMigrationStatus(migrationId!) : skipToken,
     refetchInterval: 1000, // Refresh every second
   })
 );

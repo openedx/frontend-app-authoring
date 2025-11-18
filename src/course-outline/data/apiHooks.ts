@@ -29,15 +29,13 @@ export const useCreateCourseBlock = (
 export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
-    queryFn: () => getCourseItem(itemId!),
-    enabled: enabled && itemId !== undefined,
+    queryFn: enabled && itemId !== undefined ? () => getCourseItem(itemId!) : skipToken,
   })
 );
 
 export const useCourseDetails = (courseId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseDetails(courseId),
-    queryFn: courseId ? () => getCourseDetails(courseId) : skipToken,
-    enabled: enabled && courseId !== undefined,
+    queryFn: enabled && courseId ? () => getCourseDetails(courseId) : skipToken,
   })
 );

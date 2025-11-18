@@ -206,7 +206,7 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteReimportBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.reimport.body',
-    defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this secion is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
+    defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this course is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
     description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
   importCourseCompleteToastMessage: {

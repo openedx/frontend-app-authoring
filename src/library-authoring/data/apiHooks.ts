@@ -7,6 +7,7 @@ import {
   type QueryClient,
   replaceEqualDeep,
   keepPreviousData,
+  skipToken,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { type MeiliSearch } from 'meilisearch';
@@ -977,7 +978,6 @@ export const useCourseImports = (libraryId: string) => (
 export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
-    queryFn: () => api.getMigrationInfo(sourcesKeys),
-    enabled,
+    queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
   })
 );

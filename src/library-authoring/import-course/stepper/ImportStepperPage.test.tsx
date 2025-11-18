@@ -13,8 +13,8 @@ import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
 import { useGetBlockTypes } from '@src/search-manager';
+import { bulkModulestoreMigrateUrl } from '@src/data/api';
 import { ImportStepperPage } from './ImportStepperPage';
-import { bulkMigrateContentToLibrariesUrl } from '../../../data/api';
 
 let axiosMock;
 mockGetMigrationInfo.applyMock();
@@ -172,7 +172,7 @@ describe('<ImportStepperModal />', () => {
     });
     const user = userEvent.setup();
     renderComponent();
-    axiosMock.onPost(bulkMigrateContentToLibrariesUrl()).reply(200);
+    axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
     axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
       courseId: 'course-v1:HarvardX+123+2023',
       title: 'Managing Risk in the Information Age',

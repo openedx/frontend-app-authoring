@@ -132,4 +132,4 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
     },
   ],
 } as api.MigrateTaskStatusData;
-mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getMigrationStatus').mockImplementation(mockGetMigrationStatus);
+mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getModulestoreMigrationStatus').mockImplementation(mockGetMigrationStatus);

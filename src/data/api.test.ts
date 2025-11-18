@@ -8,12 +8,12 @@ describe('legacy libraries migration API', () => {
     ({ axiosMock } = initializeMocks());
   });
 
-  describe('getMigrationStatus', () => {
+  describe('getModulestoreMigrationStatus', () => {
     it('should get migration status', async () => {
       const migrationId = '1';
-      const url = api.getMigrationStatusUrl(migrationId);
+      const url = api.getModulestoreMigrationStatusUrl(migrationId);
       axiosMock.onGet(url).reply(200);
-      await api.getMigrationStatus(migrationId);
+      await api.getModulestoreMigrationStatus(migrationId);
 
       expect(axiosMock.history.get[0].url).toEqual(url);
     });
@@ -21,9 +21,9 @@ describe('legacy libraries migration API', () => {
 
   describe('bulkMigrateLegacyLibraries', () => {
     it('should call bulk migrate legacy libraries', async () => {
-      const url = api.bulkMigrateContentToLibrariesUrl();
+      const url = api.bulkModulestoreMigrateUrl();
       axiosMock.onPost(url).reply(200);
-      await api.bulkMigrateContentToLibraries({
+      await api.bulkModulestoreMigrate({
         sources: [],
         target: '1',
       });

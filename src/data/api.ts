@@ -6,12 +6,12 @@ const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
 /**
  * Get the URL to check the migration task status
  */
-export const getMigrationStatusUrl = (migrationId: string) => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migrations/${migrationId}/`;
+export const getModulestoreMigrationStatusUrl = (migrationId: string) => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migrations/${migrationId}/`;
 
 /**
  * Get the URL for bulk migrate content to libraries
  */
-export const bulkMigrateContentToLibrariesUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
+export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
 
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
@@ -121,21 +121,21 @@ export interface BulkMigrateRequestData {
 /**
  * Get migration task status
  */
-export async function getMigrationStatus(
+export async function getModulestoreMigrationStatus(
   migrationId: string,
 ): Promise<MigrateTaskStatusData> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(getMigrationStatusUrl(migrationId));
+  const { data } = await client.get(getModulestoreMigrationStatusUrl(migrationId));
   return camelCaseObject(data);
 }
 
 /**
  * Bulk migrate content to libraries
  */
-export async function bulkMigrateContentToLibraries(
+export async function bulkModulestoreMigrate(
   requestData: BulkMigrateRequestData,
 ): Promise<MigrateTaskStatusData> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.post(bulkMigrateContentToLibrariesUrl(), snakeCaseObject(requestData));
+  const { data } = await client.post(bulkModulestoreMigrateUrl(), snakeCaseObject(requestData));
   return camelCaseObject(data);
 }

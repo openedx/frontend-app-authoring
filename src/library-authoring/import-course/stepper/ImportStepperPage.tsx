@@ -14,7 +14,7 @@ import Loading from '@src/generic/Loading';
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
-import { useBulkMigrate } from '@src/data/apiHooks';
+import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import { ToastContext } from '@src/generic/toast-context';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
@@ -76,7 +76,8 @@ export const ImportStepperPage = () => {
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   // Using bulk migrate as it allows us to create collection automatically
-  const migrate = useBulkMigrate();
+  // TODO: Modify single migration API to allow create collection
+  const migrate = useBulkModulestoreMigrate();
 
   // Load the courses list
   // The loading state is handled in `CoursesList`

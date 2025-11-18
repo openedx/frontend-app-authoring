@@ -25,7 +25,7 @@ import type { LibraryV1Data } from '@src/studio-home/data/api';
 import { ToastContext } from '@src/generic/toast-context';
 import { Filter, LibrariesList } from '@src/studio-home/tabs-section/libraries-tab';
 
-import { useBulkMigrate } from '@src/data/apiHooks';
+import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import messages from './messages';
 import { SelectDestinationView } from './SelectDestinationView';
 import { ConfirmationView } from './ConfirmationView';
@@ -83,7 +83,7 @@ export const LegacyLibMigrationPage = () => {
   const [migrationFilter, setMigrationFilter] = useState<Filter[]>([Filter.unmigrated]);
   const [destinationLibrary, setDestination] = useState<ContentLibrary>();
   const [confirmationButtonState, setConfirmationButtonState] = useState('default');
-  const migrate = useBulkMigrate();
+  const migrate = useBulkModulestoreMigrate();
 
   const handleMigrate = useCallback(async () => {
     if (destinationLibrary) {
