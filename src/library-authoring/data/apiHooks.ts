@@ -7,6 +7,7 @@ import {
   type QueryClient,
   replaceEqualDeep,
   keepPreviousData,
+  skipToken,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { type MeiliSearch } from 'meilisearch';
@@ -93,9 +94,9 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.contentLibrary(libraryId),
     'courseImports',
   ],
+  allMigrationInfo: () => [...libraryAuthoringQueryKeys.all, 'migrationInfo'],
   migrationInfo: (sourceKeys: string[]) => [
-    ...libraryAuthoringQueryKeys.all,
-    'migrationInfo',
+    ...libraryAuthoringQueryKeys.allMigrationInfo(),
     ...sourceKeys,
   ],
 };
@@ -974,9 +975,9 @@ export const useCourseImports = (libraryId: string) => (
 /**
  * Returns the migration info of a given source list
  */
-export const useMigrationInfo = (sourcesKeys: string[]) => (
+export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
-    queryFn: () => api.getMigrationInfo(sourcesKeys),
+    queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
   })
 );

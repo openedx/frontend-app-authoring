@@ -24,7 +24,7 @@ import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useMigrationStatus } from '@src/legacy-libraries-migration/data/apiHooks';
+import { useModulestoreMigrationStatus } from '@src/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import Header from '@src/header';
@@ -152,7 +152,7 @@ const LibraryAuthoringPage = ({
   const migrationId = params.get('migration_task');
   const {
     data: migrationStatusData,
-  } = useMigrationStatus(migrationId);
+  } = useModulestoreMigrationStatus(migrationId);
 
   const {
     isLoadingPage: isLoadingStudioHome,

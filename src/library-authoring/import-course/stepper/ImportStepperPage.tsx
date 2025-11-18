@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -14,6 +14,10 @@ import Loading from '@src/generic/Loading';
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
+import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
+import { ToastContext } from '@src/generic/toast-context';
+import LoadingButton from '@src/generic/loading-button';
+import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
@@ -67,11 +71,41 @@ export const ImportStepperPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
+  const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
+  const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
+  const { showToast } = useContext(ToastContext);
+  // Using bulk migrate as it allows us to create collection automatically
+  // TODO: Modify single migration API to allow create collection
+  const migrate = useBulkModulestoreMigrate();
 
   // Load the courses list
   // The loading state is handled in `CoursesList`
   useStudioHome();
+
+  const handleImportCourse = async () => {
+    if (!selectedCourseId) {
+      return;
+    }
+    try {
+      const migrationTask = await migrate.mutateAsync({
+        sources: [selectedCourseId],
+        target: libraryId,
+        createCollections: true,
+        repeatHandlingStrategy: 'fork',
+        compositionLevel: 'section',
+      });
+      showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
+        courseName: courseData?.title,
+      }));
+      // TODO: Update this URL to redirect user to import details page.
+      navigate(`/library/${libraryId}?migration_task=${migrationTask.uuid}`);
+    } catch (error) {
+      showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
+        courseName: courseData?.title,
+      }));
+    }
+  };
 
   if (!libraryData) {
     return <Loading />;
@@ -119,7 +153,10 @@ export const ImportStepperPage = () => {
                   eventKey="review-details"
                   title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
                 >
-                  <ReviewImportDetails courseId={selectedCourseId} />
+                  <ReviewImportDetails
+                    markAnalysisComplete={setAnalysisCompleted}
+                    courseId={selectedCourseId}
+                  />
                 </Stepper.Step>
               </Stepper>
               <div className="mt-4">
@@ -140,9 +177,12 @@ export const ImportStepperPage = () => {
                     <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
-                    <Button disabled>
-                      <FormattedMessage {...messages.importCourseButton} />
-                    </Button>
+                    <LoadingButton
+                      onClick={handleImportCourse}
+                      label={intl.formatMessage(messages.importCourseButton)}
+                      variant="primary"
+                      disabled={!analysisCompleted}
+                    />
                   </ActionRow>
                 )}
               </div>

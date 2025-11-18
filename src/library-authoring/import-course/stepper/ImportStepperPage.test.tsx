@@ -3,7 +3,6 @@ import {
   initializeMocks,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from '@src/testUtils';
 import { initialState } from '@src/studio-home/factories/mockApiResponses';
@@ -13,6 +12,8 @@ import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
+import { useGetBlockTypes } from '@src/search-manager';
+import { bulkModulestoreMigrateUrl } from '@src/data/api';
 import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;
@@ -28,6 +29,11 @@ const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
+}));
+
+// Mock the useGetBlockTypes hook
+jest.mock('@src/search-manager', () => ({
+  useGetBlockTypes: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
 const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
@@ -114,7 +120,7 @@ describe('<ImportStepperModal />', () => {
 
     // Select a course
     const courseCard = screen.getAllByRole('radio')[0];
-    await fireEvent.click(courseCard);
+    await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
     // Click next
@@ -125,10 +131,9 @@ describe('<ImportStepperModal />', () => {
       /managing risk in the information age is being analyzed for review prior to import/i,
     )).toBeInTheDocument());
 
-    expect(screen.getByText('Analysis Summary')).toBeInTheDocument();
-    expect(screen.getByText('Analysis Details')).toBeInTheDocument();
+    expect(await screen.findByText('Analysis Summary')).toBeInTheDocument();
     // The import details is loading
-    expect(screen.getByText('The selected course is being analyzed for import and review')).toBeInTheDocument();
+    expect(await screen.findByText('Import Analysis in Progress')).toBeInTheDocument();
   });
 
   it('the course should remain selected on back', async () => {
@@ -140,17 +145,65 @@ describe('<ImportStepperModal />', () => {
 
     // Select a course
     const courseCard = screen.getAllByRole('radio')[0];
-    await fireEvent.click(courseCard);
+    await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
     // Click next
     expect(nextButton).toBeEnabled();
     await user.click(nextButton);
 
-    const backButton = await screen.getByRole('button', { name: /back/i });
+    const backButton = await screen.findByRole('button', { name: /back/i });
     await user.click(backButton);
 
     expect(screen.getByText(/managing risk in the information age/i)).toBeInTheDocument();
     expect(courseCard).toBeChecked();
+  });
+
+  it('should import select course on button click', async () => {
+    (useGetBlockTypes as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: {
+        chapter: 1,
+        sequential: 2,
+        vertical: 3,
+        html: 5,
+        problem: 3,
+      },
+    });
+    const user = userEvent.setup();
+    renderComponent();
+    axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
+    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
+      courseId: 'course-v1:HarvardX+123+2023',
+      title: 'Managing Risk in the Information Age',
+      subtitle: '',
+      org: 'HarvardX',
+      description: 'This is a test course',
+    });
+
+    const nextButton = await screen.findByRole('button', { name: /next step/i });
+    expect(nextButton).toBeDisabled();
+
+    // Select a course
+    const courseCard = screen.getAllByRole('radio')[0];
+    await user.click(courseCard);
+    expect(courseCard).toBeChecked();
+
+    // Click next
+    expect(nextButton).toBeEnabled();
+    await user.click(nextButton);
+
+    expect(await screen.findByText('Analysis Summary')).toBeInTheDocument();
+    // Analysis completed
+    expect(await screen.findByText('Import Analysis Completed: Reimport')).toBeInTheDocument();
+    const importBtn = await screen.findByRole('button', { name: 'Import Course' });
+    await user.click(importBtn);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(axiosMock.history.post[0].data).toBe(
+      '{"sources":["course-v1:HarvardX+123+2023"],"target":"lib:Axim:TEST","create_collections":true,"repeat_handling_strategy":"fork","composition_level":"section"}',
+    );
   });
 });

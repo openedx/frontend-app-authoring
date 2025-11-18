@@ -10,7 +10,7 @@ import {
   within,
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
-import { mockGetMigrationStatus } from '@src/legacy-libraries-migration/data/api.mocks';
+import { mockGetMigrationStatus } from '@src/data/api.mocks';
 import mockEmptyResult from '@src/search-modal/__mocks__/empty-search-result.json';
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';

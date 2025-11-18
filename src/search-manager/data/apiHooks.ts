@@ -299,5 +299,6 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
       'block_types',
     ],
     queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+    refetchOnMount: 'always',
   });
 };

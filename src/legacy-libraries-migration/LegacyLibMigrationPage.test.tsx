@@ -14,8 +14,8 @@ import { mockGetStudioHomeLibraries } from '@src/studio-home/data/api.mocks';
 import { getContentLibraryV2CreateApiUrl } from '@src/library-authoring/create-library/data/api';
 import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
 
+import { bulkModulestoreMigrateUrl } from '@src/data/api';
 import { LegacyLibMigrationPage } from './LegacyLibMigrationPage';
-import { bulkMigrateLegacyLibrariesUrl } from './data/api';
 
 const path = '/libraries-v1/migrate/*';
 let axiosMock: MockAdapter;
@@ -320,7 +320,7 @@ describe('<LegacyLibMigrationPage />', () => {
 
   it('should confirm migration', async () => {
     const user = userEvent.setup();
-    axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(200);
+    axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
@@ -377,7 +377,7 @@ describe('<LegacyLibMigrationPage />', () => {
 
   it('should show error when confirm migration', async () => {
     const user = userEvent.setup();
-    axiosMock.onPost(bulkMigrateLegacyLibrariesUrl()).reply(400);
+    axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(400);
     renderPage();
     expect(await screen.findByText('Migrate Legacy Libraries')).toBeInTheDocument();
     expect(await screen.findByText('MBA')).toBeInTheDocument();
