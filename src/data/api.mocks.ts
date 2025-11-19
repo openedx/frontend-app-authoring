@@ -29,6 +29,7 @@ mockGetMigrationStatus.migrationStatusData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -37,6 +38,7 @@ mockGetMigrationStatus.migrationStatusData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: false,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -53,6 +55,7 @@ mockGetMigrationStatus.migrationStatusFailedData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -61,6 +64,7 @@ mockGetMigrationStatus.migrationStatusFailedData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -77,6 +81,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -85,8 +90,10 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
     {
+      id: 2,
       source: 'legacy-lib-2',
       target: 'lib',
       compositionLevel: 'component',
@@ -95,6 +102,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -111,6 +119,7 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -119,8 +128,10 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
     {
+      id: 2,
       source: 'legacy-lib-2',
       target: 'lib',
       compositionLevel: 'component',
@@ -129,6 +140,7 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: false,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;

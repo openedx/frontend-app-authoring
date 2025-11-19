@@ -219,6 +219,62 @@ const messages = defineMessages({
     defaultMessage: '{courseName} migration failed.',
     description: 'Toast message that indicates course migration failed.',
   },
+  importDetailsTitle: {
+    id: 'library-authoring.import-course.import-details.title',
+    defaultMessage: 'Import Details',
+    description: 'Title of the Import Details page, in the import course',
+  },
+  importSuccessfulAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-successful.alert.title',
+    defaultMessage: 'Import Successful',
+    description: 'Title of the import successful alert in the import details page',
+  },
+  importSuccessfulAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-successful.alert.body',
+    defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}',
+    description: 'Body of the import successful alert in the import details page',
+  },
+  importSuccessfulBody: {
+    id: 'library-authoring.import-course.import-details.import-successful.body',
+    defaultMessage: 'Course {courseName} has been imported successfully.'
+                + ' Imported Course content can be edited and remixed in your Library, and reused in Courses',
+    description: 'Body of the import successful card in the import details page',
+  },
+  importSummaryTitle: {
+    id: 'library-authoring.import-course.import-details.import-summary.title',
+    defaultMessage: 'Import Summary',
+    description: 'Title of the import summary card in the import details page',
+  },
+  viewImportedContentButton: {
+    id: 'library-authoring.import-course.import-details.view-imported-content.button',
+    defaultMessage: 'View Imported Content',
+    description: 'Label of the button to view imported conten of a imported course',
+  },
+  importFailedAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-failed.title',
+    defaultMessage: 'Import Failed',
+    description: 'Title of the import failed card in the import details page.',
+  },
+  importFailedAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-failed.body',
+    defaultMessage: '{courseName} was not imported into your Library. See details bellow',
+    description: 'Body of the import failed card in the import details page.',
+  },
+  importFailedDetailsSectionTitle: {
+    id: 'library-authoring.import-course.import-details.import-failed.details.title',
+    defaultMessage: 'Details',
+    description: 'Title of the details section in the import details for a failed import',
+  },
+  importFailedDetailsSectionBody: {
+    id: 'library-authoring.import-course.import-details.import-failed.details.body',
+    defaultMessage: 'Import failed for the following reasons:',
+    description: 'Body of the details section in the import details for a failed import',
+  },
+  importFailedRetryImportButton: {
+    id: 'library-authoring.import-course.import-details.import-failed.re-try-import',
+    defaultMessage: 'Re-try Import',
+    description: 'Label of the button to re-try a failed import.',
+  },
 });
 
 export default messages;

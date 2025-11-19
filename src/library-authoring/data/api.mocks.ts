@@ -1091,6 +1091,7 @@ export async function mockGetCourseImports(libraryId: string): ReturnType<typeof
 mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
 mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
 mockGetCourseImports.succeedImport = {
+  taskUuid: '1',
   source: {
     key: 'course-v1:edX+DemoX+2025_T1',
     displayName: 'DemoX 2025 T1',
@@ -1100,6 +1101,7 @@ mockGetCourseImports.succeedImport = {
   progress: 1,
 } satisfies api.CourseImport;
 mockGetCourseImports.succeedImportWithCollection = {
+  taskUuid: '2',
   source: {
     key: 'course-v1:edX+DemoX+2025_T2',
     displayName: 'DemoX 2025 T2',
@@ -1112,6 +1114,7 @@ mockGetCourseImports.succeedImportWithCollection = {
   progress: 1,
 } satisfies api.CourseImport;
 mockGetCourseImports.failImport = {
+  taskUuid: '3',
   source: {
     key: 'course-v1:edX+DemoX+2025_T3',
     displayName: 'DemoX 2025 T3',
@@ -1121,6 +1124,7 @@ mockGetCourseImports.failImport = {
   progress: 0.30,
 } satisfies api.CourseImport;
 mockGetCourseImports.inProgressImport = {
+  taskUuid: '4',
   source: {
     key: 'course-v1:edX+DemoX+2025_T4',
     displayName: 'DemoX 2025 T4',
