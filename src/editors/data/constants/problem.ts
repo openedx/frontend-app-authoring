@@ -380,6 +380,8 @@ export const ignoredOlxAttributes = [
   '@_url_name',
   '@_x-is-pointer-node',
   '@_markdown_edited',
+  '@_copied_from_block',
+  '@_copied_from_version',
 ] as const;
 
 // Useful for the block creation workflow.
