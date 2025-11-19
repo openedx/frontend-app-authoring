@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -25,6 +25,8 @@ export const ImportDetailsPage = () => {
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { courseId, migrationTaskId } = useParams();
   const { showToast } = useContext(ToastContext);
+  const [disableReimport, setDisableReimport] = useState(false);
+
   // Using bulk migrate as it allows us to create collection automatically
   // TODO: Modify single migration API to allow create collection
   const migrate = useBulkModulestoreMigrate();
@@ -51,6 +53,24 @@ export const ImportDetailsPage = () => {
 
   const isPending = isPendingCourseDetails || isPendingMigrationStatusData;
 
+  // Calculate current migration status
+  let migrationStatus = 'In Progress';
+  if (migrationStatusData?.state === 'Failed') {
+    // The entire task has failed
+    migrationStatus = 'Failed';
+  } else if (migrationStatusData?.state === 'Succeeded') {
+    // Currently, bulk migrate is being used to migrate courses because
+    // it has the ability to create collections.
+    // In bulk migration, the task may succeed, but each migration may fail.
+    // This checks whether the course migration has failed.
+    // TODO: Update this code when using simple migration
+    if (courseImportDetails?.isFailed) {
+      migrationStatus = 'Failed';
+    } else {
+      migrationStatus = 'Succeeded';
+    }
+  }
+
   const collectionLink = () => {
     let libUrl = `/library/${libraryId}`;
     if (courseImportDetails?.targetCollection?.key) {
@@ -64,22 +84,23 @@ export const ImportDetailsPage = () => {
       return;
     }
 
+    setDisableReimport(true);
+
     try {
-      await migrate.mutateAsync({
+      const newMigrationTask = await migrate.mutateAsync({
         sources: [courseId!],
         target: libraryId,
         createCollections: true,
         repeatHandlingStrategy: 'fork',
         compositionLevel: 'section',
       });
-      showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
-        courseName: courseDetails.title,
-      }));
-      navigate(`${courseImportDetails.source}/${migrationStatusData.uuid}`);
+      navigate(`../import/${courseImportDetails.source}/${newMigrationTask.uuid}`);
+      setDisableReimport(false);
     } catch (error) {
       showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
         courseName: courseDetails.title,
       }));
+      setDisableReimport(false);
     }
   };
 
@@ -88,7 +109,7 @@ export const ImportDetailsPage = () => {
       return <Loading />;
     }
 
-    if (migrationStatusData?.state === 'Succeeded') {
+    if (migrationStatus === 'Succeeded') {
       return (
         <Stack gap={3}>
           <Alert variant="success" icon={CheckCircle}>
@@ -126,7 +147,7 @@ export const ImportDetailsPage = () => {
           </div>
         </Stack>
       );
-    } if (migrationStatusData?.state === 'Failed') {
+    } if (migrationStatus === 'Failed') {
       return (
         <Stack gap={3}>
           <Alert variant="danger" icon={Info}>
@@ -151,6 +172,7 @@ export const ImportDetailsPage = () => {
               variant="outline-primary"
               iconAfter={ArrowForward}
               onClick={handleImportCourse}
+              disabled={disableReimport}
             >
               <FormattedMessage {...messages.importFailedRetryImportButton} />
             </Button>
@@ -160,8 +182,21 @@ export const ImportDetailsPage = () => {
     }
     return (
     // In Progress
-      <Stack gap={2}>
-        In progress
+      <Stack gap={3}>
+        <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
+        <p>
+          <FormattedMessage {...messages.importInProgressBody} />
+        </p>
+        <SummaryCard isPending />
+        <div className="w-100 d-flex justify-content-end">
+          <Button
+            variant="outline-primary"
+            iconAfter={ArrowForward}
+            disabled
+          >
+            <FormattedMessage {...messages.viewImportedContentButton} />
+          </Button>
+        </div>
       </Stack>
     );
   };

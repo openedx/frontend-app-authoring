@@ -209,11 +209,6 @@ const messages = defineMessages({
     defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this course is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
     description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
-  importCourseCompleteToastMessage: {
-    id: 'library-authoring.import-course.complete-import.in-progress.toast.message',
-    defaultMessage: '{courseName} is being migrated.',
-    description: 'Toast message that indicates a course is being migrated',
-  },
   importCourseCompleteFailedToastMessage: {
     id: 'library-authoring.import-course.complete-import.failed.toast.message',
     defaultMessage: '{courseName} migration failed.',
@@ -274,6 +269,16 @@ const messages = defineMessages({
     id: 'library-authoring.import-course.import-details.import-failed.re-try-import',
     defaultMessage: 'Re-try Import',
     description: 'Label of the button to re-try a failed import.',
+  },
+  importInProgressTitle: {
+    id: 'library-authoring.import-course.import-details.import-in-progress.title',
+    defaultMessage: 'Import in Progress',
+    description: 'Title of the import details when the migration is in progress',
+  },
+  importInProgressBody: {
+    id: 'library-authoring.import-course.import-details.import-in-progress.body',
+    defaultMessage: 'Course {courseName} is being imported. This page will update when import is complete',
+    description: 'Body of the import details when the migration is in progress',
   },
 });
 
