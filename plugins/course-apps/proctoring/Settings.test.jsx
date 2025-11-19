@@ -105,7 +105,6 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
     });
 
-
     it('Hides all other fields when enabledProctorExam is false when first loaded', async () => {
       cleanup();
       // Overrides the handler defined in beforeEach.
@@ -821,6 +820,5 @@ describe('ProctoredExamSettings', () => {
         expect(document.activeElement).toEqual(successAlert);
       });
     });
-
   });
 });
