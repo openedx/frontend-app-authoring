@@ -4,14 +4,18 @@ import { useNavigate, useParams } from 'react-router';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Stack, Container, Alert, Layout, Button,
+  DataTable,
 } from '@openedx/paragon';
 
 import Header from '@src/header';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import { ArrowForward, CheckCircle, Info } from '@openedx/paragon/icons';
+import {
+  ArrowForward, CheckCircle, Info, WarningFilled,
+} from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
 import { ToastContext } from '@src/generic/toast-context';
+import { Paragraph } from '@src/utils';
 
 import { useBulkModulestoreMigrate, useModulestoreMigrationStatus } from '@src/data/apiHooks';
 import messages from './messages';
@@ -66,6 +70,8 @@ export const ImportDetailsPage = () => {
     // TODO: Update this code when using simple migration
     if (courseImportDetails?.isFailed) {
       migrationStatus = 'Failed';
+    } else if (courseImportDetails?.migrationSummary.unsupported !== 0) {
+      migrationStatus = 'Partial Succeeded';
     } else {
       migrationStatus = 'Succeeded';
     }
@@ -128,10 +134,10 @@ export const ImportDetailsPage = () => {
           </Alert>
           <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
           <SummaryCard
-            totalBlocks={courseImportDetails.migrationSummary.totalBlocks}
-            totalComponents={
-              courseImportDetails.migrationSummary.components + courseImportDetails.migrationSummary.unsupported
+            totalBlocks={
+              courseImportDetails.migrationSummary.totalBlocks - courseImportDetails.migrationSummary.unsupported
             }
+            totalComponents={courseImportDetails.migrationSummary.components}
             sections={courseImportDetails.migrationSummary.sections}
             subsections={courseImportDetails.migrationSummary.subsections}
             units={courseImportDetails.migrationSummary.units}
@@ -188,14 +194,90 @@ export const ImportDetailsPage = () => {
           </div>
         </Stack>
       );
+    } if (migrationStatus === 'Partial Succeeded') {
+      const importedSuccessfullyCount = courseImportDetails.migrationSummary.totalBlocks
+        - courseImportDetails.migrationSummary.unsupported;
+
+      return (
+        <Stack gap={3}>
+          <Alert variant="warning" icon={WarningFilled}>
+            <Alert.Heading>
+              <FormattedMessage {...messages.importPartialAlertTitle} />
+            </Alert.Heading>
+            <p>
+              <FormattedMessage
+                {...messages.importPartialAlertBody}
+                values={{
+                  courseName: courseDetails?.title,
+                  collectionName: courseImportDetails.targetCollection?.title,
+                }}
+              />
+            </p>
+          </Alert>
+          <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+          <SummaryCard
+            totalBlocks={
+              courseImportDetails.migrationSummary.totalBlocks - courseImportDetails.migrationSummary.unsupported
+            }
+            totalComponents={courseImportDetails.migrationSummary.components}
+            sections={courseImportDetails.migrationSummary.sections}
+            subsections={courseImportDetails.migrationSummary.subsections}
+            units={courseImportDetails.migrationSummary.units}
+            unsupportedBlocks={courseImportDetails.migrationSummary.unsupported}
+          />
+          <div>
+            <FormattedMessage
+              {...messages.importPartialBody}
+              values={{
+                percentage: Math.floor(
+                  (importedSuccessfullyCount * 100) / courseImportDetails.migrationSummary.totalBlocks,
+                ),
+                courseName: courseDetails?.title,
+                p: Paragraph,
+              }}
+            />
+          </div>
+          <DataTable
+            columns={[
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
+                accessor: 'blockName',
+
+              },
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
+                accessor: 'blockType',
+              },
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableReason),
+                accessor: 'reason',
+              },
+            ]}
+            data={courseImportDetails.unsupportedReasons}
+          >
+            <DataTable.Table />
+          </DataTable>
+          <div className="w-100 d-flex justify-content-end">
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={() => navigate(collectionLink())}
+            >
+              <FormattedMessage {...messages.viewImportedContentButton} />
+            </Button>
+          </div>
+        </Stack>
+      );
     }
+
     return (
-    // In Progress
+      // In Progress
       <Stack gap={3}>
         <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
         <p>
           <FormattedMessage {...messages.importInProgressBody} />
         </p>
+        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
         <SummaryCard isPending />
         <div className="w-100 d-flex justify-content-end">
           <Button

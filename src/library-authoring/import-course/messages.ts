@@ -280,6 +280,39 @@ const messages = defineMessages({
     defaultMessage: 'Course {courseName} is being imported. This page will update when import is complete',
     description: 'Body of the import details when the migration is in progress',
   },
+  importPartialAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: 'Partial Import Successful',
+    description: 'Title of the alert in the import details page when the migration is in partial import.',
+  },
+  importPartialAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}.'
+    + ' Some content was not added to your course. See details bellow.',
+    description: 'Body of the alert in the import details page when the migration is in partial import.',
+  },
+  importPartialBody: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: '<p>{percentage}% of Course {courseName} has been imported successfully.'
+    + ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>'
+    + '<p>Details of the import, including reasons some content was not abled to be imported are described below</p>',
+    description: 'Body of the import details page when the migration is in partial import.',
+  },
+  importPartialReasonTableBlockName: {
+    id: 'library-authoring.import-course.import-details.reasons-table.block-name',
+    defaultMessage: 'Block Name',
+    description: 'Label for the Block Name field in the Reasons table in the import details',
+  },
+  importPartialReasonTableBlockType: {
+    id: 'library-authoring.import-course.import-details.reasons-table.block-type',
+    defaultMessage: 'Block Type',
+    description: 'Label for the Block Type field in the Reasons table in the import details',
+  },
+  importPartialReasonTableReason: {
+    id: 'library-authoring.import-course.import-details.reasons-table.reason',
+    defaultMessage: 'Reason For Failed import',
+    description: 'Label for the Reason For Failed import field in the Reasons table in the import details',
+  },
 });
 
 export default messages;

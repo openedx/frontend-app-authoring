@@ -47,6 +47,7 @@ mockGetMigrationStatus.migrationStatusData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -81,6 +82,7 @@ mockGetMigrationStatus.migrationStatusFailedData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -115,6 +117,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
     {
       id: 2,
@@ -135,6 +138,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -169,6 +173,7 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
     {
       id: 2,
@@ -189,6 +194,7 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
         components: 0,
         unsupported: 0,
       },
+      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
