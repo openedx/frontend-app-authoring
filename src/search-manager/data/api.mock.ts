@@ -16,6 +16,7 @@ export async function mockContentSearchConfig(): ReturnType<typeof api.getConten
   };
 }
 mockContentSearchConfig.multisearchEndpointUrl = 'http://mock.meilisearch.local/multi-search';
+mockContentSearchConfig.searchEndpointUrl = 'http://mock.meilisearch.local/indexes/studio/search';
 mockContentSearchConfig.applyMock = () => (
   jest.spyOn(api, 'getContentSearchConfig').mockImplementation(mockContentSearchConfig)
 );
@@ -102,3 +103,24 @@ mockFetchIndexDocuments.applyMock = () => {
     { overwriteRoutes: true },
   );
 };
+
+/**
+ * Mock the useGetContentHits
+ */
+export async function mockGetContentHits(
+  mockResponse: 'noHits' | 'someHits',
+) {
+  fetchMock.post(mockContentSearchConfig.searchEndpointUrl, () => {
+    const mockResponseMap = {
+      noHits: {
+        hits: [],
+        estimatedTotalHits: 0,
+      },
+      someHits: {
+        hits: [{ usage_key: 'some-key' }, { usage_key: 'other-key' }],
+        estimatedTotalHits: 2,
+      },
+    };
+    return mockResponseMap[mockResponse];
+  });
+}

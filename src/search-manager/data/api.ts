@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
-  Filter, MeiliSearch, MultiSearchQuery,
+  Filter, MeiliSearch, MultiSearchQuery, SearchResponse,
 } from 'meilisearch';
 import { ContainerType } from '../../generic/key-utils';
 
@@ -552,3 +552,25 @@ export async function fetchTagsThatMatchKeyword({
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
 }
+
+/**
+ * Fetch the blocks that match query
+ */
+export const fetchContentHits = async (
+  client: MeiliSearch,
+  indexName: string,
+  extraFilter?: Filter,
+  limit?: number,
+  attributesToRetrieve?: string[],
+): Promise<SearchResponse<Record<string, any>>> => {
+  // Convert 'extraFilter' into an array
+  const extraFilterFormatted = forceArray(extraFilter);
+
+  const results = await client.index(indexName).search('', {
+    filter: extraFilterFormatted,
+    limit,
+    attributesToRetrieve,
+  });
+
+  return results;
+};
