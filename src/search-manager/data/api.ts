@@ -561,6 +561,7 @@ export const fetchContentHits = async (
   indexName: string,
   extraFilter?: Filter,
   limit?: number,
+  attributesToRetrieve?: string[],
 ): Promise<SearchResponse<Record<string, any>>> => {
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
@@ -568,6 +569,7 @@ export const fetchContentHits = async (
   const results = await client.index(indexName).search('', {
     filter: extraFilterFormatted,
     limit,
+    attributesToRetrieve,
   });
 
   return results;

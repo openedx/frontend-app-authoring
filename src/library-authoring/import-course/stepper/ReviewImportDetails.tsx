@@ -8,10 +8,9 @@ import { useEffect, useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
-import { useGetBlockTypes } from '@src/search-manager';
+import { useGetBlockTypes, useGetContentHits } from '@src/search-manager';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
-import { useGetContentHits } from '../../../search-manager/data/apiHooks';
 
 interface Props {
   courseId?: string;
@@ -141,10 +140,16 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     return unsupportedBlocks;
   }, [unsupportedBlockTypes]);
 
-  const { data: unsupportedBlocksData } = useGetContentHits([
-    `context_key = "${courseId}"`,
-    `block_type IN [${unsupportedBlockTypes?.flatMap(([value]) => `"${value}"`).join(',')}]`,
-  ], totalUnsupportedBlocks > 0, totalUnsupportedBlocks, 'always');
+  const { data: unsupportedBlocksData } = useGetContentHits(
+    [
+      `context_key = "${courseId}"`,
+      `block_type IN [${unsupportedBlockTypes?.flatMap(([ value ]) => `"${value}"`).join(',')}]`,
+    ],
+    totalUnsupportedBlocks > 0,
+    [ "usage_key" ],
+    totalUnsupportedBlocks,
+    'always'
+  );
 
   const { data: unsupportedBlocksChildren } = useGetBlockTypes([
     `context_key = "${courseId}"`,

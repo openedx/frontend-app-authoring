@@ -309,6 +309,7 @@ export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) 
 export const useGetContentHits = (
   extraFilters: Filter,
   enabled: boolean = true,
+  attributesToRetrieve?: string[],
   limit?: number,
   refetchOnMount?: boolean | 'always',
 ) => {
@@ -322,7 +323,13 @@ export const useGetContentHits = (
       indexName,
       extraFilters,
     ],
-    queryFn: enabled ? () => fetchContentHits(client!, indexName!, extraFilters, limit) : skipToken,
+    queryFn: enabled ? () => fetchContentHits(
+      client!,
+      indexName!,
+      extraFilters,
+      limit,
+      attributesToRetrieve,
+    ) : skipToken,
     refetchOnMount,
   });
 };

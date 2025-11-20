@@ -159,7 +159,7 @@ describe('<ImportStepperModal />', () => {
     expect(courseCard).toBeChecked();
   });
 
-  it('should import select course on button click', async () => {
+  it('should import selected course on button click', async () => {
     (useGetBlockTypes as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
