@@ -128,7 +128,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     if (!blockTypes) {
       return undefined;
     }
-    return Object.entries(blockTypes).filter(([blockType, ]) => (
+    return Object.entries(blockTypes).filter(([blockType]) => (
       getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType)
     ));
   }, [blockTypes]);
@@ -137,16 +137,14 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     if (!unsupportedBlockTypes) {
       return 0;
     }
-    const unsupportedBlocks = unsupportedBlockTypes.reduce((total, [, count]) => {
-      return total + count;
-    }, 0);
+    const unsupportedBlocks = unsupportedBlockTypes.reduce((total, [, count]) => total + count, 0);
     return unsupportedBlocks;
   }, [unsupportedBlockTypes]);
 
   const { data: unsupportedBlocksData } = useGetContentHits([
     `context_key = "${courseId}"`,
     `block_type IN [${unsupportedBlockTypes?.flatMap(([value]) => `"${value}"`).join(',')}]`,
-  ], totalUnsupportedBlocks > 0, totalUnsupportedBlocks, 'always')
+  ], totalUnsupportedBlocks > 0, totalUnsupportedBlocks, 'always');
 
   const { data: unsupportedBlocksChildren } = useGetBlockTypes([
     `context_key = "${courseId}"`,
@@ -157,15 +155,14 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     if (!unsupportedBlocksChildren) {
       return 0;
     }
-    const unsupportedBlocks = Object.values(unsupportedBlocksChildren).reduce((total, count) => {
-      return total + count;
-    }, 0);
+    const unsupportedBlocks = Object.values(unsupportedBlocksChildren).reduce((total, count) => total + count, 0);
     return unsupportedBlocks;
   }, [unsupportedBlocksChildren]);
 
-  const finalUnssupportedBlocks = useMemo(() => {
-    return totalUnsupportedBlocks + totalUnsupportedBlockChildren;
-  }, [totalUnsupportedBlocks, totalUnsupportedBlockChildren]);
+  const finalUnssupportedBlocks = useMemo(
+    () => totalUnsupportedBlocks + totalUnsupportedBlockChildren,
+    [totalUnsupportedBlocks, totalUnsupportedBlockChildren],
+  );
 
   const totalBlocks = useMemo(() => {
     if (!blockTypes) {

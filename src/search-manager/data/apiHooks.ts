@@ -1,5 +1,7 @@
 import React from 'react';
-import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData, skipToken, useInfiniteQuery, useQuery,
+} from '@tanstack/react-query';
 import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
@@ -299,12 +301,17 @@ export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) 
       extraFilters,
       'block_types',
     ],
-    queryFn: enabled ? () => fetchBlockTypes(client!, indexName!, extraFilters): skipToken,
+    queryFn: enabled ? () => fetchBlockTypes(client!, indexName!, extraFilters) : skipToken,
     refetchOnMount: 'always',
   });
 };
 
-export const useGetContentHits = (extraFilters: Filter, enabled: boolean = true, limit?: number, refetchOnMount?: boolean | 'always') => {
+export const useGetContentHits = (
+  extraFilters: Filter,
+  enabled: boolean = true,
+  limit?: number,
+  refetchOnMount?: boolean | 'always',
+) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -315,7 +322,7 @@ export const useGetContentHits = (extraFilters: Filter, enabled: boolean = true,
       indexName,
       extraFilters,
     ],
-    queryFn: enabled ? () => fetchContentHits(client!, indexName!, extraFilters, limit): skipToken,
+    queryFn: enabled ? () => fetchContentHits(client!, indexName!, extraFilters, limit) : skipToken,
     refetchOnMount,
   });
 };

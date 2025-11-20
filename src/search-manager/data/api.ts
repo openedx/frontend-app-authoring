@@ -565,7 +565,7 @@ export const fetchContentHits = async (
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
 
-  const results = await client.index(indexName).search("", {
+  const results = await client.index(indexName).search('', {
     filter: extraFilterFormatted,
     limit,
   });
