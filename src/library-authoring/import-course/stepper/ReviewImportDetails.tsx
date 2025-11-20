@@ -143,12 +143,12 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
   const { data: unsupportedBlocksData } = useGetContentHits(
     [
       `context_key = "${courseId}"`,
-      `block_type IN [${unsupportedBlockTypes?.flatMap(([ value ]) => `"${value}"`).join(',')}]`,
+      `block_type IN [${unsupportedBlockTypes?.flatMap(([value]) => `"${value}"`).join(',')}]`,
     ],
     totalUnsupportedBlocks > 0,
-    [ "usage_key" ],
+    ['usage_key'],
     totalUnsupportedBlocks,
-    'always'
+    'always',
   );
 
   const { data: unsupportedBlocksChildren } = useGetBlockTypes([

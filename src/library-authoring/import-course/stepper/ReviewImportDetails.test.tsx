@@ -144,7 +144,7 @@ describe('ReviewImportDetails', () => {
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
-        hits: [{usage_key: "some-usage-key"}],
+        hits: [{ usage_key: 'some-usage-key' }],
         estimatedTotalHits: 1,
       },
     });
