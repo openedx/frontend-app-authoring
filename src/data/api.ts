@@ -97,6 +97,14 @@ export interface MigrateParameters {
     key: string;
     title: string;
   } | null;
+  migrationSummary: {
+    totalBlocks: number;
+    sections: number;
+    subsections: number;
+    units: number;
+    components: number;
+    unsupported: number;
+  }
 }
 
 export interface MigrateTaskStatusData {

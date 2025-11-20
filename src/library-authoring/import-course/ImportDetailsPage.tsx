@@ -105,7 +105,7 @@ export const ImportDetailsPage = () => {
   };
 
   const renderBody = () => {
-    if (isPending) {
+    if (isPending || !courseImportDetails) {
       return <Loading />;
     }
 
@@ -121,13 +121,22 @@ export const ImportDetailsPage = () => {
                 {...messages.importSuccessfulAlertBody}
                 values={{
                   courseName: courseDetails?.title,
-                  collectionName: courseImportDetails?.targetCollection?.title,
+                  collectionName: courseImportDetails.targetCollection?.title,
                 }}
               />
             </p>
           </Alert>
           <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
-          <SummaryCard isPending />
+          <SummaryCard
+            totalBlocks={courseImportDetails.migrationSummary.totalBlocks}
+            totalComponents={
+              courseImportDetails.migrationSummary.components + courseImportDetails.migrationSummary.unsupported
+            }
+            sections={courseImportDetails.migrationSummary.sections}
+            subsections={courseImportDetails.migrationSummary.subsections}
+            units={courseImportDetails.migrationSummary.units}
+            unsupportedBlocks={courseImportDetails.migrationSummary.unsupported}
+          />
           <p>
             <FormattedMessage
               {...messages.importSuccessfulBody}
