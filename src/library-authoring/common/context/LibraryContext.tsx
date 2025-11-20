@@ -7,14 +7,14 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
+import { useValidateUserPermissions } from '@src/authz/data/hooks';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
-import { useValidateUserPermissions } from '@src/authz/data/hooks';
-import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 
 const LIBRARY_PERMISSIONS = [
   CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
