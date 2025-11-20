@@ -120,9 +120,11 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
   ]);
 
   useEffect(() => {
+    // Mark complete to inform parent component of analysis completion.
     markAnalysisComplete(!isBlockDataPending);
   }, [isBlockDataPending]);
 
+  /** Filter unsupported blocks by checking if the block type is in the library's list of unsupported blocks. */
   const unsupportedBlockTypes = useMemo(() => {
     if (!blockTypes) {
       return undefined;
@@ -132,6 +134,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     ));
   }, [blockTypes]);
 
+  /** Calculate the total number of unsupported blocks by summing up the count for each block type. */
   const totalUnsupportedBlocks = useMemo(() => {
     if (!unsupportedBlockTypes) {
       return 0;
@@ -140,6 +143,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     return unsupportedBlocks;
   }, [unsupportedBlockTypes]);
 
+  // Fetch unsupported blocks usage_key information from meilisearch index.
   const { data: unsupportedBlocksData } = useGetContentHits(
     [
       `context_key = "${courseId}"`,
@@ -151,11 +155,13 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     'always',
   );
 
+  // Fetch children blocks for each block in the unsupportedBlocks array.
   const { data: unsupportedBlocksChildren } = useGetBlockTypes([
     `context_key = "${courseId}"`,
     `breadcrumbs.usage_key IN [${unsupportedBlocksData?.hits.map((value) => `"${value.usage_key}"`).join(',')}]`,
   ], (unsupportedBlocksData?.estimatedTotalHits || 0) > 0);
 
+  /** Calculate the total number of unsupported children blocks by summing up the count for each block. */
   const totalUnsupportedBlockChildren = useMemo(() => {
     if (!unsupportedBlocksChildren) {
       return 0;
@@ -164,11 +170,14 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     return unsupportedBlocks;
   }, [unsupportedBlocksChildren]);
 
+  /** Finally calculate the final number of unsupported blocks by adding parent unsupported and children
+  unsupported blocks. */
   const finalUnssupportedBlocks = useMemo(
     () => totalUnsupportedBlocks + totalUnsupportedBlockChildren,
     [totalUnsupportedBlocks, totalUnsupportedBlockChildren],
   );
 
+  /** Calculate total supported blocks by subtracting final unsupported blocks from the total number of blocks */
   const totalBlocks = useMemo(() => {
     if (!blockTypes) {
       return undefined;
@@ -176,6 +185,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnssupportedBlocks;
   }, [blockTypes, finalUnssupportedBlocks]);
 
+  /** Calculate total components by excluding those that are chapters, sequential, or vertical. */
   const totalComponents = useMemo(() => {
     if (!blockTypes) {
       return undefined;
@@ -192,6 +202,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     ) - finalUnssupportedBlocks;
   }, [blockTypes, finalUnssupportedBlocks]);
 
+  /** Calculate the unsupported block percentage based on the final total blocks and unsupported blocks. */
   const unsupportedBlockPercentage = useMemo(() => {
     if (!blockTypes || !totalBlocks) {
       return 0;
