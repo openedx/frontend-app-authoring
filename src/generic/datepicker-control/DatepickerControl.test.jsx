@@ -28,6 +28,10 @@ describe('<DatepickerControl />', () => {
     onChange: onChangeMock,
   };
 
+  beforeEach(() => {
+    onChangeMock.mockClear();
+  });
+
   it('renders without crashing', () => {
     const { getByText, queryAllByText, getByPlaceholderText } = render(
       <RootWrapper {...props} />,
@@ -47,5 +51,42 @@ describe('<DatepickerControl />', () => {
     expect(onChangeMock).toHaveBeenCalledWith(
       convertToStringFromDate('06/16/2023'),
     );
+  });
+
+  it('renders time picker with accessibility hint', () => {
+    const { getByText, getByPlaceholderText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText=""
+      />,
+    );
+    const input = getByPlaceholderText('HH:MM');
+
+    expect(
+      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
+    ).toBeInTheDocument();
+    expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
+  });
+
+  it('increments time value with arrow down and decrements with arrow up', () => {
+    const incremented = convertToStringFromDate('2025-01-01T10:30:00Z');
+    const restored = convertToStringFromDate('2025-01-01T10:00:00Z');
+    const { getByPlaceholderText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText=""
+      />,
+    );
+    const input = getByPlaceholderText('HH:MM');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown', target: { value: '10:00' } });
+    expect(onChangeMock).toHaveBeenNthCalledWith(1, incremented);
+
+    fireEvent.keyDown(input, { key: 'ArrowUp', target: { value: '10:30' } });
+    expect(onChangeMock).toHaveBeenNthCalledWith(2, restored);
   });
 });

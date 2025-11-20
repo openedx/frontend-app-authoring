@@ -5,10 +5,25 @@ import classNames from 'classnames';
 import { Form, Icon } from '@openedx/paragon';
 import { Calendar } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import moment from 'moment';
 
 import { convertToDateFromString, convertToStringFromDate, isValidDate } from '../../utils';
 import { DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import messages from './messages';
+
+const timeFormats = ['HH:mm', 'H:mm', 'hh:mm A', 'h:mm A', 'hh:mm a', 'h:mm a'];
+const timeStepMinutes = 30;
+
+const scrollSelectedTimeIntoView = () => {
+  const schedule = typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function'
+    ? window.requestAnimationFrame
+    : ((cb) => setTimeout(() => cb(), 0));
+
+  schedule(() => {
+    const selectedItem = document.querySelector('.react-datepicker__time-list-item--selected');
+    selectedItem?.scrollIntoView({ block: 'nearest' });
+  });
+};
 
 export const DATEPICKER_TYPES = {
   date: 'date',
@@ -32,6 +47,61 @@ const DatepickerControl = ({
     [DATEPICKER_TYPES.date]: DATE_FORMAT,
     [DATEPICKER_TYPES.time]: TIME_FORMAT,
   };
+  const isTimePicker = type === DATEPICKER_TYPES.time;
+
+  const parseTimeValue = (rawValue) => {
+    if (!rawValue) {
+      return null;
+    }
+    const sanitized = rawValue.trim().replace(/\s+/g, ' ');
+    const parsed = moment(sanitized, timeFormats, true);
+    if (!parsed.isValid()) {
+      return null;
+    }
+    return parsed;
+  };
+
+  const handleTimeKeyDown = (event) => {
+    if (!isTimePicker || readonly) {
+      return;
+    }
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    const direction = event.key === 'ArrowUp' ? -1 : 1;
+    const parsedTime = parseTimeValue(event.target.value);
+    const baseMoment = formattedDate ? moment(formattedDate) : moment().startOf('day');
+    const workingMoment = parsedTime
+      ? baseMoment.clone().hours(parsedTime.hours()).minutes(parsedTime.minutes())
+      : baseMoment.clone();
+
+    workingMoment.seconds(0);
+    workingMoment.milliseconds(0);
+
+    const roundedMinutes = Math.floor(workingMoment.minutes() / timeStepMinutes) * timeStepMinutes;
+    workingMoment.minutes(roundedMinutes);
+
+    const adjustedTime = workingMoment.add(direction * timeStepMinutes, 'minutes');
+    onChange(convertToStringFromDate(adjustedTime.toDate()));
+    scrollSelectedTimeIntoView();
+  };
+
+  let describedByIds;
+  if (isTimePicker) {
+    const ids = [`${controlName}-timehint`];
+    if (helpText) {
+      ids.push(`${controlName}-helptext`);
+    }
+    describedByIds = ids.filter(Boolean).join(' ') || undefined;
+  } else if (helpText) {
+    describedByIds = `${controlName}-helptext`;
+  }
+
+  const ariaLabel = isTimePicker
+    ? intl.formatMessage(messages.timepickerAriaLabel)
+    : undefined;
 
   return (
     <Form.Group className="form-group-custom datepicker-custom">
@@ -67,6 +137,9 @@ const DatepickerControl = ({
           showTimeSelectOnly={type === DATEPICKER_TYPES.time}
           placeholderText={inputFormat[type].toLocaleUpperCase()}
           showPopperArrow={false}
+          onKeyDown={isTimePicker ? handleTimeKeyDown : undefined}
+          ariaLabel={ariaLabel}
+          ariaDescribedBy={describedByIds}
           onChange={(date) => {
             if (isValidDate(date)) {
               onChange(convertToStringFromDate(date));
@@ -74,7 +147,18 @@ const DatepickerControl = ({
           }}
         />
       </div>
-      {helpText && <Form.Control.Feedback>{helpText}</Form.Control.Feedback>}
+      {isTimePicker && (
+        <Form.Text id={`${controlName}-timehint`} className="sr-only">
+          {intl.formatMessage(messages.timepickerScreenreaderHint, {
+            timeFormat: inputFormat[type].toLocaleUpperCase(),
+          })}
+        </Form.Text>
+      )}
+      {helpText && (
+        <Form.Control.Feedback id={`${controlName}-helptext`}>
+          {helpText}
+        </Form.Control.Feedback>
+      )}
     </Form.Group>
   );
 };
