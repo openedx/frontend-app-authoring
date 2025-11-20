@@ -1,4 +1,4 @@
-export const appId = 'org.openedx.frontend.app.adminConsole';
+export const appId = 'org.openedx.frontend.authoring';
 
 export const CONTENT_LIBRARY_PERMISSIONS = {
   DELETE_LIBRARY: 'content_libraries.delete_library',
