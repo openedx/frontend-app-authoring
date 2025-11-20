@@ -13,6 +13,12 @@ import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
+import { useValidateUserPermissions } from '@src/authz/data/hooks';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
+
+const LIBRARY_PERMISSIONS = [
+  CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
+];
 
 export interface ComponentEditorInfo {
   usageKey: string;
@@ -25,6 +31,7 @@ export type LibraryContextData = {
   libraryId: string;
   libraryData?: ContentLibrary;
   readOnly: boolean;
+  canPublish: boolean;
   isLoadingLibraryData: boolean;
   /** The ID of the current collection/container, on the sidebar OR page */
   collectionId: string | undefined;
@@ -107,6 +114,11 @@ export const LibraryProvider = ({
     componentPickerMode,
   } = useComponentPickerContext();
 
+  const permissions = LIBRARY_PERMISSIONS.map(action => ({ action, scope: libraryId }));
+
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useValidateUserPermissions(permissions);
+  const canPublish = userPermissions ? userPermissions[0]?.allowed : false;
+  // TODO change to use canEdit from userPermissions later
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params
@@ -131,7 +143,8 @@ export const LibraryProvider = ({
       containerId,
       setContainerId,
       readOnly,
-      isLoadingLibraryData,
+      canPublish,
+      isLoadingLibraryData: isLoadingLibraryData || isLoadingUserPermissions,
       showOnlyPublished,
       extraFilter,
       isCreateCollectionModalOpen,
@@ -154,7 +167,9 @@ export const LibraryProvider = ({
     containerId,
     setContainerId,
     readOnly,
+    canPublish,
     isLoadingLibraryData,
+    isLoadingUserPermissions,
     showOnlyPublished,
     extraFilter,
     isCreateCollectionModalOpen,
