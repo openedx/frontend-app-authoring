@@ -1,5 +1,5 @@
 import React from 'react';
-import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
@@ -11,6 +11,7 @@ import {
   getContentSearchConfig,
   fetchBlockTypes,
   type PublishStatus,
+  fetchContentHits,
 } from './api';
 
 /**
@@ -286,7 +287,7 @@ export const useTagFilterOptions = (args: {
   return { ...mainQuery, data };
 };
 
-export const useGetBlockTypes = (extraFilters: Filter) => {
+export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -298,7 +299,23 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
       extraFilters,
       'block_types',
     ],
-    queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+    queryFn: enabled ? () => fetchBlockTypes(client!, indexName!, extraFilters): skipToken,
     refetchOnMount: 'always',
+  });
+};
+
+export const useGetContentHits = (extraFilters: Filter, enabled: boolean = true, limit?: number, refetchOnMount?: boolean | 'always') => {
+  const { client, indexName } = useContentSearchConnection();
+  return useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      extraFilters,
+    ],
+    queryFn: enabled ? () => fetchContentHits(client!, indexName!, extraFilters, limit): skipToken,
+    refetchOnMount,
   });
 };

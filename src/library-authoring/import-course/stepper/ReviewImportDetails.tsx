@@ -11,6 +11,7 @@ import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useGetBlockTypes } from '@src/search-manager';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
+import { useGetContentHits } from '../../../search-manager/data/apiHooks';
 
 interface Props {
   courseId?: string;
@@ -123,26 +124,55 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     markAnalysisComplete(!isBlockDataPending);
   }, [isBlockDataPending]);
 
-  const totalUnsupportedBlocks = useMemo(() => {
+  const unsupportedBlockTypes = useMemo(() => {
     if (!blockTypes) {
+      return undefined;
+    }
+    return Object.entries(blockTypes).filter(([blockType, ]) => (
+      getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType)
+    ));
+  }, [blockTypes]);
+
+  const totalUnsupportedBlocks = useMemo(() => {
+    if (!unsupportedBlockTypes) {
       return 0;
     }
-    const unsupportedBlocks = Object.entries(blockTypes).reduce((total, [blockType, count]) => {
-      const isUnsupportedBlock = getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType);
-      if (isUnsupportedBlock) {
-        return total + count;
-      }
-      return total;
+    const unsupportedBlocks = unsupportedBlockTypes.reduce((total, [, count]) => {
+      return total + count;
     }, 0);
     return unsupportedBlocks;
-  }, [blockTypes]);
+  }, [unsupportedBlockTypes]);
+
+  const { data: unsupportedBlocksData } = useGetContentHits([
+    `context_key = "${courseId}"`,
+    `block_type IN [${unsupportedBlockTypes?.flatMap(([value]) => `"${value}"`).join(',')}]`,
+  ], totalUnsupportedBlocks > 0, totalUnsupportedBlocks, 'always')
+
+  const { data: unsupportedBlocksChildren } = useGetBlockTypes([
+    `context_key = "${courseId}"`,
+    `breadcrumbs.usage_key IN [${unsupportedBlocksData?.hits.map((value) => `"${value.usage_key}"`).join(',')}]`,
+  ], (unsupportedBlocksData?.estimatedTotalHits || 0) > 0);
+
+  const totalUnsupportedBlockChildren = useMemo(() => {
+    if (!unsupportedBlocksChildren) {
+      return 0;
+    }
+    const unsupportedBlocks = Object.values(unsupportedBlocksChildren).reduce((total, count) => {
+      return total + count;
+    }, 0);
+    return unsupportedBlocks;
+  }, [unsupportedBlocksChildren]);
+
+  const finalUnssupportedBlocks = useMemo(() => {
+    return totalUnsupportedBlocks + totalUnsupportedBlockChildren;
+  }, [totalUnsupportedBlocks, totalUnsupportedBlockChildren]);
 
   const totalBlocks = useMemo(() => {
     if (!blockTypes) {
       return undefined;
     }
-    return Object.values(blockTypes).reduce((total, block) => total + block, 0) - totalUnsupportedBlocks;
-  }, [blockTypes]);
+    return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnssupportedBlocks;
+  }, [blockTypes, finalUnssupportedBlocks]);
 
   const totalComponents = useMemo(() => {
     if (!blockTypes) {
@@ -157,15 +187,15 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         return total;
       },
       0,
-    ) - totalUnsupportedBlocks;
-  }, [blockTypes]);
+    ) - finalUnssupportedBlocks;
+  }, [blockTypes, finalUnssupportedBlocks]);
 
   const unsupportedBlockPercentage = useMemo(() => {
     if (!blockTypes || !totalBlocks) {
       return 0;
     }
-    return (totalUnsupportedBlocks / (totalBlocks + totalUnsupportedBlocks)) * 100;
-  }, [blockTypes]);
+    return (finalUnssupportedBlocks / (totalBlocks + finalUnssupportedBlocks)) * 100;
+  }, [blockTypes, finalUnssupportedBlocks]);
 
   return (
     <Stack gap={4}>
@@ -181,10 +211,10 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         sections={blockTypes?.chapter}
         subsections={blockTypes?.sequential}
         units={blockTypes?.vertical}
-        unsupportedBlocks={totalUnsupportedBlocks}
+        unsupportedBlocks={finalUnssupportedBlocks}
         isPending={isBlockDataPending}
       />
-      {!isBlockDataPending && totalUnsupportedBlocks > 0
+      {!isBlockDataPending && finalUnssupportedBlocks > 0
         && (
         <>
           <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
