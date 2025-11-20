@@ -34,6 +34,7 @@ jest.mock('react-router-dom', () => ({
 // Mock the useGetBlockTypes hook
 jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: jest.fn().mockReturnValue({ isPending: true, data: null }),
+  useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
 const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
