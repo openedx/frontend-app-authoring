@@ -5,6 +5,7 @@ import {
   useEffect,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
@@ -109,6 +110,7 @@ export const replaceStaticWithAsset = ({
   learningContextId,
   editorType,
   lmsEndpointUrl,
+  validateAssetUrl = true,
 }) => {
   let content = initialContent;
   let hasChanges = false;
@@ -116,7 +118,7 @@ export const replaceStaticWithAsset = ({
     src => src.startsWith('/static') || src.startsWith('/asset'),
   );
   if (!isEmpty(srcs)) {
-    srcs.forEach(src => {
+    srcs.forEach(async src => {
       const currentContent = content;
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
@@ -147,8 +149,18 @@ export const replaceStaticWithAsset = ({
       }
       if (staticFullUrl) {
         const currentSrc = src.substring(0, src.indexOf('"'));
-        content = currentContent.replace(currentSrc, staticFullUrl);
-        hasChanges = true;
+
+        // check if the asset exists on the server before replacing
+        try {
+          if (validateAssetUrl) {
+            await getAuthenticatedHttpClient()
+              .get(staticFullUrl);
+          }
+          content = currentContent.replace(currentSrc, staticFullUrl);
+          hasChanges = true;
+        } catch (e) {
+          content = currentContent;
+        }
       }
     });
     if (hasChanges) { return content; }

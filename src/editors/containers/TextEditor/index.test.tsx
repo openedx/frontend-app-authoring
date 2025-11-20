@@ -70,6 +70,7 @@ describe('TextEditor', () => {
     test('renders static images with relative paths', () => {
       const updatedProps = {
         ...props,
+        validateAssetUrl: false,
         blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
       };
       const { container } = render(<TextEditor {...updatedProps} />);

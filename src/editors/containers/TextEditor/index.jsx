@@ -32,6 +32,7 @@ const TextEditor = ({
   learningContextId,
   images,
   isLibrary,
+  validateAssetUrl,
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
@@ -39,6 +40,7 @@ const TextEditor = ({
   const newContent = replaceStaticWithAsset({
     initialContent,
     learningContextId,
+    validateAssetUrl,
   });
   const editorContent = newContent || initialContent;
   let staticRootUrl;
@@ -106,6 +108,7 @@ TextEditor.defaultProps = {
   blockValue: null,
   blockFinished: null,
   returnFunction: null,
+  validateAssetUrl: null,
 };
 TextEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
@@ -122,6 +125,7 @@ TextEditor.propTypes = {
   learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
+  validateAssetUrl: PropTypes.bool,
 };
 
 export const mapStateToProps = (state) => ({
