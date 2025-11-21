@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -27,7 +27,7 @@ export const ImportDetailsPage = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
-  const [ enableRefeshState, setEnableRefreshState] = useState(true);
+  const [enableRefeshState, setEnableRefreshState] = useState(true);
   const { courseId, migrationTaskId } = useParams();
   const { showToast } = useContext(ToastContext);
   const [disableReimport, setDisableReimport] = useState(false);
