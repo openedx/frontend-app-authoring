@@ -77,8 +77,6 @@ export const ImportDetailsPage = () => {
     }
   }
 
-  migrationStatus = 'In Progress';
-
   const collectionLink = () => {
     let libUrl = `/library/${libraryId}`;
     if (courseImportDetails?.targetCollection?.key) {
