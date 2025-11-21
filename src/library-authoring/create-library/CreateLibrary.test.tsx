@@ -485,6 +485,68 @@ describe('<CreateLibrary />', () => {
       });
     });
 
+    test('shows success state without instance and user email information', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      const mockResult = {
+        learningPackageId: 123,
+        title: 'Test Archive Library',
+        org: 'TestOrg',
+        slug: 'test-archive',
+        key: 'TestOrg/test-archive',
+        archiveKey: 'archive-key',
+        containers: 5,
+        components: 15,
+        collections: 3,
+        sections: 8,
+        subsections: 12,
+        units: 20,
+        createdOnServer: null,
+        createdAt: '2025-01-01T10:00:00Z',
+        createdBy: null,
+      };
+
+      // Pre-set the restore status to succeeded
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: mockResult,
+        error: null,
+        errorLog: null,
+      };
+
+      // Mock the restore mutation to return a task ID
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ taskId: 'task-123' });
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload a file to trigger the restore process
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      Object.defineProperty(input, 'files', {
+        value: [file],
+        writable: false,
+      });
+
+      fireEvent.change(input);
+
+      // Wait for the restore to complete and archive details to be shown
+      await waitFor(() => {
+        // Testing the archive details summary without instance and user email
+        expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Created on instance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/by user/i)).not.toBeInTheDocument();
+      });
+    });
+
     test('shows error state with error message and link after failed upload', async () => {
       const user = userEvent.setup();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
