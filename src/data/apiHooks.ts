@@ -65,10 +65,10 @@ export const useBulkModulestoreMigrate = () => {
 /**
  * Get the migration status
  */
-export const useModulestoreMigrationStatus = (migrationId: string | null) => (
+export const useModulestoreMigrationStatus = (migrationId: string | null, refetchInterval: number | false = 1000) => (
   useQuery({
     queryKey: migrationQueryKeys.migrationTask(migrationId),
     queryFn: migrationId ? () => getModulestoreMigrationStatus(migrationId!) : skipToken,
-    refetchInterval: 1000, // Refresh every second
+    refetchInterval,
   })
 );
