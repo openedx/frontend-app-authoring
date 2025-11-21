@@ -77,6 +77,8 @@ export const ImportDetailsPage = () => {
     }
   }
 
+  migrationStatus = 'In Progress';
+
   const collectionLink = () => {
     let libUrl = `/library/${libraryId}`;
     if (courseImportDetails?.targetCollection?.key) {
@@ -275,7 +277,12 @@ export const ImportDetailsPage = () => {
       <Stack gap={3}>
         <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
         <p>
-          <FormattedMessage {...messages.importInProgressBody} />
+          <FormattedMessage
+            {...messages.importInProgressBody}
+            values={{
+              courseName: courseDetails?.title,
+            }}
+          />
         </p>
         <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
         <SummaryCard isPending />
