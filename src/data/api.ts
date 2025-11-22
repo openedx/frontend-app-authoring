@@ -106,8 +106,8 @@ export interface MigrateParameters {
     unsupported: number;
   }
   unsupportedReasons: {
-    block_name: string;
-    block_type: string;
+    blockName: string;
+    blockType: string;
     reason: string;
   }[];
 }
