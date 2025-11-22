@@ -1,8 +1,10 @@
+import { Link, useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Card,
   Icon,
+  IconButton,
 } from '@openedx/paragon';
 import {
   ArrowForwardIos,
@@ -13,7 +15,6 @@ import {
   Warning,
 } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
 
 import { type CourseImport } from '../data/api';
 import { useLibraryRoutes } from '../routes';
@@ -54,6 +55,7 @@ const StateIcon = ({ state }: { state: CourseImport['state'] }) => (
 
 export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const { navigateTo } = useLibraryRoutes();
 
   return (
@@ -86,13 +88,11 @@ export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) =>
           </div>
         </div>
         <div className="d-flex align-items-center ml-auto">
-          <Link
-            to={`/course/${courseImport.source.key}`}
-            aria-label={intl.formatMessage(messages.courseImportNavigateAlt)}
-            className="text-primary-500"
-          >
-            <Icon src={ArrowForwardIos} />
-          </Link>
+          <IconButton
+            src={ArrowForwardIos}
+            alt={intl.formatMessage(messages.courseImportNavigateAlt)}
+            onClick={() => navigate(`${courseImport.source.key}/${courseImport.taskUuid}`)}
+          />
         </div>
       </Card.Section>
     </Card>

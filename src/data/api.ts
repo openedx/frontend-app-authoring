@@ -83,7 +83,8 @@ export async function getWaffleFlags(courseId?: string): Promise<WaffleFlagsStat
   return normalizeCourseDetail(data);
 }
 
-export interface MigrateArtifacts {
+export interface MigrateParameters {
+  id: number;
   source: string;
   target: string;
   compositionLevel: string;
@@ -92,6 +93,23 @@ export interface MigrateArtifacts {
   targetCollectionSlug: string;
   forwardSourceToTarget: boolean;
   isFailed: boolean;
+  targetCollection: {
+    key: string;
+    title: string;
+  } | null;
+  migrationSummary: {
+    totalBlocks: number;
+    sections: number;
+    subsections: number;
+    units: number;
+    components: number;
+    unsupported: number;
+  }
+  unsupportedReasons: {
+    blockName: string;
+    blockType: string;
+    reason: string;
+  }[];
 }
 
 export interface MigrateTaskStatusData {
@@ -104,7 +122,7 @@ export interface MigrateTaskStatusData {
   modified: string;
   artifacts: string[];
   uuid: string;
-  parameters: MigrateArtifacts[];
+  parameters: MigrateParameters[];
 }
 
 export interface BulkMigrateRequestData {

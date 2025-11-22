@@ -790,6 +790,7 @@ export async function publishContainer(containerId: string) {
 }
 
 export interface CourseImport {
+  taskUuid: string;
   source: {
     key: string;
     displayName: string;

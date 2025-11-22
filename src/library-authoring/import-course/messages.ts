@@ -209,15 +209,109 @@ const messages = defineMessages({
     defaultMessage: '{courseName} has already been imported into the Library "{libraryName}". If this course is re-imported, all Sections, Subsections, Units and Content Blocks will be reimported again.',
     description: 'Body of the info card when course import analysis is complete and it was already imported before.',
   },
-  importCourseCompleteToastMessage: {
-    id: 'library-authoring.import-course.complete-import.in-progress.toast.message',
-    defaultMessage: '{courseName} is being migrated.',
-    description: 'Toast message that indicates a course is being migrated',
-  },
   importCourseCompleteFailedToastMessage: {
     id: 'library-authoring.import-course.complete-import.failed.toast.message',
     defaultMessage: '{courseName} migration failed.',
     description: 'Toast message that indicates course migration failed.',
+  },
+  importDetailsTitle: {
+    id: 'library-authoring.import-course.import-details.title',
+    defaultMessage: 'Import Details',
+    description: 'Title of the Import Details page, in the import course',
+  },
+  importSuccessfulAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-successful.alert.title',
+    defaultMessage: 'Import Successful',
+    description: 'Title of the import successful alert in the import details page',
+  },
+  importSuccessfulAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-successful.alert.body',
+    defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}',
+    description: 'Body of the import successful alert in the import details page',
+  },
+  importSuccessfulBody: {
+    id: 'library-authoring.import-course.import-details.import-successful.body',
+    defaultMessage: 'Course {courseName} has been imported successfully.'
+                + ' Imported Course content can be edited and remixed in your Library, and reused in Courses',
+    description: 'Body of the import successful card in the import details page',
+  },
+  importSummaryTitle: {
+    id: 'library-authoring.import-course.import-details.import-summary.title',
+    defaultMessage: 'Import Summary',
+    description: 'Title of the import summary card in the import details page',
+  },
+  viewImportedContentButton: {
+    id: 'library-authoring.import-course.import-details.view-imported-content.button',
+    defaultMessage: 'View Imported Content',
+    description: 'Label of the button to view imported conten of a imported course',
+  },
+  importFailedAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-failed.title',
+    defaultMessage: 'Import Failed',
+    description: 'Title of the import failed card in the import details page.',
+  },
+  importFailedAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-failed.body',
+    defaultMessage: '{courseName} was not imported into your Library. See details bellow',
+    description: 'Body of the import failed card in the import details page.',
+  },
+  importFailedDetailsSectionTitle: {
+    id: 'library-authoring.import-course.import-details.import-failed.details.title',
+    defaultMessage: 'Details',
+    description: 'Title of the details section in the import details for a failed import',
+  },
+  importFailedDetailsSectionBody: {
+    id: 'library-authoring.import-course.import-details.import-failed.details.body',
+    defaultMessage: 'Import failed for the following reasons:',
+    description: 'Body of the details section in the import details for a failed import',
+  },
+  importFailedRetryImportButton: {
+    id: 'library-authoring.import-course.import-details.import-failed.re-try-import',
+    defaultMessage: 'Re-try Import',
+    description: 'Label of the button to re-try a failed import.',
+  },
+  importInProgressTitle: {
+    id: 'library-authoring.import-course.import-details.import-in-progress.title',
+    defaultMessage: 'Import in Progress',
+    description: 'Title of the import details when the migration is in progress',
+  },
+  importInProgressBody: {
+    id: 'library-authoring.import-course.import-details.import-in-progress.body',
+    defaultMessage: 'Course {courseName} is being imported. This page will update when import is complete',
+    description: 'Body of the import details when the migration is in progress',
+  },
+  importPartialAlertTitle: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: 'Partial Import Successful',
+    description: 'Title of the alert in the import details page when the migration is in partial import.',
+  },
+  importPartialAlertBody: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: '{courseName} has been imported to your library in a collection called {collectionName}.'
+    + ' Some content was not added to your course. See details bellow.',
+    description: 'Body of the alert in the import details page when the migration is in partial import.',
+  },
+  importPartialBody: {
+    id: 'library-authoring.import-course.import-details.import-partial.alert.title',
+    defaultMessage: '<p>{percentage}% of Course {courseName} has been imported successfully.'
+    + ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>'
+    + '<p>Details of the import, including reasons some content was not abled to be imported are described below</p>',
+    description: 'Body of the import details page when the migration is in partial import.',
+  },
+  importPartialReasonTableBlockName: {
+    id: 'library-authoring.import-course.import-details.reasons-table.block-name',
+    defaultMessage: 'Block Name',
+    description: 'Label for the Block Name field in the Reasons table in the import details',
+  },
+  importPartialReasonTableBlockType: {
+    id: 'library-authoring.import-course.import-details.reasons-table.block-type',
+    defaultMessage: 'Block Type',
+    description: 'Label for the Block Type field in the Reasons table in the import details',
+  },
+  importPartialReasonTableReason: {
+    id: 'library-authoring.import-course.import-details.reasons-table.reason',
+    defaultMessage: 'Reason For Failed import',
+    description: 'Label for the Reason For Failed import field in the Reasons table in the import details',
   },
 });
 
