@@ -2,6 +2,7 @@ import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { VersionSpec } from '../LibraryBlock';
 import { type ContainerType } from '../../generic/key-utils';
+import src from 'react-select/dist/declarations/src';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -158,9 +159,17 @@ export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUr
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
 /**
+ * Base url for modulestore_migrator
+ */
+export const getBaseModuleStoreMigrationUrl = () => `${getApiBaseUrl()}/api/modulestore_migrator/v1/`;
+/**
  * Get the url for the API endpoint to list library course imports.
  */
-export const getCourseImportsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/modulestore_migrator/v1/library/${libraryId}/migrations/courses/`;
+export const getCourseImportsApiUrl = (libraryId: string) => `${getBaseModuleStoreMigrationUrl()}library/${libraryId}/migrations/courses/`;
+/**
+ * Get the url for the API endpoint to get migration blocks info.
+ */
+export const getModulestoreMigratedBlocksInfoUrl = () => `${getBaseModuleStoreMigrationUrl()}migration_blocks/`;
 
 export interface ContentLibrary {
   id: string;
@@ -828,5 +837,26 @@ export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<str
   sourceKeys.forEach(key => params.append('source_keys', key));
 
   const { data } = await client.get(`${getApiBaseUrl()}/api/modulestore_migrator/v1/migration_info/`, { params });
+  return camelCaseObject(data);
+}
+
+export interface BlockMigrationInfo {
+  sourceKey: string;
+  targetKey: string | null;
+}
+
+/**
+ * Get the migration blocks info data for a library
+ */
+export async function getModulestoreMigrationBlocksInfo(libraryId: string, isFailed?: boolean): Promise<BlockMigrationInfo[]> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  params.append('target_key', libraryId);
+  if (isFailed !== undefined) {
+    params.append('is_failed', JSON.stringify(isFailed));
+  }
+
+  const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
   return camelCaseObject(data);
 }

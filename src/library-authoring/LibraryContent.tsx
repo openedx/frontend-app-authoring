@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
-import { useSearchContext } from '../search-manager';
+import { useGetContentHits, useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
@@ -10,6 +10,7 @@ import { ContentType } from './routes';
 import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
 import ContainerCard from './containers/ContainerCard';
+import { useMigrationBlocksInfo } from './data/apiHooks';
 
 /**
  * Library Content to show content grid
@@ -40,8 +41,22 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { openCreateCollectionModal } = useLibraryContext();
+  const { libraryId, openCreateCollectionModal } = useLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
+  const { data: placeholderBlocks } = useMigrationBlocksInfo(libraryId, true);
+  // Fetch unsupported blocks usage_key information from meilisearch index.
+  const { data: placeholderData } = useGetContentHits(
+    [
+      `usage_key IN [${placeholderBlocks?.map((block) => `"${block.sourceKey}"`).join(',')}]`,
+    ],
+    (placeholderBlocks?.length || 0) > 0,
+    ['usage_key', 'block_type', 'display_name'],
+    placeholderBlocks?.length,
+    true,
+  );
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("LibraryContent placeholderData: ", placeholderData); // __AUTO_GENERATED_PRINT_VAR_END__
+
 
   useEffect(() => {
     if (usageKey) {
