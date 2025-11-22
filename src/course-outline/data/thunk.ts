@@ -62,12 +62,47 @@ import {
  * @param {string} courseId - ID of the course
  * @returns {Object} - Object containing fetch course outline index query success or failure status
  */
+
+/**
+ * Helper function to retry API calls when course is not ready yet
+ */
+async function retryOnNotReady<T>(
+  apiCall: () => Promise<T>,
+  maxRetries: number = 5,
+  delayMs: number = 2000,
+  attempt: number = 1,
+): Promise<T> {
+  try {
+    return await apiCall();
+  } catch (error: any) {
+    const isNotReady = error?.response?.status === 202
+      || error?.response?.status === 404;
+    const canRetry = attempt < maxRetries;
+
+    if (isNotReady && canRetry) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, delayMs);
+      });
+      return retryOnNotReady(apiCall, maxRetries, delayMs, attempt + 1);
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Action to fetch course outline.
+ *
+ * @param {string} courseId - ID of the course
+ * @returns {Object} - Object containing fetch course outline index query success or failure status
+ */
 export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) => Promise<void> {
   return async (dispatch) => {
     dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const outlineIndex = await getCourseOutlineIndex(courseId);
+      const outlineIndex = await retryOnNotReady(() => getCourseOutlineIndex(courseId));
+
       const {
         courseReleaseDate,
         courseStructure: {
@@ -77,6 +112,7 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
           actions,
         },
       } = outlineIndex;
+
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
       dispatch(updateStatusBar({
         courseReleaseDate,
@@ -85,7 +121,6 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
         videoSharingEnabled,
       }));
       dispatch(updateCourseActions(actions));
-
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error: any) {
       if (error.response && error.response.status === 403) {
