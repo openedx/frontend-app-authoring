@@ -86,7 +86,8 @@ describe('ProctoredExamSettings', () => {
         proctoring_escalation_email: 'test@example.com',
         create_zendesk_tickets: true,
       },
-      available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc', 'lti_external'],
+      available_proctoring_providers: ['software_secure', 'mockproc', 'lti_external'],
+      requires_escalation_email_providers: ['test_lti'],
       course_start_date: '2070-01-01T00:00:00Z',
     });
   }
@@ -104,13 +105,13 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
     });
 
-    it('Updates Zendesk ticket field if proctortrack is provider', async () => {
+    it('Updates Zendesk ticket field if software_secure is provider', async () => {
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
       const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-      const zendeskTicketInput = screen.getByTestId('createZendeskTicketsNo');
+      fireEvent.change(selectElement, { target: { value: 'software_secure' } });
+      const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
       expect(zendeskTicketInput.checked).toEqual(true);
     });
 
@@ -147,7 +148,8 @@ describe('ProctoredExamSettings', () => {
           proctoring_escalation_email: 'test@example.com',
           create_zendesk_tickets: true,
         },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+        available_proctoring_providers: ['software_secure', 'mockproc'],
+        requires_escalation_email_providers: [],
         course_start_date: '2070-01-01T00:00:00Z',
       });
 
@@ -199,7 +201,7 @@ describe('ProctoredExamSettings', () => {
   });
 
   describe('Validation with invalid escalation email', () => {
-    const proctoringProvidersRequiringEscalationEmail = ['proctortrack', 'test_lti'];
+    const proctoringProvidersRequiringEscalationEmail = ['test_lti'];
 
     beforeEach(async () => {
       axiosMock.onGet(
@@ -208,12 +210,20 @@ describe('ProctoredExamSettings', () => {
         proctored_exam_settings: {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
-          proctoring_provider: 'proctortrack',
+          proctoring_provider: 'lti_external',
           proctoring_escalation_email: 'test@example.com',
           create_zendesk_tickets: true,
         },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc', 'lti_external'],
+        available_proctoring_providers: ['software_secure', 'mockproc', 'lti_external'],
+        requires_escalation_email_providers: ['test_lti'],
         course_start_date: '2070-01-01T00:00:00Z',
+      });
+
+      axiosMock.onGet(
+        `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
+      ).reply(200, {
+        provider: 'test_lti',
+        escalation_email: 'test@example.com',
       });
 
       axiosMock.onPatch(
@@ -230,7 +240,7 @@ describe('ProctoredExamSettings', () => {
     proctoringProvidersRequiringEscalationEmail.forEach(provider => {
       it(`Creates an alert when no proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
@@ -251,10 +261,10 @@ describe('ProctoredExamSettings', () => {
 
       it(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
 
-        const selectElement = screen.getByDisplayValue('proctortrack');
+        const selectElement = screen.getByDisplayValue('LTI Provider');
         fireEvent.change(selectElement, { target: { value: provider } });
 
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
@@ -277,7 +287,7 @@ describe('ProctoredExamSettings', () => {
 
       it('Creates an alert when invalid proctoring escalation email is provided with proctoring disabled', async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
@@ -295,7 +305,7 @@ describe('ProctoredExamSettings', () => {
 
       it('Has no error when empty proctoring escalation email is provided with proctoring disabled', async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
@@ -318,7 +328,7 @@ describe('ProctoredExamSettings', () => {
 
       it(`Has no error when valid proctoring escalation email is provided with ${provider} selected`, async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
@@ -339,9 +349,9 @@ describe('ProctoredExamSettings', () => {
 
       it(`Escalation email field hidden when proctoring backend is not ${provider}`, async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
-        const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+        const proctoringBackendSelect = screen.getByDisplayValue('LTI Provider');
         const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         expect(selectEscalationEmailElement.value).toEqual('test@example.com');
         fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
@@ -350,13 +360,13 @@ describe('ProctoredExamSettings', () => {
 
       it(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
-        const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+        const proctoringBackendSelect = screen.getByDisplayValue('LTI Provider');
         let selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
-        fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
+        fireEvent.change(proctoringBackendSelect, { target: { value: provider } });
         expect(screen.queryByTestId('escalationEmail')).toBeDefined();
         selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         expect(selectEscalationEmailElement.value).toEqual('test@example.com');
@@ -364,7 +374,7 @@ describe('ProctoredExamSettings', () => {
 
       it('Submits form when "Enter" key is hit in the escalation email field', async () => {
         await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
+          screen.getByDisplayValue('LTI Provider');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
         fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
@@ -384,7 +394,8 @@ describe('ProctoredExamSettings', () => {
         proctoring_escalation_email: 'test@example.com',
         create_zendesk_tickets: true,
       },
-      available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+      available_proctoring_providers: ['software_secure', 'mockproc'],
+      requires_escalation_email_providers: [],
       course_start_date: '2099-01-01T00:00:00Z',
     };
 
@@ -396,7 +407,8 @@ describe('ProctoredExamSettings', () => {
         proctoring_escalation_email: 'test@example.com',
         create_zendesk_tickets: true,
       },
-      available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+      available_proctoring_providers: ['software_secure', 'mockproc'],
+      requires_escalation_email_providers: [],
       course_start_date: '2013-01-01T00:00:00Z',
     };
 
@@ -409,7 +421,7 @@ describe('ProctoredExamSettings', () => {
       setupApp(isAdmin);
       mockCourseData(mockGetPastCourseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      const providerOption = screen.getByTestId('proctortrack');
+      const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(true);
     });
 
@@ -418,7 +430,7 @@ describe('ProctoredExamSettings', () => {
       setupApp(isAdmin);
       mockCourseData(mockGetFutureCourseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      const providerOption = screen.getByTestId('proctortrack');
+      const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
@@ -428,7 +440,7 @@ describe('ProctoredExamSettings', () => {
       setupApp(isAdmin, org);
       mockCourseData(mockGetFutureCourseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      const providerOption = screen.getByTestId('proctortrack');
+      const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
@@ -437,7 +449,7 @@ describe('ProctoredExamSettings', () => {
       setupApp(isAdmin);
       mockCourseData(mockGetPastCourseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      const providerOption = screen.getByTestId('proctortrack');
+      const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
@@ -446,14 +458,14 @@ describe('ProctoredExamSettings', () => {
       setupApp(isAdmin);
       mockCourseData(mockGetFutureCourseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      const providerOption = screen.getByTestId('proctortrack');
+      const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
     it('Does not include lti_external as a selectable option', async () => {
       const courseData = {
         ...mockGetFutureCourseData,
-        available_proctoring_providers: ['lti_external', 'proctortrack', 'mockproc'],
+        available_proctoring_providers: ['lti_external', 'mockproc'],
       };
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
@@ -466,7 +478,7 @@ describe('ProctoredExamSettings', () => {
     it('Includes lti proctoring provider options when lti_external is allowed by studio', async () => {
       const courseData = {
         ...mockGetFutureCourseData,
-        available_proctoring_providers: ['lti_external', 'proctortrack', 'mockproc'],
+        available_proctoring_providers: ['lti_external', 'mockproc'],
       };
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
@@ -507,7 +519,7 @@ describe('ProctoredExamSettings', () => {
 
     it('Selected LTI proctoring provider is shown on page load', async () => {
       const courseData = { ...mockGetFutureCourseData };
-      courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
+      courseData.available_proctoring_providers = ['lti_external', 'mockproc'];
       courseData.proctored_exam_settings.proctoring_provider = 'lti_external';
       mockCourseData(courseData);
       axiosMock.onGet(
@@ -605,15 +617,31 @@ describe('ProctoredExamSettings', () => {
       expect(submitButton).toHaveAttribute('disabled');
     });
 
-    it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
+    it('Makes API call successfully with proctoring_escalation_email if test_lti', async () => {
+      // Setup mock to include test_lti as available provider
+      axiosMock.onGet(
+        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
+      ).reply(200, {
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          proctoring_escalation_email: 'test@example.com',
+          create_zendesk_tickets: true,
+        },
+        available_proctoring_providers: ['software_secure', 'mockproc', 'lti_external'],
+        requires_escalation_email_providers: ['test_lti'],
+        course_start_date: '2070-01-01T00:00:00Z',
+      });
+
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
-      // Make a change to the provider to proctortrack and set the email
+      // Make a change to the provider to test_lti and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
+      fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       const escalationEmail = screen.getByTestId('escalationEmail');
       expect(escalationEmail.value).toEqual('test@example.com');
-      fireEvent.change(escalationEmail, { target: { value: 'proctortrack@example.com' } });
-      expect(escalationEmail.value).toEqual('proctortrack@example.com');
+      fireEvent.change(escalationEmail, { target: { value: 'test_lti@example.com' } });
+      expect(escalationEmail.value).toEqual('test_lti@example.com');
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
@@ -621,10 +649,15 @@ describe('ProctoredExamSettings', () => {
         proctored_exam_settings: {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
-          proctoring_provider: 'proctortrack',
-          proctoring_escalation_email: 'proctortrack@example.com',
-          create_zendesk_tickets: false,
+          proctoring_provider: 'lti_external',
+          proctoring_escalation_email: 'test_lti@example.com',
+          create_zendesk_tickets: true,
         },
+      });
+      expect(axiosMock.history.patch.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+        provider: 'test_lti',
+        escalation_email: 'test_lti@example.com',
       });
 
       await waitFor(() => {
@@ -636,10 +669,10 @@ describe('ProctoredExamSettings', () => {
       });
     });
 
-    it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
+    it('Makes API call successfully without proctoring_escalation_email if not requiring escalation email', async () => {
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
 
-      // make sure we have not selected proctortrack as the proctoring provider
+      // make sure we have not selected a provider requiring escalation email
       expect(screen.getByDisplayValue('mockproc')).toBeDefined();
 
       const submitButton = screen.getByTestId('submissionButton');
@@ -691,6 +724,7 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'lti_external',
+          proctoring_escalation_email: 'test_lti@example.com',
           create_zendesk_tickets: true,
         },
       });
@@ -745,7 +779,8 @@ describe('ProctoredExamSettings', () => {
           proctoring_escalation_email: 'test@example.com',
           create_zendesk_tickets: true,
         },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+        available_proctoring_providers: ['software_secure', 'mockproc'],
+        requires_escalation_email_providers: [],
         course_start_date: '2070-01-01T00:00:00Z',
       });
 
@@ -870,16 +905,15 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
       // Make a change to the proctoring provider
       const selectElement = screen.getByDisplayValue('mockproc');
-      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
+      fireEvent.change(selectElement, { target: { value: 'software_secure' } });
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
       expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
         proctored_exam_settings: {
           enable_proctored_exams: true,
-          proctoring_provider: 'proctortrack',
-          proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: false,
+          proctoring_provider: 'software_secure',
+          create_zendesk_tickets: true,
         },
       });
     });
