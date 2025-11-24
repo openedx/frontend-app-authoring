@@ -26,6 +26,9 @@ import {
 import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore, { type DeprecatedReduxState } from './store';
 import { getApiWaffleFlagsUrl } from './data/api';
+import { CONTENT_LIBRARY_PERMISSIONS } from './authz/constants';
+import * as authzApi from '@src/authz/data/api';
+
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore: Store;
@@ -191,6 +194,14 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
 
   // Clear the call counts etc. of all mocks. This doesn't remove the mock's effects; just clears their history.
   jest.clearAllMocks();
+
+  // Mock user permissions to avoid breaking tests that monitor axios calls
+  jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue([
+    {
+      action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
+      allowed: true,
+    },
+  ]);
 
   return {
     reduxStore,
