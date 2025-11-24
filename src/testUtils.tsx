@@ -23,12 +23,11 @@ import {
   Routes,
 } from 'react-router-dom';
 
+import * as authzApi from '@src/authz/data/api';
 import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore, { type DeprecatedReduxState } from './store';
 import { getApiWaffleFlagsUrl } from './data/api';
 import { CONTENT_LIBRARY_PERMISSIONS } from './authz/constants';
-import * as authzApi from '@src/authz/data/api';
-
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore: Store;
