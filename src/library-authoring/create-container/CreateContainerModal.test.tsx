@@ -80,12 +80,10 @@ describe('CreateContainerModal container linking', () => {
     const createButton = await screen.findByRole('button', { name: /create/i });
     await user.click(createButton);
     await waitFor(() => {
-      const request = axiosMock.history.post.find(req => req.url.match(/\/api\/libraries\/.*\/containers/));
-      expect(request).toBeDefined();
+      expect(axiosMock.history.post).toHaveLength(1);
     });
-    const request = axiosMock.history.post.find(req => req.url.match(/\/api\/libraries\/.*\/containers/));
-    expect(request.url).toMatch(/\/api\/libraries\/.*\/containers/);
-    expect(JSON.parse(request.data)).toEqual({
+    expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
       can_stand_alone: true,
       container_type: 'section',
       display_name: 'Test Section',
@@ -116,11 +114,9 @@ describe('CreateContainerModal container linking', () => {
     const createButton = await screen.findByRole('button', { name: /create/i });
     await user.click(createButton);
     await waitFor(() => {
-      const request = axiosMock.history.post.find(req => req.url.match(/\/api\/libraries\/.*\/containers/));
-      expect(request).toBeDefined();
+      expect(axiosMock.history.post[0].url).toMatch(/\/api\/libraries\/.*\/containers/);
     });
-    const request = axiosMock.history.post.find(req => req.url.match(/\/api\/libraries\/.*\/containers/));
-    expect(JSON.parse(request.data)).toEqual({
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
       can_stand_alone: false,
       container_type: 'subsection',
       display_name: 'Test Subsection',

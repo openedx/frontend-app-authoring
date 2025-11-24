@@ -27,12 +27,12 @@ import * as authzApi from '@src/authz/data/api';
 import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore, { type DeprecatedReduxState } from './store';
 import { getApiWaffleFlagsUrl } from './data/api';
-import { CONTENT_LIBRARY_PERMISSIONS } from './authz/constants';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore: Store;
 let queryClient: QueryClient;
 let axiosMock: MockAdapter;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof authzApi.validateUserPermissions>;
 
 /** To use this: `const { mockShowToast } = initializeMocks()` and `expect(mockShowToast).toHaveBeenCalled()` */
 let mockToastContext: ToastContextData = {
@@ -195,12 +195,8 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
   jest.clearAllMocks();
 
   // Mock user permissions to avoid breaking tests that monitor axios calls
-  jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue([
-    {
-      action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
-      allowed: true,
-    },
-  ]);
+  // If needed, override the mockResolvedValue in your test
+  validateUserPermissionsMock = jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue([]);
 
   return {
     reduxStore,
@@ -208,6 +204,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     mockShowToast: mockToastContext.showToast,
     mockToastAction: mockToastContext.toastAction,
     queryClient,
+    validateUserPermissionsMock,
   };
 }
 
