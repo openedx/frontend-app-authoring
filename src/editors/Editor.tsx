@@ -4,6 +4,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import * as hooks from './hooks';
+import { useEditorContext } from './EditorContext';
 
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
@@ -13,20 +14,17 @@ export interface Props extends EditorComponent {
   blockType: string;
   blockId: string | null;
   learningContextId: string | null;
-  lmsEndpointUrl: string | null;
-  studioEndpointUrl: string | null;
 }
 
 const Editor: React.FC<Props> = ({
   learningContextId,
   blockType,
   blockId,
-  lmsEndpointUrl,
-  studioEndpointUrl,
   onClose = null,
   returnFunction = null,
 }) => {
   const dispatch = useDispatch();
+  const { lmsEndpointUrl, studioEndpointUrl } = useEditorContext();
   const loading = hooks.useInitializeApp({
     dispatch,
     data: {

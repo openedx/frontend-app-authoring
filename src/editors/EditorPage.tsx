@@ -36,15 +36,17 @@ const EditorPage: React.FC<Props> = ({
         studioEndpointUrl,
       }}
     >
-      <EditorContextProvider learningContextId={courseId}>
+      <EditorContextProvider
+        learningContextId={courseId}
+        studioEndpointUrl={studioEndpointUrl}
+        lmsEndpointUrl={lmsEndpointUrl}
+      >
         <Editor
           {...{
             onClose,
             learningContextId: courseId,
             blockType,
             blockId,
-            lmsEndpointUrl,
-            studioEndpointUrl,
             returnFunction,
           }}
         />
