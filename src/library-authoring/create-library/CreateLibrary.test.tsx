@@ -528,15 +528,10 @@ describe('<CreateLibrary />', () => {
 
       // Upload a file to trigger the restore process
       const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
-      const dropzone = screen.getByTestId('library-archive-dropzone');
+      const dropzone = screen.getByRole('presentation', { hidden: true });
       const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
 
-      Object.defineProperty(input, 'files', {
-        value: [file],
-        writable: false,
-      });
-
-      fireEvent.change(input);
+      await user.upload(input, file);
 
       // Wait for the restore to complete and archive details to be shown
       await waitFor(() => {

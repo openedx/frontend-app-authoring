@@ -211,7 +211,7 @@ export const CreateLibrary = ({
                     </div>
                     <div className="d-flex flex-column gap-2 align-items-md-start">
                       <div className="d-flex align-items-md-center gap-2">
-                        <Icon src={Widgets} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <Icon src={Widgets} className="mr-2" style={{ width: '20px', height: '20px' }} />
                         <span className="x-small">
                           {intl.formatMessage(messages.archiveComponentsCount, {
                             countSections: restoreStatus.result.sections,
@@ -224,7 +224,7 @@ export const CreateLibrary = ({
                       {
                         (restoreStatus.result.createdBy?.email && restoreStatus.result.createdOnServer) && (
                           <div className="d-flex align-items-md-center gap-2">
-                            <Icon src={PersonOutline} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                            <Icon src={PersonOutline} className="mr-2" style={{ width: '20px', height: '20px' }} />
                             <span className="x-small">
                               {intl.formatMessage(messages.archiveRestoredCreatedBy, {
                                 createdBy: restoreStatus.result.createdBy?.email,
@@ -235,7 +235,7 @@ export const CreateLibrary = ({
                         )
                       }
                       <div className="d-flex align-items-md-center gap-2">
-                        <Icon src={AccessTime} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <Icon src={AccessTime} className="mr-2" style={{ width: '20px', height: '20px' }} />
                         <span className="x-small">
                           {intl.formatMessage(messages.archiveBackupDate, {
                             date: new Date(restoreStatus.result.createdAt).toLocaleDateString(),
