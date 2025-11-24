@@ -138,6 +138,19 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
   }
 };
 
+export const validateBlockNumericInput = ({ title, ...rest }) => (dispatch) => {
+  dispatch(requests.validateNumericInput({
+    title,
+    ...rest,
+    onSuccess: (response) => {
+      dispatch(actions.problem.updateField({ isNumericInputValid: response.data.is_valid }));
+    },
+    onFailure: () => {
+      dispatch(actions.problem.updateField({ isNumericInputValid: false }));
+    },
+  }));
+};
+
 export default {
-  initializeProblem, switchEditor, switchToAdvancedEditor, fetchAdvancedSettings,
+  initializeProblem, switchEditor, switchToAdvancedEditor, fetchAdvancedSettings, validateBlockNumericInput,
 };

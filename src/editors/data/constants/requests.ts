@@ -30,4 +30,5 @@ export const RequestKeys = StrictDict({
   fetchAdvancedSettings: 'fetchAdvancedSettings',
   fetchVideoFeatures: 'fetchVideoFeatures',
   getHandlerUrl: 'getHandlerUrl',
+  validateBlockNumericInput: 'validateBlockNumericInput',
 } as const);

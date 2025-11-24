@@ -13,6 +13,7 @@ const initialState: EditorState['problem'] = {
   rawMarkdown: '',
   isMarkdownEditorEnabled: false,
   problemType: null,
+  isNumericInputValid: true,
   question: '',
   answers: [],
   correctAnswerCount: 0,

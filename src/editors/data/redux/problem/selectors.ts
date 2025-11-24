@@ -18,6 +18,7 @@ export const simpleSelectors = {
   defaultSettings: mkSimpleSelector(problemData => problemData.defaultSettings),
   completeState: mkSimpleSelector(problemData => problemData),
   isDirty: mkSimpleSelector(problemData => problemData.isDirty),
+  isNumericInputValid: mkSimpleSelector(problemData => problemData.isNumericInputValid),
 };
 
 export default simpleSelectors;

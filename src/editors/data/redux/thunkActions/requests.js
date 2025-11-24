@@ -485,6 +485,21 @@ export const uploadVideo = ({ data, ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const validateNumericInput = ({ title, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.validateBlockNumericInput,
+    promise: api.validateBlockNumericInput({
+      blockId: selectors.app.blockId(getState()),
+      blockType: selectors.app.blockType(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
+      data: { formula: title },
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      title: selectors.app.blockTitle(getState()),
+    }),
+    ...rest,
+  }));
+};
+
 export default StrictDict({
   fetchBlock,
   fetchStudioView,
@@ -507,4 +522,5 @@ export default StrictDict({
   fetchVideoFeatures,
   uploadVideo,
   getHandlerlUrl,
+  validateNumericInput,
 });

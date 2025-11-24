@@ -18,7 +18,7 @@ import { FeedbackBox } from './components/Feedback';
 import * as hooks from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
-import { answerRangeFormatRegex, numericRegex } from '../../../data/OLXParser';
+import { answerRangeFormatRegex } from '../../../data/OLXParser';
 
 const AnswerOption = ({
   answer,
@@ -28,6 +28,7 @@ const AnswerOption = ({
   const dispatch = useDispatch();
 
   const problemType = useSelector(selectors.problem.problemType);
+  const isNumericInputValid = useSelector(selectors.problem.isNumericInputValid);
   const images = useSelector(selectors.app.images);
   const isLibrary = useSelector(selectors.app.isLibrary);
   const learningContextId = useSelector(selectors.app.learningContextId);
@@ -53,10 +54,6 @@ const AnswerOption = ({
     const cleanedValue = value.replace(/^\s+|\s+$/g, '');
     return !cleanedValue.length || answerRangeFormatRegex.test(cleanedValue);
   };
-  const validateAnswerNumeric = (value) => {
-    const cleanedValue = (value ?? '').trim();
-    return !cleanedValue.length || numericRegex.test(cleanedValue);
-  };
 
   const getInputArea = () => {
     if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -74,9 +71,8 @@ const AnswerOption = ({
       );
     }
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
-      const isValidValue = validateAnswerNumeric(answer.title);
       return (
-        <Form.Group isInvalid={!isValidValue}>
+        <Form.Group isInvalid={!isNumericInputValid}>
           <Form.Control
             as="textarea"
             className="answer-option-textarea text-gray-500 small"
@@ -87,7 +83,7 @@ const AnswerOption = ({
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
           />
-          {!isValidValue && (
+          {!isNumericInputValid && (
           <Form.Control.Feedback type="invalid">
             <FormattedMessage {...messages.answerNumericErrorText} />
           </Form.Control.Feedback>

@@ -390,6 +390,14 @@ export const apiMethods = {
   }) => get(
     urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
+  validateBlockNumericInput: ({
+    studioEndpointUrl,
+    blockId,
+    data,
+  }) => post(
+    urls.validateNumericInputUrl({ studioEndpointUrl, blockId }),
+    data,
+  ),
 };
 
 export default apiMethods;
