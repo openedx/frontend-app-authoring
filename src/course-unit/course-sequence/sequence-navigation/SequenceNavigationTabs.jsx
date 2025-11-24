@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@openedx/paragon';
+import { Button, ButtonGroup } from '@openedx/paragon';
 import { Plus as PlusIcon, ContentPasteGo as ContentPasteGoIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -49,7 +49,7 @@ const SequenceNavigationTabs = ({
   return (
     <div className="sequence-navigation-tabs-wrapper">
       <div className="sequence-navigation-tabs-container d-flex" ref={containerRef}>
-        <div
+        <ButtonGroup
           className="sequence-navigation-tabs d-flex flex-grow-1"
           style={shouldDisplayDropdown ? invisibleStyle : null}
         >
@@ -80,7 +80,7 @@ const SequenceNavigationTabs = ({
               {intl.formatMessage(messages.pasteAsNewUnitLink)}
             </Button>
           )}
-        </div>
+        </ButtonGroup>
       </div>
       {shouldDisplayDropdown && (
         <SequenceNavigationDropdown
