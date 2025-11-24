@@ -848,11 +848,14 @@ export interface BlockMigrationInfo {
 /**
  * Get the migration blocks info data for a library
  */
-export async function getModulestoreMigrationBlocksInfo(libraryId: string, isFailed?: boolean): Promise<BlockMigrationInfo[]> {
+export async function getModulestoreMigrationBlocksInfo(libraryId: string, collectionId?: string, isFailed?: boolean): Promise<BlockMigrationInfo[]> {
   const client = getAuthenticatedHttpClient();
 
   const params = new URLSearchParams();
   params.append('target_key', libraryId);
+  if (collectionId) {
+    params.append('target_collection_key', collectionId);
+  }
   if (isFailed !== undefined) {
     params.append('is_failed', JSON.stringify(isFailed));
   }

@@ -99,9 +99,10 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.allMigrationInfo(),
     ...sourceKeys,
   ],
-  migrationBlocksInfo: (libraryId: string, isFailed?: boolean) => [
+  migrationBlocksInfo: (libraryId: string, collectionId?: string, isFailed?: boolean) => [
     ...libraryAuthoringQueryKeys.allMigrationInfo(),
     libraryId,
+    collectionId,
     isFailed,
   ],
 };
@@ -990,9 +991,9 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
 /**
  * Returns the migration blocks info of a given library
  */
-export const useMigrationBlocksInfo = (libraryId: string, isFailed?: boolean, enabled = true) => (
+export const useMigrationBlocksInfo = (libraryId: string, collectionId?: string, isFailed?: boolean, enabled = true) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, isFailed),
-    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(libraryId, isFailed) : skipToken,
+    queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, collectionId, isFailed),
+    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(libraryId, collectionId, isFailed) : skipToken,
   })
 );

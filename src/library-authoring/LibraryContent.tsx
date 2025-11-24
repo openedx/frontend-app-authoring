@@ -6,11 +6,12 @@ import { useLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
-import { ContentType } from './routes';
+import { ContentType, useLibraryRoutes } from './routes';
 import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
 import ContainerCard from './containers/ContainerCard';
 import { useMigrationBlocksInfo } from './data/apiHooks';
+import PlaceholderCard from './import-course/PlaceholderCard';
 
 /**
  * Library Content to show content grid
@@ -41,9 +42,16 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { libraryId, openCreateCollectionModal } = useLibraryContext();
+  const { libraryId, openCreateCollectionModal, collectionId } = useLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
-  const { data: placeholderBlocks } = useMigrationBlocksInfo(libraryId, true);
+  const { insideCollection } = useLibraryRoutes();
+  const showPlaceholderBlocks = ([ContentType.home].includes(contentType) || insideCollection) && !isFiltered;
+  const { data: placeholderBlocks } = useMigrationBlocksInfo(
+    libraryId,
+    collectionId,
+    true,
+    showPlaceholderBlocks,
+  );
   // Fetch unsupported blocks usage_key information from meilisearch index.
   const { data: placeholderData } = useGetContentHits(
     [
@@ -54,9 +62,6 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     placeholderBlocks?.length,
     true,
   );
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("LibraryContent placeholderData: ", placeholderData); // __AUTO_GENERATED_PRINT_VAR_END__
-
 
   useEffect(() => {
     if (usageKey) {
@@ -96,6 +101,10 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
 
         return <CardComponent key={contentHit.id} hit={contentHit} />;
       })}
+      {showPlaceholderBlocks && placeholderData?.hits?.map((item) => (<PlaceholderCard
+        displayName={item.display_name}
+        blockType={item.block_type}
+      />))}
     </div>
   );
 };
