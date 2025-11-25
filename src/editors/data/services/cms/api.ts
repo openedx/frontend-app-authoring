@@ -316,6 +316,15 @@ export const apiMethods = {
         id: blockId,
         metadata: { display_name: title, ...content.settings },
       };
+    } else if (blockType === 'games') {
+      response = {
+        data: content,
+        category: blockType,
+        courseKey: learningContextId,
+        has_changes: true,
+        id: blockId,
+        metadata: { display_name: title, ...content.settings },
+      };
     } else if (blockType === 'video') {
       const {
         html5Sources,
@@ -390,6 +399,67 @@ export const apiMethods = {
   }) => get(
     urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
+  uploadGamesImage: ({
+    studioEndpointUrl,
+    blockId,
+    image,
+  }) => {
+    const data = new FormData();
+    data.append('file', image);
+    return post(
+      urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'upload_image' }),
+      data,
+    );
+  },
+  getGamesSettings: ({
+    studioEndpointUrl,
+    blockId,
+  }) => post(
+    urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'get_settings' }),
+    {},
+  ),
+  saveGamesSettings: ({
+    studioEndpointUrl,
+    blockId,
+    gameType,
+    isShuffled,
+    cards,
+    hasTimer,
+  }) => {
+    // Transform cards to include order and format properly
+    // For matching games, exclude image fields
+    const formattedCards = cards.map((card, index) => {
+      const baseCard = {
+        term: card.term || '',
+        definition: card.definition || '',
+        order: index + 1,
+      };
+      if (gameType === 'flashcards') {
+        return {
+          ...baseCard,
+          term_image: card.term_image || '',
+          definition_image: card.definition_image || '',
+        };
+      }
+      return baseCard;
+    });
+
+    const payload: any = {
+      game_type: gameType,
+      is_shuffled: isShuffled,
+      cards: formattedCards,
+    };
+
+    // Only include has_timer for matching game type
+    if (gameType === 'matching') {
+      payload.has_timer = hasTimer;
+    }
+
+    return post(
+      urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'save_settings' }),
+      payload,
+    );
+  },
 };
 
 export default apiMethods;

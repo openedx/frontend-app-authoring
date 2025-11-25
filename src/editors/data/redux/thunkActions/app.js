@@ -117,23 +117,53 @@ export const initialize = (data) => (dispatch) => {
 };
 
 /**
- * @param {func} onSuccess
+ * Helper to trigger course refresh after save
  */
-export const saveBlock = (content, returnToUnit) => (dispatch) => {
+const triggerCourseRefresh = () => {
+  const storageKey = 'courseRefreshTriggerOnComponentEditSave';
+  localStorage.setItem(storageKey, Date.now());
+  window.dispatchEvent(new StorageEvent('storage', {
+    key: storageKey,
+    newValue: Date.now().toString(),
+  }));
+};
+
+/**
+ * @param {func} returnToUnit - Callback function after save
+ */
+export const saveBlock = (content, returnToUnit) => (dispatch, getState) => {
   dispatch(actions.app.setBlockContent(content));
+
+  // Games block uses a custom handler for saving
+  const blockType = selectors.blockType(getState());
+  if (blockType === 'games' && content.gameType) {
+    dispatch(requests.saveGamesSettings({
+      gameType: content.gameType,
+      isShuffled: content.isShuffled,
+      hasTimer: content.hasTimer,
+      cards: content.cards,
+      onSuccess: (response) => {
+        triggerCourseRefresh();
+        returnToUnit(response.data);
+      },
+      onFailure: (error) => {
+        dispatch(actions.requests.failRequest({
+          requestKey: RequestKeys.saveBlock,
+          error,
+        }));
+      },
+    }));
+    return;
+  }
+
+  // Standard save for other block types
   dispatch(requests.saveBlock({
     content,
     onSuccess: (response) => {
       dispatch(actions.app.setSaveResponse(response));
       const parsedData = JSON.parse(response.config.data);
       if (parsedData?.has_changes) {
-        const storageKey = 'courseRefreshTriggerOnComponentEditSave';
-        localStorage.setItem(storageKey, Date.now());
-
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: storageKey,
-          newValue: Date.now().toString(),
-        }));
+        triggerCourseRefresh();
       }
       returnToUnit(response.data);
     },

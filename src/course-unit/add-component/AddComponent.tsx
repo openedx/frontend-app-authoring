@@ -187,6 +187,9 @@ const AddComponent = ({
           showXBlockEditorModal();
         });
         break;
+      case COMPONENT_TYPES.games:
+        handleCreateNewCourseXBlock({ type, category: type, parentLocator: blockId });
+        break;
       default:
     }
   };

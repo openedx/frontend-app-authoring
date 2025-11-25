@@ -36,7 +36,7 @@ describe('app thunkActions', () => {
   let getState;
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
-    getState = jest.fn().mockImplementation(() => ({ app: { blockId: 'blockId', images: {} } }));
+    getState = jest.fn().mockImplementation(() => ({ app: { blockId: 'blockId', blockType: 'html', images: {} } }));
   });
   describe('fetchBlock', () => {
     beforeEach(() => {
@@ -339,7 +339,7 @@ describe('app thunkActions', () => {
     let calls;
     beforeEach(() => {
       returnToUnit = jest.fn();
-      thunkActions.saveBlock(testValue, returnToUnit)(dispatch);
+      thunkActions.saveBlock(testValue, returnToUnit)(dispatch, getState);
       calls = dispatch.mock.calls;
     });
     it('dispatches actions.app.setBlockContent with content, before dispatching saveBlock', () => {

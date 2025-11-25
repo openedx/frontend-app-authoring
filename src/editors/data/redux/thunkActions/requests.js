@@ -485,6 +485,50 @@ export const uploadVideo = ({ data, ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const uploadGamesImage = ({ image, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.uploadAsset,
+    promise: api.uploadGamesImage({
+      image,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const getGamesSettings = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.fetchBlock,
+    promise: api.getGamesSettings({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const saveGamesSettings = ({
+  gameType,
+  isShuffled,
+  hasTimer,
+  cards,
+  ...rest
+}) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.saveBlock,
+    promise: api.saveGamesSettings({
+      gameType,
+      isShuffled,
+      hasTimer,
+      cards,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
 export default StrictDict({
   fetchBlock,
   fetchStudioView,
@@ -507,4 +551,7 @@ export default StrictDict({
   fetchVideoFeatures,
   uploadVideo,
   getHandlerlUrl,
+  uploadGamesImage,
+  getGamesSettings,
+  saveGamesSettings,
 });
