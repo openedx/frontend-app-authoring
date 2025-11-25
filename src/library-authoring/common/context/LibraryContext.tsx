@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { useValidateUserPermissions } from '@src/authz/data/hooks';
+import { useValidateUserPermissions } from '@src/authz/data/apiHooks';
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { ContainerType } from '../../../generic/key-utils';
 
@@ -118,7 +118,6 @@ export const LibraryProvider = ({
 
   const { isLoading: isLoadingUserPermissions, data: userPermissions } = useValidateUserPermissions(permissions);
   const canPublish = userPermissions ? userPermissions[0]?.allowed : false;
-  // TODO change to use canEdit from userPermissions later
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params
