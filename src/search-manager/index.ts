@@ -13,6 +13,7 @@ export {
   useContentSearchConnection,
   useContentSearchResults,
   useGetBlockTypes,
+  useGetContentHits,
   buildSearchQueryKey,
 } from './data/apiHooks';
 export { TypesFilterData } from './hooks';

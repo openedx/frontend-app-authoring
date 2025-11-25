@@ -1,6 +1,6 @@
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
-import { useGetBlockTypes } from '@src/search-manager';
+import { useGetBlockTypes, useGetContentHits } from '@src/search-manager';
 import { render as baseRender, screen, initializeMocks } from '@src/testUtils';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
@@ -25,6 +25,7 @@ jest.mock('@src/library-authoring/data/apiHooks', () => ({
 // Mock the useGetBlockTypes hook
 jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: jest.fn().mockReturnValue({ isPending: true, data: null }),
+  useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
 const render = (element: React.ReactElement) => {
@@ -80,7 +81,7 @@ describe('ReviewImportDetails', () => {
         }],
       },
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValue({
+    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
       isPending: false,
       data: { html: 1 },
     });
@@ -103,7 +104,7 @@ describe('ReviewImportDetails', () => {
       isPending: false,
       data: null,
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValue({
+    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
       isPending: false,
       data: {
         chapter: 1,
@@ -134,13 +135,63 @@ describe('ReviewImportDetails', () => {
     expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
+  it('considers children blocks of unsupportedBlocks', async () => {
+    (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
+    (useMigrationInfo as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: null,
+    });
+    (useGetContentHits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: {
+        hits: [{ usage_key: 'some-usage-key' }],
+        estimatedTotalHits: 1,
+      },
+    });
+    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
+      isPending: false,
+      data: {
+        chapter: 1,
+        sequential: 2,
+        vertical: 3,
+        library_content: 1,
+        html: 1,
+        problem: 4,
+      },
+    }).mockReturnValueOnce({
+      isPending: false,
+      data: {
+        problem: 2,
+      },
+    });
+
+    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
+    expect(await screen.findByText(
+      /25.00% of content cannot be imported. For details see below./i,
+    )).toBeInTheDocument();
+    expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
+    expect(await screen.findByText('9/12')).toBeInTheDocument();
+    expect(await screen.findByText('Sections')).toBeInTheDocument();
+    expect(await screen.findByText('1')).toBeInTheDocument();
+    expect(await screen.findByText('Subsections')).toBeInTheDocument();
+    expect(await screen.findByText('2')).toBeInTheDocument();
+    expect(await screen.findByText('Units')).toBeInTheDocument();
+    expect(await screen.findByText('3')).toBeInTheDocument();
+    expect(await screen.findByText('Components')).toBeInTheDocument();
+    expect(await screen.findByText('3/6')).toBeInTheDocument();
+    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
+  });
+
   it('renders success alert when no unsupported blocks', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: null,
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValue({
+    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
       isPending: false,
       data: {
         chapter: 1,
