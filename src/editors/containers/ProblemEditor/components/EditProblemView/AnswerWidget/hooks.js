@@ -106,11 +106,5 @@ export const useAnswerContainer = ({ answers, updateField }) => {
 };
 
 export default {
-  state,
-  removeAnswer,
-  setAnswer,
-  setAnswerTitle,
-  useFeedback,
-  isSingleAnswerProblem,
-  useAnswerContainer,
+  state, removeAnswer, setAnswer, setAnswerTitle, useFeedback, isSingleAnswerProblem, useAnswerContainer,
 };

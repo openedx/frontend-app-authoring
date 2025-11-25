@@ -96,6 +96,7 @@ export const responseKeys = [
  * []
  */
 export const answerRangeFormatRegex = /^[([]\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*,\s*-?(?:\d+(?:\.\d+)?|\d+\/\d+)\s*[)\]]$/m;
+
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
   Object.entries(input).forEach(([key, value]) => {
