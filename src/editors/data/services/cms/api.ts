@@ -392,10 +392,9 @@ export const apiMethods = {
   ),
   validateBlockNumericInput: ({
     studioEndpointUrl,
-    blockId,
     data,
   }) => post(
-    urls.validateNumericInputUrl({ studioEndpointUrl, blockId }),
+    urls.validateNumericInputUrl({ studioEndpointUrl }),
     data,
   ),
 };

@@ -157,7 +157,6 @@ export interface EditorState {
     rawOLX: string;
     rawMarkdown: string;
     problemType: null | ProblemType | AdvancedProblemType;
-    isNumericInputValid: boolean;
     /**
      * Is the "markdown" editor currently active (as opposed to visual or advanced editors)
      * This is confusingly named, and different from `isMarkdownEditorEnabledForContext`

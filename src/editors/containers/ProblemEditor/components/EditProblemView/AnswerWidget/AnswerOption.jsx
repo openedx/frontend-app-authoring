@@ -19,6 +19,7 @@ import * as hooks from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
 import { answerRangeFormatRegex } from '../../../data/OLXParser';
+import { useValidateInputBlock } from '../../../data/apiHooks';
 
 const AnswerOption = ({
   answer,
@@ -28,12 +29,10 @@ const AnswerOption = ({
   const dispatch = useDispatch();
 
   const problemType = useSelector(selectors.problem.problemType);
-  const isNumericInputValid = useSelector(selectors.problem.isNumericInputValid);
   const images = useSelector(selectors.app.images);
   const isLibrary = useSelector(selectors.app.isLibrary);
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
-
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
   const setAnswerTitle = hooks.setAnswerTitle({
@@ -45,6 +44,7 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
+  const { data = { is_valid: true }, mutate } = useValidateInputBlock();
 
   const staticRootUrl = isLibrary
     ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
@@ -72,18 +72,21 @@ const AnswerOption = ({
     }
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
       return (
-        <Form.Group isInvalid={!isNumericInputValid}>
+        <Form.Group isInvalid={!data?.is_valid ?? true}>
           <Form.Control
             as="textarea"
             className="answer-option-textarea text-gray-500 small"
             autoResize
             rows={1}
             value={answer.title}
-            onChange={setAnswerTitle}
+            onChange={(e) => {
+              setAnswerTitle(e);
+              mutate({ title: e.target.value });
+            }}
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
           />
-          {!isNumericInputValid && (
+          {(!data?.is_valid ?? true) && (
           <Form.Control.Feedback type="invalid">
             <FormattedMessage {...messages.answerNumericErrorText} />
           </Form.Control.Feedback>

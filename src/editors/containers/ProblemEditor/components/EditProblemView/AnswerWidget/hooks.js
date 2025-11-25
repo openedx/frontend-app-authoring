@@ -5,7 +5,7 @@ import { StrictDict } from '../../../../../utils';
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
-import { actions, thunkActions } from '../../../../../data/redux';
+import { actions } from '../../../../../data/redux';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
@@ -29,17 +29,6 @@ export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) =>
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
 };
 
-export const validateInputBlock = ({
-  title, dispatch,
-}) => {
-  if (!title) {
-    return;
-  }
-  dispatch(thunkActions.problem.validateBlockNumericInput({
-    title,
-  }));
-};
-
 export const setAnswerTitle = ({
   answer,
   hasSingleAnswer,
@@ -53,11 +42,6 @@ export const setAnswerTitle = ({
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
   if (isDirty !== undefined) {
     dispatch(actions.problem.setDirty(isDirty));
-  }
-
-  // For numeric problems, validate input on title change
-  if (problemType === ProblemTypeKeys.NUMERIC) {
-    validateInputBlock({ title, dispatch });
   }
 };
 
@@ -129,5 +113,4 @@ export default {
   useFeedback,
   isSingleAnswerProblem,
   useAnswerContainer,
-  validateInputBlock,
 };
