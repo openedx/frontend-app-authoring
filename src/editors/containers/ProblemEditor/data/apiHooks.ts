@@ -5,11 +5,11 @@ import api from '@src/editors/data/services/cms/api';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const useValidateInputBlock = () => useMutation({
-  mutationFn: async ({ title }) => {
+  mutationFn: async (title) => {
     try {
       const res = await api.validateBlockNumericInput({ studioEndpointUrl: `${getApiBaseUrl()}`, data: { formula: title } });
       return res.data;
-    } catch (err) {
+    } catch (err: any) {
       return {
         is_valid: false,
         error: err.response?.data?.error ?? 'Unknown error',

@@ -81,7 +81,7 @@ const AnswerOption = ({
             value={answer.title}
             onChange={(e) => {
               setAnswerTitle(e);
-              mutate({ title: e.target.value });
+              mutate(e.target.value);
             }}
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
