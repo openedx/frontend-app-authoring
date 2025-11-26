@@ -843,6 +843,7 @@ export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<str
 export interface BlockMigrationInfo {
   sourceKey: string;
   targetKey: string | null;
+  unsupportedReason?: string;
 }
 
 /**

@@ -3,14 +3,16 @@ import BaseCard from "../components/BaseCard";
 interface PlaceHolderCardProps {
   blockType: string;
   displayName: string;
+  description?: string;
 }
 
-const PlaceholderCard = ({ blockType, displayName }: PlaceHolderCardProps) => {
+const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCardProps) => {
+  const truncatedDescription = description?.substring(0, 40) + "...";
   return (
     <BaseCard
       itemType={blockType}
       displayName={displayName}
-      preview={null}
+      description={truncatedDescription}
       tags={{}}
       numChildren={0}
       actions={null}

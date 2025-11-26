@@ -101,9 +101,10 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
 
         return <CardComponent key={contentHit.id} hit={contentHit} />;
       })}
-      {showPlaceholderBlocks && placeholderData?.hits?.map((item) => (<PlaceholderCard
+      {showPlaceholderBlocks && placeholderData?.hits?.map((item, index) => (<PlaceholderCard
         displayName={item.display_name}
         blockType={item.block_type}
+        description={placeholderBlocks?.at(index)?.unsupportedReason}
       />))}
     </div>
   );
