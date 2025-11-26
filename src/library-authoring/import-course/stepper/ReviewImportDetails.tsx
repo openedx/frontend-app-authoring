@@ -7,7 +7,7 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { useEffect, useMemo } from 'react';
 import { CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
-import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
+import { useLibraryBlockLimits, useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useGetBlockTypes, useGetContentHits } from '@src/search-manager';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
@@ -118,11 +118,15 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
   const { data: blockTypes, isPending: isBlockDataPending } = useGetBlockTypes([
     `context_key = "${courseId}"`,
   ]);
+  const {
+    data: libraryBlockLimits,
+    isPending: isPendinglibraryBlockLimits,
+  } = useLibraryBlockLimits();
 
   useEffect(() => {
     // Mark complete to inform parent component of analysis completion.
-    markAnalysisComplete(!isBlockDataPending);
-  }, [isBlockDataPending]);
+    markAnalysisComplete(!isBlockDataPending && !isPendinglibraryBlockLimits);
+  }, [isBlockDataPending, isPendinglibraryBlockLimits]);
 
   /** Filter unsupported blocks by checking if the block type is in the library's list of unsupported blocks. */
   const unsupportedBlockTypes = useMemo(() => {
@@ -172,25 +176,21 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
 
   /** Finally calculate the final number of unsupported blocks by adding parent unsupported and children
   unsupported blocks. */
-  const finalUnssupportedBlocks = useMemo(
+  let finalUnsupportedBlocks = useMemo(
     () => totalUnsupportedBlocks + totalUnsupportedBlockChildren,
     [totalUnsupportedBlocks, totalUnsupportedBlockChildren],
   );
 
-  /** Calculate total supported blocks by subtracting final unsupported blocks from the total number of blocks */
-  const totalBlocks = useMemo(() => {
-    if (!blockTypes) {
-      return undefined;
-    }
-    return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnssupportedBlocks;
-  }, [blockTypes, finalUnssupportedBlocks]);
-
   /** Calculate total components by excluding those that are chapters, sequential, or vertical. */
-  const totalComponents = useMemo(() => {
+  /** Also, calculate if the total components exceed the limits */
+  const { totalComponents, unsupportedByLimit } = useMemo(() => {
     if (!blockTypes) {
-      return undefined;
+      return {
+        totalComponents: undefined,
+        unsupportedByLimit: 0,
+      };
     }
-    return Object.entries(blockTypes).reduce(
+    let resultTotalComponents = Object.entries(blockTypes).reduce(
       (total, [blockType, count]) => {
         const isComponent = !['chapter', 'sequential', 'vertical'].includes(blockType);
         if (isComponent) {
@@ -199,16 +199,40 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         return total;
       },
       0,
-    ) - finalUnssupportedBlocks;
-  }, [blockTypes, finalUnssupportedBlocks]);
+    ) - finalUnsupportedBlocks;
+
+    let resultUnsupportedByLimit = 0
+    if (libraryBlockLimits && resultTotalComponents > libraryBlockLimits.maxBlocksPerContentLibrary) {
+      resultUnsupportedByLimit = resultTotalComponents - libraryBlockLimits.maxBlocksPerContentLibrary
+      resultTotalComponents -= resultUnsupportedByLimit
+    }
+    
+    return {
+      totalComponents: resultTotalComponents,
+      unsupportedByLimit: resultUnsupportedByLimit,
+    }
+  }, [blockTypes, finalUnsupportedBlocks, libraryBlockLimits]);
+
+  // Adds the components exceed the limit to the final unsupported count
+  if (unsupportedByLimit) {
+    finalUnsupportedBlocks += unsupportedByLimit;
+  }
+
+  /** Calculate total supported blocks by subtracting final unsupported blocks from the total number of blocks */
+  const totalBlocks = useMemo(() => {
+    if (!blockTypes) {
+      return undefined;
+    }
+    return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnsupportedBlocks;
+  }, [blockTypes, finalUnsupportedBlocks]);  
 
   /** Calculate the unsupported block percentage based on the final total blocks and unsupported blocks. */
   const unsupportedBlockPercentage = useMemo(() => {
     if (!blockTypes || !totalBlocks) {
       return 0;
     }
-    return (finalUnssupportedBlocks / (totalBlocks + finalUnssupportedBlocks)) * 100;
-  }, [blockTypes, finalUnssupportedBlocks]);
+    return (finalUnsupportedBlocks / (totalBlocks + finalUnsupportedBlocks)) * 100;
+  }, [blockTypes, finalUnsupportedBlocks]);
 
   return (
     <Stack gap={4}>
@@ -224,10 +248,10 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         sections={blockTypes?.chapter}
         subsections={blockTypes?.sequential}
         units={blockTypes?.vertical}
-        unsupportedBlocks={finalUnssupportedBlocks}
+        unsupportedBlocks={finalUnsupportedBlocks}
         isPending={isBlockDataPending}
       />
-      {!isBlockDataPending && finalUnssupportedBlocks > 0
+      {!isBlockDataPending && finalUnsupportedBlocks > 0
         && (
         <>
           <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
