@@ -124,12 +124,12 @@ export const replaceStaticWithAsset = ({
 
       // Check if this is a direct /static/filename.ext pattern (should be converted)
       // vs /static/images/filename.ext pattern (should NOT be converted)
-      const isDirectStaticFile = isStatic && !assetSrc.substring(8).includes('images/');
+      const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
 
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
-      const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+      const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
 
       // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
