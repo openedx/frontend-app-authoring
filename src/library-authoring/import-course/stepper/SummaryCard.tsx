@@ -84,7 +84,6 @@ export const SummaryCard = ({
   unsupportedBlocks,
   isPending,
 }: Props) => {
-
   let totalBlocksStr = totalBlocks?.toString();
   if (unsupportedBlocks && totalBlocks) {
     totalBlocksStr = `${totalBlocksStr}/${totalBlocks + unsupportedBlocks}`;
@@ -93,7 +92,6 @@ export const SummaryCard = ({
   if (unsupportedBlocks && totalComponents) {
     totalComponentsStr = `${totalComponentsStr}/${totalComponents + unsupportedBlocks}`;
   }
-
   return (
     <Card>
       <Card.Section>
