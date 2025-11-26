@@ -991,7 +991,12 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
 /**
  * Returns the migration blocks info of a given library
  */
-export const useMigrationBlocksInfo = (libraryId: string, collectionId?: string, isFailed?: boolean, enabled = true) => (
+export const useMigrationBlocksInfo = (
+  libraryId: string,
+  collectionId?: string,
+  isFailed?: boolean,
+  enabled = true,
+) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, collectionId, isFailed),
     queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(libraryId, collectionId, isFailed) : skipToken,

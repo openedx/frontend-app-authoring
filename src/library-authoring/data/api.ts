@@ -2,7 +2,6 @@ import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { VersionSpec } from '../LibraryBlock';
 import { type ContainerType } from '../../generic/key-utils';
-import src from 'react-select/dist/declarations/src';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -849,7 +848,11 @@ export interface BlockMigrationInfo {
 /**
  * Get the migration blocks info data for a library
  */
-export async function getModulestoreMigrationBlocksInfo(libraryId: string, collectionId?: string, isFailed?: boolean): Promise<BlockMigrationInfo[]> {
+export async function getModulestoreMigrationBlocksInfo(
+  libraryId: string,
+  collectionId?: string,
+  isFailed?: boolean,
+): Promise<BlockMigrationInfo[]> {
   const client = getAuthenticatedHttpClient();
 
   const params = new URLSearchParams();

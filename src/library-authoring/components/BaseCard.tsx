@@ -12,8 +12,8 @@ import ComponentCount from '@src/generic/component-count';
 import TagCount from '@src/generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
 import { skipIfUnwantedTarget } from '@src/utils';
-import messages from './messages';
 import { Report } from '@openedx/paragon/icons';
+import messages from './messages';
 
 type BaseCardProps = {
   itemType: string;
@@ -50,7 +50,7 @@ const BaseCard = ({
 
   const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
-  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType): "component-style-import-placeholder";
+  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-import-placeholder';
 
   return (
     <Container className="library-item-card selected">
@@ -67,7 +67,7 @@ const BaseCard = ({
         <Card.Header
           className={`library-item-header ${itemComponentStyle}`}
           title={
-            <Icon src={props.isPlaceholder ? Report: itemIcon} className="library-item-header-icon my-2" />
+            <Icon src={props.isPlaceholder ? Report : itemIcon} className="library-item-header-icon my-2" />
           }
           actions={(
             <div
@@ -94,10 +94,12 @@ const BaseCard = ({
                   <BlockTypeLabel blockType={itemType} />
                 </small>
               </Stack>
-              {!props.isPlaceholder && <>
+              {!props.isPlaceholder && (
+              <>
                 <ComponentCount count={numChildren} />
                 <TagCount size="sm" count={tagCount} />
-              </>}
+              </>
+              )}
             </Stack>
             <div className="badge-container d-flex align-items-center justify-content-center">
               {props.hasUnpublishedChanges && (

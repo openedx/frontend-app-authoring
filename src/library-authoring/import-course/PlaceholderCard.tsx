@@ -1,4 +1,4 @@
-import BaseCard from "../components/BaseCard";
+import BaseCard from '../components/BaseCard';
 
 interface PlaceHolderCardProps {
   blockType: string;
@@ -7,7 +7,7 @@ interface PlaceHolderCardProps {
 }
 
 const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCardProps) => {
-  const truncatedDescription = description ? description.substring(0, 40) + "...": undefined;
+  const truncatedDescription = description ? `${description.substring(0, 40) }...` : undefined;
   return (
     <BaseCard
       itemType={blockType}
@@ -21,7 +21,7 @@ const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCar
       selected={false}
       isPlaceholder
     />
-  )
+  );
 };
 
 export default PlaceholderCard;
