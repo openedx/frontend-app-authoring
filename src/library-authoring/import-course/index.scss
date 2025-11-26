@@ -17,3 +17,22 @@
 .text-decoration-underline {
   text-decoration: underline;
 }
+
+.import-course-stepper {
+  .import-container {
+    // Calculate all the screen size subtracting the height of the header and title and top/bottom margins
+    min-height: calc(calc(100vh - 60px - 61px) - calc(var(--pgn-spacing-spacer-base) * 6));
+  }
+
+  .content-buttons {
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+  }
+
+  [class*="col-"] {
+    // To avoid create an empty gray space between the main content and the sidebar
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
