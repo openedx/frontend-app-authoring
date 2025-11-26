@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { LoadingSpinner } from '../generic/Loading';
-import { useGetContentHits, useSearchContext } from '../search-manager';
+import { LoadingSpinner } from '@src/generic/Loading';
+import { useGetContentHits, useSearchContext } from '@src/search-manager';
+import { useLoadOnScroll } from '@src/hooks';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
 import { ContentType, useLibraryRoutes } from './routes';
-import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
 import ContainerCard from './containers/ContainerCard';
 import { useMigrationBlocksInfo } from './data/apiHooks';

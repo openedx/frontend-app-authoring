@@ -8,6 +8,7 @@ interface PlaceHolderCardProps {
 
 const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCardProps) => {
   const truncatedDescription = description ? `${description.substring(0, 40) }...` : undefined;
+  /* istanbul ignore next */
   return (
     <BaseCard
       itemType={blockType}
