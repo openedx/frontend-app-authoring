@@ -121,6 +121,11 @@ export const replaceStaticWithAsset = ({
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
       const assetSrc = src.substring(0, src.indexOf('"'));
+
+      // Check if this is a direct /static/filename.ext pattern (should be converted)
+      // vs /static/images/filename.ext pattern (should NOT be converted)
+      const isDirectStaticFile = isStatic && !assetSrc.substring(8).includes('images/');
+
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
@@ -133,16 +138,16 @@ export const replaceStaticWithAsset = ({
         // set the base URL to an endpoint serving the draft version of an asset by
         // its path.
         /* istanbul ignore next */
-        if (isStatic) {
+        if (isStatic && isDirectStaticFile) {
           staticFullUrl = assetSrc.substring(1);
         }
       } else if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
           staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
-        } else {
+        } else if (isDirectStaticFile) {
           staticFullUrl = `${lmsEndpointUrl}${getRelativeUrl({ courseId: learningContextId, displayName })}`;
         }
-      } else if (!isCorrectAssetFormat) {
+      } else if (!isCorrectAssetFormat && isDirectStaticFile) {
         staticFullUrl = getRelativeUrl({ courseId: learningContextId, displayName });
       }
       if (staticFullUrl) {
