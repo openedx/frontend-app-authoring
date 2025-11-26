@@ -59,7 +59,10 @@ describe('ReviewImportDetails', () => {
 
   it('renders import progress status when isBlockDataPending or migrationInfoIsPending is true', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 100 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: true,
       data: null,
@@ -74,7 +77,10 @@ describe('ReviewImportDetails', () => {
 
   it('renders warning when reimport', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 100 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
@@ -103,7 +109,10 @@ describe('ReviewImportDetails', () => {
 
   it('renders warning when unsupportedBlockPercentage > 0', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 100 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: null,
@@ -141,7 +150,10 @@ describe('ReviewImportDetails', () => {
 
   it('renders warning when components exceed the limit', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 20 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 20 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: null,
@@ -179,7 +191,10 @@ describe('ReviewImportDetails', () => {
 
   it('considers children blocks of unsupportedBlocks', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 100 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: null,
@@ -230,7 +245,10 @@ describe('ReviewImportDetails', () => {
 
   it('renders success alert when no unsupported blocks', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({ isPending: false, data: { maxBlocksPerContentLibrary: 100 } });
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
       data: null,

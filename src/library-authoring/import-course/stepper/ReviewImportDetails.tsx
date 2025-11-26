@@ -201,16 +201,16 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
       0,
     ) - finalUnsupportedBlocks;
 
-    let resultUnsupportedByLimit = 0
+    let resultUnsupportedByLimit = 0;
     if (libraryBlockLimits && resultTotalComponents > libraryBlockLimits.maxBlocksPerContentLibrary) {
-      resultUnsupportedByLimit = resultTotalComponents - libraryBlockLimits.maxBlocksPerContentLibrary
-      resultTotalComponents -= resultUnsupportedByLimit
+      resultUnsupportedByLimit = resultTotalComponents - libraryBlockLimits.maxBlocksPerContentLibrary;
+      resultTotalComponents -= resultUnsupportedByLimit;
     }
-    
+
     return {
       totalComponents: resultTotalComponents,
       unsupportedByLimit: resultUnsupportedByLimit,
-    }
+    };
   }, [blockTypes, finalUnsupportedBlocks, libraryBlockLimits]);
 
   // Adds the components exceed the limit to the final unsupported count
@@ -224,7 +224,7 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
       return undefined;
     }
     return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnsupportedBlocks;
-  }, [blockTypes, finalUnsupportedBlocks]);  
+  }, [blockTypes, finalUnsupportedBlocks]);
 
   /** Calculate the unsupported block percentage based on the final total blocks and unsupported blocks. */
   const unsupportedBlockPercentage = useMemo(() => {
