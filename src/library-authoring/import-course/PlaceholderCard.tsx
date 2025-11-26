@@ -7,7 +7,7 @@ interface PlaceHolderCardProps {
 }
 
 const PlaceholderCard = ({ blockType, displayName, description }: PlaceHolderCardProps) => {
-  const truncatedDescription = description?.substring(0, 40) + "...";
+  const truncatedDescription = description ? description.substring(0, 40) + "...": undefined;
   return (
     <BaseCard
       itemType={blockType}
