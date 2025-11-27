@@ -7,14 +7,19 @@ import {
 } from '@src/testUtils';
 import { mockGetMigrationStatus } from '@src/data/api.mocks';
 import { bulkModulestoreMigrateUrl } from '@src/data/api';
+import { useGetContentHits } from '@src/search-manager';
 import { ImportDetailsPage } from './ImportDetailsPage';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary } from '../data/api.mocks';
+import { getModulestoreMigratedBlocksInfoUrl } from '../data/api';
+import { libraryComponentsMock } from '../__mocks__';
 
 mockContentLibrary.applyMock();
 mockGetMigrationStatus.applyMock();
 const { libraryId } = mockContentLibrary;
 const mockNavigate = jest.fn();
+const mockUseSearchContext = jest.fn();
+const mockFetchNextPage = jest.fn();
 let axiosMock;
 
 // Mock the useCourseDetails hook
@@ -25,6 +30,12 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
+}));
+
+jest.mock('@src/search-manager', () => ({
+  ...jest.requireActual('@src/search-manager'),
+  useSearchContext: () => mockUseSearchContext(),
+  useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
 const render = (migrationTaskId: string) => (
@@ -96,6 +107,42 @@ describe('', () => {
   });
 
   it('should render Partial Succeeded state', async () => {
+    axiosMock.onGet(getModulestoreMigratedBlocksInfoUrl()).reply(200, [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+        targetKey: null,
+        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
+      },
+    ]);
+    (useGetContentHits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: {
+        hits: [
+          {
+            display_name: 'Randomized Content Block',
+            usage_key: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+            block_type: 'library_content',
+          },
+        ],
+        query: '',
+        processingTimeMs: 0,
+        limit: 1,
+        offset: 0,
+        estimatedTotalHits: 1,
+      },
+    });
+    mockUseSearchContext.mockReturnValue({
+      totalContentAndCollectionHits: 0,
+      contentAndCollectionHits: [],
+      isFetchingNextPage: false,
+      hasNextPage: false,
+      fetchNextPage: mockFetchNextPage,
+      searchKeywords: '',
+      isFiltered: false,
+      isPending: false,
+      hits: libraryComponentsMock,
+    });
+
     render(mockGetMigrationStatus.migrationIdPartial);
     expect(await screen.findByText(/partial import successful/i)).toBeInTheDocument();
 
@@ -103,15 +150,15 @@ describe('', () => {
       /85% of course test course has been imported successfully/i,
     )).toBeInTheDocument();
 
-    expect(screen.getByRole('cell', {
-      name: /legacy library content/i,
+    expect(await screen.findByRole('cell', {
+      name: /randomized content block/i,
     })).toBeInTheDocument();
-    expect(screen.getByRole('cell', {
-      name: /library_content/i,
+    expect(await screen.findByRole('cell', {
+      name: 'library_content',
     })).toBeInTheDocument();
-    expect(screen.getByRole('cell', {
-      name: /the block has children, so it is not supported in content libraries/i,
-    }));
+    expect(await screen.findByRole('cell', {
+      name: /has children, so it not supported in content libraries/i,
+    })).toBeInTheDocument();
 
     const viewImportedContentBtn = screen.getByRole('button', {
       name: /view imported content/i,

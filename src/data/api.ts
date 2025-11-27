@@ -105,11 +105,6 @@ export interface MigrateParameters {
     components: number;
     unsupported: number;
   }
-  unsupportedReasons: {
-    blockName: string;
-    blockType: string;
-    reason: string;
-  }[];
 }
 
 export interface MigrateTaskStatusData {

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -18,10 +18,12 @@ import { ToastContext } from '@src/generic/toast-context';
 import { Paragraph } from '@src/utils';
 
 import { useBulkModulestoreMigrate, useModulestoreMigrationStatus } from '@src/data/apiHooks';
+import { useGetContentHits } from '@src/search-manager';
 import messages from './messages';
 import { SummaryCard } from './stepper/SummaryCard';
 import { HelpSidebar } from './HelpSidebar';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useMigrationBlocksInfo } from '../data/apiHooks';
 
 export const ImportDetailsPage = () => {
   const intl = useIntl();
@@ -77,6 +79,43 @@ export const ImportDetailsPage = () => {
       migrationStatus = 'Succeeded';
     }
   }
+
+  const {
+    data: migrationBlockInfo,
+    isPending: isPendingMigrationBlockInfo,
+  } = useMigrationBlocksInfo(
+    libraryId,
+    undefined,
+    true,
+    migrationTaskId,
+    migrationStatus === 'Partial Succeeded',
+  );
+  // Fetch unsupported blocks usage_key information from meilisearch index.
+  const { data: unssupportedBlocksData } = useGetContentHits(
+    [
+      `usage_key IN [${migrationBlockInfo?.map((block) => `"${block.sourceKey}"`).join(',')}]`,
+    ],
+    (migrationBlockInfo?.length || 0) > 0,
+    ['usage_key', 'block_type', 'display_name'],
+    migrationBlockInfo?.length,
+    true,
+  );
+  const unsupportedTableData = useMemo(() => {
+    if (!migrationBlockInfo || !unssupportedBlocksData) {
+      return [];
+    }
+
+    const reasons = migrationBlockInfo.reduce((result, block) => ({
+      ...result,
+      [block.sourceKey]: block.unsupportedReason || '',
+    }), {} as Record<string, string>);
+
+    return unssupportedBlocksData.hits.map(block => ({
+      blockName: block.display_name,
+      blockType: block.block_type,
+      reason: reasons[block.usage_key],
+    }));
+  }, [migrationBlockInfo, unssupportedBlocksData]);
 
   if (enableRefeshState && migrationStatus !== 'In Progress') {
     setEnableRefreshState(false);
@@ -242,32 +281,35 @@ export const ImportDetailsPage = () => {
               }}
             />
           </div>
-          <DataTable
-            isPaginated
-            initialState={{
-              pageSize: 10,
-            }}
-            itemCount={courseImportDetails.unsupportedReasons.length}
-            columns={[
-              {
-                Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
-                accessor: 'blockName',
+          {!isPendingMigrationBlockInfo && unsupportedTableData && (
+            <DataTable
+              isPaginated
+              initialState={{
+                pageSize: 10,
+              }}
+              itemCount={unsupportedTableData.length}
+              columns={[
+                {
+                  Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
+                  accessor: 'blockName',
 
-              },
-              {
-                Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
-                accessor: 'blockType',
-              },
-              {
-                Header: intl.formatMessage(messages.importPartialReasonTableReason),
-                accessor: 'reason',
-              },
-            ]}
-            data={courseImportDetails.unsupportedReasons}
-          >
-            <DataTable.Table />
-            <DataTable.TableFooter />
-          </DataTable>
+                },
+                {
+                  Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
+                  accessor: 'blockType',
+                },
+                {
+                  Header: intl.formatMessage(messages.importPartialReasonTableReason),
+                  accessor: 'reason',
+                },
+              ]}
+              data={unsupportedTableData}
+            >
+              <DataTable.Table />
+              <DataTable.TableFooter />
+            </DataTable>
+          )}
+
           <div className="w-100 d-flex justify-content-end">
             <Button
               variant="outline-primary"

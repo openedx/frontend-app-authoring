@@ -56,6 +56,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     libraryId,
     collectionId,
     true,
+    undefined,
     showPlaceholderBlocks,
   );
   // Fetch unsupported blocks usage_key information from meilisearch index.

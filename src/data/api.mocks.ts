@@ -56,7 +56,6 @@ mockGetMigrationStatus.migrationStatusData = {
         components: 3,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -91,7 +90,6 @@ mockGetMigrationStatus.migrationStatusFailedData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -126,7 +124,6 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
     {
       id: 2,
@@ -147,7 +144,6 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -182,7 +178,6 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
     {
       id: 2,
@@ -203,7 +198,6 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -239,7 +233,6 @@ mockGetMigrationStatus.migrationStatusInProgressData = {
         components: 0,
         unsupported: 0,
       },
-      unsupportedReasons: [],
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -277,11 +270,6 @@ mockGetMigrationStatus.migrationStatusPartialData = {
         components: 3,
         unsupported: 1,
       },
-      unsupportedReasons: [{
-        blockName: 'Legacy library content',
-        blockType: 'library_content',
-        reason: 'The block has children, so it is not supported in content libraries',
-      }],
     },
   ],
 } as api.MigrateTaskStatusData;
