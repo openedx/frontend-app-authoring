@@ -7,7 +7,7 @@ import {
   Icon,
 } from '@openedx/paragon';
 import classNames from 'classnames';
-import DatePicker from 'react-datepicker/dist';
+import DatePicker from 'react-datepicker';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Calendar as CalendarIcon, Error as ErrorIcon } from '@openedx/paragon/icons';
 import { Formik } from 'formik';
@@ -73,7 +73,7 @@ const UpdateForm = ({
                   <DatePicker
                     name="date"
                     data-testid="course-updates-datepicker"
-                    selected={isValidDate(values.date) ? convertToDateFromString(values.date) : ''}
+                    selected={isValidDate(values.date) ? convertToDateFromString(values.date) : undefined}
                     dateFormat={DATE_FORMAT}
                     className={classNames('datepicker-custom-control', {
                       'datepicker-custom-control_isInvalid': !isValid,

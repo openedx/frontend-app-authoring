@@ -1,5 +1,5 @@
 import React from 'react';
-import DatePicker from 'react-datepicker/dist';
+import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form, Icon } from '@openedx/paragon';

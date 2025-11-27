@@ -108,7 +108,7 @@ export const ImportStepperPage = () => {
   }
 
   return (
-    <div className="d-flex">
+    <div className="import-course-stepper d-flex">
       <div className="flex-grow-1">
         <Helmet>
           <title>{libraryData.title} | {process.env.SITE_NAME}</title>
@@ -124,7 +124,7 @@ export const ImportStepperPage = () => {
             size: undefined,
           }}
         />
-        <Container className="mt-4 mb-5">
+        <Container className="mt-4">
           <div className="px-4 bg-light-200 border-bottom">
             <SubHeader
               title={intl.formatMessage(messages.importCourseStepperTitle)}
@@ -133,29 +133,31 @@ export const ImportStepperPage = () => {
           </div>
           <Layout xs={[{ span: 9 }, { span: 3 }]}>
             <Layout.Element>
-              <Stepper activeKey={currentStep}>
-                <Stepper.Header />
-                <Stepper.Step
-                  eventKey="select-course"
-                  title={intl.formatMessage(messages.importCourseSelectCourseStep)}
-                >
-                  <CoursesList
-                    selectedCourseId={selectedCourseId}
-                    handleSelect={setSelectedCourseId}
-                    cardMigrationStatusWidget={MigrationStatus}
-                  />
-                </Stepper.Step>
-                <Stepper.Step
-                  eventKey="review-details"
-                  title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
-                >
-                  <ReviewImportDetails
-                    markAnalysisComplete={setAnalysisCompleted}
-                    courseId={selectedCourseId}
-                  />
-                </Stepper.Step>
-              </Stepper>
-              <div className="mt-4">
+              <div className="import-container px-4">
+                <Stepper activeKey={currentStep}>
+                  <Stepper.Header />
+                  <Stepper.Step
+                    eventKey="select-course"
+                    title={intl.formatMessage(messages.importCourseSelectCourseStep)}
+                  >
+                    <CoursesList
+                      selectedCourseId={selectedCourseId}
+                      handleSelect={setSelectedCourseId}
+                      cardMigrationStatusWidget={MigrationStatus}
+                    />
+                  </Stepper.Step>
+                  <Stepper.Step
+                    eventKey="review-details"
+                    title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
+                  >
+                    <ReviewImportDetails
+                      markAnalysisComplete={setAnalysisCompleted}
+                      courseId={selectedCourseId}
+                    />
+                  </Stepper.Step>
+                </Stepper>
+              </div>
+              <div className="content-buttons mt-5 px-5 py-2 bg-white box-shadow-up-1">
                 {currentStep === 'select-course' ? (
                   <ActionRow className="d-flex justify-content-between">
                     <Button variant="outline-primary" onClick={() => navigate('../import')}>

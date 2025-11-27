@@ -15,6 +15,7 @@ import {
 import {
   AccessTime,
   Widgets,
+  PersonOutline,
 } from '@openedx/paragon/icons';
 import AlertError from '@src/generic/alert-error';
 import classNames from 'classnames';
@@ -203,22 +204,38 @@ export const CreateLibrary = ({
                 <Card.Body>
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-start p-4 text-primary-700">
                     <div className="flex-grow-1 mb-4 mb-md-0">
-                      <span className="mb-2">{restoreStatus.result.title}</span>
+                      <span className="mb-4">{restoreStatus.result.title}</span>
                       <p className="small mb-0">
                         {restoreStatus.result.org} / {restoreStatus.result.slug}
                       </p>
                     </div>
-                    <div className="d-flex flex-column gap-2 align-items-md-end">
+                    <div className="d-flex flex-column gap-2 align-items-md-start">
                       <div className="d-flex align-items-md-center gap-2">
-                        <Icon src={Widgets} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <Icon src={Widgets} className="mr-2" style={{ width: '20px', height: '20px' }} />
                         <span className="x-small">
                           {intl.formatMessage(messages.archiveComponentsCount, {
-                            count: restoreStatus.result.components,
+                            countSections: restoreStatus.result.sections,
+                            countSubsections: restoreStatus.result.subsections,
+                            countUnits: restoreStatus.result.units,
+                            countComponents: restoreStatus.result.components,
                           })}
                         </span>
                       </div>
+                      {
+                        (restoreStatus.result.createdBy?.email && restoreStatus.result.createdOnServer) && (
+                          <div className="d-flex align-items-md-center gap-2">
+                            <Icon src={PersonOutline} className="mr-2" style={{ width: '20px', height: '20px' }} />
+                            <span className="x-small">
+                              {intl.formatMessage(messages.archiveRestoredCreatedBy, {
+                                createdBy: restoreStatus.result.createdBy?.email,
+                                server: restoreStatus.result.createdOnServer,
+                              })}
+                            </span>
+                          </div>
+                        )
+                      }
                       <div className="d-flex align-items-md-center gap-2">
-                        <Icon src={AccessTime} style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                        <Icon src={AccessTime} className="mr-2" style={{ width: '20px', height: '20px' }} />
                         <span className="x-small">
                           {intl.formatMessage(messages.archiveBackupDate, {
                             date: new Date(restoreStatus.result.createdAt).toLocaleDateString(),

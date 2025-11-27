@@ -108,8 +108,8 @@ const messages = defineMessages({
   },
   'header.links.exportLibrary': {
     id: 'header.links.exportLibrary',
-    defaultMessage: 'Backup to local archive',
-    description: 'Link to Studio Backup Library page',
+    defaultMessage: 'Back up to local archive',
+    description: 'Link to Studio Library Backup page',
   },
   'header.menu.teamAccess': {
     id: 'header.links.teamAccess',

@@ -158,9 +158,17 @@ export const getLibraryRestoreStatusApiUrl = (taskId: string) => `${getApiBaseUr
  */
 export const getLibraryContainerCopyApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}copy/`;
 /**
+ * Base url for modulestore_migrator
+ */
+export const getBaseModuleStoreMigrationUrl = () => `${getApiBaseUrl()}/api/modulestore_migrator/v1/`;
+/**
  * Get the url for the API endpoint to list library course imports.
  */
-export const getCourseImportsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/modulestore_migrator/v1/library/${libraryId}/migrations/courses/`;
+export const getCourseImportsApiUrl = (libraryId: string) => `${getBaseModuleStoreMigrationUrl()}library/${libraryId}/migrations/courses/`;
+/**
+ * Get the url for the API endpoint to get migration blocks info.
+ */
+export const getModulestoreMigratedBlocksInfoUrl = () => `${getBaseModuleStoreMigrationUrl()}migration_blocks/`;
 
 export interface ContentLibrary {
   id: string;
@@ -829,5 +837,34 @@ export async function getMigrationInfo(sourceKeys: string[]): Promise<Record<str
   sourceKeys.forEach(key => params.append('source_keys', key));
 
   const { data } = await client.get(`${getApiBaseUrl()}/api/modulestore_migrator/v1/migration_info/`, { params });
+  return camelCaseObject(data);
+}
+
+export interface BlockMigrationInfo {
+  sourceKey: string;
+  targetKey: string | null;
+  unsupportedReason?: string;
+}
+
+/**
+ * Get the migration blocks info data for a library
+ */
+export async function getModulestoreMigrationBlocksInfo(
+  libraryId: string,
+  collectionId?: string,
+  isFailed?: boolean,
+): Promise<BlockMigrationInfo[]> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  params.append('target_key', libraryId);
+  if (collectionId) {
+    params.append('target_collection_key', collectionId);
+  }
+  if (isFailed !== undefined) {
+    params.append('is_failed', JSON.stringify(isFailed));
+  }
+
+  const { data } = await client.get(getModulestoreMigratedBlocksInfoUrl(), { params });
   return camelCaseObject(data);
 }
