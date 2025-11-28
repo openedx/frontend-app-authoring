@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { PermissionValidationRequest, PermissionValidationResponse } from '@src/authz/types';
-import { appId } from '@src/authz/constants';
 import { validateUserPermissions } from './api';
 
 const adminConsoleQueryKeys = {
-  all: [appId] as const,
+  all: ['authz'],
   permissions: (permissions: PermissionValidationRequest[]) => [...adminConsoleQueryKeys.all, 'validatePermissions', permissions] as const,
 };
 
@@ -19,7 +18,6 @@ const adminConsoleQueryKeys = {
  * @example
  * const { data } = useValidateUserPermissions([{
            "action": "act:read",
-           "object": "lib:test-lib",
            "scope": "org:OpenedX"
        }]);
  * if (data[0].allowed) { ... }
