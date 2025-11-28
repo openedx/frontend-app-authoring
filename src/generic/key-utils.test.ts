@@ -2,6 +2,7 @@ import {
   buildCollectionUsageKey,
   ContainerType,
   getBlockType,
+  getBlockTypeBlockV1,
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
@@ -139,6 +140,27 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for '${containerType}'`, () => {
         expect(normalizeContainerType(containerType)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('getBlockTypeBlockV1', () => {
+    for (const [input, expected] of [
+      ['block-v1:org+type@html+block@1', 'html'],
+      ['block-v1:OpenCraftX+type@html+block@1571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'html'],
+      ['block-v1:Axim+type@problem+block@571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'problem'],
+      ['block-v1:org+type@unit+block@1', 'unit'],
+      ['block-v1:org+type@section+block@1', 'section'],
+      ['block-v1:org+type@subsection+block@1', 'subsection'],
+    ]) {
+      it(`returns '${expected}' for usage key '${input}'`, () => {
+        expect(getBlockTypeBlockV1(input)).toStrictEqual(expected);
+      });
+    }
+
+    for (const input of ['', undefined, null, 'not a key', 'block-v1:foo']) {
+      it(`throws an exception for usage key '${input}'`, () => {
+        expect(() => getBlockTypeBlockV1(input as any)).toThrow(`Invalid usageKey: ${input}`);
       });
     }
   });

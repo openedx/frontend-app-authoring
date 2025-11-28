@@ -14,8 +14,6 @@ export async function mockGetMigrationStatus(migrationId: string): Promise<api.M
       return new Promise(() => {});
     case mockGetMigrationStatus.migrationIdInProgress:
       return mockGetMigrationStatus.migrationStatusInProgressData;
-    case mockGetMigrationStatus.migrationIdPartial:
-      return mockGetMigrationStatus.migrationStatusPartialData;
     default:
       /* istanbul ignore next */
       throw new Error(`mockGetMigrationStatus: unknown migration ID "${migrationId}"`);
@@ -177,35 +175,6 @@ mockGetMigrationStatus.migrationStatusInProgressData = {
       forwardSourceToTarget: true,
       isFailed: false,
       targetCollection: null,
-    },
-  ],
-} as api.MigrateTaskStatusData;
-mockGetMigrationStatus.migrationIdPartial = '7';
-mockGetMigrationStatus.migrationStatusPartialData = {
-  uuid: mockGetMigrationStatus.migrationIdPartial,
-  state: 'Succeeded',
-  stateText: 'Succeeded',
-  completedSteps: 9,
-  totalSteps: 9,
-  attempts: 1,
-  created: '',
-  modified: '',
-  artifacts: [],
-  parameters: [
-    {
-      id: 1,
-      source: 'legacy-lib-1',
-      target: 'lib',
-      compositionLevel: 'component',
-      repeatHandlingStrategy: 'update',
-      preserveUrlSlugs: false,
-      targetCollectionSlug: 'coll-1',
-      forwardSourceToTarget: true,
-      isFailed: false,
-      targetCollection: {
-        key: 'coll',
-        title: 'Test Collection',
-      },
     },
   ],
 } as api.MigrateTaskStatusData;

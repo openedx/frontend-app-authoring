@@ -139,7 +139,7 @@ describe('', () => {
       hits: libraryComponentsMock,
     });
 
-    render(mockGetMigrationStatus.migrationIdPartial);
+    render(mockGetMigrationStatus.migrationId);
     expect(await screen.findByText(/partial import successful/i)).toBeInTheDocument();
 
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
