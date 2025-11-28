@@ -126,3 +126,18 @@ export function normalizeContainerType(containerType: ContainerType | string) {
       return containerType;
   }
 }
+
+/**
+ * Given a usage key of V1 block like `block-v1:org+type@html+block@1`, get the type (e.g. `html`)
+ * @param usageKey e.g. `block-v1:org+type@html+block@1`
+ * @returns The block type as a string
+ */
+export function getBlockTypeBlockV1(usageKey: string): string {
+  if (usageKey && usageKey.startsWith('block-v1:')) {
+    const blockType = usageKey.match(/type@([^+]+)/);
+    if (blockType) {
+      return blockType[1];
+    }
+  }
+  throw new Error(`Invalid usageKey: ${usageKey}`);
+}

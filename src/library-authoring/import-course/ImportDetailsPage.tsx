@@ -16,14 +16,24 @@ import {
 import Loading from '@src/generic/Loading';
 import { ToastContext } from '@src/generic/toast-context';
 import { Paragraph } from '@src/utils';
-
 import { useBulkModulestoreMigrate, useModulestoreMigrationStatus } from '@src/data/apiHooks';
 import { useGetContentHits } from '@src/search-manager';
+import { ContainerType, getBlockTypeBlockV1 } from '@src/generic/key-utils';
+
 import messages from './messages';
 import { SummaryCard } from './stepper/SummaryCard';
 import { HelpSidebar } from './HelpSidebar';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useMigrationBlocksInfo } from '../data/apiHooks';
+
+export interface MigrationSummary {
+  totalBlocks: number;
+  sections: number;
+  subsections: number;
+  units: number;
+  components: number;
+  unsupported: number;
+}
 
 export const ImportDetailsPage = () => {
   const intl = useIntl();
@@ -58,7 +68,76 @@ export const ImportDetailsPage = () => {
   // Get the first migration, because the courses are imported one by one
   const courseImportDetails = migrationStatusData?.parameters?.[0];
 
-  const isPending = isPendingCourseDetails || isPendingMigrationStatusData;
+  const {
+    data: migrationBlockInfo,
+    isPending: isPendingMigrationBlockInfo,
+  } = useMigrationBlocksInfo(
+    libraryId,
+    undefined,
+    undefined,
+    migrationTaskId,
+    migrationStatusData?.state !== 'Failed',
+  );
+
+  const isPending = isPendingCourseDetails || isPendingMigrationStatusData || isPendingMigrationBlockInfo;
+
+  // Build migration summary using the mibration blocks info
+  const {
+    migrationSummary,
+    unsupportedBlockIds,
+  } = useMemo(() => {
+    const counts: MigrationSummary = {
+      totalBlocks: 0,
+      sections: 0,
+      subsections: 0,
+      units: 0,
+      components: 0,
+      unsupported: 0,
+    };
+    const resultUnsupportedIds: string[] = [];
+
+    if (!migrationBlockInfo) {
+      return {
+        migrationSummary: counts,
+        unsupportedBlockIds: resultUnsupportedIds,
+      };
+    }
+
+    for (const block of migrationBlockInfo) {
+      if (!block.targetKey) {
+        // The migrations of this block is failed
+        counts.unsupported += 1;
+        resultUnsupportedIds.push(`"${block.sourceKey}"`);
+
+        if (block.unsupportedReason) {
+          // Verify if the unsupported block has children
+          const match = block.unsupportedReason.match(/It has (\d+) children/);
+          counts.unsupported += match ? Number(match[1]) : 0;
+        }
+      } else {
+        counts.totalBlocks += 1;
+        const blockType = getBlockTypeBlockV1(block.sourceKey);
+        switch (blockType) {
+          case ContainerType.Chapter:
+            counts.sections += 1;
+            break;
+          case ContainerType.Sequential:
+            counts.subsections += 1;
+            break;
+          case ContainerType.Vertical:
+            counts.units += 1;
+            break;
+          default:
+            counts.components += 1;
+        }
+      }
+    }
+
+    return {
+      migrationSummary: counts,
+      unsupportedBlockIds: resultUnsupportedIds,
+    };
+  }, [migrationBlockInfo]);
 
   // Calculate current migration status
   let migrationStatus = 'In Progress';
@@ -73,33 +152,25 @@ export const ImportDetailsPage = () => {
     // TODO: Update this code when using simple migration
     if (courseImportDetails?.isFailed) {
       migrationStatus = 'Failed';
-    } else if (courseImportDetails?.migrationSummary.unsupported !== 0) {
+    } else if (migrationSummary.unsupported !== 0) {
       migrationStatus = 'Partial Succeeded';
     } else {
       migrationStatus = 'Succeeded';
     }
   }
 
-  const {
-    data: migrationBlockInfo,
-    isPending: isPendingMigrationBlockInfo,
-  } = useMigrationBlocksInfo(
-    libraryId,
-    undefined,
-    true,
-    migrationTaskId,
-    migrationStatus === 'Partial Succeeded',
-  );
   // Fetch unsupported blocks usage_key information from meilisearch index.
   const { data: unssupportedBlocksData } = useGetContentHits(
     [
-      `usage_key IN [${migrationBlockInfo?.map((block) => `"${block.sourceKey}"`).join(',')}]`,
+      `usage_key IN [${unsupportedBlockIds.join(',')}]`,
     ],
-    (migrationBlockInfo?.length || 0) > 0,
+    (unsupportedBlockIds.length || 0) > 0,
     ['usage_key', 'block_type', 'display_name'],
-    migrationBlockInfo?.length,
+    unsupportedBlockIds.length,
     true,
   );
+
+  // Build the data for the reasons for failed imports
   const unsupportedTableData = useMemo(() => {
     if (!migrationBlockInfo || !unssupportedBlocksData) {
       return [];
@@ -117,6 +188,8 @@ export const ImportDetailsPage = () => {
     }));
   }, [migrationBlockInfo, unssupportedBlocksData]);
 
+  // In any state other than "in progress", it is no longer necessary
+  // to keep refreshing the task status.
   if (enableRefeshState && migrationStatus !== 'In Progress') {
     setEnableRefreshState(false);
   }
@@ -178,14 +251,13 @@ export const ImportDetailsPage = () => {
           </Alert>
           <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
           <SummaryCard
-            totalBlocks={
-              courseImportDetails.migrationSummary.totalBlocks - courseImportDetails.migrationSummary.unsupported
-            }
-            totalComponents={courseImportDetails.migrationSummary.components}
-            sections={courseImportDetails.migrationSummary.sections}
-            subsections={courseImportDetails.migrationSummary.subsections}
-            units={courseImportDetails.migrationSummary.units}
-            unsupportedBlocks={courseImportDetails.migrationSummary.unsupported}
+            totalBlocks={migrationSummary.totalBlocks}
+            totalComponents={migrationSummary.components}
+            sections={migrationSummary.sections}
+            subsections={migrationSummary.subsections}
+            units={migrationSummary.units}
+            unsupportedBlocks={migrationSummary.unsupported}
+            isPending={isPendingMigrationBlockInfo}
           />
           <p>
             <FormattedMessage
@@ -239,9 +311,6 @@ export const ImportDetailsPage = () => {
         </Stack>
       );
     } if (migrationStatus === 'Partial Succeeded') {
-      const importedSuccessfullyCount = courseImportDetails.migrationSummary.totalBlocks
-        - courseImportDetails.migrationSummary.unsupported;
-
       return (
         <Stack gap={3}>
           <Alert variant="warning" icon={WarningFilled}>
@@ -260,21 +329,20 @@ export const ImportDetailsPage = () => {
           </Alert>
           <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
           <SummaryCard
-            totalBlocks={
-              courseImportDetails.migrationSummary.totalBlocks - courseImportDetails.migrationSummary.unsupported
-            }
-            totalComponents={courseImportDetails.migrationSummary.components}
-            sections={courseImportDetails.migrationSummary.sections}
-            subsections={courseImportDetails.migrationSummary.subsections}
-            units={courseImportDetails.migrationSummary.units}
-            unsupportedBlocks={courseImportDetails.migrationSummary.unsupported}
+            totalBlocks={migrationSummary.totalBlocks}
+            totalComponents={migrationSummary.components}
+            sections={migrationSummary.sections}
+            subsections={migrationSummary.subsections}
+            units={migrationSummary.units}
+            unsupportedBlocks={migrationSummary.unsupported}
+            isPending={isPendingMigrationBlockInfo}
           />
           <div>
             <FormattedMessage
               {...messages.importPartialBody}
               values={{
                 percentage: Math.floor(
-                  (importedSuccessfullyCount * 100) / courseImportDetails.migrationSummary.totalBlocks,
+                  (migrationSummary.totalBlocks * 100) / (migrationSummary.totalBlocks + migrationSummary.unsupported),
                 ),
                 courseName: courseDetails?.title,
                 p: Paragraph,

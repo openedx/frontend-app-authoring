@@ -10,8 +10,7 @@ import { bulkModulestoreMigrateUrl } from '@src/data/api';
 import { useGetContentHits } from '@src/search-manager';
 import { ImportDetailsPage } from './ImportDetailsPage';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { mockContentLibrary } from '../data/api.mocks';
-import { getModulestoreMigratedBlocksInfoUrl } from '../data/api';
+import { mockContentLibrary, mockGetModulestoreMigratedBlocksInfo } from '../data/api.mocks';
 import { libraryComponentsMock } from '../__mocks__';
 
 mockContentLibrary.applyMock();
@@ -93,10 +92,13 @@ describe('', () => {
   });
 
   it('should render Succeeded state', async () => {
+    mockGetModulestoreMigratedBlocksInfo.applyMockSuccess();
     render(mockGetMigrationStatus.migrationId);
     expect(await screen.findByText(
       /test course has been imported to your library in a collection called test collection/i,
     ));
+    expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
+    expect(await screen.findByText('4')).toBeInTheDocument();
 
     const viewImportedContentBtn = screen.getByRole('button', {
       name: /view imported content/i,
@@ -107,13 +109,7 @@ describe('', () => {
   });
 
   it('should render Partial Succeeded state', async () => {
-    axiosMock.onGet(getModulestoreMigratedBlocksInfoUrl()).reply(200, [
-      {
-        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
-        targetKey: null,
-        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
-      },
-    ]);
+    mockGetModulestoreMigratedBlocksInfo.applyMockPartial();
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
       data: {
@@ -146,8 +142,13 @@ describe('', () => {
     render(mockGetMigrationStatus.migrationIdPartial);
     expect(await screen.findByText(/partial import successful/i)).toBeInTheDocument();
 
-    expect(screen.getByText(
-      /85% of course test course has been imported successfully/i,
+    expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
+    expect(await screen.findByText('2/5')).toBeInTheDocument();
+    expect(await screen.findByText(/Components/i)).toBeInTheDocument();
+    expect(await screen.findByText('1/4')).toBeInTheDocument();
+
+    expect(await screen.findByText(
+      /40% of course test course has been imported successfully/i,
     )).toBeInTheDocument();
 
     expect(await screen.findByRole('cell', {

@@ -48,14 +48,6 @@ mockGetMigrationStatus.migrationStatusData = {
         key: 'coll',
         title: 'Test Collection',
       },
-      migrationSummary: {
-        totalBlocks: 6,
-        sections: 1,
-        subsections: 1,
-        units: 1,
-        components: 3,
-        unsupported: 0,
-      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -82,14 +74,6 @@ mockGetMigrationStatus.migrationStatusFailedData = {
       forwardSourceToTarget: true,
       isFailed: true,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -116,14 +100,6 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       forwardSourceToTarget: true,
       isFailed: true,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
     {
       id: 2,
@@ -136,14 +112,6 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       forwardSourceToTarget: true,
       isFailed: true,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -170,14 +138,6 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       forwardSourceToTarget: true,
       isFailed: true,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
     {
       id: 2,
@@ -190,14 +150,6 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       forwardSourceToTarget: true,
       isFailed: false,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -225,14 +177,6 @@ mockGetMigrationStatus.migrationStatusInProgressData = {
       forwardSourceToTarget: true,
       isFailed: false,
       targetCollection: null,
-      migrationSummary: {
-        totalBlocks: 0,
-        sections: 0,
-        subsections: 0,
-        units: 0,
-        components: 0,
-        unsupported: 0,
-      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -261,14 +205,6 @@ mockGetMigrationStatus.migrationStatusPartialData = {
       targetCollection: {
         key: 'coll',
         title: 'Test Collection',
-      },
-      migrationSummary: {
-        totalBlocks: 7,
-        sections: 1,
-        subsections: 1,
-        units: 1,
-        components: 3,
-        unsupported: 1,
       },
     },
   ],

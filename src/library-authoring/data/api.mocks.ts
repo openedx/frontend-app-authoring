@@ -34,6 +34,52 @@ export const mockGetContentLibraryV2List = {
   }),
 };
 
+export const mockGetModulestoreMigratedBlocksInfo = {
+  applyMockSuccess: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@sequential+block@2',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@vertical+block@2',
+        targetKey: '3',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@3',
+        targetKey: '4',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+  applyMockPartial: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+        targetKey: null,
+        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+};
+
 /**
  * Mock for `getContentLibrary()`
  *
