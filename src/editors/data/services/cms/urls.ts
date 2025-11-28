@@ -125,5 +125,5 @@ export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
 )) satisfies UrlFunction;
 
 export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
-  `${studioEndpointUrl}/api/courses/v1/validate/numerical-input/`
+  `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
 )) satisfies UrlFunction;

@@ -6,6 +6,7 @@ import {
   Icon,
   IconButton,
   Form,
+  Spinner,
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -44,7 +45,7 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
-  const { data = { is_valid: true }, mutate } = useValidateInputBlock();
+  const { data = { is_valid: true }, mutate, isPending } = useValidateInputBlock();
 
   const staticRootUrl = isLibrary
     ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
@@ -90,6 +91,9 @@ const AnswerOption = ({
           <Form.Control.Feedback type="invalid">
             <FormattedMessage {...messages.answerNumericErrorText} />
           </Form.Control.Feedback>
+          )}
+          {isPending && (
+            <Spinner animation="border" className="mie-3 mt-3" screenReaderText="loading" />
           )}
         </Form.Group>
       );
