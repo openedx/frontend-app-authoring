@@ -23,6 +23,7 @@ import libraryMessages from '../../../library-authoring/add-content/messages';
 import './index.scss';
 import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
 import CancelConfirmModal from './components/CancelConfirmModal';
+import AIAssistantWidget from '../../../assistant/AIAssistantWidget';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -130,12 +131,17 @@ const EditorContainer: React.FC<Props> = ({
           <h2 className="h3 col pl-0">
             <TitleHeader isInitialized={isInitialized} />
           </h2>
-          <IconButton
-            src={Close}
-            iconAs={Icon}
-            onClick={confirmCancelIfDirty}
-            alt={intl.formatMessage(messages.exitButtonAlt)}
-          />
+          <div className="d-flex">
+            <AIAssistantWidget
+              xblockType="html"
+            />
+            <IconButton
+              src={Close}
+              iconAs={Icon}
+              onClick={confirmCancelIfDirty}
+              alt={intl.formatMessage(messages.exitButtonAlt)}
+            />
+          </div>
         </div>
       </ModalDialog.Header>
       <EditorModalBody>

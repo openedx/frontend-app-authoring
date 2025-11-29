@@ -32,6 +32,8 @@ import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
 // Mocks for ComponentEditorModal to work in tests.
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 
+jest.mock('../../assistant/context/hooks');
+
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
   const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };

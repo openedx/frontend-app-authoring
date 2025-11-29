@@ -6,6 +6,8 @@ import { USER_ROLES } from '../../constants';
 import CourseTeamMember from './CourseTeamMember';
 import messages from './messages';
 
+jest.mock('../../assistant/context/hooks');
+
 const userNameMock = 'User';
 const emailMock = 'user@example.com';
 const currentUserEmailMock = 'user@example.com';

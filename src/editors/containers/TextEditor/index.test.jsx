@@ -76,6 +76,8 @@ jest.mock('../../data/redux', () => ({
   },
 }));
 
+jest.mock('../../../assistant/context/hooks');
+
 describe('TextEditor', () => {
   const props = {
     onClose: jest.fn().mockName('props.onClose'),

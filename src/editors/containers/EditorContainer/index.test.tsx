@@ -11,6 +11,13 @@ import editorCmsApi from '../../data/services/cms/api';
 import EditorPage from '../../EditorPage';
 import * as hooks from './hooks';
 
+jest.mock('../../../assistant/context/hooks');
+
+jest.mock('../../../assistant/AIAssistantWidget', () => ({
+  __esModule: true,
+  default: () => <div data-testid="ai-assistant-widget-mock" />,
+}));
+
 // Mock this plugins component:
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 // Always mock out the "fetch course images" endpoint:

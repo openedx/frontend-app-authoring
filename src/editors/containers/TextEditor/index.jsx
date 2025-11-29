@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -18,6 +18,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useAiAssistant } from '../../../assistant/context/hooks';
 
 const TextEditor = ({
   onClose,
@@ -35,8 +36,38 @@ const TextEditor = ({
   // inject
   intl,
 }) => {
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const initialContent = blockValue ? blockValue.data.data : '';
+  const { aiData } = useAiAssistant();
+  const aiGeneratedContent = aiData?.content ?? aiData;
+
+  const { editorRef, refReady, setEditorRef: internalSetEditorRef } = prepareEditorRef();
+
+  const setEditorRef = useCallback((ref) => {
+    internalSetEditorRef(ref);
+  }, [internalSetEditorRef]);
+
+  const contentFromBlock = blockValue?.data?.data || '';
+  const initialContent = contentFromBlock;
+
+  useEffect(() => {
+    const isEditorReady = showRawEditor
+      ? !!editorRef.current
+      : (refReady && !!editorRef.current);
+
+    if (aiGeneratedContent && isEditorReady) {
+      if (showRawEditor) {
+        editorRef.current.dispatch({
+          changes: {
+            from: 0,
+            to: editorRef.current.state.doc.length,
+            insert: aiGeneratedContent,
+          },
+        });
+      } else {
+        editorRef.current.setContent(aiGeneratedContent);
+      }
+    }
+  }, [aiGeneratedContent, refReady, showRawEditor, editorRef, aiData]);
+
   const newContent = replaceStaticWithAsset({
     initialContent,
     learningContextId,

@@ -59,7 +59,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       maxHeight={500}
       minHeight={500}
       onChange={[Function]}
-      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      setEditorRef={[Function]}
       studioEndpointUrl=""
     />
   </div>
@@ -235,7 +235,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       maxHeight={500}
       minHeight={500}
       onChange={[Function]}
-      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      setEditorRef={[Function]}
       studioEndpointUrl=""
     />
   </div>
@@ -301,7 +301,7 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
       maxHeight={500}
       minHeight={500}
       onChange={[Function]}
-      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      setEditorRef={[Function]}
       studioEndpointUrl=""
     />
   </div>

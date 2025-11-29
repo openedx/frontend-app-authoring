@@ -23,6 +23,8 @@ import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import LibraryLayout from '../LibraryLayout';
 
+jest.mock('../../assistant/context/hooks');
+
 mockContentSearchConfig.applyMock();
 mockClipboardEmpty.applyMock();
 mockContentLibrary.applyMock();

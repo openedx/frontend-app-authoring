@@ -115,13 +115,25 @@ export const createCodeMirrorDomNode = ({
       ],
     });
     const view = new EditorView({ state: newState, parent: ref.current });
-    // eslint-disable-next-line no-param-reassign
-    upstreamRef.current = view;
+
+    if (typeof upstreamRef === 'function') {
+      upstreamRef(view);
+    } else if (upstreamRef) {
+      // eslint-disable-next-line no-param-reassign
+      upstreamRef.current = view;
+    }
+
     view.focus();
 
     return () => {
       // called on cleanup
       view.destroy();
+      if (typeof upstreamRef === 'function') {
+        upstreamRef(null);
+      } else if (upstreamRef) {
+        // eslint-disable-next-line no-param-reassign
+        upstreamRef.current = null;
+      }
     };
   }, []);
 };

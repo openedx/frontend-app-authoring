@@ -8,6 +8,8 @@ import editorCmsApi from './data/services/cms/api';
 
 import EditorPage from './EditorPage';
 
+jest.mock('../assistant/context/hooks');
+
 // Mock this plugins component:
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 // Always mock out the "fetch course images" endpoint:

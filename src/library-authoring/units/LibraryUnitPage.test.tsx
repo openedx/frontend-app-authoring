@@ -30,6 +30,8 @@ import { ToastActionData } from '../../generic/toast-context';
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
+jest.mock('../../assistant/context/hooks');
+
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 

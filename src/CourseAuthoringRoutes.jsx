@@ -27,6 +27,7 @@ import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import { CourseLibraries } from './course-libraries';
 import { IframeProvider } from './generic/hooks/context/iFrameContext';
+import { AiAssistantProvider } from './assistant/context/AIAssistantProvider';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -48,101 +49,103 @@ const CourseAuthoringRoutes = () => {
   const { courseId } = useParams();
 
   return (
-    <CourseAuthoringPage courseId={courseId}>
-      <Routes>
-        <Route
-          path="/"
-          element={<PageWrap><CourseOutline courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="course_info"
-          element={<PageWrap><CourseUpdates courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="libraries"
-          element={<PageWrap><CourseLibraries courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="assets"
-          element={<PageWrap><FilesPage courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="videos"
-          element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
-        />
-        <Route
-          path="pages-and-resources/*"
-          element={<PageWrap><PagesAndResources courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="proctored-exam-settings"
-          element={<Navigate replace to={`/course/${courseId}/pages-and-resources`} />}
-        />
-        <Route
-          path="custom-pages/*"
-          element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
-        />
-        {DECODED_ROUTES.COURSE_UNIT.map((path) => (
+    <AiAssistantProvider>
+      <CourseAuthoringPage courseId={courseId}>
+        <Routes>
           <Route
-            key={path}
-            path={path}
-            element={<PageWrap><IframeProvider><CourseUnit courseId={courseId} /></IframeProvider></PageWrap>}
+            path="/"
+            element={<PageWrap><CourseOutline courseId={courseId} /></PageWrap>}
           />
-        ))}
-        <Route
-          path="editor/course-videos/:blockId"
-          element={<PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="editor/:blockType/:blockId?"
-          element={<PageWrap><EditorContainer learningContextId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="settings/details"
-          element={<PageWrap><ScheduleAndDetails courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="settings/grading"
-          element={<PageWrap><GradingSettings courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="course_team"
-          element={<PageWrap><CourseTeam courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="group_configurations"
-          element={<PageWrap><GroupConfigurations courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="settings/advanced"
-          element={<PageWrap><AdvancedSettings courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="import"
-          element={<PageWrap><CourseImportPage courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="export"
-          element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="optimizer"
-          element={<PageWrap><CourseOptimizerPage courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="checklists"
-          element={<PageWrap><CourseChecklist courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="certificates"
-          element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates courseId={courseId} /></PageWrap> : null}
-        />
-        <Route
-          path="textbooks"
-          element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
-        />
-      </Routes>
-    </CourseAuthoringPage>
+          <Route
+            path="course_info"
+            element={<PageWrap><CourseUpdates courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="libraries"
+            element={<PageWrap><CourseLibraries courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="assets"
+            element={<PageWrap><FilesPage courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="videos"
+            element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
+          />
+          <Route
+            path="pages-and-resources/*"
+            element={<PageWrap><PagesAndResources courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="proctored-exam-settings"
+            element={<Navigate replace to={`/course/${courseId}/pages-and-resources`} />}
+          />
+          <Route
+            path="custom-pages/*"
+            element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
+          />
+          {DECODED_ROUTES.COURSE_UNIT.map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={<PageWrap><IframeProvider><CourseUnit courseId={courseId} /></IframeProvider></PageWrap>}
+            />
+          ))}
+          <Route
+            path="editor/course-videos/:blockId"
+            element={<PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="editor/:blockType/:blockId?"
+            element={<PageWrap><EditorContainer learningContextId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="settings/details"
+            element={<PageWrap><ScheduleAndDetails courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="settings/grading"
+            element={<PageWrap><GradingSettings courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="course_team"
+            element={<PageWrap><CourseTeam courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="group_configurations"
+            element={<PageWrap><GroupConfigurations courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="settings/advanced"
+            element={<PageWrap><AdvancedSettings courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="import"
+            element={<PageWrap><CourseImportPage courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="export"
+            element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="optimizer"
+            element={<PageWrap><CourseOptimizerPage courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="checklists"
+            element={<PageWrap><CourseChecklist courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path="certificates"
+            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates courseId={courseId} /></PageWrap> : null}
+          />
+          <Route
+            path="textbooks"
+            element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
+          />
+        </Routes>
+      </CourseAuthoringPage>
+    </AiAssistantProvider>
   );
 };
 
