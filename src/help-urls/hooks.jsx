@@ -1,22 +1,19 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
-
-import { fetchHelpUrls } from './data/thunks';
-import { getPages, selectHelpUrlsByNames } from './data/selectors';
+import { useAllHelpUrls } from './data/apiHooks';
 
 const useHelpUrls = (tokenNames) => {
-  const dispatch = useDispatch();
-  const helpTokens = useSelector(selectHelpUrlsByNames(tokenNames));
-  const pages = useSelector(getPages);
+  const {
+    data: pages,
+  } = useAllHelpUrls();
 
-  useEffect(() => {
-    if (isEmpty(pages)) {
-      dispatch(fetchHelpUrls());
-    }
-  }, []);
+  const urlsDictionary = {};
 
-  return helpTokens;
+  if (pages) {
+    tokenNames.forEach(name => {
+      urlsDictionary[name] = pages[name] || null;
+    });
+  }
+
+  return urlsDictionary;
 };
 
 export { useHelpUrls };
