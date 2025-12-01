@@ -21,6 +21,7 @@ import {
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
+  updateCourseUnitSidebar,
 } from './data/thunk';
 import {
   getCanEdit,
@@ -221,8 +222,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       // edits the component using editor which has a separate store
       /* istanbul ignore next */
       if (event.key === 'courseRefreshTriggerOnComponentEditSave') {
-        dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-        dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
+        dispatch(updateCourseUnitSidebar(blockId));
         localStorage.removeItem(event.key);
       }
     };
