@@ -1,6 +1,7 @@
 import {
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { libraryAuthoringQueryKeys } from '@src/library-authoring/data/apiHooks';
 import {
   getWaffleFlags,
@@ -8,7 +9,9 @@ import {
   bulkModulestoreMigrate,
   getModulestoreMigrationStatus,
   BulkMigrateRequestData,
+  getCourseDetail,
 } from './api';
+import { RequestStatus, RequestStatusType } from './constants';
 
 export const migrationQueryKeys = {
   all: ['contentLibrary'],
@@ -16,6 +19,14 @@ export const migrationQueryKeys = {
    * Base key for data specific to a migration task
    */
   migrationTask: (migrationId?: string | null) => [...migrationQueryKeys.all, migrationId],
+};
+
+export const courseDetailsKey = {
+  all: ['courseDetails'],
+  /**
+   * Base key for get course details data.
+   */
+  courseDetails: (courseId: string) => [...courseDetailsKey.all, courseId],
 };
 
 /**
@@ -72,3 +83,34 @@ export const useModulestoreMigrationStatus = (migrationId: string | null) => (
     refetchInterval: 1000, // Refresh every second
   })
 );
+
+/**
+ * Get details of a course
+ */
+export const useCourseDetails = (courseId: string) => {
+  const query = useQuery({
+    queryKey: courseDetailsKey.courseDetails(courseId),
+    queryFn: () => getCourseDetail(courseId, getAuthenticatedUser().username),
+    retry: false,
+  });
+
+  let status: RequestStatusType = RequestStatus.PENDING;
+
+  if (query.isLoading) {
+    status = RequestStatus.IN_PROGRESS;
+  } else if (query.isSuccess) {
+    status = RequestStatus.SUCCESSFUL;
+  } else if (query.error) {
+    const errorStatus = (query.error as any)?.response?.status;
+    if (errorStatus === 404) {
+      status = RequestStatus.NOT_FOUND;
+    } else {
+      status = RequestStatus.FAILED;
+    }
+  }
+
+  return {
+    ...query,
+    status,
+  };
+};

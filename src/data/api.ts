@@ -3,6 +3,30 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
 
+export type CourseDetailsData = {
+  blocksUrl: string;
+  courseId: string;
+  effort?: string;
+  end?: string;
+  enrollmentEnd?: string;
+  enrollmentStart?: string;
+  hidden: boolean;
+  id: string;
+  invitationOnly: boolean;
+  isEnrolled: boolean;
+  media: Object;
+  mobileAvailable: boolean;
+  name: string;
+  number: string;
+  org: string;
+  overview: string;
+  pacing: string;
+  shortDescription?: string;
+  start?: string;
+  startDisplay?: string;
+  startType?: string;
+};
+
 /**
  * Get the URL to check the migration task status
  */
@@ -20,18 +44,13 @@ export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   return courseId ? `${baseUrl}${apiPath}/${courseId}` : `${baseUrl}${apiPath}`;
 };
 
-function normalizeCourseDetail(data) {
+export async function getCourseDetail(courseId: string, username: string): Promise<CourseDetailsData> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
   return {
     id: data.course_id,
     ...camelCaseObject(data),
   };
-}
-
-export async function getCourseDetail(courseId: string, username: string) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
-
-  return normalizeCourseDetail(data);
 }
 
 /**
@@ -80,7 +99,10 @@ export type WaffleFlagsStatus = { id: string | undefined } & Record<WaffleFlagNa
 export async function getWaffleFlags(courseId?: string): Promise<WaffleFlagsStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getApiWaffleFlagsUrl(courseId));
-  return normalizeCourseDetail(data);
+  return {
+    id: data.course_id,
+    ...camelCaseObject(data),
+  };
 }
 
 export interface MigrateArtifacts {

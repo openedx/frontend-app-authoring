@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -7,34 +6,32 @@ import {
 } from 'react-router-dom';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import Header from './header';
-import { fetchCourseDetail } from './data/thunks';
-import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { fetchOnlyStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
+import { useCourseAuthoringContext } from './CourseAuthoringContext';
 
-const CourseAuthoringPage = ({ courseId, children }) => {
+interface Props {
+  children?: React.ReactNode;
+}
+
+const CourseAuthoringPage = ({ children }: Props) => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchCourseDetail(courseId));
-  }, [courseId]);
 
   useEffect(() => {
     dispatch(fetchOnlyStudioHomeData());
   }, []);
 
-  const courseDetail = useModel('courseDetails', courseId);
+  const { courseId, courseDetails, courseDetailStatus } = useCourseAuthoringContext();
 
-  const courseNumber = courseDetail ? courseDetail.number : null;
-  const courseOrg = courseDetail ? courseDetail.org : null;
-  const courseTitle = courseDetail ? courseDetail.name : courseId;
+  const courseNumber = courseDetails ? courseDetails.number : undefined;
+  const courseOrg = courseDetails ? courseDetails.org : undefined;
+  const courseTitle = courseDetails ? courseDetails.name : courseId;
+  const inProgress = courseDetailStatus === RequestStatus.IN_PROGRESS || courseDetailStatus === RequestStatus.PENDING;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
-  const courseDetailStatus = useSelector(state => state.courseDetail.status);
-  const inProgress = courseDetailStatus === RequestStatus.IN_PROGRESS;
   const { pathname } = useLocation();
   const isEditor = pathname.includes('/editor');
 
@@ -68,15 +65,6 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       {!inProgress && !isEditor && <StudioFooterSlot />}
     </div>
   );
-};
-
-CourseAuthoringPage.propTypes = {
-  children: PropTypes.node,
-  courseId: PropTypes.string.isRequired,
-};
-
-CourseAuthoringPage.defaultProps = {
-  children: null,
 };
 
 export default CourseAuthoringPage;
