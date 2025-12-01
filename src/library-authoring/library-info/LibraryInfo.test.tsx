@@ -9,7 +9,6 @@ import {
   initializeMocks,
 } from '@src/testUtils';
 import { validateUserPermissions } from '@src/authz/data/api';
-import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -46,12 +45,7 @@ describe('<LibraryInfo />', () => {
     mockShowToast = mocks.mockShowToast;
     validateUserPermissionsMock = mocks.validateUserPermissionsMock;
 
-    validateUserPermissionsMock.mockResolvedValue([
-      {
-        action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
-        allowed: true,
-      },
-    ]);
+    validateUserPermissionsMock.mockResolvedValue({ canPublish: true });
   });
 
   afterEach(() => {

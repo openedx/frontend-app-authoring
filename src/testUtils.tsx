@@ -196,7 +196,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
 
   // Mock user permissions to avoid breaking tests that monitor axios calls
   // If needed, override the mockResolvedValue in your test
-  validateUserPermissionsMock = jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue([]);
+  validateUserPermissionsMock = jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue({});
 
   return {
     reduxStore,
