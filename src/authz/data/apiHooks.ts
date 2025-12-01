@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { PermissionValidationRequest, PermissionValidationResponse } from '@src/authz/types';
+import { PermissionValidationAnswer, PermissionValidationQuery } from '@src/authz/types';
 import { validateUserPermissions } from './api';
 
 const adminConsoleQueryKeys = {
   all: ['authz'],
-  permissions: (permissions: PermissionValidationRequest[]) => [...adminConsoleQueryKeys.all, 'validatePermissions', permissions] as const,
+  permissions: (permissions: PermissionValidationQuery) => [...adminConsoleQueryKeys.all, 'validatePermissions', permissions] as const,
 };
 
 /**
@@ -13,19 +13,23 @@ const adminConsoleQueryKeys = {
  * - Determine whether the current user can access certain object.
  * - Provide role-based rendering logic for UI components.
  *
- * @param permissions - The array of objects and actions to validate.
+ * @param permissions - A key/value map of objects and actions to validate.
+ * The key is an arbitrary string to identify the permission check,
+ * and the value is an object containing the action and optional scope.
  *
  * @example
- * const { data } = useValidateUserPermissions([{
-           "action": "act:read",
-           "scope": "org:OpenedX"
-       }]);
- * if (data[0].allowed) { ... }
+ * const { isLoading, data } = useUserPermissions({
+ *     "canRead": {
+ *         "action": "act:read",
+ *         "scope": "org:OpenedX"
+ *      }
+ *    });
+ * if (data.canRead) { ... }
  *
  */
-export const useValidateUserPermissions = (
-  permissions: PermissionValidationRequest[],
-) => useQuery<PermissionValidationResponse[], Error>({
+export const useUserPermissions = (
+  permissions: PermissionValidationQuery,
+) => useQuery<PermissionValidationAnswer, Error>({
   queryKey: adminConsoleQueryKeys.permissions(permissions),
   queryFn: () => validateUserPermissions(permissions),
   retry: false,

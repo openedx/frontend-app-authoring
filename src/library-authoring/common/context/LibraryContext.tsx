@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { useValidateUserPermissions } from '@src/authz/data/apiHooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { ContainerType } from '../../../generic/key-utils';
 
@@ -15,10 +15,6 @@ import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
-
-const LIBRARY_PERMISSIONS = [
-  CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
-];
 
 export interface ComponentEditorInfo {
   usageKey: string;
@@ -114,10 +110,13 @@ export const LibraryProvider = ({
     componentPickerMode,
   } = useComponentPickerContext();
 
-  const permissions = LIBRARY_PERMISSIONS.map(action => ({ action, scope: libraryId }));
-
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useValidateUserPermissions(permissions);
-  const canPublish = userPermissions ? userPermissions[0]?.allowed : false;
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canPublish: {
+      action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
+      scope: libraryId,
+    },
+  });
+  const canPublish = userPermissions?.canPublish || false;
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params

@@ -1,8 +1,16 @@
-export interface PermissionValidationRequest {
+export interface PermissionValidationRequestItem {
   action: string;
   scope?: string;
 }
 
-export interface PermissionValidationResponse extends PermissionValidationRequest {
+export interface PermissionValidationResponseItem extends PermissionValidationRequestItem {
   allowed: boolean;
+}
+
+export interface PermissionValidationQuery {
+  [permissionKey: string]: PermissionValidationRequestItem;
+}
+
+export interface PermissionValidationAnswer {
+  [permissionKey: string]: boolean;
 }
