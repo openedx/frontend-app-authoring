@@ -19,9 +19,9 @@ const adminConsoleQueryKeys = {
  *
  * @example
  * const { isLoading, data } = useUserPermissions({
- *     "canRead": {
- *         "action": "act:read",
- *         "scope": "org:OpenedX"
+ *     canRead: {
+ *         action: "content_libraries.view_library",
+ *         scope: "lib:OpenedX:CSPROB"
  *      }
  *    });
  * if (data.canRead) { ... }

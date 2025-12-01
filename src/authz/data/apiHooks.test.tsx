@@ -26,17 +26,17 @@ const createWrapper = () => {
 
 const singlePermission = {
   canRead: {
-    action: 'act:read',
-    scope: 'lib:test-lib',
+    action: 'example.read',
+    scope: 'lib:example-org:test-lib',
   },
 };
 
 const mockValidSinglePermission = [
-  { action: 'act:read', scope: 'lib:test-lib', allowed: true },
+  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: true },
 ];
 
 const mockInvalidSinglePermission = [
-  { action: 'act:read', scope: 'lib:test-lib', allowed: false },
+  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: false },
 ];
 
 const mockEmptyPermissions = [
@@ -45,23 +45,23 @@ const mockEmptyPermissions = [
 
 const multiplePermissions = {
   canRead: {
-    action: 'act:read',
-    scope: 'lib:test-lib',
+    action: 'example.read',
+    scope: 'lib:example-org:test-lib',
   },
   canWrite: {
-    action: 'act:write',
-    scope: 'lib:test-lib',
+    action: 'example.write',
+    scope: 'lib:example-org:test-lib',
   },
 };
 
 const mockValidMultiplePermissions = [
-  { action: 'act:read', scope: 'lib:test-lib', allowed: true },
-  { action: 'act:write', scope: 'lib:test-lib', allowed: true },
+  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: true },
+  { action: 'example.write', scope: 'lib:example-org:test-lib', allowed: true },
 ];
 
 const mockInvalidMultiplePermissions = [
-  { action: 'act:read', scope: 'lib:test-lib', allowed: false },
-  { action: 'act:write', scope: 'lib:test-lib', allowed: false },
+  { action: 'example.read', scope: 'lib:example-org:test-lib', allowed: false },
+  { action: 'example.write', scope: 'lib:example-org:test-lib', allowed: false },
 ];
 
 describe('useUserPermissions', () => {
