@@ -65,7 +65,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="assets"
-            element={<PageWrap><FilesPage courseId={courseId} /></PageWrap>}
+            element={<PageWrap><FilesPage /></PageWrap>}
           />
           <Route
             path="videos"

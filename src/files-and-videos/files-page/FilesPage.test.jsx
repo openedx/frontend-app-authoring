@@ -1,24 +1,21 @@
+
+import userEvent from '@testing-library/user-event';
+import ReactDOM from 'react-dom';
+import { saveAs } from 'file-saver';
+
+import { camelCaseObject } from '@edx/frontend-platform';
+
 import {
   render,
   fireEvent,
   screen,
   waitFor,
   within,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import ReactDOM from 'react-dom';
-import { saveAs } from 'file-saver';
-
-import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
-import { RequestStatus } from '../../data/constants';
+  initializeMocks,
+} from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { executeThunk } from '@src/utils';
+import { RequestStatus } from '@src/data/constants';
 import FilesPage from './FilesPage';
 import {
   generateFetchAssetApiResponse,
@@ -51,20 +48,16 @@ jest.mock('file-saver');
 
 const renderComponent = () => {
   render(
-    <IntlProvider locale="en">
-      <AppProvider store={store} wrapWithRouter={false}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/videos`]}>
-          <Routes>
-            <Route
-              path="/course/:courseId/*"
-              element={
-                <FilesPage courseId={courseId} />
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      </AppProvider>
-    </IntlProvider>,
+    <CourseAuthoringProvider courseId={courseId}>
+      <FilesPage />,
+    </CourseAuthoringProvider>,
+    {
+      path: '/course/:courseId/*',
+      routerProps: {
+        initialEntries: [`/course/${courseId}/videos`],
+      },
+      params: { courseId },
+    },
   );
 };
 
@@ -91,24 +84,19 @@ const emptyMockStore = async (status) => {
 
 describe('FilesAndUploads', () => {
   describe('empty state', () => {
-    beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
+    beforeEach(() => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          assets: {
+            ...initialState.assets,
+            assetIds: [],
+          },
+          models: {},
         },
       });
-      store = initializeStore({
-        ...initialState,
-        assets: {
-          ...initialState.assets,
-          assetIds: [],
-        },
-        models: {},
-      });
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
 
@@ -152,17 +140,19 @@ describe('FilesAndUploads', () => {
   });
 
   describe('valid assets', () => {
-    beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
+    beforeEach(() => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          assets: {
+            ...initialState.assets,
+            assetIds: [],
+          },
+          models: {},
         },
       });
-      store = initializeStore(initialState);
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
       global.localStorage.clear();
     });
