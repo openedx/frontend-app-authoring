@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Navigate, Routes, Route, useParams,
 } from 'react-router-dom';
@@ -62,7 +61,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="libraries"
-            element={<PageWrap><CourseLibraries courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CourseLibraries /></PageWrap>}
           />
           <Route
             path="assets"
