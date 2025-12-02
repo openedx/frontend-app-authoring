@@ -91,7 +91,7 @@ const CourseAuthoringRoutes = () => {
             <Route
               key={path}
               path={path}
-              element={<PageWrap><IframeProvider><CourseUnit courseId={courseId} /></IframeProvider></PageWrap>}
+              element={<PageWrap><IframeProvider><CourseUnit /></IframeProvider></PageWrap>}
             />
           ))}
           <Route

@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -33,10 +32,12 @@ import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-const CourseUnit = ({ courseId }) => {
+const CourseUnit = () => {
   const { blockId } = useParams();
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const {
     courseUnit,
     isLoading,
@@ -268,10 +269,6 @@ const CourseUnit = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseUnit.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseUnit;
