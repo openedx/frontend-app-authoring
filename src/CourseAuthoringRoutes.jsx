@@ -96,7 +96,7 @@ const CourseAuthoringRoutes = () => {
           ))}
           <Route
             path="editor/course-videos/:blockId"
-            element={<PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap>}
+            element={<PageWrap><VideoSelectorContainer /></PageWrap>}
           />
           <Route
             path="editor/:blockType/:blockId?"
