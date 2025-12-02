@@ -3,6 +3,7 @@ import {
 } from '../testUtils';
 import SubsectionUnitRedirect from './SubsectionUnitRedirect';
 import { getXBlockApiUrl } from '../course-outline/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 const courseId = '123';
@@ -26,12 +27,17 @@ const expectedCourseItemDataWithoutUnit = [{
 }];
 
 const renderSubsectionRedirectPage = () => {
-  render(<SubsectionUnitRedirect courseId={courseId} />, {
-    path,
-    routerProps: {
-      initialEntries: [`/subsection/${subsectionId}`],
-    },
-  });
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <SubsectionUnitRedirect />
+    </CourseAuthoringProvider>,
+    {
+      path,
+      routerProps: {
+        initialEntries: [`/subsection/${subsectionId}`],
+      },
+    }
+  );
 };
 
 jest.mock('react-router-dom', () => {

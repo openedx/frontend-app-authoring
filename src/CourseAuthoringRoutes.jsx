@@ -85,7 +85,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="/subsection/:subsectionId"
-            element={<PageWrap><SubsectionUnitRedirect courseId={courseId} /></PageWrap>}
+            element={<PageWrap><SubsectionUnitRedirect /></PageWrap>}
           />
           {DECODED_ROUTES.COURSE_UNIT.map((path) => (
             <Route
