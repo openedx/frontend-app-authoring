@@ -124,6 +124,8 @@ export const replaceStaticWithAsset = ({
 
       // Check if this is a direct /static/filename.ext pattern (should be converted)
       // vs /static/images/filename.ext pattern (should NOT be converted)
+      // /static/images/ are direct links to images stored in static, not course assets
+      // we have dummy images there for course content that should not be converted to assets
       const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
 
       const staticName = assetSrc.substring(8);
@@ -370,12 +372,18 @@ export const setupCustomBehavior = ({
   editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
-      // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
       const newContent = replaceStaticWithAsset({
         initialContent,
+        editorType,
+        lmsEndpointUrl,
         learningContextId,
       });
-      if (newContent) { editor.setContent(newContent); }
+      if (newContent) {
+        // Use setTimeout to ensure the update happens after current execution
+        setTimeout(() => {
+          editor.setContent(newContent);
+        }, 0);
+      }
     }
     if (e.command === 'RemoveFormat') {
       editor.formatter.remove('blockquote');
