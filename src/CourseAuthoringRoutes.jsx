@@ -73,7 +73,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="pages-and-resources/*"
-            element={<PageWrap><PagesAndResources courseId={courseId} /></PageWrap>}
+            element={<PageWrap><PagesAndResources /></PageWrap>}
           />
           <Route
             path="proctored-exam-settings"

@@ -1,3 +1,6 @@
+import { userEvent } from '@testing-library/user-event';
+import MockAdapter from 'axios-mock-adapter';
+
 import {
   render,
   act,
@@ -7,15 +10,10 @@ import {
   within,
   initializeMocks,
 } from '@src/testUtils';
-import { userEvent } from '@testing-library/user-event';
+import { getHttpClient } from '@edx/frontend-platform/auth';
+import { executeThunk } from '@src/utils';
+import { RequestStatus } from '@src/data/constants';
 
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
-
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
-import { RequestStatus } from '../../data/constants';
 import VideosPage from './VideosPage';
 import {
   generateFetchVideosApiResponse,

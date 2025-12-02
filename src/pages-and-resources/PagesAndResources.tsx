@@ -1,42 +1,43 @@
-import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { PageWrap, AppContext } from '@edx/frontend-platform/react';
-
+import { useContext, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { getConfig } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 import { Button, Hyperlink } from '@openedx/paragon';
+import { useModels } from '@src/generic/model-store';
+import { RequestStatus } from '@src/data/constants';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import getPageHeadTitle from '@src/generic/utils';
+import { AdditionalCoursePluginSlot } from '@src/plugin-slots/AdditionalCoursePluginSlot';
+import { AdditionalCourseContentPluginSlot } from '@src/plugin-slots/AdditionalCourseContentPluginSlot';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { DeprecatedReduxState } from '@src/store';
+
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
-import { useModels, useModel } from '../generic/model-store';
 import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
-import { RequestStatus } from '../data/constants';
 import SettingsComponent from './SettingsComponent';
-import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
-import getPageHeadTitle from '../generic/utils';
-import { AdditionalCoursePluginSlot } from '../plugin-slots/AdditionalCoursePluginSlot';
-import { AdditionalCourseContentPluginSlot } from '../plugin-slots/AdditionalCourseContentPluginSlot';
 
-const PagesAndResources = ({ courseId }) => {
+const PagesAndResources = () => {
   const intl = useIntl();
-  const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  const { courseId, courseDetails } = useCourseAuthoringContext();
+  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
   }, [courseId]);
 
-  const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
+  const courseAppIds = useSelector((state: DeprecatedReduxState) => state.pagesAndResources.courseAppIds);
   const loadingStatus = useSelector(getLoadingStatus);
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
 
+  // @ts-ignore
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
@@ -47,7 +48,7 @@ const PagesAndResources = ({ courseId }) => {
 
   // We want the Xpert learning assistant and unit summaries to appear in the "Content Permissions" section instead,
   // so we remove them from pages and add them to contentPermissionsPages.
-  const contentPermissionsPages = [];
+  const contentPermissionsPages: any[] = [];
 
   ['xpert_unit_summary', 'learning_assistant'].forEach(separateAppId => {
     const index = pages.findIndex(app => app.id === separateAppId);
@@ -107,10 +108,6 @@ const PagesAndResources = ({ courseId }) => {
       </main>
     </PagesAndResourcesProvider>
   );
-};
-
-PagesAndResources.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default PagesAndResources;
