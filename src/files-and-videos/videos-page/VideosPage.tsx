@@ -1,34 +1,33 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { Container } from '@openedx/paragon';
-import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
-import CourseVideosSlot from '../../plugin-slots/CourseVideosSlot';
-import { RequestStatus } from '../../data/constants';
 
-import Placeholder from '../../editors/Placeholder';
-import { useModel } from '../../generic/model-store';
-import getPageHeadTitle from '../../generic/utils';
-import EditVideoAlertsSlot from '../../plugin-slots/EditVideoAlertsSlot';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Container } from '@openedx/paragon';
+import CourseVideosSlot from '@src/plugin-slots/CourseVideosSlot';
+import { RequestStatus } from '@src/data/constants';
+import Placeholder from '@src/editors/Placeholder';
+import getPageHeadTitle from '@src/generic/utils';
+import EditVideoAlertsSlot from '@src/plugin-slots/EditVideoAlertsSlot';
+
 import { EditFileErrors } from '../generic';
 import { fetchVideos, resetErrors } from './data/thunks';
 import messages from './messages';
 import VideosPageProvider from './VideosPageProvider';
+import { DeprecatedReduxState } from '@src/store';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-const VideosPage = ({
-  courseId,
-}) => {
+const VideosPage = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     loadingStatus,
     addingStatus: addVideoStatus,
     deletingStatus: deleteVideoStatus,
     updatingStatus: updateVideoStatus,
     errors: errorMessages,
-  } = useSelector((state) => state.videos);
+  } = useSelector((state: DeprecatedReduxState) => state.videos);
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
 
@@ -47,7 +46,7 @@ const VideosPage = ({
   return (
     <VideosPageProvider courseId={courseId}>
       <Helmet>
-        <title>{getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading))}</title>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
       </Helmet>
       <Container size="xl" className="p-4 pt-4.5">
         <EditFileErrors
@@ -64,10 +63,6 @@ const VideosPage = ({
       </Container>
     </VideosPageProvider>
   );
-};
-
-VideosPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default VideosPage;

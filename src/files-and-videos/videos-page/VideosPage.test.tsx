@@ -5,16 +5,13 @@ import {
   screen,
   waitFor,
   within,
-} from '@testing-library/react';
+  initializeMocks,
+} from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import React from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
@@ -40,6 +37,7 @@ import {
 import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
@@ -51,20 +49,16 @@ jest.mock('file-saver');
 
 const renderComponent = () => {
   render(
-    <IntlProvider locale="en">
-      <AppProvider store={store} wrapWithRouter={false}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/videos`]}>
-          <Routes>
-            <Route
-              path="/course/:courseId/*"
-              element={
-                <VideosPage courseId={courseId} />
-          }
-            />
-          </Routes>
-        </MemoryRouter>
-      </AppProvider>
-    </IntlProvider>,
+    <CourseAuthoringProvider courseId={courseId}>
+      <VideosPage />
+    </CourseAuthoringProvider>,
+    {
+      path: "/course/:courseId/*",
+      routerProps: {
+        initialEntries: [`/course/${courseId}/videos`],
+      },
+      params: { courseId },
+    }
   );
 };
 
@@ -102,23 +96,19 @@ const emptyMockStore = async (status) => {
 describe('Videos page', () => {
   describe('empty state', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore({
-        ...initialState,
-        videos: {
-          ...initialState.videos,
-          videoIds: [],
-        },
-        models: {},
-      });
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      const mocks = initializeMocks({
+        // @ts-ignore
+        initialState: {
+          ...initialState,
+          videos: {
+            ...initialState.videos,
+            videoIds: [],
+          },
+          models: {},
+        }
+      })
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.mp4', { type: 'video/mp4' });
       global.localStorage.clear();
@@ -166,16 +156,15 @@ describe('Videos page', () => {
 
   describe('valid videos', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore({ ...initialState });
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      const mocks = initializeMocks({
+        // @ts-ignore
+        initialState: {
+          ...initialState,
+        }
+      })
+
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
       global.localStorage.clear();
@@ -271,6 +260,7 @@ describe('Videos page', () => {
           axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
           const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          // @ts-ignore
           const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
@@ -301,6 +291,7 @@ describe('Videos page', () => {
           axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
           const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          // @ts-ignore
           const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
@@ -356,13 +347,14 @@ describe('Videos page', () => {
         fireEvent.click(actionsButton);
 
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
+        expect(deleteButton).not.toBeNull();
         expect(deleteButton).not.toHaveClass('disabled');
 
         axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
 
-        fireEvent.click(deleteButton);
+        fireEvent.click(deleteButton!);
         expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
-        fireEvent.click(deleteButton);
+        fireEvent.click(deleteButton!);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
@@ -391,10 +383,11 @@ describe('Videos page', () => {
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(200, null);
 
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        expect(downloadButton).not.toBeNull();
         expect(downloadButton).not.toHaveClass('disabled');
 
         await act(async () => {
-          fireEvent.click(downloadButton);
+          fireEvent.click(downloadButton!);
         });
       });
 
@@ -594,7 +587,7 @@ describe('Videos page', () => {
         await waitFor(() => {
           expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
         });
-        await executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
+        await executeThunk(deleteVideoFile(courseId, 'mOckID1'), store.dispatch);
         const deleteStatus = store.getState().videos.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
 
@@ -733,10 +726,12 @@ describe('Videos page', () => {
 
         fireEvent.click(actionsButton);
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        expect(downloadButton).not.toBeNull();
         expect(downloadButton).not.toHaveClass('disabled');
 
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);
-        fireEvent.click(downloadButton);
+        fireEvent.click(downloadButton!);
+        // @ts-ignore
         await executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
 
         const updateStatus = store.getState().videos.updatingStatus;
