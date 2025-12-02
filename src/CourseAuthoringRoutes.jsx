@@ -81,7 +81,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="custom-pages/*"
-            element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CustomPages /></PageWrap>}
           />
           <Route
             path="/subsection/:subsectionId"
