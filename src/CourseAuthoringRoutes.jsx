@@ -104,7 +104,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="settings/details"
-            element={<PageWrap><ScheduleAndDetails courseId={courseId} /></PageWrap>}
+            element={<PageWrap><ScheduleAndDetails /></PageWrap>}
           />
           <Route
             path="settings/grading"

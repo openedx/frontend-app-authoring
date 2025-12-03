@@ -5,19 +5,21 @@ import {
   render,
   waitFor,
   fireEvent,
-} from '../testUtils';
-import { executeThunk } from '../utils';
+} from '@src/testUtils';
+import { executeThunk } from '@src/utils';
+import genericMessages from '@src/generic/help-sidebar/messages';
+import { DATE_FORMAT } from '@src/constants';
+
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
 import { updateCourseDetailsQuery } from './data/thunks';
-import { DATE_FORMAT } from '../constants';
 import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';
 import basicMessages from './basic-section/messages';
 import scheduleMessages from './schedule-section/messages';
-import genericMessages from '../generic/help-sidebar/messages';
 import messages from './messages';
 import ScheduleAndDetails from '.';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -47,6 +49,12 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
 )));
 
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <ScheduleAndDetails />
+  </CourseAuthoringProvider>
+);
+
 describe('<ScheduleAndDetails />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
@@ -64,7 +72,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should render without errors', async () => {
-    const { getByText, getByRole, getAllByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { getByText, getByRole, getAllByText } = renderComponent();
     await waitFor(() => {
       const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
       const scheduleAndDetailTitle = scheduleAndDetailElements[0];
@@ -99,7 +107,7 @@ describe('<ScheduleAndDetails />', () => {
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, updatedResponse);
 
-    const { queryAllByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { queryAllByText } = renderComponent();
     await waitFor(() => {
       expect(
         queryAllByText(creditMessages.creditTitle.defaultMessage).length,
@@ -108,9 +116,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should show save alert onChange ', async () => {
-    const { getAllByPlaceholderText, getByText } = render(
-      <ScheduleAndDetails courseId={courseId} />,
-    );
+    const { getAllByPlaceholderText, getByText } = renderComponent();
     let inputs;
     await waitFor(() => {
       inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
@@ -124,7 +130,7 @@ describe('<ScheduleAndDetails />', () => {
   });
 
   it('should display a success message when course details saves', async () => {
-    const { getByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { getByText } = renderComponent();
     await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
     expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
   });
@@ -133,7 +139,7 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onGet(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
     });
@@ -143,7 +149,7 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { getByText } = renderComponent();
     await waitFor(() => {
       expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
     });
@@ -153,7 +159,7 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
-    const { getByText } = render(<ScheduleAndDetails courseId={courseId} />);
+    const { getByText } = renderComponent();
     await act(async () => {
       await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
     });
