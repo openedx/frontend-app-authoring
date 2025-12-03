@@ -2,7 +2,8 @@
 /* eslint-disable react/jsx-filename-extension */
 import {
   fireEvent, render, waitFor, screen,
-} from '@testing-library/react';
+  initializeMocks,
+} from '@src/testUtils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -23,37 +24,24 @@ import {
 } from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let store;
 let axiosMock;
 const courseId = '123';
-const courseName = 'About Node JS';
-
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: courseName,
-  }),
-}));
 
 // Mock the waffle flags hook
 jest.mock('../data/apiHooks', () => ({
+  ...jest.requireActual('../data/apiHooks'),
   useWaffleFlags: jest.fn(() => ({
     enableCourseOptimizerCheckPrevRunLinks: false,
   })),
 }));
 
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: 'About Node JS',
-  }),
-}));
-
 const OptimizerPage = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <CourseOptimizerPage courseId={courseId} />
-    </IntlProvider>
-  </AppProvider>
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseOptimizerPage />
+  </CourseAuthoringProvider>
 );
 
 const setupOptimizerPage = async (apiResponse = mockApiResponse) => {
@@ -132,16 +120,9 @@ describe('CourseOptimizerPage', () => {
     beforeEach(() => {
       jest.useRealTimers();
       jest.clearAllMocks();
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: true,
-          roles: [],
-        },
-      });
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      const mocks = initializeMocks();
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       axiosMock
         .onPost(postLinkCheckCourseApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'In-Progress' });

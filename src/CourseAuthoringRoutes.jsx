@@ -132,7 +132,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="optimizer"
-            element={<PageWrap><CourseOptimizerPage courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CourseOptimizerPage /></PageWrap>}
           />
           <Route
             path="checklists"
