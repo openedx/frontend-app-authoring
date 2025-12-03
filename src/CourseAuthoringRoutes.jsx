@@ -124,7 +124,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="import"
-            element={<PageWrap><CourseImportPage courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CourseImportPage /></PageWrap>}
           />
           <Route
             path="export"

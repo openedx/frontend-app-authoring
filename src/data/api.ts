@@ -2,6 +2,10 @@ import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
+export const getCourseDetailUrl = (courseId: string, username: string) => (
+  `${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`
+);
+
 
 export type CourseDetailsData = {
   blocksUrl: string;
@@ -46,7 +50,7 @@ export const getApiWaffleFlagsUrl = (courseId?: string): string => {
 
 export async function getCourseDetail(courseId: string, username: string): Promise<CourseDetailsData> {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
+    .get(getCourseDetailUrl(courseId, username));
   return {
     id: data.course_id,
     ...camelCaseObject(data),

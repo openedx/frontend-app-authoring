@@ -8,6 +8,8 @@ import CourseImportPage from './CourseImportPage';
 import { getImportStatusApiUrl } from './data/api';
 import { IMPORT_STAGES } from './data/constants';
 import stepperMessages from './import-stepper/messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailUrl } from '@src/data/api';
 
 let store;
 let axiosMock;
@@ -29,16 +31,27 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => Cookie);
 });
 
-const renderComponent = () => render(<CourseImportPage courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}  >
+    <CourseImportPage />
+  </CourseAuthoringProvider>
+);
 
 describe('<CourseImportPage />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
+    const user = {
+      userId: 1,
+      username: 'username',
+    };
+    const mocks = initializeMocks({ user });
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
       .reply(200, { importStatus: 1, message: '' });
+    axiosMock
+      .onGet(getCourseDetailUrl(courseId, user.username))
+      .reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
