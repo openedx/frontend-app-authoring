@@ -9,12 +9,17 @@ import { fetchCertificates } from './data/thunks';
 import { certificatesDataMock } from './__mocks__';
 import Certificates from './Certificates';
 import messages from './messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
 const courseId = 'course-123';
 
-const renderComponent = (props) => render(<Certificates courseId={courseId} {...props} />);
+const renderComponent = (props) => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <Certificates {...props} />
+  </CourseAuthoringProvider>
+);
 
 describe('Certificates', () => {
   beforeEach(async () => {

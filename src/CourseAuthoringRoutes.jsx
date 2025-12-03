@@ -140,7 +140,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="certificates"
-            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates courseId={courseId} /></PageWrap> : null}
+            element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates /></PageWrap> : null}
           />
           <Route
             path="textbooks"
