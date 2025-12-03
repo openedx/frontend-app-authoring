@@ -112,7 +112,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="course_team"
-            element={<PageWrap><CourseTeam courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CourseTeam /></PageWrap>}
           />
           <Route
             path="group_configurations"

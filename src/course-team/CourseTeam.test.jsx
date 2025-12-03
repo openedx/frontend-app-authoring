@@ -13,13 +13,19 @@ import {
   render as baseRender,
   waitFor,
 } from '../testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
-const render = () => baseRender(<CourseTeam courseId={courseId} />, { path: mockPathname });
+const render = () => baseRender(
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseTeam />
+  </CourseAuthoringProvider>,
+  { path: mockPathname }
+);
 
 describe('<CourseTeam />', () => {
   beforeEach(() => {

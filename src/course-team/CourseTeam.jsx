@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -7,9 +6,9 @@ import {
   Layout,
 } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import InternetConnectionAlert from '../generic/internet-connection-alert';
-import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { USER_ROLES } from '../constants';
 import messages from './messages';
@@ -22,11 +21,11 @@ import { useCourseTeam } from './hooks';
 import getPageHeadTitle from '../generic/utils';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
-const CourseTeam = ({ courseId }) => {
+const CourseTeam = () => {
   const intl = useIntl();
 
-  const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
+  const { courseId, courseDetails } = useCourseAuthoringContext();
+  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.headingTitle));
 
   const {
     modalType,
@@ -169,10 +168,6 @@ const CourseTeam = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseTeam.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseTeam;
