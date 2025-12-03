@@ -17,12 +17,6 @@ let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
 
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: courseName,
-  }),
-}));
-
 jest.mock('universal-cookie', () => {
   const Cookie = {
     get: jest.fn(),
