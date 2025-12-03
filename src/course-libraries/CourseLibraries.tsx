@@ -202,7 +202,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all && (
+          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ? (
             <Button
               variant="primary"
               onClick={onAlertReview}
@@ -210,7 +210,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
             >
               {intl.formatMessage(messages.reviewUpdatesBtn)}
             </Button>
-          )}
+          ): null}
           hideBorder
         />
         <section className="mb-4">
