@@ -6,7 +6,6 @@ export const getCourseDetailUrl = (courseId: string, username: string) => (
   `${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`
 );
 
-
 export type CourseDetailsData = {
   blocksUrl: string;
   courseId: string;

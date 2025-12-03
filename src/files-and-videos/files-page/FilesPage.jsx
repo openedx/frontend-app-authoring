@@ -1,7 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Container } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -66,10 +65,6 @@ const FilesPage = () => {
       </Container>
     </FilesPageProvider>
   );
-};
-
-FilesPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default FilesPage;

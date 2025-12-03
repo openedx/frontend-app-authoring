@@ -1,9 +1,9 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   initializeMocks, waitFor, render, screen,
 } from '../testUtils';
 import SubsectionUnitRedirect from './SubsectionUnitRedirect';
 import { getXBlockApiUrl } from '../course-outline/data/api';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 const courseId = '123';
@@ -36,7 +36,7 @@ const renderSubsectionRedirectPage = () => {
       routerProps: {
         initialEntries: [`/subsection/${subsectionId}`],
       },
-    }
+    },
   );
 };
 

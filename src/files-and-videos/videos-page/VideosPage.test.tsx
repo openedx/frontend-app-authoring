@@ -14,6 +14,7 @@ import { getHttpClient } from '@edx/frontend-platform/auth';
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import VideosPage from './VideosPage';
 import {
   generateFetchVideosApiResponse,
@@ -35,7 +36,6 @@ import {
 import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
@@ -51,12 +51,12 @@ const renderComponent = () => {
       <VideosPage />
     </CourseAuthoringProvider>,
     {
-      path: "/course/:courseId/*",
+      path: '/course/:courseId/*',
       routerProps: {
         initialEntries: [`/course/${courseId}/videos`],
       },
       params: { courseId },
-    }
+    },
   );
 };
 
@@ -103,8 +103,8 @@ describe('Videos page', () => {
             videoIds: [],
           },
           models: {},
-        }
-      })
+        },
+      });
       store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;
       axiosUnauthenticateMock = new MockAdapter(getHttpClient());
@@ -158,8 +158,8 @@ describe('Videos page', () => {
         // @ts-ignore
         initialState: {
           ...initialState,
-        }
-      })
+        },
+      });
 
       store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;

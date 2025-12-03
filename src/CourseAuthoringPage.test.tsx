@@ -4,9 +4,9 @@ import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
 import { executeThunk } from './utils';
 import { fetchCourseApps } from './pages-and-resources/data/thunks';
-import { fetchCourseDetail } from './data/thunks';
 import { getApiWaffleFlagsUrl } from './data/api';
 import { initializeMocks, render } from './testUtils';
+import { CourseAuthoringProvider } from './CourseAuthoringContext';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let mockPathname = '/evilguy/';
@@ -18,6 +18,12 @@ jest.mock('react-router-dom', () => ({
 }));
 let axiosMock;
 let store;
+
+const renderComponent = children => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    {children}
+  </CourseAuthoringProvider>,
+);
 
 beforeEach(async () => {
   const mocks = initializeMocks();
@@ -35,14 +41,13 @@ describe('Editor Pages Load no header', () => {
     axiosMock.onGet(`${courseAppsApiUrl}/${courseId}`).reply(200, {
       response: { status: 200 },
     });
-    await executeThunk(fetchCourseApps(courseId), store.dispatch);
   };
   test('renders no loading wheel on editor pages', async () => {
     mockPathname = '/editor/';
     await mockStoreSuccess();
-    const wrapper = render(
-      <CourseAuthoringPage courseId={courseId}>
-        <PagesAndResources courseId={courseId} />
+    const wrapper = renderComponent(
+      <CourseAuthoringPage>
+        <PagesAndResources />
       </CourseAuthoringPage>
       ,
     );
@@ -51,9 +56,9 @@ describe('Editor Pages Load no header', () => {
   test('renders loading wheel on non editor pages', async () => {
     mockPathname = '/evilguy/';
     await mockStoreSuccess();
-    const wrapper = render(
-      <CourseAuthoringPage courseId={courseId}>
-        <PagesAndResources courseId={courseId} />
+    const wrapper = renderComponent(
+      <CourseAuthoringPage>
+        <PagesAndResources />
       </CourseAuthoringPage>
       ,
     );
@@ -70,7 +75,6 @@ describe('Course authoring page', () => {
     ).reply(404, {
       response: { status: 404 },
     });
-    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
   };
   const mockStoreError = async () => {
     axiosMock.onGet(
@@ -78,11 +82,10 @@ describe('Course authoring page', () => {
     ).reply(500, {
       response: { status: 500 },
     });
-    await executeThunk(fetchCourseDetail(courseId), store.dispatch);
   };
   test('renders not found page on non-existent course key', async () => {
     await mockStoreNotFound();
-    const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
+    const wrapper = renderComponent(<CourseAuthoringPage />);
     expect(await wrapper.findByTestId('notFoundAlert')).toBeInTheDocument();
   });
   test('does not render not found page on other kinds of error', async () => {
@@ -92,8 +95,8 @@ describe('Course authoring page', () => {
     // IN_PROGRESS but also not NOT_FOUND or DENIED- then check that the not
     // found alert is not present.
     const contentTestId = 'courseAuthoringPageContent';
-    const wrapper = render(
-      <CourseAuthoringPage courseId={courseId}>
+    const wrapper = renderComponent(
+      <CourseAuthoringPage>
         <div data-testid={contentTestId} />
       </CourseAuthoringPage>
       ,
@@ -114,7 +117,7 @@ describe('Course authoring page', () => {
     mockPathname = '/editor/';
     await mockStoreDenied();
 
-    const wrapper = render(<CourseAuthoringPage courseId={courseId} />);
+    const wrapper = renderComponent(<CourseAuthoringPage />);
     expect(await wrapper.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
 });

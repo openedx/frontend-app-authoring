@@ -11,10 +11,9 @@ import messages from './messages';
 
 const courseId = '123';
 let axiosMock;
-let store;
 
 const RootWrapper = () => (
-  <CourseAuthoringProvider courseId={courseId}> 
+  <CourseAuthoringProvider courseId={courseId}>
     <GradingSettings />
   </CourseAuthoringProvider>
 );
@@ -26,7 +25,6 @@ describe('<GradingSettings />', () => {
     // jsdom doesn't implement scrollTo; mock to avoid noisy console errors.
     Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
 
-    store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getGradingSettingsApiUrl(courseId))

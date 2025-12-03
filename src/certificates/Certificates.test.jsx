@@ -1,6 +1,7 @@
 // @ts-check
 import userEvent from '@testing-library/user-event';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
@@ -9,7 +10,6 @@ import { fetchCertificates } from './data/thunks';
 import { certificatesDataMock } from './__mocks__';
 import Certificates from './Certificates';
 import messages from './messages';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -18,7 +18,7 @@ const courseId = 'course-123';
 const renderComponent = (props) => render(
   <CourseAuthoringProvider courseId={courseId}>
     <Certificates {...props} />
-  </CourseAuthoringProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('Certificates', () => {

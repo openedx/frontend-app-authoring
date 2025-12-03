@@ -127,7 +127,6 @@ const Textbooks = () => {
                         initialFormValues={getTextbookFormInitialValues()}
                         onSubmit={handleTextbookFormSubmit}
                         onSavingStatus={handleSavingStatusDispatch}
-                        courseId={courseId}
                       />
                     )}
                   </div>

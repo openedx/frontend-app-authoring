@@ -10,10 +10,10 @@ import {
 } from 'CourseAuthoring/grading-settings/data/apiHooks';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SectionSubHeader from '../generic/section-sub-header';

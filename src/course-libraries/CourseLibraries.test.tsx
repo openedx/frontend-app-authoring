@@ -12,6 +12,8 @@ import {
 } from '@src/testUtils';
 import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { type ToastActionData } from '@src/generic/toast-context';
+import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
@@ -19,8 +21,6 @@ import {
   mockFetchIndexDocuments,
   mockUseLibBlockMetadata,
 } from './data/api.mocks';
-import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 mockContentSearchConfig.applyMock();
 mockGetEntityLinks.applyMock();
@@ -62,7 +62,7 @@ describe('<CourseLibraries />', () => {
     render(
       <CourseAuthoringProvider courseId={courseId}>
         <CourseLibraries />
-      </CourseAuthoringProvider>
+      </CourseAuthoringProvider>,
     );
   };
 
@@ -184,7 +184,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     render(
       <CourseAuthoringProvider courseId={courseId}>
         <CourseLibraries />
-      </CourseAuthoringProvider>
+      </CourseAuthoringProvider>,
     );
   };
 

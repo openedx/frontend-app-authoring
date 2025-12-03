@@ -4,6 +4,7 @@ import {
   fireEvent, render, waitFor, screen,
   initializeMocks,
 } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
@@ -17,9 +18,7 @@ import {
 } from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
-let store;
 let axiosMock;
 const courseId = '123';
 
@@ -114,7 +113,6 @@ describe('CourseOptimizerPage', () => {
       jest.useRealTimers();
       jest.clearAllMocks();
       const mocks = initializeMocks();
-      store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;
       axiosMock
         .onPost(postLinkCheckCourseApiUrl(courseId))

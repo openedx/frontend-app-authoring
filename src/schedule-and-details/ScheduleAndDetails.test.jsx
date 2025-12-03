@@ -10,6 +10,7 @@ import { executeThunk } from '@src/utils';
 import genericMessages from '@src/generic/help-sidebar/messages';
 import { DATE_FORMAT } from '@src/constants';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
 import { updateCourseDetailsQuery } from './data/thunks';
@@ -19,7 +20,6 @@ import basicMessages from './basic-section/messages';
 import scheduleMessages from './schedule-section/messages';
 import messages from './messages';
 import ScheduleAndDetails from '.';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -52,7 +52,7 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
     <ScheduleAndDetails />
-  </CourseAuthoringProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('<ScheduleAndDetails />', () => {

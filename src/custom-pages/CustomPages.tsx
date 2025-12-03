@@ -23,12 +23,13 @@ import Placeholder from '@src/editors/Placeholder';
 import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
-import { useModels, useModel } from '@src/generic/model-store';
+import { useModels } from '@src/generic/model-store';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import getPageHeadTitle from '@src/generic/utils';
 import { getPagePath } from '@src/utils';
 import { DeprecatedReduxState } from '@src/store';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import {
   addSingleCustomPage,
@@ -41,7 +42,6 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const CustomPages = () => {
   const intl = useIntl();

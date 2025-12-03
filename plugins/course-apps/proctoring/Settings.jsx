@@ -22,6 +22,7 @@ import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import messages from './messages';
 
@@ -66,7 +67,7 @@ const ProctoringSettings = ({ onClose }) => {
   }
 
   const { courseId } = useContext(PagesAndResourcesContext);
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseDetails } = useCourseAuthoringContext();
   const org = courseDetails?.org;
   const appInfo = useModel('courseApps', 'proctoring');
   const alertRef = React.createRef();

@@ -1,20 +1,15 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React from 'react';
 import {
   render, screen, within, queryAllByRole, waitFor, fireEvent,
-} from '@testing-library/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+  initializeMocks,
+} from '@src/testUtils';
 import { act } from 'react-dom/test-utils';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
 import { breakpoints } from '@openedx/paragon';
 import userEvent from '@testing-library/user-event';
-import MockAdapter from 'axios-mock-adapter';
 import { Context as ResponsiveContext } from 'react-responsive';
 
-import initializeStore from '../../../store';
-import { executeThunk } from '../../../utils';
+import { executeThunk } from '@src/utils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from '../data/api';
 import { fetchDiscussionSettings, fetchProviders } from '../data/thunks';
 import {
@@ -40,13 +35,11 @@ const mockStore = async (mockResponse, provider) => {
 
 function renderComponent(screenWidth = breakpoints.extraLarge.minWidth) {
   const wrapper = render(
-    <AppProvider store={store}>
+    <CourseAuthoringProvider courseId={courseId}>
       <ResponsiveContext.Provider value={{ width: screenWidth }}>
-        <IntlProvider locale="en">
-          <AppList />
-        </IntlProvider>
+        <AppList />
       </ResponsiveContext.Provider>
-    </AppProvider>,
+    </CourseAuthoringProvider>,
   );
   container = wrapper.container;
 }
@@ -54,17 +47,10 @@ function renderComponent(screenWidth = breakpoints.extraLarge.minWidth) {
 describe('AppList', () => {
   describe('AppList for Admin role', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: true,
-          roles: [],
-        },
-      });
+      const mocks = initializeMocks();
 
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       await mockStore(piazzaApiResponse);
     });
 
@@ -154,8 +140,8 @@ describe('AppList', () => {
 
   describe('AppList for Non Admin role', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
+      const mocks = initializeMocks({
+        user: {
           userId: 3,
           username: 'abc123',
           administrator: false,
@@ -163,8 +149,8 @@ describe('AppList', () => {
         },
       });
 
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       await mockStore(legacyApiResponse, 'legacy');
     });
 

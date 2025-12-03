@@ -10,12 +10,12 @@ import Placeholder from '@src/editors/Placeholder';
 import getPageHeadTitle from '@src/generic/utils';
 import EditVideoAlertsSlot from '@src/plugin-slots/EditVideoAlertsSlot';
 
+import { DeprecatedReduxState } from '@src/store';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { EditFileErrors } from '../generic';
 import { fetchVideos, resetErrors } from './data/thunks';
 import messages from './messages';
 import VideosPageProvider from './VideosPageProvider';
-import { DeprecatedReduxState } from '@src/store';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const VideosPage = () => {
   const intl = useIntl();

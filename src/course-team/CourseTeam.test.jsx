@@ -1,4 +1,5 @@
 // @ts-check
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
@@ -13,7 +14,6 @@ import {
   render as baseRender,
   waitFor,
 } from '../testUtils';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -24,7 +24,7 @@ const render = () => baseRender(
   <CourseAuthoringProvider courseId={courseId}>
     <CourseTeam />
   </CourseAuthoringProvider>,
-  { path: mockPathname }
+  { path: mockPathname },
 );
 
 describe('<CourseTeam />', () => {

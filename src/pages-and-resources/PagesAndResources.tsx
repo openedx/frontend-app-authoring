@@ -87,9 +87,9 @@ const PagesAndResources = () => {
         </div>
 
         <Routes>
-          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
+          <Route path="discussion" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
+          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings /></PageWrap>} />
           <Route path=":appId/settings" element={<PageWrap><SettingsComponent url={redirectUrl} /></PageWrap>} />
         </Routes>
 

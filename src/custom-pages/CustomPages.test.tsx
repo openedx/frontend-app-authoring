@@ -10,6 +10,7 @@ import {
 import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
@@ -25,7 +26,6 @@ import {
 } from './data/thunks';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
 import messages from './messages';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -36,7 +36,7 @@ const renderComponent = () => {
   render(
     <CourseAuthoringProvider courseId={courseId}>
       <CustomPages />
-    </CourseAuthoringProvider>
+    </CourseAuthoringProvider>,
   );
 };
 

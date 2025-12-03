@@ -2,14 +2,14 @@ import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailUrl } from '@src/data/api';
 import {
   initializeMocks,
   fireEvent,
   render,
   waitFor,
 } from '../testUtils';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailUrl } from '@src/data/api';
 import { RequestStatus } from '../data/constants';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
@@ -36,7 +36,7 @@ jest.mock('universal-cookie', () => {
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
     <CourseExportPage />
-  </CourseAuthoringProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('<CourseExportPage />', () => {

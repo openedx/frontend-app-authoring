@@ -47,6 +47,11 @@ import { CourseAuthoringProvider } from './CourseAuthoringContext';
 const CourseAuthoringRoutes = () => {
   const { courseId } = useParams();
 
+  if (courseId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing courseId.');
+  }
+
   return (
     <CourseAuthoringProvider courseId={courseId}>
       <CourseAuthoringPage>

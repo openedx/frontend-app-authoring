@@ -1,10 +1,10 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   render as baseRender,
   fireEvent,
   initializeMocks,
   waitFor,
 } from '../testUtils';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { executeThunk } from '../utils';
 import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';

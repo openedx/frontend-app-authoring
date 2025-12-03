@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
@@ -8,6 +9,7 @@ export type CourseAuthoringContextData = {
   courseId: string;
   courseDetails?: CourseDetailsData;
   courseDetailStatus: RequestStatusType;
+  canChangeProviders: boolean;
 };
 
 /**
@@ -29,12 +31,14 @@ export const CourseAuthoringProvider = ({
   courseId,
 }: CourseAuthoringProviderProps) => {
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
+  const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
 
   const context = useMemo<CourseAuthoringContextData>(() => {
     const contextValue = {
       courseId,
       courseDetails,
       courseDetailStatus,
+      canChangeProviders,
     };
 
     return contextValue;
@@ -42,6 +46,7 @@ export const CourseAuthoringProvider = ({
     courseId,
     courseDetails,
     courseDetailStatus,
+    canChangeProviders,
   ]);
 
   return (

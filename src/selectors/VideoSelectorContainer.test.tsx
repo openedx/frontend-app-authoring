@@ -1,7 +1,7 @@
 import React from 'react';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { render, initializeMocks } from '../testUtils';
 import VideoSelectorContainer from './VideoSelectorContainer';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 describe('VideoSelectorContainer', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('VideoSelectorContainer', () => {
     const { container } = render(
       <CourseAuthoringProvider courseId="course-v1:edX+Test+2024">
         <VideoSelectorContainer />
-      </CourseAuthoringProvider>
+      </CourseAuthoringProvider>,
     );
     expect(container.querySelector('.selector-page')).toBeInTheDocument();
   });

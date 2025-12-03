@@ -1,9 +1,11 @@
-import { screen, waitFor, initializeMocks, render } from '@src/testUtils';
+import {
+  screen, waitFor, initializeMocks, render,
+} from '@src/testUtils';
 
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
-import { PagesAndResources } from '.';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { PagesAndResources } from '.';
 
 const mockPlugin = (identifier) => ({
   plugins: [
@@ -24,7 +26,7 @@ const courseId = 'course-v1:edX+TestX+Test_Course';
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
     <PagesAndResources />
-  </CourseAuthoringProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('PagesAndResources', () => {
@@ -80,7 +82,7 @@ describe('PagesAndResources', () => {
     };
 
     initializeMocks({ initialState });
-    renderComponent();    
+    renderComponent();
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Learning Assistant')).toBeInTheDocument());

@@ -5,8 +5,8 @@ import {
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import Placeholder from '../editors/Placeholder';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
 import InternetConnectionAlert from '../generic/internet-connection-alert';

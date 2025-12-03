@@ -6,6 +6,7 @@ import {
 } from '@src/testUtils';
 import '@testing-library/jest-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
 import { getCourseLaunchApiUrl, getCourseBestPracticesApiUrl } from './data/api';
@@ -17,7 +18,6 @@ import {
 } from './factories/mockApiResponses';
 import messages from './messages';
 import CourseChecklist from './index';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;

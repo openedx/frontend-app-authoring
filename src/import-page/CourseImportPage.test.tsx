@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailUrl } from '@src/data/api';
 import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
@@ -8,8 +10,6 @@ import CourseImportPage from './CourseImportPage';
 import { getImportStatusApiUrl } from './data/api';
 import { IMPORT_STAGES } from './data/constants';
 import stepperMessages from './import-stepper/messages';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailUrl } from '@src/data/api';
 
 let store;
 let axiosMock;
@@ -26,9 +26,9 @@ jest.mock('universal-cookie', () => {
 });
 
 const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}  >
+  <CourseAuthoringProvider courseId={courseId}>
     <CourseImportPage />
-  </CourseAuthoringProvider>
+  </CourseAuthoringProvider>,
 );
 
 describe('<CourseImportPage />', () => {

@@ -9,6 +9,7 @@ import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
 } from '@openedx/paragon/icons';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -32,7 +33,6 @@ import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const CourseUnit = () => {
   const { blockId } = useParams();

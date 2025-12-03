@@ -22,8 +22,8 @@ import {
 
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import getPageHeadTitle from '../generic/utils';
-import { useModel } from '../generic/model-store';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
@@ -33,7 +33,6 @@ import { useStudioHome } from '../studio-home/hooks';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;

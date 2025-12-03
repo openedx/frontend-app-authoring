@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -24,8 +23,7 @@ import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 const CourseTeam = () => {
   const intl = useIntl();
 
-  const { courseId, courseDetails } = useCourseAuthoringContext();
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.headingTitle));
+  const { courseId } = useCourseAuthoringContext();
 
   const {
     modalType,
@@ -55,6 +53,8 @@ const CourseTeam = () => {
     handleChangeRoleUserSubmit,
     handleInternetConnectionFailed,
   } = useCourseTeam({ intl, courseId });
+
+  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
 
   if (isLoadingDenied) {
     return (
