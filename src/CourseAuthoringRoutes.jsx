@@ -116,7 +116,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="group_configurations"
-            element={<PageWrap><GroupConfigurations courseId={courseId} /></PageWrap>}
+            element={<PageWrap><GroupConfigurations /></PageWrap>}
           />
           <Route
             path="settings/advanced"

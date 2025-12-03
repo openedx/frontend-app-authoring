@@ -13,6 +13,7 @@ import messages from './messages';
 import experimentMessages from './experiment-configurations-section/messages';
 import contentGroupsMessages from './content-groups-section/messages';
 import GroupConfigurations from '.';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
@@ -20,7 +21,11 @@ const courseId = 'course-v1:org+101+101';
 const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurations[0];
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 
-const renderComponent = () => render(<GroupConfigurations courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <GroupConfigurations />
+  </CourseAuthoringProvider>
+);
 
 describe('<GroupConfigurations />', () => {
   beforeEach(async () => {
