@@ -32,6 +32,22 @@ const DatepickerControl = ({
     [DATEPICKER_TYPES.date]: DATE_FORMAT,
     [DATEPICKER_TYPES.time]: TIME_FORMAT,
   };
+  const isTimePicker = type === DATEPICKER_TYPES.time;
+
+  let describedByIds;
+  if (isTimePicker) {
+    const ids = [`${controlName}-timehint`];
+    if (helpText) {
+      ids.push(`${controlName}-helptext`);
+    }
+    describedByIds = ids.filter(Boolean).join(' ') || undefined;
+  } else if (helpText) {
+    describedByIds = `${controlName}-helptext`;
+  }
+
+  const ariaLabel = isTimePicker
+    ? intl.formatMessage(messages.timepickerAriaLabel)
+    : undefined;
 
   return (
     <Form.Group className="form-group-custom datepicker-custom">
@@ -67,6 +83,8 @@ const DatepickerControl = ({
           showTimeSelectOnly={type === DATEPICKER_TYPES.time}
           placeholderText={inputFormat[type].toLocaleUpperCase()}
           showPopperArrow={false}
+          ariaLabel={ariaLabel}
+          ariaDescribedBy={describedByIds}
           onChange={(date) => {
             if (isValidDate(date)) {
               onChange(convertToStringFromDate(date));
@@ -74,7 +92,18 @@ const DatepickerControl = ({
           }}
         />
       </div>
-      {helpText && <Form.Control.Feedback>{helpText}</Form.Control.Feedback>}
+      {isTimePicker && (
+        <Form.Text id={`${controlName}-timehint`} className="sr-only">
+          {intl.formatMessage(messages.timepickerScreenreaderHint, {
+            timeFormat: inputFormat[type].toLocaleUpperCase(),
+          })}
+        </Form.Text>
+      )}
+      {helpText && (
+        <Form.Control.Feedback id={`${controlName}-helptext`}>
+          {helpText}
+        </Form.Control.Feedback>
+      )}
     </Form.Group>
   );
 };
