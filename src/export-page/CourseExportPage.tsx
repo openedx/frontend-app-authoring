@@ -9,11 +9,11 @@ import Cookies from 'universal-cookie';
 import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
-import { useModel } from '../generic/model-store';
 import messages from './messages';
 import ExportSidebar from './export-sidebar/ExportSidebar';
 import {
@@ -26,11 +26,11 @@ import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
 
-const CourseExportPage = ({ courseId }: { courseId: string }) => {
+const CourseExportPage = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const exportTriggered = useSelector(getExportTriggered);
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const currentStage = useSelector(getCurrentStage);
   const { msg: errorMessage } = useSelector(getError);
   const loadingStatus = useSelector(getLoadingStatus);
