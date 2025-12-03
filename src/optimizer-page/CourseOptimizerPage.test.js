@@ -4,13 +4,6 @@ import {
   fireEvent, render, waitFor, screen,
   initializeMocks,
 } from '@src/testUtils';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import MockAdapter from 'axios-mock-adapter';
-import initializeStore from '../store';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';

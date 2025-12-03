@@ -136,7 +136,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="checklists"
-            element={<PageWrap><CourseChecklist courseId={courseId} /></PageWrap>}
+            element={<PageWrap><CourseChecklist /></PageWrap>}
           />
           <Route
             path="certificates"

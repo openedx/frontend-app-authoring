@@ -2,38 +2,31 @@ import {
   render,
   waitFor,
   screen,
-} from '@testing-library/react';
+  initializeMocks,
+} from '@src/testUtils';
 import '@testing-library/jest-dom';
-import { getConfig, setConfig, initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
-import initializeStore from '../store';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
 import { getCourseLaunchApiUrl, getCourseBestPracticesApiUrl } from './data/api';
 import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
 import {
   courseId,
-  initialState,
   generateCourseLaunchData,
   generateCourseBestPracticesData,
 } from './factories/mockApiResponses';
 import messages from './messages';
 import CourseChecklist from './index';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
 
 const renderComponent = () => {
   render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <CourseChecklist {...{ courseId }} />
-      </AppProvider>
-    </IntlProvider>,
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseChecklist />
+    </CourseAuthoringProvider>,
   );
 };
 
@@ -47,16 +40,9 @@ const mockStore = async (status) => {
 
 describe('CourseChecklistPage', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
   describe('renders', () => {
     describe('if enable_quality prop is true', () => {
