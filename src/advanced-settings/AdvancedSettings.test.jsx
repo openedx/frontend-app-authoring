@@ -4,6 +4,7 @@ import {
   initializeMocks,
   waitFor,
 } from '../testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { executeThunk } from '../utils';
 import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';
@@ -26,7 +27,9 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
 )));
 
 const render = () => baseRender(
-  <AdvancedSettings courseId={courseId} />,
+  <CourseAuthoringProvider courseId={courseId}>
+    <AdvancedSettings />
+  </CourseAuthoringProvider>,
   { path: mockPathname },
 );
 

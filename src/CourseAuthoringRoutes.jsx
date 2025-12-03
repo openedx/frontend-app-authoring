@@ -120,7 +120,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="settings/advanced"
-            element={<PageWrap><AdvancedSettings courseId={courseId} /></PageWrap>}
+            element={<PageWrap><AdvancedSettings /></PageWrap>}
           />
           <Route
             path="import"
