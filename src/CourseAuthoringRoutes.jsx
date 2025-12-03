@@ -144,7 +144,7 @@ const CourseAuthoringRoutes = () => {
           />
           <Route
             path="textbooks"
-            element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
+            element={<PageWrap><Textbooks /></PageWrap>}
           />
         </Routes>
       </CourseAuthoringPage>

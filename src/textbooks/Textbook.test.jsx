@@ -9,13 +9,18 @@ import { fetchTextbooksQuery } from './data/thunk';
 import { textbooksMock } from './__mocks__';
 import { Textbooks } from '.';
 import messages from './messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 let axiosMock;
 let store;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
-const renderComponent = () => render(<Textbooks courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <Textbooks />
+  </CourseAuthoringProvider>
+);
 
 describe('<Textbooks />', () => {
   beforeEach(async () => {
