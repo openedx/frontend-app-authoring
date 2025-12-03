@@ -71,6 +71,7 @@ export const ImportDetailsPage = () => {
   const {
     data: migrationBlockInfo,
     isPending: isPendingMigrationBlockInfo,
+    refetch: refetchMigrationBlockInfo,
   } = useMigrationBlocksInfo(
     libraryId,
     undefined,
@@ -81,7 +82,7 @@ export const ImportDetailsPage = () => {
 
   const isPending = isPendingCourseDetails || isPendingMigrationStatusData || isPendingMigrationBlockInfo;
 
-  // Build migration summary using the mibration blocks info
+  // Build migration summary using the migration blocks info
   const {
     migrationSummary,
     unsupportedBlockIds,
@@ -145,6 +146,8 @@ export const ImportDetailsPage = () => {
     // The entire task has failed
     migrationStatus = 'Failed';
   } else if (migrationStatusData?.state === 'Succeeded') {
+    // refetch migrationBlockInfo data once the import is complete
+    refetchMigrationBlockInfo();
     // Currently, bulk migrate is being used to migrate courses because
     // it has the ability to create collections.
     // In bulk migration, the task may succeed, but each migration may fail.
