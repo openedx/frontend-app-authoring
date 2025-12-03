@@ -6,6 +6,7 @@ import {
   Icon,
   IconButton,
   Form,
+  Spinner,
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -19,6 +20,7 @@ import * as hooks from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
 import { answerRangeFormatRegex } from '../../../data/OLXParser';
+import { useValidateInputBlock } from '../../../data/apiHooks';
 
 const AnswerOption = ({
   answer,
@@ -32,7 +34,6 @@ const AnswerOption = ({
   const isLibrary = useSelector(selectors.app.isLibrary);
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
-
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
   const setAnswerTitle = hooks.setAnswerTitle({
@@ -44,6 +45,7 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
+  const { data = { is_valid: true }, mutate, isPending } = useValidateInputBlock();
 
   const staticRootUrl = isLibrary
     ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
@@ -71,15 +73,29 @@ const AnswerOption = ({
     }
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
       return (
-        <Form.Control
-          as="textarea"
-          className="answer-option-textarea text-gray-500 small"
-          autoResize
-          rows={1}
-          value={answer.title}
-          onChange={setAnswerTitle}
-          placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
-        />
+        <Form.Group isInvalid={!data?.is_valid ?? true}>
+          <Form.Control
+            as="textarea"
+            className="answer-option-textarea text-gray-500 small"
+            autoResize
+            rows={1}
+            value={answer.title}
+            onChange={(e) => {
+              setAnswerTitle(e);
+              mutate(e.target.value);
+            }}
+            placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
+
+          />
+          {(!data?.is_valid ?? true) && (
+          <Form.Control.Feedback type="invalid">
+            <FormattedMessage {...messages.answerNumericErrorText} />
+          </Form.Control.Feedback>
+          )}
+          {isPending && (
+            <Spinner animation="border" className="mie-3 mt-3" screenReaderText="loading" />
+          )}
+        </Form.Group>
       );
     }
     // Return Answer Range View
