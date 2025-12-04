@@ -73,9 +73,9 @@ const SortableItem = ({
       className="mx-0"
       onClick={onClick}
       onKeyDown={(e) => {
-        if (!onClick) return;
+        if (!onClick) { return; }
 
-        if (e.key === "Enter" || e.key === " ") {
+        if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onClick(e);
         }

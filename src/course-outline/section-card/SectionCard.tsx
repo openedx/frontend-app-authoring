@@ -295,11 +295,12 @@ const SectionCard = ({
         onClick={onClickCard}
       >
         <div
-          className={classNames('section-card',
+          className={classNames(
+            'section-card',
             {
-              'highlight': isScrolledToElement,
+              highlight: isScrolledToElement,
               'outline-card-selected': section.id === selectedContainerId,
-            }
+            },
           )}
           data-testid="section-card"
           ref={currentRef}

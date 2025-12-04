@@ -168,6 +168,12 @@ const UnitCard = ({
     }
   }, [dispatch, section, queryClient, courseId]);
 
+  const onClickCard = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      openContainerInfoSidebar(unit.id);
+    }
+  }, [openContainerInfoSidebar]);
+
   const titleComponent = (
     <TitleLink
       title={displayName}
@@ -216,12 +222,6 @@ const UnitCard = ({
       && !subsection.upstreamInfo?.upstreamRef
   );
 
-  const onClickCard = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id);
-    }
-  }, [openContainerInfoSidebar]);
-
   return (
     <>
       <SortableItem
@@ -241,11 +241,12 @@ const UnitCard = ({
         onClick={onClickCard}
       >
         <div
-          className={classNames('unit-card',
+          className={classNames(
+            'unit-card',
             {
-              'highlight': isScrolledToElement,
+              highlight: isScrolledToElement,
               'outline-card-selected': unit.id === selectedContainerId,
-            }
+            },
           )}
           data-testid="unit-card"
           ref={currentRef}

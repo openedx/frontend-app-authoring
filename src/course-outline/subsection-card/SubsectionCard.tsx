@@ -297,11 +297,12 @@ const SubsectionCard = ({
         onClick={onClickCard}
       >
         <div
-          className={classNames('subsection-card',
+          className={classNames(
+            'subsection-card',
             {
-              'highlight': isScrolledToElement,
+              highlight: isScrolledToElement,
               'outline-card-selected': subsection.id === selectedContainerId,
-            }
+            },
           )}
           data-testid="subsection-card"
           ref={currentRef}
