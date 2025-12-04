@@ -1,5 +1,6 @@
 import { Alert, Button, Hyperlink } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import { useNavigate } from 'react-router-dom';
 
 import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
@@ -10,7 +11,7 @@ const libraryDocsLink = (
   <Hyperlink
     target="_blank"
     showLaunchIcon={false}
-    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html"
+    destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html')}
   >
     <FormattedMessage {...messages.alertLibrariesDocLinkText} />
   </Hyperlink>
