@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
-  Layout,
   Row,
+  Stack,
   TransitionReplace,
   Toast,
   StandardModal,
@@ -331,17 +331,11 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
               />
             )}
           />
-          <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 12 }, { span: 12 }]}
-            xs={[{ span: 12 }, { span: 12 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
-            <Layout.Element>
+          <div className="d-flex align-items-baseline flex-wrap">
+            <div className="flex-fill">
               <article>
                 <div>
-                  <section className="course-outline-section">
+                  <section>
                     <StatusBar
                       courseId={courseId}
                       isLoading={isLoading}
@@ -489,15 +483,13 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                   </section>
                 </div>
               </article>
-            </Layout.Element>
-            <Layout.Element>
-              <CourseAuthoringOutlineSidebarSlot
-                courseId={courseId}
-                courseName={courseName}
-                sections={sections}
-              />
-            </Layout.Element>
-          </Layout>
+            </div>
+            <CourseAuthoringOutlineSidebarSlot
+              courseId={courseId}
+              courseName={courseName}
+              sections={sections}
+            />
+          </div>
           <EnableHighlightsModal
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}

@@ -1,0 +1,13 @@
+.sidebar-toggle {
+  align-self: flex-start;
+
+  .pgn__icon-button-toggle__container {
+    flex-direction: column;
+    align-items: flex-center;
+
+    .btn-icon + .btn-icon {
+      margin-top: var(--pgn-spacing-spacer-1);
+      margin-inline-start: unset;
+    }
+  }
+}

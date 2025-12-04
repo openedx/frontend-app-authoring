@@ -10,7 +10,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
-import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { ComponentIcon } from '@src/generic/block-type-utils';
 import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { type ContainerHit, Highlight, PublishStatus } from '@src/search-manager';
@@ -165,17 +165,14 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
         childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
           const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
-          let classNames;
 
           if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
             // Show the first N-1 blocks as item icons
             // (or all N blocks if no hidden children)
-            classNames = `rounded p-1 ${getComponentStyleColor(blockType)}`;
             blockPreview = (
-              <Icon
-                src={getItemIcon(blockType)}
-                screenReaderText={blockType}
-                title={usageKey}
+              <ComponentIcon
+                blockType={blockType}
+                iconTitle={usageKey}
               />
             );
           } else {
@@ -192,7 +189,6 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
               // A container can have multiple instances of the same block
               // eslint-disable-next-line react/no-array-index-key
               key={`${usageKey}-${idx}`}
-              className={classNames}
             >
               {blockPreview}
             </div>

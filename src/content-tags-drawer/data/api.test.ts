@@ -1,4 +1,3 @@
-// @ts-check
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -44,7 +43,7 @@ describe('content tags drawer api calls', () => {
   });
 
   it('should get taxonomy tags data', async () => {
-    const taxonomyId = 123;
+    const taxonomyId = '123';
     axiosMock.onGet().reply(200, taxonomyTagsMock);
     const result = await getTaxonomyTagsData(taxonomyId);
 
@@ -53,7 +52,7 @@ describe('content tags drawer api calls', () => {
   });
 
   it('should get taxonomy tags data with parentTag', async () => {
-    const taxonomyId = 123;
+    const taxonomyId = '123';
     const options = { parentTag: 'Sample Tag' };
     axiosMock.onGet().reply(200, taxonomyTagsMock);
     const result = await getTaxonomyTagsData(taxonomyId, options);
@@ -63,7 +62,7 @@ describe('content tags drawer api calls', () => {
   });
 
   it('should get taxonomy tags data with page', async () => {
-    const taxonomyId = 123;
+    const taxonomyId = '123';
     const options = { page: 2 };
     axiosMock.onGet().reply(200, taxonomyTagsMock);
     const result = await getTaxonomyTagsData(taxonomyId, options);
@@ -73,7 +72,7 @@ describe('content tags drawer api calls', () => {
   });
 
   it('should get taxonomy tags data with searchTerm', async () => {
-    const taxonomyId = 123;
+    const taxonomyId = '123';
     const options = { searchTerm: 'memo' };
     axiosMock.onGet().reply(200, taxonomyTagsMock);
     const result = await getTaxonomyTagsData(taxonomyId, options);
