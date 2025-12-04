@@ -4,21 +4,16 @@ import {
   getByRole,
   getAllByRole,
   waitForElementToBeRemoved,
-} from '@testing-library/react';
+  initializeMocks,
+} from 'CourseAuthoring/testUtils';
 
 import ReactDOM from 'react-dom';
-import { Routes, Route, MemoryRouter } from 'react-router-dom';
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import userEvent from '@testing-library/user-event';
-import initializeStore from 'CourseAuthoring/store';
 import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
@@ -40,17 +35,20 @@ ReactDOM.createPortal = jest.fn(node => node);
 
 const renderComponent = () => {
   const wrapper = render(
-    <IntlProvider locale="en">
-      <AppProvider store={store} wrapWithRouter={false}>
-        <PagesAndResourcesProvider courseId={courseId}>
-          <MemoryRouter initialEntries={[liveSettingsUrl]}>
-            <Routes>
-              <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
-            </Routes>
-          </MemoryRouter>
-        </PagesAndResourcesProvider>
-      </AppProvider>
-    </IntlProvider>,
+    <CourseAuthoringProvider courseId={courseId}>
+      <PagesAndResourcesProvider courseId={courseId}>
+        <LiveSettings onClose={() => {}} />
+      </PagesAndResourcesProvider>
+    </CourseAuthoringProvider>,
+    {
+      path: liveSettingsUrl,
+      routerProps: {
+        initialEntries: [liveSettingsUrl],
+      },
+      params: {
+        courseId,
+      },
+    },
   );
   container = wrapper.container;
 };
@@ -74,16 +72,9 @@ const mockStore = async ({
 
 describe('BBB Settings', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks({ initialState });
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   test('Plan dropdown to be visible and enabled in UI', async () => {

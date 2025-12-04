@@ -4,7 +4,9 @@ import { Button } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import { DeprecatedReduxState } from '@src/store';
-import { getCourseId, getSequenceId } from '@src/course-unit/data/selectors';
+import { getSequenceId } from '@src/course-unit/data/selectors';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import UnitIcon from './UnitIcon';
 
 interface Props {
@@ -20,7 +22,7 @@ const UnitButton: FC<Props> = ({
   isActive, // passed from parent (SequenceNavigationTabs)
   showTitle = false,
 }) => {
-  const courseId = useSelector(getCourseId);
+  const { courseId } = useCourseAuthoringContext();
   const sequenceId = useSelector(getSequenceId);
 
   const unit = useSelector((state: DeprecatedReduxState) => state.models.units[unitId]);
