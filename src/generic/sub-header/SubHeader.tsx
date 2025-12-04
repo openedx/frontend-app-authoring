@@ -1,5 +1,5 @@
 import { ActionRow } from '@openedx/paragon';
-import { ReactElement, } from 'react';
+import { ReactElement } from 'react';
 
 interface SubHeaderProps {
   title: ReactElement | string | null;
@@ -12,7 +12,7 @@ interface SubHeaderProps {
   titleActions?: ReactElement | ReactElement[] | null;
   hideBorder?: boolean;
   withSubHeaderContent?: boolean;
-};
+}
 
 const SubHeader = ({
   title,

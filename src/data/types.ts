@@ -123,3 +123,15 @@ export interface XBlock {
   discussionEnabled?: boolean;
   upstreamInfo?: UpstreamInfo;
 }
+
+interface OutlineError {
+  data?: string;
+  type: string;
+}
+
+export interface OutlinePageErrors {
+  outlineIndexApi?: OutlineError | null,
+  reindexApi?: OutlineError | null,
+  sectionLoadingApi?: OutlineError | null,
+  courseLaunchApi?: OutlineError | null,
+}
