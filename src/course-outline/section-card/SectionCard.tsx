@@ -29,6 +29,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -77,6 +78,7 @@ const SectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
+  const { selectedContainerId, openContainerInfoSidebar } = useSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
@@ -269,6 +271,12 @@ const SectionCard = ({
 
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
+  const onClickCard = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      openContainerInfoSidebar(section.id);
+    }
+  }, [openContainerInfoSidebar]);
+
   return (
     <>
       <SortableItem
@@ -284,9 +292,15 @@ const SectionCard = ({
           padding: '1.75rem',
           ...borderStyle,
         }}
+        onClick={onClickCard}
       >
         <div
-          className={`section-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames('section-card',
+            {
+              'highlight': isScrolledToElement,
+              'outline-card-selected': section.id === selectedContainerId,
+            }
+          )}
           data-testid="section-card"
           ref={currentRef}
         >
