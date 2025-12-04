@@ -30,6 +30,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -88,6 +89,7 @@ const SubsectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
+  const { selectedContainerId, openContainerInfoSidebar } = useSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
@@ -269,6 +271,12 @@ const SubsectionCard = ({
     closeAddLibraryUnitModal();
   }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
+  const onClickCard = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      openContainerInfoSidebar(subsection.id);
+    }
+  }, [openContainerInfoSidebar]);
+
   return (
     <>
       <SortableItem
@@ -286,9 +294,15 @@ const SubsectionCard = ({
           background: '#f8f7f6',
           ...borderStyle,
         }}
+        onClick={onClickCard}
       >
         <div
-          className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames('subsection-card',
+            {
+              'highlight': isScrolledToElement,
+              'outline-card-selected': subsection.id === selectedContainerId,
+            }
+          )}
           data-testid="subsection-card"
           ref={currentRef}
         >

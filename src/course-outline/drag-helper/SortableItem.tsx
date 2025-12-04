@@ -21,6 +21,7 @@ interface SortableItemProps {
   isDraggable?: boolean;
   children: React.ReactNode;
   componentStyle?: object;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const SortableItem = ({
@@ -30,6 +31,7 @@ const SortableItem = ({
   componentStyle,
   data,
   children,
+  onClick,
 }: SortableItemProps) => {
   const intl = useIntl();
   const {
@@ -66,8 +68,18 @@ const SortableItem = ({
   return (
     <Row
       ref={setNodeRef}
+      tabIndex={onClick ? 0 : -1}
       style={style}
       className="mx-0"
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (!onClick) return;
+
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick(e);
+        }
+      }}
     >
       <Col className="extend-margin px-0">
         {children}

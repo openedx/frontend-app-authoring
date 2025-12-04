@@ -4,6 +4,7 @@ import {
   useMemo,
   useRef,
 } from 'react';
+import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
@@ -24,6 +25,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -70,6 +72,7 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const { selectedContainerId, openContainerInfoSidebar } = useSidebarContext();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
@@ -213,6 +216,12 @@ const UnitCard = ({
       && !subsection.upstreamInfo?.upstreamRef
   );
 
+  const onClickCard = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      openContainerInfoSidebar(unit.id);
+    }
+  }, [openContainerInfoSidebar]);
+
   return (
     <>
       <SortableItem
@@ -229,9 +238,15 @@ const UnitCard = ({
           background: '#fdfdfd',
           ...borderStyle,
         }}
+        onClick={onClickCard}
       >
         <div
-          className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames('unit-card',
+            {
+              'highlight': isScrolledToElement,
+              'outline-card-selected': unit.id === selectedContainerId,
+            }
+          )}
           data-testid="unit-card"
           ref={currentRef}
         >
