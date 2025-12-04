@@ -5,6 +5,22 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.header-navigations.button.new-section',
     defaultMessage: 'New section',
   },
+  addButton: {
+    id: 'course-authoring.course-outline.header-navigations.button.add-button',
+    defaultMessage: 'Add',
+  },
+  infoButton: {
+    id: 'course-authoring.course-outline.header-navigations.button.infoButton',
+    defaultMessage: 'Info',
+  },
+  analyticsButton: {
+    id: 'course-authoring.course-outline.header-navigations.button.analyticsButton',
+    defaultMessage: 'Analytics',
+  },
+  helpButton: {
+    id: 'course-authoring.course-outline.header-navigations.button.helpButton',
+    defaultMessage: 'Help',
+  },
   newSectionButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.new-section.tooltip',
     defaultMessage: 'Click to add a new section',
