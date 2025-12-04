@@ -56,7 +56,7 @@ const render = (migrationTaskId: string) => (
   )
 );
 
-describe('', () => {
+describe('<ImportDetailsPage />', () => {
   beforeEach(() => {
     const newMocks = initializeMocks();
     axiosMock = newMocks.axiosMock;

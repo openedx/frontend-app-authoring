@@ -1137,7 +1137,7 @@ export async function mockGetCourseImports(libraryId: string): ReturnType<typeof
 mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
 mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
 mockGetCourseImports.succeedImport = {
-  taskUuid: '1',
+  taskUuid: '2d35e36b-1234-1234-1234-123456789000',
   source: {
     key: 'course-v1:edX+DemoX+2025_T1',
     displayName: 'DemoX 2025 T1',

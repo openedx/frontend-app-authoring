@@ -18,7 +18,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { Paragraph } from '@src/utils';
 import { useBulkModulestoreMigrate, useModulestoreMigrationStatus } from '@src/data/apiHooks';
 import { useGetContentHits } from '@src/search-manager';
-import { ContainerType, getBlockTypeBlockV1 } from '@src/generic/key-utils';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 
 import messages from './messages';
 import { SummaryCard } from './stepper/SummaryCard';
@@ -26,20 +26,11 @@ import { HelpSidebar } from './HelpSidebar';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useMigrationBlocksInfo } from '../data/apiHooks';
 
-export interface MigrationSummary {
-  totalBlocks: number;
-  sections: number;
-  subsections: number;
-  units: number;
-  components: number;
-  unsupported: number;
-}
-
-export const ImportDetailsPage = () => {
+const ImportDetailsContent = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const { libraryId, libraryData, readOnly } = useLibraryContext();
   const [enableRefeshState, setEnableRefreshState] = useState(true);
+  const { libraryId } = useLibraryContext();
   const { courseId, migrationTaskId } = useParams();
   const { showToast } = useContext(ToastContext);
   const [disableReimport, setDisableReimport] = useState(false);
@@ -108,7 +99,7 @@ export const ImportDetailsPage = () => {
       if (!block.targetKey) {
         // The migrations of this block is failed
         counts.unsupported += 1;
-        resultUnsupportedIds.push(`"${block.sourceKey}"`);
+        resultUnsupportedIds.push(block.sourceKey);
 
         if (block.unsupportedReason) {
           // Verify if the unsupported block has children
@@ -117,7 +108,7 @@ export const ImportDetailsPage = () => {
         }
       } else {
         counts.totalBlocks += 1;
-        const blockType = getBlockTypeBlockV1(block.sourceKey);
+        const blockType = getBlockType(block.sourceKey);
         switch (blockType) {
           case ContainerType.Chapter:
             counts.sections += 1;
@@ -163,9 +154,9 @@ export const ImportDetailsPage = () => {
   }
 
   // Fetch unsupported blocks usage_key information from meilisearch index.
-  const { data: unssupportedBlocksData } = useGetContentHits(
+  const { data: unsupportedBlocksData } = useGetContentHits(
     [
-      `usage_key IN [${unsupportedBlockIds.join(',')}]`,
+      `usage_key IN [${unsupportedBlockIds.map(k => `"${k}"`).join(',')}]`,
     ],
     (unsupportedBlockIds.length || 0) > 0,
     ['usage_key', 'block_type', 'display_name'],
@@ -175,7 +166,7 @@ export const ImportDetailsPage = () => {
 
   // Build the data for the reasons for failed imports
   const unsupportedTableData = useMemo(() => {
-    if (!migrationBlockInfo || !unssupportedBlocksData) {
+    if (!migrationBlockInfo || !unsupportedBlocksData) {
       return [];
     }
 
@@ -184,12 +175,12 @@ export const ImportDetailsPage = () => {
       [block.sourceKey]: block.unsupportedReason || '',
     }), {} as Record<string, string>);
 
-    return unssupportedBlocksData.hits.map(block => ({
+    return unsupportedBlocksData.hits.map(block => ({
       blockName: block.display_name,
       blockType: block.block_type,
       reason: reasons[block.usage_key],
     }));
-  }, [migrationBlockInfo, unssupportedBlocksData]);
+  }, [migrationBlockInfo, unsupportedBlocksData]);
 
   // In any state other than "in progress", it is no longer necessary
   // to keep refreshing the task status.
@@ -230,196 +221,212 @@ export const ImportDetailsPage = () => {
     }
   };
 
-  const renderBody = () => {
-    if (isPending || !courseImportDetails) {
-      return <Loading />;
-    }
+  if (isPending || !courseImportDetails) {
+    return <Loading />;
+  }
 
-    if (migrationStatus === 'Succeeded') {
-      return (
-        <Stack gap={3}>
-          <Alert variant="success" icon={CheckCircle}>
-            <Alert.Heading>
-              <FormattedMessage {...messages.importSuccessfulAlertTitle} />
-            </Alert.Heading>
-            <p>
-              <FormattedMessage
-                {...messages.importSuccessfulAlertBody}
-                values={{
-                  courseName: courseDetails?.title,
-                  collectionName: courseImportDetails.targetCollection?.title,
-                }}
-              />
-            </p>
-          </Alert>
-          <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
-          <SummaryCard
-            totalBlocks={migrationSummary.totalBlocks}
-            totalComponents={migrationSummary.components}
-            sections={migrationSummary.sections}
-            subsections={migrationSummary.subsections}
-            units={migrationSummary.units}
-            unsupportedBlocks={migrationSummary.unsupported}
-            isPending={isPendingMigrationBlockInfo}
-          />
-          <p>
-            <FormattedMessage
-              {...messages.importSuccessfulBody}
-              values={{
-                courseName: courseDetails?.title,
-              }}
-            />
-          </p>
-          <div className="w-100 d-flex justify-content-end">
-            <Button
-              variant="outline-primary"
-              iconAfter={ArrowForward}
-              onClick={() => navigate(collectionLink())}
-            >
-              <FormattedMessage {...messages.viewImportedContentButton} />
-            </Button>
-          </div>
-        </Stack>
-      );
-    } if (migrationStatus === 'Failed') {
-      return (
-        <Stack gap={3}>
-          <Alert variant="danger" icon={Info}>
-            <Alert.Heading>
-              <FormattedMessage {...messages.importFailedAlertTitle} />
-            </Alert.Heading>
-            <p>
-              <FormattedMessage
-                {...messages.importFailedAlertBody}
-                values={{
-                  courseName: courseDetails?.title,
-                }}
-              />
-            </p>
-          </Alert>
-          <h4><FormattedMessage {...messages.importFailedDetailsSectionTitle} /></h4>
-          <p>
-            <FormattedMessage {...messages.importFailedDetailsSectionBody} />
-          </p>
-          <div className="w-100 d-flex justify-content-end">
-            <Button
-              variant="outline-primary"
-              iconAfter={ArrowForward}
-              onClick={handleImportCourse}
-              disabled={disableReimport}
-            >
-              <FormattedMessage {...messages.importFailedRetryImportButton} />
-            </Button>
-          </div>
-        </Stack>
-      );
-    } if (migrationStatus === 'Partial Succeeded') {
-      return (
-        <Stack gap={3}>
-          <Alert variant="warning" icon={WarningFilled}>
-            <Alert.Heading>
-              <FormattedMessage {...messages.importPartialAlertTitle} />
-            </Alert.Heading>
-            <p>
-              <FormattedMessage
-                {...messages.importPartialAlertBody}
-                values={{
-                  courseName: courseDetails?.title,
-                  collectionName: courseImportDetails.targetCollection?.title,
-                }}
-              />
-            </p>
-          </Alert>
-          <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
-          <SummaryCard
-            totalBlocks={migrationSummary.totalBlocks}
-            totalComponents={migrationSummary.components}
-            sections={migrationSummary.sections}
-            subsections={migrationSummary.subsections}
-            units={migrationSummary.units}
-            unsupportedBlocks={migrationSummary.unsupported}
-            isPending={isPendingMigrationBlockInfo}
-          />
-          <div>
-            <FormattedMessage
-              {...messages.importPartialBody}
-              values={{
-                percentage: Math.floor(
-                  (migrationSummary.totalBlocks * 100) / (migrationSummary.totalBlocks + migrationSummary.unsupported),
-                ),
-                courseName: courseDetails?.title,
-                p: Paragraph,
-              }}
-            />
-          </div>
-          {!isPendingMigrationBlockInfo && unsupportedTableData && (
-            <DataTable
-              isPaginated
-              initialState={{
-                pageSize: 10,
-              }}
-              itemCount={unsupportedTableData.length}
-              columns={[
-                {
-                  Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
-                  accessor: 'blockName',
-
-                },
-                {
-                  Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
-                  accessor: 'blockType',
-                },
-                {
-                  Header: intl.formatMessage(messages.importPartialReasonTableReason),
-                  accessor: 'reason',
-                },
-              ]}
-              data={unsupportedTableData}
-            >
-              <DataTable.Table />
-              <DataTable.TableFooter />
-            </DataTable>
-          )}
-
-          <div className="w-100 d-flex justify-content-end">
-            <Button
-              variant="outline-primary"
-              iconAfter={ArrowForward}
-              onClick={() => navigate(collectionLink())}
-            >
-              <FormattedMessage {...messages.viewImportedContentButton} />
-            </Button>
-          </div>
-        </Stack>
-      );
-    }
-
+  if (migrationStatus === 'Succeeded') {
     return (
-      // In Progress
       <Stack gap={3}>
-        <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
+        <Alert variant="success" icon={CheckCircle}>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importSuccessfulAlertTitle} />
+          </Alert.Heading>
+          <p>
+            <FormattedMessage
+              {...messages.importSuccessfulAlertBody}
+              values={{
+                courseName: courseDetails?.title,
+                collectionName: courseImportDetails.targetCollection?.title,
+              }}
+            />
+          </p>
+        </Alert>
+        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+        <SummaryCard
+          totalBlocks={migrationSummary.totalBlocks}
+          totalComponents={migrationSummary.components}
+          sections={migrationSummary.sections}
+          subsections={migrationSummary.subsections}
+          units={migrationSummary.units}
+          unsupportedBlocks={migrationSummary.unsupported}
+          isPending={isPendingMigrationBlockInfo}
+        />
         <p>
           <FormattedMessage
-            {...messages.importInProgressBody}
+            {...messages.importSuccessfulBody}
             values={{
               courseName: courseDetails?.title,
             }}
           />
         </p>
-        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
-        <SummaryCard isPending />
         <div className="w-100 d-flex justify-content-end">
           <Button
             variant="outline-primary"
             iconAfter={ArrowForward}
-            disabled
+            onClick={() => navigate(collectionLink())}
           >
             <FormattedMessage {...messages.viewImportedContentButton} />
           </Button>
         </div>
       </Stack>
     );
-  };
+  } if (migrationStatus === 'Failed') {
+    return (
+      <Stack gap={3}>
+        <Alert variant="danger" icon={Info}>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importFailedAlertTitle} />
+          </Alert.Heading>
+          <p>
+            <FormattedMessage
+              {...messages.importFailedAlertBody}
+              values={{
+                courseName: courseDetails?.title,
+              }}
+            />
+          </p>
+        </Alert>
+        <h4><FormattedMessage {...messages.importFailedDetailsSectionTitle} /></h4>
+        <p>
+          <FormattedMessage {...messages.importFailedDetailsSectionBody} />
+        </p>
+        <div className="w-100 d-flex justify-content-end">
+          <Button
+            variant="outline-primary"
+            iconAfter={ArrowForward}
+            onClick={handleImportCourse}
+            disabled={disableReimport}
+          >
+            <FormattedMessage {...messages.importFailedRetryImportButton} />
+          </Button>
+        </div>
+      </Stack>
+    );
+  } if (migrationStatus === 'Partial Succeeded') {
+    return (
+      <Stack gap={3}>
+        <Alert variant="warning" icon={WarningFilled}>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importPartialAlertTitle} />
+          </Alert.Heading>
+          <p>
+            <FormattedMessage
+              {...messages.importPartialAlertBody}
+              values={{
+                courseName: courseDetails?.title,
+                collectionName: courseImportDetails.targetCollection?.title,
+              }}
+            />
+          </p>
+        </Alert>
+        <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+        <SummaryCard
+          totalBlocks={migrationSummary.totalBlocks}
+          totalComponents={migrationSummary.components}
+          sections={migrationSummary.sections}
+          subsections={migrationSummary.subsections}
+          units={migrationSummary.units}
+          unsupportedBlocks={migrationSummary.unsupported}
+          isPending={isPendingMigrationBlockInfo}
+        />
+        <div>
+          <FormattedMessage
+            {...messages.importPartialBody}
+            values={{
+              percentage: Math.floor(
+                (migrationSummary.totalBlocks * 100) / (migrationSummary.totalBlocks + migrationSummary.unsupported),
+              ),
+              courseName: courseDetails?.title,
+              p: Paragraph,
+            }}
+          />
+        </div>
+        {!isPendingMigrationBlockInfo && unsupportedTableData && (
+          <DataTable
+            isPaginated
+            initialState={{
+              pageSize: 10,
+            }}
+            itemCount={unsupportedTableData.length}
+            columns={[
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableBlockName),
+                accessor: 'blockName',
+
+              },
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableBlockType),
+                accessor: 'blockType',
+              },
+              {
+                Header: intl.formatMessage(messages.importPartialReasonTableReason),
+                accessor: 'reason',
+              },
+            ]}
+            data={unsupportedTableData}
+          >
+            <DataTable.Table />
+            <DataTable.TableFooter />
+          </DataTable>
+        )}
+
+        <div className="w-100 d-flex justify-content-end">
+          <Button
+            variant="outline-primary"
+            iconAfter={ArrowForward}
+            onClick={() => navigate(collectionLink())}
+          >
+            <FormattedMessage {...messages.viewImportedContentButton} />
+          </Button>
+        </div>
+      </Stack>
+    );
+  }
+
+  return (
+    // In Progress
+    <Stack gap={3}>
+      <h4><FormattedMessage {...messages.importInProgressTitle} /></h4>
+      <p>
+        <FormattedMessage
+          {...messages.importInProgressBody}
+          values={{
+            courseName: courseDetails?.title,
+          }}
+        />
+      </p>
+      <h4><FormattedMessage {...messages.importSummaryTitle} /></h4>
+      <SummaryCard isPending />
+      <div className="w-100 d-flex justify-content-end">
+        <Button
+          variant="outline-primary"
+          iconAfter={ArrowForward}
+          disabled
+        >
+          <FormattedMessage {...messages.viewImportedContentButton} />
+        </Button>
+      </div>
+    </Stack>
+  );
+};
+
+export interface MigrationSummary {
+  totalBlocks: number;
+  sections: number;
+  subsections: number;
+  units: number;
+  components: number;
+  unsupported: number;
+}
+
+export const ImportDetailsPage = () => {
+  const intl = useIntl();
+  const { libraryId, libraryData, readOnly } = useLibraryContext();
+  const { courseId } = useParams();
+  const {
+    data: courseDetails,
+  } = useCourseDetails(courseId);
 
   return (
     <div className="d-flex">
@@ -448,7 +455,7 @@ export const ImportDetailsPage = () => {
           <Layout xs={[{ span: 9 }, { span: 3 }]}>
             <Layout.Element>
               <div className="mt-4 px-4">
-                {renderBody()}
+                <ImportDetailsContent />
               </div>
             </Layout.Element>
             <Layout.Element>
