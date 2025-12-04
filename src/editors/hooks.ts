@@ -96,3 +96,7 @@ export const clearSaveError = ({
 export const clearCreateError = ({
   dispatch,
 }) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.createBlock }));
+
+export const clearUploadError = ({
+  dispatch,
+}) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.uploadAsset }));

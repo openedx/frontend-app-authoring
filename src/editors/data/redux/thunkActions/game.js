@@ -87,7 +87,47 @@ export const uploadGameImage = ({ index, imageFile, imageType }) => (dispatch) =
   }));
 };
 
+/**
+ * Delete an image from games xblock
+ */
+export const deleteGameImage = ({ index, imageType, filePath }) => (dispatch) => {
+  if (!filePath) {
+    // If no filePath, just clear the field without calling API
+    if (imageType === 'term') {
+      dispatch(actions.game.updateTermImage({ index, termImage: '' }));
+    } else if (imageType === 'definition') {
+      dispatch(actions.game.updateDefinitionImage({ index, definitionImage: '' }));
+    }
+    return;
+  }
+
+  dispatch(requests.deleteGamesImage({
+    key: filePath,
+    onSuccess: (response) => {
+      if (response.data.success === false) {
+        dispatch(actions.requests.failRequest({
+          requestKey: RequestKeys.uploadAsset,
+          error: response.data?.error,
+        }));
+        return;
+      }
+      if (imageType === 'term') {
+        dispatch(actions.game.updateTermImage({ index, termImage: '' }));
+      } else if (imageType === 'definition') {
+        dispatch(actions.game.updateDefinitionImage({ index, definitionImage: '' }));
+      }
+    },
+    onFailure: (error) => {
+      dispatch(actions.requests.failRequest({
+        requestKey: RequestKeys.uploadAsset,
+        error,
+      }));
+    },
+  }));
+};
+
 export default StrictDict({
   loadGamesSettings,
   uploadGameImage,
+  deleteGameImage,
 });

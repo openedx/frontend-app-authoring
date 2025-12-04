@@ -425,6 +425,7 @@ export const apiMethods = {
     isShuffled,
     cards,
     hasTimer,
+    title,
   }) => {
     // Transform cards to include order and format properly
     // For matching games, exclude image fields
@@ -445,6 +446,7 @@ export const apiMethods = {
     });
 
     const payload: any = {
+      display_name: title,
       game_type: gameType,
       is_shuffled: isShuffled,
       cards: formattedCards,
@@ -460,6 +462,14 @@ export const apiMethods = {
       payload,
     );
   },
+  deleteGamesImage: ({
+    studioEndpointUrl,
+    blockId,
+    key,
+  }) => post(
+    urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'delete_image_handler' }),
+    { key },
+  ),
 };
 
 export default apiMethods;

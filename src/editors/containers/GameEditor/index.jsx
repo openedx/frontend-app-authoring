@@ -72,9 +72,7 @@ export const GameEditor = ({
   // list
   list,
   updateTerm,
-  updateTermImage,
   updateDefinition,
-  updateDefinitionImage,
   toggleOpen,
   setList,
   addCard,
@@ -82,6 +80,7 @@ export const GameEditor = ({
 
   // thunks
   uploadGameImage,
+  deleteGameImage,
   loadGamesSettings,
 
   isDirty,
@@ -104,11 +103,11 @@ export const GameEditor = ({
     // Function to determine what the header will say based on type
     switch (type) {
       case 'flashcards':
-        return 'Flashcard terms';
+        return intl.formatMessage(messages.descriptionHeaderFlashcard);
       case 'matching':
-        return 'Matching terms';
+        return intl.formatMessage(messages.descriptionHeaderMatching);
       default:
-        return 'Undefined';
+        return intl.formatMessage(messages.undefined);
     }
   };
 
@@ -116,11 +115,11 @@ export const GameEditor = ({
     // Function to determine what the description will say based on type
     switch (type) {
       case 'flashcards':
-        return 'Enter your terms and definitions below. Learners will review each card by viewing the term, then flipping to reveal the definition.';
+        return intl.formatMessage(messages.descriptionFlashcard);
       case 'matching':
-        return 'Enter your terms and definitions below. Learners must match each term with the correct definition.';
+        return intl.formatMessage(messages.descriptionMatching);
       default:
-        return 'Undefined';
+        return intl.formatMessage(messages.undefined);
     }
   };
 
@@ -133,11 +132,11 @@ export const GameEditor = ({
     }
   };
 
-  const handleImageRemove = (index, imageType) => {
+  const handleImageRemove = (index, imageType, imageUrl) => {
     const id = `${imageType}_image_upload|${index}`;
     document.getElementById(id).value = '';
-    const updateAction = imageType === 'term' ? updateTermImage : updateDefinitionImage;
-    updateAction({ index, [imageType === 'term' ? 'termImage' : 'definitionImage']: '' });
+    const filePath = imageUrl.replace(/^\/media\//, '');
+    deleteGameImage({ index, imageType, filePath });
   };
 
   // Backward compatible wrappers
@@ -177,7 +176,7 @@ export const GameEditor = ({
         iconAs={Icon}
         alt="DEL_IMG"
         variant="primary"
-        onClick={() => handleImageRemove(index, imageType)}
+        onClick={() => handleImageRemove(index, imageType, imageUrl)}
       />
     </div>
   );
@@ -206,7 +205,7 @@ export const GameEditor = ({
       isCardCollapsibleOpen="true"
     >
       <>
-        <div className="settings-description">Measure the time it takes learners to match all terms and definitions. Used to calculate a learner&apos;s score.</div>
+        <div className="settings-description">{intl.formatMessage(messages.timerSettingsDescription)}</div>
         <Button
           onClick={() => timerFalse()}
           variant={!settings.timer ? 'primary' : 'outline-primary'}
@@ -271,12 +270,14 @@ export const GameEditor = ({
                     id={`term_image_upload|${index}`}
                     hidden
                     onChange={() => saveTermImage(index)}
+                    accept="image/png, image/jpeg, image/gif, image/webp"
                   />
                   <input
                     type="file"
                     id={`definition_image_upload|${index}`}
                     hidden
                     onChange={() => saveDefinitionImage(index)}
+                    accept="image/png, image/jpeg, image/gif, image/webp"
                   />
                   <Collapsible.Trigger className="card-heading">
                     <div className="drag-spacer" />
@@ -360,9 +361,10 @@ export const GameEditor = ({
                           <Form.Control
                             className="d-flex flex-column align-items-start align-self-stretch"
                             id={`term|${index}`}
-                            placeholder="Enter your term"
+                            placeholder={intl.formatMessage(messages.enterYourTerm)}
                             value={card.term}
                             onChange={(e) => updateTerm({ index, term: e.target.value })}
+                            maxLength={255}
                           />
                           {type !== 'matching' && termImageUploadButton(card, index)}
                         </div>
@@ -375,9 +377,10 @@ export const GameEditor = ({
                           <Form.Control
                             className="d-flex flex-column align-items-start align-self-stretch"
                             id={`definition|${index}`}
-                            placeholder="Enter your definition"
+                            placeholder={intl.formatMessage(messages.enterYourDefinition)}
                             value={card.definition}
                             onChange={(e) => updateDefinition({ index, definition: e.target.value })}
+                            maxLength={255}
                           />
                           {type !== 'matching' && definitionImageUploadButton(card, index)}
                         </div>
@@ -432,7 +435,7 @@ export const GameEditor = ({
           isCardCollapsibleOpen="true"
         >
           <>
-            <div className="settings-description">Shuffle the order of terms shown to learners when reviewing.</div>
+            <div className="settings-description">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
             <Button
               onClick={() => shuffleFalse()}
               variant={!settings.shuffle ? 'primary' : 'outline-primary'}
@@ -477,9 +480,7 @@ GameEditor.propTypes = {
   blockValue: PropTypes.shape({}),
   list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   updateTerm: PropTypes.func.isRequired,
-  updateTermImage: PropTypes.func.isRequired,
   updateDefinition: PropTypes.func.isRequired,
-  updateDefinitionImage: PropTypes.func.isRequired,
   toggleOpen: PropTypes.func.isRequired,
   setList: PropTypes.func.isRequired,
   addCard: PropTypes.func.isRequired,
@@ -497,6 +498,7 @@ GameEditor.propTypes = {
 
   // thunks
   uploadGameImage: PropTypes.func.isRequired,
+  deleteGameImage: PropTypes.func.isRequired,
   loadGamesSettings: PropTypes.func.isRequired,
 
   isDirty: PropTypes.bool,
@@ -539,6 +541,7 @@ export const mapDispatchToProps = {
   // thunks
   loadGamesSettings: thunkActions.game.loadGamesSettings,
   uploadGameImage: thunkActions.game.uploadGameImage,
+  deleteGameImage: thunkActions.game.deleteGameImage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameEditor);

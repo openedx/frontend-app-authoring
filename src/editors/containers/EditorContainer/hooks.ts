@@ -10,6 +10,7 @@ import * as appHooks from '../../hooks';
 export const {
   clearSaveError,
   clearCreateError,
+  clearUploadError,
   navigateCallback,
   nullMethod,
   saveBlock,
@@ -90,6 +91,11 @@ export const isInitialized = () => useSelector(selectors.app.isInitialized);
 // eslint-disable-next-line react-hooks/rules-of-hooks
 export const saveFailed = () => useSelector((rootState) => (
   selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
+));
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+export const uploadFailed = () => useSelector((rootState) => (
+  selectors.requests.isFailed(rootState, { requestKey: RequestKeys.uploadAsset })
 ));
 
 export const createFailed = () => ({

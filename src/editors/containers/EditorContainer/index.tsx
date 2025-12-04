@@ -67,8 +67,10 @@ const EditorContainer: React.FC<Props> = ({
   const { createFailed, createFailedError } = hooks.createFailed();
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
+  const uploadFailed = hooks.uploadFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
+  const clearUploadFailed = hooks.clearUploadError({ dispatch });
 
   const handleSave = hooks.handleSaveClicked({
     dispatch,
@@ -111,6 +113,11 @@ const EditorContainer: React.FC<Props> = ({
       )}
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
+          {intl.formatMessage(messages.contentSaveFailed)}
+        </Toast>
+      )}
+      {uploadFailed && (
+        <Toast show onClose={clearUploadFailed}>
           {intl.formatMessage(messages.contentSaveFailed)}
         </Toast>
       )}

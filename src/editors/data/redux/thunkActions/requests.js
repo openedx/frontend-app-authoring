@@ -522,6 +522,22 @@ export const saveGamesSettings = ({
       isShuffled,
       hasTimer,
       cards,
+      title: selectors.app.blockTitle(getState()),
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const deleteGamesImage = ({
+  key,
+  ...rest
+}) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.saveBlock,
+    promise: api.deleteGamesImage({
+      key,
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
       blockId: selectors.app.blockId(getState()),
     }),
@@ -554,4 +570,5 @@ export default StrictDict({
   uploadGamesImage,
   getGamesSettings,
   saveGamesSettings,
+  deleteGamesImage,
 });
