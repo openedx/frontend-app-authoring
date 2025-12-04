@@ -5,6 +5,7 @@ import {
 import { XBlock } from '@src/data/types';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import { SidebarProvider } from '../common/context/SidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -74,28 +75,30 @@ const unit = {
 } satisfies Partial<XBlock> as XBlock;
 
 const renderComponent = (props?: object) => render(
-  <UnitCard
-    section={section}
-    subsection={subsection}
-    unit={unit}
-    index={1}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onEditSubmit={jest.fn()}
-    onDuplicateSubmit={jest.fn()}
-    getTitleLink={(id) => `/some/${id}`}
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    discussionsSettings={{
-      providerType: '',
-      enableGradedUnits: false,
-    }}
-    {...props}
-  />,
+  <SidebarProvider>
+    <UnitCard
+      section={section}
+      subsection={subsection}
+      unit={unit}
+      index={1}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenPublishModal={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenUnlinkModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onEditSubmit={jest.fn()}
+      onDuplicateSubmit={jest.fn()}
+      getTitleLink={(id) => `/some/${id}`}
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      discussionsSettings={{
+        providerType: '',
+        enableGradedUnits: false,
+      }}
+      {...props}
+    />
+  </SidebarProvider>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
@@ -115,6 +118,28 @@ describe('<UnitCard />', () => {
       'href',
       '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
     );
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render UnitCard component in selected state', () => {
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('unit-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('hides header based on isHeaderVisible flag', async () => {

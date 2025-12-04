@@ -1,8 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext, useCallback, useContext, useMemo, useState,
+} from 'react';
 
 export type SidebarContextData = {
   selectedContainerId?: string;
-  openContainerInfoSidebar: (containerId: string) => void; 
+  openContainerInfoSidebar: (containerId: string) => void;
 };
 
 /**
@@ -18,7 +20,7 @@ type SidebarProviderProps = {
 };
 
 export const SidebarProvider = ({ children }: SidebarProviderProps) => {
-  const [ selectedContainerId, setSelectedContainerId ] = useState<string | undefined>();
+  const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
   const openContainerInfoSidebar = useCallback((containerId: string) => {
     setSelectedContainerId(containerId);
@@ -27,7 +29,7 @@ export const SidebarProvider = ({ children }: SidebarProviderProps) => {
   const context = useMemo<SidebarContextData>(() => {
     const contextValue = {
       selectedContainerId,
-      openContainerInfoSidebar,  
+      openContainerInfoSidebar,
     };
 
     return contextValue;
