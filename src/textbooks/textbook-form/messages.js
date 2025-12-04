@@ -59,6 +59,11 @@ const descriptions = {
     defaultMessage: 'Chapter asset is required',
     description: 'Validation error message for the chapter asset field in the form',
   },
+  chapterUrlMustStartWithSlash: {
+    id: 'course-authoring.textbooks.form.chapter.url.must-start-with-slash',
+    defaultMessage: 'Chapter asset must start with a single forward slash (/) and cannot be an absolute URL. Try uploading the PDF.',
+    description: 'Validation error message for the chapter asset field in the form when the URL format is incorrect',
+  },
   addChapterHelperText: {
     id: 'course-authoring.textbooks.form.add-chapter.helper-text',
     defaultMessage: 'Please add at least one chapter',

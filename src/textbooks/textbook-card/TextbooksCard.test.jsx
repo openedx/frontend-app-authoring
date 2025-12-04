@@ -117,7 +117,7 @@ describe('<TextbookCard />', () => {
       chapters: [
         {
           title: 'Chapter',
-          url: 'Url',
+          url: '/static/example.pdf',
         },
       ],
       id: textbooksMock.textbooks[1].id,

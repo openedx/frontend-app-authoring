@@ -98,7 +98,7 @@ describe('<TextbookForm />', () => {
       chapters: [
         {
           title: 'Chapter',
-          url: 'Url',
+          url: '/static/example.pdf',
         },
       ],
     };
