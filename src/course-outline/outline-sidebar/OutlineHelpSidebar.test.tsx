@@ -1,8 +1,7 @@
-// @ts-check
 import { initializeMocks, render, waitFor } from '../../testUtils';
 import { helpUrls } from '../../help-urls/__mocks__';
 import { getHelpUrlsApiUrl } from '../../help-urls/data/api';
-import OutlineSidebar from './OutlineSidebar';
+import OutlineHelpSidebar from './OutlineHelpSidebar';
 import messages from './messages';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -16,7 +15,7 @@ let axiosMock;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
-const renderComponent = (props) => render(<OutlineSidebar courseId={courseId} {...props} />, { path: mockPathname });
+const renderComponent = () => render(<OutlineHelpSidebar courseId={courseId} />, { path: mockPathname });
 
 describe('<OutlineSidebar />', () => {
   beforeEach(() => {

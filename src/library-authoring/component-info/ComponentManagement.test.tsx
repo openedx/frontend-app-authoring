@@ -1,12 +1,14 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 
-import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
+import { mockContentTaxonomyTagsData } from '@src/content-tags-drawer/data/api.mocks';
 import {
   initializeMocks,
   render as baseRender,
   screen,
   waitFor,
-} from '../../testUtils';
+  matchInnerText,
+} from '@src/testUtils';
+
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
@@ -32,24 +34,6 @@ jest.mock('react-router-dom', () => ({
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
-
-/*
- * Utility to get the inner text of an element safely.
- */
-const getInnerText = (element: Element | null): string => {
-  if (!element) {
-    return '';
-  }
-  return (element.textContent ?? '')
-    .split('\n')
-    .filter((text) => text && !/^\s+$/.test(text))
-    .map((text) => text.trim())
-    .join(' ');
-};
-
-const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, element: Element | null) => !!element
-    && element.nodeName === nodeName
-    && getInnerText(element) === textToMatch;
 
 const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
   extraWrapper: ({ children }) => (
