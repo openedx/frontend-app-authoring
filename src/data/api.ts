@@ -61,6 +61,7 @@ export const waffleFlagDefaults = {
   useNewGroupConfigurationsPage: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
+  tempWaffleFlag: false, // FIXME: update this to false once we have the feature flag
 } as const;
 
 export type WaffleFlagName = keyof typeof waffleFlagDefaults;
