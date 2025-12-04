@@ -206,7 +206,7 @@ export const CourseLibraries = () => {
             >
               {intl.formatMessage(messages.reviewUpdatesBtn)}
             </Button>
-          ): null}
+          ) : null}
           hideBorder
         />
         <section className="mb-4">
