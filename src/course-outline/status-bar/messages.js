@@ -25,6 +25,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.checklists.completed',
     defaultMessage: 'completed',
   },
+  notificationMetadataTitle: {
+    id: 'course-authoring.course-outline.status-bar.notification-metadata',
+    defaultMessage: '{count, plural, one {{count} notification} other {{count} notifications}}',
+    description: 'Metadata notifications text in course outline'
+  },
   highlightEmailsTitle: {
     id: 'course-authoring.course-outline.status-bar.highlight-emails',
     defaultMessage: 'Course highlight emails',
