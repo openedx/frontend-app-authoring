@@ -33,11 +33,11 @@ const CourseDatesAndStatus = ({ startDate, endDate, startDateRaw, datesLink }: {
   return (
     <Stack direction='horizontal' gap={3}>
       {courseStatus.active
-        ? <Badge className="px-3 py-1" variant="success">Active</Badge>
+        ? <Badge className="px-3 py-2" variant="success">Active</Badge>
         : courseStatus.upcoming
-          ? <Badge className="px-3 py-1 bg-white text-success-400 border border-success-500" variant="success">Upcoming</Badge>
+          ? <Badge className="px-3 py-2 bg-white text-success-400 border border-success-500" variant="success">Upcoming</Badge>
           : courseStatus.archived &&
-          <Badge className="px-3 py-1" variant="light">Archived</Badge>
+          <Badge className="px-3 py-2" variant="light">Archived</Badge>
       }
       <Link
         className="small text-gray-700"
@@ -72,7 +72,7 @@ interface StatusBarProps {
   notificationCount?: number;
 };
 
-const StatusBar = ({
+export const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
@@ -125,5 +125,3 @@ const StatusBar = ({
     </Stack>
   );
 };
-
-export default StatusBar;
