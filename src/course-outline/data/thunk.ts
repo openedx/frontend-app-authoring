@@ -75,6 +75,7 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
           videoSharingEnabled,
           videoSharingOptions,
           actions,
+          end,
         },
       } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
@@ -83,6 +84,7 @@ export function fetchCourseOutlineIndexQuery(courseId: string): (dispatch: any) 
         highlightsEnabledForMessaging,
         videoSharingOptions,
         videoSharingEnabled,
+        endDate: end,
       }));
       dispatch(updateCourseActions(actions));
 
