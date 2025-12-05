@@ -8,6 +8,7 @@ const messages = defineMessages({
   headingSubtitle: {
     id: 'course-authoring.course-outline.subTitle',
     defaultMessage: 'Course Outline',
+    description: 'Course Outline heading subTitle.',
   },
   alertSuccessTitle: {
     id: 'course-authoring.course-outline.reindex.alert.success.title',

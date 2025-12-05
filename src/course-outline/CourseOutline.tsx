@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   Container,
   Layout,
@@ -44,7 +45,6 @@ import {
   getTimedExamsFlag,
 } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
@@ -63,6 +63,8 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { StatusBar } from './status-bar/StatusBar';
+import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -141,6 +143,7 @@ const CourseOutline = () => {
     resetScrollState,
   } = useCourseOutline({ courseId });
 
+  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -341,12 +344,23 @@ const CourseOutline = () => {
               <article>
                 <div>
                   <section className="course-outline-section">
-                    <StatusBar
-                      courseId={courseId}
-                      isLoading={isLoading}
-                      statusBarData={statusBarData}
-                      notificationCount={3}
-                    />
+                    {showNewActionsBar
+                      ? (
+                        <StatusBar
+                          courseId={courseId}
+                          isLoading={isLoading}
+                          statusBarData={statusBarData}
+                          notificationCount={3}
+                        />
+                      ) : (
+                        <LegacyStatusBar
+                          courseId={courseId}
+                          isLoading={isLoading}
+                          statusBarData={statusBarData}
+                          openEnableHighlightsModal={openEnableHighlightsModal}
+                          handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+                        />
+                      )}
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
                         {sections.length ? (
