@@ -26,7 +26,7 @@ const SubHeader = ({
   hideBorder = false,
   withSubHeaderContent,
 }: SubHeaderProps) => (
-  <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-3`}>
+  <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-2`}>
     {breadcrumbs && (
       <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
     )}
