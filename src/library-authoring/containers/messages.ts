@@ -66,6 +66,11 @@ const messages = defineMessages({
     defaultMessage: 'Container actions menu',
     description: 'Alt/title text for the container card menu button.',
   },
+  containerSettingsMsg: {
+    id: 'course-authoring.library-authoring.container.settings.alert.message',
+    defaultMessage: 'Section settings cannot be configured with Libraries and must be set withing a course. In a future release, Libraries may support configuring some settings.',
+    description: 'Temporary message for settings tab being',
+  },
   menuOpen: {
     id: 'course-authoring.library-authoring.menu.open',
     defaultMessage: 'Open',
