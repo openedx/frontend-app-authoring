@@ -318,6 +318,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
           <SubHeader
             title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
+            hideBorder
             headerActions={(
               <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
@@ -346,8 +347,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                       courseId={courseId}
                       isLoading={isLoading}
                       statusBarData={statusBarData}
-                      openEnableHighlightsModal={openEnableHighlightsModal}
-                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+                      notificationCount={3}
                     />
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
