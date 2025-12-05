@@ -314,7 +314,7 @@ const CourseOutline = () => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            title={intl.formatMessage(messages.headingTitle)}
+            title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             headerActions={(
               <CourseOutlineHeaderActionsSlot
