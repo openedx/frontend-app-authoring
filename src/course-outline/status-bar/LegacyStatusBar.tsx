@@ -6,6 +6,8 @@ import {
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
+import { ReactNode } from 'react';
+import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
@@ -14,13 +16,11 @@ import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { useContentTagsCount } from '../../generic/data/apiHooks';
 import messages from './messages';
 import { getVideoSharingOptionText } from '../utils';
-import { ReactNode } from 'react';
-import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 
 interface StatusBarItemProps {
   title: string,
   children: ReactNode,
-};
+}
 
 const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
   <div className="d-flex flex-column justify-content-between">
@@ -31,13 +31,13 @@ const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
   </div>
 );
 
-interface LegacyStatusBarProps {
+export interface LegacyStatusBarProps {
   courseId: string,
   isLoading: boolean,
   openEnableHighlightsModal: () => void,
   handleVideoSharingOptionChange: (value: string) => void,
   statusBarData: CourseOutlineStatusBar,
-};
+}
 
 export const LegacyStatusBar = ({
   statusBarData,

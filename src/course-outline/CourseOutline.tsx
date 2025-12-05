@@ -355,7 +355,7 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
                 handleVideoSharingOptionChange={handleVideoSharingOptionChange}
               />
             )}
-          <hr className='mt-4 mb-0 w-100 text-light-400' />
+          <hr className="mt-4 mb-0 w-100 text-light-400" />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
             md={[{ span: 9 }, { span: 3 }]}
@@ -366,21 +366,23 @@ const CourseOutline = ({ courseId }: CourseOutlineProps) => {
             <Layout.Element>
               <article>
                 <div>
-                  {showNewActionsBar && <ActionRow className='mt-3'>
+                  {showNewActionsBar && (
+                  <ActionRow className="mt-3">
                     {Boolean(sectionsList.length) && (
-                      <Button
-                        variant="outline-primary"
-                        id="expand-collapse-all-button"
-                        data-testid="expand-collapse-all-button"
-                        iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
-                        onClick={headerNavigationsActions.handleExpandAll}
-                      >
-                        {isSectionsExpanded
-                          ? intl.formatMessage(headerMessages.collapseAllButton)
-                          : intl.formatMessage(headerMessages.expandAllButton)}
-                      </Button>
+                    <Button
+                      variant="outline-primary"
+                      id="expand-collapse-all-button"
+                      data-testid="expand-collapse-all-button"
+                      iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                      onClick={headerNavigationsActions.handleExpandAll}
+                    >
+                      {isSectionsExpanded
+                        ? intl.formatMessage(headerMessages.collapseAllButton)
+                        : intl.formatMessage(headerMessages.expandAllButton)}
+                    </Button>
                     )}
-                  </ActionRow>}
+                  </ActionRow>
+                  )}
                   <section className="course-outline-section">
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
