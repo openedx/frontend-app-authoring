@@ -8,13 +8,17 @@ import GameEditor from './containers/GameEditor';
 
 import { blockTypes } from './data/constants/app';
 
-const supportedEditors = {
+const supportedEditors: Record<string, any> = {
   [blockTypes.html]: TextEditor,
   [blockTypes.video]: VideoEditor,
   [blockTypes.problem]: ProblemEditor,
   [blockTypes.video_upload]: VideoUploadEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.game]: GameEditor,
-} as const;
+};
+
+export const registerEditor = (blockType: string, editorComponent: any) => {
+  supportedEditors[blockType] = editorComponent;
+};
 
 export default supportedEditors;

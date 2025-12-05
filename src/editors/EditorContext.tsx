@@ -15,10 +15,16 @@ export interface EditorContext {
   learningContextId: string;
   /** Is the so-called "Markdown" problem editor available in this learning context? */
   isMarkdownEditorEnabledForContext: boolean;
+  /** e.g. "http://studio.local.openedx.io:8001" */
+  studioEndpointUrl?: string | null;
+  /** e.g. "http://local.openedx.io:8000" */
+  lmsEndpointUrl?: string | null;
 }
 
 export type EditorContextInit = {
   learningContextId: string;
+  studioEndpointUrl?: string | null;
+  lmsEndpointUrl?: string | null;
 };
 
 const context = React.createContext<EditorContext | undefined>(undefined);
@@ -36,6 +42,8 @@ export function useEditorContext() {
 export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & EditorContextInit> = ({
   children,
   learningContextId,
+  studioEndpointUrl,
+  lmsEndpointUrl,
 }) => {
   const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
   const isMarkdownEditorEnabledForContext = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
@@ -43,10 +51,14 @@ export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & Ed
   const ctx: EditorContext = React.useMemo(() => ({
     learningContextId,
     isMarkdownEditorEnabledForContext,
+    studioEndpointUrl,
+    lmsEndpointUrl,
   }), [
     // Dependencies - make sure we update the context object if any of these values change:
     learningContextId,
     isMarkdownEditorEnabledForContext,
+    studioEndpointUrl,
+    lmsEndpointUrl,
   ]);
   return <context.Provider value={ctx}>{children}</context.Provider>;
 };
