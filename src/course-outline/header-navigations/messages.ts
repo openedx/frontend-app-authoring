@@ -8,18 +8,22 @@ const messages = defineMessages({
   addButton: {
     id: 'course-authoring.course-outline.header-navigations.button.add-button',
     defaultMessage: 'Add',
+    description: 'Add button text in course outline header',
   },
   infoButton: {
     id: 'course-authoring.course-outline.header-navigations.button.infoButton',
     defaultMessage: 'Info',
+    description: 'Info button text in course outline header',
   },
   analyticsButton: {
     id: 'course-authoring.course-outline.header-navigations.button.analyticsButton',
     defaultMessage: 'Analytics',
+    description: 'Analytics button text in course outline header',
   },
   helpButton: {
     id: 'course-authoring.course-outline.header-navigations.button.helpButton',
     defaultMessage: 'Help',
+    description: 'Help button text in course outline header',
   },
   newSectionButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.new-section.tooltip',
