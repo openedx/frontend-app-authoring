@@ -32,10 +32,12 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps> = ({ upstreamInfo
     };
 
   return (
-    <Icon
-      {...iconProps}
-      size={size}
-      className="mr-1"
-    />
+    <div className={`upstream-info-icon size-${size} box-shadow-centered-1 d-flex justify-content-center`}>
+      <Icon
+        {...iconProps}
+        size={size}
+        className="mr-1"
+      />
+    </div>
   );
 };

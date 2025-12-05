@@ -205,7 +205,7 @@ const SubsectionCard = ({
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} />}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
     />
   );
 

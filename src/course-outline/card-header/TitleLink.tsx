@@ -22,8 +22,10 @@ const TitleLink = ({
     to={titleLink}
     title={title}
   >
-    {prefixIcon}
-    <span className={`${namePrefix}-card-title mb-0 truncate-1-line`}>
+    <div className="mr-2">
+      {prefixIcon}
+    </div>
+    <span className={`${namePrefix}-card-title mb-0 truncate-1-line text-left`}>
       {title}
     </span>
   </Button>
