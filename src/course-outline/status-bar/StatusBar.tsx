@@ -1,44 +1,82 @@
-import moment from 'moment/moment';
+import moment, { Moment } from 'moment/moment';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
-import {
-  Button, Hyperlink, Stack,
-} from '@openedx/paragon';
+import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
-import { useHelpUrls } from '../../help-urls/hooks';
 import { useWaffleFlags } from '../../data/apiHooks';
 import messages from './messages';
-import { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import { ChecklistRtl, NotificationsNone } from '@openedx/paragon/icons';
 
-interface StatusBarItemProps {
-  title: string,
-  children: ReactNode,
+const CourseDatesAndStatus = ({ startDate, endDate, startDateRaw, datesLink }: {
+  startDate: Moment;
+  endDate: Moment;
+  startDateRaw: string;
+  datesLink: string;
+}) => {
+  if (!startDate.isValid()) {
+    // Returns string contained in startDate, i.e. `Set Date`
+    return <>{startDateRaw}</>;
+  }
+
+  const courseStatus = useMemo(() => {
+    const now = moment().utc();
+    return {
+      active: now.isBetween(startDate, endDate.isValid() ? endDate : undefined, undefined, '[]'),
+      upcoming: now.isBefore(startDate),
+      archived: endDate.isValid() && endDate.isBefore(now),
+    }
+  }, [startDate, endDate]);
+
+  return (
+    <Stack direction='horizontal' gap={3}>
+      {courseStatus.active
+        ? <Badge className="px-3 py-1" variant="success">Active</Badge>
+        : courseStatus.upcoming
+          ? <Badge className="px-3 py-1 bg-white text-success-400 border border-success-500" variant="success">Upcoming</Badge>
+          : courseStatus.archived &&
+          <Badge className="px-3 py-1" variant="light">Archived</Badge>
+      }
+      <Link
+        className="small text-gray-700"
+        to={datesLink}
+      >
+        <FormattedDate
+          value={startDate.toString()}
+          year="numeric"
+          month="short"
+          day="2-digit"
+        />
+        {endDate.isValid() && (
+          <>
+            {" - "}
+            <FormattedDate
+              value={endDate.toString()}
+              year="numeric"
+              month="short"
+              day="2-digit"
+            />
+          </>
+        )}
+      </Link>
+    </Stack>
+  )
 };
 
-const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
-  <div className="d-flex flex-column justify-content-between">
-    <h5>{title}</h5>
-    <div className="d-flex align-items-center">
-      {children}
-    </div>
-  </div>
-);
-
 interface StatusBarProps {
-  courseId: string,
-  isLoading: boolean,
-  openEnableHighlightsModal: () => void,
-  handleVideoSharingOptionChange: () => void,
-  statusBarData: CourseOutlineStatusBar,
+  courseId: string;
+  isLoading: boolean;
+  statusBarData: CourseOutlineStatusBar;
+  notificationCount?: number;
 };
 
 const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
-  openEnableHighlightsModal,
+  notificationCount,
 }: StatusBarProps) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);
@@ -46,9 +84,7 @@ const StatusBar = ({
   const {
     endDate,
     courseReleaseDate,
-    highlightsEnabledForMessaging,
     checklist,
-    isSelfPaced,
   } = statusBarData;
 
   const {
@@ -63,70 +99,30 @@ const StatusBar = ({
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
-  const {
-    contentHighlights: contentHighlightsUrl,
-  } = useHelpUrls(['contentHighlights', 'socialSharing']);
-
   if (isLoading) {
     return null;
   }
 
   return (
-    <>
-      <Stack direction="horizontal" gap={3.5} className="d-flex align-items-stretch outline-status-bar" data-testid="outline-status-bar">
-        <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
-          <Link
-            className="small"
-            to={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
-          >
-            {courseReleaseDateObj.isValid() ? (
-              <FormattedDate
-                value={courseReleaseDateObj.toString()}
-                year="numeric"
-                month="short"
-                day="2-digit"
-              />
-            ) : courseReleaseDate}
-          </Link>
-        </StatusBarItem>
-        <StatusBarItem title={intl.formatMessage(messages.pacingTypeTitle)}>
-          <span className="small">
-            {isSelfPaced
-              ? intl.formatMessage(messages.pacingTypeSelfPaced)
-              : intl.formatMessage(messages.pacingTypeInstructorPaced)}
-          </span>
-        </StatusBarItem>
-        <StatusBarItem title={intl.formatMessage(messages.checklistTitle)}>
-          <Link
-            className="small"
-            to={`/course/${courseId}/checklists`}
-          >
-            {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
-          </Link>
-        </StatusBarItem>
-        <StatusBarItem title={intl.formatMessage(messages.highlightEmailsTitle)}>
-          <div className="d-flex align-items-center">
-            {highlightsEnabledForMessaging ? (
-              <span data-testid="highlights-enabled-span" className="small">
-                {intl.formatMessage(messages.highlightEmailsEnabled)}
-              </span>
-            ) : (
-              <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
-                {intl.formatMessage(messages.highlightEmailsButton)}
-              </Button>
-            )}
-            <Hyperlink
-              className="small ml-2"
-              destination={contentHighlightsUrl}
-              target="_blank"
-              showLaunchIcon={false}
-            >
-              {intl.formatMessage(messages.highlightEmailsLink)}
-            </Hyperlink>
-          </div>
-        </StatusBarItem>
-      </Stack>
-    </>
+    <Stack direction="horizontal" gap={4}>
+      <CourseDatesAndStatus
+        startDate={courseReleaseDateObj}
+        endDate={endDateObj}
+        startDateRaw={courseReleaseDate}
+        datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
+      />
+      {(notificationCount || 0) > 0 && <small className="d-flex">
+        <Icon className="mr-2" size="md" src={NotificationsNone} />
+        {intl.formatMessage(messages.notificationMetadataTitle, { count: notificationCount })}
+      </small>}
+      <Link
+        className="small text-primary-500 d-flex"
+        to={`/course/${courseId}/checklists`}
+      >
+        <Icon src={ChecklistRtl} size="md" className="mr-2" />
+        {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
+      </Link>
+    </Stack>
   );
 };
 
