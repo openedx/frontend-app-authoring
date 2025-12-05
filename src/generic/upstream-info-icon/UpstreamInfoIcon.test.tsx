@@ -16,10 +16,12 @@ describe('<UpstreamInfoIcon>', () => {
   it('should render with link', () => {
     renderComponent({ upstreamRef: 'some-ref', errorMessage: null });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
+    expect(screen.queryByTitle('The link to the library item is broken.')).not.toBeInTheDocument();
   });
 
   it('should render with broken link', () => {
     renderComponent({ upstreamRef: 'some-ref', errorMessage: 'upstream error' });
+    expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.getByTitle('The link to the library item is broken.')).toBeInTheDocument();
   });
 

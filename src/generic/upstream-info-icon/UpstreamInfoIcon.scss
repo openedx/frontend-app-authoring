@@ -1,21 +1,31 @@
 .upstream-info-icon {
-  &.size-md {
+  &.size-one-md {
     width: 32px;
     height: 26px;
   }
 
-  &.size-sm {
+  &.size-one-sm {
     width: 28px;
     height: 22px;
   }
 
-  &.size-xs {
+  &.size-one-xs {
     width: 24px;
     height: 18px;
   }
 
-  .pgn__icon {
-    // Removes the right margin
-    margin-right: 0 !important;
+  &.size-two-md {
+    width: 60px;
+    height: 26px;
   }
-};
+
+  &.size-two-sm {
+    width: 46px;
+    height: 22px;
+  }
+
+  &.size-two-xs {
+    width: 36px;
+    height: 18px;
+  }
+}

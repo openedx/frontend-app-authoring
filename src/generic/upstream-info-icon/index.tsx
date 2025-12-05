@@ -19,25 +19,27 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps> = ({ upstreamInfo
     return null;
   }
 
-  const iconProps = !upstreamInfo?.errorMessage
-    ? {
-      title: intl.formatMessage(messages.upstreamLinkOk),
-      ariaLabel: intl.formatMessage(messages.upstreamLinkOk),
-      src: Newsstand,
-    }
-    : {
-      title: intl.formatMessage(messages.upstreamLinkError),
-      ariaLabel: intl.formatMessage(messages.upstreamLinkError),
-      src: LinkOff,
-    };
+  let hasTwoIcons = false;
+  if (upstreamInfo?.errorMessage) {
+    hasTwoIcons = true;
+  }
 
   return (
-    <div className={`upstream-info-icon size-${size} box-shadow-centered-1 d-flex justify-content-center`}>
+    <div className={`upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} box-shadow-centered-1 d-flex justify-content-center`}>
       <Icon
-        {...iconProps}
+        title={intl.formatMessage(messages.upstreamLinkOk)}
+        aria-label={intl.formatMessage(messages.upstreamLinkOk)}
+        src={Newsstand}
         size={size}
-        className="mr-1"
       />
+      {upstreamInfo?.errorMessage && (
+        <Icon
+          title={intl.formatMessage(messages.upstreamLinkError)}
+          aria-label={intl.formatMessage(messages.upstreamLinkError)}
+          src={LinkOff}
+          size={size}
+        />
+      )}
     </div>
   );
 };
