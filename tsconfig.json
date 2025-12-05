@@ -4,7 +4,8 @@
       "outDir": "dist",
       "baseUrl": "./src",
       "paths": {
-        "@src/*": ["./*"]
+        "@src/*": ["./*"],
+	"CourseAuthoring/*": ["./*"]
       },
       "types": ["jest", "@testing-library/jest-dom"]
     },
