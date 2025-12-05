@@ -68,7 +68,7 @@ const messages = defineMessages({
   },
   containerSettingsMsg: {
     id: 'course-authoring.library-authoring.container.settings.alert.message',
-    defaultMessage: 'Section settings cannot be configured with Libraries and must be set withing a course. In a future release, Libraries may support configuring some settings.',
+    defaultMessage: 'Section settings cannot be configured within Libraries and must be set within a course. In a future release, Libraries may support configuring some settings.',
     description: 'Temporary message for settings tab being',
   },
   menuOpen: {
