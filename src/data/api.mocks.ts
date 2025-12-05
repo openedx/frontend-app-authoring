@@ -10,6 +10,10 @@ export async function mockGetMigrationStatus(migrationId: string): Promise<api.M
       return mockGetMigrationStatus.migrationStatusFailedMultipleData;
     case mockGetMigrationStatus.migrationIdOneLibrary:
       return mockGetMigrationStatus.migrationStatusFailedOneLibraryData;
+    case mockGetMigrationStatus.migrationIdLoading:
+      return new Promise(() => {});
+    case mockGetMigrationStatus.migrationIdInProgress:
+      return mockGetMigrationStatus.migrationStatusInProgressData;
     default:
       /* istanbul ignore next */
       throw new Error(`mockGetMigrationStatus: unknown migration ID "${migrationId}"`);
@@ -29,6 +33,7 @@ mockGetMigrationStatus.migrationStatusData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -37,6 +42,10 @@ mockGetMigrationStatus.migrationStatusData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: false,
+      targetCollection: {
+        key: 'coll',
+        title: 'Test Collection',
+      },
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -53,6 +62,7 @@ mockGetMigrationStatus.migrationStatusFailedData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -61,6 +71,7 @@ mockGetMigrationStatus.migrationStatusFailedData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -77,6 +88,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -85,8 +97,10 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
     {
+      id: 2,
       source: 'legacy-lib-2',
       target: 'lib',
       compositionLevel: 'component',
@@ -95,6 +109,7 @@ mockGetMigrationStatus.migrationStatusFailedMultipleData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;
@@ -111,6 +126,7 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
   artifacts: [],
   parameters: [
     {
+      id: 1,
       source: 'legacy-lib-1',
       target: 'lib',
       compositionLevel: 'component',
@@ -119,8 +135,10 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: true,
+      targetCollection: null,
     },
     {
+      id: 2,
       source: 'legacy-lib-2',
       target: 'lib',
       compositionLevel: 'component',
@@ -129,6 +147,34 @@ mockGetMigrationStatus.migrationStatusFailedOneLibraryData = {
       targetCollectionSlug: 'coll-1',
       forwardSourceToTarget: true,
       isFailed: false,
+      targetCollection: null,
+    },
+  ],
+} as api.MigrateTaskStatusData;
+mockGetMigrationStatus.migrationIdLoading = '5';
+mockGetMigrationStatus.migrationIdInProgress = '6';
+mockGetMigrationStatus.migrationStatusInProgressData = {
+  uuid: mockGetMigrationStatus.migrationIdInProgress,
+  state: 'In Progress',
+  stateText: 'In Progress',
+  completedSteps: 3,
+  totalSteps: 9,
+  attempts: 1,
+  created: '',
+  modified: '',
+  artifacts: [],
+  parameters: [
+    {
+      id: 1,
+      source: 'legacy-lib-1',
+      target: 'lib',
+      compositionLevel: 'component',
+      repeatHandlingStrategy: 'update',
+      preserveUrlSlugs: false,
+      targetCollectionSlug: 'coll-1',
+      forwardSourceToTarget: true,
+      isFailed: false,
+      targetCollection: null,
     },
   ],
 } as api.MigrateTaskStatusData;

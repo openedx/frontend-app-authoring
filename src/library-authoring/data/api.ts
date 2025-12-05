@@ -798,6 +798,7 @@ export async function publishContainer(containerId: string) {
 }
 
 export interface CourseImport {
+  taskUuid: string;
   source: {
     key: string;
     displayName: string;
@@ -852,6 +853,7 @@ export async function getModulestoreMigrationBlocksInfo(
   libraryId: string,
   collectionId?: string,
   isFailed?: boolean,
+  taskUuid?: string,
 ): Promise<BlockMigrationInfo[]> {
   const client = getAuthenticatedHttpClient();
 
@@ -859,6 +861,9 @@ export async function getModulestoreMigrationBlocksInfo(
   params.append('target_key', libraryId);
   if (collectionId) {
     params.append('target_collection_key', collectionId);
+  }
+  if (taskUuid) {
+    params.append('task_uuid', taskUuid);
   }
   if (isFailed !== undefined) {
     params.append('is_failed', JSON.stringify(isFailed));

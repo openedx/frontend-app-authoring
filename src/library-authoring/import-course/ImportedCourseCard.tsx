@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -13,7 +14,6 @@ import {
   Warning,
 } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
 
 import { type CourseImport } from '../data/api';
 import { useLibraryRoutes } from '../routes';
@@ -87,7 +87,9 @@ export const ImportedCourseCard = ({ courseImport }: ImportedCourseCardProps) =>
         </div>
         <div className="d-flex align-items-center ml-auto">
           <Link
-            to={`/course/${courseImport.source.key}`}
+            // window.location.href is required due to browser mistaking course id and taskUuid
+            // combination as an external link to be opened with an external application.
+            to={`${window.location.href}/${courseImport.source.key}/${courseImport.taskUuid}`}
             aria-label={intl.formatMessage(messages.courseImportNavigateAlt)}
             className="text-primary-500"
           >

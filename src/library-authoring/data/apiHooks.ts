@@ -995,10 +995,16 @@ export const useMigrationBlocksInfo = (
   libraryId: string,
   collectionId?: string,
   isFailed?: boolean,
+  taskUuid?: string,
   enabled = true,
 ) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationBlocksInfo(libraryId, collectionId, isFailed),
-    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(libraryId, collectionId, isFailed) : skipToken,
+    queryFn: enabled ? () => api.getModulestoreMigrationBlocksInfo(
+      libraryId,
+      collectionId,
+      isFailed,
+      taskUuid,
+    ) : skipToken,
   })
 );

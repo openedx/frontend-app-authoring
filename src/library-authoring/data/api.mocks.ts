@@ -34,6 +34,52 @@ export const mockGetContentLibraryV2List = {
   }),
 };
 
+export const mockGetModulestoreMigratedBlocksInfo = {
+  applyMockSuccess: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@sequential+block@2',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@vertical+block@2',
+        targetKey: '3',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@3',
+        targetKey: '4',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+  applyMockPartial: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+        targetKey: null,
+        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+};
+
 /**
  * Mock for `getContentLibrary()`
  *
@@ -1091,6 +1137,7 @@ export async function mockGetCourseImports(libraryId: string): ReturnType<typeof
 mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
 mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
 mockGetCourseImports.succeedImport = {
+  taskUuid: '2d35e36b-1234-1234-1234-123456789000',
   source: {
     key: 'course-v1:edX+DemoX+2025_T1',
     displayName: 'DemoX 2025 T1',
@@ -1100,6 +1147,7 @@ mockGetCourseImports.succeedImport = {
   progress: 1,
 } satisfies api.CourseImport;
 mockGetCourseImports.succeedImportWithCollection = {
+  taskUuid: '2',
   source: {
     key: 'course-v1:edX+DemoX+2025_T2',
     displayName: 'DemoX 2025 T2',
@@ -1112,6 +1160,7 @@ mockGetCourseImports.succeedImportWithCollection = {
   progress: 1,
 } satisfies api.CourseImport;
 mockGetCourseImports.failImport = {
+  taskUuid: '3',
   source: {
     key: 'course-v1:edX+DemoX+2025_T3',
     displayName: 'DemoX 2025 T3',
@@ -1121,6 +1170,7 @@ mockGetCourseImports.failImport = {
   progress: 0.30,
 } satisfies api.CourseImport;
 mockGetCourseImports.inProgressImport = {
+  taskUuid: '4',
   source: {
     key: 'course-v1:edX+DemoX+2025_T4',
     displayName: 'DemoX 2025 T4',

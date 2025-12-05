@@ -51,6 +51,8 @@ export const ROUTES = {
   IMPORT: '/import',
   // ImportStepperPage route:
   IMPORT_COURSE: '/import/courses',
+  // ImportDetailsPage route:
+  IMPORT_COURSE_DETAILS: '/import/:courseId/:migrationTaskId',
 };
 
 export enum ContentType {

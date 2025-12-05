@@ -95,11 +95,7 @@ export const ImportStepperPage = () => {
         repeatHandlingStrategy: 'fork',
         compositionLevel: 'section',
       });
-      showToast(intl.formatMessage(messages.importCourseCompleteToastMessage, {
-        courseName: courseData?.title,
-      }));
-      // TODO: Update this URL to redirect user to import details page.
-      navigate(`/library/${libraryId}?migration_task=${migrationTask.uuid}`);
+      navigate(`../import/${selectedCourseId}/${migrationTask.uuid}`);
     } catch (error) {
       showToast(intl.formatMessage(messages.importCourseCompleteFailedToastMessage, {
         courseName: courseData?.title,
