@@ -13,7 +13,7 @@ import userEvent from '@testing-library/user-event';
 import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,

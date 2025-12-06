@@ -9,7 +9,7 @@ import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
 import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
-import { getCourseDetailUrl } from 'CourseAuthoring/data/api';
+import { getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import ProctoredExamSettings from './Settings';
 
 const courseId = 'course-v1%3AedX%2BDemoX%2BDemo_Course';
@@ -51,7 +51,7 @@ describe('ProctoredExamSettings', () => {
 
     axiosMock = mocks.axiosMock;
     axiosMock
-      .onGet(getCourseDetailUrl(courseId, user.username))
+      .onGet(getCourseDetailsUrl(courseId, user.username))
       .reply(200, {
         courseId,
         name: 'Course Test',

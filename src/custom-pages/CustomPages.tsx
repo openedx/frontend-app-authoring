@@ -54,7 +54,7 @@ const CustomPages = () => {
 
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
-  // @ts-ignore
+  // @ts-expect-error - frontend-platform doesn't have type information
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 

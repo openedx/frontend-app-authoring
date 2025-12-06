@@ -19,7 +19,7 @@ import {
 } from 'react-router-dom';
 import initializeStore from '@src/store';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailUrl } from '@src/data/api';
+import { getCourseDetailsUrl } from '@src/data/api';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import ltiMessages from './app-config-form/apps/lti/messages';
 import appMessages from './app-config-form/messages';
@@ -98,7 +98,7 @@ describe('DiscussionsSettings', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getCourseDetailUrl(courseId, username))
+      .onGet(getCourseDetailsUrl(courseId, username))
       .reply(200, { courseId, name: 'Course Test' });
   });
 
@@ -468,7 +468,7 @@ describe.each([
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
       .reply(200, generatePiazzaApiResponse(piiSharingAllowed));
     axiosMock
-      .onGet(getCourseDetailUrl(courseId, username))
+      .onGet(getCourseDetailsUrl(courseId, username))
       .reply(200, { courseId, name: 'Course Test' });
   });
 

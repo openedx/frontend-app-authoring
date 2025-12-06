@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailUrl } from '@src/data/api';
+import { getCourseDetailsUrl } from '@src/data/api';
 import {
   initializeMocks,
   fireEvent,
@@ -52,7 +52,7 @@ describe('<CourseExportPage />', () => {
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
     axiosMock
-      .onGet(getCourseDetailUrl(courseId, user.username))
+      .onGet(getCourseDetailsUrl(courseId, user.username))
       .reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);

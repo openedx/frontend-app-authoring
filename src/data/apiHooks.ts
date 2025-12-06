@@ -9,7 +9,7 @@ import {
   bulkModulestoreMigrate,
   getModulestoreMigrationStatus,
   BulkMigrateRequestData,
-  getCourseDetail,
+  getCourseDetails,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -90,10 +90,14 @@ export const useModulestoreMigrationStatus = (migrationId: string | null) => (
 export const useCourseDetails = (courseId: string) => {
   const query = useQuery({
     queryKey: courseDetailsKey.courseDetails(courseId),
-    queryFn: () => getCourseDetail(courseId, getAuthenticatedUser().username),
+    queryFn: () => getCourseDetails(courseId, getAuthenticatedUser().username),
     retry: false,
   });
 
+  /**
+   * Include a status summary field for now, to better match the old redux data
+   * loading status that other components expect. This could be changed/removed in the future.
+   */
   let status: RequestStatusType = RequestStatus.PENDING;
 
   if (query.isLoading) {

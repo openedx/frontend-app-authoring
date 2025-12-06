@@ -2,7 +2,7 @@ import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
-export const getCourseDetailUrl = (courseId: string, username: string) => (
+export const getCourseDetailsUrl = (courseId: string, username: string) => (
   `${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`
 );
 
@@ -17,7 +17,10 @@ export type CourseDetailsData = {
   id: string;
   invitationOnly: boolean;
   isEnrolled: boolean;
-  media: Object;
+  media: Record<
+  'image' | 'course_image' | 'banner_image' | 'course_video',
+  Record<string, string | null>
+  >;
   mobileAvailable: boolean;
   name: string;
   number: string;
@@ -47,9 +50,9 @@ export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   return courseId ? `${baseUrl}${apiPath}/${courseId}` : `${baseUrl}${apiPath}`;
 };
 
-export async function getCourseDetail(courseId: string, username: string): Promise<CourseDetailsData> {
+export async function getCourseDetails(courseId: string, username: string): Promise<CourseDetailsData> {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseDetailUrl(courseId, username));
+    .get(getCourseDetailsUrl(courseId, username));
   return {
     id: data.course_id,
     ...camelCaseObject(data),

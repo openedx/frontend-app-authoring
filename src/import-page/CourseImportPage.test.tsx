@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailUrl } from '@src/data/api';
+import { getCourseDetailsUrl } from '@src/data/api';
 import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
@@ -44,7 +44,7 @@ describe('<CourseImportPage />', () => {
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
       .reply(200, { importStatus: 1, message: '' });
     axiosMock
-      .onGet(getCourseDetailUrl(courseId, user.username))
+      .onGet(getCourseDetailsUrl(courseId, user.username))
       .reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);

@@ -26,10 +26,9 @@ const CourseAuthoringPage = ({ children }: Props) => {
   }, []);
 
   const { courseId, courseDetails, courseDetailStatus } = useCourseAuthoringContext();
-
-  const courseNumber = courseDetails ? courseDetails.number : undefined;
-  const courseOrg = courseDetails ? courseDetails.org : undefined;
-  const courseTitle = courseDetails ? courseDetails.name : courseId;
+  const courseNumber = courseDetails?.number;
+  const courseOrg = courseDetails?.org;
+  const courseTitle = courseDetails?.name;
   const inProgress = courseDetailStatus === RequestStatus.IN_PROGRESS || courseDetailStatus === RequestStatus.PENDING;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
   const { pathname } = useLocation();
