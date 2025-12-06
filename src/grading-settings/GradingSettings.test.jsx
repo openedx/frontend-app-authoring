@@ -1,14 +1,8 @@
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, fireEvent, render, screen,
-} from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+  act, fireEvent, render, screen, initializeMocks,
+} from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
-import initializeStore from '../store';
 import gradingSettings from './__mocks__/gradingSettings';
 import { getCourseSettingsApiUrl, getGradingSettingsApiUrl } from './data/api';
 import * as apiHooks from './data/apiHooks';
@@ -17,33 +11,21 @@ import messages from './messages';
 
 const courseId = '123';
 let axiosMock;
-let store;
-
-const queryClient = new QueryClient();
 
 const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <GradingSettings courseId={courseId} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
+  <CourseAuthoringProvider courseId={courseId}>
+    <GradingSettings />
+  </CourseAuthoringProvider>
 );
 
 describe('<GradingSettings />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3, username: 'abc123', administrator: true, roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
     // jsdom doesn't implement scrollTo; mock to avoid noisy console errors.
     Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getGradingSettingsApiUrl(courseId))
       .reply(200, gradingSettings);

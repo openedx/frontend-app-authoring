@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
   Container, Button, Layout, StatefulButton,
@@ -11,14 +9,15 @@ import {
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import Placeholder from '../editors/Placeholder';
-import { RequestStatus } from '../data/constants';
-import { useModel } from '../generic/model-store';
-import AlertMessage from '../generic/alert-message';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import { STATEFUL_BUTTON_STATES } from '../constants';
-import getPageHeadTitle from '../generic/utils';
-import { useScrollToHashElement } from '../hooks';
+import Placeholder from '@src/editors/Placeholder';
+import { RequestStatus } from '@src/data/constants';
+import AlertMessage from '@src/generic/alert-message';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import { STATEFUL_BUTTON_STATES } from '@src/constants';
+import getPageHeadTitle from '@src/generic/utils';
+import { useScrollToHashElement } from '@src/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,
@@ -44,7 +43,7 @@ import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
-const ScheduleAndDetails = ({ courseId }) => {
+const ScheduleAndDetails = () => {
   const intl = useIntl();
   const courseSettings = useSelector(getCourseSettings);
   const courseDetails = useSelector(getCourseDetails);
@@ -53,8 +52,8 @@ const ScheduleAndDetails = ({ courseId }) => {
   const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
     || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
-  const course = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(course?.name, intl.formatMessage(messages.headingTitle));
+  const { courseId, courseDetails: course } = useCourseAuthoringContext();
+  document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
 
   const {
     platformName,
@@ -393,10 +392,6 @@ const ScheduleAndDetails = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-ScheduleAndDetails.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default ScheduleAndDetails;

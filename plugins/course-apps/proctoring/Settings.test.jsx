@@ -1,18 +1,15 @@
-import React from 'react';
 import {
   render, screen, cleanup, waitFor, fireEvent, act,
-} from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+  initializeMocks,
+} from 'CourseAuthoring/testUtils';
 
-import { initializeMockApp, mergeConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
+import { mergeConfig } from '@edx/frontend-platform';
 
 import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
 import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
-import initializeStore from 'CourseAuthoring/store';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import { getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import ProctoredExamSettings from './Settings';
 
 const courseId = 'course-v1%3AedX%2BDemoX%2BDemo_Course';
@@ -20,16 +17,13 @@ const defaultProps = {
   courseId,
   onClose: () => {},
 };
-let store;
 
-const intlWrapper = children => (
-  <AppProvider store={store}>
+const renderComponent = children => (
+  <CourseAuthoringProvider courseId={defaultProps.courseId}>
     <PagesAndResourcesProvider courseId={defaultProps.courseId}>
-      <IntlProvider locale="en">
-        {children}
-      </IntlProvider>
+      {children}
     </PagesAndResourcesProvider>
-  </AppProvider>
+  </CourseAuthoringProvider>
 );
 let axiosMock;
 
@@ -38,38 +32,38 @@ describe('ProctoredExamSettings', () => {
     mergeConfig({
       EXAMS_BASE_URL: 'http://exams.testing.co',
     }, 'CourseAuthoringConfig');
-
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: isAdmin,
-        roles: [],
-      },
-    });
-    store = initializeStore({
-      models: {
-        courseApps: {
-          proctoring: {},
-        },
-        courseDetails: {
-          [courseId]: {
-            start: Date(),
+    const user = {
+      userId: 3,
+      username: 'abc123',
+      administrator: isAdmin,
+      roles: [],
+    };
+    const mocks = initializeMocks({
+      user,
+      initialState: {
+        models: {
+          courseApps: {
+            proctoring: {},
           },
         },
-        ...(org ? { courseDetails: { [courseId]: { org } } } : {}),
       },
     });
 
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onGet(
-      `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers${org ? `?org=${org}` : ''}`,
-    ).reply(200, [
-      {
-        name: 'test_lti',
-        verbose_name: 'LTI Provider',
-      },
-    ]);
+    axiosMock = mocks.axiosMock;
+    axiosMock
+      .onGet(getCourseDetailsUrl(courseId, user.username))
+      .reply(200, {
+        courseId,
+        name: 'Course Test',
+        start: Date(),
+        ...(org ? { org } : {}),
+      });
+    axiosMock.onGet(`${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`)
+      .reply(200, [{ name: 'test_lti', verbose_name: 'LTI Provider' }]);
+    if (org) {
+      axiosMock.onGet(`${ExamsApiService.getExamsBaseUrl()}/api/v1/providers?org=${org}`)
+        .reply(200, [{ name: 'test_lti', verbose_name: 'LTI Provider' }]);
+    }
     axiosMock.onGet(
       `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
     ).reply(200, {
@@ -92,17 +86,13 @@ describe('ProctoredExamSettings', () => {
     });
   }
 
-  afterEach(() => {
-    cleanup();
-    axiosMock.reset();
-  });
   beforeEach(async () => {
     setupApp();
   });
 
   describe('Field dependencies', () => {
     beforeEach(async () => {
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
     });
 
     it('Updates Zendesk ticket field if software_secure is provider', async () => {
@@ -153,7 +143,7 @@ describe('ProctoredExamSettings', () => {
         course_start_date: '2070-01-01T00:00:00Z',
       });
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByText('Proctored exams');
       });
@@ -234,7 +224,7 @@ describe('ProctoredExamSettings', () => {
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(200, {});
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
     });
 
     proctoringProvidersRequiringEscalationEmail.forEach(provider => {
@@ -420,7 +410,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = false;
       setupApp(isAdmin);
       mockCourseData(mockGetPastCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(true);
     });
@@ -429,7 +419,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = false;
       setupApp(isAdmin);
       mockCourseData(mockGetFutureCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
@@ -439,7 +429,7 @@ describe('ProctoredExamSettings', () => {
       const org = 'test-org';
       setupApp(isAdmin, org);
       mockCourseData(mockGetFutureCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
@@ -448,7 +438,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = true;
       setupApp(isAdmin);
       mockCourseData(mockGetPastCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
@@ -457,7 +447,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = true;
       setupApp(isAdmin);
       mockCourseData(mockGetFutureCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('software_secure');
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
@@ -468,7 +458,7 @@ describe('ProctoredExamSettings', () => {
         available_proctoring_providers: ['lti_external', 'mockproc'],
       };
       mockCourseData(courseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -481,7 +471,7 @@ describe('ProctoredExamSettings', () => {
         available_proctoring_providers: ['lti_external', 'mockproc'],
       };
       mockCourseData(courseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -494,7 +484,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = true;
       setupApp(isAdmin);
       mockCourseData(mockGetFutureCourseData);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
@@ -508,12 +498,13 @@ describe('ProctoredExamSettings', () => {
         EXAMS_BASE_URL: null,
       }, 'CourseAuthoringConfig');
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
-      // only outgoing request should be for studio settings
-      expect(axiosMock.history.get.length).toBe(1);
+      // (1) for studio settings
+      // (2) for course details
+      expect(axiosMock.history.get.length).toBe(2);
       expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
 
@@ -527,7 +518,7 @@ describe('ProctoredExamSettings', () => {
       ).reply(200, {
         provider: 'test_lti',
       });
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
         screen.getByText('Proctoring provider');
       });
@@ -540,14 +531,14 @@ describe('ProctoredExamSettings', () => {
   describe('Toggles field visibility based on user permissions', () => {
     it('Hides opting out and zendesk tickets for non edX staff', async () => {
       setupApp(false);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       expect(screen.queryByTestId('allowOptingOutYes')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
     });
 
     it('Shows opting out and zendesk tickets for edX staff', async () => {
       setupApp(true);
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       expect(screen.queryByTestId('allowOptingOutYes')).not.toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsYes')).not.toBeNull();
     });
@@ -555,7 +546,7 @@ describe('ProctoredExamSettings', () => {
 
   describe('Connection states', () => {
     it('Shows the spinner before the connection is complete', async () => {
-      render(intlWrapper(<ProctoredExamSettings {...defaultProps} />));
+      render(renderComponent(<ProctoredExamSettings {...defaultProps} />));
       const spinner = await screen.findByRole('status');
       expect(spinner.textContent).toEqual('Loading...');
     });
@@ -565,7 +556,7 @@ describe('ProctoredExamSettings', () => {
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(500);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const connectionError = screen.getByTestId('connectionErrorAlert');
       expect(connectionError.textContent).toEqual(
         expect.stringContaining('We encountered a technical error when loading this page.'),
@@ -577,7 +568,7 @@ describe('ProctoredExamSettings', () => {
         `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`,
       ).reply(500);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const connectionError = screen.getByTestId('connectionErrorAlert');
       expect(connectionError.textContent).toEqual(
         expect.stringContaining('We encountered a technical error when loading this page.'),
@@ -589,7 +580,7 @@ describe('ProctoredExamSettings', () => {
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(403);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const permissionError = screen.getByTestId('permissionDeniedAlert');
       expect(permissionError.textContent).toEqual(
         expect.stringContaining('You are not authorized to view this page'),
@@ -608,7 +599,7 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Disable button while submitting', async () => {
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       let submitButton = screen.getByTestId('submissionButton');
       expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
       fireEvent.click(submitButton);
@@ -634,7 +625,7 @@ describe('ProctoredExamSettings', () => {
         course_start_date: '2070-01-01T00:00:00Z',
       });
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to test_lti and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
       fireEvent.change(selectElement, { target: { value: 'test_lti' } });
@@ -670,7 +661,7 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Makes API call successfully without proctoring_escalation_email if not requiring escalation email', async () => {
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
 
       // make sure we have not selected a provider requiring escalation email
       expect(screen.getByDisplayValue('mockproc')).toBeDefined();
@@ -697,7 +688,7 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to test_lti and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
       fireEvent.change(selectElement, { target: { value: 'test_lti' } });
@@ -739,7 +730,7 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Sets exam service provider to null if a non-lti provider is selected', async () => {
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       // update exam service config
@@ -784,7 +775,7 @@ describe('ProctoredExamSettings', () => {
         course_start_date: '2070-01-01T00:00:00Z',
       });
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       // does not update exam service config
@@ -814,7 +805,7 @@ describe('ProctoredExamSettings', () => {
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(500);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
@@ -832,7 +823,7 @@ describe('ProctoredExamSettings', () => {
         `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
       ).reply(500, 'error');
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
@@ -850,7 +841,7 @@ describe('ProctoredExamSettings', () => {
         `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
       ).reply(403, 'error');
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
@@ -869,7 +860,7 @@ describe('ProctoredExamSettings', () => {
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(500);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
       fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
@@ -902,7 +893,7 @@ describe('ProctoredExamSettings', () => {
       const isAdmin = false;
       setupApp(isAdmin);
 
-      await act(async () => render(intlWrapper(<ProctoredExamSettings {...defaultProps} />)));
+      await act(async () => render(renderComponent(<ProctoredExamSettings {...defaultProps} />)));
       // Make a change to the proctoring provider
       const selectElement = screen.getByDisplayValue('mockproc');
       fireEvent.change(selectElement, { target: { value: 'software_secure' } });

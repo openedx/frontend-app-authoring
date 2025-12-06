@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -11,13 +9,13 @@ import {
 import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 
-import { useModel } from '../generic/model-store';
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
-import ProcessingNotification from '../generic/processing-notification';
-import SubHeader from '../generic/sub-header/SubHeader';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-import { RequestStatus } from '../data/constants';
+import { getProcessingNotification } from '@src/generic/processing-notification/data/selectors';
+import ProcessingNotification from '@src/generic/processing-notification';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import { RequestStatus } from '@src/data/constants';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -34,9 +32,9 @@ import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 
-const CourseUpdates = ({ courseId }) => {
+const CourseUpdates = () => {
   const intl = useIntl();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
 
   const {
     requestType,
@@ -81,7 +79,7 @@ const CourseUpdates = ({ courseId }) => {
     <>
       <Helmet>
         <title>
-          {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
+          {getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.headingTitle))}
         </title>
       </Helmet>
       <Container size="xl" className="px-4 pt-4">
@@ -163,7 +161,6 @@ const CourseUpdates = ({ courseId }) => {
                   <section className="updates-section">
                     {isMainFormOpen && (
                       <UpdateForm
-                        isOpen={isUpdateFormOpen}
                         close={closeUpdateForm}
                         requestType={requestType}
                         onSubmit={handleUpdatesSubmit}
@@ -176,7 +173,6 @@ const CourseUpdates = ({ courseId }) => {
                           {courseUpdates.map((courseUpdate, index) => (
                             isInnerFormOpen(courseUpdate.id) ? (
                               <UpdateForm
-                                isOpen={isUpdateFormOpen}
                                 close={closeUpdateForm}
                                 requestType={requestType}
                                 isInnerForm
@@ -249,10 +245,6 @@ const CourseUpdates = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseUpdates.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseUpdates;

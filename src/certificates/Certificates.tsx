@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet';
-import PropTypes from 'prop-types';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
 import Loading from '../generic/Loading';
@@ -21,7 +21,8 @@ const MODE_COMPONENTS = {
   [MODE_STATES.editAll]: CertificateEditForm,
 };
 
-const Certificates = ({ courseId }) => {
+const Certificates = () => {
+  const { courseId } = useCourseAuthoringContext();
   const {
     certificates, componentMode, isLoading, loadingStatus, pageHeadTitle, hasCertificateModes,
   } = useCertificates({ courseId });
@@ -48,10 +49,6 @@ const Certificates = ({ courseId }) => {
       </MainLayout>
     </>
   );
-};
-
-Certificates.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default Certificates;

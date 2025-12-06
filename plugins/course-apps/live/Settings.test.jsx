@@ -8,20 +8,14 @@ import {
   queryByText,
   getByRole,
   waitForElementToBeRemoved,
-} from '@testing-library/react';
+  initializeMocks,
+} from 'CourseAuthoring/testUtils';
 
 import ReactDOM from 'react-dom';
-import { Routes, Route, MemoryRouter } from 'react-router-dom';
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
-import initializeStore from 'CourseAuthoring/store';
 import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
+import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
@@ -44,17 +38,20 @@ ReactDOM.createPortal = jest.fn(node => node);
 
 const renderComponent = () => {
   const wrapper = render(
-    <IntlProvider locale="en">
-      <AppProvider store={store} wrapWithRouter={false}>
-        <PagesAndResourcesProvider courseId={courseId}>
-          <MemoryRouter initialEntries={[liveSettingsUrl]}>
-            <Routes>
-              <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
-            </Routes>
-          </MemoryRouter>
-        </PagesAndResourcesProvider>
-      </AppProvider>
-    </IntlProvider>,
+    <PagesAndResourcesProvider courseId={courseId}>
+      <CourseAuthoringProvider>
+        <LiveSettings onClose={() => {}} />
+      </CourseAuthoringProvider>
+    </PagesAndResourcesProvider>,
+    {
+      path: liveSettingsUrl,
+      routerProps: {
+        initialEntries: [liveSettingsUrl],
+      },
+      params: {
+        courseId,
+      },
+    },
   );
   container = wrapper.container;
 };
@@ -77,16 +74,11 @@ const mockStore = async ({
 
 describe('LiveSettings', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
+    const mocks = initializeMocks({
+      initialState,
     });
-    store = initializeStore(initialState);
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   test('Live Configuration modal is visible', async () => {
