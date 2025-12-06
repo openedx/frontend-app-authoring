@@ -213,6 +213,15 @@ describe('TinyMceEditor hooks', () => {
         const actual = module.replaceStaticWithAsset({ initialContent: content, learningContextId });
         expect(actual).toBeFalsy();
       });
+      it('does not convert static URLs with subdirectories but converts direct static files', () => {
+        const contentWithSubdirectory = '<img src="/static/images/placeholder-faculty.png"/><img src="/static/example.jpg"/>';
+        const expected = `<img src="/static/images/placeholder-faculty.png"/><img src="/${baseAssetUrl}@example.jpg"/>`;
+        const actual = module.replaceStaticWithAsset({
+          initialContent: contentWithSubdirectory,
+          learningContextId,
+        });
+        expect(actual).toEqual(expected);
+      });
     });
     describe('setAssetToStaticUrl', () => {
       it('returns content with updated img links', () => {

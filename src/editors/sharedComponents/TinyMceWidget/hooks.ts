@@ -121,10 +121,17 @@ export const replaceStaticWithAsset = ({
       let staticFullUrl;
       const isStatic = src.startsWith('/static/');
       const assetSrc = src.substring(0, src.indexOf('"'));
+
+      // Check if this is a direct /static/filename.ext pattern (should be converted)
+      // vs /static/images/filename.ext pattern (should NOT be converted)
+      // /static/images/ are direct links to images stored in static, not course assets
+      // we have dummy images there for course content that should not be converted to assets
+      const isDirectStaticFile = (isStatic || assetSrc.startsWith('/asset')) && !assetSrc.substring(8).includes('images/');
+
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
-      const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+      const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
 
       // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
@@ -133,16 +140,16 @@ export const replaceStaticWithAsset = ({
         // set the base URL to an endpoint serving the draft version of an asset by
         // its path.
         /* istanbul ignore next */
-        if (isStatic) {
+        if (isStatic && isDirectStaticFile) {
           staticFullUrl = assetSrc.substring(1);
         }
       } else if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
           staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
-        } else {
+        } else if (isDirectStaticFile) {
           staticFullUrl = `${lmsEndpointUrl}${getRelativeUrl({ courseId: learningContextId, displayName })}`;
         }
-      } else if (!isCorrectAssetFormat) {
+      } else if (!isCorrectAssetFormat && isDirectStaticFile) {
         staticFullUrl = getRelativeUrl({ courseId: learningContextId, displayName });
       }
       if (staticFullUrl) {
@@ -365,12 +372,18 @@ export const setupCustomBehavior = ({
   editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
-      // @ts-ignore Some parameters like 'lmsEndpointUrl' were missing here. Fix me?
       const newContent = replaceStaticWithAsset({
         initialContent,
+        editorType,
+        lmsEndpointUrl,
         learningContextId,
       });
-      if (newContent) { editor.setContent(newContent); }
+      if (newContent) {
+        // Use setTimeout to ensure the update happens after current execution
+        setTimeout(() => {
+          editor.setContent(newContent);
+        }, 0);
+      }
     }
     if (e.command === 'RemoveFormat') {
       editor.formatter.remove('blockquote');
