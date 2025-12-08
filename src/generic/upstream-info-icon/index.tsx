@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Icon } from '@openedx/paragon';
-import { LinkOff, Newsstand, Sync } from '@openedx/paragon/icons';
+import {
+  CallSplit, LinkOff, Newsstand, Sync,
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 
@@ -9,7 +11,8 @@ export interface UpstreamInfoIconProps {
   upstreamInfo?: {
     errorMessage?: string | null;
     upstreamRef?: string | null;
-    readyToSync?: boolean | null;
+    readyToSync: boolean;
+    downstreamCustomized: string[];
   };
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'inline';
 }
@@ -21,9 +24,33 @@ const UpstreamInfoIconContent = ({
   const intl = useIntl();
 
   let hasTwoIcons = false;
-  if (upstreamInfo?.errorMessage || upstreamInfo?.readyToSync) {
+  const hasCourseOverrides = (upstreamInfo?.downstreamCustomized.length || 0) > 0;
+  if (upstreamInfo?.errorMessage || upstreamInfo?.readyToSync || hasCourseOverrides) {
     hasTwoIcons = true;
   }
+
+  const getSecondIconProps = () => {
+    if (upstreamInfo?.errorMessage) {
+      return {
+        title: intl.formatMessage(messages.upstreamLinkError),
+        ariaLabel: intl.formatMessage(messages.upstreamLinkError),
+        src: LinkOff,
+      };
+    } if (upstreamInfo?.readyToSync) {
+      return {
+        title: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
+        ariaLabel: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
+        src: Sync,
+      };
+    } if (hasCourseOverrides) {
+      return {
+        title: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
+        ariaLabel: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
+        src: CallSplit,
+      };
+    }
+    return {};
+  };
 
   return (
     <div
@@ -37,20 +64,10 @@ const UpstreamInfoIconContent = ({
         src={Newsstand}
         size={size}
       />
-      {upstreamInfo?.errorMessage && (
+      {hasTwoIcons && (
         <Icon
-          title={intl.formatMessage(messages.upstreamLinkError)}
-          aria-label={intl.formatMessage(messages.upstreamLinkError)}
-          src={LinkOff}
           size={size}
-        />
-      )}
-      {upstreamInfo?.readyToSync && (
-        <Icon
-          title={intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel)}
-          aria-label={intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel)}
-          src={Sync}
-          size={size}
+          {...getSecondIconProps()}
         />
       )}
     </div>

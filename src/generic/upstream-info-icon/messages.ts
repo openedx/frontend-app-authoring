@@ -16,6 +16,11 @@ const messages = defineMessages({
     id: 'upstream-icon.ready-to-sync.aria-label',
     description: 'Hint and aria-label for the upstream icon when the link is ready to sync.',
   },
+  upstreamLinkOverridesAriaLabel: {
+    defaultMessage: 'This library reference has course overrides applied.',
+    id: 'upstream-icon.course-overrides.aria-label',
+    description: 'Hint and aria-label for the upstream icon when the link has course overrides.',
+  },
 });
 
 export default messages;

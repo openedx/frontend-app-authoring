@@ -22,6 +22,7 @@ describe('<UpstreamInfoIcon>', () => {
       upstreamRef: 'some-ref',
       errorMessage: null,
       readyToSync: false,
+      downstreamCustomized: [],
     });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.queryByTitle('The referenced library or library object is not available.')).not.toBeInTheDocument();
@@ -32,6 +33,7 @@ describe('<UpstreamInfoIcon>', () => {
       upstreamRef: 'some-ref',
       errorMessage: 'upstream error',
       readyToSync: false,
+      downstreamCustomized: [],
     });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.getByTitle('The referenced library or library object is not available.')).toBeInTheDocument();
@@ -42,6 +44,7 @@ describe('<UpstreamInfoIcon>', () => {
       upstreamRef: 'some-ref',
       errorMessage: null,
       readyToSync: true,
+      downstreamCustomized: [],
     });
 
     const icon = screen.getByTitle('This item is linked to a library item.');
@@ -52,6 +55,31 @@ describe('<UpstreamInfoIcon>', () => {
     await waitFor(() => expect(mockOpenSyncModal).toHaveBeenCalled());
   });
 
+  it('should render with course overrides', () => {
+    renderComponent({
+      upstreamRef: 'some-ref',
+      errorMessage: null,
+      readyToSync: false,
+      downstreamCustomized: ['data'],
+    });
+
+    expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
+    expect(screen.getByTitle('This library reference has course overrides applied.')).toBeInTheDocument();
+  });
+
+  it('should render with ready to sync and course overrides', () => {
+    renderComponent({
+      upstreamRef: 'some-ref',
+      errorMessage: null,
+      readyToSync: true,
+      downstreamCustomized: ['data'],
+    });
+
+    expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
+    expect(screen.queryByTitle('This library reference has course overrides applied.')).not.toBeInTheDocument();
+    expect(screen.getByTitle('The linked library or library object has updates available.')).toBeInTheDocument();
+  });
+
   it('should render null without upstream', () => {
     renderComponent(undefined);
     const container = screen.getByTestId('redux-provider');
@@ -59,7 +87,12 @@ describe('<UpstreamInfoIcon>', () => {
   });
 
   it('should render null without upstreamRf', () => {
-    renderComponent({ upstreamRef: null, errorMessage: null });
+    renderComponent({
+      upstreamRef: null,
+      errorMessage: null,
+      readyToSync: false,
+      downstreamCustomized: [],
+    });
     const container = screen.getByTestId('redux-provider');
     expect(container).toBeEmptyDOMElement();
   });
