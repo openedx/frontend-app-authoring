@@ -1,16 +1,21 @@
 /* eslint-disable react/prop-types */
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon } from '@openedx/paragon';
+import {
+  Button, Icon, OverlayTrigger, Tooltip,
+} from '@openedx/paragon';
 import {
   CallSplit, LinkOff, Newsstand, Sync,
 } from '@openedx/paragon/icons';
 
+import { BoldText } from '@src/utils';
+import { ReactNode } from 'react';
 import messages from './messages';
 
 export interface UpstreamInfoIconProps {
   upstreamInfo?: {
     errorMessage?: string | null;
     upstreamRef?: string | null;
+    upstreamName: string;
     readyToSync: boolean;
     downstreamCustomized: string[];
   };
@@ -23,54 +28,81 @@ const UpstreamInfoIconContent = ({
 }: UpstreamInfoIconProps) => {
   const intl = useIntl();
 
-  let hasTwoIcons = false;
-  const hasCourseOverrides = (upstreamInfo?.downstreamCustomized.length || 0) > 0;
-  if (upstreamInfo?.errorMessage || upstreamInfo?.readyToSync || hasCourseOverrides) {
-    hasTwoIcons = true;
+  if (!upstreamInfo) {
+    return null;
   }
 
-  const getSecondIconProps = () => {
-    if (upstreamInfo?.errorMessage) {
-      return {
-        title: intl.formatMessage(messages.upstreamLinkError),
-        ariaLabel: intl.formatMessage(messages.upstreamLinkError),
-        src: LinkOff,
-      };
-    } if (upstreamInfo?.readyToSync) {
-      return {
-        title: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
-        ariaLabel: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
-        src: Sync,
-      };
-    } if (hasCourseOverrides) {
-      return {
-        title: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
-        ariaLabel: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
-        src: CallSplit,
-      };
-    }
-    return {};
-  };
+  let hasTwoIcons = false;
+  let secondIconProps = {};
+  let tooltipMessage: string | ReactNode = intl.formatMessage(
+    messages.upstreamLinkTooltip,
+    {
+      upstreamName: upstreamInfo.upstreamName,
+      b: BoldText,
+    },
+  );
+
+  if (upstreamInfo.errorMessage) {
+    hasTwoIcons = true;
+    tooltipMessage = intl.formatMessage(messages.upstreamLinkError);
+    secondIconProps = {
+      title: intl.formatMessage(messages.upstreamLinkError),
+      ariaLabel: intl.formatMessage(messages.upstreamLinkError),
+      src: LinkOff,
+    };
+  } else if (upstreamInfo.readyToSync) {
+    hasTwoIcons = true;
+    tooltipMessage = intl.formatMessage(
+      messages.upstreamLinkReadyToSyncTooltip,
+      {
+        upstreamName: upstreamInfo.upstreamName,
+        b: BoldText,
+      },
+    );
+    secondIconProps = {
+      title: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
+      ariaLabel: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
+      src: Sync,
+    };
+  } else if ((upstreamInfo.downstreamCustomized.length || 0) > 0) {
+    hasTwoIcons = true;
+    tooltipMessage = intl.formatMessage(messages.upstreamLinkOverridesAriaLabel);
+    secondIconProps = {
+      title: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
+      ariaLabel: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
+      src: CallSplit,
+    };
+  }
 
   return (
-    <div
-      className={
-        `upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} box-shadow-centered-1 d-flex justify-content-center`
-      }
-    >
-      <Icon
-        title={intl.formatMessage(messages.upstreamLinkOk)}
-        aria-label={intl.formatMessage(messages.upstreamLinkOk)}
-        src={Newsstand}
-        size={size}
-      />
-      {hasTwoIcons && (
-        <Icon
-          size={size}
-          {...getSecondIconProps()}
-        />
+    <OverlayTrigger
+      key={`upstream-icon-${upstreamInfo.upstreamRef}`}
+      placement="top"
+      overlay={(
+        <Tooltip id={`upstream-icon-tooltip-${upstreamInfo.upstreamRef}`}>
+          {tooltipMessage}
+        </Tooltip>
       )}
-    </div>
+    >
+      <div
+        className={
+          `upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} box-shadow-centered-1 d-flex justify-content-center`
+        }
+      >
+        <Icon
+          title={intl.formatMessage(messages.upstreamLinkOk)}
+          aria-label={intl.formatMessage(messages.upstreamLinkOk)}
+          src={Newsstand}
+          size={size}
+        />
+        {hasTwoIcons && (
+          <Icon
+            size={size}
+            {...secondIconProps}
+          />
+        )}
+      </div>
+    </OverlayTrigger>
   );
 };
 

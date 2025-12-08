@@ -57,6 +57,7 @@ export interface UpstreamChildrenInfo {
 export interface UpstreamInfo {
   readyToSync: boolean,
   upstreamRef: string,
+  upstreamName: string,
   versionSynced: number,
   versionAvailable: number | null,
   versionDeclined: number | null,

@@ -23,6 +23,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: null,
       readyToSync: false,
       downstreamCustomized: [],
+      upstreamName: 'Upstream',
     });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.queryByTitle('The referenced library or library object is not available.')).not.toBeInTheDocument();
@@ -34,6 +35,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: 'upstream error',
       readyToSync: false,
       downstreamCustomized: [],
+      upstreamName: 'Upstream',
     });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.getByTitle('The referenced library or library object is not available.')).toBeInTheDocument();
@@ -45,6 +47,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: null,
       readyToSync: true,
       downstreamCustomized: [],
+      upstreamName: 'Upstream',
     });
 
     const icon = screen.getByTitle('This item is linked to a library item.');
@@ -61,6 +64,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: null,
       readyToSync: false,
       downstreamCustomized: ['data'],
+      upstreamName: 'Upstream',
     });
 
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
@@ -73,6 +77,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: null,
       readyToSync: true,
       downstreamCustomized: ['data'],
+      upstreamName: 'Upstream',
     });
 
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
@@ -92,6 +97,7 @@ describe('<UpstreamInfoIcon>', () => {
       errorMessage: null,
       readyToSync: false,
       downstreamCustomized: [],
+      upstreamName: 'Upstream',
     });
     const container = screen.getByTestId('redux-provider');
     expect(container).toBeEmptyDOMElement();
