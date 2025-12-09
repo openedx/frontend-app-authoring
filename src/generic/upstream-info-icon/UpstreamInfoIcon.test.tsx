@@ -26,7 +26,7 @@ describe('<UpstreamInfoIcon>', () => {
       upstreamName: 'Upstream',
     });
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
-    expect(screen.queryByTitle('The referenced library or library object is not available.')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('The linked library object has updates available.')).not.toBeInTheDocument();
   });
 
   it('should render with broken link', () => {
@@ -52,7 +52,7 @@ describe('<UpstreamInfoIcon>', () => {
 
     const icon = screen.getByTitle('This item is linked to a library item.');
     expect(icon).toBeInTheDocument();
-    expect(screen.getByTitle('The linked library or library object has updates available.')).toBeInTheDocument();
+    expect(screen.getByTitle('The linked library object has updates available.')).toBeInTheDocument();
 
     fireEvent.click(icon);
     await waitFor(() => expect(mockOpenSyncModal).toHaveBeenCalled());
@@ -82,7 +82,7 @@ describe('<UpstreamInfoIcon>', () => {
 
     expect(screen.getByTitle('This item is linked to a library item.')).toBeInTheDocument();
     expect(screen.queryByTitle('This library reference has course overrides applied.')).not.toBeInTheDocument();
-    expect(screen.getByTitle('The linked library or library object has updates available.')).toBeInTheDocument();
+    expect(screen.getByTitle('The linked library object has updates available.')).toBeInTheDocument();
   });
 
   it('should render null without upstream', () => {

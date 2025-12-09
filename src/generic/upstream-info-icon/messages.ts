@@ -12,7 +12,7 @@ const messages = defineMessages({
     description: 'Hint and aria-label for the upstream icon when the link is broken.',
   },
   upstreamLinkReadyToSyncAriaLabel: {
-    defaultMessage: 'The linked library or library object has updates available.',
+    defaultMessage: 'The linked library object has updates available.',
     id: 'upstream-icon.ready-to-sync.aria-label',
     description: 'Hint and aria-label for the upstream icon when the link is ready to sync.',
   },
