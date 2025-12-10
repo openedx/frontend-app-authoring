@@ -11,6 +11,7 @@ import { getClipboardUrl } from '../../generic/data/api';
 import { ContentHit } from '../../search-manager';
 import ComponentCard from './ComponentCard';
 import { PublishStatus } from '../../search-manager/data/api';
+import { mockContentLibrary } from '../data/api.mocks';
 
 const mockNavigate = jest.fn();
 
@@ -48,12 +49,12 @@ const contentHit: ContentHit = {
   publishStatus: PublishStatus.Published,
 };
 
-const libraryId = 'lib:org1:Demo_Course';
-const render = () => baseRender(<ComponentCard hit={contentHit} />, {
+const libraryId = mockContentLibrary.libraryId;
+const render = (libId: string = libraryId) => baseRender(<ComponentCard hit={contentHit} />, {
   path: '/library/:libraryId',
-  params: { libraryId },
+  params: { libraryId: libId },
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId}>
+    <LibraryProvider libraryId={libId}>
       <SidebarProvider>
         { children }
       </SidebarProvider>
@@ -62,6 +63,9 @@ const render = () => baseRender(<ComponentCard hit={contentHit} />, {
 });
 
 describe('<ComponentCard />', () => {
+  beforeEach(() => {
+    mockContentLibrary.applyMock();
+  });
   it('should render the card with title and description', () => {
     initializeMocks();
     render();
@@ -127,7 +131,7 @@ describe('<ComponentCard />', () => {
     expect(menu).toBeInTheDocument();
     fireEvent.click(menu);
 
-    // Click copy to clipboard
+    // Click edit option
     const editOption = await screen.findByRole('button', { name: 'Edit' });
     expect(editOption).toBeInTheDocument();
     fireEvent.click(editOption);
@@ -136,5 +140,19 @@ describe('<ComponentCard />', () => {
       pathname: `/library/${libraryId}/${contentHit.usageKey}`,
       search: '',
     });
+  });
+
+  it('should not show edit button when library is read-only', async () => {
+    initializeMocks();
+    render(mockContentLibrary.libraryIdReadOnly);
+
+    // Open menu
+    const menu = await screen.findByTestId('component-card-menu-toggle');
+    expect(menu).toBeInTheDocument();
+    fireEvent.click(menu);
+
+    // Edit button should not be visible in readonly mode
+    const editOption = screen.queryByRole('button', { name: 'Edit' });
+    expect(editOption).not.toBeInTheDocument();
   });
 });
