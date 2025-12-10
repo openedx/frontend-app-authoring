@@ -159,12 +159,12 @@ const defaultUser = {
  */
 export function initializeMocks({ user = defaultUser, initialState = undefined }: {
   user?: { userId: number, username: string },
-  initialState?: Partial<DeprecatedReduxState>
+  initialState?: Partial<DeprecatedReduxState>,
 } = {}) {
   initializeMockApp({
     authenticatedUser: user,
   });
-  reduxStore = initializeReduxStore(initialState as any);
+  reduxStore = initializeReduxStore(initialState);
   queryClient = new QueryClient({
     defaultOptions: {
       queries: {

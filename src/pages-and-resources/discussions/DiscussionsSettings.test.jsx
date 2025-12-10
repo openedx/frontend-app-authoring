@@ -398,13 +398,7 @@ describe.each([
       },
     });
 
-    store = initializeStore({
-      models: {
-        courseDetails: {
-          [courseId]: {},
-        },
-      },
-    });
+    store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
