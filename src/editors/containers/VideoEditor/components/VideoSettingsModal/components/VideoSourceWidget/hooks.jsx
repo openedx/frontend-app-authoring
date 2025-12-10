@@ -39,16 +39,17 @@ export const sourceHooks = ({ dispatch, previousVideoId, setAlert }) => ({
 
 export const fallbackHooks = ({ fallbackVideos, dispatch }) => ({
   addFallbackVideo: () => dispatch(actions.video.updateField({ fallbackVideos: [...fallbackVideos, ''] })),
+
   /**
    * Deletes the first occurrence of the given videoUrl from the fallbackVideos list
    * @param {string} videoUrl - the video URL to delete
    */
-  deleteFallbackVideo: (videoUrl) => {
-    const index = fallbackVideos.findIndex(video => video === videoUrl);
+  deleteFallbackVideo: (videoIndex) => {
     const updatedFallbackVideos = [
-      ...fallbackVideos.slice(0, index),
-      ...fallbackVideos.slice(index + 1),
+      ...fallbackVideos.slice(0, videoIndex),
+      ...fallbackVideos.slice(videoIndex + 1),
     ];
+
     dispatch(actions.video.updateField({ fallbackVideos: updatedFallbackVideos }));
   },
 });
