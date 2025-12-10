@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
-  PageBanner, Button, Card, MailtoLink, Hyperlink,
+  Button, Card, MailtoLink, Hyperlink,
 } from '@openedx/paragon';
+import PageBannerSlot from '../../plugin-slots/PageBannerSlot';
 import { Email as EmailIcon } from '@openedx/paragon/icons';
 
 import SectionSubHeader from '../../generic/section-sub-header';
@@ -78,7 +79,7 @@ const BasicSection = ({
   );
 
   const renderPageBanner = () => (
-    <PageBanner
+    <PageBannerSlot
       show={showPageBanner}
       dismissible
       onDismiss={() => setShowPageBanner(false)}
@@ -88,7 +89,7 @@ const BasicSection = ({
       <span className="text text-gray-700 text-left">
         {intl.formatMessage(messages.basicBannerText)}
       </span>
-    </PageBanner>
+    </PageBannerSlot>
   );
 
   const renderCoursePromotion = () => (
