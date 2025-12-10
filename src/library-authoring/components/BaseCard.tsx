@@ -64,7 +64,7 @@ const BaseCard = ({
         <Card.Header
           className={`library-item-header ${getComponentStyleColor(itemType)}`}
           title={
-            <Icon src={itemIcon} className="library-item-header-icon" />
+            <Icon src={itemIcon} className="library-item-header-icon my-2" />
           }
           actions={(
             <div

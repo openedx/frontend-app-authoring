@@ -120,8 +120,13 @@ const messages = defineMessages({
   },
   archiveComponentsCount: {
     id: 'course-authoring.library-authoring.create-library.form.archive.components-count',
-    defaultMessage: 'Contains {count} Components',
-    description: 'Text showing the number of components in the restored archive.',
+    defaultMessage: 'Contains {countSections} sections, {countSubsections} subsections, {countUnits} units, {countComponents} components',
+    description: 'Text showing the number of sections, subsections, units, and components in the restored archive.',
+  },
+  archiveRestoredCreatedBy: {
+    id: 'course-authoring.library-authoring.create-library.form.archive.restored-created-by',
+    defaultMessage: 'Created on instance {server}, by user {createdBy}',
+    description: 'Text showing who restored the archive.',
   },
   archiveBackupDate: {
     id: 'course-authoring.library-authoring.create-library.form.archive.backup-date',
