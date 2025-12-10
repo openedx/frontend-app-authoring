@@ -1,4 +1,15 @@
 .upstream-info-icon {
+  border: 1px solid var(--pgn-color-light-800);
+  color: var(--pgn-color-primary-500);
+
+  &.sync-state {
+    &:hover {
+      border-color: var(--pgn-color-primary-500);
+      background-color: var(--pgn-color-primary-500);
+      color: white;
+    }
+  }
+
   &.size-one-md {
     width: 32px;
     height: 26px;

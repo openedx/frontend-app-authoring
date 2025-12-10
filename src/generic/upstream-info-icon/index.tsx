@@ -86,7 +86,7 @@ const UpstreamInfoIconContent = ({
     >
       <div
         className={
-          `upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} box-shadow-centered-1 d-flex justify-content-center`
+          `upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`
         }
       >
         <Icon
@@ -125,7 +125,7 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal:
       <Button
         variant="tertiary"
         size="inline"
-        className="px-0"
+        className="border-0 px-0"
         onClick={handleSyncModal}
       >
         <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />
