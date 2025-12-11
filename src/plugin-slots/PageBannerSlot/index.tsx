@@ -19,8 +19,10 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
 }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
-    idAliases={["page_banner_slot"]}
-    pluginProps={{ show, dismissible, onDismiss, className }}
+    idAliases={['page_banner_slot']}
+    pluginProps={{
+      show, dismissible, onDismiss, className,
+    }}
   >
     <PageBanner
       show={show}

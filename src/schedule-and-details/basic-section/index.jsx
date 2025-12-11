@@ -4,7 +4,7 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button, Card, MailtoLink, Hyperlink,
 } from '@openedx/paragon';
-import PageBannerSlot from '../../plugin-slots/PageBannerSlot';
+import PageBannerSlot from '@src/plugin-slots/PageBannerSlot';
 import { Email as EmailIcon } from '@openedx/paragon/icons';
 
 import SectionSubHeader from '../../generic/section-sub-header';
