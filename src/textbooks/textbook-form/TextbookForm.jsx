@@ -17,11 +17,11 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import FormikControl from '../../generic/FormikControl';
-import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
-import ModalDropzone from '../../generic/modal-dropzone/ModalDropzone';
-import { useModel } from '../../generic/model-store';
-import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import FormikControl from '@src/generic/FormikControl';
+import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
+import ModalDropzone from '@src/generic/modal-dropzone/ModalDropzone';
+import { UPLOAD_FILE_MAX_SIZE } from '@src/constants';
 import textbookFormValidationSchema from './validations';
 import messages from './messages';
 
@@ -30,11 +30,10 @@ const TextbookForm = ({
   initialFormValues,
   onSubmit,
   onSavingStatus,
-  courseId,
 }) => {
   const intl = useIntl();
 
-  const courseDetail = useModel('courseDetails', courseId);
+  const { courseDetail } = useCourseAuthoringContext();
   const courseTitle = courseDetail ? courseDetail?.name : '';
 
   const [currentTextbookIndex, setCurrentTextbookIndex] = useState(0);
@@ -195,7 +194,6 @@ TextbookForm.propTypes = {
   initialFormValues: PropTypes.shape({}).isRequired,
   onSubmit: PropTypes.func.isRequired,
   onSavingStatus: PropTypes.func.isRequired,
-  courseId: PropTypes.string.isRequired,
 };
 
 export default TextbookForm;

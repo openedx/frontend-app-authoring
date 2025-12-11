@@ -59,7 +59,7 @@ describe('<LibraryCollectionPage />', () => {
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const requestData = JSON.parse((req.body ?? '') as string);
       const query = requestData?.queries[0]?.q ?? '';
       const mockResultCopy = cloneDeep(mockResult);
       // We have to replace the query (search keywords) in the mock results with the actual query,
@@ -409,7 +409,7 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage();
 
     // Wait for the unit cards to load
-    waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
 
     // open sidebar
     fireEvent.click(await screen.findByText(displayName));

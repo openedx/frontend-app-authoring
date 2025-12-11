@@ -125,10 +125,13 @@ describe('ORASettings', () => {
   });
 
   it('Displays title, helper text and badge when flexible peer grading button is enabled', async () => {
-    renderComponent();
     await mockStore({ apiStatus: 200, enabled: true });
+    renderComponent();
 
-    waitFor(() => {
+    const checkbox = await screen.getByRole('checkbox', { name: /Flex Peer Grading/ });
+    expect(checkbox).toBeChecked();
+
+    await waitFor(() => {
       const label = screen.getByText(messages.enableFlexPeerGradeLabel.defaultMessage);
       const enableBadge = screen.getByTestId('enable-badge');
 

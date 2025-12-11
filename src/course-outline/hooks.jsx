@@ -159,7 +159,7 @@ const useCourseOutline = ({ courseId }) => {
       data.shouldScroll = true;
       // Page should scroll to newly added subsection.
       dispatch(addSubsection({ parentLocator, data }));
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   });
@@ -174,7 +174,7 @@ const useCourseOutline = ({ courseId }) => {
       // Page should scroll to newly added section.
       data.shouldScroll = true;
       dispatch(addSection(data));
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   });

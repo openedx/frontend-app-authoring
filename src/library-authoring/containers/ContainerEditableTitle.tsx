@@ -27,7 +27,7 @@ export const ContainerEditableTitle = ({ containerId, textClassName }: EditableT
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(messages.updateContainerSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateContainerErrorMsg));
     }
   };

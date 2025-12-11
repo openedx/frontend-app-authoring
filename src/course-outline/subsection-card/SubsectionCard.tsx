@@ -126,7 +126,9 @@ const SubsectionCard = ({
       downstreamBlockId: id,
       upstreamBlockId: upstreamInfo.upstreamRef,
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isReadyToSyncIndividually: upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
+      blockType: 'subsection',
     };
   }, [upstreamInfo]);
 

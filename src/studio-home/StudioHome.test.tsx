@@ -113,22 +113,18 @@ describe('<StudioHome />', () => {
     });
 
     describe('render new library button', () => {
-      it('should navigate to home_library when libraries-v2 disabled', async () => {
+      it('should navigate to legacy library creation when libraries-v2 disabled', async () => {
         mockUseSelector.mockReturnValue({
           ...studioHomeMock,
           courseCreatorStatus: COURSE_CREATOR_STATES.granted,
           librariesV2Enabled: false,
         });
-        const studioBaseUrl = 'http://localhost:18010';
-
         render(<StudioHome />, { path: '/home' });
         await waitFor(() => {
           const createNewLibraryButton = screen.getByRole('button', { name: 'New library' });
 
-          const mockWindowOpen = jest.spyOn(window, 'open');
           fireEvent.click(createNewLibraryButton);
-          expect(mockWindowOpen).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
-          mockWindowOpen.mockRestore();
+          expect(mockNavigate).toHaveBeenCalledWith('/libraries-v1/create');
         });
       });
 

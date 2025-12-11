@@ -1,11 +1,10 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Stack, Row,
 } from '@openedx/paragon';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { LoadingSpinner } from '../generic/Loading';
-import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import ProcessingNotification from '../generic/processing-notification';
@@ -18,9 +17,9 @@ import GroupConfigurationSidebar from './group-configuration-sidebar';
 import { useGroupConfigurations } from './hooks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
-const GroupConfigurations = ({ courseId }) => {
+const GroupConfigurations = () => {
   const { formatMessage } = useIntl();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     isLoading,
     savingStatus,
@@ -126,10 +125,6 @@ const GroupConfigurations = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-GroupConfigurations.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default GroupConfigurations;

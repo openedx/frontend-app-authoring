@@ -118,7 +118,7 @@ const messages = defineMessages({
     defaultMessage: 'Welcome to the new Content Libraries experience! Libraries have been redesigned'
       + ' from the ground up, making it much easier to reuse content. You can create, organize and manage'
       + ' new content, reuse your content in as many courses as you\'d like, publish updates, and create/randomize'
-      + ' problem sets. See {link} for details.',
+      + ' Problem Banks. See {link} for details.',
     description: 'Description for the alert message while there are no libraries pending migration on v2 tab.',
   },
   alertDescriptionV2MigrationPending: {
@@ -130,6 +130,16 @@ const messages = defineMessages({
     id: 'studio-home.libraries.migrate-alert.docs',
     defaultMessage: 'Libraries documentation',
     description: 'Link text for the libraries documentation link.',
+  },
+  selectAll: {
+    id: 'studio-home.libraries.migrate.select-all',
+    defaultMessage: 'Select All',
+    description: 'Button to select all libraries when migrate legacy libraries.',
+  },
+  libraryMigrationStatusText: {
+    id: 'course-authoring.studio-home.library-v1.card.status',
+    description: 'Status text in v1 library card in studio informing user of its migration status',
+    defaultMessage: 'Previously migrated library. Any problem bank links were already moved to',
   },
 });
 

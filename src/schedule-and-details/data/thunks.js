@@ -40,7 +40,7 @@ export function updateCourseDetailsQuery(courseId, details) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(updateCourseDetailsSuccess(detailsValues));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

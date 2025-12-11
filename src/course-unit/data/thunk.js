@@ -58,7 +58,7 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       localStorage.removeItem('staticFileNotices');
       dispatch(fetchSequenceSuccess({ sequenceId }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.FAILED }));
       dispatch(fetchSequenceFailure({ sequenceId }));
       return false;
@@ -204,7 +204,7 @@ export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPag
       }
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.FAILED }));
     }
   };

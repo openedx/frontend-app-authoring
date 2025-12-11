@@ -17,7 +17,11 @@ import {
 } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
-import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
+import {
+  getLibraryContainerApiUrl,
+  getLibraryContainerPublishApiUrl,
+  getLibraryContainerCopyApiUrl,
+} from '../data/api';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 
 mockContentLibrary.applyMock();
@@ -124,7 +128,7 @@ const render = (
   });
 };
 let axiosMock: MockAdapter;
-let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
 
 [
   {
@@ -192,6 +196,27 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
         expect(axiosMock.history.delete.length).toBe(1);
       });
       expect(mockShowToast).toHaveBeenCalled();
+    });
+
+    it(`should copy the ${containerType} using the menu`, async () => {
+      const user = userEvent.setup();
+      const url = getLibraryContainerCopyApiUrl(containerId);
+      axiosMock.onPost(url).reply(200);
+      render(containerId);
+
+      // Open menu
+      expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
+      await user.click(screen.getByTestId('container-info-menu-toggle'));
+
+      // Click on Copy Item
+      const copyMenuItem = await screen.findByRole('button', { name: 'Copy to clipboard' });
+      expect(copyMenuItem).toBeInTheDocument();
+      await user.click(copyMenuItem);
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toEqual(url);
     });
 
     it(`shows Published if the ${containerType} has no draft changes`, async () => {

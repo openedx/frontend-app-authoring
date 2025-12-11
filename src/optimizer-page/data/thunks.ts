@@ -37,7 +37,7 @@ export function startLinkCheck(courseId: string) {
       await postLinkCheck(courseId);
       await dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       dispatch(updateLinkCheckInProgress(false));
       dispatch(updateCurrentStage(SCAN_STAGES[LINK_CHECK_STATUSES.CANCELED]));

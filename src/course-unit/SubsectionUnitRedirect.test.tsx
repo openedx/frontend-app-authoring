@@ -1,3 +1,4 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   initializeMocks, waitFor, render, screen,
 } from '../testUtils';
@@ -26,12 +27,17 @@ const expectedCourseItemDataWithoutUnit = [{
 }];
 
 const renderSubsectionRedirectPage = () => {
-  render(<SubsectionUnitRedirect courseId={courseId} />, {
-    path,
-    routerProps: {
-      initialEntries: [`/subsection/${subsectionId}`],
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <SubsectionUnitRedirect />
+    </CourseAuthoringProvider>,
+    {
+      path,
+      routerProps: {
+        initialEntries: [`/subsection/${subsectionId}`],
+      },
     },
-  });
+  );
 };
 
 jest.mock('react-router-dom', () => {

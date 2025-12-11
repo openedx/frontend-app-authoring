@@ -112,6 +112,12 @@ const VisibilityTab = ({
                 <FormattedMessage {...messages.showAssessmentResultsPastDue} />
               </Form.Radio>
               <Form.Text><FormattedMessage {...messages.showAssessmentResultsPastDueDescription} /></Form.Text>
+              <Form.Radio value="never_but_include_grade">
+                <FormattedMessage {...messages.neverShowAssessmentResultsButIncludeGrade} />
+              </Form.Radio>
+              <Form.Text>
+                <FormattedMessage {...messages.neverShowAssessmentResultsButIncludeGradeDescription} />
+              </Form.Text>
             </Form.RadioSet>
           </>
         ) : (

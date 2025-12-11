@@ -6,7 +6,8 @@ import {
   screen,
   waitFor,
   initializeMocks,
-} from '../../testUtils';
+} from '@src/testUtils';
+
 import { mockContentLibrary } from '../data/api.mocks';
 import { getContentLibraryApiUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';

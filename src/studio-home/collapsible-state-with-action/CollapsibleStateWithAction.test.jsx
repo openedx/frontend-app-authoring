@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import {
-  render, fireEvent, waitFor, act,
+  render, fireEvent, waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -83,7 +83,7 @@ describe('<CollapsibleStateWithAction />', () => {
     expect(getByText(messages.deniedCollapsibleTitle.defaultMessage)).toBeInTheDocument();
   });
 
-  it('renders collapsible denied state successfully opened', () => {
+  it('renders collapsible denied state successfully opened', async () => {
     useSelector.mockReturnValue(studioHomeMock);
 
     const initialState = { ...props, state: COURSE_CREATOR_STATES.denied };
@@ -91,11 +91,9 @@ describe('<CollapsibleStateWithAction />', () => {
     const container = getByText(messages.deniedCollapsibleTitle.defaultMessage);
 
     fireEvent.click(container);
-    act(async () => {
-      await waitFor(() => {
-        expect(getByText(messages.deniedCollapsibleState.defaultMessage)).toBeInTheDocument();
-        expect(getByText(messages.deniedCollapsibleActionTitle.defaultMessage)).toBeInTheDocument();
-      });
+    await waitFor(() => {
+      expect(getByText(messages.deniedCollapsibleState.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.deniedCollapsibleActionTitle.defaultMessage)).toBeInTheDocument();
     });
   });
 });

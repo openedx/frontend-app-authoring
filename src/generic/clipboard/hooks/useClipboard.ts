@@ -2,14 +2,17 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useContext, useEffect } from 'react';
 
-import { getClipboard, updateClipboard } from '../../data/api';
 import {
   CLIPBOARD_STATUS,
   STRUCTURAL_XBLOCK_TYPES,
   STUDIO_CLIPBOARD_CHANNEL,
-} from '../../../constants';
+} from '@src/constants';
+
+import { getClipboard, updateClipboard } from '../../data/api';
 import { ToastContext } from '../../toast-context';
 import messages from './messages';
+
+const CLIPBOARD_QUERY_KEY = ['clipboard'];
 
 // Global, shared broadcast channel for the clipboard. Disabled by default in test environment where it's not defined.
 let clipboardBroadcastChannel = (
@@ -25,6 +28,8 @@ export const _testingOverrideBroadcastChannel = (x: BroadcastChannel) => { clipb
  * @param canEdit - Flag indicating whether the clipboard is editable.
  * @returns - An object containing state variables and functions related to clipboard functionality.
  * @property showPasteUnit - Flag indicating whether the "Paste Unit" button should be visible.
+ * @property showPasteSubsection - Flag indicating whether the "Paste Subsection" button should be visible.
+ * @property showPasteSection - Flag indicating whether the "Paste Subsection" button should be visible.
  * @property showPasteXBlock - Flag indicating whether the "Paste XBlock" button should be visible.
  * @property sharedClipboardData - The shared clipboard data object.
  * @property copyToClipboard - Function to copy the current selection to the clipboard.
@@ -32,7 +37,7 @@ export const _testingOverrideBroadcastChannel = (x: BroadcastChannel) => { clipb
 const useClipboard = (canEdit: boolean = true) => {
   const intl = useIntl();
   const { data: clipboardData } = useQuery({
-    queryKey: ['clipboard'],
+    queryKey: CLIPBOARD_QUERY_KEY,
     queryFn: getClipboard,
     refetchInterval: (query) => (query.state.data?.content?.status === CLIPBOARD_STATUS.loading ? 1000 : false),
   });
@@ -47,8 +52,14 @@ const useClipboard = (canEdit: boolean = true) => {
     let newData;
     try {
       newData = await updateClipboard(usageKey);
-      queryClient.setQueryData(['clipboard'], newData);
-    } catch (error) {
+      if (newData) {
+        // Update the clipboard state if we have new data
+        queryClient.setQueryData(CLIPBOARD_QUERY_KEY, newData);
+      } else {
+        // If we don't have new data, invalidate the query
+        queryClient.invalidateQueries({ queryKey: CLIPBOARD_QUERY_KEY });
+      }
+    } catch {
       showToast(intl.formatMessage(messages.error));
       return;
     }
@@ -85,14 +96,19 @@ const useClipboard = (canEdit: boolean = true) => {
 
   const isPasteable = canEdit && clipboardData?.content?.status !== CLIPBOARD_STATUS.expired;
   const showPasteUnit = isPasteable && clipboardData?.content?.blockType === 'vertical';
+  const showPasteSubsection = isPasteable && clipboardData?.content?.blockType === 'sequential';
+  const showPasteSection = isPasteable && clipboardData?.content?.blockType === 'chapter';
   const showPasteXBlock = isPasteable
     && clipboardData?.content
     && !STRUCTURAL_XBLOCK_TYPES.includes(clipboardData.content?.blockType);
 
   return {
     showPasteUnit,
+    showPasteSubsection,
+    showPasteSection,
     showPasteXBlock,
     sharedClipboardData: clipboardData,
+    isPasteable,
     copyToClipboard,
   };
 };

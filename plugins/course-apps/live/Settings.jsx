@@ -11,6 +11,7 @@ import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-m
 import { useModel } from 'CourseAuthoring/generic/model-store';
 import Loading from 'CourseAuthoring/generic/Loading';
 import { RequestStatus } from 'CourseAuthoring/data/constants';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
 import { selectApp } from './data/slice';
@@ -25,7 +26,7 @@ const LiveSettings = ({
   const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const courseId = useSelector(state => state.courseDetail.courseId);
+  const { courseId } = useCourseAuthoringContext();
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
     piiSharingAllowed, selectedAppId, enabled, status,

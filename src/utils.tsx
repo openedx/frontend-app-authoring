@@ -93,7 +93,7 @@ export function parseArrayOrObjectValues(obj: { [s: string]: string; } | ArrayLi
       } else {
         result[key] = JSON.parse(value);
       }
-    } catch (e) {
+    } catch {
       result[key] = value;
     }
   });
@@ -265,15 +265,16 @@ export function setupYupExtensions() {
   });
 }
 
-export const convertToDateFromString = (dateStr: string) => {
+export const convertToDateFromString = (dateStr: string): Date | undefined => {
   /**
    * Convert UTC to local time for react-datepicker
-   * Note: react-datepicker has a bug where it only interacts with local time
+   * Note: react-datepicker v4 had a bug where it only interacts with local time
+   * but this bug may no longer be affecting v8+ ?
    * @param {string} dateStr - YYYY-MM-DDTHH:MM:SSZ
-   * @return {Date} date in local time
+   * @return date in local time
    */
   if (!dateStr) {
-    return '';
+    return undefined;
   }
 
   const stripTimeZone = (stringValue: string) => stringValue.substring(0, 19);
@@ -281,12 +282,13 @@ export const convertToDateFromString = (dateStr: string) => {
   return moment(stripTimeZone(String(dateStr))).toDate();
 };
 
-export const convertToStringFromDate = (date: moment.MomentInput) => {
+export const convertToStringFromDate = (date: moment.MomentInput): string => {
   /**
    * Convert local time to UTC from react-datepicker
-   * Note: react-datepicker has a bug where it only interacts with local time
+   * Note: react-datepicker v4 had a bug where it only interacts with local time
+   * but this bug may no longer be affecting v8+ ?
    * @param {Date} date - date in local time
-   * @return {string} YYYY-MM-DDTHH:MM:SSZ
+   * @return YYYY-MM-DDTHH:MM:SSZ
    */
   if (!date) {
     return '';
@@ -349,3 +351,5 @@ export const skipIfUnwantedTarget = (
 };
 
 export const BoldText = (chunk: string[]) => <b>{chunk}</b>;
+export const Div = (chunk: string[]) => <div>{chunk}</div>;
+export const Paragraph = (chunk: string[]) => <p>{chunk}</p>;

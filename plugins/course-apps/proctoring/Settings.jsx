@@ -22,6 +22,7 @@ import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import messages from './messages';
 
@@ -40,6 +41,7 @@ const ProctoringSettings = ({ onClose }) => {
   const [loadingPermissionError, setLoadingPermissionError] = useState(false);
   const [allowLtiProviders, setAllowLtiProviders] = useState(false);
   const [availableProctoringProviders, setAvailableProctoringProviders] = useState([]);
+  const [requiresEscalationEmailProviders, setRequiresEscalationEmailProviders] = useState([]);
   const [ltiProctoringProviders, setLtiProctoringProviders] = useState([]);
   const [courseStartDate, setCourseStartDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -64,7 +66,7 @@ const ProctoringSettings = ({ onClose }) => {
   }
 
   const { courseId } = useContext(PagesAndResourcesContext);
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseDetails } = useCourseAuthoringContext();
   const org = courseDetails?.org;
   const appInfo = useModel('courseApps', 'proctoring');
   const alertRef = React.createRef();
@@ -88,6 +90,10 @@ const ProctoringSettings = ({ onClose }) => {
       } else if (value === 'software_secure') {
         setFormValues({ ...newFormValues });
         setShowEscalationEmail(false);
+
+      if (requiresEscalationEmailProviders.includes(value)) {
+        setFormValues({ ...newFormValues });
+        setShowEscalationEmail(true);
       } else if (isLtiProvider(value)) {
         setFormValues(newFormValues);
         setShowEscalationEmail(true);
@@ -120,7 +126,7 @@ const ProctoringSettings = ({ onClose }) => {
       studioDataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = formValues.allowOptingOut;
     }
 
-    if (formValues.proctoringProvider === 'proctortrack') {
+    if (requiresEscalationEmailProviders.includes(formValues.proctoringProvider)) {
       studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.escalationEmail === '' ? null : formValues.escalationEmail;
     }
 
@@ -157,7 +163,7 @@ const ProctoringSettings = ({ onClose }) => {
     event.preventDefault();
     const isLtiProviderSelected = isLtiProvider(formValues.proctoringProvider);
     if (
-      (formValues.proctoringProvider === 'proctortrack' || isLtiProviderSelected)
+      (requiresEscalationEmailProviders.includes(formValues.proctoringProvider) || isLtiProviderSelected)
       && !EmailValidator.validate(formValues.escalationEmail)
       && !(formValues.escalationEmail === '' && !formValues.enableProctoredExams)
     ) {
@@ -501,6 +507,7 @@ const ProctoringSettings = ({ onClose }) => {
           setSubmissionInProgress(false);
           setCourseStartDate(settingsResponse.data.course_start_date);
           setAvailableProctoringProviders(settingsResponse.data.available_proctoring_providers);
+          setRequiresEscalationEmailProviders(settingsResponse.data.requires_escalation_email_providers);
 
           // The list of providers returned by studio settings are the default behavior. If lti_external
           // is available as an option display the list of LTI providers returned by the exam service.
@@ -528,10 +535,11 @@ const ProctoringSettings = ({ onClose }) => {
             selectedProvider = proctoredExamSettings.proctoring_provider;
           }
 
-          const isProctortrack = selectedProvider === 'proctortrack';
+          const requiresEscalationEmailProvidersList = settingsResponse.data.requires_escalation_email_providers;
+          const isEscalationEmailRequired = requiresEscalationEmailProvidersList.includes(selectedProvider);
           const ltiProviderSelected = proctoringProvidersLti.some(p => p.name === selectedProvider);
 
-          if (isProctortrack || ltiProviderSelected) {
+          if (isEscalationEmailRequired || ltiProviderSelected) {
             setShowEscalationEmail(true);
           }
 

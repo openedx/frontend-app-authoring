@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -10,6 +9,7 @@ import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
 } from '@openedx/paragon/icons';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -34,9 +34,10 @@ import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
 
-const CourseUnit = ({ courseId }) => {
+const CourseUnit = () => {
   const { blockId } = useParams();
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const {
     courseUnit,
     isLoading,
@@ -50,6 +51,7 @@ const CourseUnit = ({ courseId }) => {
     isUnitVerticalType,
     isUnitLibraryType,
     isSplitTestType,
+    isProblemBankType,
     staticFileNotices,
     currentlyVisibleToStudents,
     unitXBlockActions,
@@ -219,6 +221,7 @@ const CourseUnit = ({ courseId }) => {
                   parentLocator={blockId}
                   isSplitTestType={isSplitTestType}
                   isUnitVerticalType={isUnitVerticalType}
+                  isProblemBankType={isProblemBankType}
                   handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
                   addComponentTemplateData={addComponentTemplateData}
                 />
@@ -266,10 +269,6 @@ const CourseUnit = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-CourseUnit.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseUnit;

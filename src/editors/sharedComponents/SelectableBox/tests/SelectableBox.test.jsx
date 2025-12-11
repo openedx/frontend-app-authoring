@@ -77,7 +77,7 @@ describe('<SelectableBox />', () => {
       const onClickSpy = jest.fn();
       render(<SelectableCheckbox onClick={onClickSpy} />);
       const selectableBox = screen.getByRole('button');
-      await await user.click(selectableBox);
+      await user.click(selectableBox);
       expect(onClickSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with on key press event when onClick is passed', async () => {
@@ -86,7 +86,7 @@ describe('<SelectableBox />', () => {
       render(<SelectableCheckbox onClick={onClickSpy} />);
       const selectableBox = screen.getByRole('button');
       selectableBox.focus();
-      await await user.keyboard('{enter}');
+      await user.keyboard('{enter}');
       expect(onClickSpy).toHaveBeenCalledTimes(1);
     });
     it('renders with hidden input when inputHidden is passed', () => {

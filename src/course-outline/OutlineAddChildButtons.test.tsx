@@ -33,10 +33,10 @@ jest.mock('react-redux', () => ({
       expect(newBtn).toBeInTheDocument();
       const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
       expect(useBtn).toBeInTheDocument();
-      userEvent.click(newBtn);
-      waitFor(() => expect(newClickHandler).toHaveBeenCalled());
-      userEvent.click(useBtn);
-      waitFor(() => expect(useFromLibClickHandler).toHaveBeenCalled());
+      await userEvent.click(newBtn);
+      await waitFor(() => expect(newClickHandler).toHaveBeenCalled());
+      await userEvent.click(useBtn);
+      await waitFor(() => expect(useFromLibClickHandler).toHaveBeenCalled());
     });
   });
 });

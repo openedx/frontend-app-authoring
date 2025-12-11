@@ -224,7 +224,7 @@ const ItemReviewList = ({
         messages.updateSingleBlockSuccess,
         { name: info.displayName },
       ));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
     }
   }, []);
@@ -243,7 +243,7 @@ const ItemReviewList = ({
         messages.ignoreSingleBlockSuccess,
         { name: blockData.displayName },
       ));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(previewChangesMessages.ignoreChangesFailure));
     } finally {
       closeConfirmModal();

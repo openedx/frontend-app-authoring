@@ -4,7 +4,7 @@ import {
 import React from 'react';
 import messages from './messages';
 import { ToleranceTypes } from './constants';
-import { ToleranceCardInternal as ToleranceCard } from './index';
+import { ToleranceCard } from './index';
 import { formatMessage } from '../../../../../../../testUtils';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -13,6 +13,9 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   FormattedMessage: jest.fn(({ defaultMessage }) => (
     <div>{ defaultMessage }</div>
   )),
+  useIntl: () => ({
+    formatMessage: (message) => message.defaultMessage,
+  }),
 }));
 
 // eslint-disable-next-line react/prop-types

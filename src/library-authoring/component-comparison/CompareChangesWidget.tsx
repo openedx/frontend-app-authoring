@@ -52,7 +52,7 @@ const CompareChangesWidget = ({
                 {oldTitle}
               </div>
             )}
-            <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-15px' } : {}}>
+            <div style={hasLocalChanges ? { marginLeft: '-35px', marginTop: '-8px' } : {}}>
               <IframeProvider>
                 <LibraryBlock
                   usageKey={oldUsageKey || usageKey}

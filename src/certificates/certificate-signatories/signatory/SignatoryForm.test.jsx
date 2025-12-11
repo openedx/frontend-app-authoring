@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -30,6 +30,7 @@ const initialState = {
 };
 
 const defaultProps = {
+  index: 0,
   ...signatoriesMock[0],
   showDeleteButton: true,
   isEdit: true,
@@ -62,31 +63,36 @@ describe('Signatory Component', () => {
   it('handles input change', async () => {
     const user = userEvent.setup();
     const handleChange = jest.fn();
-    const { getByPlaceholderText } = renderSignatory({ ...defaultProps, handleChange });
-    const input = getByPlaceholderText(messages.namePlaceholder.defaultMessage);
+    renderSignatory({ ...defaultProps, handleChange });
+    const input = screen.getByPlaceholderText(messages.namePlaceholder.defaultMessage);
     const newInputValue = 'Jane Doe';
 
-    await user.type(input, newInputValue, { name: 'signatories[0].name' });
+    expect(handleChange).not.toHaveBeenCalled();
+    expect(input.value).not.toBe(newInputValue);
+    await user.type(input, newInputValue);
 
-    waitFor(() => {
-      expect(handleChange).toHaveBeenCalledWith(expect.anything());
-      expect(input.value).toBe(newInputValue);
+    await waitFor(() => {
+      // This is not a great test; handleChange() gets called for each key press:
+      expect(handleChange).toHaveBeenCalledTimes(newInputValue.length);
+      // And the input value never actually changes because it's a controlled component
+      // and we pass the name in as a prop, which hasn't changed.
+      // expect(input.value).toBe(newInputValue);
     });
   });
 
   it('opens image upload modal on button click', async () => {
     const user = userEvent.setup();
-    const { getByRole, queryByRole } = renderSignatory(defaultProps);
+    const { getByRole, queryByTestId } = renderSignatory(defaultProps);
     const replaceButton = getByRole(
       'button',
       { name: messages.uploadImageButton.defaultMessage.replace('{uploadText}', messages.uploadModalReplace.defaultMessage) },
     );
 
-    expect(queryByRole('presentation')).not.toBeInTheDocument();
+    expect(queryByTestId('dropzone-container')).not.toBeInTheDocument();
 
     await user.click(replaceButton);
 
-    expect(getByRole('presentation')).toBeInTheDocument();
+    expect(queryByTestId('dropzone-container')).toBeInTheDocument();
   });
 
   it('shows confirm modal on delete icon click', async () => {

@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { CourseContainerChildrenData } from '@src/course-unit/data/types';
+import { CourseContainerChildrenData, type UpstreamReadyToSyncChildrenInfo } from '@src/course-unit/data/types';
 import * as unitApi from '@src/course-unit/data/api';
 
 /**
@@ -8,9 +8,10 @@ import * as unitApi from '@src/course-unit/data/api';
  * This mock returns a fixed response for the given container ID.
  */
 export async function mockGetCourseContainerChildren(containerId: string): Promise<CourseContainerChildrenData> {
-  const numChildren: number = 3;
+  let numChildren: number = 3;
   let blockType: string;
   let displayName: string;
+  let upstreamReadyToSyncChildrenInfo: UpstreamReadyToSyncChildrenInfo[] = [];
   switch (containerId) {
     case mockGetCourseContainerChildren.unitId:
       blockType = 'text';
@@ -24,13 +25,45 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
       blockType = 'unit';
       displayName = 'subsection block 00';
       break;
+    case mockGetCourseContainerChildren.sectionShowsAlertSingleText:
+      blockType = 'subsection';
+      displayName = 'Test Title';
+      upstreamReadyToSyncChildrenInfo = [{
+        id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
+        name: 'Html block 11',
+        blockType: 'html',
+        downstreamCustomized: ['display_name'],
+        upstream: 'upstream-id',
+      }];
+      break;
+    case mockGetCourseContainerChildren.sectionShowsAlertMultipleText:
+      blockType = 'subsection';
+      displayName = 'Test Title';
+      upstreamReadyToSyncChildrenInfo = [
+        {
+          id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@1',
+          name: 'Html block 11',
+          blockType: 'html',
+          downstreamCustomized: ['display_name'],
+          upstream: 'upstream-id',
+        },
+        {
+          id: 'block-v1:UNIX+UX1+2025_T3+type@html+block@2',
+          name: 'Html block 22',
+          blockType: 'html',
+          downstreamCustomized: ['display_name'],
+          upstream: 'upstream-id',
+        },
+      ];
+      break;
     case mockGetCourseContainerChildren.unitIdLoading:
     case mockGetCourseContainerChildren.sectionIdLoading:
     case mockGetCourseContainerChildren.subsectionIdLoading:
       return new Promise(() => { });
     default:
-      blockType = 'unit';
-      displayName = 'subsection block 00';
+      blockType = 'section';
+      displayName = 'section block 00';
+      numChildren = 0;
       break;
   }
   const children = Array(numChildren).fill(mockGetCourseContainerChildren.childTemplate).map((child, idx) => (
@@ -45,7 +78,7 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
         versionSynced: 1,
         versionAvailable: 2,
         versionDeclined: null,
-        isModified: false,
+        downstreamCustomized: [],
       },
     }
   ));
@@ -54,11 +87,14 @@ export async function mockGetCourseContainerChildren(containerId: string): Promi
     isPublished: false,
     children,
     displayName,
+    upstreamReadyToSyncChildrenInfo,
   });
 }
 mockGetCourseContainerChildren.unitId = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0';
 mockGetCourseContainerChildren.subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0';
 mockGetCourseContainerChildren.sectionId = 'block-v1:UNIX+UX1+2025_T3+type@section+block@0';
+mockGetCourseContainerChildren.sectionShowsAlertSingleText = 'block-v1:UNIX+UX1+2025_T3+type@section2+block@0';
+mockGetCourseContainerChildren.sectionShowsAlertMultipleText = 'block-v1:UNIX+UX1+2025_T3+type@section3+block@0';
 mockGetCourseContainerChildren.unitIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@loading';
 mockGetCourseContainerChildren.subsectionIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@loading';
 mockGetCourseContainerChildren.sectionIdLoading = 'block-v1:UNIX+UX1+2025_T3+type@section+block@loading';
@@ -71,7 +107,7 @@ mockGetCourseContainerChildren.childTemplate = {
     versionSynced: 1,
     versionAvailable: 2,
     versionDeclined: null,
-    isModified: false,
+    downstreamCustomized: [],
   },
 };
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

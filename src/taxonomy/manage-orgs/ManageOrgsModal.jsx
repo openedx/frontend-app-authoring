@@ -100,7 +100,7 @@ const ManageOrgsModal = ({
         if (setToastMessage) {
           setToastMessage(intl.formatMessage(messages.assignOrgsSuccess));
         }
-      } catch (error) {
+      } catch {
         // ToDo: display the error to the user
       } finally {
         enableDialog();

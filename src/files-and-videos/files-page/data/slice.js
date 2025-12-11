@@ -59,6 +59,9 @@ const slice = createSlice({
           break;
       }
     },
+    clearAssetIds: (state) => {
+      state.assetIds = [];
+    },
     deleteAssetSuccess: (state, { payload }) => {
       state.assetIds = state.assetIds.filter(id => id !== payload.assetId);
     },
@@ -94,6 +97,7 @@ export const {
   clearErrors,
   updateEditStatus,
   updateDuplicateFiles,
+  clearAssetIds,
 } = slice.actions;
 
 export const {

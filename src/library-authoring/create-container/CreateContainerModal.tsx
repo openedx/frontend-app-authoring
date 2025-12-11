@@ -94,7 +94,7 @@ const CreateContainerModal = () => {
       }
 
       showToast(labels.successMsg);
-    } catch (error) {
+    } catch {
       showToast(labels.errorMsg);
     } finally {
       handleClose();

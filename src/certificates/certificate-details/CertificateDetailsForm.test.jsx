@@ -65,7 +65,7 @@ describe('CertificateDetails', () => {
 
     await user.type(input, newInputValue);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(input.value).toBe(newInputValue);
     });
   });

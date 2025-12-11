@@ -10,7 +10,12 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
-import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl, getLibraryContainerChildrenApiUrl } from '../data/api';
+import {
+  getLibraryContainerApiUrl,
+  getLibraryContainerRestoreApiUrl,
+  getLibraryContainerChildrenApiUrl,
+  getLibraryContainerCopyApiUrl,
+} from '../data/api';
 import { ContainerType } from '../../generic/key-utils';
 
 let axiosMock: MockAdapter;
@@ -461,5 +466,31 @@ describe('<ContainerCard />', () => {
       expect(axiosMock.history.delete.length).toBe(1);
     });
     expect(mockShowToast).toHaveBeenCalled();
+  });
+
+  test.each([
+    ContainerType.Unit,
+    ContainerType.Subsection,
+    ContainerType.Section,
+  ])('should be able to copy %s', async (containerType) => {
+    const containerHit = getContainerHitSample(containerType);
+    const url = getLibraryContainerCopyApiUrl(containerHit.usageKey);
+    axiosMock.onPost(url).reply(200);
+    const user = userEvent.setup();
+    render(<ContainerCard hit={containerHit} />);
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    await user.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Copy Item
+    const copyMenuItem = screen.getByRole('button', { name: 'Copy to clipboard' });
+    expect(copyMenuItem).toBeInTheDocument();
+    await user.click(copyMenuItem);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(axiosMock.history.post[0].url).toEqual(url);
   });
 });

@@ -10,8 +10,12 @@ import {
   within,
 } from '@src/testUtils';
 import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
+import { mockGetMigrationStatus } from '@src/data/api.mocks';
+import mockEmptyResult from '@src/search-modal/__mocks__/empty-search-result.json';
+import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
+import { getStudioHomeApiUrl } from '@src/studio-home/data/api';
+
 import mockResult from './__mocks__/library-search.json';
-import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
@@ -19,8 +23,6 @@ import {
   mockGetLibraryTeam,
   mockXBlockFields,
 } from './data/api.mocks';
-import { mockContentSearchConfig } from '../search-manager/data/api.mock';
-import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';
 
@@ -33,6 +35,7 @@ mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetLibraryTeam.applyMock();
 mockXBlockFields.applyMock();
+mockGetMigrationStatus.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -68,7 +71,7 @@ describe('<LibraryAuthoringPage />', () => {
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
     fetchMock.post(searchEndpoint, (_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const requestData = JSON.parse((req.body ?? '') as string);
       const query = requestData?.queries[0]?.q ?? '';
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
@@ -311,21 +314,21 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
   });
 
-  it('should show "Manage Access" button in Library Info that opens the Library Team modal', async () => {
+  it('should show Library Team button in Library Info that opens the Library Team modal', async () => {
     await renderLibraryPage();
-    const manageAccess = screen.getByRole('button', { name: /manage access/i });
+    const manageAccess = await screen.findByRole('button', { name: /Library Team/i });
 
     expect(manageAccess).not.toBeDisabled();
     fireEvent.click(manageAccess);
 
-    expect(await screen.findByText('Library Team')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Library Team' })).toBeInTheDocument();
   });
 
-  it('should not show "Manage Access" button in Library Info to users who cannot edit the library', async () => {
+  it('should not show "Library Team" button in Library Info to users who cannot edit the library', async () => {
     const libraryId = mockContentLibrary.libraryIdReadOnly;
     render(<LibraryLayout />, { path, params: { libraryId } });
 
-    const manageAccess = screen.queryByRole('button', { name: /manage access/i });
+    const manageAccess = screen.queryByRole('button', { name: /Library Team/i });
     expect(manageAccess).not.toBeInTheDocument();
   });
 
@@ -1061,5 +1064,57 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This page cannot be shown: Libraries v2 are disabled.',
     );
+  });
+
+  it('Should show success in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationId}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The migration of legacy libraries has been completed successfully.'));
+  });
+
+  it('Should show fail in migration legacy libraries', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdFailed}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Legacy libraries migration have failed'));
+  });
+
+  it('Should show fail multiple legacy libraries in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdMultiple}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Multiple legacy libraries have failed'));
+  });
+
+  it('Should show fail one legacy library in a migration', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}?migration_task=${mockGetMigrationStatus.migrationIdOneLibrary}`,
+        ],
+      },
+    });
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('The legacy library with this key has failed: legacy-lib-1'));
   });
 });

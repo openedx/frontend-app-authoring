@@ -1,15 +1,11 @@
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
+  initializeMocks,
   render, waitFor, within,
-} from '@testing-library/react';
+} from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
+import { executeThunk } from '@src/utils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getTextbookFormInitialValues } from '../utils';
 import { getUpdateTextbooksApiUrl } from '../data/api';
 import { createTextbookQuery } from '../data/thunk';
@@ -26,32 +22,22 @@ const onSubmitMock = jest.fn();
 const onSavingStatus = jest.fn();
 
 const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <TextbookForm
-        closeTextbookForm={closeTextbookFormMock}
-        initialFormValues={initialFormValuesMock}
-        onSubmit={onSubmitMock}
-        onSavingStatus={onSavingStatus}
-        courseId={courseId}
-      />
-    </IntlProvider>
-  </AppProvider>,
+  <CourseAuthoringProvider>
+    <TextbookForm
+      closeTextbookForm={closeTextbookFormMock}
+      initialFormValues={initialFormValuesMock}
+      onSubmit={onSubmitMock}
+      onSavingStatus={onSavingStatus}
+    />
+  </CourseAuthoringProvider>,
 );
 
 describe('<TextbookForm />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   it('renders TextbooksForm component correctly', async () => {
@@ -174,11 +160,11 @@ describe('<TextbookForm />', () => {
     const { findByTestId, findByRole } = renderComponent();
 
     const button = await findByTestId('chapter-upload-button');
-    await await user.click(button);
+    await user.click(button);
     const modalBackdrop = await findByTestId('modal-backdrop');
 
     const cancelButton = await within(await findByRole('dialog')).findByText('Cancel');
-    await await user.click(cancelButton);
+    await user.click(cancelButton);
     await waitFor(() => {
       expect(modalBackdrop).not.toBeInTheDocument();
     });

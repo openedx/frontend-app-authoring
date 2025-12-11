@@ -34,6 +34,52 @@ export const mockGetContentLibraryV2List = {
   }),
 };
 
+export const mockGetModulestoreMigratedBlocksInfo = {
+  applyMockSuccess: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@sequential+block@2',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@vertical+block@2',
+        targetKey: '3',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@3',
+        targetKey: '4',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+  applyMockPartial: () => jest.spyOn(api, 'getModulestoreMigrationBlocksInfo').mockResolvedValue(
+    [
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
+        targetKey: null,
+        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',
+        targetKey: '1',
+        unsupportedReason: undefined,
+      },
+      {
+        sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@chapter+block@1',
+        targetKey: '2',
+        unsupportedReason: undefined,
+      },
+    ],
+  ),
+};
+
 /**
  * Mock for `getContentLibrary()`
  *
@@ -603,6 +649,7 @@ mockGetContainerMetadata.applyMock = () => {
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
   let blockType = 'html';
+  let addDuplicate = false;
   switch (containerId) {
     case mockGetContainerMetadata.unitId:
     case mockGetContainerMetadata.sectionId:
@@ -614,6 +661,10 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
       break;
     case mockGetContainerChildren.sixChildren:
       numChildren = 6;
+      break;
+    case mockGetContainerChildren.unitIdWithDuplicate:
+      numChildren = 3;
+      addDuplicate = true;
       break;
     default:
       numChildren = 0;
@@ -630,19 +681,22 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
     name = blockType;
     typeNamespace = 'lct';
   }
-  return Promise.resolve(
-    Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
-      {
-        ...child,
-        // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
-        id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
-        displayName: `${name} block ${idx}`,
-        publishedDisplayName: `${name} block published ${idx}`,
-        blockType,
-      }
-    )),
-  );
+  let result = Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
+    {
+      ...child,
+      // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
+      id: `${typeNamespace}:org1:Demo_course_generated:${blockType}:${name}-${idx}`,
+      displayName: `${name} block ${idx}`,
+      publishedDisplayName: `${name} block published ${idx}`,
+      blockType,
+    }
+  ));
+  if (addDuplicate) {
+    result = [...result, result[0]];
+  }
+  return Promise.resolve(result);
 }
+mockGetContainerChildren.unitIdWithDuplicate = 'lct:org1:Demo_Course:unit:unit-duplicate';
 mockGetContainerChildren.fiveChildren = 'lct:org1:Demo_Course:unit:unit-5';
 mockGetContainerChildren.sixChildren = 'lct:org1:Demo_Course:unit:unit-6';
 mockGetContainerChildren.childTemplate = {
@@ -1064,3 +1118,82 @@ mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
   'getEntityLinks',
 ).mockImplementation(mockGetEntityLinks);
+
+export async function mockGetCourseImports(libraryId: string): ReturnType<typeof api.getCourseImports> {
+  switch (libraryId) {
+    case mockContentLibrary.libraryId:
+      return [
+        mockGetCourseImports.succeedImport,
+        mockGetCourseImports.succeedImportWithCollection,
+        mockGetCourseImports.failImport,
+        mockGetCourseImports.inProgressImport,
+      ];
+    case mockGetCourseImports.emptyLibraryId:
+      return [];
+    default:
+      throw new Error(`mockGetCourseImports doesn't know how to mock ${JSON.stringify(libraryId)}`);
+  }
+}
+mockGetCourseImports.libraryId = mockContentLibrary.libraryId;
+mockGetCourseImports.emptyLibraryId = mockContentLibrary.libraryId2;
+mockGetCourseImports.succeedImport = {
+  taskUuid: '2d35e36b-1234-1234-1234-123456789000',
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T1',
+    displayName: 'DemoX 2025 T1',
+  },
+  targetCollection: null,
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseImport;
+mockGetCourseImports.succeedImportWithCollection = {
+  taskUuid: '2',
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T2',
+    displayName: 'DemoX 2025 T2',
+  },
+  targetCollection: {
+    key: 'sample-collection',
+    title: 'DemoX 2025 T1 (2)',
+  },
+  state: 'Succeeded',
+  progress: 1,
+} satisfies api.CourseImport;
+mockGetCourseImports.failImport = {
+  taskUuid: '3',
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T3',
+    displayName: 'DemoX 2025 T3',
+  },
+  targetCollection: null,
+  state: 'Failed',
+  progress: 0.30,
+} satisfies api.CourseImport;
+mockGetCourseImports.inProgressImport = {
+  taskUuid: '4',
+  source: {
+    key: 'course-v1:edX+DemoX+2025_T4',
+    displayName: 'DemoX 2025 T4',
+  },
+  targetCollection: null,
+  state: 'In Progress',
+  progress: 0.5012,
+} satisfies api.CourseImport;
+mockGetCourseImports.applyMock = () => jest.spyOn(
+  api,
+  'getCourseImports',
+).mockImplementation(mockGetCourseImports);
+
+export const mockGetMigrationInfo = {
+  applyMock: () => jest.spyOn(api, 'getMigrationInfo').mockResolvedValue(
+    camelCaseObject({
+      'course-v1:HarvardX+123+2023': [{
+        sourceKey: 'course-v1:HarvardX+123+2023',
+        targetCollectionKey: 'ltc:org:coll-1',
+        targetCollectionTitle: 'Collection 1',
+        targetKey: mockContentLibrary.libraryId,
+        targetTitle: 'Library 1',
+      }],
+    }),
+  ),
+};

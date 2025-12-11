@@ -10,7 +10,6 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
-import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
@@ -91,8 +90,7 @@ const StudioHome = () => {
         if (showV2LibraryURL) {
           navigate('/library/create');
         } else {
-          // Studio home library for legacy libraries
-          window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
+          navigate('/libraries-v1/create');
         }
       };
 

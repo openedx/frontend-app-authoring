@@ -1,23 +1,20 @@
+import userEvent from '@testing-library/user-event';
+import ReactDOM from 'react-dom';
+import { saveAs } from 'file-saver';
+
+import { camelCaseObject } from '@edx/frontend-platform';
+
 import {
   render,
   fireEvent,
   screen,
   waitFor,
   within,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import ReactDOM from 'react-dom';
-import { saveAs } from 'file-saver';
-
-import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
-import { RequestStatus } from '../../data/constants';
+  initializeMocks,
+} from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { executeThunk } from '@src/utils';
+import { RequestStatus } from '@src/data/constants';
 import FilesPage from './FilesPage';
 import {
   generateFetchAssetApiResponse,
@@ -50,11 +47,16 @@ jest.mock('file-saver');
 
 const renderComponent = () => {
   render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <FilesPage courseId={courseId} />
-      </AppProvider>
-    </IntlProvider>,
+    <CourseAuthoringProvider courseId={courseId}>
+      <FilesPage />,
+    </CourseAuthoringProvider>,
+    {
+      path: '/course/:courseId/*',
+      routerProps: {
+        initialEntries: [`/course/${courseId}/videos`],
+      },
+      params: { courseId },
+    },
   );
 };
 
@@ -81,24 +83,19 @@ const emptyMockStore = async (status) => {
 
 describe('FilesAndUploads', () => {
   describe('empty state', () => {
-    beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
+    beforeEach(() => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          assets: {
+            ...initialState.assets,
+            assetIds: [],
+          },
+          models: {},
         },
       });
-      store = initializeStore({
-        ...initialState,
-        assets: {
-          ...initialState.assets,
-          assetIds: [],
-        },
-        models: {},
-      });
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
 
@@ -142,17 +139,19 @@ describe('FilesAndUploads', () => {
   });
 
   describe('valid assets', () => {
-    beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
+    beforeEach(() => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          assets: {
+            ...initialState.assets,
+            assetIds: [],
+          },
+          models: {},
         },
       });
-      store = initializeStore(initialState);
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
       global.localStorage.clear();
     });
@@ -280,7 +279,7 @@ describe('FilesAndUploads', () => {
       it('should have disabled action buttons', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
 
-        const actionsButton = await screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         fireEvent.click(actionsButton);
         expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
 
@@ -401,7 +400,7 @@ describe('FilesAndUploads', () => {
       it('should open asset info', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
 
-        const [assetMenuButton] = await screen.getAllByTestId('file-menu-dropdown-mOckID1');
+        const [assetMenuButton] = screen.getAllByTestId('file-menu-dropdown-mOckID1');
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
           .reply(201, {
@@ -465,7 +464,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(await screen.getByText('Unlock'));
+        fireEvent.click(screen.getByText('Unlock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID1',
@@ -484,7 +483,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(await screen.getByText('Lock'));
+        fireEvent.click(screen.getByText('Lock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID3',
@@ -513,7 +512,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        const confirmDelete = screen.getByTestId('open-delete-confirmation-button');
         fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID1')).toBeVisible();
@@ -600,7 +599,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        const confirmDelete = screen.getByTestId('open-delete-confirmation-button');
         fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID3')).toBeVisible();

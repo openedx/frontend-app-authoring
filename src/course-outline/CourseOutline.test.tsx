@@ -12,6 +12,7 @@ import { getApiBaseUrl, getClipboardUrl } from '@src/generic/data/api';
 import { postXBlockBaseApiUrl } from '@src/course-unit/data/api';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
@@ -136,7 +137,9 @@ jest.mock('@src/studio-home/data/selectors', () => ({
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderComponent = () => render(
-  <CourseOutline courseId={courseId} />,
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseOutline />
+  </CourseAuthoringProvider>,
 );
 
 describe('<CourseOutline />', () => {

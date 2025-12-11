@@ -36,6 +36,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
   for (let index = 0; index < b.length; index++) {
     const newVersion = b[index];
     const oldVersion = mapA.get(newVersion.id);
+
     if (!oldVersion) {
       // This is a newly added component
       addedA.push({
@@ -53,18 +54,30 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
     } else {
       // It was present in previous version
       let state: ContainerState | undefined;
-      const displayName = oldVersion.upstreamLink.isModified ? oldVersion.name : newVersion.displayName;
+      const displayName = oldVersion.upstreamLink.downstreamCustomized.includes('display_name') ? oldVersion.name : newVersion.displayName;
       let originalName: string | undefined;
+      // FIXME: This logic doesn't work when the content is updated locally and the upstream display name is updated.
+      // `isRenamed` becomes true.
+      // We probably need to differentiate between `contentModified` and `rename` in the backend or
+      // send `downstream_customized` field to the frontend and use it here.
+      const isRenamed = displayName !== newVersion.displayName && displayName === oldVersion.name;
+      const isContentModified = oldVersion.upstreamLink.downstreamCustomized.includes('data');
       if (index !== oldVersion.index) {
         // has moved from its position
         state = 'moved';
       }
-      if (displayName !== newVersion.displayName && displayName === oldVersion.name) {
-        // Has been renamed
-        state = 'locallyRenamed';
-        originalName = newVersion.displayName;
-      }
-      if (checkIsReadyToSync(oldVersion.upstreamLink)) {
+      if ((oldVersion.upstreamLink.downstreamCustomized.length || 0) > 0) {
+        if (isRenamed) {
+          state = 'locallyRenamed';
+          originalName = newVersion.displayName;
+        }
+        if (isContentModified) {
+          state = 'locallyContentUpdated';
+        }
+        if (isRenamed && isContentModified) {
+          state = 'locallyRenamedAndContentUpdated';
+        }
+      } else if (checkIsReadyToSync(oldVersion.upstreamLink)) {
         // has a new version ready to sync
         state = 'modified';
       }
@@ -122,7 +135,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 }
 
 export function isRowClickable(state?: ContainerState, blockType?: ContainerType) {
-  return state === 'modified' && blockType && [
+  return state && blockType && ['modified', 'added', 'removed'].includes(state) && [
     ContainerType.Section,
     ContainerType.Subsection,
     ContainerType.Unit,

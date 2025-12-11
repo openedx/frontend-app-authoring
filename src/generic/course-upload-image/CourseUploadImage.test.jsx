@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { fireEvent, render, act } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -57,9 +57,7 @@ describe('<CourseUploadImage />', () => {
   it('should call onChange if input value changed', async () => {
     const { getByPlaceholderText } = render(<RootWrapper {...props} />);
     const input = getByPlaceholderText(props.customInputPlaceholder);
-    await act(() => {
-      fireEvent.change(input, { target: { value: '/assets' } });
-    });
+    fireEvent.change(input, { target: { value: '/assets' } });
     expect(onChangeMock).toHaveBeenCalledWith(
       '/assets',
       props.assetImageField,

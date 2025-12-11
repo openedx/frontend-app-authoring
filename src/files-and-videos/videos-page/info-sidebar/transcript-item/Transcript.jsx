@@ -8,7 +8,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { isEmpty } from 'lodash';
 import LanguageSelect from './LanguageSelect';
 import TranscriptMenu from './TranscriptMenu';
@@ -20,9 +20,8 @@ const Transcript = ({
   transcript,
   previousSelection,
   handleTranscript,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [isConfirmationOpen, openConfirmation, closeConfirmation] = useToggle();
   const [newLanguage, setNewLanguage] = useState(transcript);
   const language = transcript;
@@ -122,8 +121,6 @@ Transcript.propTypes = {
   transcript: PropTypes.string.isRequired,
   previousSelection: PropTypes.arrayOf(PropTypes.string).isRequired,
   handleTranscript: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(Transcript);
+export default Transcript;

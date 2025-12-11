@@ -1,4 +1,5 @@
 import type MockAdapter from 'axios-mock-adapter';
+import { mergeConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -7,6 +8,7 @@ import {
   waitFor,
   initializeMocks,
 } from '@src/testUtils';
+import { validateUserPermissions } from '@src/authz/data/api';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -27,11 +29,12 @@ const {
 } = mockContentLibrary;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
+  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
 });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof validateUserPermissions>;
 
 mockContentLibrary.applyMock();
 
@@ -40,6 +43,9 @@ describe('<LibraryInfo />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+
+    validateUserPermissionsMock.mockResolvedValue({ canPublish: true });
   });
 
   afterEach(() => {
@@ -269,5 +275,14 @@ describe('<LibraryInfo />', () => {
 
     expect(publishButton).not.toBeInTheDocument();
     expect(discardButton).not.toBeInTheDocument();
+  });
+
+  it('display a redirection button when ADMIN_CONSOLE_URL is setted', async () => {
+    const ADMIN_CONSOLE_URL = 'http://localhost:2025/admin-console';
+    mergeConfig({ ADMIN_CONSOLE_URL });
+    render();
+    const manageTeam = await screen.findByText('Library Team');
+    expect(manageTeam).toBeInTheDocument();
+    expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz/libraries/${libraryData.id}`);
   });
 });

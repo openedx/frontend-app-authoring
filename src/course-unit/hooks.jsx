@@ -24,6 +24,7 @@ import {
   fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
+  updateCourseUnitSidebar,
 } from './data/thunk';
 import {
   getCanEdit,
@@ -72,6 +73,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
+  const isProblemBankType = [
+    COURSE_BLOCK_NAMES.legacyLibraryContent.id,
+    COURSE_BLOCK_NAMES.itembank.id,
+  ].includes(unitCategory);
 
   const headerNavigationsActions = {
     handleViewLive: () => {
@@ -227,8 +232,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       // edits the component using editor which has a separate store
       /* istanbul ignore next */
       if (event.key === 'courseRefreshTriggerOnComponentEditSave') {
-        dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-        dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
+        dispatch(updateCourseUnitSidebar(blockId));
         localStorage.removeItem(event.key);
       }
     };
@@ -254,6 +258,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     isUnitVerticalType,
     isUnitLibraryType,
     isSplitTestType,
+    isProblemBankType,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,

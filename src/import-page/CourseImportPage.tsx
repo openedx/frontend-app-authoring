@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -8,11 +8,12 @@ import {
 import Cookies from 'universal-cookie';
 import { Helmet } from 'react-helmet';
 
-import SubHeader from '../generic/sub-header/SubHeader';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import { RequestStatus } from '../data/constants';
-import { useModel } from '../generic/model-store';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import { RequestStatus } from '@src/data/constants';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import {
   updateFileName, updateImportTriggered, updateSavingStatus, updateSuccessDate,
 } from './data/slice';
@@ -23,11 +24,11 @@ import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
 
-const CourseImportPage = ({ courseId }: { courseId: string }) => {
+const CourseImportPage = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const cookies = new Cookies();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const importTriggered = useSelector(getImportTriggered);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);

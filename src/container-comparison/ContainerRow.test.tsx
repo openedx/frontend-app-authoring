@@ -29,20 +29,6 @@ describe('<ContainerRow />', () => {
     )).toBeInTheDocument();
   });
 
-  test('is not clickable when state !== modified', async () => {
-    const onClick = jest.fn();
-    render(<ContainerRow
-      title="Test title"
-      containerType="subsection"
-      side="Before"
-      state="removed"
-      onClick={onClick}
-    />);
-    const titleDiv = await screen.findByText('Test title');
-    const card = titleDiv.closest('.clickable');
-    expect(card).toBe(null);
-  });
-
   test('calls onClick when clicked', async () => {
     const onClick = jest.fn();
     const user = userEvent.setup();
@@ -81,6 +67,17 @@ describe('<ContainerRow />', () => {
   test('renders with originalName', async () => {
     render(<ContainerRow title="Test title" containerType="subsection" side="Before" state="locallyRenamed" originalName="Modified name" />);
     expect(await screen.findByText(messages.renamedDiffBeforeMessage.defaultMessage.replace('{name}', 'Modified name'))).toBeInTheDocument();
+  });
+
+  test('renders with local content update', async () => {
+    render(<ContainerRow title="Test title" containerType="html" side="Before" state="locallyContentUpdated" />);
+    expect(await screen.findByText(messages.locallyContentUpdatedBeforeMessage.defaultMessage.replace('{blockType}', 'html'))).toBeInTheDocument();
+  });
+
+  test('renders with rename and local content update', async () => {
+    render(<ContainerRow title="Test title" containerType="html" side="Before" state="locallyRenamedAndContentUpdated" originalName="Modified name" />);
+    expect(await screen.findByText(messages.renamedDiffBeforeMessage.defaultMessage.replace('{name}', 'Modified name'))).toBeInTheDocument();
+    expect(await screen.findByText(messages.locallyContentUpdatedBeforeMessage.defaultMessage.replace('{blockType}', 'html'))).toBeInTheDocument();
   });
 
   test('renders with moved state', async () => {
