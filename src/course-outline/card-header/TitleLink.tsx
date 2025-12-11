@@ -15,7 +15,7 @@ const TitleLink = ({
   prefixIcon,
 }: TitleLinkProps) => (
   <>
-    <div className="mr-2 mb-1">
+    <div className="mr-2">
       {prefixIcon}
     </div>
     <Button

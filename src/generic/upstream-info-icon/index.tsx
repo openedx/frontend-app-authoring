@@ -124,8 +124,7 @@ export const UpstreamInfoIcon: React.FC<UpstreamInfoIconProps & { openSyncModal:
     return (
       <Button
         variant="tertiary"
-        size="inline"
-        className="border-0 px-0"
+        className="border-0 px-0 py-0"
         onClick={handleSyncModal}
       >
         <UpstreamInfoIconContent upstreamInfo={upstreamInfo} size={size} />
