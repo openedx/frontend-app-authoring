@@ -18,6 +18,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { TextEditorPluginSlot } from '../../../plugin-slots/TextEditorPluginSlot';
 
 const TextEditor = ({
   onClose,
@@ -97,7 +98,29 @@ const TextEditor = ({
                 screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
               />
             </div>
-          ) : (selectEditor())}
+          ) : (
+            <>
+              <TextEditorPluginSlot
+                updateContent={(newContent) => {
+                  // Update the editor
+                  if (showRawEditor && editorRef?.current) {
+                    const transaction = editorRef.current.state.update({
+                      changes: {
+                        from: 0,
+                        to: editorRef.current.state.doc.length,
+                        insert: newContent,
+                      },
+                    });
+                    editorRef.current.dispatch(transaction);
+                  } else if (editorRef?.current) {
+                    editorRef.current.setContent(newContent);
+                  }
+                }}
+                blockType="html"
+              />
+              {selectEditor()}
+            </>
+          )}
       </div>
     </EditorContainer>
   );
