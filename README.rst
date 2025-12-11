@@ -175,10 +175,6 @@ Feature: New Proctoring Exams View
 Requirements
 ------------
 
-* ``edx-platform`` Django settings:
-
-  * ``ZENDESK_*``: necessary if automatic ZenDesk ticket creation is desired
-
 * `edx-exams <https://github.com/edx/edx-exams>`_: for this feature to work, the ``edx-exams`` IDA must be deployed and its API accessible by the browser
 
 Configuration
