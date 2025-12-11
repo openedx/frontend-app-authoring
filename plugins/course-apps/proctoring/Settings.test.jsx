@@ -603,7 +603,7 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'lti_external',
-          proctoring_escalation_email: 'test_lti@example.com'
+          proctoring_escalation_email: 'test_lti@example.com',
         },
       });
       expect(axiosMock.history.patch.length).toBe(1);
@@ -675,7 +675,7 @@ describe('ProctoredExamSettings', () => {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'lti_external',
-          proctoring_escalation_email: 'test_lti@example.com'
+          proctoring_escalation_email: 'test_lti@example.com',
         },
       });
 
