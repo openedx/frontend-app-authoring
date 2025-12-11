@@ -1,3 +1,4 @@
+import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
 import {
   fireEvent,
   render as baseRender,
@@ -11,7 +12,6 @@ import { getClipboardUrl } from '../../generic/data/api';
 import { ContentHit } from '../../search-manager';
 import ComponentCard from './ComponentCard';
 import { PublishStatus } from '../../search-manager/data/api';
-import { mockContentLibrary } from '../data/api.mocks';
 
 const mockNavigate = jest.fn();
 
@@ -49,7 +49,7 @@ const contentHit: ContentHit = {
   publishStatus: PublishStatus.Published,
 };
 
-const libraryId = mockContentLibrary.libraryId;
+const { libraryId } = mockContentLibrary;
 const render = (libId: string = libraryId) => baseRender(<ComponentCard hit={contentHit} />, {
   path: '/library/:libraryId',
   params: { libraryId: libId },
