@@ -8,6 +8,8 @@ export interface PageBannerSlotProps {
   onDismiss: () => void;
   className: string;
   children: ReactNode;
+  variant?: string;
+  dismissAltText?: string;
 }
 
 const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
@@ -16,22 +18,27 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
   onDismiss,
   className,
   children,
+  variant = 'info',
+  dismissAltText = 'Dismiss',
 }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
     idAliases={['page_banner_slot']}
     pluginProps={{
-      show, dismissible, onDismiss, className,
+      show, dismissible, onDismiss, className, variant, dismissAltText,
     }}
   >
-    <PageBanner
-      show={show}
-      dismissible={dismissible}
-      onDismiss={onDismiss}
-      className={className}
-    >
-      {children}
-    </PageBanner>
+    <div className={className}>
+      <PageBanner
+        show={show}
+        dismissible={dismissible}
+        onDismiss={onDismiss}
+        variant={variant as any}
+        dismissAltText={dismissAltText}
+      >
+        {children}
+      </PageBanner>
+    </div>
   </PluginSlot>
 );
 
