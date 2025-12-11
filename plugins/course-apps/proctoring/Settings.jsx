@@ -84,13 +84,7 @@ const ProctoringSettings = ({ onClose }) => {
       setFormValues({ ...formValues, [name]: value === 'true' });
     } else if (name === 'proctoringProvider') {
       const newFormValues = { ...formValues, proctoringProvider: value };
-      if (value === 'proctortrack') {
-        setFormValues(newFormValues);
-        setShowEscalationEmail(true);
-      } else if (value === 'software_secure') {
-        setFormValues({ ...newFormValues });
-        setShowEscalationEmail(false);
-
+      
       if (requiresEscalationEmailProviders.includes(value)) {
         setFormValues({ ...newFormValues });
         setShowEscalationEmail(true);
