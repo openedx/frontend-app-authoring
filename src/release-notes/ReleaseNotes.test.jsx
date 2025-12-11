@@ -21,6 +21,7 @@ jest.mock('@edx/frontend-platform/auth', () => ({
 const mockUseReleaseNotes = {
   requestType: null,
   notes: [],
+  hasAccess: false,
   notesInitialValues: {},
   isFormOpen: false,
   isDeleteModalOpen: false,
@@ -138,6 +139,10 @@ describe('ReleaseNotes', () => {
 
     test('renders New Post button for admin users', () => {
       getAuthenticatedUser.mockReturnValue({ administrator: true });
+      useReleaseNotes.mockReturnValue({
+        ...mockUseReleaseNotes,
+        hasAccess: true,
+      });
       renderReleaseNotes();
       expect(screen.getByRole('button', { name: messages.newPostButton.defaultMessage })).toBeInTheDocument();
     });
@@ -176,6 +181,7 @@ describe('ReleaseNotes', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
         notes: [mockReleaseNotes[0]],
+        hasAccess: true,
       });
       renderReleaseNotes();
       expect(screen.getByTestId('release-note-edit-button')).toBeInTheDocument();
@@ -186,6 +192,7 @@ describe('ReleaseNotes', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
         notes: [mockReleaseNotes[0]],
+        hasAccess: true,
       });
       renderReleaseNotes();
       expect(screen.getByTestId('release-note-delete-button')).toBeInTheDocument();
@@ -251,6 +258,7 @@ describe('ReleaseNotes', () => {
       getAuthenticatedUser.mockReturnValue({ administrator: true });
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
+        hasAccess: true,
         handleOpenUpdateForm,
       });
       renderReleaseNotes();
@@ -344,6 +352,7 @@ describe('ReleaseNotes', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
         notes: [mockReleaseNotes[0]],
+        hasAccess: true,
         isFormOpen: true,
       });
       renderReleaseNotes();
@@ -360,6 +369,7 @@ describe('ReleaseNotes', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
         notes: [mockReleaseNotes[0]],
+        hasAccess: true,
         handleOpenUpdateForm,
       });
       renderReleaseNotes();
@@ -375,6 +385,7 @@ describe('ReleaseNotes', () => {
       useReleaseNotes.mockReturnValue({
         ...mockUseReleaseNotes,
         notes: [mockReleaseNotes[0]],
+        hasAccess: true,
         handleOpenDeleteForm,
       });
       renderReleaseNotes();

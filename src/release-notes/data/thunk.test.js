@@ -40,8 +40,9 @@ describe('release-notes thunks', () => {
 
     expect(actions[0].type).toBe(updateLoadingStatuses.type);
     const success = actions.find(a => a.type === fetchReleaseNotesSuccess.type);
-    expect(success.payload[0].id).toBe(2);
-    expect(success.payload[0]).toEqual(expect.objectContaining({ description: '<p>b</p>', published_at: expect.any(String), created_by: 'b@x' }));
+    expect(success.payload.notes[0].id).toBe(2);
+    expect(success.payload.notes[0]).toEqual(expect.objectContaining({ description: '<p>b</p>', published_at: expect.any(String), created_by: 'b@x' }));
+    expect(success.payload.hasAccess).toBe(false);
     const last = actions[actions.length - 1];
     expect(last.type).toBe(updateLoadingStatuses.type);
     expect(last.payload.status.fetchReleaseNotesQuery).toBe(RequestStatus.SUCCESSFUL);

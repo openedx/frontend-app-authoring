@@ -20,8 +20,10 @@ export function fetchReleaseNotesQuery() {
   return async (dispatch) => {
     try {
       dispatch(updateLoadingStatuses({ fetchReleaseNotesQuery: RequestStatus.IN_PROGRESS }));
-      const notes = await getReleaseNotes();
-      const normalized = (notes || []).map((n) => ({
+      const response = await getReleaseNotes();
+      const notesList = Array.isArray(response) ? response : (response.results || []);
+      const hasAccess = response.hasAccess || false;
+      const normalized = (notesList || []).map((n) => ({
         id: n.id,
         title: n.title,
         description: n.rawHtmlContent,
@@ -33,7 +35,7 @@ export function fetchReleaseNotesQuery() {
           const tb = b.published_at ? Date.parse(b.published_at) : -Infinity;
           return tb - ta;
         });
-      dispatch(fetchReleaseNotesSuccess(normalized));
+      dispatch(fetchReleaseNotesSuccess({ notes: normalized, hasAccess }));
       dispatch(updateLoadingStatuses({
         status: { fetchReleaseNotesQuery: RequestStatus.SUCCESSFUL },
         error: { loadingNotes: false },

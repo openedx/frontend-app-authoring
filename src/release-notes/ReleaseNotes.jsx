@@ -16,7 +16,6 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import moment from 'moment';
-import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
@@ -30,13 +29,13 @@ import unsavedMessages from './update-form/unsaved-modal-messages';
 
 const ReleaseNotes = () => {
   const intl = useIntl();
-  const { administrator } = getAuthenticatedUser() || {};
   const isDirtyCheckRef = React.useRef(() => false);
   const showUnsavedModalRef = React.useRef(null);
   const [isUnsavedModalOpen, setIsUnsavedModalOpen] = React.useState(false);
   const {
     requestType,
     notes,
+    hasAccess,
     notesInitialValues,
     isFormOpen,
     isDeleteModalOpen,
@@ -140,7 +139,7 @@ const ReleaseNotes = () => {
             subtitle=""
             instruction=""
             hideBorder
-            headerActions={administrator && !errors.loadingNotes ? (
+            headerActions={hasAccess && !errors.loadingNotes ? (
               <Button
                 variant="primary"
                 iconBefore={AddIcon}
@@ -204,7 +203,7 @@ const ReleaseNotes = () => {
                                 )}
                                 <div className="d-flex align-items-center mb-1 justify-content-between">
                                   <h3 className="m-0 post-title">{post.title}</h3>
-                                  {administrator && (
+                                  {hasAccess && (
                                     <div className="ml-3 d-flex">
                                       <IconButtonWithTooltip
                                         tooltipContent={intl.formatMessage(messages.editButton)}

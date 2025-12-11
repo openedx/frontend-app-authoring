@@ -4,6 +4,7 @@ import { sortBy } from 'lodash';
 
 const initialState = {
   releaseNotes: [],
+  hasAccess: false,
   savingStatuses: {
     createReleaseNoteQuery: '',
     editReleaseNoteQuery: '',
@@ -25,7 +26,8 @@ const slice = createSlice({
   initialState,
   reducers: {
     fetchReleaseNotesSuccess: (state, { payload }) => {
-      state.releaseNotes = payload;
+      state.releaseNotes = payload.notes || payload;
+      state.hasAccess = payload.hasAccess || false;
     },
     createReleaseNote: (state, { payload }) => {
       state.releaseNotes = [payload, ...state.releaseNotes];

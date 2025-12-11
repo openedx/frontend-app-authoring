@@ -12,6 +12,7 @@ import {
 } from './data/thunk';
 import {
   getReleaseNotes as selectReleaseNotes,
+  getHasAccess,
   getLoadingStatuses,
   getSavingStatuses,
   getErrors,
@@ -29,6 +30,7 @@ const useReleaseNotes = () => {
   const [currentNote, setCurrentNote] = useState(initialNote);
 
   const notes = useSelector(selectReleaseNotes) || [];
+  const hasAccess = useSelector(getHasAccess);
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
   const errors = useSelector(getErrors);
@@ -102,6 +104,7 @@ const useReleaseNotes = () => {
   return {
     requestType,
     notes,
+    hasAccess,
     notesInitialValues,
     isMainFormOpen: isFormOpen && requestType !== REQUEST_TYPES.edit_update,
     isInnerFormOpen: (id) => (
