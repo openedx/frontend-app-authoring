@@ -47,7 +47,9 @@ const TitleButton = ({
         onClick={onTitleClick}
         title={title}
       >
-        {prefixIcon}
+        <div className="mr-2">
+          {prefixIcon}
+        </div>
         <span className={`${namePrefix}-card-title mb-0 truncate-1-line`}>
           {title}
         </span>
