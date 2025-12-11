@@ -175,10 +175,6 @@ Feature: New Proctoring Exams View
 Requirements
 ------------
 
-* ``edx-platform`` Django settings:
-
-  * ``ZENDESK_*``: necessary if automatic ZenDesk ticket creation is desired
-
 * `edx-exams <https://github.com/edx/edx-exams>`_: for this feature to work, the ``edx-exams`` IDA must be deployed and its API accessible by the browser
 
 Configuration
@@ -196,7 +192,6 @@ In Studio, a new item ("Proctored Exam Settings") is added to "Other Course Sett
 * Enable proctored exams for the course
 * Allow opting out of proctored exams
 * Select a proctoring provider
-* Enable automatic creation of Zendesk tickets for "suspicious" proctored exam attempts
 
 Feature: Advanced Settings
 ==========================

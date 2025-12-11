@@ -62,7 +62,6 @@ module.exports = {
     highlightsPreviewOnly: false,
     highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
     enableProctoredExams: true,
-    createZendeskTickets: true,
     enableTimedExams: true,
     childInfo: {
       category: 'chapter',
