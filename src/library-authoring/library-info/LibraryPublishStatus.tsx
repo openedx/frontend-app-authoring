@@ -12,7 +12,7 @@ import messages from './messages';
 
 const LibraryPublishStatus = () => {
   const intl = useIntl();
-  const { libraryData, readOnly } = useLibraryContext();
+  const { libraryData, readOnly, canPublish } = useLibraryContext();
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
 
   const commitLibraryChanges = useCommitLibraryChanges();
@@ -51,10 +51,10 @@ const LibraryPublishStatus = () => {
     <>
       <StatusWidget
         {...libraryData}
-        onCommit={!readOnly ? commit : undefined}
+        onCommit={!readOnly && canPublish ? commit : undefined}
         onCommitStatus={commitLibraryChanges.status}
         onCommitLabel={intl.formatMessage(messages.publishLibraryButtonLabel)}
-        onRevert={!readOnly ? openConfirmModal : undefined}
+        onRevert={!readOnly && canPublish ? openConfirmModal : undefined}
       />
       <DeleteModal
         isOpen={isConfirmModalOpen}

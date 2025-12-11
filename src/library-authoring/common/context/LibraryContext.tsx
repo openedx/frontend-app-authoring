@@ -7,6 +7,8 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
@@ -25,6 +27,7 @@ export type LibraryContextData = {
   libraryId: string;
   libraryData?: ContentLibrary;
   readOnly: boolean;
+  canPublish: boolean;
   isLoadingLibraryData: boolean;
   /** The ID of the current collection/container, on the sidebar OR page */
   collectionId: string | undefined;
@@ -107,6 +110,13 @@ export const LibraryProvider = ({
     componentPickerMode,
   } = useComponentPickerContext();
 
+  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
+    canPublish: {
+      action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
+      scope: libraryId,
+    },
+  });
+  const canPublish = userPermissions?.canPublish || false;
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params
@@ -131,7 +141,8 @@ export const LibraryProvider = ({
       containerId,
       setContainerId,
       readOnly,
-      isLoadingLibraryData,
+      canPublish,
+      isLoadingLibraryData: isLoadingLibraryData || isLoadingUserPermissions,
       showOnlyPublished,
       extraFilter,
       isCreateCollectionModalOpen,
@@ -154,7 +165,9 @@ export const LibraryProvider = ({
     containerId,
     setContainerId,
     readOnly,
+    canPublish,
     isLoadingLibraryData,
+    isLoadingUserPermissions,
     showOnlyPublished,
     extraFilter,
     isCreateCollectionModalOpen,

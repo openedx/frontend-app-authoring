@@ -435,7 +435,7 @@ describe('<CreateLibrary />', () => {
         sections: 8,
         subsections: 12,
         units: 20,
-        createdOnServer: '2025-01-01T10:00:00Z',
+        createdOnServer: 'test.com',
         createdAt: '2025-01-01T10:00:00Z',
         createdBy: {
           username: 'testuser',
@@ -478,7 +478,67 @@ describe('<CreateLibrary />', () => {
       await waitFor(() => {
         expect(screen.getByText('Test Archive Library')).toBeInTheDocument();
         expect(screen.getByText('TestOrg / test-archive')).toBeInTheDocument();
-        expect(screen.getByText(/Contains 15 Components/i)).toBeInTheDocument();
+        // Testing the archive details summary
+        expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
+        expect(screen.getByText(/Created on instance test.com/i)).toBeInTheDocument();
+        expect(screen.getByText(/by user test@example.com/i)).toBeInTheDocument();
+      });
+    });
+
+    test('shows success state without instance and user email information', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+
+      const mockResult = {
+        learningPackageId: 123,
+        title: 'Test Archive Library',
+        org: 'TestOrg',
+        slug: 'test-archive',
+        key: 'TestOrg/test-archive',
+        archiveKey: 'archive-key',
+        containers: 5,
+        components: 15,
+        collections: 3,
+        sections: 8,
+        subsections: 12,
+        units: 20,
+        createdOnServer: null,
+        createdAt: '2025-01-01T10:00:00Z',
+        createdBy: null,
+      };
+
+      // Pre-set the restore status to succeeded
+      mockRestoreStatusData = {
+        state: LibraryRestoreStatus.Succeeded,
+        result: mockResult,
+        error: null,
+        errorLog: null,
+      };
+
+      // Mock the restore mutation to return a task ID
+      mockRestoreMutate.mockImplementation((_file: File, { onSuccess }: any) => {
+        onSuccess({ taskId: 'task-123' });
+      });
+
+      render(<CreateLibrary />);
+
+      // Switch to archive mode
+      const createFromArchiveBtn = await screen.findByRole('button', { name: messages.createFromArchiveButton.defaultMessage });
+      await user.click(createFromArchiveBtn);
+
+      // Upload a file to trigger the restore process
+      const file = new File(['test content'], 'test-archive.zip', { type: 'application/zip' });
+      const dropzone = screen.getByRole('presentation', { hidden: true });
+      const input = dropzone.querySelector('input[type="file"]') as HTMLInputElement;
+
+      await user.upload(input, file);
+
+      // Wait for the restore to complete and archive details to be shown
+      await waitFor(() => {
+        // Testing the archive details summary without instance and user email
+        expect(screen.getByText(/Contains 8 sections, 12 subsections, 20 units, 15 components/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Created on instance/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/by user/i)).not.toBeInTheDocument();
       });
     });
 

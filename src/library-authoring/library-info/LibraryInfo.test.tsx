@@ -8,6 +8,7 @@ import {
   waitFor,
   initializeMocks,
 } from '@src/testUtils';
+import { validateUserPermissions } from '@src/authz/data/api';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -33,6 +34,7 @@ const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof validateUserPermissions>;
 
 mockContentLibrary.applyMock();
 
@@ -41,6 +43,9 @@ describe('<LibraryInfo />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+
+    validateUserPermissionsMock.mockResolvedValue({ canPublish: true });
   });
 
   afterEach(() => {
