@@ -196,7 +196,6 @@ In Studio, a new item ("Proctored Exam Settings") is added to "Other Course Sett
 * Enable proctored exams for the course
 * Allow opting out of proctored exams
 * Select a proctoring provider
-* Enable automatic creation of Zendesk tickets for "suspicious" proctored exam attempts
 
 Feature: Advanced Settings
 ==========================

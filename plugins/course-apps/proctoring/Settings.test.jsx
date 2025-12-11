@@ -78,7 +78,6 @@ describe('ProctoredExamSettings', () => {
         allow_proctoring_opt_out: false,
         proctoring_provider: 'mockproc',
         proctoring_escalation_email: 'test@example.com',
-        create_zendesk_tickets: true,
       },
       available_proctoring_providers: ['software_secure', 'mockproc', 'lti_external'],
       requires_escalation_email_providers: ['test_lti'],
@@ -106,7 +105,6 @@ describe('ProctoredExamSettings', () => {
           allow_proctoring_opt_out: false,
           proctoring_provider: 'mockproc',
           proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: true,
         },
         available_proctoring_providers: ['software_secure', 'mockproc'],
         requires_escalation_email_providers: [],
@@ -149,8 +147,6 @@ describe('ProctoredExamSettings', () => {
       const selectElement = screen.getByDisplayValue('mockproc');
       fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       expect(screen.queryByTestId('allowOptingOutRadio')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
-      expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
     });
   });
 
