@@ -60,9 +60,10 @@ const GroupConfigurations = ({ courseId }) => {
   }
 
   const enrollmentTrackGroup = shouldShowEnrollmentTrack
-    ? allGroupConfigurations[0]
+    ? allGroupConfigurations?.find((config) => config.scheme === 'enrollment_track')
     : null;
-  const contentGroup = allGroupConfigurations?.[shouldShowEnrollmentTrack ? 1 : 0];
+  const contentTypeGateGroup = allGroupConfigurations?.find((config) => config.scheme === 'content_type_gate');
+  const contentGroup = allGroupConfigurations?.find((config) => config.scheme === 'cohort');
 
   return (
     <>
@@ -87,6 +88,11 @@ const GroupConfigurations = ({ courseId }) => {
               {!!enrollmentTrackGroup && (
                 <EnrollmentTrackGroupsSection
                   availableGroup={enrollmentTrackGroup}
+                />
+              )}
+              {!!contentTypeGateGroup && (
+                <EnrollmentTrackGroupsSection
+                  availableGroup={contentTypeGateGroup}
                 />
               )}
               {!!contentGroup && (
