@@ -3,11 +3,11 @@ import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { PageBanner } from '@openedx/paragon';
 
 export interface PageBannerSlotProps {
-  show?: boolean;
-  dismissible?: boolean;
-  onDismiss?: () => void;
-  className?: string;
-  children?: ReactNode;
+  show: boolean;
+  dismissible: boolean;
+  onDismiss: () => void;
+  className: string;
+  children: ReactNode;
 }
 
 const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
