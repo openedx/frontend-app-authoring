@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form, IconButton, useToggle } from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  Badge, Form, Icon, IconButton, Stack, useToggle,
+} from '@openedx/paragon';
 import {
   EditOutline as EditIcon,
+  Groups,
+  Lock,
+  QuestionAnswer,
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
 
@@ -13,6 +18,90 @@ import { COURSE_BLOCK_NAMES } from '../../constants';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
+import { UNIT_VISIBILITY_STATES } from '../constants';
+
+const StatusBar = ({ courseUnit }) => {
+  const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
+  const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
+
+  let visibilityChipData = {
+    variant: 'success',
+    className: 'bg-white text-success-400 border border-success-500',
+    text: messages.statusBarUpcomingBadge,
+  };
+  let publishStatusChipData = {
+    variant: 'light',
+    className: '',
+    text: messages.statusBarUnpublishedBadge,
+  };
+
+  if (courseUnit.currentlyVisibleToStudents) {
+    visibilityChipData = {
+      variant: 'success',
+      className: '',
+      text: messages.statusBarLiveBadge,
+    };
+  } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.ready) {
+    visibilityChipData = {
+      variant: 'success',
+      className: 'bg-white text-success-400 border border-success-500',
+      text: messages.statusBarReadyBadge,
+    };
+  }
+
+  if (courseUnit.published) {
+    if (courseUnit.hasChanges) {
+      publishStatusChipData = {
+        variant: 'warning',
+        className: 'bg-warning-500 text-primary-700 border border-warning-300',
+        text: messages.statusBarDraftChangesBadge,
+      };
+    } else {
+      publishStatusChipData = {
+        variant: 'success',
+        className: '',
+        text: messages.statusBarPublishedBadge,
+      };
+    }
+  }
+
+  return (
+    <Stack direction="horizontal" gap={3}>
+      <Badge
+        variant={visibilityChipData.variant}
+        className={`px-3 py-2 ${visibilityChipData.className}`}
+      >
+        <FormattedMessage {...visibilityChipData.text} />
+      </Badge>
+      <Badge
+        variant={publishStatusChipData.variant}
+        className={`px-3 py-2 ${publishStatusChipData.className}`}
+      >
+        <FormattedMessage {...publishStatusChipData.text} />
+      </Badge>
+      {courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly && (
+        <Stack direction="horizontal" gap={1}>
+          <Icon src={Lock} />
+          <FormattedMessage {...messages.statusBarStaffOnly} />
+        </Stack>
+      )}
+      {hasGroups && (
+        <Stack direction="horizontal" gap={1}>
+          <Icon src={Groups} />
+          <span>
+            {selectedGroupsLabel}
+          </span>
+        </Stack>
+      )}
+      {courseUnit.discussionEnabled && (
+        <Stack direction="horizontal" gap={1}>
+          <Icon src={QuestionAnswer} />
+          <FormattedMessage {...messages.statusBarDiscussionsEnabled} />
+        </Stack>
+      )}
+    </Stack>
+  );
+};
 
 const HeaderTitle = ({
   unitTitle,
@@ -26,7 +115,6 @@ const HeaderTitle = ({
   const [titleValue, setTitleValue] = useState(unitTitle);
   const currentItemData = useSelector(getCourseUnitData);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
-  const { selectedPartitionIndex, selectedGroupsLabel } = currentItemData.userPartitionInfo ?? {};
 
   const isXBlockComponent = [
     COURSE_BLOCK_NAMES.libraryContent.id,
@@ -41,9 +129,7 @@ const HeaderTitle = ({
   const getVisibilityMessage = () => {
     let message;
 
-    if (selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel) {
-      message = intl.formatMessage(messages.definedVisibilityMessage, { selectedGroupsLabel });
-    } else if (currentItemData.hasPartitionGroupComponents) {
+    if (currentItemData.hasPartitionGroupComponents) {
       message = intl.formatMessage(messages.commonVisibilityMessage);
     }
 
@@ -96,6 +182,9 @@ const HeaderTitle = ({
           isXBlockComponent={isXBlockComponent}
           userPartitionInfo={currentItemData?.userPartitionInfo || {}}
         />
+      </div>
+      <div className="h5 font-weight-normal">
+        <StatusBar courseUnit={currentItemData} />
       </div>
       {getVisibilityMessage()}
     </>
