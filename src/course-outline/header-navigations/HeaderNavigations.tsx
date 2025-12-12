@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import {
@@ -8,7 +7,23 @@ import {
   ArrowDropUp as ArrowUpIcon,
 } from '@openedx/paragon/icons';
 
+import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import messages from './messages';
+
+export interface HeaderNavigationsProps {
+  isReIndexShow: boolean,
+  isSectionsExpanded: boolean,
+  isDisabledReindexButton: boolean,
+  headerNavigationsActions: {
+    handleNewSection: () => void,
+    handleReIndex: () => void,
+    handleExpandAll: () => void,
+    lmsLink: string,
+  },
+  hasSections: boolean,
+  courseActions: XBlockActions,
+  errors?: OutlinePageErrors,
+}
 
 const HeaderNavigations = ({
   headerNavigationsActions,
@@ -18,7 +33,7 @@ const HeaderNavigations = ({
   hasSections,
   courseActions,
   errors,
-}) => {
+}: HeaderNavigationsProps) => {
   const intl = useIntl();
   const {
     handleNewSection, handleReIndex, handleExpandAll, lmsLink,
@@ -38,7 +53,7 @@ const HeaderNavigations = ({
           <Button
             iconBefore={IconAdd}
             onClick={handleNewSection}
-            disabled={errors?.outlineIndexApi}
+            disabled={!(errors?.outlineIndexApi === undefined || errors?.outlineIndexApi === null)}
           >
             {intl.formatMessage(messages.newSectionButton)}
           </Button>
@@ -94,47 +109,6 @@ const HeaderNavigations = ({
       </OverlayTrigger>
     </>
   );
-};
-
-HeaderNavigations.defaultProps = {
-  errors: {},
-};
-
-HeaderNavigations.propTypes = {
-  isReIndexShow: PropTypes.bool.isRequired,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  isDisabledReindexButton: PropTypes.bool.isRequired,
-  headerNavigationsActions: PropTypes.shape({
-    handleNewSection: PropTypes.func.isRequired,
-    handleReIndex: PropTypes.func.isRequired,
-    handleExpandAll: PropTypes.func.isRequired,
-    lmsLink: PropTypes.string.isRequired,
-  }).isRequired,
-  hasSections: PropTypes.bool.isRequired,
-  courseActions: PropTypes.shape({
-    deletable: PropTypes.bool.isRequired,
-    draggable: PropTypes.bool.isRequired,
-    childAddable: PropTypes.bool.isRequired,
-    duplicable: PropTypes.bool.isRequired,
-  }).isRequired,
-  errors: PropTypes.shape({
-    outlineIndexApi: PropTypes.shape({
-      data: PropTypes.string,
-      type: PropTypes.string.isRequired,
-    }),
-    reindexApi: PropTypes.shape({
-      data: PropTypes.string,
-      type: PropTypes.string.isRequired,
-    }),
-    sectionLoadingApi: PropTypes.shape({
-      data: PropTypes.string,
-      type: PropTypes.string.isRequired,
-    }),
-    courseLaunchApi: PropTypes.shape({
-      data: PropTypes.string,
-      type: PropTypes.string.isRequired,
-    }),
-  }),
 };
 
 export default HeaderNavigations;

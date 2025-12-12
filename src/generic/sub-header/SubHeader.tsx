@@ -1,20 +1,32 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { ActionRow } from '@openedx/paragon';
+import { ReactElement } from 'react';
+
+interface SubHeaderProps {
+  title: ReactElement | string | null;
+  subtitle?: string;
+  breadcrumbs?: ReactElement | ReactElement[] | string | null;
+  contentTitle?: string;
+  description?: string;
+  instruction?: ReactElement | string,
+  headerActions?: ReactElement | ReactElement[] | null;
+  titleActions?: ReactElement | ReactElement[] | null;
+  hideBorder?: boolean;
+  withSubHeaderContent?: boolean;
+}
 
 const SubHeader = ({
   title,
-  subtitle,
+  subtitle = '',
   breadcrumbs,
   contentTitle,
-  description,
+  description = '',
   instruction,
   headerActions,
   titleActions,
-  hideBorder,
-  withSubHeaderContent,
-}) => (
-  <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-3`}>
+  hideBorder = false,
+  withSubHeaderContent = true,
+}: SubHeaderProps) => (
+  <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-2`}>
     {breadcrumbs && (
       <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
     )}
@@ -46,37 +58,4 @@ const SubHeader = ({
   </div>
 );
 
-SubHeader.defaultProps = {
-  instruction: '',
-  description: '',
-  subtitle: '',
-  breadcrumbs: '',
-  contentTitle: '',
-  headerActions: null,
-  titleActions: null,
-  hideBorder: false,
-  withSubHeaderContent: true,
-};
-
-SubHeader.propTypes = {
-  title: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.string,
-  ]).isRequired,
-  subtitle: PropTypes.string,
-  breadcrumbs: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.string,
-  ]),
-  contentTitle: PropTypes.string,
-  description: PropTypes.string,
-  instruction: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.string,
-  ]),
-  headerActions: PropTypes.node,
-  titleActions: PropTypes.node,
-  hideBorder: PropTypes.bool,
-  withSubHeaderContent: PropTypes.bool,
-};
 export default SubHeader;

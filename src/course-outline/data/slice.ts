@@ -22,6 +22,7 @@ const initialState = {
   savingStatus: '',
   statusBarData: {
     courseReleaseDate: '',
+    endDate: '',
     highlightsEnabledForMessaging: false,
     isSelfPaced: false,
     checklist: {
