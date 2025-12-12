@@ -49,6 +49,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.header-navigations.button.view-live',
     defaultMessage: 'View live',
   },
+  moreActionsButtonAriaLabel: {
+    id: 'course-authoring.course-outline.header-navigations.button.more-actions.aria-label',
+    defaultMessage: 'More actions',
+    description: 'More actions button aria label in course outline'
+  },
   viewLiveButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.view-live.tooltip',
     defaultMessage: 'Click to open the courseware in the LMS in a new tab',

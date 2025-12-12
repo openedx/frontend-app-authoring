@@ -69,7 +69,7 @@ const HeaderActions = ({
           id="dropdown-toggle-with-iconbutton"
           as={Button}
           variant="outline-primary"
-          aria-label="More actions"
+          aria-label={intl.formatMessage(messages.moreActionsButtonAriaLabel)}
         >
           <Icon src={ViewSidebar} />
         </Dropdown.Toggle>
