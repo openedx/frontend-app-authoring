@@ -63,6 +63,7 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { SidebarProvider } from './common/context/SidebarContext';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -279,7 +280,7 @@ const CourseOutline = () => {
   }
 
   return (
-    <>
+    <SidebarProvider>
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
@@ -577,7 +578,7 @@ const CourseOutline = () => {
           {toastMessage}
         </Toast>
       )}
-    </>
+    </SidebarProvider>
   );
 };
 
