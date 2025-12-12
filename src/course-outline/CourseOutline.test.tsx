@@ -1,4 +1,4 @@
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
@@ -2483,5 +2483,17 @@ describe('<CourseOutline />', () => {
       expect(axiosMock.history.delete).toHaveLength(1);
     });
     expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
+  });
+
+  it('check that the new status bar and expand bar is shown when flag is set', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    expect(await screen.findByRole('button', { name: 'Collapse all' })).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Add' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'More actions' })).toBeInTheDocument();
   });
 });
