@@ -24,7 +24,7 @@ const SubHeader = ({
   headerActions,
   titleActions,
   hideBorder = false,
-  withSubHeaderContent,
+  withSubHeaderContent = true,
 }: SubHeaderProps) => (
   <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-2`}>
     {breadcrumbs && (

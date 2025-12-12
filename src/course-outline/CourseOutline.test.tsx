@@ -184,7 +184,7 @@ describe('<CourseOutline />', () => {
   it('render CourseOutline component correctly', async () => {
     renderComponent();
 
-    expect(await screen.findByText("Demonstration Course")).toBeInTheDocument();
+    expect(await screen.findByText('Demonstration Course')).toBeInTheDocument();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
