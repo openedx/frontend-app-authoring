@@ -74,6 +74,7 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
+
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   const readOnly = !!courseUnit.readOnly;
@@ -121,7 +122,7 @@ const CourseUnit = () => {
                   : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
                 aria-hidden={movedXBlockParams.isSuccess}
                 dismissible
-                actions={movedXBlockParams.isUndo ? null : [
+                actions={movedXBlockParams.isUndo ? undefined : [
                   <Button
                     onClick={handleRollbackMovedXBlock}
                     key="xblock-moved-alert-undo-move-button"
@@ -146,7 +147,6 @@ const CourseUnit = () => {
                 {
                   link: (
                     <Alert.Link
-                      className="ml-1"
                       href={courseUnit.upstreamInfo.upstreamLink}
                     >
                       {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
@@ -208,15 +208,17 @@ const CourseUnit = () => {
                   courseId={courseId}
                 />
               )}
-              <XBlockContainerIframe
-                courseId={courseId}
-                blockId={blockId}
-                isUnitVerticalType={isUnitVerticalType}
-                unitXBlockActions={unitXBlockActions}
-                courseVerticalChildren={courseVerticalChildren.children}
-                handleConfigureSubmit={handleConfigureSubmit}
-              />
-              {!readOnly && (
+              {blockId && (
+                <XBlockContainerIframe
+                  courseId={courseId}
+                  blockId={blockId}
+                  isUnitVerticalType={isUnitVerticalType}
+                  unitXBlockActions={unitXBlockActions}
+                  courseVerticalChildren={courseVerticalChildren.children}
+                  handleConfigureSubmit={handleConfigureSubmit}
+                />
+              )}
+              {!readOnly && blockId && (
                 <AddComponent
                   parentLocator={blockId}
                   isSplitTestType={isSplitTestType}
@@ -226,7 +228,7 @@ const CourseUnit = () => {
                   addComponentTemplateData={addComponentTemplateData}
                 />
               )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && (
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={
@@ -244,15 +246,17 @@ const CourseUnit = () => {
               <IframePreviewLibraryXBlockChanges />
             </Layout.Element>
             <Layout.Element>
-              <CourseAuthoringUnitSidebarSlot
-                courseId={courseId}
-                blockId={blockId}
-                unitTitle={unitTitle}
-                xBlocks={courseVerticalChildren.children}
-                readOnly={readOnly}
-                isUnitVerticalType={isUnitVerticalType}
-                isSplitTestType={isSplitTestType}
-              />
+              {blockId && (
+                <CourseAuthoringUnitSidebarSlot
+                  courseId={courseId}
+                  blockId={blockId}
+                  unitTitle={unitTitle}
+                  xBlocks={courseVerticalChildren.children}
+                  readOnly={readOnly}
+                  isUnitVerticalType={isUnitVerticalType}
+                  isSplitTestType={isSplitTestType}
+                />
+              )}
             </Layout.Element>
           </Layout>
         </section>
