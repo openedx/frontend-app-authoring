@@ -52,7 +52,7 @@ const messages = defineMessages({
   moreActionsButtonAriaLabel: {
     id: 'course-authoring.course-outline.header-navigations.button.more-actions.aria-label',
     defaultMessage: 'More actions',
-    description: 'More actions button aria label in course outline'
+    description: 'More actions button aria label in course outline',
   },
   viewLiveButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.view-live.tooltip',
