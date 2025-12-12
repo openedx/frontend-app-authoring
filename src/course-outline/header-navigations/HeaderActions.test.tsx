@@ -1,7 +1,5 @@
-import userEvent from '@testing-library/user-event';
-
 import {
-  fireEvent, initializeMocks, render, screen, waitFor,
+  fireEvent, initializeMocks, render, screen,
 } from '@src/testUtils';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';

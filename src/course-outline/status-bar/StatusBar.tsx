@@ -15,17 +15,23 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
     case !startDate.isValid():
       return null;
     case now.isBetween(startDate, endDate.isValid() ? endDate : undefined, undefined, '[]'):
-      return <Badge className="px-3 py-2" variant="success">
-        <FormattedMessage {...messages.activeBadgeText} />
-      </Badge>;
+      return (
+        <Badge className="px-3 py-2" variant="success">
+          <FormattedMessage {...messages.activeBadgeText} />
+        </Badge>
+      );
     case now.isBefore(startDate):
-      return <Badge className="px-3 py-2 bg-white text-success-400 border border-success-500" variant="success">
-        <FormattedMessage {...messages.upcomingBadgeText} />
-      </Badge>;
+      return (
+        <Badge className="px-3 py-2 bg-white text-success-400 border border-success-500" variant="success">
+          <FormattedMessage {...messages.upcomingBadgeText} />
+        </Badge>
+      );
     case endDate.isValid() && endDate.isBefore(now):
-      return <Badge className="px-3 py-2" variant="light">
-        <FormattedMessage {...messages.archivedBadgeText} />
-      </Badge>;
+      return (
+        <Badge className="px-3 py-2" variant="light">
+          <FormattedMessage {...messages.archivedBadgeText} />
+        </Badge>
+      );
     default:
       // istanbul ignore next: this should not happen
       return null;

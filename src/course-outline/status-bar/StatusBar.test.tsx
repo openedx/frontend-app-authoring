@@ -28,7 +28,7 @@ const renderComponent = (props?: Partial<StatusBarProps>) => render(
     isLoading={isLoading}
     statusBarData={statusBarData}
     {...props}
-  />
+  />,
 );
 
 describe('<StatusBar />', () => {
@@ -43,27 +43,29 @@ describe('<StatusBar />', () => {
 
     expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
     expect(await screen.findByText(`2/9 ${messages.checklistCompleted.defaultMessage}`)).toBeInTheDocument();
-    expect(await screen.findByText(`Active`)).toBeInTheDocument();
+    expect(await screen.findByText('Active')).toBeInTheDocument();
   });
 
   it('renders Archived Badge', async () => {
     jest.setSystemTime(new Date('2014-03-05'));
     renderComponent();
-    expect(await screen.findByText(`Archived`)).toBeInTheDocument();
+    expect(await screen.findByText('Archived')).toBeInTheDocument();
   });
 
   it('renders Upcoming Badge', async () => {
     jest.setSystemTime(new Date('2012-03-05'));
     renderComponent();
-    expect(await screen.findByText(`Upcoming`)).toBeInTheDocument();
+    expect(await screen.findByText('Upcoming')).toBeInTheDocument();
   });
 
   it('renders set date link if date is not set', async () => {
-    renderComponent({ statusBarData: {
-      ...statusBarData,
-      courseReleaseDate: 'Set Date',
-    }});
-    expect(await screen.findByText(`Set Date`)).toBeInTheDocument();
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        courseReleaseDate: 'Set Date',
+      },
+    });
+    expect(await screen.findByText('Set Date')).toBeInTheDocument();
   });
 
   it('not render component when isLoading is true', async () => {
