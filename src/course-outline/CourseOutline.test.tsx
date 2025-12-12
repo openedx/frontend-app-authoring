@@ -182,12 +182,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component correctly', async () => {
-    const { getByText } = renderComponent();
+    renderComponent();
 
-    await waitFor(() => {
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Demonstration Course")).toBeInTheDocument();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
