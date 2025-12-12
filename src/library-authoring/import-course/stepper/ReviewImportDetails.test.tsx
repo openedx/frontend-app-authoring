@@ -10,6 +10,7 @@ import messages from '../messages';
 mockContentLibrary.applyMock();
 const { libraryId } = mockContentLibrary;
 const markAnalysisComplete = jest.fn();
+const setImportIsBlocked = jest.fn();
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
@@ -50,7 +51,11 @@ describe('ReviewImportDetails', () => {
   });
 
   it('renders loading spinner when isPending is true', async () => {
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     const spinners = await screen.findAllByRole('status');
     spinners.every((spinner) => expect(spinner.textContent).toEqual('Loading...'));
@@ -68,7 +73,11 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis in Progress/i)).toBeInTheDocument();
@@ -90,12 +99,16 @@ describe('ReviewImportDetails', () => {
         }],
       },
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
+    (useGetBlockTypes as jest.Mock).mockReturnValue({
       isPending: false,
       data: { html: 1 },
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Completed: Reimport/i)).toBeInTheDocument();
@@ -117,18 +130,40 @@ describe('ReviewImportDetails', () => {
       isPending: false,
       data: null,
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        'problem-builder': 1,
-        html: 1,
-      },
+    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
+      // Block types query for children of unsupported blocks
+      if (args.length === 2) {
+        return {
+          isPending: false,
+          data: {},
+        };
+      }
+
+      // Block types query from the course
+      if (args[0] === 'context_key = "test-course-id"') {
+        return {
+          isPending: false,
+          data: {
+            chapter: 1,
+            sequential: 2,
+            vertical: 3,
+            'problem-builder': 1,
+            html: 1,
+          },
+        };
+      }
+
+      return {
+        isPending: true,
+        data: null,
+      };
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
@@ -158,35 +193,48 @@ describe('ReviewImportDetails', () => {
       isPending: false,
       data: null,
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        'problem-builder': 1,
-        html: 25,
-      },
+    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
+      // Block types query for children of unsupported blocks
+      if (args.length === 2) {
+        return {
+          isPending: false,
+          data: {},
+        };
+      }
+
+      // Block types query from the course
+      if (args[0] === 'context_key = "test-course-id"') {
+        return {
+          isPending: false,
+          data: {
+            chapter: 1,
+            sequential: 2,
+            vertical: 3,
+            'problem-builder': 1,
+            html: 25,
+          },
+        };
+      }
+
+      return {
+        isPending: true,
+        data: null,
+      };
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
-    expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /18.75% of content cannot be imported. For details see below./i,
+      /This import would exceed the Content Library limit of 20 items/i,
     )).toBeInTheDocument();
-    expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
-    expect(await screen.findByText('26/32')).toBeInTheDocument();
-    expect(await screen.findByText('Sections')).toBeInTheDocument();
-    expect(await screen.findByText('1')).toBeInTheDocument();
-    expect(await screen.findByText('Subsections')).toBeInTheDocument();
-    expect(await screen.findByText('2')).toBeInTheDocument();
-    expect(await screen.findByText('Units')).toBeInTheDocument();
-    expect(await screen.findByText('3')).toBeInTheDocument();
-    expect(await screen.findByText('Components')).toBeInTheDocument();
-    expect(await screen.findByText('20/26')).toBeInTheDocument();
     expect(markAnalysisComplete).toHaveBeenCalledWith(true);
+    expect(setImportIsBlocked).toHaveBeenCalledWith(true);
   });
 
   it('considers children blocks of unsupportedBlocks', async () => {
@@ -206,24 +254,43 @@ describe('ReviewImportDetails', () => {
         estimatedTotalHits: 1,
       },
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        library_content: 1,
-        html: 1,
-        problem: 4,
-      },
-    }).mockReturnValueOnce({
-      isPending: false,
-      data: {
-        problem: 2,
-      },
+    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
+      // Block types query for children of unsupported blocks
+      if (args.length === 2) {
+        return {
+          isPending: false,
+          data: {
+            problem: 2,
+          },
+        };
+      }
+
+      // Block types query from the course
+      if (args[0] === 'context_key = "test-course-id"') {
+        return {
+          isPending: false,
+          data: {
+            chapter: 1,
+            sequential: 2,
+            vertical: 3,
+            library_content: 1,
+            html: 1,
+            problem: 4,
+          },
+        };
+      }
+
+      return {
+        isPending: true,
+        data: null,
+      };
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
@@ -253,18 +320,40 @@ describe('ReviewImportDetails', () => {
       isPending: false,
       data: null,
     });
-    (useGetBlockTypes as jest.Mock).mockReturnValueOnce({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        html: 5,
-        problem: 3,
-      },
+    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
+      // Block types query for children of unsupported blocks
+      if (args.length === 2) {
+        return {
+          isPending: false,
+          data: {},
+        };
+      }
+
+      // Block types query from the course
+      if (args[0] === 'context_key = "test-course-id"') {
+        return {
+          isPending: false,
+          data: {
+            chapter: 1,
+            sequential: 2,
+            vertical: 3,
+            html: 5,
+            problem: 3,
+          },
+        };
+      }
+
+      return {
+        isPending: true,
+        data: null,
+      };
     });
 
-    render(<ReviewImportDetails markAnalysisComplete={markAnalysisComplete} courseId="test-course-id" />);
+    render(<ReviewImportDetails
+      markAnalysisComplete={markAnalysisComplete}
+      courseId="test-course-id"
+      setImportIsBlocked={setImportIsBlocked}
+    />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(

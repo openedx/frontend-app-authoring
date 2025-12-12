@@ -212,7 +212,7 @@ export const ReviewImportDetails = ({
       },
       0,
     ) - finalUnsupportedBlocks;
-  }, [blockTypes, finalUnsupportedBlocks, libraryBlockLimits]);
+  }, [blockTypes, finalUnsupportedBlocks]);
 
   /** Calculate the unsupported block percentage based on the final total blocks and unsupported blocks. */
   const unsupportedBlockPercentage = useMemo(() => {
