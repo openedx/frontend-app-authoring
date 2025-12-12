@@ -151,15 +151,14 @@ const ContainerActions = ({
 };
 
 /* istanbul ignore next */
-const ContainerSettings = () => {
-  const intl = useIntl();
-  return (
-    <Alert icon={InfoOutline} variant="info">
-      <p>{intl.formatMessage(messages.containerSettingsMsg)}</p>
-    </Alert>
-  );
-};
-
+/* istanbul ignore next */
+const ContainerSettings = () => (
+  <Alert icon={InfoOutline} variant="info">
+    <p>
+      <FormattedMessage {...messages.containerSettingsMsg} />
+    </p>
+  </Alert>
+);
 const ContainerInfo = () => {
   const intl = useIntl();
   const {
