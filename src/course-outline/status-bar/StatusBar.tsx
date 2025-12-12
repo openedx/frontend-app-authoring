@@ -21,6 +21,7 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
     case endDate.isValid() && endDate.isBefore(now):
       return <Badge className="px-3 py-2" variant="light">Archived</Badge>;
     default:
+      // istanbul ignore next: this should not happen
       return null;
   }
 };
@@ -71,7 +72,7 @@ const CourseDates = ({
   );
 };
 
-interface StatusBarProps {
+export interface StatusBarProps {
   courseId: string;
   isLoading: boolean;
   statusBarData: CourseOutlineStatusBar;
