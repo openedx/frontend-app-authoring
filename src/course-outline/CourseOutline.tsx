@@ -146,6 +146,8 @@ const CourseOutline = () => {
     resetScrollState,
   } = useCourseOutline({ courseId });
 
+  // Show the new actions bar if it is enabled in the configuration.
+  // This is a temporary flag until the new design feature is fully implemented.
   const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
