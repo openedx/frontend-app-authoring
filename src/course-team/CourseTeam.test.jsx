@@ -1,4 +1,5 @@
 // @ts-check
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
@@ -19,7 +20,12 @@ let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
-const render = () => baseRender(<CourseTeam courseId={courseId} />, { path: mockPathname });
+const render = () => baseRender(
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseTeam />
+  </CourseAuthoringProvider>,
+  { path: mockPathname },
+);
 
 describe('<CourseTeam />', () => {
   beforeEach(() => {

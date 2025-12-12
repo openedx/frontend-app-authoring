@@ -1,6 +1,7 @@
 // @ts-check
 import userEvent from '@testing-library/user-event';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import { executeThunk } from '../utils';
@@ -15,7 +16,11 @@ let store;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
-const renderComponent = () => render(<Textbooks courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <Textbooks />
+  </CourseAuthoringProvider>,
+);
 
 describe('<Textbooks />', () => {
   beforeEach(async () => {

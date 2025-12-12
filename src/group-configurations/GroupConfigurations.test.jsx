@@ -1,3 +1,4 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   initializeMocks,
   render,
@@ -20,7 +21,11 @@ const courseId = 'course-v1:org+101+101';
 const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurations[0];
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 
-const renderComponent = () => render(<GroupConfigurations courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <GroupConfigurations />
+  </CourseAuthoringProvider>,
+);
 
 describe('<GroupConfigurations />', () => {
   beforeEach(async () => {

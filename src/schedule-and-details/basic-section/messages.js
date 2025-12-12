@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   basicBannerTitle: {
     id: 'course-authoring.schedule.basic.banner.title',
-    defaultMessage: 'Promoting your course with edX',
+    defaultMessage: 'Promoting your course with {platformName}',
   },
   basicBannerText: {
     id: 'course-authoring.schedule.basic.banner.text',

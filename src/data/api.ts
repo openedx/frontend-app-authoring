@@ -2,6 +2,36 @@ import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
+export const getCourseDetailsUrl = (courseId: string, username: string) => (
+  `${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`
+);
+
+export type CourseDetailsData = {
+  blocksUrl: string;
+  courseId: string;
+  effort?: string;
+  end?: string;
+  enrollmentEnd?: string;
+  enrollmentStart?: string;
+  hidden: boolean;
+  id: string;
+  invitationOnly: boolean;
+  isEnrolled: boolean;
+  media: Record<
+  'image' | 'course_image' | 'banner_image' | 'course_video',
+  Record<string, string | null>
+  >;
+  mobileAvailable: boolean;
+  name: string;
+  number: string;
+  org: string;
+  overview: string;
+  pacing: string;
+  shortDescription?: string;
+  start?: string;
+  startDisplay?: string;
+  startType?: string;
+};
 
 /**
  * Get the URL to check the migration task status
@@ -20,18 +50,13 @@ export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   return courseId ? `${baseUrl}${apiPath}/${courseId}` : `${baseUrl}${apiPath}`;
 };
 
-function normalizeCourseDetail(data) {
+export async function getCourseDetails(courseId: string, username: string): Promise<CourseDetailsData> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseDetailsUrl(courseId, username));
   return {
     id: data.course_id,
     ...camelCaseObject(data),
   };
-}
-
-export async function getCourseDetail(courseId: string, username: string) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
-
-  return normalizeCourseDetail(data);
 }
 
 /**
@@ -80,10 +105,14 @@ export type WaffleFlagsStatus = { id: string | undefined } & Record<WaffleFlagNa
 export async function getWaffleFlags(courseId?: string): Promise<WaffleFlagsStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getApiWaffleFlagsUrl(courseId));
-  return normalizeCourseDetail(data);
+  return {
+    id: data.course_id,
+    ...camelCaseObject(data),
+  };
 }
 
-export interface MigrateArtifacts {
+export interface MigrateParameters {
+  id: number;
   source: string;
   target: string;
   compositionLevel: string;
@@ -92,6 +121,10 @@ export interface MigrateArtifacts {
   targetCollectionSlug: string;
   forwardSourceToTarget: boolean;
   isFailed: boolean;
+  targetCollection: {
+    key: string;
+    title: string;
+  } | null;
 }
 
 export interface MigrateTaskStatusData {
@@ -104,7 +137,7 @@ export interface MigrateTaskStatusData {
   modified: string;
   artifacts: string[];
   uuid: string;
-  parameters: MigrateArtifacts[];
+  parameters: MigrateParameters[];
 }
 
 export interface BulkMigrateRequestData {

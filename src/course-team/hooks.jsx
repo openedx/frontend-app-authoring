@@ -3,9 +3,9 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useEffect, useState } from 'react';
 import { useToggle } from '@openedx/paragon';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { USER_ROLES } from '../constants';
 import { RequestStatus } from '../data/constants';
-import { useModel } from '../generic/model-store';
 import {
   changeRoleTeamUserQuery,
   createCourseTeamQuery,
@@ -26,7 +26,7 @@ const useCourseTeam = ({ courseId }) => {
   const dispatch = useDispatch();
 
   const { email: currentUserEmail } = getAuthenticatedUser();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseDetails } = useCourseAuthoringContext();
 
   const [modalType, setModalType] = useState(MODAL_TYPES.delete);
   const [isInfoModalOpen, openInfoModal, closeInfoModal] = useToggle(false);

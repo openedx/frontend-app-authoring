@@ -1,8 +1,11 @@
 import { LoadingSpinner } from '@src/generic/Loading';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+
 import { useParams, Navigate } from 'react-router-dom';
 import { useCourseItemData } from '../course-outline/data/apiHooks';
 
-const SubsectionUnitRedirect = ({ courseId }: { courseId: string }) => {
+const SubsectionUnitRedirect = () => {
+  const { courseId } = useCourseAuthoringContext();
   let { subsectionId } = useParams();
   // if the call is made via the click on breadcrumbs the re won't be courseId available
   // in such cases the page should redirect to the 1st unit of he subsection

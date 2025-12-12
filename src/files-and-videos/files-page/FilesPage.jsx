@@ -1,28 +1,27 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Container } from '@openedx/paragon';
-import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import CourseFilesSlot from '../../plugin-slots/CourseFilesSlot';
-import Placeholder from '../../editors/Placeholder';
 
-import { RequestStatus } from '../../data/constants';
-import { useModel } from '../../generic/model-store';
-import getPageHeadTitle from '../../generic/utils';
-import EditFileAlertsSlot from '../../plugin-slots/EditFileAlertsSlot';
+import { Container } from '@openedx/paragon';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import CourseFilesSlot from '@src/plugin-slots/CourseFilesSlot';
+import Placeholder from '@src/editors/Placeholder';
+import { RequestStatus } from '@src/data/constants';
+import getPageHeadTitle from '@src/generic/utils';
+import EditFileAlertsSlot from '@src/plugin-slots/EditFileAlertsSlot';
+
 import { EditFileErrors } from '../generic';
 import { fetchAssets, resetErrors } from './data/thunks';
 import FilesPageProvider from './FilesPageProvider';
 import messages from './messages';
 import './FilesPage.scss';
 
-const FilesPage = ({
-  courseId,
-}) => {
+const FilesPage = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  const { courseId, courseDetails } = useCourseAuthoringContext();
+  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
   const {
     loadingStatus,
     addingStatus: addAssetStatus,
@@ -66,10 +65,6 @@ const FilesPage = ({
       </Container>
     </FilesPageProvider>
   );
-};
-
-FilesPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default FilesPage;

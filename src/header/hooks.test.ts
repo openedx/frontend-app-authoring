@@ -174,7 +174,7 @@ describe('header utils', () => {
       const items = renderHook(() => useLibraryToolsMenuItems('course-123')).result.current;
       expect(items).toContainEqual({
         href: '/library/course-123/backup',
-        title: 'Backup to local archive',
+        title: 'Back up to local archive',
       });
       expect(items).toContainEqual({ href: '/library/course-123/import', title: 'Import' });
     });
