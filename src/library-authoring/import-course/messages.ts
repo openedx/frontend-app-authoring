@@ -313,6 +313,23 @@ const messages = defineMessages({
     defaultMessage: 'Reason For Failed import',
     description: 'Label for the Reason For Failed import field in the Reasons table in the import details',
   },
+  importBlockedTitle: {
+    id: 'library-authoring.import-course.review-details.import-blocked.title',
+    defaultMessage: 'Import Blocked',
+    description: 'Title for the alert in review details when the import is blocked',
+  },
+  importBlockedBody: {
+    id: 'library-authoring.import-course.review-details.import-blocked.body',
+    defaultMessage: 'This import would exceed the Content Library limit of {limitNumber} items.'
+    + ' To prevent incomplete or lost content, the import has been blocked. For more information,'
+    + ' view the Content Library documentation.',
+    description: 'Body for the alert in review details when the import is blocked',
+  },
+  importNotPossibleTooltip: {
+    id: 'library-authoring.import-course.review-details.import-blocked.import-course-btn.tooltip',
+    defaultMessage: 'Import not possible',
+    description: 'Label for the tooltip for the import button in review details when the import is blocked',
+  },
 });
 
 export default messages;

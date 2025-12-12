@@ -14,6 +14,7 @@ import { LibraryProvider } from '@src/library-authoring/common/context/LibraryCo
 import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
 import { useGetBlockTypes } from '@src/search-manager';
 import { bulkModulestoreMigrateUrl } from '@src/data/api';
+import { useLibraryBlockLimits } from '@src/library-authoring/data/apiHooks';
 import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;
@@ -35,6 +36,11 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: jest.fn().mockReturnValue({ isPending: true, data: null }),
   useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
+}));
+
+jest.mock('@src/library-authoring/data/apiHooks', () => ({
+  ...jest.requireActual('@src/library-authoring/data/apiHooks'),
+  useLibraryBlockLimits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
 const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
@@ -106,6 +112,10 @@ describe('<ImportStepperModal />', () => {
   });
 
   it('should go to review import details step', async () => {
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     const user = userEvent.setup();
     renderComponent();
     axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {

@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Button, Chip, Container, Layout, Stepper,
+  ActionRow, Button, Chip, Container, Layout, OverlayTrigger, Stepper,
+  Tooltip,
 } from '@openedx/paragon';
 
 import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
@@ -72,6 +73,7 @@ export const ImportStepperPage = () => {
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
   const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
+  const [importIsBlocked, setImportIsBlocked] = useState<boolean>(false);
   const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
@@ -152,6 +154,7 @@ export const ImportStepperPage = () => {
                   >
                     <ReviewImportDetails
                       markAnalysisComplete={setAnalysisCompleted}
+                      setImportIsBlocked={setImportIsBlocked}
                       courseId={selectedCourseId}
                     />
                   </Stepper.Step>
@@ -175,12 +178,27 @@ export const ImportStepperPage = () => {
                     <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
-                    <LoadingButton
-                      onClick={handleImportCourse}
-                      label={intl.formatMessage(messages.importCourseButton)}
-                      variant="primary"
-                      disabled={!analysisCompleted}
-                    />
+                    {importIsBlocked ? (
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={(
+                          <Tooltip id="tooltip-import-course-button">
+                            <FormattedMessage {...messages.importNotPossibleTooltip} />
+                          </Tooltip>
+                        )}
+                      >
+                        <Button variant="primary" disabled>
+                          <FormattedMessage {...messages.importCourseButton} />
+                        </Button>
+                      </OverlayTrigger>
+                    ) : (
+                      <LoadingButton
+                        onClick={handleImportCourse}
+                        label={intl.formatMessage(messages.importCourseButton)}
+                        variant="primary"
+                        disabled={!analysisCompleted}
+                      />
+                    )}
                   </ActionRow>
                 )}
               </div>
