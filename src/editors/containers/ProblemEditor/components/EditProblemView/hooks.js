@@ -91,7 +91,7 @@ export const parseState = ({
     settings: {
       ...settings,
       ...(isMarkdownEditorEnabled && { markdown: contentString }),
-      markdown_edited: isMarkdownEditorEnabled,
+      markdown_edited: !!isMarkdownEditorEnabled,
     },
     olx: isAdvanced || isMarkdownEditorEnabled ? rawOLX : reactBuiltOlx,
   };

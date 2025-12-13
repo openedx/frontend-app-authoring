@@ -306,6 +306,7 @@ describe('EditProblemView hooks parseState', () => {
       show_reset_button: false,
       submission_wait_seconds: 0,
       attempts_before_showanswer_button: 0,
+      markdown_edited: false,
     };
     const openSaveWarningModal = jest.fn();
 
@@ -353,6 +354,7 @@ describe('EditProblemView hooks parseState', () => {
         attempts_before_showanswer_button: 0,
         submission_wait_seconds: 0,
         weight: 1,
+        markdown_edited: false,
       });
     });
 
