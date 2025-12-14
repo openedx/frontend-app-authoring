@@ -23,6 +23,7 @@ import {
   labelDescriptionQuestionOLX,
   htmlEntityTestOLX,
   numberParseTestOLX,
+  numericTextCoercionTestOLX,
   numericalProblemPartialCredit,
   solutionExplanationTest,
   solutionExplanationWithoutDivTest,
@@ -263,6 +264,19 @@ describe('OLXParser', () => {
       const { answers } = multipleChoiceOlxParser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
       it('should equal an array of objects with length three', () => {
         expect(answers).toEqual(multipleChoiceWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(3);
+      });
+    });
+    describe('given multiple choice olx with numeric text that needs coercion', () => {
+      const olxparser = new OLXParser(numericTextCoercionTestOLX.rawOLX);
+      const { answers } = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
+      it('should coerce numeric #text values to strings', () => {
+        expect(answers).toEqual(numericTextCoercionTestOLX.data.answers);
+        answers.forEach((answer) => {
+          expect(typeof answer.title).toBe('string');
+        });
+      });
+      it('should equal an array of objects with length three', () => {
         expect(answers).toHaveLength(3);
       });
     });
