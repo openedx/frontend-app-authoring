@@ -1,26 +1,21 @@
-import MockAdapter from 'axios-mock-adapter';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  act, fireEvent, render, waitFor, within, screen,
-} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
 import {
   camelCaseObject,
   getConfig,
-  initializeMockApp,
   setConfig,
 } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
 
+import {
+  act, fireEvent, render, waitFor, within, screen, initializeMocks,
+} from '@src/testUtils';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
 import { getClipboardUrl } from '@src/generic/data/api';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import {
   getCourseSectionVerticalApiUrl,
@@ -38,7 +33,6 @@ import {
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
 } from './data/thunk';
-import initializeStore from '../store';
 import {
   courseCreateXblockMock,
   courseSectionVerticalMock,
@@ -68,7 +62,6 @@ import messages from './messages';
 
 let axiosMock;
 let store;
-let queryClient;
 const courseId = '123';
 const blockId = '567890';
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
@@ -111,38 +104,20 @@ function simulatePostMessageEvent(type, payload) {
 }
 
 const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <IframeProvider>
-        <QueryClientProvider client={queryClient}>
-          <CourseUnit courseId={courseId} />
-        </QueryClientProvider>
-      </IframeProvider>
-    </IntlProvider>
-  </AppProvider>
+  <IframeProvider>
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseUnit />
+    </CourseAuthoringProvider>
+  </IframeProvider>
 );
 
 describe('<CourseUnit />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
     window.scrollTo = jest.fn();
     global.localStorage.clear();
-    store = initializeStore();
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getClipboardUrl())
       .reply(200, clipboardUnit);
@@ -2218,7 +2193,7 @@ describe('<CourseUnit />', () => {
       const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
       const helpLinkUrl = 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components';
 
-      waitFor(() => {
+      await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');
         expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
@@ -2291,19 +2266,17 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders and navigates to the new HTML XBlock editor after xblock duplicating', async () => {
-    render(<RootWrapper />);
     const updatedCourseVerticalChildrenMock = JSON.parse(JSON.stringify(courseVerticalChildrenMock));
-    const targetBlockId = updatedCourseVerticalChildrenMock.children[1].block_id;
-
-    updatedCourseVerticalChildrenMock.children = updatedCourseVerticalChildrenMock.children
-      .map((child) => (child.block_id === targetBlockId
-        ? { ...child, block_type: 'html' }
-        : child));
+    // Convert the second child from drag and drop to HTML:
+    const targetChild = updatedCourseVerticalChildrenMock.children[1];
+    targetChild.block_type = 'html';
+    targetChild.name = 'Test HTML Block';
+    targetChild.block_id = 'block-v1:OpenedX+L153+3T2023+type@html+block@test123original';
 
     axiosMock
       .onPost(postXBlockBaseApiUrl({
         parent_locator: blockId,
-        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
+        duplicate_source_locator: targetChild.block_id,
       }))
       .replyOnce(200, { locator: '1234567890' });
 
@@ -2311,21 +2284,20 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
       .reply(200, updatedCourseVerticalChildrenMock);
 
+    render(<RootWrapper />);
     await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
 
     await waitFor(() => {
       const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
       expect(iframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.currentXBlockId, {
-        id: targetBlockId,
-      });
     });
 
-    waitFor(() => {
-      simulatePostMessageEvent(messageTypes.duplicateXBlock, {});
-      simulatePostMessageEvent(messageTypes.newXBlockEditor, {});
-      expect(mockedUsedNavigate)
-        .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
+    // After duplicating, the editor modal will open:
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.duplicateXBlock, { usageId: targetChild.block_id });
+    simulatePostMessageEvent(messageTypes.newXBlockEditor, { blockType: 'html', usageId: targetChild.block_id });
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeInTheDocument();
     });
   });
 
@@ -2353,14 +2325,14 @@ describe('<CourseUnit />', () => {
 
     expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
 
-    // Disable the "Edit" button
+    // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
     const editButton = within(unitHeaderTitle).getByRole(
       'button',
       { name: 'Edit' },
     );
     expect(editButton).toBeInTheDocument();
-    expect(editButton).toBeDisabled();
+    expect(editButton).toBeEnabled();
 
     // The "Publish" button should still be enabled
     const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
@@ -2370,14 +2342,6 @@ describe('<CourseUnit />', () => {
     );
     expect(publishButton).toBeInTheDocument();
     expect(publishButton).toBeEnabled();
-
-    // Disable the "Manage Tags" button
-    const manageTagsButton = screen.getByRole(
-      'button',
-      { name: tagsDrawerMessages.manageTagsButton.defaultMessage },
-    );
-    expect(manageTagsButton).toBeInTheDocument();
-    expect(manageTagsButton).toBeDisabled();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();

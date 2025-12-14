@@ -200,7 +200,7 @@ describe('Answer Options Hooks', () => {
   });
   describe('isSingleAnswerProblem()', () => {
     test('singleSelect', () => {
-      expect(module.isSingleAnswerProblem(ProblemTypeKeys.SINGLESELECT)).toBe(false);
+      expect(module.isSingleAnswerProblem(ProblemTypeKeys.SINGLESELECT)).toBe(true);
     });
     test('multiSelect', () => {
       expect(module.isSingleAnswerProblem(ProblemTypeKeys.MULTISELECT)).toBe(false);

@@ -27,6 +27,7 @@ import {
   clearErrors,
   updateEditStatus,
   updateDuplicateFiles,
+  clearAssetIds,
 } from './slice';
 
 import { getUploadConflicts, updateFileValues } from './utils';
@@ -47,7 +48,7 @@ export function fetchAdditionalAssets(courseId, totalCount) {
         }));
         remainingAssetCount -= 50;
         page += 1;
-      } catch (error) {
+      } catch {
         remainingAssetCount = 0;
         dispatch(updateErrors({ error: 'loading', message: 'Failed to load remaining files.' }));
         dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL_FAILURE }));
@@ -58,6 +59,7 @@ export function fetchAdditionalAssets(courseId, totalCount) {
 
 export function fetchAssets(courseId) {
   return async (dispatch) => {
+    dispatch(clearAssetIds());
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
@@ -99,7 +101,7 @@ export function deleteAssetFile(courseId, id) {
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
     }
@@ -152,7 +154,7 @@ export function validateAssetFiles(courseId, files) {
           dispatch(updateDuplicateFiles({ files: conflicts }));
         }
       });
-    } catch (error) {
+    } catch {
       files.forEach(file => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
@@ -175,7 +177,7 @@ export function updateAssetLock({ assetId, courseId, locked }) {
         },
       }));
       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       const lockStatus = locked ? 'lock' : 'unlock';
       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.FAILED }));
@@ -203,7 +205,7 @@ export function getUsagePaths({ asset, courseId }) {
         },
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
     }

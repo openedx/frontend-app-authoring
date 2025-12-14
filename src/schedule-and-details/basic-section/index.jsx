@@ -84,7 +84,7 @@ const BasicSection = ({
       onDismiss={() => setShowPageBanner(false)}
       className="align-items-start"
     >
-      <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle)}</h4>
+      <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle, { platformName })}</h4>
       <span className="text text-gray-700 text-left">
         {intl.formatMessage(messages.basicBannerText)}
       </span>

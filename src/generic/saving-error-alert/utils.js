@@ -9,7 +9,7 @@ const handleResponseErrors = (error, dispatch, savingStatusFunction) => {
     } = error;
     const parsedData = JSON.parse(httpErrorResponseData);
     errorMessage = parsedData?.error || errorMessage;
-  } catch (err) {
+  } catch {
     errorMessage = '';
   }
 

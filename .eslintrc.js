@@ -14,6 +14,15 @@ module.exports = createConfig(
       'no-restricted-exports': 'off',
       // There is no reason to disallow this syntax anymore; we don't use regenerator-runtime in new browsers
       'no-restricted-syntax': 'off',
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@edx/frontend-platform/i18n'],
+            importNames: ['injectIntl'],
+            message: "Use 'useIntl' hook instead of injectIntl.",
+          },
+        ],
+      }],
     },
     settings: {
       // Import URLs should be resolved using aliases

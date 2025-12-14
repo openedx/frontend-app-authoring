@@ -8,7 +8,7 @@ import {
 } from '@src/testUtils';
 import { ContainerType } from '@src/generic/key-utils';
 import type { ToastActionData } from '@src/generic/toast-context';
-import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
+import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 import {
   mockContentLibrary,
   mockGetContainerChildren,
@@ -17,7 +17,11 @@ import {
 } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import ContainerInfo from './ContainerInfo';
-import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
+import {
+  getLibraryContainerApiUrl,
+  getLibraryContainerPublishApiUrl,
+  getLibraryContainerCopyApiUrl,
+} from '../data/api';
 import { SidebarBodyItemId, SidebarProvider } from '../common/context/SidebarContext';
 
 mockContentLibrary.applyMock();
@@ -124,7 +128,7 @@ const render = (
   });
 };
 let axiosMock: MockAdapter;
-let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
 
 [
   {
@@ -162,16 +166,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
   describe(`<ContainerInfo /> with containerType: ${containerType}`, () => {
     beforeEach(() => {
       ({ axiosMock, mockShowToast } = initializeMocks());
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [{
-              blockType: containerType,
-              displayName: `Test ${containerType}`,
-            }],
-          },
-        ],
-      });
+      mockSearchResult(hydrateSearchResult([{
+        blockType: containerType,
+        displayName: `Test ${containerType}`,
+      }]));
     });
 
     it(`should delete the ${containerType} using the menu`, async () => {
@@ -189,7 +187,8 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       fireEvent.click(deleteMenuItem);
 
       // Confirm delete Modal is open
-      expect(screen.getByText(`Delete ${containerType[0].toUpperCase()}${containerType.slice(1)}`));
+      const modal = await screen.findByRole('dialog', { name: `Delete ${containerType[0].toUpperCase()}${containerType.slice(1)}` });
+      expect(modal).toBeInTheDocument();
       const deleteButton = screen.getByRole('button', { name: /delete/i });
       fireEvent.click(deleteButton);
 
@@ -197,6 +196,27 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
         expect(axiosMock.history.delete.length).toBe(1);
       });
       expect(mockShowToast).toHaveBeenCalled();
+    });
+
+    it(`should copy the ${containerType} using the menu`, async () => {
+      const user = userEvent.setup();
+      const url = getLibraryContainerCopyApiUrl(containerId);
+      axiosMock.onPost(url).reply(200);
+      render(containerId);
+
+      // Open menu
+      expect(await screen.findByTestId('container-info-menu-toggle')).toBeInTheDocument();
+      await user.click(screen.getByTestId('container-info-menu-toggle'));
+
+      // Click on Copy Item
+      const copyMenuItem = await screen.findByRole('button', { name: 'Copy to clipboard' });
+      expect(copyMenuItem).toBeInTheDocument();
+      await user.click(copyMenuItem);
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toEqual(url);
     });
 
     it(`shows Published if the ${containerType} has no draft changes`, async () => {

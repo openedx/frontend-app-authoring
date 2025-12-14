@@ -1,0 +1,38 @@
+.status-border-imported {
+  border-left: 8px solid #5690BB;
+}
+
+.status-border-failed {
+  border-left: 8px solid var(--pgn-color-danger-500);
+}
+
+.status-border-partial {
+  border-left: 8px solid var(--pgn-color-warning-500);
+}
+
+.status-border-in-progress {
+  border-left: 8px solid #F4B57B;
+}
+
+.text-decoration-underline {
+  text-decoration: underline;
+}
+
+.import-course-stepper {
+  .import-container {
+    // Calculate all the screen size subtracting the height of the header and title and top/bottom margins
+    min-height: calc(calc(100vh - 60px - 61px) - calc(var(--pgn-spacing-spacer-base) * 6));
+  }
+
+  .content-buttons {
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+  }
+
+  [class*="col-"] {
+    // To avoid create an empty gray space between the main content and the sidebar
+    padding-right: 0;
+    padding-left: 0;
+  }
+}

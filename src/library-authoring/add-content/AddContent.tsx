@@ -14,10 +14,13 @@ import {
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 
-import { ToastContext } from '../../generic/toast-context';
-import { getItemIcon } from '../../generic/block-type-utils';
-import { useClipboard } from '../../generic/clipboard';
-import { getCanEdit } from '../../course-unit/data/selectors';
+import { ToastContext } from '@src/generic/toast-context';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { useClipboard } from '@src/generic/clipboard';
+import { getCanEdit } from '@src/course-unit/data/selectors';
+import { blockTypes } from '@src/editors/data/constants/app';
+import { ContainerType } from '@src/generic/key-utils';
+
 import {
   useCreateLibraryBlock,
   useLibraryPasteClipboard,
@@ -27,13 +30,11 @@ import {
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
-import { blockTypes } from '../../editors/data/constants/app';
 
 import { useLibraryRoutes } from '../routes';
 import genericMessages from '../generic/messages';
 import { messages, getContentMessages } from './messages';
 import type { BlockTypeMetadata } from '../data/api';
-import { ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
@@ -176,6 +177,9 @@ const AddContentView = ({
     <hr className="w-100 bg-gray-500" />
   );
 
+  // Extract the paste button for use on Section and Subsection
+  const pasteButton = componentButtons.find(ct => ct.key === 'add-content-paste');
+
   /** List buttons that should be displayed based on current path */
   const visibleButtons = useMemo(() => {
     if (insideCollection) {
@@ -202,6 +206,7 @@ const AddContentView = ({
       return [
         existingContentButton,
         subsectionButton,
+        pasteButton,
       ];
     }
     if (insideSubsection) {
@@ -209,6 +214,7 @@ const AddContentView = ({
       return [
         existingContentButton,
         unitButton,
+        pasteButton,
       ];
     }
     // except for existing content, show everything.
@@ -291,7 +297,7 @@ export const parseErrorMsg = (
     if (detail) {
       return intl.formatMessage(detailedMessage, { detail });
     }
-  } catch (_err) {
+  } catch {
     // ignore
   }
   return intl.formatMessage(defaultMessage);
@@ -319,7 +325,13 @@ const AddContent = () => {
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
-  const { showPasteUnit, showPasteXBlock, sharedClipboardData } = useClipboard(canEdit);
+  const {
+    showPasteUnit,
+    showPasteSubsection,
+    showPasteXBlock,
+    isPasteable,
+    sharedClipboardData,
+  } = useClipboard(canEdit);
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
@@ -383,7 +395,17 @@ const AddContent = () => {
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
   // that can be pasted
-  if (showPasteXBlock || showPasteUnit) {
+  const showPasteButton = false
+    // We are not in a unit, subsection, or section, so we can paste any XBlock
+    || (!(insideUnit || insideSubsection || insideSection) && isPasteable)
+    // We are in a unit, so we can paste only components
+    || (insideUnit && showPasteXBlock)
+    // We are in a subsection, so we can only paste units
+    || (insideSubsection && showPasteUnit)
+    // We are in a section, so we can only paste subsections
+    || (insideSection && showPasteSubsection);
+
+  if (showPasteButton) {
     const pasteButton = {
       name: intl.formatMessage(messages.pasteButton),
       disabled: false,
@@ -478,7 +500,7 @@ const AddContent = () => {
   };
 
   /* istanbul ignore next */
-  if (pasteClipboardMutation.isLoading) {
+  if (pasteClipboardMutation.isPending) {
     showToast(intl.formatMessage(messages.pastingClipboardMessage));
   }
 

@@ -6,10 +6,16 @@
 @import "./section-subsections";
 @import "./containers";
 @import "./hierarchy";
+@import "./import-course";
 
 .library-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 2rem;
   justify-items: center;
+}
+
+.min-1-rem {
+  min-height: 1rem;
+  min-width: 1rem;
 }

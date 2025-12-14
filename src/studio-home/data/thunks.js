@@ -3,14 +3,12 @@ import {
   getStudioHomeData,
   sendRequestForCourseCreator,
   handleCourseNotification,
-  getStudioHomeLibraries,
   getStudioHomeCoursesV2,
 } from './api';
 import {
   fetchStudioHomeDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
-  fetchLibraryDataSuccess,
   fetchCourseDataSuccessV2,
 } from './slice';
 
@@ -35,7 +33,7 @@ function fetchStudioHomeData(
         const studioHomeData = await getStudioHomeData();
         dispatch(fetchStudioHomeDataSuccess(studioHomeData));
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.SUCCESSFUL }));
-      } catch (error) {
+      } catch {
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.FAILED }));
         return;
       }
@@ -46,7 +44,7 @@ function fetchStudioHomeData(
         const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
         dispatch(fetchCourseDataSuccessV2(coursesData));
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
-      } catch (error) {
+      } catch {
         dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
       }
     }
@@ -58,20 +56,6 @@ function fetchOnlyStudioHomeData() {
   return fetchStudioHomeData('', false, {}, false, false);
 }
 
-function fetchLibraryData() {
-  return async (dispatch) => {
-    dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.IN_PROGRESS }));
-
-    try {
-      const libraryData = await getStudioHomeLibraries();
-      dispatch(fetchLibraryDataSuccess(libraryData));
-      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
-      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.FAILED }));
-    }
-  };
-}
-
 function handleDeleteNotificationQuery(url) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: RequestStatus.PENDING }));
@@ -79,7 +63,7 @@ function handleDeleteNotificationQuery(url) {
     try {
       await handleCourseNotification(url);
       dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: RequestStatus.FAILED }));
     }
   };
@@ -93,7 +77,7 @@ function requestCourseCreatorQuery() {
       await sendRequestForCourseCreator();
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch {
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: RequestStatus.FAILED }));
       return false;
     }
@@ -103,7 +87,6 @@ function requestCourseCreatorQuery() {
 export {
   fetchStudioHomeData,
   fetchOnlyStudioHomeData,
-  fetchLibraryData,
   requestCourseCreatorQuery,
   handleDeleteNotificationQuery,
 };

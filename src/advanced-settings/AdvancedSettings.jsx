@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Container, Button, Layout, StatefulButton, TransitionReplace,
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
-import { useModel } from '../generic/model-store';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
@@ -26,7 +25,7 @@ import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import getPageHeadTitle from '../generic/utils';
 
-const AdvancedSettings = ({ courseId }) => {
+const AdvancedSettings = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
@@ -39,7 +38,7 @@ const AdvancedSettings = ({ courseId }) => {
   const [isEditableState, setIsEditableState] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
 
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   useEffect(() => {
@@ -276,10 +275,6 @@ const AdvancedSettings = ({ courseId }) => {
       />
     </>
   );
-};
-
-AdvancedSettings.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default AdvancedSettings;

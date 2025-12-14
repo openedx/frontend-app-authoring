@@ -24,7 +24,7 @@ import { ToastContext } from '../../generic/toast-context';
 import TagCount from '../../generic/tag-count';
 import { useLibraryRoutes } from '../routes';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { useRunOnNextRender } from '../../utils';
+import { skipIfUnwantedTarget, useRunOnNextRender } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
 
 interface LibraryContainerChildrenProps {
@@ -39,9 +39,12 @@ interface LibraryContainerMetadataWithUniqueId extends Container {
 
 interface ContainerRowProps extends LibraryContainerChildrenProps {
   container: LibraryContainerMetadataWithUniqueId;
+  index?: number;
 }
 
-const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) => {
+const ContainerRow = ({
+  containerKey, container, readOnly, index,
+}: ContainerRowProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
@@ -54,7 +57,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         displayName: newDisplayName,
       });
       showToast(intl.formatMessage(containerMessages.updateContainerSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(containerMessages.updateContainerErrorMsg));
     }
   };
@@ -76,7 +79,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
@@ -90,8 +93,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
         direction="horizontal"
         gap={3}
         // Prevent parent card from being clicked.
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         {!showOnlyPublished && container.hasUnpublishedChanges && (
           <Badge
@@ -113,6 +115,7 @@ const ContainerRow = ({ containerKey, container, readOnly }: ContainerRowProps) 
           <ContainerMenu
             containerKey={container.originalId}
             displayName={container.displayName}
+            index={index}
           />
         )}
       </Stack>
@@ -139,7 +142,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     try {
       await orderMutator.mutateAsync(childrenKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);
@@ -149,7 +152,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     isLoading,
     isError,
     error,
-  } = useContainerChildren(containerKey, showOnlyPublished);
+  } = useContainerChildren<Container>(containerKey, showOnlyPublished);
 
   useEffect(() => {
     // Create new ids which are unique using index.
@@ -165,14 +168,18 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
     return setOrderedChildren(newChildren || []);
   }, [children, setOrderedChildren]);
 
-  const handleChildClick = useCallback((child: LibraryContainerMetadataWithUniqueId, numberOfClicks: number) => {
+  const handleChildClick = useCallback((
+    child: LibraryContainerMetadataWithUniqueId,
+    numberOfClicks: number,
+    index: number,
+  ) => {
     if (readOnly) {
       // don't allow interaction if rendered as preview
       return;
     }
     const doubleClicked = numberOfClicks > 1;
     if (!doubleClicked) {
-      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo);
+      openItemSidebar(child.originalId, SidebarBodyItemId.ContainerInfo, index);
     } else {
       navigateTo({ containerId: child.originalId });
     }
@@ -216,7 +223,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
         activeId={activeDraggingId}
         setActiveId={setActiveDraggingId}
       >
-        {orderedChildren?.map((child) => (
+        {orderedChildren?.map((child, index) => (
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
           <SortableItem
@@ -230,19 +237,20 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
               borderLeft: '8px solid #E1DDDB',
             }}
             isClickable={!readOnly}
-            onClick={(e) => handleChildClick(child, e.detail)}
+            onClick={(e) => skipIfUnwantedTarget(e, (event) => handleChildClick(child, event.detail, index))}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleChildClick(child, 1);
+                handleChildClick(child, 1, index);
               }
             }}
             disabled={readOnly || libReadOnly}
-            cardClassName={sidebarItemInfo?.id === child.originalId ? 'selected' : undefined}
+            cardClassName={sidebarItemInfo?.id === child.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
             actions={(
               <ContainerRow
                 containerKey={containerKey}
                 container={child}
                 readOnly={readOnly || libReadOnly}
+                index={index}
               />
             )}
           />

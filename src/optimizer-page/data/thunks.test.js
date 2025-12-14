@@ -235,7 +235,7 @@ describe('updateAllPreviousRunLinks', () => {
 
       try {
         await updateAllPreviousRunLinks(courseId)(dispatch, getState);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -292,7 +292,7 @@ describe('updateSinglePreviousRunLink', () => {
 
       try {
         await updateSinglePreviousRunLink(courseId, linkUrl, blockId, contentType)(dispatch, getState);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -383,7 +383,7 @@ describe('fetchRerunLinkUpdateStatus', () => {
 
       try {
         await fetchRerunLinkUpdateStatus(courseId)(dispatch, getState);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -541,7 +541,7 @@ describe('updateAllPreviousRunLinks additional edge cases', () => {
 
     try {
       await updateAllPreviousRunLinks(courseId)(dispatch, getState);
-    } catch (error) {
+    } catch {
       // Expected to throw
     }
 
@@ -556,7 +556,7 @@ describe('updateAllPreviousRunLinks additional edge cases', () => {
 
     try {
       await updateAllPreviousRunLinks(courseId)(dispatch, getState);
-    } catch (error) {
+    } catch {
       // Expected to throw
     }
 
@@ -595,7 +595,7 @@ describe('updateSinglePreviousRunLink additional edge cases', () => {
 
     try {
       await updateSinglePreviousRunLink(courseId, linkUrl, blockId, 'sections')(dispatch, getState);
-    } catch (error) {
+    } catch {
       // Expected to throw
     }
 
@@ -611,7 +611,7 @@ describe('updateSinglePreviousRunLink additional edge cases', () => {
 
     try {
       await updateSinglePreviousRunLink(courseId, malformedUrl, blockId, 'sections')(dispatch, getState);
-    } catch (error) {
+    } catch {
       // Expected to throw
     }
 
@@ -664,7 +664,7 @@ describe('updateAllPreviousRunLinks with polling support', () => {
 
       try {
         await updateAllPreviousRunLinks(courseId)(dispatch, getState);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -759,7 +759,7 @@ describe('fetchRerunLinkUpdateStatus with polling support', () => {
 
       try {
         await fetchRerunLinkUpdateStatus(courseId)(dispatch, getState);
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 

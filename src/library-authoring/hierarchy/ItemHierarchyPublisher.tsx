@@ -31,11 +31,11 @@ export const ItemHierarchyPublisher = ({
 
   const {
     data: hierarchy,
-    isLoading,
+    isPending,
     isError,
   } = useLibraryItemHierarchy(itemId);
 
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 

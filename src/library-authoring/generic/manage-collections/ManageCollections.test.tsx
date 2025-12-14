@@ -45,7 +45,7 @@ describe('<ManageCollections />', () => {
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
     fetchMock.post(searchEndpoint, (_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
+      const requestData = JSON.parse((req.body ?? '') as string);
       const query = requestData?.queries[0]?.q ?? '';
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
@@ -121,7 +121,6 @@ describe('<ManageCollections />', () => {
       collections={[]}
       useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
-    screen.logTestingPlaygroundURL();
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     await user.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });

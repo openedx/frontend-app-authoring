@@ -1,4 +1,5 @@
 import type MockAdapter from 'axios-mock-adapter';
+import { mergeConfig } from '@edx/frontend-platform';
 
 import {
   fireEvent,
@@ -6,11 +7,13 @@ import {
   screen,
   waitFor,
   initializeMocks,
-} from '../../testUtils';
+} from '@src/testUtils';
+import { validateUserPermissions } from '@src/authz/data/api';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCommitLibraryChangesUrl } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import LibraryInfo from './LibraryInfo';
+import * as apiHooks from '../data/apiHooks';
 
 const {
   libraryId: mockLibraryId,
@@ -26,11 +29,12 @@ const {
 } = mockContentLibrary;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
+  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>,
 });
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof validateUserPermissions>;
 
 mockContentLibrary.applyMock();
 
@@ -39,6 +43,9 @@ describe('<LibraryInfo />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+
+    validateUserPermissionsMock.mockResolvedValue({ canPublish: true });
   });
 
   afterEach(() => {
@@ -105,7 +112,10 @@ describe('<LibraryInfo />', () => {
 
     expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
-    expect(screen.getByText('Published')).toBeInTheDocument();
+    // First 'Published' from the state
+    expect(screen.getAllByText('Published')[0]).toBeInTheDocument();
+    // Second 'Published' from the published button
+    expect(screen.getAllByText('Published')[1]).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.getByText('staff')).toBeInTheDocument();
   });
@@ -115,7 +125,10 @@ describe('<LibraryInfo />', () => {
 
     expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
-    expect(screen.getByText('Published')).toBeInTheDocument();
+    // First 'Published' from the state
+    expect(screen.getAllByText('Published')[0]).toBeInTheDocument();
+    // Second 'Published' from the published button
+    expect(screen.getAllByText('Published')[1]).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.queryByText('staff')).not.toBeInTheDocument();
   });
@@ -134,6 +147,31 @@ describe('<LibraryInfo />', () => {
       expect(axiosMock.history.post[0].url).toEqual(url);
       expect(mockShowToast).toHaveBeenCalledWith('Library published successfully');
     });
+  });
+
+  it('should publish library 2', async () => {
+    const useCommitLibraryChangesSpy = jest
+      .spyOn(apiHooks, 'useCommitLibraryChanges')
+      .mockReturnValue(
+        // @ts-ignore
+        {
+          mutate: jest.fn(),
+          mutateAsync: jest.fn(),
+          status: 'pending',
+        },
+      );
+
+    render();
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
+    const publishButton = screen.getByRole('button', { name: /publish/i });
+    fireEvent.click(publishButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/publishing/i)).toBeInTheDocument();
+    });
+    useCommitLibraryChangesSpy.mockRestore();
   });
 
   it('should show error on publish library', async () => {
@@ -237,5 +275,14 @@ describe('<LibraryInfo />', () => {
 
     expect(publishButton).not.toBeInTheDocument();
     expect(discardButton).not.toBeInTheDocument();
+  });
+
+  it('display a redirection button when ADMIN_CONSOLE_URL is setted', async () => {
+    const ADMIN_CONSOLE_URL = 'http://localhost:2025/admin-console';
+    mergeConfig({ ADMIN_CONSOLE_URL });
+    render();
+    const manageTeam = await screen.findByText('Library Team');
+    expect(manageTeam).toBeInTheDocument();
+    expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz/libraries/${libraryData.id}`);
   });
 });

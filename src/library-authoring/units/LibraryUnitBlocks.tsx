@@ -7,16 +7,18 @@ import classNames from 'classnames';
 import {
   useCallback, useContext, useEffect, useState,
 } from 'react';
-import { blockTypes } from '../../editors/data/constants/app';
-import DraggableList, { SortableItem } from '../../generic/DraggableList';
+import { blockTypes } from '@src/editors/data/constants/app';
+import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 
-import ErrorAlert from '../../generic/alert-error';
-import { getItemIcon } from '../../generic/block-type-utils';
-import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
-import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
-import { InplaceTextEditor } from '../../generic/inplace-text-editor';
-import Loading from '../../generic/Loading';
-import TagCount from '../../generic/tag-count';
+import ErrorAlert from '@src/generic/alert-error';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
+import Loading from '@src/generic/Loading';
+import TagCount from '@src/generic/tag-count';
+import { ToastContext } from '@src/generic/toast-context';
+import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
@@ -28,9 +30,7 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
-import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { useRunOnNextRender } from '../../utils';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -46,13 +46,14 @@ interface LibraryBlockMetadataWithUniqueId extends LibraryBlockMetadata {
 }
 
 interface ComponentBlockProps {
+  index: number;
   block: LibraryBlockMetadataWithUniqueId;
   readOnly?: boolean;
   isDragging?: boolean;
 }
 
 /** Component header */
-const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
+const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
@@ -68,7 +69,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
         },
       });
       showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
-    } catch (err) {
+    } catch {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
     }
   };
@@ -91,9 +92,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       <Stack
         direction="horizontal"
         gap={2}
-        className="font-weight-bold"
-        // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="font-weight-bold stop-event-propagation"
       >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
@@ -106,8 +105,7 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
       <Stack
         direction="horizontal"
         gap={3}
-        // Prevent parent card from being clicked.
-        onClick={(e) => e.stopPropagation()}
+        className="stop-event-propagation"
       >
         {!showOnlyPublished && block.hasUnpublishedChanges && (
           <Badge
@@ -121,17 +119,18 @@ const BlockHeader = ({ block, readOnly }: ComponentBlockProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={block.tagsCount} onClick={readOnly ? undefined : jumpToManageTags} />
-        {!readOnly && <ComponentMenu usageKey={block.originalId} />}
+        {!readOnly && <ComponentMenu index={index} usageKey={block.originalId} />}
       </Stack>
     </>
   );
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) => {
-  const { showOnlyPublished } = useLibraryContext();
+const ComponentBlock = ({
+  block, readOnly, isDragging, index,
+}: ComponentBlockProps) => {
+  const { showOnlyPublished, openComponentEditor } = useLibraryContext();
 
-  const { openComponentEditor } = useLibraryContext();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
@@ -139,7 +138,11 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
       // don't allow interaction if rendered as preview
       return;
     }
-    openItemSidebar(block.originalId, SidebarBodyItemId.ComponentInfo);
+    openItemSidebar(
+      block.originalId,
+      SidebarBodyItemId.ComponentInfo,
+      index,
+    );
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
@@ -177,7 +180,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle()}
-        actions={<BlockHeader block={block} readOnly={readOnly} />}
+        actions={<BlockHeader block={block} index={index} readOnly={readOnly} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
@@ -185,14 +188,14 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable={!readOnly}
-        onClick={(e) => handleComponentSelection(e.detail)}
+        onClick={(e) => skipIfUnwantedTarget(e, (event) => handleComponentSelection(event.detail))}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleComponentSelection(e.detail);
           }
         }}
         disabled={readOnly}
-        cardClassName={sidebarItemInfo?.id === block.originalId ? 'selected' : undefined}
+        cardClassName={sidebarItemInfo?.id === block.originalId && sidebarItemInfo?.index === index ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
@@ -206,7 +209,7 @@ const ComponentBlock = ({ block, readOnly, isDragging }: ComponentBlockProps) =>
             usageKey={block.originalId}
             version={showOnlyPublished ? 'published' : undefined}
             minHeight={calculateMinHeight()}
-            scrollIntoView={block.isNew}
+            scrollIntoView={!readOnly && block.isNew}
           />
         </div>
       </SortableItem>
@@ -239,7 +242,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     isLoading,
     isError,
     error,
-  } = useContainerChildren(unitId, showOnlyPublished);
+  } = useContainerChildren<LibraryBlockMetadata>(unitId, showOnlyPublished);
 
   const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
     if (!newOrder) {
@@ -249,7 +252,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
     try {
       await orderMutator.mutateAsync(usageKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
+    } catch {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
   }, [orderMutator]);
@@ -293,11 +296,11 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
       >
         {orderedBlocks?.map((block, idx) => (
           // A container can have multiple instances of the same block
-          // eslint-disable-next-line react/no-array-index-key
           <ComponentBlock
             // eslint-disable-next-line react/no-array-index-key
             key={`${block.originalId}-${idx}-${block.modified}`}
             block={block}
+            index={idx}
             isDragging={hidePreviewFor === block.id}
             readOnly={readOnly}
           />

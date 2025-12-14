@@ -90,8 +90,11 @@ export const parseState = ({
   return {
     settings: {
       ...settings,
-      ...(isMarkdownEditorEnabled && { markdown: contentString }),
-      markdown_edited: !!isMarkdownEditorEnabled,
+      // If the save action isn’t triggered from the Markdown editor, the Markdown content might be outdated. Since the
+      // Markdown editor shouldn't be displayed in future in this case, we’re sending `null` instead.
+      // TODO: Implement OLX-to-Markdown conversion to properly handle this scenario.
+      markdown: isMarkdownEditorEnabled ? contentString : null,
+      markdown_edited: isMarkdownEditorEnabled,
     },
     olx: isAdvanced || isMarkdownEditorEnabled ? rawOLX : reactBuiltOlx,
   };

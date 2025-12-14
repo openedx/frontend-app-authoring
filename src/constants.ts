@@ -7,6 +7,7 @@ export const STATEFUL_BUTTON_STATES = {
   default: 'default',
   pending: 'pending',
   error: 'error',
+  disable: 'disable',
 };
 
 export const USER_ROLES = {
@@ -61,6 +62,8 @@ export const COURSE_BLOCK_NAMES = ({
   libraryContent: { id: 'library_content', name: 'Library content' },
   splitTest: { id: 'split_test', name: 'Split Test' },
   component: { id: 'component', name: 'Component' },
+  itembank: { id: 'itembank', name: 'Problem Bank' },
+  legacyLibraryContent: { id: 'library_content', name: 'Randomized Content Block' },
 });
 
 export const STUDIO_CLIPBOARD_CHANNEL = 'studio_clipboard_channel';

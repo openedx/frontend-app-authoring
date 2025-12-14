@@ -40,7 +40,7 @@ export interface SearchContextData {
   defaultSearchSortOrder: SearchSortOption;
   hits: HitType[];
   totalHits: number;
-  isLoading: boolean;
+  isPending: boolean;
   hasNextPage: boolean | undefined;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
@@ -117,7 +117,7 @@ export const SearchContextProvider: React.FC<{
       if (getBlockType(value)) {
         return value;
       }
-    } catch (error) {
+    } catch {
       // Error thrown if value cannot be parsed into a library usage key.
       // Pass through to return below.
     }

@@ -6,7 +6,7 @@ import {
   initializeMocks,
   waitFor,
 } from '@src/testUtils';
-import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
+import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
 
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
@@ -51,7 +51,7 @@ const renderArgs = {
   ),
 };
 
-let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: any; };
 
 [
   'unit' as const,
@@ -62,29 +62,10 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     beforeEach(() => {
       const mocks = initializeMocks();
       mockShowToast = mocks.mockShowToast;
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [{
-              blockType: context,
-              displayName: `Test ${context}`,
-            }],
-          },
-        ],
-      });
-    });
-
-    it(`<${context}> is invisible when isOpen is false`, async () => {
-      const mockClose = jest.fn();
-      const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter
-        containerId={containerId}
-        isOpen={false}
-        close={mockClose}
-      />, renderArgs);
-
-      const modal = screen.queryByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
-      expect(modal).not.toBeInTheDocument();
+      mockSearchResult(hydrateSearchResult([{
+        blockType: context,
+        displayName: `Test ${context}`,
+      }]));
     });
 
     it(`<${context}> should show a confirmation prompt the card with title and description`, async () => {
@@ -92,7 +73,6 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       const { containerId } = getContainerDetails(context);
       render(<ContainerDeleter
         containerId={containerId}
-        isOpen
         close={mockCancel}
       />, renderArgs);
 
@@ -111,7 +91,7 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
     it(`<${context}> deletes the block when confirmed, shows a toast with undo option and restores block on undo`, async () => {
       const mockCancel = jest.fn();
       const { containerId } = getContainerDetails(context);
-      render(<ContainerDeleter containerId={containerId} isOpen close={mockCancel} />, renderArgs);
+      render(<ContainerDeleter containerId={containerId} close={mockCancel} />, renderArgs);
 
       const modal = await screen.findByRole('dialog', { name: new RegExp(`Delete ${context}`, 'i') });
       expect(modal).toBeVisible();
@@ -138,23 +118,17 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       if (!parent) {
         return;
       }
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [{
-              [`${parent}s`]: {
-                displayName: [`${parent} 1`],
-                key: [`${parent}1`],
-              },
-              blockType: context,
-            }],
-          },
-        ],
-      });
+      mockSearchResult(hydrateSearchResult([{
+        [`${parent}s`]: {
+          displayName: [`${parent} 1`],
+          key: [`${parent}1`],
+        },
+        blockType: context,
+      }]));
+
       render(
         <ContainerDeleter
           containerId={containerId}
-          isOpen
           close={mockCancel}
         />,
         renderArgs,
@@ -173,23 +147,16 @@ let mockShowToast: { (message: string, action?: ToastActionData | undefined): vo
       if (!parent) {
         return;
       }
-      mockSearchResult({
-        results: [ // @ts-ignore
-          {
-            hits: [{
-              [`${parent}s`]: {
-                displayName: [`${parent} 1`, `${parent} 2`],
-                key: [`${parent}1`, `${parent}2`],
-              },
-              blockType: context,
-            }],
-          },
-        ],
-      });
+      mockSearchResult(hydrateSearchResult([{
+        [`${parent}s`]: {
+          displayName: [`${parent} 1`, `${parent} 2`],
+          key: [`${parent}1`, `${parent}2`],
+        },
+        blockType: context,
+      }]));
       render(
         <ContainerDeleter
           containerId={containerId}
-          isOpen
           close={mockCancel}
         />,
         renderArgs,

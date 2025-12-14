@@ -107,17 +107,18 @@ const LibraryCollectionPage = () => {
     showOnlyPublished,
     extraFilter: contextExtraFilter,
     setCollectionId,
+    readOnly,
   } = useLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
     data: collectionData,
-    isLoading,
+    isPending: isLoading,
     isError,
     error,
   } = useCollection(libraryId, collectionId);
 
-  const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
+  const { data: libraryData, isPending: isLibLoading } = useContentLibrary(libraryId);
 
   if (!collectionId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -194,6 +195,7 @@ const LibraryCollectionPage = () => {
             title={libraryData.title}
             org={libraryData.org}
             contextId={libraryId}
+            readOnly={readOnly}
             isLibrary
             containerProps={{
               size: undefined,

@@ -33,7 +33,7 @@ const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let mockShowToast: (message: string, action?: ToastActionData) => void;
 
 mockClipboardEmpty.applyMock();
 mockGetContainerMetadata.applyMock();
@@ -177,7 +177,6 @@ describe('<LibraryUnitPage />', () => {
     const textBox = screen.getByRole('textbox', { name: /text input/i });
     expect(textBox).toBeInTheDocument();
     expect(textBox).toHaveValue('Test Unit');
-    screen.logTestingPlaygroundURL();
     fireEvent.change(textBox, { target: { value: 'New Unit Title' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
 
@@ -354,16 +353,23 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should remove a component & restore from component card', async () => {
+    const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const removeButton = await screen.findByText('Remove from unit');
-    fireEvent.click(removeButton);
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
@@ -375,26 +381,62 @@ describe('<LibraryUnitPage />', () => {
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
     const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
-    axiosMock.onPost(restoreUrl).reply(200);
+    axiosMock.onPatch(restoreUrl).reply(200);
     // restore collection
     restoreFn();
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.patch.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
   });
 
+  it('should remove only one instance of component even if it is present multiple times in this page', async () => {
+    const user = userEvent.setup();
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerChildren.unitIdWithDuplicate);
+    axiosMock.onPatch(url).reply(200);
+    renderLibraryUnitPage(mockGetContainerChildren.unitIdWithDuplicate);
+
+    expect((await screen.findAllByText('text block 0')).length).toEqual(2);
+    const menu = (await screen.findAllByRole('button', { name: /component actions menu/i }))[0];
+    await user.click(menu);
+
+    const removeButton = await screen.findByText('Remove from unit');
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
+    const result = await mockGetContainerChildren(mockGetContainerChildren.unitIdWithDuplicate);
+    const resultIds = result.map((obj) => obj.id);
+
+    await waitFor(() => {
+      expect(axiosMock.history.patch[0].url).toEqual(url);
+    });
+    // Only the first element is removed even though the last element has the same id.
+    expect(JSON.parse(axiosMock.history.patch[0].data).usage_keys).toEqual(resultIds.slice(1));
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+  });
+
   it('should show error on remove a component', async () => {
+    const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(404);
     renderLibraryUnitPage();
 
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const removeButton = await screen.findByText('Remove from unit');
-    fireEvent.click(removeButton);
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
@@ -403,16 +445,23 @@ describe('<LibraryUnitPage />', () => {
   });
 
   it('should show error on restore removed component', async () => {
+    const user = userEvent.setup();
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
 
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const removeButton = await screen.findByText('Remove from unit');
-    fireEvent.click(removeButton);
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
@@ -424,11 +473,11 @@ describe('<LibraryUnitPage />', () => {
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
     const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.unitId);
-    axiosMock.onPost(restoreUrl).reply(404);
+    axiosMock.onPatch(restoreUrl).reply(404);
     // restore collection
     restoreFn();
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.patch.length).toEqual(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Failed to undo remove component operation');
   });
@@ -446,10 +495,16 @@ describe('<LibraryUnitPage />', () => {
     const { findByRole, findByText } = within(sidebar);
 
     const menu = await findByRole('button', { name: /component actions menu/i });
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const removeButton = await findByText('Remove from unit');
-    fireEvent.click(removeButton);
+    await user.click(removeButton);
+
+    const modal = await screen.findByRole('dialog', { name: 'Remove Component' });
+    expect(modal).toBeVisible();
+
+    const confirmButton = await within(modal).findByRole('button', { name: 'Remove' });
+    await user.click(confirmButton);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);

@@ -1,6 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import TinyMceWidget, { prepareEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 
 import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
@@ -14,7 +13,7 @@ export const WysiwygEditor = ({
   initialValue, editorType, onChange, minHeight,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const { courseId } = useSelector((state) => state.courseDetail);
+  const { courseId } = useCourseAuthoringContext();
   const isEquivalentCodeExtraSpaces = (first, second) => {
     // Utils allows to compare code extra spaces
     const removeWhitespace = (str) => str.replace(/\s/g, '');

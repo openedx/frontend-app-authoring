@@ -48,15 +48,15 @@ describe('cms api', () => {
   });
   describe('apiMethods', () => {
     describe('fetchBlockId', () => {
-      it('should call get with url.blocks', () => {
-        apiMethods.fetchBlockById({ blockId, studioEndpointUrl });
+      it('should call get with url.blocks', async () => {
+        await apiMethods.fetchBlockById({ blockId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.block({ blockId, studioEndpointUrl }));
       });
     });
 
     describe('fetchByUnitId', () => {
-      it('should call get with url.blockAncestor', () => {
-        apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+      it('should call get with url.blockAncestor', async () => {
+        await apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
       });
 
@@ -82,7 +82,7 @@ describe('cms api', () => {
           // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
           const utils = await import('./utils');
           const getSpy = jest.spyOn(utils, 'get');
-          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+          await apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
           expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
         });
 
@@ -94,22 +94,22 @@ describe('cms api', () => {
           // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
           const utils = await import('./utils');
           const getSpy = jest.spyOn(utils, 'get');
-          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+          await apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
           expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
         });
       });
     });
 
     describe('fetchStudioView', () => {
-      it('should call get with url.blockStudioView', () => {
-        apiMethods.fetchStudioView({ blockId, studioEndpointUrl });
+      it('should call get with url.blockStudioView', async () => {
+        await apiMethods.fetchStudioView({ blockId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.blockStudioView({ studioEndpointUrl, blockId }));
       });
     });
 
     describe('fetchCourseImages', () => {
-      it('should call get with url.courseAssets', () => {
-        apiMethods.fetchCourseImages({
+      it('should call get with url.courseAssets', async () => {
+        await apiMethods.fetchCourseImages({
           learningContextId, studioEndpointUrl, pageNumber: 0,
         });
         const params = {
@@ -123,8 +123,8 @@ describe('cms api', () => {
       });
     });
     describe('fetchLibraryImages', () => {
-      it('should call get with urls.libraryAssets for library V2', () => {
-        apiMethods.fetchLibraryImages({
+      it('should call get with urls.libraryAssets for library V2', async () => {
+        await apiMethods.fetchLibraryImages({
           blockId,
         });
         expect(get).toHaveBeenCalledWith(
@@ -134,30 +134,30 @@ describe('cms api', () => {
     });
 
     describe('fetchCourseDetails', () => {
-      it('should call get with url.courseDetailsUrl', () => {
-        apiMethods.fetchCourseDetails({ learningContextId, studioEndpointUrl });
+      it('should call get with url.courseDetailsUrl', async () => {
+        await apiMethods.fetchCourseDetails({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }));
       });
     });
 
     describe('fetchVideos', () => {
-      it('should call get with url.courseVideos', () => {
-        apiMethods.fetchVideos({ learningContextId, studioEndpointUrl });
+      it('should call get with url.courseVideos', async () => {
+        await apiMethods.fetchVideos({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseVideos({ studioEndpointUrl, learningContextId }));
       });
     });
 
     describe('fetchAdvancedSettings', () => {
-      it('should call get with url.courseAdvanceSettings', () => {
-        apiMethods.fetchAdvancedSettings({ learningContextId, studioEndpointUrl });
+      it('should call get with url.courseAdvanceSettings', async () => {
+        await apiMethods.fetchAdvancedSettings({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }));
       });
     });
 
     describe('getHandlerUrl', () => {
-      it('should call get with url.handlerUrl', () => {
+      it('should call get with url.handlerUrl', async () => {
         const handlerName = 'transcript';
-        apiMethods.getHandlerUrl({ studioEndpointUrl, blockId, handlerName });
+        await apiMethods.getHandlerUrl({ studioEndpointUrl, blockId, handlerName });
         expect(get).toHaveBeenCalledWith(urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }));
       });
     });
@@ -250,8 +250,8 @@ describe('cms api', () => {
 
     describe('saveBlock', () => {
       const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
-      it('should call post with urls.block and normalizeContent', () => {
-        apiMethods.saveBlock({
+      it('should call post with urls.block and normalizeContent', async () => {
+        await apiMethods.saveBlock({
           blockId,
           blockType: 'html',
           content,
@@ -278,8 +278,8 @@ describe('cms api', () => {
       const asset = new File([img], filename, { type: 'image/jpeg' });
       const mockFormdata = new FormData();
       mockFormdata.append('file', asset);
-      it('should call post with urls.courseAssets and imgdata', () => {
-        apiMethods.uploadAsset({
+      it('should call post with urls.courseAssets and imgdata', async () => {
+        await apiMethods.uploadAsset({
           blockId,
           learningContextId,
           studioEndpointUrl,
@@ -290,10 +290,10 @@ describe('cms api', () => {
           mockFormdata,
         );
       });
-      it('should call post with urls.libraryAssets and imgdata', () => {
+      it('should call post with urls.libraryAssets and imgdata', async () => {
         learningContextId = 'lib:demo2uX';
         mockFormdata.append('content', asset);
-        apiMethods.uploadAsset({
+        await apiMethods.uploadAsset({
           blockId,
           learningContextId,
           studioEndpointUrl,
@@ -307,10 +307,10 @@ describe('cms api', () => {
     });
 
     describe('uploadVideo', () => {
-      it('should call post with urls.courseVideos and data', () => {
+      it('should call post with urls.courseVideos and data', async () => {
         const data = { files: [{ file_name: 'video.mp4', content_type: 'mp4' }] };
 
-        apiMethods.uploadVideo({ data, studioEndpointUrl, learningContextId });
+        await apiMethods.uploadVideo({ data, studioEndpointUrl, learningContextId });
 
         expect(urls.courseVideos).toHaveBeenCalledWith({ studioEndpointUrl, learningContextId });
         expect(post).toHaveBeenCalledWith(
@@ -354,10 +354,10 @@ describe('cms api', () => {
     describe('uploadThumbnail', () => {
       const thumbnail = 'dAta';
       const videoId = 'sOmeVIDeoiD';
-      it('should call post with urls.thumbnailUpload and thumbnail data', () => {
+      it('should call post with urls.thumbnailUpload and thumbnail data', async () => {
         const mockFormdata = new FormData();
         mockFormdata.append('file', thumbnail);
-        apiMethods.uploadThumbnail({
+        await apiMethods.uploadThumbnail({
           studioEndpointUrl,
           learningContextId,
           videoId,
@@ -376,8 +376,8 @@ describe('cms api', () => {
     const youTubeId = 'SOMeyoutUBeid';
     describe('checkTranscriptsForImport', () => {
       const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
-      it('should call get with url.checkTranscriptsForImport', () => {
-        apiMethods.checkTranscriptsForImport({
+      it('should call get with url.checkTranscriptsForImport', async () => {
+        await apiMethods.checkTranscriptsForImport({
           studioEndpointUrl,
           blockId,
           videoId,
@@ -391,8 +391,8 @@ describe('cms api', () => {
     });
     describe('importTranscript', () => {
       const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"}]}`;
-      it('should call get with url.replaceTranscript', () => {
-        apiMethods.importTranscript({ studioEndpointUrl, blockId, youTubeId });
+      it('should call get with url.replaceTranscript', async () => {
+        await apiMethods.importTranscript({ studioEndpointUrl, blockId, youTubeId });
         expect(get).toHaveBeenCalledWith(urls.replaceTranscript({
           studioEndpointUrl,
           parameters: encodeURIComponent(getJSON),
@@ -401,13 +401,13 @@ describe('cms api', () => {
     });
     describe('uploadTranscript', () => {
       const transcript = new Blob(['dAta']);
-      it('should call post with urls.videoTranscripts and transcript data', () => {
+      it('should call post with urls.videoTranscripts and transcript data', async () => {
         const mockFormdata = new FormData();
         mockFormdata.append('file', transcript);
         mockFormdata.append('edx_video_id', videoId);
         mockFormdata.append('language_code', language);
         mockFormdata.append('new_language_code', language);
-        apiMethods.uploadTranscript({
+        await apiMethods.uploadTranscript({
           blockId,
           studioEndpointUrl,
           transcript,
@@ -422,14 +422,14 @@ describe('cms api', () => {
     });
     describe('uploadTranscriptV2', () => {
       const transcript = new Blob(['dAta']);
-      it('should call post with urls.uploadTranscriptV2 and transcript data', () => {
+      it('should call post with urls.uploadTranscriptV2 and transcript data', async () => {
         const mockFormdata = new FormData();
         const transcriptHandlerUrl = 'handlerUrl';
         mockFormdata.append('file', transcript);
         mockFormdata.append('edx_video_id', videoId);
         mockFormdata.append('language_code', language);
         mockFormdata.append('new_language_code', language);
-        apiMethods.uploadTranscriptV2({
+        await apiMethods.uploadTranscriptV2({
           handlerUrl: transcriptHandlerUrl,
           transcript,
           videoId,
@@ -442,9 +442,9 @@ describe('cms api', () => {
       });
     });
     describe('transcript delete', () => {
-      it('should call deleteObject with urls.videoTranscripts and transcript data', () => {
+      it('should call deleteObject with urls.videoTranscripts and transcript data', async () => {
         const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
-        apiMethods.deleteTranscript({
+        await apiMethods.deleteTranscript({
           blockId,
           studioEndpointUrl,
           videoId,
@@ -455,10 +455,10 @@ describe('cms api', () => {
           mockDeleteJSON,
         );
       });
-      it('should call deleteObject with urls.transcriptXblockV2 and transcript data', () => {
+      it('should call deleteObject with urls.transcriptXblockV2 and transcript data', async () => {
         const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
         const transcriptHandlerUrl = 'handlerUrl';
-        apiMethods.deleteTranscriptV2({
+        await apiMethods.deleteTranscriptV2({
           handlerUrl: transcriptHandlerUrl,
           videoId,
           language,
@@ -470,9 +470,9 @@ describe('cms api', () => {
       });
     });
     describe('transcript get', () => {
-      it('should call get with urls.videoTranscripts and transcript data', () => {
+      it('should call get with urls.videoTranscripts and transcript data', async () => {
         const mockJSON = { data: { lang: language, edx_video_id: videoId } };
-        apiMethods.getTranscript({
+        await apiMethods.getTranscript({
           blockId,
           studioEndpointUrl,
           videoId,
@@ -483,10 +483,10 @@ describe('cms api', () => {
           mockJSON,
         );
       });
-      it('should call get with urls.transcriptXblockV2 and transcript data', () => {
+      it('should call get with urls.transcriptXblockV2 and transcript data', async () => {
         const mockJSON = { data: { lang: language, edx_video_id: videoId } };
         const transcriptHandlerUrl = 'handlerUrl';
-        apiMethods.getTranscriptV2({
+        await apiMethods.getTranscriptV2({
           handlerUrl: transcriptHandlerUrl,
           videoId,
           language,
@@ -672,9 +672,9 @@ describe('cms api', () => {
     });
   });
   describe('fetchVideoFeatures', () => {
-    it('should call get with url.videoFeatures', () => {
+    it('should call get with url.videoFeatures', async () => {
       const args = { studioEndpointUrl };
-      apiMethods.fetchVideoFeatures({ ...args });
+      await apiMethods.fetchVideoFeatures({ ...args });
       expect(get).toHaveBeenCalledWith(urls.videoFeatures({ ...args }));
     });
   });

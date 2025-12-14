@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
-import { getCourseItem } from './api';
+import { getCourseDetails, getCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -9,7 +9,7 @@ export const courseOutlineQueryKeys = {
    */
   contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
   courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
-
+  courseDetails: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId, 'details'],
 };
 
 /**
@@ -22,14 +22,20 @@ export const useCreateCourseBlock = (
 ) => useMutation({
   mutationFn: createCourseXblock,
   onSettled: async (data) => {
-    callback?.(data.locator, data.parent_locator);
+    callback?.(data?.locator, data.parent_locator);
   },
 });
 
 export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
-    queryFn: () => getCourseItem(itemId!),
-    enabled: enabled && itemId !== undefined,
+    queryFn: enabled && itemId !== undefined ? () => getCourseItem(itemId!) : skipToken,
+  })
+);
+
+export const useCourseDetails = (courseId?: string, enabled: boolean = true) => (
+  useQuery({
+    queryKey: courseOutlineQueryKeys.courseDetails(courseId),
+    queryFn: enabled && courseId ? () => getCourseDetails(courseId) : skipToken,
   })
 );

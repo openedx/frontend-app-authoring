@@ -7,11 +7,13 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import ComponentCount from '@src/generic/component-count';
+import TagCount from '@src/generic/tag-count';
+import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
+import { skipIfUnwantedTarget } from '@src/utils';
+import { Report } from '@openedx/paragon/icons';
 import messages from './messages';
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import ComponentCount from '../../generic/component-count';
-import TagCount from '../../generic/tag-count';
-import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseCardProps = {
   itemType: string;
@@ -24,6 +26,7 @@ type BaseCardProps = {
   hasUnpublishedChanges?: boolean;
   onSelect: (e?: React.MouseEvent) => void;
   selected?: boolean;
+  isPlaceholder?: boolean;
 };
 
 const BaseCard = ({
@@ -47,12 +50,13 @@ const BaseCard = ({
 
   const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
+  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-import-placeholder';
 
   return (
     <Container className="library-item-card selected">
       <Card
         isClickable
-        onClick={onSelect}
+        onClick={(e: React.MouseEvent) => skipIfUnwantedTarget(e, onSelect)}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
             onSelect();
@@ -61,16 +65,17 @@ const BaseCard = ({
         className={selected ? 'selected' : undefined}
       >
         <Card.Header
-          className={`library-item-header ${getComponentStyleColor(itemType)}`}
+          className={`library-item-header ${itemComponentStyle}`}
           title={
-            <Icon src={itemIcon} className="library-item-header-icon" />
+            <Icon src={props.isPlaceholder ? Report : itemIcon} className="library-item-header-icon my-2" />
           }
-          actions={
-            // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
-            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-            jsx-a11y/no-static-element-interactions */
-            <div onClick={(e) => e.stopPropagation()}>{actions}</div>
-          }
+          actions={(
+            <div
+              // Prevent card being clicked when actions menu are clicked
+              className="stop-event-propagation"
+            >{actions}
+            </div>
+          )}
         />
         <Card.Body className="w-100">
           <Card.Section>
@@ -89,8 +94,12 @@ const BaseCard = ({
                   <BlockTypeLabel blockType={itemType} />
                 </small>
               </Stack>
-              <ComponentCount count={numChildren} />
-              <TagCount size="sm" count={tagCount} />
+              {!props.isPlaceholder && (
+              <>
+                <ComponentCount count={numChildren} />
+                <TagCount size="sm" count={tagCount} />
+              </>
+              )}
             </Stack>
             <div className="badge-container d-flex align-items-center justify-content-center">
               {props.hasUnpublishedChanges && (

@@ -8,14 +8,15 @@ import {
 import {
   Chip,
   Button,
+  Icon,
   useCheckboxSetValues,
   useToggle,
   StatefulButton,
-  Spinner,
 } from '@openedx/paragon';
 import {
   ArrowDropDown,
   CloseSmall,
+  SpinnerSimple,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useDispatch } from 'react-redux';
@@ -493,7 +494,7 @@ const ScanResults: FC<Props> = ({
           } else if (onErrorStateChange) {
             onErrorStateChange(null);
           }
-        } catch (error) {
+        } catch {
           setIsUpdateAllInProgress(false);
           setUpdateAllCompleted(false);
           setUpdateAllTrigger(t => t + 1);
@@ -716,7 +717,7 @@ const ScanResults: FC<Props> = ({
       };
 
       return await pollForSingleLinkResult();
-    } catch (error) {
+    } catch {
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinkError));
       }
@@ -757,7 +758,7 @@ const ScanResults: FC<Props> = ({
       await dispatch(updateAllPreviousRunLinks(courseId));
 
       return true;
-    } catch (error) {
+    } catch {
       setIsUpdateAllInProgress(false); // Reset on error
       if (onErrorStateChange) {
         onErrorStateChange(intl.formatMessage(messages.updateLinksError));
@@ -1043,21 +1044,23 @@ const ScanResults: FC<Props> = ({
                 <StatefulButton
                   className="px-4 rounded-0 update-all-course-btn"
                   labels={{
-                    default: 'Update all',
-                    pending: 'Update all',
+                    default: intl.formatMessage(messages.updateAllButtonText),
+                    disable: intl.formatMessage(messages.updateAllButtonText),
+                    pending: intl.formatMessage(messages.updateAllButtonText),
                   }}
                   icons={{
                     default: '',
-                    pending: <Spinner
-                      animation="border"
-                      size="sm"
-                      className="mr-2 spinner-icon"
-                    />,
+                    disable: '',
+                    pending: <Icon src={SpinnerSimple} className="icon-spin" />,
                   }}
-                  state={getUpdateAllButtonState()}
+                  state={
+                      Object.keys(updatingLinkIds).length > 0
+                        ? STATEFUL_BUTTON_STATES.disable
+                        : getUpdateAllButtonState()
+                    }
                   onClick={handleUpdateAllCourseLinks}
                   disabled={areAllLinksUpdated}
-                  disabledStates={['pending']}
+                  disabledStates={['disable', 'pending']}
                   variant="primary"
                   data-testid="update-all-course"
                 />

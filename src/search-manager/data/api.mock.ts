@@ -16,12 +16,16 @@ export async function mockContentSearchConfig(): ReturnType<typeof api.getConten
   };
 }
 mockContentSearchConfig.multisearchEndpointUrl = 'http://mock.meilisearch.local/multi-search';
+mockContentSearchConfig.searchEndpointUrl = 'http://mock.meilisearch.local/indexes/studio/search';
 mockContentSearchConfig.applyMock = () => (
   jest.spyOn(api, 'getContentSearchConfig').mockImplementation(mockContentSearchConfig)
 );
 
 /**
  * Mock all future Meilisearch searches with the given response.
+ *
+ * If you want to pass only the hits, use `hydrateSearchResult()` to create a full
+ * MultiSearchResponse object.
  *
  * For a given test suite, this mock will stay in effect until you call it with
  * a different mock response, or you call `fetchMock.mockReset()`
@@ -31,7 +35,7 @@ export function mockSearchResult(
   filterFn?: (requestData: any) => MultiSearchResponse,
 ) {
   fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, (_url, req) => {
-    const requestData = JSON.parse(req.body?.toString() ?? '');
+    const requestData = JSON.parse((req.body ?? '') as string);
     const query = requestData?.queries[0]?.q ?? '';
     // We have to replace the query (search keywords) in the mock results with the actual query,
     // because otherwise Instantsearch will update the UI and change the query,
@@ -44,6 +48,25 @@ export function mockSearchResult(
     return filterFn?.(requestData) || newMockResponse;
   }, { overwriteRoutes: true });
 }
+
+/** Helper to create a full MultiSearchResponse object from an array of hits.
+ * You can then pass the result to `mockSearchResult()`.
+ */
+export const hydrateSearchResult: (hits: any[]) => MultiSearchResponse = (hits) => ({
+  results: [
+    {
+      hits,
+      offset: 0,
+      limit: 20,
+      nbHits: 0,
+      exhaustiveNbHits: true,
+      processingTimeMs: 1,
+      query: '',
+      params: '',
+      indexUid: 'studio',
+    },
+  ],
+});
 
 /**
  * Mock the block types returned by the API.
@@ -80,3 +103,24 @@ mockFetchIndexDocuments.applyMock = () => {
     { overwriteRoutes: true },
   );
 };
+
+/**
+ * Mock the useGetContentHits
+ */
+export async function mockGetContentHits(
+  mockResponse: 'noHits' | 'someHits',
+) {
+  fetchMock.post(mockContentSearchConfig.searchEndpointUrl, () => {
+    const mockResponseMap = {
+      noHits: {
+        hits: [],
+        estimatedTotalHits: 0,
+      },
+      someHits: {
+        hits: [{ usage_key: 'some-key' }, { usage_key: 'other-key' }],
+        estimatedTotalHits: 2,
+      },
+    };
+    return mockResponseMap[mockResponse];
+  });
+}

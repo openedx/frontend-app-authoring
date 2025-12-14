@@ -22,13 +22,13 @@ import { ContainerEditableTitle, FooterActions, HeaderActions } from '../contain
 /** Full library subsection page */
 export const LibrarySubsectionPage = () => {
   const intl = useIntl();
-  const { libraryId, containerId } = useLibraryContext();
+  const { libraryId, containerId, readOnly } = useLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
-  const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
+  const { data: libraryData, isPending: isLibPending } = useContentLibrary(libraryId);
   // fetch subsectionData from index as it includes its parent sections as well.
   const {
-    hits, isLoading, isError, error,
+    hits, isPending, isError, error,
   } = useContentFromSearchIndex(containerId ? [containerId] : []);
   const subsectionData = (hits as ContainerHit[])?.[0];
 
@@ -38,7 +38,7 @@ export const LibrarySubsectionPage = () => {
   }
 
   // Only show loading if section or library data is not fetched from index yet
-  if (isLibLoading || isLoading) {
+  if (isLibPending || isPending) {
     return <Loading />;
   }
 
@@ -64,6 +64,7 @@ export const LibrarySubsectionPage = () => {
           title={libraryData.title}
           org={libraryData.org}
           contextId={libraryData.id}
+          readOnly={readOnly}
           isLibrary
           containerProps={{
             size: undefined,

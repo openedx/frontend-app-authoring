@@ -87,11 +87,11 @@ export const ItemHierarchy = ({
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
   } = useLibraryItemHierarchy(itemId);
 
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 

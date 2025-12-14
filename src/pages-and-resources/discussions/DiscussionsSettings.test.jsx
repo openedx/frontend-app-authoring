@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   getConfig, initializeMockApp, setConfig,
 } from '@edx/frontend-platform';
@@ -10,16 +11,15 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
-import React from 'react';
 import {
   Routes,
   Route,
   MemoryRouter,
   useLocation,
 } from 'react-router-dom';
-import { fetchCourseDetail } from '../../data/thunks';
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
+import initializeStore from '@src/store';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailsUrl } from '@src/data/api';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import ltiMessages from './app-config-form/apps/lti/messages';
 import appMessages from './app-config-form/messages';
@@ -38,6 +38,13 @@ const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
 let store;
 let container;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 // Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
 ReactDOM.createPortal = jest.fn(node => node);
@@ -50,21 +57,25 @@ const LocationDisplay = () => {
 function renderComponent(route) {
   const wrapper = render(
     <AppProvider store={store} wrapWithRouter={false}>
-      <PagesAndResourcesProvider courseId={courseId}>
-        <MemoryRouter initialEntries={[`${route}`]}>
-          <Routes>
-            <Route
-              path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
-              element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>}
-            />
-            <Route
-              path={`/course/${courseId}/pages-and-resources/discussion`}
-              element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>}
-            />
-          </Routes>
-          <LocationDisplay />
-        </MemoryRouter>
-      </PagesAndResourcesProvider>
+      <QueryClientProvider client={queryClient}>
+        <CourseAuthoringProvider courseId={courseId}>
+          <PagesAndResourcesProvider courseId={courseId}>
+            <MemoryRouter initialEntries={[`${route}`]}>
+              <Routes>
+                <Route
+                  path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
+                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                />
+                <Route
+                  path={`/course/${courseId}/pages-and-resources/discussion`}
+                  element={<PageWrap><DiscussionsSettings /></PageWrap>}
+                />
+              </Routes>
+              <LocationDisplay />
+            </MemoryRouter>
+          </PagesAndResourcesProvider>
+        </CourseAuthoringProvider>
+      </QueryClientProvider>
     </AppProvider>,
   );
   container = wrapper.container;
@@ -74,25 +85,21 @@ describe('DiscussionsSettings', () => {
   let user;
   beforeEach(() => {
     user = userEvent.setup();
+    const username = 'abc123';
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
-        username: 'abc123',
+        username,
         administrator: true,
         roles: [],
       },
     });
 
-    store = initializeStore({
-      models: {
-        courseDetails: {
-          [courseId]: {
-            start: Date(),
-          },
-        },
-      },
-    });
+    store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getCourseDetailsUrl(courseId, username))
+      .reply(200, { courseId, name: 'Course Test' });
   });
 
   describe('with successful network connections', () => {
@@ -147,7 +154,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-      await user.click(queryByLabelText(container, 'Select edX'));
+      await user.click(queryByLabelText(container, 'Select Open edX (legacy)'));
       await user.click(queryByText(container, messages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
@@ -217,7 +224,6 @@ describe('DiscussionsSettings', () => {
 
     test('requires confirmation if changing provider', async () => {
       axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
-      await executeThunk(fetchCourseDetail(courseId), store.dispatch);
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -238,7 +244,6 @@ describe('DiscussionsSettings', () => {
 
     test('can cancel confirmation', async () => {
       axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
-      await executeThunk(fetchCourseDetail(courseId), store.dispatch);
 
       renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -393,13 +398,7 @@ describe.each([
       },
     });
 
-    store = initializeStore({
-      models: {
-        courseDetails: {
-          [courseId]: {},
-        },
-      },
-    });
+    store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
@@ -445,28 +444,26 @@ describe.each([
   const enablePIISharing = false;
 
   beforeEach(() => {
+    const username = 'abc123';
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
-        username: 'abc123',
+        username,
         administrator: true,
         roles: [],
       },
     });
 
-    store = initializeStore({
-      models: {
-        courseDetails: {
-          [courseId]: {},
-        },
-      },
-    });
+    store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
       .reply(200, generateProvidersApiResponse(false));
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
       .reply(200, generatePiazzaApiResponse(piiSharingAllowed));
+    axiosMock
+      .onGet(getCourseDetailsUrl(courseId, username))
+      .reply(200, { courseId, name: 'Course Test' });
   });
 
   test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'

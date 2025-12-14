@@ -1,5 +1,7 @@
 import React from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData, skipToken, useInfiniteQuery, useQuery,
+} from '@tanstack/react-query';
 import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
@@ -11,6 +13,7 @@ import {
   getContentSearchConfig,
   fetchBlockTypes,
   type PublishStatus,
+  fetchContentHits,
 } from './api';
 
 /**
@@ -26,7 +29,7 @@ export const useContentSearchConnection = (): {
   const { data: connectionDetails, isError: hasConnectionError } = useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
-    cacheTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
+    gcTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
     staleTime: 60 * 60_000, // If cache is up to one hour old, no need to re-fetch
     refetchInterval: 60 * 60_000,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
@@ -135,7 +138,7 @@ export const useContentSearchResults = ({
       tagsFilter,
       sort,
     }),
-    queryFn: ({ pageParam = 0 }) => {
+    queryFn: ({ pageParam }) => {
       // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
@@ -157,9 +160,10 @@ export const useContentSearchResults = ({
         limit,
       });
     },
+    initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
@@ -176,7 +180,7 @@ export const useContentSearchResults = ({
     problemTypes: pages?.[0]?.problemTypes ?? {},
     publishStatus: pages?.[0]?.publishStatus ?? {},
     status: query.status,
-    isLoading: query.isLoading,
+    isPending: query.isPending,
     isError: query.isError,
     error: query.error,
     isFetchingNextPage: query.isFetchingNextPage,
@@ -232,7 +236,7 @@ export const useTagFilterOptions = (args: {
       return fetchAvailableTagOptions({ ...args, client, indexName });
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
@@ -257,7 +261,7 @@ export const useTagFilterOptions = (args: {
       return fetchTagsThatMatchKeyword({ ...args, client, indexName });
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
@@ -285,7 +289,7 @@ export const useTagFilterOptions = (args: {
   return { ...mainQuery, data };
 };
 
-export const useGetBlockTypes = (extraFilters: Filter) => {
+export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -297,6 +301,35 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
       extraFilters,
       'block_types',
     ],
-    queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+    queryFn: enabled ? () => fetchBlockTypes(client!, indexName!, extraFilters) : skipToken,
+    refetchOnMount: 'always',
+  });
+};
+
+export const useGetContentHits = (
+  extraFilters: Filter,
+  enabled: boolean = true,
+  attributesToRetrieve?: string[],
+  limit?: number,
+  refetchOnMount?: boolean | 'always',
+) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      extraFilters,
+    ],
+    queryFn: enabled ? () => fetchContentHits(
+      client!,
+      indexName!,
+      extraFilters,
+      limit,
+      attributesToRetrieve,
+    ) : skipToken,
+    refetchOnMount,
   });
 };

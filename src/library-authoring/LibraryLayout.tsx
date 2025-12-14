@@ -6,17 +6,22 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { ROUTES } from './routes';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
+import { LibraryBackupPage } from './backup-restore';
+import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
-import { CreateCollectionModal } from './create-collection';
-import { CreateContainerModal } from './create-container';
-import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
-import { LibraryUnitPage } from './units';
+import { CreateCollectionModal } from './create-collection';
+import { CreateContainerModal } from './create-container';
+import { CourseImportHomePage } from './import-course';
+import { ROUTES } from './routes';
 import { LibrarySectionPage, LibrarySubsectionPage } from './section-subsections';
+import { LibraryUnitPage } from './units';
+import { LibraryTeamModal } from './library-team';
+import { ImportStepperPage } from './import-course/stepper/ImportStepperPage';
+import { ImportDetailsPage } from './import-course/ImportDetailsPage';
 
 const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const {
@@ -47,6 +52,7 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
         <CreateCollectionModal />
         <CreateContainerModal />
         <ComponentEditorModal />
+        <LibraryTeamModal />
       </SidebarProvider>
     </LibraryProvider>
   );
@@ -84,6 +90,22 @@ const LibraryLayout = () => (
       <Route
         path={ROUTES.UNIT}
         Component={LibraryUnitPage}
+      />
+      <Route
+        path={ROUTES.BACKUP}
+        Component={LibraryBackupPage}
+      />
+      <Route
+        path={ROUTES.IMPORT}
+        Component={CourseImportHomePage}
+      />
+      <Route
+        path={ROUTES.IMPORT_COURSE}
+        Component={ImportStepperPage}
+      />
+      <Route
+        path={ROUTES.IMPORT_COURSE_DETAILS}
+        Component={ImportDetailsPage}
       />
     </Route>
   </Routes>

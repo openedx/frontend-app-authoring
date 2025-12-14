@@ -165,6 +165,7 @@ describe('EditProblemView hooks parseState', () => {
         assets: {},
       })();
       expect(res.olx).toBe(mockRawOLX);
+      expect(res.settings.markdown).toBe(null);
     });
     it('markdown problem', () => {
       const res = hooks.parseState({
@@ -306,6 +307,7 @@ describe('EditProblemView hooks parseState', () => {
       show_reset_button: false,
       submission_wait_seconds: 0,
       attempts_before_showanswer_button: 0,
+      markdown: null,
       markdown_edited: false,
     };
     const openSaveWarningModal = jest.fn();
@@ -314,6 +316,7 @@ describe('EditProblemView hooks parseState', () => {
       const problem = { ...problemState, problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
       const content = hooks.getContent({
         isAdvancedProblemType: false,
+        isMarkdownEditorEnabled: false,
         problemState: problem,
         editorRef,
         assets,
@@ -340,6 +343,7 @@ describe('EditProblemView hooks parseState', () => {
       };
       const { settings } = hooks.getContent({
         isAdvancedProblemType: false,
+        isMarkdownEditorEnabled: false,
         problemState: problem,
         editorRef,
         assets,
@@ -354,6 +358,7 @@ describe('EditProblemView hooks parseState', () => {
         attempts_before_showanswer_button: 0,
         submission_wait_seconds: 0,
         weight: 1,
+        markdown: null,
         markdown_edited: false,
       });
     });
@@ -361,6 +366,7 @@ describe('EditProblemView hooks parseState', () => {
     it('default advanced save and returns parseState data', () => {
       const content = hooks.getContent({
         isAdvancedProblemType: true,
+        isMarkdownEditorEnabled: false,
         problemState,
         editorRef,
         assets,

@@ -155,6 +155,8 @@ describe('<ConfigureModal /> for Subsection', () => {
     expect(getByText(messages.neverShowAssessmentResultsDescription.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.showAssessmentResultsPastDue.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.showAssessmentResultsPastDueDescription.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.neverShowAssessmentResultsButIncludeGrade.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.neverShowAssessmentResultsButIncludeGradeDescription.defaultMessage)).toBeInTheDocument();
   });
 
   it('switches to the subsection Advanced tab and renders correctly', async () => {

@@ -13,8 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus } from '@src/data/constants';
-import { isUnitReadOnly } from '@src/course-unit/data/utils';
+import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -33,7 +32,7 @@ interface UnitCardProps {
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus: string;
+  savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
   onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
@@ -104,11 +103,11 @@ const UnitCard = ({
       downstreamBlockId: id,
       upstreamBlockId: upstreamInfo.upstreamRef,
       upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isReadyToSyncIndividually: upstreamInfo.isReadyToSyncIndividually,
       isContainer: true,
+      blockType: 'unit',
     };
   }, [upstreamInfo]);
-
-  const readOnly = isUnitReadOnly(unit);
 
   // re-create actions object for customizations
   const actions = { ...unitActions };
@@ -247,7 +246,7 @@ const UnitCard = ({
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
-            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
+            savingStatus={savingStatus}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

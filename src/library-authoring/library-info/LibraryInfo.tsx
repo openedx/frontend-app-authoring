@@ -1,24 +1,28 @@
 import { useCallback } from 'react';
-import { Button, Stack } from '@openedx/paragon';
+import { Button, Hyperlink, Stack } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
-import { LibraryTeamModal } from '../library-team';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 const LibraryInfo = () => {
   const intl = useIntl();
-  const { libraryData, readOnly } = useLibraryContext();
-  const { sidebarAction, setSidebarAction, resetSidebarAction } = useSidebarContext();
-  const isLibraryTeamModalOpen = (sidebarAction === SidebarActions.ManageTeam);
+  const { libraryId, libraryData, readOnly } = useLibraryContext();
+  const { setSidebarAction } = useSidebarContext();
+  const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
+
+  // always show link to admin console MFE if it is being used
+  const shouldShowAdminConsoleLink = !!adminConsoleUrl;
+
+  // if the admin console MFE isn't being used, show team modal button for non–read-only users
+  const shouldShowTeamModalButton = !adminConsoleUrl && !readOnly;
+
   const openLibraryTeamModal = useCallback(() => {
     setSidebarAction(SidebarActions.ManageTeam);
   }, [setSidebarAction]);
-  const closeLibraryTeamModal = useCallback(() => {
-    resetSidebarAction();
-  }, [resetSidebarAction]);
 
   return (
     <Stack direction="vertical" gap={2.5}>
@@ -30,8 +34,13 @@ const LibraryInfo = () => {
         <span>
           {libraryData?.org}
         </span>
-        {!readOnly && (
+        {shouldShowTeamModalButton && (
           <Button variant="outline-primary" onClick={openLibraryTeamModal}>
+            {intl.formatMessage(messages.libraryTeamButtonTitle)}
+          </Button>
+        )}
+        {shouldShowAdminConsoleLink && (
+          <Button as={Hyperlink} variant="outline-primary" destination={`${adminConsoleUrl}/authz/libraries/${libraryId}`} target="_blank">
             {intl.formatMessage(messages.libraryTeamButtonTitle)}
           </Button>
         )}
@@ -67,7 +76,6 @@ const LibraryInfo = () => {
           </span>
         </Stack>
       </Stack>
-      {isLibraryTeamModalOpen && <LibraryTeamModal onClose={closeLibraryTeamModal} />}
     </Stack>
   );
 };

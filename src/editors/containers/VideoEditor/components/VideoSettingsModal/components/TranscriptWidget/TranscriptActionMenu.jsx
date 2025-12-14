@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
 
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Dropdown, Icon, IconButton } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 
@@ -90,4 +90,4 @@ export const mapDispatchToProps = {
 };
 
 export const TranscriptActionMenuInternal = TranscriptActionMenu; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(TranscriptActionMenu));
+export default connect(mapStateToProps, mapDispatchToProps)(TranscriptActionMenu);

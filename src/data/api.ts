@@ -1,7 +1,47 @@
-import { camelCaseObject, getConfig } from '@edx/frontend-platform';
+import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
+export const getCourseDetailsUrl = (courseId: string, username: string) => (
+  `${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`
+);
+
+export type CourseDetailsData = {
+  blocksUrl: string;
+  courseId: string;
+  effort?: string;
+  end?: string;
+  enrollmentEnd?: string;
+  enrollmentStart?: string;
+  hidden: boolean;
+  id: string;
+  invitationOnly: boolean;
+  isEnrolled: boolean;
+  media: Record<
+  'image' | 'course_image' | 'banner_image' | 'course_video',
+  Record<string, string | null>
+  >;
+  mobileAvailable: boolean;
+  name: string;
+  number: string;
+  org: string;
+  overview: string;
+  pacing: string;
+  shortDescription?: string;
+  start?: string;
+  startDisplay?: string;
+  startType?: string;
+};
+
+/**
+ * Get the URL to check the migration task status
+ */
+export const getModulestoreMigrationStatusUrl = (migrationId: string) => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migrations/${migrationId}/`;
+
+/**
+ * Get the URL for bulk migrate content to libraries
+ */
+export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
 
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
@@ -10,18 +50,13 @@ export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   return courseId ? `${baseUrl}${apiPath}/${courseId}` : `${baseUrl}${apiPath}`;
 };
 
-function normalizeCourseDetail(data) {
+export async function getCourseDetails(courseId: string, username: string): Promise<CourseDetailsData> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseDetailsUrl(courseId, username));
   return {
     id: data.course_id,
     ...camelCaseObject(data),
   };
-}
-
-export async function getCourseDetail(courseId: string, username: string) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
-
-  return normalizeCourseDetail(data);
 }
 
 /**
@@ -70,5 +105,70 @@ export type WaffleFlagsStatus = { id: string | undefined } & Record<WaffleFlagNa
 export async function getWaffleFlags(courseId?: string): Promise<WaffleFlagsStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getApiWaffleFlagsUrl(courseId));
-  return normalizeCourseDetail(data);
+  return {
+    id: data.course_id,
+    ...camelCaseObject(data),
+  };
+}
+
+export interface MigrateParameters {
+  id: number;
+  source: string;
+  target: string;
+  compositionLevel: string;
+  repeatHandlingStrategy: 'update' | 'skip' | 'fork';
+  preserveUrlSlugs: boolean;
+  targetCollectionSlug: string;
+  forwardSourceToTarget: boolean;
+  isFailed: boolean;
+  targetCollection: {
+    key: string;
+    title: string;
+  } | null;
+}
+
+export interface MigrateTaskStatusData {
+  state: string;
+  stateText: string;
+  completedSteps: number;
+  totalSteps: number;
+  attempts: number;
+  created: string;
+  modified: string;
+  artifacts: string[];
+  uuid: string;
+  parameters: MigrateParameters[];
+}
+
+export interface BulkMigrateRequestData {
+  sources: string[];
+  target: string;
+  targetCollectionSlugList?: string[];
+  createCollections?: boolean;
+  compositionLevel?: string;
+  repeatHandlingStrategy?: string;
+  preserveUrlSlugs?: boolean;
+  forwardSourceToTarget?: boolean;
+}
+
+/**
+ * Get migration task status
+ */
+export async function getModulestoreMigrationStatus(
+  migrationId: string,
+): Promise<MigrateTaskStatusData> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getModulestoreMigrationStatusUrl(migrationId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Bulk migrate content to libraries
+ */
+export async function bulkModulestoreMigrate(
+  requestData: BulkMigrateRequestData,
+): Promise<MigrateTaskStatusData> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(bulkModulestoreMigrateUrl(), snakeCaseObject(requestData));
+  return camelCaseObject(data);
 }

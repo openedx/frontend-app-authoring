@@ -28,7 +28,7 @@ export function fetchTextbooksQuery(courseId) {
       const { textbooks } = await getTextbooks(courseId);
       dispatch(fetchTextbooks({ textbooks }));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch {
       dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
     }
   };
