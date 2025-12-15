@@ -8,14 +8,14 @@ import { Link } from 'react-router-dom';
 
 import { ReactNode } from 'react';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
-import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
-import TagCount from '../../generic/tag-count';
-import { useHelpUrls } from '../../help-urls/hooks';
-import { useWaffleFlags } from '../../data/apiHooks';
-import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { useContentTagsCount } from '../../generic/data/apiHooks';
+import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
+import TagCount from '@src/generic/tag-count';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
+import { useContentTagsCount } from '@src/generic/data/apiHooks';
+import { getVideoSharingOptionText } from '@src/course-outline/utils';
 import messages from './messages';
-import { getVideoSharingOptionText } from '../utils';
 
 interface StatusBarItemProps {
   title: string,

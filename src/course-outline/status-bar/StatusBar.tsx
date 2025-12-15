@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { ChecklistRtl } from '@openedx/paragon/icons';
+import { useWaffleFlags } from '@src/data/apiHooks';
 import messages from './messages';
-import { useWaffleFlags } from '../../data/apiHooks';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {

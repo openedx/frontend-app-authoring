@@ -5,11 +5,11 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getConfig, setConfig } from '@edx/frontend-platform/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import messages from './messages';
 import initializeStore from '../../store';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { LegacyStatusBar, LegacyStatusBarProps } from './LegacyStatusBar';
-import { CourseOutlineStatusBar } from '../data/types';
 
 let store;
 const mockPathname = '/foo-bar';

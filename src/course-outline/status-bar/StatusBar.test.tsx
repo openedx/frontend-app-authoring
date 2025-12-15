@@ -1,8 +1,8 @@
-import messages from './messages';
-import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { CourseOutlineStatusBar } from '../data/types';
+import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
+import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import { initializeMocks, render, screen } from '@src/testUtils';
 import { StatusBar, StatusBarProps } from './StatusBar';
-import { initializeMocks, render, screen } from '../../testUtils';
+import messages from './messages';
 
 const courseId = 'course-v1:123';
 const isLoading = false;
