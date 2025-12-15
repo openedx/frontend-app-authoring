@@ -16,6 +16,7 @@ import {
   getLibraryContainerRestoreApiUrl,
   getLibraryContainerChildrenApiUrl,
   getLibraryContainerPublishApiUrl,
+  getLibraryBlockLimitsUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -33,6 +34,7 @@ import {
   useUpdateContainerChildren,
   useRemoveContainerChildren,
   usePublishContainer,
+  useLibraryBlockLimits,
 } from './apiHooks';
 
 let axiosMock;
@@ -334,6 +336,18 @@ describe('library api hooks', () => {
     // 5 & 6. subsections
     // 7 all hierarchies
     expect(spy).toHaveBeenCalledTimes(7);
+  });
+
+  it('should get the library content limit', async () => {
+    const url = getLibraryBlockLimitsUrl();
+
+    axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
+    const { result } = renderHook(() => useLibraryBlockLimits(), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(result.current.data).toEqual({ testData: 'test-value' });
+    expect(axiosMock.history.get[0].url).toEqual(url);
   });
 
   describe('publishContainer', () => {
