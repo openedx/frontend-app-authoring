@@ -368,10 +368,16 @@ export const GameEditor = ({
                           variant="primary"
                         />
                         <Dropdown.Menu align="right">
-                          <Dropdown.Item onClick={() => moveCardUp(index)}>{intl.formatMessage(messages.moveUpLabel)}</Dropdown.Item>
-                          <Dropdown.Item onClick={() => moveCardDown(index)}>{intl.formatMessage(messages.moveDownLabel)}</Dropdown.Item>
+                          <Dropdown.Item onClick={() => moveCardUp(index)}>
+                            {intl.formatMessage(messages.moveUpLabel)}
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => moveCardDown(index)}>
+                            {intl.formatMessage(messages.moveDownLabel)}
+                          </Dropdown.Item>
                           <Dropdown.Divider />
-                          <Dropdown.Item onClick={() => removeCard({ index })}>{intl.formatMessage(messages.deleteLabel)}</Dropdown.Item>
+                          <Dropdown.Item onClick={() => removeCard({ index })}>
+                            {intl.formatMessage(messages.deleteLabel)}
+                          </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
