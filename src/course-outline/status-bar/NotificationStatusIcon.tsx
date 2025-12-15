@@ -21,6 +21,7 @@ function useDynamicHookShim() {
 
     async function load() {
       try {
+        // @ts-ignore
         // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved
         const module = await import('@edx/frontend-plugin-notifications');
         const hookFn = module.useAppNotifications ?? module.default;
