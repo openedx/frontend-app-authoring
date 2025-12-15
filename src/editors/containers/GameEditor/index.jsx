@@ -247,23 +247,26 @@ export const GameEditor = ({
                 id={card.id}
                 key={card.id}
                 buttonClassName="draggable-button"
+                actionStyle={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  zIndex: 2,
+                }}
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
-                  padding: '24px',
                   marginBottom: '16px',
                   boxShadow: '0px 1px 5px #ADADAD',
                   position: 'relative',
                   width: '100%',
                   flexDirection: 'column',
-                  flexFlow: 'nowrap',
                 }}
               >
                 <Collapsible.Advanced
                   className="card"
-                  defaultOpen
-                  onOpen={() => toggleOpen({ index, isOpen: true })}
-                  onClose={() => toggleOpen({ index, isOpen: false })}
+                  defaultOpen={card.editorOpen}
+                  onToggle={(state) => toggleOpen({ index, isOpen: state })}
                 >
                   <input
                     type="file"
@@ -279,8 +282,7 @@ export const GameEditor = ({
                     onChange={() => saveDefinitionImage(index)}
                     accept="image/png, image/jpeg, image/gif, image/webp"
                   />
-                  <Collapsible.Trigger className="card-heading">
-                    <div className="drag-spacer" />
+                  <Collapsible.Trigger className="card-heading-wrapper">
                     <div className="card-heading d-flex align-items-center align-self-stretch">
                       <div className="card-number">{index + 1}</div>
                       {!card.editorOpen ? (
@@ -320,7 +322,7 @@ export const GameEditor = ({
                           iconAs={Icon}
                           variant="primary"
                         />
-                        <Dropdown.Menu>
+                        <Dropdown.Menu align="right">
                           <Dropdown.Item onClick={() => moveCardUp(index)}>Move up</Dropdown.Item>
                           <Dropdown.Item onClick={() => moveCardDown(index)}>Move down</Dropdown.Item>
                           <Dropdown.Divider />
@@ -351,9 +353,7 @@ export const GameEditor = ({
                   </Collapsible.Trigger>
                   <div className="card-body p-0">
                     <Collapsible.Body>
-                      <div className="card-body-divider">
-                        <div className="card-divider" />
-                      </div>
+                      <div className="card-divider" />
                       <div className="card-term d-flex flex-column align-items-start align-self-stretch">
                         <div className="d-flex justify-content-between align-items-center align-self-stretch">
                           <span>{intl.formatMessage(messages.termLabel)}</span>

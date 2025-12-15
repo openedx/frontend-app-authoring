@@ -51,8 +51,6 @@ width: 100%;
 .card-number {
   width: 32px;
   height: 32px;
-  border-radius: 16px;
-  background: #EEF1F5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -171,12 +169,21 @@ width: 100%;
   background: var(--extras-white, #FFFFFF);
 }
 
+.card-heading-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+}
+
 .card-heading {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
   align-self: stretch;
   width: 100%;
+  margin-left: 24px;
 }
 
 .card-spacer {
@@ -198,10 +205,6 @@ width: 100%;
 .card-body {
   width: 100%;
   position: relative;
-}
-
-.card-body-divider {
-  padding-top: 20px;
 }
 
 .card-term, .card-definition {
