@@ -89,6 +89,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
     },
-    preloadedState,
+    preloadedState: (preloadedState as DeprecatedReduxState | undefined),
   });
 }
