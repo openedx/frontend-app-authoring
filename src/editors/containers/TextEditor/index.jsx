@@ -100,7 +100,7 @@ const TextEditor = ({
             </div>
           ) : (
             <>
-              <TextEditorPluginSlot blockType="html" />
+              <TextEditorPluginSlot blockType={blockTypes.html} />
               {selectEditor()}
             </>
           )}
