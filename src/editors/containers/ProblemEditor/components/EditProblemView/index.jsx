@@ -48,8 +48,6 @@ const EditProblemView = ({ returnFunction }) => {
 
   const isMarkdownEditorEnabled = isMarkdownEditorEnabledSelector && isMarkdownEditorEnabledForContext;
 
-  const defaultSettings = useSelector(selectors.problem.defaultSettings) || {};
-
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
 
   const { isSaveWarningModalOpen, openSaveWarningModal, closeSaveWarningModal } = saveWarningModalToggle();
