@@ -48,6 +48,7 @@ import SettingsOption from '../ProblemEditor/components/EditProblemView/Settings
 import Button from '../../sharedComponents/Button';
 import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
+import { set } from 'lodash';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => ({
@@ -67,10 +68,8 @@ export const GameEditor = ({
 
   // settings
   settings,
-  shuffleTrue,
-  shuffleFalse,
-  timerTrue,
-  timerFalse,
+  setShuffleStatus,
+  setTimerStatus,
   type,
   updateType,
 
@@ -243,14 +242,14 @@ export const GameEditor = ({
         <div className="settings-description">{intl.formatMessage(messages.timerSettingsDescription)}</div>
         <div className='d-flex flex-row gap-0 w-100'>
           <Button
-            onClick={() => timerFalse()}
+            onClick={() => setTimerStatus(false)}
             variant={!settings.timer ? 'primary' : 'outline-primary'}
             className="toggle-button rounded-0"
           >
             Off
           </Button>
           <Button
-            onClick={() => timerTrue()}
+            onClick={() => setTimerStatus(true)}
             variant={settings.timer ? 'primary' : 'outline-primary'}
             className="toggle-button rounded-0"
           >
@@ -528,14 +527,14 @@ export const GameEditor = ({
             <div className="settings-description">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
             <div className='d-flex flex-row gap-0 w-100'>
               <Button
-                onClick={() => shuffleFalse()}
+                onClick={() => setShuffleStatus(false)}
                 variant={!settings.shuffle ? 'primary' : 'outline-primary'}
                 className="toggle-button rounded-0"
               >
                 Off
               </Button>
               <Button
-                onClick={() => shuffleTrue()}
+                onClick={() => setShuffleStatus(true)}
                 variant={settings.shuffle ? 'primary' : 'outline-primary'}
                 className="toggle-button rounded-0"
               >
@@ -588,10 +587,8 @@ GameEditor.propTypes = {
     shuffle: PropTypes.bool.isRequired,
     timer: PropTypes.bool.isRequired,
   }).isRequired,
-  shuffleTrue: PropTypes.func.isRequired,
-  shuffleFalse: PropTypes.func.isRequired,
-  timerTrue: PropTypes.func.isRequired,
-  timerFalse: PropTypes.func.isRequired,
+  setShuffleStatus: PropTypes.func.isRequired,
+  setTimerStatus: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
   updateType: PropTypes.func.isRequired,
 
@@ -617,12 +614,10 @@ export const mapDispatchToProps = {
   initializeEditor: actions.app.initializeEditor,
 
   // shuffle
-  shuffleTrue: actions.game.shuffleTrue,
-  shuffleFalse: actions.game.shuffleFalse,
+  setShuffleStatus: actions.game.setShuffleStatus,
 
   // timer
-  timerTrue: actions.game.timerTrue,
-  timerFalse: actions.game.timerFalse,
+  setTimerStatus: actions.game.setTimerStatus,
 
   // type
   updateType: actions.game.updateType,
