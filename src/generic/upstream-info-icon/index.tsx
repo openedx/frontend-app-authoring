@@ -32,8 +32,7 @@ const UpstreamInfoIconContent = ({
     return null;
   }
 
-  let hasTwoIcons = false;
-  let secondIconProps = {};
+  let secondIcon: JSX.Element | undefined;
   let tooltipMessage: string | ReactNode = intl.formatMessage(
     messages.upstreamLinkTooltip,
     {
@@ -43,15 +42,16 @@ const UpstreamInfoIconContent = ({
   );
 
   if (upstreamInfo.errorMessage) {
-    hasTwoIcons = true;
     tooltipMessage = intl.formatMessage(messages.upstreamLinkError);
-    secondIconProps = {
-      title: intl.formatMessage(messages.upstreamLinkError),
-      ariaLabel: intl.formatMessage(messages.upstreamLinkError),
-      src: LinkOff,
-    };
+    secondIcon = (
+      <Icon
+        size={size}
+        title={intl.formatMessage(messages.upstreamLinkError)}
+        aria-label={intl.formatMessage(messages.upstreamLinkError)}
+        src={LinkOff}
+      />
+    );
   } else if (upstreamInfo.readyToSync) {
-    hasTwoIcons = true;
     tooltipMessage = intl.formatMessage(
       messages.upstreamLinkReadyToSyncTooltip,
       {
@@ -59,19 +59,24 @@ const UpstreamInfoIconContent = ({
         b: BoldText,
       },
     );
-    secondIconProps = {
-      title: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
-      ariaLabel: intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel),
-      src: Sync,
-    };
+    secondIcon = (
+      <Icon
+        size={size}
+        title={intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel)}
+        aria-label={intl.formatMessage(messages.upstreamLinkReadyToSyncAriaLabel)}
+        src={Sync}
+      />
+    );
   } else if ((upstreamInfo.downstreamCustomized.length || 0) > 0) {
-    hasTwoIcons = true;
     tooltipMessage = intl.formatMessage(messages.upstreamLinkOverridesAriaLabel);
-    secondIconProps = {
-      title: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
-      ariaLabel: intl.formatMessage(messages.upstreamLinkOverridesAriaLabel),
-      src: CallSplit,
-    };
+    secondIcon = (
+      <Icon
+        size={size}
+        title={intl.formatMessage(messages.upstreamLinkOverridesAriaLabel)}
+        aria-label={intl.formatMessage(messages.upstreamLinkOverridesAriaLabel)}
+        src={CallSplit}
+      />
+    );
   }
 
   return (
@@ -86,7 +91,7 @@ const UpstreamInfoIconContent = ({
     >
       <div
         className={
-          `upstream-info-icon size-${hasTwoIcons ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`
+          `upstream-info-icon size-${secondIcon ? 'two' : 'one'}-${size} ${upstreamInfo.readyToSync ? 'sync-state' : ''} rounded-sm d-flex justify-content-center`
         }
       >
         <Icon
@@ -95,12 +100,7 @@ const UpstreamInfoIconContent = ({
           src={Newsstand}
           size={size}
         />
-        {hasTwoIcons && (
-          <Icon
-            size={size}
-            {...secondIconProps}
-          />
-        )}
+        {secondIcon}
       </div>
     </OverlayTrigger>
   );
