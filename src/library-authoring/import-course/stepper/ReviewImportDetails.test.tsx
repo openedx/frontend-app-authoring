@@ -51,6 +51,10 @@ describe('ReviewImportDetails', () => {
   });
 
   it('renders loading spinner when isPending is true', async () => {
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 100 },
+    });
     render(<ReviewImportDetails
       markAnalysisComplete={markAnalysisComplete}
       courseId="test-course-id"

@@ -21,10 +21,18 @@ interface Props {
 interface BannerProps {
   courseId?: string;
   isBlockDataPending?: boolean;
+  limitIsExceeded?: boolean;
+  limitNumber?: number;
   unsupportedBlockPercentage: number;
 }
 
-const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: BannerProps) => {
+const Banner = ({
+  courseId,
+  isBlockDataPending,
+  limitIsExceeded,
+  limitNumber,
+  unsupportedBlockPercentage,
+}: BannerProps) => {
   const { data, isPending } = useCourseDetails(courseId);
   const { libraryId } = useLibraryContext();
   const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo(
@@ -62,6 +70,22 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           />
         </p>
       </Alert>
+    );
+  }
+
+  if (limitIsExceeded) {
+    return (
+      <>
+        <Alert variant="danger" icon={Info}>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importBlockedTitle} />
+          </Alert.Heading>
+        </Alert>
+        <FormattedMessage
+          {...messages.importBlockedBody}
+          values={{ limitNumber }}
+        />
+      </>
     );
   }
 
@@ -223,58 +247,46 @@ export const ReviewImportDetails = ({
   }, [blockTypes, finalUnsupportedBlocks]);
 
   const limitIsExceeded = useMemo(() => (
-    libraryData?.numBlocks || 0) + (totalBlocks || 0) > (libraryBlockLimits?.maxBlocksPerContentLibrary || 0
+    libraryBlockLimits !== undefined
+      && (libraryData?.numBlocks || 0) + (totalBlocks || 0) > libraryBlockLimits.maxBlocksPerContentLibrary
   ), [libraryData?.numBlocks, totalBlocks, libraryBlockLimits?.maxBlocksPerContentLibrary]);
 
   useEffect(() => {
     setImportIsBlocked(limitIsExceeded);
   }, [limitIsExceeded, setImportIsBlocked]);
 
-  // If the total blocks exceeds the permitted limit, render the page to block import
-  if (limitIsExceeded) {
-    return (
-      <Stack gap={4}>
-        <Alert variant="danger" icon={Info}>
-          <Alert.Heading>
-            <FormattedMessage {...messages.importBlockedTitle} />
-          </Alert.Heading>
-        </Alert>
-        <FormattedMessage
-          {...messages.importBlockedBody}
-          values={{
-            limitNumber: libraryBlockLimits?.maxBlocksPerContentLibrary || 0,
-          }}
-        />
-      </Stack>
-    );
-  }
-
   return (
     <Stack gap={4}>
       <Banner
         courseId={courseId}
         isBlockDataPending={isBlockDataPending}
+        limitIsExceeded={limitIsExceeded}
+        limitNumber={libraryBlockLimits?.maxBlocksPerContentLibrary || 0}
         unsupportedBlockPercentage={unsupportedBlockPercentage}
       />
-      <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
-      <SummaryCard
-        totalBlocks={totalBlocks}
-        totalComponents={totalComponents}
-        sections={blockTypes?.chapter}
-        subsections={blockTypes?.sequential}
-        units={blockTypes?.vertical}
-        unsupportedBlocks={finalUnsupportedBlocks}
-        isPending={isBlockDataPending}
-      />
-      {!isBlockDataPending && finalUnsupportedBlocks > 0
-        && (
+      {!limitIsExceeded && (
         <>
-          <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
-          <Stack className="align-items-center" gap={3}>
-            <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
-          </Stack>
+          <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
+          <SummaryCard
+            totalBlocks={totalBlocks}
+            totalComponents={totalComponents}
+            sections={blockTypes?.chapter}
+            subsections={blockTypes?.sequential}
+            units={blockTypes?.vertical}
+            unsupportedBlocks={finalUnsupportedBlocks}
+            isPending={isBlockDataPending}
+          />
+          {!isBlockDataPending && finalUnsupportedBlocks > 0
+            && (
+            <>
+              <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
+              <Stack className="align-items-center" gap={3}>
+                <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
+              </Stack>
+            </>
+            )}
         </>
-        )}
+      )}
     </Stack>
   );
 };
