@@ -61,6 +61,31 @@ const messages = defineMessages({
     defaultMessage: 'Definition',
     description: 'Label for definition input field',
   },
+  termValidationError: {
+    id: 'GameEditor.termValidationError',
+    defaultMessage: 'Enter a term',
+    description: 'Error message when term field is empty but definition is filled',
+  },
+  definitionValidationError: {
+    id: 'GameEditor.definitionValidationError',
+    defaultMessage: 'Enter a definition',
+    description: 'Error message when definition field is empty but term is filled',
+  },
+  settingsTitle: {
+    id: 'GameEditor.settingsTitle',
+    defaultMessage: 'Settings',
+    description: 'Title for the settings sidebar in the game editor.',
+  },
+  validationErrorHeading: {
+    id: 'GameEditor.validationErrorHeading',
+    defaultMessage: 'We couldn\'t save your changes.',
+    description: 'Heading for validation errors alert in the game editor.',
+  },
+  validationErrorAlert: {
+    id: 'GameEditor.validationErrorAlert',
+    defaultMessage: 'Please check your entries and try again.',
+    description: 'Alert message for validation errors in the game editor.',
+  },
 });
 
 export default messages;
