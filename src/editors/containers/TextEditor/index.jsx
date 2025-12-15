@@ -100,24 +100,7 @@ const TextEditor = ({
             </div>
           ) : (
             <>
-              <TextEditorPluginSlot
-                updateContent={(newContent) => {
-                  // Update the editor
-                  if (showRawEditor && editorRef?.current) {
-                    const transaction = editorRef.current.state.update({
-                      changes: {
-                        from: 0,
-                        to: editorRef.current.state.doc.length,
-                        insert: newContent,
-                      },
-                    });
-                    editorRef.current.dispatch(transaction);
-                  } else if (editorRef?.current) {
-                    editorRef.current.setContent(newContent);
-                  }
-                }}
-                blockType="html"
-              />
+              <TextEditorPluginSlot blockType="html" />
               {selectEditor()}
             </>
           )}

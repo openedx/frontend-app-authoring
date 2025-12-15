@@ -27,8 +27,7 @@ import messages from './messages';
 import ExplanationWidget from './ExplanationWidget';
 import { saveBlock } from '../../../../hooks';
 
-import { selectors, actions } from '../../../../data/redux';
-import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
+import { selectors } from '../../../../data/redux';
 import { ProblemEditorContextProvider } from './ProblemEditorContext';
 import { ProblemEditorPluginSlot } from '../../../../../plugin-slots/ProblemEditorPluginSlot';
 
@@ -132,32 +131,7 @@ const EditProblemView = ({ returnFunction }) => {
             </Container>
           ) : (
             <span className="flex-grow-1 mb-5">
-              <ProblemEditorPluginSlot
-                updateContent={(newOLX) => {
-                  // Parse and update the problem state
-                  const rawSettings = {
-                    weight: problemState.settings?.scoring?.weight || 1,
-                    max_attempts: problemState.settings?.scoring?.attempts?.number || null,
-                    showanswer: problemState.settings?.showAnswer?.on || null,
-                    show_reset_button: problemState.settings?.showResetButton || null,
-                    rerandomize: problemState.settings?.randomization || null,
-                  };
-
-                  const parsedData = getDataFromOlx({
-                    rawOLX: newOLX,
-                    rawSettings,
-                    defaultSettings: defaultSettings || {},
-                  });
-
-                  dispatch(actions.problem.load({
-                    ...parsedData,
-                    rawOLX: newOLX,
-                    rawMarkdown: problemState.rawMarkdown,
-                    isMarkdownEditorEnabled,
-                  }));
-                }}
-                blockType={problemType || 'problem'}
-              />
+              <ProblemEditorPluginSlot blockType={problemType || 'problem'} />
               <QuestionWidget />
               <ExplanationWidget />
               <AnswerWidget problemType={problemType} />

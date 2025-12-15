@@ -7,22 +7,21 @@
 
 ### Plugin Props:
 
-* `updateContent` - Function. Updates the editor content with the provided string.
 * `blockType` - String. The type of block being edited (e.g., 'html').
 
 ## Description
 
-The slot is positioned in the Text Editor modal window for HTML xBlocks. It is suitable for adding AI-powered content generation tools or other editor enhancements.
+The slot is positioned in the Text Editor modal window for HTML XBlocks. It is suitable for adding AI-powered content generation tools or other editor enhancements.
 
 By default, the slot is **empty**. Add widgets via `env.config.jsx`.
 
-## Example: Adding the AI Content Assistant
+## Example: Adding the custom component into `TextEditorPluginSlot`
 
-The following example configuration shows how to add the built-in AI Content Assistant widget:
+The following example configuration shows how to add the AI Content Assistant widget:
 
 ```jsx
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
-import AIAssistantWidget from './src/editors/sharedComponents/AIAssistantWidget';
+import { AIAssistantWidget } from '@edx/frontend-ai-content-assistant';
 
 const config = {
   pluginSlots: {
@@ -45,10 +44,6 @@ const config = {
 export default config;
 ```
 
-## Example: Screenshots with implemented `AIAssistantWidget` for HTML editor
-![Screenshot with hidden AIAssistantWidget](./images/html_xBlock_1.png)
-![Screenshot with expanded AIAssistantWidget](./images/html_xBlock_2.png)
-
 ## Example: Custom Implementation
 
 The following example configuration shows how to add a custom AI assistant:
@@ -57,12 +52,12 @@ The following example configuration shows how to add a custom AI assistant:
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { Card } from '@openedx/paragon';
 
-const CustomAIAssistant = ({ updateContent, blockType }) => {
-  // Your custom AI assistant implementation
+const CustomAIAssistant = ({ blockType }) => {
+  // Your custom AI assistant implementation (example)
   return (
     <Card>
       <Card.Body>
-        Custom AI Assistant for {blockType}
+        Custom Component for {blockType} Editor 🤗🤗🤗
       </Card.Body>
     </Card>
   );
@@ -89,6 +84,9 @@ const config = {
 export default config;
 ```
 
-## Example: Screenshot with custom implementation
+### Example: Screenshot with passed component into plugin slot for HTML editor
+![Screenshot with hidden AIAssistantWidget](./images/html_editor_slot.png)
 
-![Screenshot with custom implementation](./images/custom_ai_assistant_html.png)
+### Example: Screenshot with default HTML Editor
+
+![Screenshot with custom implementation](./images/default_html_editor.png)
