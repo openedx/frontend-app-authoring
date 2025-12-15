@@ -1,16 +1,12 @@
-import React from 'react';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor, within } from '@testing-library/react';
+import {
+  render, waitFor, within, initializeMocks,
+} from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
-import MockAdapter from 'axios-mock-adapter';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { initializeMockApp } from '@edx/frontend-platform';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getEditTextbooksApiUrl } from '../data/api';
 import { deleteTextbookQuery, editTextbookQuery } from '../data/thunk';
 import { textbooksMock } from '../__mocks__';
-import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
 import TextbookCard from './TextbooksCard';
 import messages from '../textbook-form/messages';
@@ -26,34 +22,25 @@ const onDeleteSubmitMock = jest.fn();
 const handleSavingStatusDispatchMock = jest.fn();
 
 const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <TextbookCard
-        textbook={textbook}
-        courseId={courseId}
-        onEditSubmit={onEditSubmitMock}
-        onDeleteSubmit={onDeleteSubmitMock}
-        handleSavingStatusDispatch={handleSavingStatusDispatchMock}
-      />
-    </IntlProvider>
-  </AppProvider>,
+  <CourseAuthoringProvider courseId={courseId}>
+    <TextbookCard
+      textbook={textbook}
+      courseId={courseId}
+      onEditSubmit={onEditSubmitMock}
+      onDeleteSubmit={onDeleteSubmitMock}
+      handleSavingStatusDispatch={handleSavingStatusDispatchMock}
+    />,
+  </CourseAuthoringProvider>,
 );
 
 describe('<TextbookCard />', () => {
   let user;
   beforeEach(async () => {
     user = userEvent.setup();
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
 
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
   });
 
   it('render TextbookCard component correctly', async () => {

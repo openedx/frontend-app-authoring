@@ -1,3 +1,4 @@
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import {
   render as baseRender,
   fireEvent,
@@ -26,7 +27,9 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
 )));
 
 const render = () => baseRender(
-  <AdvancedSettings courseId={courseId} />,
+  <CourseAuthoringProvider courseId={courseId}>
+    <AdvancedSettings />
+  </CourseAuthoringProvider>,
   { path: mockPathname },
 );
 

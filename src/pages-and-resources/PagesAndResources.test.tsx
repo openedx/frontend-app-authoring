@@ -1,10 +1,11 @@
-// @ts-check
-import { screen, waitFor } from '@testing-library/react';
+import {
+  screen, waitFor, initializeMocks, render,
+} from '@src/testUtils';
 
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { PagesAndResources } from '.';
-import { initializeMocks, render } from '../testUtils';
 
 const mockPlugin = (identifier) => ({
   plugins: [
@@ -21,6 +22,12 @@ const mockPlugin = (identifier) => ({
 });
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
+
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <PagesAndResources />
+  </CourseAuthoringProvider>,
+);
 
 describe('PagesAndResources', () => {
   beforeEach(() => {
@@ -45,7 +52,7 @@ describe('PagesAndResources', () => {
     };
 
     initializeMocks({ initialState });
-    render(<PagesAndResources courseId={courseId} />);
+    renderComponent();
 
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
@@ -75,7 +82,7 @@ describe('PagesAndResources', () => {
     };
 
     initializeMocks({ initialState });
-    render(<PagesAndResources courseId={courseId} />);
+    renderComponent();
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Learning Assistant')).toBeInTheDocument());
@@ -108,7 +115,7 @@ describe('PagesAndResources', () => {
     };
 
     initializeMocks({ initialState });
-    render(<PagesAndResources courseId={courseId} />);
+    renderComponent();
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Xpert unit summaries')).toBeInTheDocument());

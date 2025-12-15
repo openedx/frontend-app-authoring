@@ -40,7 +40,7 @@ Cloning and Setup
 
 2. Use the version of Node specified in the ``.nvmrc`` file.
 
-  The current version of the micro-frontend build scripts supports node 20.
+  The current version of the micro-frontend build scripts supports the version of Node found in ``.nvmrc``.
   Using other major versions of node *may* work, but this is unsupported.  For
   convenience, this repository includes an ``.nvmrc`` file to help in setting the
   correct node version via `nvm <https://github.com/nvm-sh/nvm>`_.
@@ -97,7 +97,7 @@ Troubleshooting
 
 * If tutor-mfe is not starting the authoring MFE in development mode (eg. `tutor dev start authoring` fails), it may be due to
   using a tutor version that expects the MFE name to be frontend-app-course-authoring (the previous name of this repo). To fix
-  this, you can rename the cloned repo directory to frontend-app-course-authoring. More information can be found in 
+  this, you can rename the cloned repo directory to frontend-app-course-authoring. More information can be found in
   `this forum post <https://discuss.openedx.org/t/repo-rename-frontend-app-course-authoring-frontend-app-authoring/13930/2>`__.
 
 
@@ -175,10 +175,6 @@ Feature: New Proctoring Exams View
 Requirements
 ------------
 
-* ``edx-platform`` Django settings:
-
-  * ``ZENDESK_*``: necessary if automatic ZenDesk ticket creation is desired
-
 * `edx-exams <https://github.com/edx/edx-exams>`_: for this feature to work, the ``edx-exams`` IDA must be deployed and its API accessible by the browser
 
 Configuration
@@ -196,7 +192,6 @@ In Studio, a new item ("Proctored Exam Settings") is added to "Other Course Sett
 * Enable proctored exams for the course
 * Allow opting out of proctored exams
 * Select a proctoring provider
-* Enable automatic creation of Zendesk tickets for "suspicious" proctored exam attempts
 
 Feature: Advanced Settings
 ==========================
@@ -239,7 +234,7 @@ Configuration
 
 In additional to the standard settings, the following local configuration items are required:
 
-* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled (which it is by default) in order to actually enable/show the new 
+* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled (which it is by default) in order to actually enable/show the new
 Tagging/Taxonomy functionality.
 
 
@@ -273,7 +268,7 @@ Troubleshooting
 ========================
 
 * ``npm ERR! gyp ERR! build error`` while running npm install on Macs with M1 processors: Probably due to a compatibility issue of node-canvas with M1.
-  
+
   Run ``brew install pkg-config pixman cairo pango libpng jpeg giflib librsvg`` before ``npm install`` to get the correct versions of the dependencies.
   If there is still an error, look for "no package [...] found" in the error message and install missing package via brew.
   (https://github.com/Automattic/node-canvas/issues/1733)

@@ -2,6 +2,8 @@ import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailsUrl } from '@src/data/api';
 import {
   initializeMocks,
   fireEvent,
@@ -23,12 +25,6 @@ let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
 
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: courseName,
-  }),
-}));
-
 jest.mock('universal-cookie', () => {
   const mCookie = {
     get: jest.fn(),
@@ -37,16 +33,27 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => mCookie);
 });
 
-const renderComponent = () => render(<CourseExportPage courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseExportPage />
+  </CourseAuthoringProvider>,
+);
 
 describe('<CourseExportPage />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
+    const user = {
+      userId: 1,
+      username: 'username',
+    };
+    const mocks = initializeMocks({ user });
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
+    axiosMock
+      .onGet(getCourseDetailsUrl(courseId, user.username))
+      .reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });

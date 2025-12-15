@@ -81,11 +81,6 @@ const messages = defineMessages({
     defaultMessage: 'Allow learners to opt out of proctoring on proctored exams',
     description: 'Label for radio selection allowing proctored exam opt out',
   },
-  'authoring.proctoring.createzendesk.label': {
-    id: 'authoring.proctoring.createzendesk.label',
-    defaultMessage: 'Create Zendesk tickets for suspicious attempts',
-    description: 'Label for Zendesk ticket creation radio select.',
-  },
   'authoring.proctoring.error.single': {
     id: 'authoring.proctoring.error.single',
     defaultMessage: 'There is 1 error in this form.',

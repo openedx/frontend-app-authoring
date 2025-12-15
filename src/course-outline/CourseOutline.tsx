@@ -37,6 +37,7 @@ import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
@@ -63,13 +64,10 @@ import messages from './messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
-interface CourseOutlineProps {
-  courseId: string,
-}
-
-const CourseOutline = ({ courseId }: CourseOutlineProps) => {
+const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
+  const { courseId } = useCourseAuthoringContext();
 
   const {
     courseUsageKey,

@@ -3,13 +3,12 @@ import { initializeMockApp } from '@edx/frontend-platform/testing';
 import MockAdapter from 'axios-mock-adapter';
 import { waitFor } from '@testing-library/react';
 import { DivisionSchemes } from '../../../data/constants';
-import { LOADED } from '../../../data/slice';
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { generateProvidersApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './api';
 import {
-  DENIED, FAILED, SAVED, selectApp, updateValidationStatus,
+  DENIED, FAILED, SAVED, LOADED, selectApp, updateValidationStatus,
 } from './slice';
 import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './thunks';
 

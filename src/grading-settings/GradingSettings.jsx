@@ -8,14 +8,13 @@ import {
   useGradingSettings,
   useGradingSettingUpdater,
 } from 'CourseAuthoring/grading-settings/data/apiHooks';
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 
-import { useModel } from '../generic/model-store';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SectionSubHeader from '../generic/section-sub-header';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -28,8 +27,9 @@ import GradingSidebar from './grading-sidebar';
 import { useConvertGradeCutoffs, useUpdateGradingData } from './hooks';
 import messages from './messages';
 
-const GradingSettings = ({ courseId }) => {
+const GradingSettings = () => {
   const intl = useIntl();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     data: gradingSettings,
     isLoading: isGradingSettingsLoading,
@@ -56,7 +56,7 @@ const GradingSettings = ({ courseId }) => {
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [eligibleGrade, setEligibleGrade] = useState(null);
 
-  const courseName = useModel('courseDetails', courseId)?.name;
+  const courseName = courseDetails?.name || '';
 
   const {
     graders,
@@ -277,10 +277,6 @@ const GradingSettings = ({ courseId }) => {
       </div>
     </>
   );
-};
-
-GradingSettings.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default GradingSettings;

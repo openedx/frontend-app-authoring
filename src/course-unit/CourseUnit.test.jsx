@@ -1,26 +1,21 @@
-import MockAdapter from 'axios-mock-adapter';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  act, fireEvent, render, waitFor, within, screen,
-} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
 import {
   camelCaseObject,
   getConfig,
-  initializeMockApp,
   setConfig,
 } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
 
+import {
+  act, fireEvent, render, waitFor, within, screen, initializeMocks,
+} from '@src/testUtils';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
 import { getClipboardUrl } from '@src/generic/data/api';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import {
   getCourseSectionVerticalApiUrl,
@@ -38,7 +33,6 @@ import {
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
 } from './data/thunk';
-import initializeStore from '../store';
 import {
   courseCreateXblockMock,
   courseSectionVerticalMock,
@@ -68,7 +62,6 @@ import messages from './messages';
 
 let axiosMock;
 let store;
-let queryClient;
 const courseId = '123';
 const blockId = '567890';
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
@@ -111,38 +104,20 @@ function simulatePostMessageEvent(type, payload) {
 }
 
 const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <IframeProvider>
-        <QueryClientProvider client={queryClient}>
-          <CourseUnit courseId={courseId} />
-        </QueryClientProvider>
-      </IframeProvider>
-    </IntlProvider>
-  </AppProvider>
+  <IframeProvider>
+    <CourseAuthoringProvider courseId={courseId}>
+      <CourseUnit />
+    </CourseAuthoringProvider>
+  </IframeProvider>
 );
 
 describe('<CourseUnit />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
+    const mocks = initializeMocks();
     window.scrollTo = jest.fn();
     global.localStorage.clear();
-    store = initializeStore();
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getClipboardUrl())
       .reply(200, clipboardUnit);

@@ -1,13 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import VideoSelectorPage from '../editors/VideoSelectorPage';
 
-const VideoSelectorContainer = ({
-  courseId,
-}) => {
+const VideoSelectorContainer = () => {
   const { blockId } = useParams();
+  const { courseId } = useCourseAuthoringContext();
   return (
     <div className="selector-page">
       <VideoSelectorPage
@@ -18,10 +16,6 @@ const VideoSelectorContainer = ({
       />
     </div>
   );
-};
-
-VideoSelectorContainer.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default VideoSelectorContainer;

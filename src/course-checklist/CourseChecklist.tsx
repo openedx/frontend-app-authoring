@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Stack } from '@openedx/paragon';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { DeprecatedReduxState } from '@src/store';
 
-import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import AriaLiveRegion from './AriaLiveRegion';
@@ -15,12 +15,10 @@ import ChecklistSection from './ChecklistSection';
 import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
-const CourseChecklist = ({
-  courseId,
-}) => {
+const CourseChecklist = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const enableQuality = getConfig().ENABLE_CHECKLIST_QUALITY === 'true';
 
   useEffect(() => {
@@ -32,7 +30,7 @@ const CourseChecklist = ({
     loadingStatus,
     launchData,
     bestPracticeData,
-  } = useSelector(state => state.courseChecklist);
+  } = useSelector((state: DeprecatedReduxState) => state.courseChecklist);
 
   const { bestPracticeChecklistLoadingStatus, launchChecklistLoadingStatus, launchChecklistStatus } = loadingStatus;
 
@@ -92,10 +90,6 @@ const CourseChecklist = ({
       </Container>
     </>
   );
-};
-
-CourseChecklist.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseChecklist;

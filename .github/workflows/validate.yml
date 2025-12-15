@@ -17,7 +17,7 @@ jobs:
         node-version-file: '.nvmrc'
     - run: make validate.ci
     - name: Archive code coverage results
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: code-coverage-report
         path: coverage/*.*
@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Download code coverage results
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         pattern: code-coverage-report
         path: coverage

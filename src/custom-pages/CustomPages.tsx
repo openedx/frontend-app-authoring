@@ -1,5 +1,4 @@
 import { useEffect, useContext, useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Routes, Route, useNavigate, Link,
 } from 'react-router-dom';
@@ -20,12 +19,17 @@ import {
   Container,
 } from '@openedx/paragon';
 import { Add, SpinnerSimple } from '@openedx/paragon/icons';
-import Placeholder from '../editors/Placeholder';
-import DraggableList, { SortableItem } from '../generic/DraggableList';
-import ErrorAlert from '../editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import Placeholder from '@src/editors/Placeholder';
+import DraggableList, { SortableItem } from '@src/generic/DraggableList';
+import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import { RequestStatus } from '@src/data/constants';
+import { useModels } from '@src/generic/model-store';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import getPageHeadTitle from '@src/generic/utils';
+import { getPagePath } from '@src/utils';
+import { DeprecatedReduxState } from '@src/store';
 
-import { RequestStatus } from '../data/constants';
-import { useModels, useModel } from '../generic/model-store';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import {
   addSingleCustomPage,
@@ -33,29 +37,24 @@ import {
   updatePageOrder,
   updateSingleCustomPage,
 } from './data/thunks';
-
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
-import { useWaffleFlags } from '../data/apiHooks';
-import getPageHeadTitle from '../generic/utils';
-import { getPagePath } from '../utils';
 
-const CustomPages = ({
-  courseId,
-}) => {
+const CustomPages = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [orderedPages, setOrderedPages] = useState([]);
-  const [currentPage, setCurrentPage] = useState();
+  const [currentPage, setCurrentPage] = useState<any>();
   const [isOpen, open, close] = useToggle(false);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
 
-  const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
+  // @ts-expect-error - frontend-platform doesn't have type information
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
@@ -63,9 +62,9 @@ const CustomPages = ({
     dispatch(fetchCustomPages(courseId));
   }, [courseId]);
 
-  const customPagesIds = useSelector(state => state.customPages.customPagesIds);
-  const addPageStatus = useSelector(state => state.customPages.addingStatus);
-  const deletePageStatus = useSelector(state => state.customPages.deletingStatus);
+  const customPagesIds = useSelector((state: DeprecatedReduxState) => state.customPages.customPagesIds);
+  const addPageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.addingStatus);
+  const deletePageStatus = useSelector((state: DeprecatedReduxState) => state.customPages.deletingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
   const waffleFlags = useWaffleFlags(courseId);
@@ -174,7 +173,7 @@ const CustomPages = ({
               <FormattedMessage {...messages.note} />
             </div>
             <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
-              {orderedPages.map((page) => (
+              {orderedPages.map((page: any) => (
                 <SortableItem
                   id={page.id}
                   key={page.id}
@@ -243,6 +242,7 @@ const CustomPages = ({
           onClose={close}
           size="lg"
           title={intl.formatMessage(messages.studentViewModalTitle)}
+          isOverflowVisible={false}
         >
           <ModalDialog.Header>
             <ModalDialog.Title>
@@ -273,10 +273,6 @@ const CustomPages = ({
       </Container>
     </CustomPagesProvider>
   );
-};
-
-CustomPages.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CustomPages;

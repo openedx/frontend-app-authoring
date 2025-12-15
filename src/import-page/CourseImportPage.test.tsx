@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getCourseDetailsUrl } from '@src/data/api';
 import { initializeMocks, render, waitFor } from '../testUtils';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
@@ -15,12 +17,6 @@ let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
 
-jest.mock('../generic/model-store', () => ({
-  useModel: jest.fn().mockReturnValue({
-    name: courseName,
-  }),
-}));
-
 jest.mock('universal-cookie', () => {
   const Cookie = {
     get: jest.fn(),
@@ -29,16 +25,27 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => Cookie);
 });
 
-const renderComponent = () => render(<CourseImportPage courseId={courseId} />);
+const renderComponent = () => render(
+  <CourseAuthoringProvider courseId={courseId}>
+    <CourseImportPage />
+  </CourseAuthoringProvider>,
+);
 
 describe('<CourseImportPage />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
+    const user = {
+      userId: 1,
+      username: 'username',
+    };
+    const mocks = initializeMocks({ user });
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
       .reply(200, { importStatus: 1, message: '' });
+    axiosMock
+      .onGet(getCourseDetailsUrl(courseId, user.username))
+      .reply(200, { courseId, name: courseName });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });

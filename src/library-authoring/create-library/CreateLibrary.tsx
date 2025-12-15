@@ -253,7 +253,8 @@ export const CreateLibrary = ({
 
         {(restoreTaskId || isError || restoreMutation.isError) && (
           <div className="mb-4">
-            {restoreStatus?.state === LibraryRestoreStatus.Pending && (
+            {(restoreStatus?.state === LibraryRestoreStatus.Pending
+            || restoreStatus?.state === LibraryRestoreStatus.InProgress) && (
               <Alert variant="info">
                 {intl.formatMessage(messages.restoreInProgress)}
               </Alert>

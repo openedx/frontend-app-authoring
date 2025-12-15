@@ -5,7 +5,6 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
 
 import { reducer as modelsReducer } from './generic/model-store';
-import { reducer as courseDetailReducer } from './data/slice';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 import { reducer as customPagesReducer } from './custom-pages/data/slice';
@@ -36,7 +35,6 @@ type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
  *   TODO: refactor each part to use React Context and React Query instead.
  */
 export interface DeprecatedReduxState {
-  courseDetail: InferState<typeof courseDetailReducer>;
   customPages: Record<string, any>;
   discussions: Record<string, any>;
   assets: Record<string, any>;
@@ -66,7 +64,6 @@ export interface DeprecatedReduxState {
 export default function initializeStore(preloadedState: Partial<DeprecatedReduxState> | undefined = undefined) {
   return configureStore<DeprecatedReduxState>({
     reducer: {
-      courseDetail: courseDetailReducer,
       customPages: customPagesReducer,
       discussions: discussionsReducer,
       assets: filesReducer,
@@ -92,6 +89,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
     },
-    preloadedState,
+    preloadedState: (preloadedState as DeprecatedReduxState | undefined),
   });
 }

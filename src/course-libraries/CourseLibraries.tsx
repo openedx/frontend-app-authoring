@@ -22,8 +22,8 @@ import {
 
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import getPageHeadTitle from '../generic/utils';
-import { useModel } from '../generic/model-store';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
@@ -33,10 +33,6 @@ import { useStudioHome } from '../studio-home/hooks';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
-
-interface Props {
-  courseId: string;
-}
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
@@ -100,9 +96,9 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   );
 };
 
-export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
+export const CourseLibraries = () => {
   const intl = useIntl();
-  const courseDetails = useModel('courseDetails', courseId);
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const [searchParams] = useSearchParams();
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(
     () => searchParams.get('tab') as CourseLibraryTabs,
@@ -189,7 +185,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     <>
       <Helmet>
         <title>
-          {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
+          {getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.headingTitle))}
         </title>
       </Helmet>
       <Container size="xl" className="px-4 pt-4 mt-3">

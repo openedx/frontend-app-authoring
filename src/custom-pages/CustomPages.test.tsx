@@ -6,10 +6,11 @@ import {
   screen,
   act,
   render,
-} from '../testUtils';
-import { executeThunk } from '../utils';
-import { RequestStatus } from '../data/constants';
-import { getApiWaffleFlagsUrl } from '../data/api';
+} from '@src/testUtils';
+import { executeThunk } from '@src/utils';
+import { RequestStatus } from '@src/data/constants';
+import { getApiWaffleFlagsUrl } from '@src/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
@@ -28,10 +29,15 @@ import messages from './messages';
 
 let axiosMock;
 let store;
+// @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
 
 const renderComponent = () => {
-  render(<CustomPages courseId={courseId} />);
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <CustomPages />
+    </CourseAuthoringProvider>,
+  );
 };
 
 const mockStore = async (status) => {

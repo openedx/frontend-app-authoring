@@ -103,13 +103,13 @@ const messages = defineMessages({
   },
   proctoringEmailShortDescription: {
     id: 'proctoringEmailShortDescription',
-    defaultMessage: 'Add a proctortrack escalation email',
+    defaultMessage: 'Add an escalation email for this proctoring provider',
     description: 'Label for a section that describes proctoring escalation email',
   },
   proctoringEmailLongDescription: {
     id: 'proctoringEmailLongDescription',
-    defaultMessage: 'Courses using Proctortrack require an escalation email. Ensure learners and Support can contact your course team regarding proctoring issues (e.g. appeals, exam resets, etc).',
-    description: 'Description for a section that prompts the user to add a Proctortrack escalation email for the course',
+    defaultMessage: 'The selected proctoring provider requires an escalation email. Ensure learners and Support can contact your course team regarding proctoring issues (e.g. appeals, exam resets, etc).',
+    description: 'Description for a section that prompts the user to add a proctoring escalation email for the course',
   },
   updateLinkLabel: {
     id: 'updateLinkLabel',
