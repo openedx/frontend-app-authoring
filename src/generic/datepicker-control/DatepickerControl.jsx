@@ -45,12 +45,8 @@ const DatepickerControl = ({
     describedByIds = `${controlName}-helptext`;
   }
 
-  const ariaLabel = isTimePicker
-    ? intl.formatMessage(messages.timepickerAriaLabel)
-    : undefined;
-
   return (
-    <Form.Group className="form-group-custom datepicker-custom">
+    <Form.Group controlId={controlName} className="form-group-custom datepicker-custom">
       <Form.Label className="d-flex justify-content-between">
         {label}
         {showUTC && (
@@ -68,6 +64,7 @@ const DatepickerControl = ({
           />
         )}
         <DatePicker
+          id={controlName}
           name={controlName}
           selected={formattedDate}
           disabled={readonly}
@@ -83,8 +80,7 @@ const DatepickerControl = ({
           showTimeSelectOnly={type === DATEPICKER_TYPES.time}
           placeholderText={inputFormat[type].toLocaleUpperCase()}
           showPopperArrow={false}
-          ariaLabel={ariaLabel}
-          ariaDescribedBy={describedByIds}
+          aria-describedby={describedByIds}
           onChange={(date) => {
             if (isValidDate(date)) {
               onChange(convertToStringFromDate(date));
