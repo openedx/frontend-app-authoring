@@ -8,6 +8,7 @@ import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { ChecklistRtl, NotificationsNone } from '@openedx/paragon/icons';
 import messages from './messages';
 import { useWaffleFlags } from '../../data/apiHooks';
+import { NotificationStatusIcon } from './NotificationStatusIcon';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
   const now = moment().utc();
@@ -131,12 +132,7 @@ export const StatusBar = ({
         startDateRaw={courseReleaseDate}
         datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
       />
-      {(notificationCount || 0) > 0 && (
-      <small className="d-flex">
-        <Icon className="mr-2" size="md" src={NotificationsNone} />
-        {intl.formatMessage(messages.notificationMetadataTitle, { count: notificationCount })}
-      </small>
-      )}
+      <NotificationStatusIcon />
       <Link
         className="small text-primary-500 d-flex"
         to={`/course/${courseId}/checklists`}
