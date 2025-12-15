@@ -151,8 +151,7 @@ width: 100%;
   align-self: stretch;
   width: 100%;
   position: relative;
-  border-radius: 6px;
-  border: var(--extras-white, #FFFFFF);
+  border: none;
   background: var(--extras-white, #FFFFFF);
 }
 
@@ -239,10 +238,11 @@ width: 100%;
 
 .sidebar-type, .sidebar-shuffle, .sidebar-timer {
   border-radius: 4px;
-  border: 1px solid var(--extras-white, #FFFFFF) !important;
-  background: #FFFFFF;
+  border: none !important;
+  background: var(--extras-white, #FFFFFF);
   justify-content: space-between;
-  box-shadow: 0px 1px 5px #ADADAD !important;
+  // stylelint-disable-next-line
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15) !important;
 }
 
 .sidebar-type > div, .sidebar-shuffle > div, .sidebar-timer > div {

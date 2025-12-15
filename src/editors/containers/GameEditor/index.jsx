@@ -48,7 +48,6 @@ import SettingsOption from '../ProblemEditor/components/EditProblemView/Settings
 import Button from '../../sharedComponents/Button';
 import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
-import { set } from 'lodash';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => ({
@@ -101,8 +100,8 @@ export const GameEditor = ({
   }, [blockFinished, blockId, blockValue, settingsLoaded, loadGamesSettings]);
 
   const getCardErrors = (card, index) => ({
-    termError: validationErrors && validationErrors[`${index}_term`] || false,
-    definitionError: validationErrors && validationErrors[`${index}_definition`] || false,
+    termError: (validationErrors && validationErrors[`${index}_term`]) || false,
+    definitionError: (validationErrors && validationErrors[`${index}_definition`]) || false,
   });
 
   const validateAllCards = () => {
@@ -240,7 +239,7 @@ export const GameEditor = ({
     >
       <>
         <div className="settings-description">{intl.formatMessage(messages.timerSettingsDescription)}</div>
-        <div className='d-flex flex-row gap-0 w-100'>
+        <div className="d-flex flex-row gap-0 w-100">
           <Button
             onClick={() => setTimerStatus(false)}
             variant={!settings.timer ? 'primary' : 'outline-primary'}
@@ -303,7 +302,7 @@ export const GameEditor = ({
                   background: 'white',
                   borderRadius: '6px',
                   marginBottom: '16px',
-                  boxShadow: '0px 1px 5px #ADADAD',
+                  boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15)',
                   position: 'relative',
                   width: '100%',
                   flexDirection: 'column',
@@ -525,7 +524,7 @@ export const GameEditor = ({
         >
           <>
             <div className="settings-description">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
-            <div className='d-flex flex-row gap-0 w-100'>
+            <div className="d-flex flex-row gap-0 w-100">
               <Button
                 onClick={() => setShuffleStatus(false)}
                 variant={!settings.shuffle ? 'primary' : 'outline-primary'}
