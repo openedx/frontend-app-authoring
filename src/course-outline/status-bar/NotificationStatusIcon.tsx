@@ -21,16 +21,16 @@ function useDynamicHookShim() {
 
     async function load() {
       try {
-        const module = await import("@edx/frontend-plugin-notifications");
+        // eslint-disable-next-line import/no-extraneous-dependencies
+        const module = await import('@edx/frontend-plugin-notifications');
         const hookFn = module.useAppNotifications ?? module.default;
         if (!cancelled) {
           // `module.useAppNotifications` is itself a hook
           setHook(() => hookFn);
         }
       } catch (err: any) {
-        // If the module cannot be found, just keep `hook` as null.
-        console.error("Failed to load notifications plugin:", err);
-        // No hook – the UI will fall back to the placeholder.
+        // eslint-disable-next-line no-console
+        console.error('Failed to load notifications plugin:', err);
       }
     }
 
@@ -45,7 +45,7 @@ function useDynamicHookShim() {
 }
 
 // Component that actually calls the loaded hook
-function NotificationHookConsumer({ hook }: { hook: () => HooKType }) {
+const NotificationHookConsumer = ({ hook }: { hook: () => HooKType }) => {
   // The hook is now called on **every** render of this component
   const { notificationAppData } = hook();
 
@@ -63,7 +63,7 @@ function NotificationHookConsumer({ hook }: { hook: () => HooKType }) {
       />
     </small>
   );
-}
+};
 
 // Main component
 export const NotificationStatusIcon = () => {
@@ -76,4 +76,3 @@ export const NotificationStatusIcon = () => {
   // Once loaded, delegate to a component that calls the hook
   return <NotificationHookConsumer hook={loadedHook} />;
 };
-

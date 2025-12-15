@@ -5,7 +5,7 @@ import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
-import { ChecklistRtl, NotificationsNone } from '@openedx/paragon/icons';
+import { ChecklistRtl } from '@openedx/paragon/icons';
 import messages from './messages';
 import { useWaffleFlags } from '../../data/apiHooks';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
@@ -89,14 +89,12 @@ export interface StatusBarProps {
   courseId: string;
   isLoading: boolean;
   statusBarData: CourseOutlineStatusBar;
-  notificationCount?: number;
 }
 
 export const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
-  notificationCount,
 }: StatusBarProps) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);

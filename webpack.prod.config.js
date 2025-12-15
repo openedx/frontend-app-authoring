@@ -1,5 +1,6 @@
 const path = require('path');
 const { createConfig } = require('@openedx/frontend-build');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const webpack = require('webpack');
 
 const config = createConfig('webpack-prod', {
@@ -25,9 +26,10 @@ const config = createConfig('webpack-prod', {
           require.resolve('@edx/frontend-plugin-notifications');
         } catch (e) {
           // Package not found → point to the stub we created.
+          // eslint-disable-next-line no-param-reassign
           resource.request = path.resolve(__dirname, 'src/stubs/empty-notifications-plugin.tsx');
         }
-      }
+      },
     ),
   ],
 });

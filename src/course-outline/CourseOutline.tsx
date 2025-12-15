@@ -344,7 +344,6 @@ const CourseOutline = () => {
                 courseId={courseId}
                 isLoading={isLoading}
                 statusBarData={statusBarData}
-                notificationCount={3}
               />
             ) : (
               <LegacyStatusBar

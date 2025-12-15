@@ -1,11 +1,9 @@
-export const useAppNotifications = () => {
-  return {
-    notificationAppData: {
-      tabsCount: {
-        count: 0,
-      }
-    }
-  };
-};
+export const useAppNotifications = () => ({
+  notificationAppData: {
+    tabsCount: {
+      count: 0,
+    },
+  },
+});
 
-export const NotificationsTray = () => <></>;
+export const NotificationsTray = () => null;
