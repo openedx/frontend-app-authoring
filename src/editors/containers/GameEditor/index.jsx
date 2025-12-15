@@ -233,7 +233,7 @@ export const GameEditor = ({
   const timerSettingsOption = (
     <SettingsOption
       className="sidebar-timer d-flex flex-column align-items-start align-self-stretch"
-      title="Timer"
+      title={intl.formatMessage(messages.timerLabel)}
       summary={settings.timer ? 'On' : 'Off'}
       isCardCollapsibleOpen="true"
     >
@@ -245,14 +245,14 @@ export const GameEditor = ({
             variant={!settings.timer ? 'primary' : 'outline-primary'}
             className="toggle-button rounded-0"
           >
-            Off
+            {intl.formatMessage(messages.offLabel)}
           </Button>
           <Button
             onClick={() => setTimerStatus(true)}
             variant={settings.timer ? 'primary' : 'outline-primary'}
             className="toggle-button rounded-0"
           >
-            On
+            {intl.formatMessage(messages.onLabel)}
           </Button>
         </div>
       </>
@@ -342,7 +342,7 @@ export const GameEditor = ({
                                 </span>
                               )
                                 : ''}
-                              {card.term !== '' ? card.term : <span className="text-gray">No text</span>}
+                              {card.term !== '' ? card.term : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
                             </span>
                             <span className="preview-definition">
                               {type === 'flashcards' ? (
@@ -353,7 +353,7 @@ export const GameEditor = ({
                                 </span>
                               )
                                 : ''}
-                              {card.definition !== '' ? card.definition : <span className="text-gray">No text</span>}
+                              {card.definition !== '' ? card.definition : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
                             </span>
                           </span>
                         </div>
@@ -368,10 +368,10 @@ export const GameEditor = ({
                           variant="primary"
                         />
                         <Dropdown.Menu align="right">
-                          <Dropdown.Item onClick={() => moveCardUp(index)}>Move up</Dropdown.Item>
-                          <Dropdown.Item onClick={() => moveCardDown(index)}>Move down</Dropdown.Item>
+                          <Dropdown.Item onClick={() => moveCardUp(index)}>{intl.formatMessage(messages.moveUpLabel)}</Dropdown.Item>
+                          <Dropdown.Item onClick={() => moveCardDown(index)}>{intl.formatMessage(messages.moveDownLabel)}</Dropdown.Item>
                           <Dropdown.Divider />
-                          <Dropdown.Item onClick={() => removeCard({ index })}>Delete</Dropdown.Item>
+                          <Dropdown.Item onClick={() => removeCard({ index })}>{intl.formatMessage(messages.deleteLabel)}</Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
@@ -487,7 +487,7 @@ export const GameEditor = ({
             alt="ADD"
             variant="primary"
           />
-          Add
+          {intl.formatMessage(messages.addLabel)}
         </Button>
       </div>
       <div className="sidebar d-flex flex-column align-items-start flex-shrink-0">
@@ -496,7 +496,7 @@ export const GameEditor = ({
         </div>
         <SettingsOption
           className="sidebar-type d-flex flex-column align-items-start align-self-stretch"
-          title="Type"
+          title={intl.formatMessage(messages.typeLabel)}
           summary={type.substr(0, 1).toUpperCase() + type.substr(1)}
           isCardCollapsibleOpen="true"
         >
@@ -504,7 +504,7 @@ export const GameEditor = ({
             onClick={() => updateType('flashcards')}
             className="type-button"
           >
-            <span className="small text-primary-500">Flashcards</span>
+            <span className="small text-primary-500">{intl.formatMessage(messages.flashcardsLabel)}</span>
             <span hidden={type !== 'flashcards'}><Icon src={Check} className="text-success" /></span>
           </Button>
           <div className="card-divider" />
@@ -512,13 +512,13 @@ export const GameEditor = ({
             onClick={() => updateType('matching')}
             className="type-button"
           >
-            <span className="small text-primary-500">Matching</span>
+            <span className="small text-primary-500">{intl.formatMessage(messages.matchingLabel)}</span>
             <span hidden={type !== 'matching'}><Icon src={Check} className="text-success" /></span>
           </Button>
         </SettingsOption>
         <SettingsOption
           className="sidebar-shuffle d-flex flex-column align-items-start align-self-stretch"
-          title="Shuffle"
+          title={intl.formatMessage(messages.shuffleLabel)}
           summary={settings.shuffle ? 'On' : 'Off'}
           isCardCollapsibleOpen="true"
         >
@@ -530,14 +530,14 @@ export const GameEditor = ({
                 variant={!settings.shuffle ? 'primary' : 'outline-primary'}
                 className="toggle-button rounded-0"
               >
-                Off
+                {intl.formatMessage(messages.offLabel)}
               </Button>
               <Button
                 onClick={() => setShuffleStatus(true)}
                 variant={settings.shuffle ? 'primary' : 'outline-primary'}
                 className="toggle-button rounded-0"
               >
-                On
+                {intl.formatMessage(messages.onLabel)}
               </Button>
             </div>
           </>

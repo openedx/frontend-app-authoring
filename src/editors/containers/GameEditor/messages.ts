@@ -86,6 +86,66 @@ const messages = defineMessages({
     defaultMessage: 'Please check your entries and try again.',
     description: 'Alert message for validation errors in the game editor.',
   },
+  noTextLabel: {
+    id: 'GameEditor.noTextLabel',
+    defaultMessage: 'No text',
+    description: 'Label shown when a card has no text content.',
+  },
+  moveUpLabel: {
+    id: 'GameEditor.moveUpLabel',
+    defaultMessage: 'Move up',
+    description: 'Label for move up dropdown item.',
+  },
+  moveDownLabel: {
+    id: 'GameEditor.moveDownLabel',
+    defaultMessage: 'Move down',
+    description: 'Label for move down dropdown item.',
+  },
+  deleteLabel: {
+    id: 'GameEditor.deleteLabel',
+    defaultMessage: 'Delete',
+    description: 'Label for delete dropdown item.',
+  },
+  addLabel: {
+    id: 'GameEditor.addLabel',
+    defaultMessage: 'Add',
+    description: 'Label for add button.',
+  },
+  typeLabel: {
+    id: 'GameEditor.typeLabel',
+    defaultMessage: 'Type',
+    description: 'Label for type setting.',
+  },
+  flashcardsLabel: {
+    id: 'GameEditor.flashcardsLabel',
+    defaultMessage: 'Flashcards',
+    description: 'Label for flashcards game type.',
+  },
+  matchingLabel: {
+    id: 'GameEditor.matchingLabel',
+    defaultMessage: 'Matching',
+    description: 'Label for matching game type.',
+  },
+  shuffleLabel: {
+    id: 'GameEditor.shuffleLabel',
+    defaultMessage: 'Shuffle',
+    description: 'Label for shuffle setting.',
+  },
+  timerLabel: {
+    id: 'GameEditor.timerLabel',
+    defaultMessage: 'Timer',
+    description: 'Label for timer setting.',
+  },
+  offLabel: {
+    id: 'GameEditor.offLabel',
+    defaultMessage: 'Off',
+    description: 'Label for off toggle button.',
+  },
+  onLabel: {
+    id: 'GameEditor.onLabel',
+    defaultMessage: 'On',
+    description: 'Label for on toggle button.',
+  },
 });
 
 export default messages;
