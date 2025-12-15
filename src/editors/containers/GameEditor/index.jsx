@@ -355,7 +355,10 @@ export const GameEditor = ({
                         <div className="card-divider" />
                       </div>
                       <div className="card-term d-flex flex-column align-items-start align-self-stretch">
-                        Term
+                        <div className="d-flex justify-content-between align-items-center align-self-stretch">
+                          <span>{intl.formatMessage(messages.termLabel)}</span>
+                          <small className="text-muted">{card.term.length}/120</small>
+                        </div>
                         {(type !== 'matching' && card.term_image !== '') && termImageDiv(card, index)}
                         <div className="card-input-line d-flex align-items-start align-self-stretch">
                           <Form.Control
@@ -364,14 +367,17 @@ export const GameEditor = ({
                             placeholder={intl.formatMessage(messages.enterYourTerm)}
                             value={card.term}
                             onChange={(e) => updateTerm({ index, term: e.target.value })}
-                            maxLength={255}
+                            maxLength={120}
                           />
                           {type !== 'matching' && termImageUploadButton(card, index)}
                         </div>
                       </div>
                       <div className="card-divider" />
                       <div className="card-definition d-flex flex-column align-items-start align-self-stretch">
-                        Definition
+                        <div className="d-flex justify-content-between align-items-center align-self-stretch">
+                          <span>{intl.formatMessage(messages.definitionLabel)}</span>
+                          <small className="text-muted">{card.definition.length}/120</small>
+                        </div>
                         {(type !== 'matching' && card.definition_image !== '') && definitionImageDiv(card, index)}
                         <div className="card-input-line d-flex align-items-start align-self-stretch">
                           <Form.Control
@@ -380,7 +386,7 @@ export const GameEditor = ({
                             placeholder={intl.formatMessage(messages.enterYourDefinition)}
                             value={card.definition}
                             onChange={(e) => updateDefinition({ index, definition: e.target.value })}
-                            maxLength={255}
+                            maxLength={120}
                           />
                           {type !== 'matching' && definitionImageUploadButton(card, index)}
                         </div>

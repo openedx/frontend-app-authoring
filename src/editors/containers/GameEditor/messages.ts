@@ -51,6 +51,16 @@ const messages = defineMessages({
     defaultMessage: 'Shuffle the order of terms shown to learners when reviewing.',
     description: 'Shuffle Settings Description',
   },
+  termLabel: {
+    id: 'GameEditor.termLabel',
+    defaultMessage: 'Term',
+    description: 'Label for term input field',
+  },
+  definitionLabel: {
+    id: 'GameEditor.definitionLabel',
+    defaultMessage: 'Definition',
+    description: 'Label for definition input field',
+  },
 });
 
 export default messages;
