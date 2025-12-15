@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Badge, Form, Icon, IconButton, Stack, useToggle,
@@ -13,14 +12,14 @@ import {
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
 
-import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
-import { COURSE_BLOCK_NAMES } from '../../constants';
+import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 import { UNIT_VISIBILITY_STATES } from '../constants';
 
-const StatusBar = ({ courseUnit }) => {
+const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
   const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
 
@@ -103,13 +102,27 @@ const StatusBar = ({ courseUnit }) => {
   );
 };
 
+type HeaderTitleProps = {
+  unitTitle: string;
+  isTitleEditFormOpen: boolean;
+  handleTitleEdit: () => void;
+  handleTitleEditSubmit: (title: string) => void;
+  handleConfigureSubmit: (
+    id: string,
+    isVisible: boolean,
+    groupAccess: boolean,
+    isDiscussionEnabled: boolean,
+    closeModalFn: (value: boolean) => void
+  ) => void;
+};
+
 const HeaderTitle = ({
   unitTitle,
   isTitleEditFormOpen,
   handleTitleEdit,
   handleTitleEditSubmit,
   handleConfigureSubmit,
-}) => {
+}: HeaderTitleProps) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [titleValue, setTitleValue] = useState(unitTitle);
@@ -123,17 +136,13 @@ const HeaderTitle = ({
   ].includes(currentItemData.category);
 
   const onConfigureSubmit = (...arg) => {
-    handleConfigureSubmit(currentItemData.id, ...arg, closeConfigureModal);
-  };
-
-  const getVisibilityMessage = () => {
-    let message;
-
-    if (currentItemData.hasPartitionGroupComponents) {
-      message = intl.formatMessage(messages.commonVisibilityMessage);
-    }
-
-    return message ? (<p className="header-title__visibility-message mb-0">{message}</p>) : null;
+    handleConfigureSubmit(
+      currentItemData.id,
+      arg[0],
+      arg[1],
+      arg[2],
+      closeConfigureModal,
+    );
   };
 
   useEffect(() => {
@@ -180,23 +189,13 @@ const HeaderTitle = ({
           currentItemData={currentItemData}
           isSelfPaced={false}
           isXBlockComponent={isXBlockComponent}
-          userPartitionInfo={currentItemData?.userPartitionInfo || {}}
         />
       </div>
-      <div className="h5 font-weight-normal">
+      <div className="h5 mt-2 font-weight-normal">
         <StatusBar courseUnit={currentItemData} />
       </div>
-      {getVisibilityMessage()}
     </>
   );
 };
 
 export default HeaderTitle;
-
-HeaderTitle.propTypes = {
-  unitTitle: PropTypes.string.isRequired,
-  isTitleEditFormOpen: PropTypes.bool.isRequired,
-  handleTitleEdit: PropTypes.func.isRequired,
-  handleTitleEditSubmit: PropTypes.func.isRequired,
-  handleConfigureSubmit: PropTypes.func.isRequired,
-};
