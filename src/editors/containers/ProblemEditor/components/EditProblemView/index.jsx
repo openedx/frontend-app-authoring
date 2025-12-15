@@ -17,6 +17,7 @@ import QuestionWidget from './QuestionWidget';
 import EditorContainer from '../../../EditorContainer';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
+import { blockTypes } from '../../../../data/constants/app';
 
 import {
   checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent,

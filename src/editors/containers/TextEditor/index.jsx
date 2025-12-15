@@ -10,6 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getConfig } from '@edx/frontend-platform';
 import { actions, selectors } from '../../data/redux';
+import { blockTypes } from '../../data/constants/app';
 import { RequestKeys } from '../../data/constants/requests';
 
 import EditorContainer from '../EditorContainer';
