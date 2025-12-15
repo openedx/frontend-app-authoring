@@ -24,7 +24,7 @@ import {
 } from '@openedx/paragon';
 import {
   DeleteOutline,
-  Add,
+  Plus,
   ExpandMore,
   ExpandLess,
   InsertPhoto,
@@ -91,6 +91,8 @@ export const GameEditor = ({
   const intl = useIntl();
   const [settingsLoaded, setSettingsLoaded] = React.useState(false);
   const [validationErrors, setValidationErrors] = React.useState({});
+  const MAX_TERM_LENGTH = 120;
+  const MAX_DEFINITION_LENGTH = 120;
 
   React.useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
@@ -311,7 +313,7 @@ export const GameEditor = ({
                 <Collapsible.Advanced
                   className="card"
                   defaultOpen={card.editorOpen}
-                  onToggle={(state) => toggleOpen({ index, isOpen: state })}
+                  onToggle={(isOpen) => toggleOpen({ index, isOpen })}
                 >
                   <input
                     type="file"
@@ -406,33 +408,35 @@ export const GameEditor = ({
                     <Collapsible.Body>
                       <div className="card-divider" />
                       <div className="card-term d-flex flex-column align-items-start align-self-stretch">
-                        <div className="d-flex justify-content-between align-items-center align-self-stretch">
-                          <span>{intl.formatMessage(messages.termLabel)}</span>
-                          <small className="text-muted">{card.term.length}/120</small>
-                        </div>
+                        <span>{intl.formatMessage(messages.termLabel)}</span>
                         {(type !== 'matching' && card.term_image !== '') && termImageDiv(card, index)}
-                        <div className="card-input-line d-flex align-items-start align-self-stretch">
-                          <Form.Control
-                            className="d-flex flex-column align-items-start align-self-stretch"
-                            id={`term|${index}`}
-                            placeholder={intl.formatMessage(messages.enterYourTerm)}
-                            value={card.term}
-                            onChange={(e) => {
-                              updateTerm({ index, term: e.target.value });
-                              // Clear validation error when user starts typing
-                              if (validationErrors[`${index}_term`]) {
-                                setValidationErrors(prev => {
-                                  const newErrors = { ...prev };
-                                  delete newErrors[`${index}_term`];
-                                  return newErrors;
-                                });
-                              }
-                            }}
-                            style={{ borderRadius: 0 }}
-                            maxLength={120}
-                            isInvalid={getCardErrors(card, index).termError}
-                          />
-                          {type !== 'matching' && termImageUploadButton(card, index)}
+                        <div className="term-input-area d-flex flex-column align-items-start align-self-stretch">
+                          <div className="card-input-line d-flex align-items-start align-self-stretch">
+                            <Form.Control
+                              className="d-flex flex-column align-items-start align-self-stretch"
+                              id={`term|${index}`}
+                              placeholder={intl.formatMessage(messages.enterYourTerm)}
+                              value={card.term}
+                              onChange={(e) => {
+                                updateTerm({ index, term: e.target.value });
+                                // Clear validation error when user starts typing
+                                if (validationErrors[`${index}_term`]) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors[`${index}_term`];
+                                    return newErrors;
+                                  });
+                                }
+                              }}
+                              style={{ borderRadius: 0 }}
+                              maxLength={MAX_TERM_LENGTH}
+                              isInvalid={getCardErrors(card, index).termError}
+                            />
+                            {type !== 'matching' && termImageUploadButton(card, index)}
+                          </div>
+                          <div className={`d-flex justify-content-end align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <small className="text-muted mr-2">{card.term.length}/{MAX_TERM_LENGTH}</small>
+                          </div>
                         </div>
                         {getCardErrors(card, index).termError && (
                           <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -442,33 +446,35 @@ export const GameEditor = ({
                       </div>
                       <div className="card-divider" />
                       <div className="card-definition d-flex flex-column align-items-start align-self-stretch">
-                        <div className="d-flex justify-content-between align-items-center align-self-stretch">
-                          <span>{intl.formatMessage(messages.definitionLabel)}</span>
-                          <small className="text-muted">{card.definition.length}/120</small>
-                        </div>
+                        <span>{intl.formatMessage(messages.definitionLabel)}</span>
                         {(type !== 'matching' && card.definition_image !== '') && definitionImageDiv(card, index)}
-                        <div className="card-input-line d-flex align-items-start align-self-stretch">
-                          <Form.Control
-                            className="d-flex flex-column align-items-start align-self-stretch"
-                            id={`definition|${index}`}
-                            placeholder={intl.formatMessage(messages.enterYourDefinition)}
-                            value={card.definition}
-                            onChange={(e) => {
-                              updateDefinition({ index, definition: e.target.value });
-                              // Clear validation error when user starts typing
-                              if (validationErrors[`${index}_definition`]) {
-                                setValidationErrors(prev => {
-                                  const newErrors = { ...prev };
-                                  delete newErrors[`${index}_definition`];
-                                  return newErrors;
-                                });
-                              }
-                            }}
-                            maxLength={120}
-                            style={{ borderRadius: 0 }}
-                            isInvalid={getCardErrors(card, index).definitionError}
-                          />
-                          {type !== 'matching' && definitionImageUploadButton(card, index)}
+                        <div className="definition-input-area d-flex flex-column align-items-start align-self-stretch">
+                          <div className="card-input-line d-flex align-items-start align-self-stretch">
+                            <Form.Control
+                              className="d-flex flex-column align-items-start align-self-stretch"
+                              id={`definition|${index}`}
+                              placeholder={intl.formatMessage(messages.enterYourDefinition)}
+                              value={card.definition}
+                              onChange={(e) => {
+                                updateDefinition({ index, definition: e.target.value });
+                                // Clear validation error when user starts typing
+                                if (validationErrors[`${index}_definition`]) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors[`${index}_definition`];
+                                    return newErrors;
+                                  });
+                                }
+                              }}
+                              maxLength={MAX_DEFINITION_LENGTH}
+                              style={{ borderRadius: 0 }}
+                              isInvalid={getCardErrors(card, index).definitionError}
+                            />
+                            {type !== 'matching' && definitionImageUploadButton(card, index)}
+                          </div>
+                          <div className={`d-flex justify-content-end align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <small className="text-muted mr-2">{card.definition.length}/{MAX_DEFINITION_LENGTH}</small>
+                          </div>
                         </div>
                         {getCardErrors(card, index).definitionError && (
                           <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -486,13 +492,10 @@ export const GameEditor = ({
         <Button
           className="add-button"
           onClick={() => addCard()}
+          iconBefore={Plus}
+          variant="link"
+          size="inline"
         >
-          <IconButton
-            src={Add}
-            iconAs={Icon}
-            alt="ADD"
-            variant="primary"
-          />
           {intl.formatMessage(messages.addLabel)}
         </Button>
       </div>

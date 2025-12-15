@@ -86,7 +86,19 @@ width: 100%;
 .add-button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  padding: 16px 16px 16px 2px;
+  text-decoration: none;
+  color: var(--primary-500, #00262B);
+}
+
+.add-button:hover {
+  text-decoration: none;
+  color: var(--primary-500, #00262B);
+}
+
+.add-button .btn-icon-before {
+  width: 24px !important;
+  height: 24px !important;
 }
 
 .type-button {
