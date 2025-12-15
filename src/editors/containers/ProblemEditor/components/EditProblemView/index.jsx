@@ -129,7 +129,7 @@ const EditProblemView = ({ returnFunction }) => {
             </Container>
           ) : (
             <span className="flex-grow-1 mb-5">
-              <ProblemEditorPluginSlot blockType={problemType || 'problem'} />
+              <ProblemEditorPluginSlot blockType={problemType || blockTypes.problem} />
               <QuestionWidget />
               <ExplanationWidget />
               <AnswerWidget problemType={problemType} />
