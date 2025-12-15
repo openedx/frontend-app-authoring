@@ -147,6 +147,71 @@ describe('<ImportStepperModal />', () => {
     expect(await screen.findByText('Import Analysis in Progress')).toBeInTheDocument();
   });
 
+  it('should block import when content limit is reached', async () => {
+    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
+      isPending: false,
+      data: { maxBlocksPerContentLibrary: 20 },
+    });
+
+    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
+      // Block types query for children of unsupported blocks
+      if (args.length === 2) {
+        return {
+          isPending: false,
+          data: {},
+        };
+      }
+
+      // Block types query from the course
+      if (args[0] === 'context_key = "course-v1:HarvardX+123+2023"') {
+        return {
+          isPending: false,
+          data: {
+            chapter: 1,
+            sequential: 2,
+            vertical: 3,
+            'problem-builder': 1,
+            html: 25,
+          },
+        };
+      }
+
+      return {
+        isPending: true,
+        data: null,
+      };
+    });
+
+    const user = userEvent.setup();
+    renderComponent();
+    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
+      courseId: 'course-v1:HarvardX+123+2023',
+      title: 'Managing Risk in the Information Age',
+      subtitle: '',
+      org: 'HarvardX',
+      description: 'This is a test course',
+    });
+
+    const nextButton = await screen.findByRole('button', { name: /next step/i });
+    expect(nextButton).toBeDisabled();
+
+    // Select a course
+    const courseCard = screen.getAllByRole('radio')[0];
+    await user.click(courseCard);
+    expect(courseCard).toBeChecked();
+
+    // Click next
+    expect(nextButton).toBeEnabled();
+    await user.click(nextButton);
+
+    expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
+    expect(await screen.findByText(
+      /This import would exceed the Content Library limit of 20 items/i,
+    )).toBeInTheDocument();
+
+    expect(screen.getByRole('button', { name: /import course/i })).toBeDisabled();
+  });
+
   it('the course should remain selected on back', async () => {
     const user = userEvent.setup();
     renderComponent();
