@@ -23,17 +23,17 @@ export const loadGamesSettings = () => (dispatch) => {
 
       if (data.is_shuffled !== undefined) {
         if (data.is_shuffled) {
-          dispatch(actions.game.shuffleTrue());
+          dispatch(actions.game.setShuffleStatus(true));
         } else {
-          dispatch(actions.game.shuffleFalse());
+          dispatch(actions.game.setShuffleStatus(false));
         }
       }
 
       if (data.has_timer !== undefined) {
         if (data.has_timer) {
-          dispatch(actions.game.timerTrue());
+          dispatch(actions.game.setTimerStatus(true));
         } else {
-          dispatch(actions.game.timerFalse());
+          dispatch(actions.game.setTimerStatus(false));
         }
       }
 
