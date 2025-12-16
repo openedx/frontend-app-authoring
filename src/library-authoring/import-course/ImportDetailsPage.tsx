@@ -230,10 +230,23 @@ const ImportDetailsContent = () => {
       <Stack gap={3}>
         <Helmet>
           <title>
-            {libraryData?.title} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} | {process.env.SITE_NAME}
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} | {process.env.SITE_NAME}
           </title>
         </Helmet>
-        <Alert variant="success" icon={CheckCircle}>
+        <Alert
+          variant="success"
+          icon={CheckCircle}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={() => navigate(collectionLink())}
+            >
+              <FormattedMessage {...messages.viewImportedContentButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importSuccessfulAlertTitle} />
           </Alert.Heading>
@@ -265,15 +278,6 @@ const ImportDetailsContent = () => {
             }}
           />
         </p>
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={() => navigate(collectionLink())}
-          >
-            <FormattedMessage {...messages.viewImportedContentButton} />
-          </Button>
-        </div>
       </Stack>
     );
   } if (migrationStatus === 'Failed') {
@@ -281,10 +285,24 @@ const ImportDetailsContent = () => {
       <Stack gap={3}>
         <Helmet>
           <title>
-            {libraryData?.title} | {intl.formatMessage(messages.importFailedAlertTitle)} | {process.env.SITE_NAME}
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importFailedAlertTitle)} | {process.env.SITE_NAME}
           </title>
         </Helmet>
-        <Alert variant="danger" icon={Info}>
+        <Alert
+          variant="danger"
+          icon={Info}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={handleImportCourse}
+              disabled={disableReimport}
+            >
+              <FormattedMessage {...messages.importFailedRetryImportButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importFailedAlertTitle} />
           </Alert.Heading>
@@ -301,16 +319,6 @@ const ImportDetailsContent = () => {
         <p>
           <FormattedMessage {...messages.importFailedDetailsSectionBody} />
         </p>
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={handleImportCourse}
-            disabled={disableReimport}
-          >
-            <FormattedMessage {...messages.importFailedRetryImportButton} />
-          </Button>
-        </div>
       </Stack>
     );
   } if (migrationStatus === 'Partial Succeeded') {
@@ -318,10 +326,23 @@ const ImportDetailsContent = () => {
       <Stack gap={3}>
         <Helmet>
           <title>
-            {libraryData?.title} | {intl.formatMessage(messages.importPartialAlertTitle)} | {process.env.SITE_NAME}
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importPartialAlertTitle)} | {process.env.SITE_NAME}
           </title>
         </Helmet>
-        <Alert variant="warning" icon={WarningFilled}>
+        <Alert
+          variant="warning"
+          icon={WarningFilled}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={() => navigate(collectionLink())}
+            >
+              <FormattedMessage {...messages.viewImportedContentButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importPartialAlertTitle} />
           </Alert.Heading>
@@ -385,16 +406,6 @@ const ImportDetailsContent = () => {
             <DataTable.TableFooter />
           </DataTable>
         )}
-
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={() => navigate(collectionLink())}
-          >
-            <FormattedMessage {...messages.viewImportedContentButton} />
-          </Button>
-        </div>
       </Stack>
     );
   }
@@ -442,7 +453,7 @@ export const ImportDetailsPage = () => {
   return (
     <div className="d-flex">
       <Helmet>
-        <title>{libraryData?.title} | {process.env.SITE_NAME}</title>
+        <title>{libraryData?.title || ''} | {process.env.SITE_NAME}</title>
       </Helmet>
       <div className="flex-grow-1">
         <Header
