@@ -44,7 +44,7 @@ export const loadGamesSettings = () => (dispatch) => {
           term_image: card.term_image || '',
           definition: card.definition || '',
           definition_image: card.definition_image || '',
-          editorOpen: false,
+          editorOpen: true,
         }));
         dispatch(actions.game.setList(formattedCards));
       }

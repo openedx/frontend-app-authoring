@@ -51,6 +51,101 @@ const messages = defineMessages({
     defaultMessage: 'Shuffle the order of terms shown to learners when reviewing.',
     description: 'Shuffle Settings Description',
   },
+  termLabel: {
+    id: 'GameEditor.termLabel',
+    defaultMessage: 'Term',
+    description: 'Label for term input field',
+  },
+  definitionLabel: {
+    id: 'GameEditor.definitionLabel',
+    defaultMessage: 'Definition',
+    description: 'Label for definition input field',
+  },
+  termValidationError: {
+    id: 'GameEditor.termValidationError',
+    defaultMessage: 'Enter a term',
+    description: 'Error message when term field is empty but definition is filled',
+  },
+  definitionValidationError: {
+    id: 'GameEditor.definitionValidationError',
+    defaultMessage: 'Enter a definition',
+    description: 'Error message when definition field is empty but term is filled',
+  },
+  settingsTitle: {
+    id: 'GameEditor.settingsTitle',
+    defaultMessage: 'Settings',
+    description: 'Title for the settings sidebar in the game editor.',
+  },
+  validationErrorHeading: {
+    id: 'GameEditor.validationErrorHeading',
+    defaultMessage: 'We couldn\'t save your changes.',
+    description: 'Heading for validation errors alert in the game editor.',
+  },
+  validationErrorAlert: {
+    id: 'GameEditor.validationErrorAlert',
+    defaultMessage: 'Please check your entries and try again.',
+    description: 'Alert message for validation errors in the game editor.',
+  },
+  noTextLabel: {
+    id: 'GameEditor.noTextLabel',
+    defaultMessage: 'No text',
+    description: 'Label shown when a card has no text content.',
+  },
+  moveUpLabel: {
+    id: 'GameEditor.moveUpLabel',
+    defaultMessage: 'Move up',
+    description: 'Label for move up dropdown item.',
+  },
+  moveDownLabel: {
+    id: 'GameEditor.moveDownLabel',
+    defaultMessage: 'Move down',
+    description: 'Label for move down dropdown item.',
+  },
+  deleteLabel: {
+    id: 'GameEditor.deleteLabel',
+    defaultMessage: 'Delete',
+    description: 'Label for delete dropdown item.',
+  },
+  addLabel: {
+    id: 'GameEditor.addLabel',
+    defaultMessage: 'Add',
+    description: 'Label for add button.',
+  },
+  typeLabel: {
+    id: 'GameEditor.typeLabel',
+    defaultMessage: 'Type',
+    description: 'Label for type setting.',
+  },
+  flashcardsLabel: {
+    id: 'GameEditor.flashcardsLabel',
+    defaultMessage: 'Flashcards',
+    description: 'Label for flashcards game type.',
+  },
+  matchingLabel: {
+    id: 'GameEditor.matchingLabel',
+    defaultMessage: 'Matching',
+    description: 'Label for matching game type.',
+  },
+  shuffleLabel: {
+    id: 'GameEditor.shuffleLabel',
+    defaultMessage: 'Shuffle',
+    description: 'Label for shuffle setting.',
+  },
+  timerLabel: {
+    id: 'GameEditor.timerLabel',
+    defaultMessage: 'Timer',
+    description: 'Label for timer setting.',
+  },
+  offLabel: {
+    id: 'GameEditor.offLabel',
+    defaultMessage: 'Off',
+    description: 'Label for off toggle button.',
+  },
+  onLabel: {
+    id: 'GameEditor.onLabel',
+    defaultMessage: 'On',
+    description: 'Label for on toggle button.',
+  },
 });
 
 export default messages;

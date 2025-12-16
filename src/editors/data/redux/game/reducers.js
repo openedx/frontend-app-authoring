@@ -5,8 +5,8 @@ const generateId = () => `card-${Date.now()}-${Math.floor(Math.random() * 100000
 
 const initialState = {
   settings: {
-    shuffle: false,
-    timer: false,
+    shuffle: true,
+    timer: true,
   },
   type: 'flashcards',
   list: [
@@ -43,6 +43,11 @@ const game = createSlice({
       ...state,
       type: payload,
       isDirty: true,
+      settings: {
+        ...state.settings,
+        shuffle: true,
+        timer: true,
+      },
     }),
     // Unified card field update
     updateCardField: (state, { payload }) => {
@@ -93,10 +98,8 @@ const baseActions = game.actions;
 const actions = StrictDict({
   ...baseActions,
   // Backward compatible wrappers for settings
-  shuffleTrue: () => baseActions.updateSetting({ key: 'shuffle', value: true }),
-  shuffleFalse: () => baseActions.updateSetting({ key: 'shuffle', value: false }),
-  timerTrue: () => baseActions.updateSetting({ key: 'timer', value: true }),
-  timerFalse: () => baseActions.updateSetting({ key: 'timer', value: false }),
+  setShuffleStatus: (state) => baseActions.updateSetting({ key: 'shuffle', value: state }),
+  setTimerStatus: (state) => baseActions.updateSetting({ key: 'timer', value: state }),
   // Backward compatible wrappers for card fields
   updateTerm: ({ index, term }) => baseActions.updateCardField({ index, field: 'term', value: term }),
   updateTermImage: ({ index, termImage }) => baseActions.updateCardField({ index, field: 'term_image', value: termImage }),

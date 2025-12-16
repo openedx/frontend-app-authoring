@@ -18,6 +18,7 @@ import {
   ViewDay,
   Widgets,
   WidthWide,
+  Award as GamesIcon,
 } from '@openedx/paragon/icons';
 import NewsstandIcon from '../NewsstandIcon';
 
@@ -59,6 +60,7 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
   [COMPONENT_TYPES.problem]: HelpOutlineIcon,
   [COMPONENT_TYPES.video]: VideoCameraIcon,
   [COMPONENT_TYPES.dragAndDrop]: BackHandIcon,
+  [COMPONENT_TYPES.games]: GamesIcon,
 };
 
 export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {

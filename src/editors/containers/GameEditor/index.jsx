@@ -18,15 +18,20 @@ import {
   Icon,
   IconButton,
   Dropdown,
+  OverlayTrigger,
+  Tooltip,
+  Alert,
 } from '@openedx/paragon';
 import {
   DeleteOutline,
-  Add,
+  Plus,
   ExpandMore,
   ExpandLess,
   InsertPhoto,
   MoreHoriz,
+  InfoOutline,
   Check,
+  Info,
 } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import {
@@ -62,10 +67,8 @@ export const GameEditor = ({
 
   // settings
   settings,
-  shuffleTrue,
-  shuffleFalse,
-  timerTrue,
-  timerFalse,
+  setShuffleStatus,
+  setTimerStatus,
   type,
   updateType,
 
@@ -86,10 +89,10 @@ export const GameEditor = ({
   isDirty,
 }) => {
   const intl = useIntl();
-  // State for list
-  const [state, setState] = React.useState(list);
   const [settingsLoaded, setSettingsLoaded] = React.useState(false);
-  React.useEffect(() => { setState(list); }, [list]);
+  const [validationErrors, setValidationErrors] = React.useState({});
+  const MAX_TERM_LENGTH = 120;
+  const MAX_DEFINITION_LENGTH = 120;
 
   React.useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
@@ -98,7 +101,39 @@ export const GameEditor = ({
     }
   }, [blockFinished, blockId, blockValue, settingsLoaded, loadGamesSettings]);
 
-  // Non-reducer functions go here
+  const getCardErrors = (card, index) => ({
+    termError: (validationErrors && validationErrors[`${index}_term`]) || false,
+    definitionError: (validationErrors && validationErrors[`${index}_definition`]) || false,
+  });
+
+  const validateAllCards = () => {
+    const errors = {};
+    let hasErrors = false;
+
+    list.forEach((card, index) => {
+      const termEmpty = !card.term.trim();
+      const definitionEmpty = !card.definition.trim();
+
+      if (termEmpty && definitionEmpty) {
+        // Both empty is allowed
+        return;
+      }
+
+      if (termEmpty && !definitionEmpty) {
+        errors[`${index}_term`] = true;
+        hasErrors = true;
+      }
+
+      if (!termEmpty && definitionEmpty) {
+        errors[`${index}_definition`] = true;
+        hasErrors = true;
+      }
+    });
+
+    setValidationErrors(errors);
+    return !hasErrors;
+  };
+
   const getDescriptionHeader = () => {
     // Function to determine what the header will say based on type
     switch (type) {
@@ -145,16 +180,16 @@ export const GameEditor = ({
 
   const moveCardUp = (index) => {
     if (index === 0) { return; }
-    const temp = state.slice();
+    const temp = list.slice();
     [temp[index], temp[index - 1]] = [temp[index - 1], temp[index]];
-    setState(temp);
+    setList(temp);
   };
 
   const moveCardDown = (index) => {
-    if (index === state.length - 1) { return; }
-    const temp = state.slice();
+    if (index === list.length - 1) { return; }
+    const temp = list.slice();
     [temp[index + 1], temp[index]] = [temp[index], temp[index + 1]];
-    setState(temp);
+    setList(temp);
   };
 
   const loading = (
@@ -200,26 +235,28 @@ export const GameEditor = ({
   const timerSettingsOption = (
     <SettingsOption
       className="sidebar-timer d-flex flex-column align-items-start align-self-stretch"
-      title="Timer"
+      title={intl.formatMessage(messages.timerLabel)}
       summary={settings.timer ? 'On' : 'Off'}
       isCardCollapsibleOpen="true"
     >
       <>
         <div className="settings-description">{intl.formatMessage(messages.timerSettingsDescription)}</div>
-        <Button
-          onClick={() => timerFalse()}
-          variant={!settings.timer ? 'primary' : 'outline-primary'}
-          className="toggle-button rounded-0"
-        >
-          Off
-        </Button>
-        <Button
-          onClick={() => timerTrue()}
-          variant={settings.timer ? 'primary' : 'outline-primary'}
-          className="toggle-button rounded-0"
-        >
-          On
-        </Button>
+        <div className="d-flex flex-row gap-0 w-100">
+          <Button
+            onClick={() => setTimerStatus(false)}
+            variant={!settings.timer ? 'primary' : 'outline-primary'}
+            className="toggle-button rounded-0"
+          >
+            {intl.formatMessage(messages.offLabel)}
+          </Button>
+          <Button
+            onClick={() => setTimerStatus(true)}
+            variant={settings.timer ? 'primary' : 'outline-primary'}
+            className="toggle-button rounded-0"
+          >
+            {intl.formatMessage(messages.onLabel)}
+          </Button>
+        </div>
       </>
     </SettingsOption>
   );
@@ -227,43 +264,56 @@ export const GameEditor = ({
   const page = (
     <div className="page-body d-flex align-items-start">
       <div className="terms d-flex flex-column align-items-start align-self-stretch">
-        <div className="description d-flex flex-column align-items-start align-self-stretch">
+        <div className="description d-flex flex-row align-items-start align-self-stretch">
           <div className="description-header">
             {getDescriptionHeader()}
           </div>
-          <div className="description-body align-self-stretch">
-            {getDescription()}
-          </div>
+          <OverlayTrigger
+            placement="bottom"
+            overlay={(
+              <Tooltip id="description-tooltip">
+                {getDescription()}
+              </Tooltip>
+            )}
+          >
+            <Icon
+              src={InfoOutline}
+              className="ml-2"
+            />
+          </OverlayTrigger>
         </div>
         <DraggableList
           className="d-flex flex-column align-items-start align-self-stretch"
-          itemList={state}
-          setState={setState}
+          itemList={list}
+          setState={setList}
           updateOrder={() => (newList) => setList(newList)}
         >
           {
-            state.map((card, index) => (
+            list.map((card, index) => (
               <SortableItem
                 id={card.id}
                 key={card.id}
                 buttonClassName="draggable-button"
+                actionStyle={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  zIndex: 2,
+                }}
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
-                  padding: '24px',
                   marginBottom: '16px',
-                  boxShadow: '0px 1px 5px #ADADAD',
+                  boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15)',
                   position: 'relative',
                   width: '100%',
                   flexDirection: 'column',
-                  flexFlow: 'nowrap',
                 }}
               >
                 <Collapsible.Advanced
                   className="card"
-                  defaultOpen
-                  onOpen={() => toggleOpen({ index, isOpen: true })}
-                  onClose={() => toggleOpen({ index, isOpen: false })}
+                  defaultOpen={card.editorOpen}
+                  onToggle={(isOpen) => toggleOpen({ index, isOpen })}
                 >
                   <input
                     type="file"
@@ -279,8 +329,7 @@ export const GameEditor = ({
                     onChange={() => saveDefinitionImage(index)}
                     accept="image/png, image/jpeg, image/gif, image/webp"
                   />
-                  <Collapsible.Trigger className="card-heading">
-                    <div className="drag-spacer" />
+                  <Collapsible.Trigger className="card-heading-wrapper">
                     <div className="card-heading d-flex align-items-center align-self-stretch">
                       <div className="card-number">{index + 1}</div>
                       {!card.editorOpen ? (
@@ -295,7 +344,7 @@ export const GameEditor = ({
                                 </span>
                               )
                                 : ''}
-                              {card.term !== '' ? card.term : <span className="text-gray">No text</span>}
+                              {card.term !== '' ? card.term : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
                             </span>
                             <span className="preview-definition">
                               {type === 'flashcards' ? (
@@ -306,7 +355,7 @@ export const GameEditor = ({
                                 </span>
                               )
                                 : ''}
-                              {card.definition !== '' ? card.definition : <span className="text-gray">No text</span>}
+                              {card.definition !== '' ? card.definition : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
                             </span>
                           </span>
                         </div>
@@ -320,11 +369,17 @@ export const GameEditor = ({
                           iconAs={Icon}
                           variant="primary"
                         />
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={() => moveCardUp(index)}>Move up</Dropdown.Item>
-                          <Dropdown.Item onClick={() => moveCardDown(index)}>Move down</Dropdown.Item>
+                        <Dropdown.Menu align="right">
+                          <Dropdown.Item onClick={() => moveCardUp(index)}>
+                            {intl.formatMessage(messages.moveUpLabel)}
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => moveCardDown(index)}>
+                            {intl.formatMessage(messages.moveDownLabel)}
+                          </Dropdown.Item>
                           <Dropdown.Divider />
-                          <Dropdown.Item onClick={() => removeCard({ index })}>Delete</Dropdown.Item>
+                          <Dropdown.Item onClick={() => removeCard({ index })}>
+                            {intl.formatMessage(messages.deleteLabel)}
+                          </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
@@ -351,38 +406,84 @@ export const GameEditor = ({
                   </Collapsible.Trigger>
                   <div className="card-body p-0">
                     <Collapsible.Body>
-                      <div className="card-body-divider">
-                        <div className="card-divider" />
-                      </div>
+                      <div className="card-divider" />
                       <div className="card-term d-flex flex-column align-items-start align-self-stretch">
-                        Term
+                        <span>{intl.formatMessage(messages.termLabel)}</span>
                         {(type !== 'matching' && card.term_image !== '') && termImageDiv(card, index)}
-                        <div className="card-input-line d-flex align-items-start align-self-stretch">
-                          <Form.Control
-                            className="d-flex flex-column align-items-start align-self-stretch"
-                            id={`term|${index}`}
-                            placeholder={intl.formatMessage(messages.enterYourTerm)}
-                            value={card.term}
-                            onChange={(e) => updateTerm({ index, term: e.target.value })}
-                            maxLength={255}
-                          />
-                          {type !== 'matching' && termImageUploadButton(card, index)}
+                        <div className="term-input-area d-flex flex-column align-items-start align-self-stretch">
+                          <div className="card-input-line d-flex align-items-start align-self-stretch">
+                            <Form.Control
+                              className="d-flex flex-column align-items-start align-self-stretch"
+                              id={`term|${index}`}
+                              placeholder={intl.formatMessage(messages.enterYourTerm)}
+                              value={card.term}
+                              onChange={(e) => {
+                                updateTerm({ index, term: e.target.value });
+                                // Clear validation error when user starts typing
+                                if (validationErrors[`${index}_term`]) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors[`${index}_term`];
+                                    return newErrors;
+                                  });
+                                }
+                              }}
+                              style={{ borderRadius: 0 }}
+                              maxLength={MAX_TERM_LENGTH}
+                              isInvalid={getCardErrors(card, index).termError}
+                            />
+                            {type !== 'matching' && termImageUploadButton(card, index)}
+                          </div>
+                          <div className={`d-flex justify-content-between align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <span>
+                              {getCardErrors(card, index).termError && (
+                                <Form.Control.Feedback type="invalid" hasIcon={false}>
+                                  {intl.formatMessage(messages.termValidationError)}
+                                </Form.Control.Feedback>
+                              )}
+                            </span>
+                            <small className="text-muted mr-1">{card.term.length}/{MAX_TERM_LENGTH}</small>
+                          </div>
                         </div>
                       </div>
                       <div className="card-divider" />
                       <div className="card-definition d-flex flex-column align-items-start align-self-stretch">
-                        Definition
+                        <span>{intl.formatMessage(messages.definitionLabel)}</span>
                         {(type !== 'matching' && card.definition_image !== '') && definitionImageDiv(card, index)}
-                        <div className="card-input-line d-flex align-items-start align-self-stretch">
-                          <Form.Control
-                            className="d-flex flex-column align-items-start align-self-stretch"
-                            id={`definition|${index}`}
-                            placeholder={intl.formatMessage(messages.enterYourDefinition)}
-                            value={card.definition}
-                            onChange={(e) => updateDefinition({ index, definition: e.target.value })}
-                            maxLength={255}
-                          />
-                          {type !== 'matching' && definitionImageUploadButton(card, index)}
+                        <div className="definition-input-area d-flex flex-column align-items-start align-self-stretch">
+                          <div className="card-input-line d-flex align-items-start align-self-stretch">
+                            <Form.Control
+                              className="d-flex flex-column align-items-start align-self-stretch"
+                              id={`definition|${index}`}
+                              placeholder={intl.formatMessage(messages.enterYourDefinition)}
+                              value={card.definition}
+                              onChange={(e) => {
+                                updateDefinition({ index, definition: e.target.value });
+                                // Clear validation error when user starts typing
+                                if (validationErrors[`${index}_definition`]) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors[`${index}_definition`];
+                                    return newErrors;
+                                  });
+                                }
+                              }}
+                              maxLength={MAX_DEFINITION_LENGTH}
+                              style={{ borderRadius: 0 }}
+                              isInvalid={getCardErrors(card, index).definitionError}
+                            />
+                            {type !== 'matching' && definitionImageUploadButton(card, index)}
+                          </div>
+                          <div className={`d-flex justify-content-between align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <span>
+                              {getCardErrors(card, index).definitionError && (
+                                <Form.Control.Feedback type="invalid" hasIcon={false}>
+                                  {intl.formatMessage(messages.definitionValidationError)}
+                                </Form.Control.Feedback>
+                              )}
+                            </span>
+                            <small className="text-muted mr-1">{card.definition.length}/{MAX_DEFINITION_LENGTH}</small>
+                          </div>
                         </div>
                       </div>
                     </Collapsible.Body>
@@ -395,20 +496,20 @@ export const GameEditor = ({
         <Button
           className="add-button"
           onClick={() => addCard()}
+          iconBefore={Plus}
+          variant="link"
+          size="inline"
         >
-          <IconButton
-            src={Add}
-            iconAs={Icon}
-            alt="ADD"
-            variant="primary"
-          />
-          Add
+          {intl.formatMessage(messages.addLabel)}
         </Button>
       </div>
       <div className="sidebar d-flex flex-column align-items-start flex-shrink-0">
+        <div className="sidebar-header d-flex align-items-center align-self-stretch">
+          <span className="sidebar-title">{intl.formatMessage(messages.settingsTitle)}</span>
+        </div>
         <SettingsOption
           className="sidebar-type d-flex flex-column align-items-start align-self-stretch"
-          title="Type"
+          title={intl.formatMessage(messages.typeLabel)}
           summary={type.substr(0, 1).toUpperCase() + type.substr(1)}
           isCardCollapsibleOpen="true"
         >
@@ -416,7 +517,7 @@ export const GameEditor = ({
             onClick={() => updateType('flashcards')}
             className="type-button"
           >
-            <span className="small text-primary-500">Flashcards</span>
+            <span className="small text-primary-500">{intl.formatMessage(messages.flashcardsLabel)}</span>
             <span hidden={type !== 'flashcards'}><Icon src={Check} className="text-success" /></span>
           </Button>
           <div className="card-divider" />
@@ -424,32 +525,34 @@ export const GameEditor = ({
             onClick={() => updateType('matching')}
             className="type-button"
           >
-            <span className="small text-primary-500">Matching</span>
+            <span className="small text-primary-500">{intl.formatMessage(messages.matchingLabel)}</span>
             <span hidden={type !== 'matching'}><Icon src={Check} className="text-success" /></span>
           </Button>
         </SettingsOption>
         <SettingsOption
           className="sidebar-shuffle d-flex flex-column align-items-start align-self-stretch"
-          title="Shuffle"
+          title={intl.formatMessage(messages.shuffleLabel)}
           summary={settings.shuffle ? 'On' : 'Off'}
           isCardCollapsibleOpen="true"
         >
           <>
             <div className="settings-description">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
-            <Button
-              onClick={() => shuffleFalse()}
-              variant={!settings.shuffle ? 'primary' : 'outline-primary'}
-              className="toggle-button rounded-0"
-            >
-              Off
-            </Button>
-            <Button
-              onClick={() => shuffleTrue()}
-              variant={settings.shuffle ? 'primary' : 'outline-primary'}
-              className="toggle-button rounded-0"
-            >
-              On
-            </Button>
+            <div className="d-flex flex-row gap-0 w-100">
+              <Button
+                onClick={() => setShuffleStatus(false)}
+                variant={!settings.shuffle ? 'primary' : 'outline-primary'}
+                className="toggle-button rounded-0"
+              >
+                {intl.formatMessage(messages.offLabel)}
+              </Button>
+              <Button
+                onClick={() => setShuffleStatus(true)}
+                variant={settings.shuffle ? 'primary' : 'outline-primary'}
+                className="toggle-button rounded-0"
+              >
+                {intl.formatMessage(messages.onLabel)}
+              </Button>
+            </div>
           </>
         </SettingsOption>
         {type === 'matching' && timerSettingsOption}
@@ -463,8 +566,15 @@ export const GameEditor = ({
       getContent={() => hooks.getContent({ type, settings, list })}
       onClose={onClose}
       isDirty={() => isDirty}
+      validateEntry={validateAllCards}
     >
       <div className="editor-body h-75 overflow-auto">
+        {Object.keys(validationErrors).length > 0 && (
+          <Alert variant="danger" className="mt-2" icon={Info}>
+            <Alert.Heading className="font-size-normal">{intl.formatMessage(messages.validationErrorHeading)}</Alert.Heading>
+            <p>{intl.formatMessage(messages.validationErrorAlert)}</p>
+          </Alert>
+        )}
         {!blockFinished ? loading : page}
       </div>
     </EditorContainer>
@@ -489,10 +599,8 @@ GameEditor.propTypes = {
     shuffle: PropTypes.bool.isRequired,
     timer: PropTypes.bool.isRequired,
   }).isRequired,
-  shuffleTrue: PropTypes.func.isRequired,
-  shuffleFalse: PropTypes.func.isRequired,
-  timerTrue: PropTypes.func.isRequired,
-  timerFalse: PropTypes.func.isRequired,
+  setShuffleStatus: PropTypes.func.isRequired,
+  setTimerStatus: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
   updateType: PropTypes.func.isRequired,
 
@@ -518,12 +626,10 @@ export const mapDispatchToProps = {
   initializeEditor: actions.app.initializeEditor,
 
   // shuffle
-  shuffleTrue: actions.game.shuffleTrue,
-  shuffleFalse: actions.game.shuffleFalse,
+  setShuffleStatus: actions.game.setShuffleStatus,
 
   // timer
-  timerTrue: actions.game.timerTrue,
-  timerFalse: actions.game.timerFalse,
+  setTimerStatus: actions.game.setTimerStatus,
 
   // type
   updateType: actions.game.updateType,
