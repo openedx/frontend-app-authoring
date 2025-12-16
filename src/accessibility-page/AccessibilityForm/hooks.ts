@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import messages from './messages';
-import { useSummitAccessibilityForm } from '../data/apiHooks';
+import { useSubmitAccessibilityForm } from '../data/apiHooks';
 import { AccessibilityFormData } from '../data/api';
 
 const useAccessibility = (initialValues: AccessibilityFormData) => {
@@ -32,7 +32,7 @@ const useAccessibility = (initialValues: AccessibilityFormData) => {
     onSubmit: () => {},
   });
 
-  const mutation = useSummitAccessibilityForm(handleReset);
+  const mutation = useSubmitAccessibilityForm(handleReset);
 
   useEffect(() => {
     setFormFilled(Object.values(values).every((i) => i));
