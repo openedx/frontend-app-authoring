@@ -7,7 +7,7 @@
  * To use run npm run-script addXblock <your>
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -89,11 +89,13 @@ export const GameEditor = ({
   isDirty,
 }) => {
   const intl = useIntl();
+  const [cardsData, setCardsData] = React.useState(list);
   const [settingsLoaded, setSettingsLoaded] = React.useState(false);
   const [validationErrors, setValidationErrors] = React.useState({});
   const MAX_TERM_LENGTH = 120;
   const MAX_DEFINITION_LENGTH = 120;
 
+  React.useEffect(() => setCardsData(list), [list]);
   React.useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
       loadGamesSettings();
@@ -178,19 +180,19 @@ export const GameEditor = ({
   const saveTermImage = (index) => handleImageUpload(index, 'term');
   const saveDefinitionImage = (index) => handleImageUpload(index, 'definition');
 
-  const moveCardUp = (index) => {
+  const moveCardUp = useCallback((index) => {
     if (index === 0) { return; }
-    const temp = list.slice();
+    const temp = cardsData.slice();
     [temp[index], temp[index - 1]] = [temp[index - 1], temp[index]];
-    setList(temp);
-  };
+    setCardsData(temp);
+  }, [cardsData]);
 
-  const moveCardDown = (index) => {
-    if (index === list.length - 1) { return; }
-    const temp = list.slice();
+  const moveCardDown = useCallback((index) => {
+    if (index === cardsData.length - 1) { return; }
+    const temp = cardsData.slice();
     [temp[index + 1], temp[index]] = [temp[index], temp[index + 1]];
-    setList(temp);
-  };
+    setCardsData(temp);
+  }, [cardsData]);
 
   const loading = (
     <div className="text-center p-6">
@@ -284,12 +286,12 @@ export const GameEditor = ({
         </div>
         <DraggableList
           className="d-flex flex-column align-items-start align-self-stretch"
-          itemList={list}
-          setState={setList}
+          itemList={cardsData}
+          setState={setCardsData}
           updateOrder={() => (newList) => setList(newList)}
         >
           {
-            list.map((card, index) => (
+            cardsData.map((card, index) => (
               <SortableItem
                 id={card.id}
                 key={card.id}

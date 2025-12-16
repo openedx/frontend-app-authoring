@@ -98,8 +98,8 @@ const baseActions = game.actions;
 const actions = StrictDict({
   ...baseActions,
   // Backward compatible wrappers for settings
-  setShuffleStatus: (state) => baseActions.updateSetting({ key: 'shuffle', value: state }),
-  setTimerStatus: (state) => baseActions.updateSetting({ key: 'timer', value: state }),
+  setShuffleStatus: (value) => baseActions.updateSetting({ key: 'shuffle', value }),
+  setTimerStatus: (value) => baseActions.updateSetting({ key: 'timer', value }),
   // Backward compatible wrappers for card fields
   updateTerm: ({ index, term }) => baseActions.updateCardField({ index, field: 'term', value: term }),
   updateTermImage: ({ index, termImage }) => baseActions.updateCardField({ index, field: 'term_image', value: termImage }),
