@@ -82,7 +82,6 @@ export const GameEditor = ({
   const [cardsData, setCardsData] = React.useState(list);
   const [settingsLoaded, setSettingsLoaded] = React.useState(false);
   const [validationErrors, setValidationErrors] = React.useState({});
-
   const [localInputValues, setLocalInputValues] = React.useState({});
 
   const MAX_TERM_LENGTH = 120;
@@ -91,6 +90,7 @@ export const GameEditor = ({
   React.useEffect(() => {
     setCardsData(list);
   }, [list]);
+
   React.useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
       loadGamesSettings();
@@ -116,7 +116,9 @@ export const GameEditor = ({
       }
       return prev;
     });
-  }, []);  const handleInputBlur = React.useCallback((index, field) => {
+  }, []);
+
+  const handleInputBlur = React.useCallback((index, field) => {
     const key = `${index}_${field}`;
     const value = localInputValues[key];
 
@@ -132,12 +134,14 @@ export const GameEditor = ({
         return newState;
       });
     }
-  }, [localInputValues, updateTerm, updateDefinition]);  const getCardErrors = (card, index) => ({
+  }, [localInputValues, updateTerm, updateDefinition]);
+
+  const getCardErrors = (card, index) => ({
     termError: (validationErrors && validationErrors[`${index}_term`]) || false,
     definitionError: (validationErrors && validationErrors[`${index}_definition`]) || false,
   });
 
-  const validateAllCards = () => {
+  const validateAllCards = useCallback(() => {
     const errors = {};
     let hasErrors = false;
 
@@ -162,7 +166,7 @@ export const GameEditor = ({
 
     setValidationErrors(errors);
     return !hasErrors;
-  };
+  }, [list]);
 
   const getDescriptionHeader = () => {
     switch (type) {
@@ -186,23 +190,23 @@ export const GameEditor = ({
     }
   };
 
-  const handleImageUpload = (index, imageType) => {
+  const handleImageUpload = useCallback((index, imageType) => {
     const id = `${imageType}_image_upload|${index}`;
     const file = document.getElementById(id).files[0];
     if (file) {
       uploadGameImage({ index, imageFile: file, imageType });
     }
-  };
+  }, [uploadGameImage]);
 
-  const handleImageRemove = (index, imageType, imageUrl) => {
+  const handleImageRemove = useCallback((index, imageType, imageUrl) => {
     const id = `${imageType}_image_upload|${index}`;
     document.getElementById(id).value = '';
     const filePath = imageUrl.replace(/^\/media\//, '');
     deleteGameImage({ index, imageType, filePath });
-  };
+  }, [deleteGameImage]);
 
-  const saveTermImage = (index) => handleImageUpload(index, 'term');
-  const saveDefinitionImage = (index) => handleImageUpload(index, 'definition');
+  const saveTermImage = useCallback((index) => handleImageUpload(index, 'term'), [handleImageUpload]);
+  const saveDefinitionImage = useCallback((index) => handleImageUpload(index, 'definition'), [handleImageUpload]);
 
   const moveCardUp = useCallback((index) => {
     if (index === 0) { return; }
@@ -228,7 +232,7 @@ export const GameEditor = ({
     </div>
   );
 
-  const renderImageDisplay = (imageUrl, index, imageType) => (
+  const renderImageDisplay = useCallback((imageUrl, index, imageType) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
       <img className="card-image" src={`${getConfig().STUDIO_BASE_URL}${imageUrl}`} alt={`${imageType.toUpperCase()}_IMG`} />
       <IconButton
@@ -239,9 +243,9 @@ export const GameEditor = ({
         onClick={() => handleImageRemove(index, imageType, imageUrl)}
       />
     </div>
-  );
+  ), [handleImageRemove]);
 
-  const renderImageUploadButton = (index, imageType) => (
+  const renderImageUploadButton = useCallback((index, imageType) => (
     <IconButton
       src={InsertPhoto}
       iconAs={Icon}
@@ -249,7 +253,7 @@ export const GameEditor = ({
       variant="primary"
       onClick={() => document.getElementById(`${imageType}_image_upload|${index}`).click()}
     />
-  );
+  ), []);
 
   const termImageDiv = (card, index) => renderImageDisplay(card.term_image, index, 'term');
   const termImageUploadButton = (card, index) => renderImageUploadButton(index, 'term');
