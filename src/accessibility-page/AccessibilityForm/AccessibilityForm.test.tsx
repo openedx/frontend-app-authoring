@@ -1,56 +1,31 @@
 import {
+  initializeMocks,
   render,
   screen,
-} from '@testing-library/react';
+} from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
-import initializeStore from '../../store';
-import { RequestStatus } from '../../data/constants';
 
 import AccessibilityForm from './index';
 import { getZendeskrUrl } from '../data/api';
 import messages from './messages';
 
 let axiosMock;
-let store;
 
 const defaultProps = {
   accessibilityEmail: 'accessibilityTest@test.com',
 };
 
-const initialState = {
-  accessibilityPage: {
-    savingStatus: '',
-  },
-};
-
 const renderComponent = () => {
   render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <AccessibilityForm {...defaultProps} />
-      </AppProvider>
-    </IntlProvider>,
+    <AccessibilityForm {...defaultProps} />,
   );
 };
 
 describe('<AccessibilityPolicyForm />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+
+    axiosMock = mocks.axiosMock;
   });
 
   describe('renders', () => {
@@ -91,9 +66,6 @@ describe('<AccessibilityPolicyForm />', () => {
 
       await user.click(submitButton);
 
-      const { savingStatus } = store.getState().accessibilityPage;
-      expect(savingStatus).toEqual(RequestStatus.SUCCESSFUL);
-
       expect(screen.getAllByRole('alert')).toHaveLength(1);
 
       expect(screen.getByText(messages.accessibilityPolicyFormSuccess.defaultMessage)).toBeVisible();
@@ -107,9 +79,6 @@ describe('<AccessibilityPolicyForm />', () => {
       axiosMock.onPost(getZendeskrUrl()).reply(429);
 
       await user.click(submitButton);
-
-      const { savingStatus } = store.getState().accessibilityPage;
-      expect(savingStatus).toEqual(RequestStatus.FAILED);
 
       expect(screen.getAllByRole('alert')).toHaveLength(1);
 

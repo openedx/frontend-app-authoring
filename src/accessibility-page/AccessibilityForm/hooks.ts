@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { RequestStatus } from '../../data/constants';
 import messages from './messages';
+import { useSummitAccessibilityForm } from '../data/apiHooks';
+import { AccessibilityFormData } from '../data/api';
 
-const useAccessibility = (initialValues, intl) => {
-  const dispatch = useDispatch();
-  const savingStatus = useSelector(state => state.accessibilityPage.savingStatus);
+const useAccessibility = (initialValues: AccessibilityFormData) => {
+  const intl = useIntl();
   const [isFormFilled, setFormFilled] = useState(false);
   const validationSchema = Yup.object().shape({
     name: Yup.string().required(
@@ -29,17 +29,14 @@ const useAccessibility = (initialValues, intl) => {
     enableReinitialize: true,
     validateOnBlur: false,
     validationSchema,
+    onSubmit: () => {},
   });
+
+  const mutation = useSummitAccessibilityForm(handleReset);
 
   useEffect(() => {
     setFormFilled(Object.values(values).every((i) => i));
   }, [values]);
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      handleReset();
-    }
-  }, [savingStatus]);
 
   const hasErrorField = (fieldName) => !!errors[fieldName] && !!touched[fieldName];
 
@@ -47,11 +44,11 @@ const useAccessibility = (initialValues, intl) => {
     errors,
     values,
     isFormFilled,
-    dispatch,
+    mutation,
     handleBlur,
     handleChange,
     hasErrorField,
-    savingStatus,
+    savingStatus: mutation.status,
   };
 };
 

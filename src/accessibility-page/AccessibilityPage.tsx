@@ -1,4 +1,3 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { Container } from '@openedx/paragon';
@@ -23,7 +22,7 @@ const AccessibilityPage = () => {
         </title>
       </Helmet>
       <Header isHiddenMainMenu />
-      <Container size="xl" classNamae="px-4">
+      <Container size="xl">
         <AccessibilityBody
           {...{ email: ACCESSIBILITY_EMAIL, communityAccessibilityLink: COMMUNITY_ACCESSIBILITY_LINK }}
         />
@@ -33,7 +32,5 @@ const AccessibilityPage = () => {
     </>
   );
 };
-
-AccessibilityPage.propTypes = {};
 
 export default AccessibilityPage;
