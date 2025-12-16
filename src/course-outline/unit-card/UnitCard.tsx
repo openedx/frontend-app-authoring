@@ -170,7 +170,13 @@ const UnitCard = ({
       title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
-      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
+      prefixIcon={(
+        <UpstreamInfoIcon
+          upstreamInfo={upstreamInfo}
+          size="xs"
+          openSyncModal={openSyncModal}
+        />
+      )}
     />
   );
 

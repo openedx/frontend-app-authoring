@@ -69,6 +69,7 @@ const unit = {
     versionDeclined: null,
     errorMessage: null,
     downstreamCustomized: [] as string[],
+    upstreamName: 'Upstream',
   },
 } satisfies Partial<XBlock> as XBlock;
 
