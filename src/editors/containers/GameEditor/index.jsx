@@ -434,15 +434,17 @@ export const GameEditor = ({
                             />
                             {type !== 'matching' && termImageUploadButton(card, index)}
                           </div>
-                          <div className={`d-flex justify-content-end align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
-                            <small className="text-muted mr-2">{card.term.length}/{MAX_TERM_LENGTH}</small>
+                          <div className={`d-flex justify-content-between align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <span>
+                              {getCardErrors(card, index).termError && (
+                                <Form.Control.Feedback type="invalid" hasIcon={false}>
+                                  {intl.formatMessage(messages.termValidationError)}
+                                </Form.Control.Feedback>
+                              )}
+                            </span>
+                            <small className="text-muted mr-1">{card.term.length}/{MAX_TERM_LENGTH}</small>
                           </div>
                         </div>
-                        {getCardErrors(card, index).termError && (
-                          <Form.Control.Feedback type="invalid" hasIcon={false}>
-                            {intl.formatMessage(messages.termValidationError)}
-                          </Form.Control.Feedback>
-                        )}
                       </div>
                       <div className="card-divider" />
                       <div className="card-definition d-flex flex-column align-items-start align-self-stretch">
@@ -472,15 +474,17 @@ export const GameEditor = ({
                             />
                             {type !== 'matching' && definitionImageUploadButton(card, index)}
                           </div>
-                          <div className={`d-flex justify-content-end align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
-                            <small className="text-muted mr-2">{card.definition.length}/{MAX_DEFINITION_LENGTH}</small>
+                          <div className={`d-flex justify-content-between align-items-center align-self-stretch ${type !== 'matching' ? 'mr-5' : ''}`}>
+                            <span>
+                              {getCardErrors(card, index).definitionError && (
+                                <Form.Control.Feedback type="invalid" hasIcon={false}>
+                                  {intl.formatMessage(messages.definitionValidationError)}
+                                </Form.Control.Feedback>
+                              )}
+                            </span>
+                            <small className="text-muted mr-1">{card.definition.length}/{MAX_DEFINITION_LENGTH}</small>
                           </div>
                         </div>
-                        {getCardErrors(card, index).definitionError && (
-                          <Form.Control.Feedback type="invalid" hasIcon={false}>
-                            {intl.formatMessage(messages.definitionValidationError)}
-                          </Form.Control.Feedback>
-                        )}
                       </div>
                     </Collapsible.Body>
                   </div>
