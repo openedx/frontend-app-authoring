@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export const useAppNotifications = () => ({
   notificationAppData: {
     tabsCount: {
@@ -6,4 +7,6 @@ export const useAppNotifications = () => ({
   },
 });
 
-export const NotificationsTray = () => null;
+export const NotificationsTray: React.FC = () => null;
+
+export default NotificationsTray;

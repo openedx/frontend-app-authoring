@@ -17,6 +17,7 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { userEvent } from '@testing-library/user-event';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -2491,9 +2492,13 @@ describe('<CourseOutline />', () => {
       ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
     });
     renderComponent();
-    expect(await screen.findByRole('button', { name: 'Collapse all' })).toBeInTheDocument();
+    const btn = await screen.findByRole('button', { name: 'Collapse all' });
+    expect(btn).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Add' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'More actions' })).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(btn);
+    expect(await screen.findByRole('button', { name: 'Expand all' })).toBeInTheDocument();
   });
 });
