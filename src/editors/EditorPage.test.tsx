@@ -49,7 +49,7 @@ describe('EditorPage', () => {
     initializeMocks();
   });
 
-  test('it can display the Text (html) editor in a modal', async () => {
+  test('it can display the Text (html) editor in a fullscreen modal', async () => {
     jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
       { status: 200, data: snakeCaseObject(fieldsHtml) }
     ));
@@ -61,8 +61,8 @@ describe('EditorPage', () => {
 
     const modalElement = screen.getByRole('dialog');
     expect(modalElement.classList).toContain('pgn__modal');
-    expect(modalElement.classList).toContain('pgn__modal-xl');
-    expect(modalElement.classList).not.toContain('pgn__modal-fullscreen');
+    expect(modalElement.classList).toContain('pgn__modal-fullscreen');
+    expect(modalElement.classList).not.toContain('pgn__modal-xl');
   });
 
   test('it shows the Advanced Editor if there is no corresponding editor', async () => {
