@@ -1,12 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-/**
- * This is an example component for an xblock Editor
- * It uses pre-existing components to handle the saving of a the result of a function into the xblock's data.
- * To use run npm run-script addXblock <your>
- */
-
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -60,19 +54,16 @@ export const hooks = {
 
 export const GameEditor = ({
   onClose,
-  // redux
   blockFinished,
   blockId,
   blockValue,
 
-  // settings
   settings,
   setShuffleStatus,
   setTimerStatus,
   type,
   updateType,
 
-  // list
   list,
   updateTerm,
   updateDefinition,
@@ -81,7 +72,6 @@ export const GameEditor = ({
   addCard,
   removeCard,
 
-  // thunks
   uploadGameImage,
   deleteGameImage,
   loadGamesSettings,
@@ -92,10 +82,15 @@ export const GameEditor = ({
   const [cardsData, setCardsData] = React.useState(list);
   const [settingsLoaded, setSettingsLoaded] = React.useState(false);
   const [validationErrors, setValidationErrors] = React.useState({});
+
+  const [localInputValues, setLocalInputValues] = React.useState({});
+
   const MAX_TERM_LENGTH = 120;
   const MAX_DEFINITION_LENGTH = 120;
 
-  React.useEffect(() => setCardsData(list), [list]);
+  React.useEffect(() => {
+    setCardsData(list);
+  }, [list]);
   React.useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
       loadGamesSettings();
@@ -103,7 +98,41 @@ export const GameEditor = ({
     }
   }, [blockFinished, blockId, blockValue, settingsLoaded, loadGamesSettings]);
 
-  const getCardErrors = (card, index) => ({
+  const getInputValue = (index, field) => {
+    const key = `${index}_${field}`;
+    return localInputValues[key] !== undefined ? localInputValues[key] : cardsData[index]?.[field] || '';
+  };
+
+  const handleInputChange = React.useCallback((index, field, value) => {
+    const key = `${index}_${field}`;
+
+    setLocalInputValues(prev => ({ ...prev, [key]: value }));
+
+    setValidationErrors(prev => {
+      if (prev[key]) {
+        const newErrors = { ...prev };
+        delete newErrors[key];
+        return newErrors;
+      }
+      return prev;
+    });
+  }, []);  const handleInputBlur = React.useCallback((index, field) => {
+    const key = `${index}_${field}`;
+    const value = localInputValues[key];
+
+    if (value !== undefined) {
+      // Update Redux state
+      const updateFn = field === 'term' ? updateTerm : updateDefinition;
+      updateFn({ index, [field]: value });
+
+      // Clear local state
+      setLocalInputValues(prev => {
+        const newState = { ...prev };
+        delete newState[key];
+        return newState;
+      });
+    }
+  }, [localInputValues, updateTerm, updateDefinition]);  const getCardErrors = (card, index) => ({
     termError: (validationErrors && validationErrors[`${index}_term`]) || false,
     definitionError: (validationErrors && validationErrors[`${index}_definition`]) || false,
   });
@@ -117,7 +146,6 @@ export const GameEditor = ({
       const definitionEmpty = !card.definition.trim();
 
       if (termEmpty && definitionEmpty) {
-        // Both empty is allowed
         return;
       }
 
@@ -137,7 +165,6 @@ export const GameEditor = ({
   };
 
   const getDescriptionHeader = () => {
-    // Function to determine what the header will say based on type
     switch (type) {
       case 'flashcards':
         return intl.formatMessage(messages.descriptionHeaderFlashcard);
@@ -149,7 +176,6 @@ export const GameEditor = ({
   };
 
   const getDescription = () => {
-    // Function to determine what the description will say based on type
     switch (type) {
       case 'flashcards':
         return intl.formatMessage(messages.descriptionFlashcard);
@@ -160,7 +186,6 @@ export const GameEditor = ({
     }
   };
 
-  // Unified image handling
   const handleImageUpload = (index, imageType) => {
     const id = `${imageType}_image_upload|${index}`;
     const file = document.getElementById(id).files[0];
@@ -176,7 +201,6 @@ export const GameEditor = ({
     deleteGameImage({ index, imageType, filePath });
   };
 
-  // Backward compatible wrappers
   const saveTermImage = (index) => handleImageUpload(index, 'term');
   const saveDefinitionImage = (index) => handleImageUpload(index, 'definition');
 
@@ -204,7 +228,6 @@ export const GameEditor = ({
     </div>
   );
 
-  // Unified image components
   const renderImageDisplay = (imageUrl, index, imageType) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
       <img className="card-image" src={`${getConfig().STUDIO_BASE_URL}${imageUrl}`} alt={`${imageType.toUpperCase()}_IMG`} />
@@ -228,7 +251,6 @@ export const GameEditor = ({
     />
   );
 
-  // Backward compatible wrappers for image components
   const termImageDiv = (card, index) => renderImageDisplay(card.term_image, index, 'term');
   const termImageUploadButton = (card, index) => renderImageUploadButton(index, 'term');
   const definitionImageDiv = (card, index) => renderImageDisplay(card.definition_image, index, 'definition');
@@ -418,18 +440,9 @@ export const GameEditor = ({
                               className="d-flex flex-column align-items-start align-self-stretch"
                               id={`term|${index}`}
                               placeholder={intl.formatMessage(messages.enterYourTerm)}
-                              value={card.term}
-                              onChange={(e) => {
-                                updateTerm({ index, term: e.target.value });
-                                // Clear validation error when user starts typing
-                                if (validationErrors[`${index}_term`]) {
-                                  setValidationErrors(prev => {
-                                    const newErrors = { ...prev };
-                                    delete newErrors[`${index}_term`];
-                                    return newErrors;
-                                  });
-                                }
-                              }}
+                              value={getInputValue(index, 'term')}
+                              onChange={(e) => handleInputChange(index, 'term', e.target.value)}
+                              onBlur={() => handleInputBlur(index, 'term')}
                               style={{ borderRadius: 0 }}
                               maxLength={MAX_TERM_LENGTH}
                               isInvalid={getCardErrors(card, index).termError}
@@ -444,7 +457,7 @@ export const GameEditor = ({
                                 </Form.Control.Feedback>
                               )}
                             </span>
-                            <small className="text-muted mr-1">{card.term.length}/{MAX_TERM_LENGTH}</small>
+                            <small className="text-muted mr-1">{getInputValue(index, 'term').length}/{MAX_TERM_LENGTH}</small>
                           </div>
                         </div>
                       </div>
@@ -458,18 +471,9 @@ export const GameEditor = ({
                               className="d-flex flex-column align-items-start align-self-stretch"
                               id={`definition|${index}`}
                               placeholder={intl.formatMessage(messages.enterYourDefinition)}
-                              value={card.definition}
-                              onChange={(e) => {
-                                updateDefinition({ index, definition: e.target.value });
-                                // Clear validation error when user starts typing
-                                if (validationErrors[`${index}_definition`]) {
-                                  setValidationErrors(prev => {
-                                    const newErrors = { ...prev };
-                                    delete newErrors[`${index}_definition`];
-                                    return newErrors;
-                                  });
-                                }
-                              }}
+                              value={getInputValue(index, 'definition')}
+                              onChange={(e) => handleInputChange(index, 'definition', e.target.value)}
+                              onBlur={() => handleInputBlur(index, 'definition')}
                               maxLength={MAX_DEFINITION_LENGTH}
                               style={{ borderRadius: 0 }}
                               isInvalid={getCardErrors(card, index).definitionError}
@@ -484,7 +488,7 @@ export const GameEditor = ({
                                 </Form.Control.Feedback>
                               )}
                             </span>
-                            <small className="text-muted mr-1">{card.definition.length}/{MAX_DEFINITION_LENGTH}</small>
+                            <small className="text-muted mr-1">{getInputValue(index, 'definition').length}/{MAX_DEFINITION_LENGTH}</small>
                           </div>
                         </div>
                       </div>
@@ -562,7 +566,6 @@ export const GameEditor = ({
     </div>
   );
 
-  // Page content goes here
   return (
     <EditorContainer
       getContent={() => hooks.getContent({ type, settings, list })}
@@ -586,7 +589,6 @@ export const GameEditor = ({
 GameEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
 
-  // redux
   blockFinished: PropTypes.bool.isRequired,
   blockId: PropTypes.string.isRequired,
   blockValue: PropTypes.shape({}),
@@ -606,7 +608,6 @@ GameEditor.propTypes = {
   type: PropTypes.string.isRequired,
   updateType: PropTypes.func.isRequired,
 
-  // thunks
   uploadGameImage: PropTypes.func.isRequired,
   deleteGameImage: PropTypes.func.isRequired,
   loadGamesSettings: PropTypes.func.isRequired,
@@ -627,16 +628,12 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = {
   initializeEditor: actions.app.initializeEditor,
 
-  // shuffle
   setShuffleStatus: actions.game.setShuffleStatus,
 
-  // timer
   setTimerStatus: actions.game.setTimerStatus,
 
-  // type
   updateType: actions.game.updateType,
 
-  // list
   updateTerm: actions.game.updateTerm,
   updateTermImage: actions.game.updateTermImage,
   updateDefinition: actions.game.updateDefinition,
@@ -646,7 +643,6 @@ export const mapDispatchToProps = {
   addCard: actions.game.addCard,
   removeCard: actions.game.removeCard,
 
-  // thunks
   loadGamesSettings: thunkActions.game.loadGamesSettings,
   uploadGameImage: thunkActions.game.uploadGameImage,
   deleteGameImage: thunkActions.game.deleteGameImage,
