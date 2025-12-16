@@ -30,7 +30,7 @@ const ImportDetailsContent = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const [enableRefeshState, setEnableRefreshState] = useState(true);
-  const { libraryId } = useLibraryContext();
+  const { libraryId, libraryData } = useLibraryContext();
   const { courseId, migrationTaskId } = useParams();
   const { showToast } = useContext(ToastContext);
   const [disableReimport, setDisableReimport] = useState(false);
@@ -228,6 +228,11 @@ const ImportDetailsContent = () => {
   if (migrationStatus === 'Succeeded') {
     return (
       <Stack gap={3}>
+        <Helmet>
+          <title>
+            {libraryData?.title} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
         <Alert variant="success" icon={CheckCircle}>
           <Alert.Heading>
             <FormattedMessage {...messages.importSuccessfulAlertTitle} />
@@ -274,6 +279,11 @@ const ImportDetailsContent = () => {
   } if (migrationStatus === 'Failed') {
     return (
       <Stack gap={3}>
+        <Helmet>
+          <title>
+            {libraryData?.title} | {intl.formatMessage(messages.importFailedAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
         <Alert variant="danger" icon={Info}>
           <Alert.Heading>
             <FormattedMessage {...messages.importFailedAlertTitle} />
@@ -306,6 +316,11 @@ const ImportDetailsContent = () => {
   } if (migrationStatus === 'Partial Succeeded') {
     return (
       <Stack gap={3}>
+        <Helmet>
+          <title>
+            {libraryData?.title} | {intl.formatMessage(messages.importPartialAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
         <Alert variant="warning" icon={WarningFilled}>
           <Alert.Heading>
             <FormattedMessage {...messages.importPartialAlertTitle} />
@@ -423,17 +438,13 @@ export interface MigrationSummary {
 export const ImportDetailsPage = () => {
   const intl = useIntl();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
-  const { courseId } = useParams();
-  const {
-    data: courseDetails,
-  } = useCourseDetails(courseId);
 
   return (
     <div className="d-flex">
+      <Helmet>
+        <title>{libraryData?.title} | {process.env.SITE_NAME}</title>
+      </Helmet>
       <div className="flex-grow-1">
-        <Helmet>
-          <title>{courseDetails?.title ?? ''} | {process.env.SITE_NAME}</title>
-        </Helmet>
         <Header
           number={libraryData?.slug}
           title={libraryData?.title}
