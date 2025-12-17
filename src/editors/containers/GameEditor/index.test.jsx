@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   IntlProvider,
 } from '@edx/frontend-platform/i18n';
@@ -125,19 +124,6 @@ jest.mock('../../sharedComponents/Button', () => ({
   ),
 }));
 
-// Mock component with PropTypes
-const MockSortableItem = ({ children, id, componentStyle }) => (
-  <div data-testid="sortable-item" data-id={id} style={componentStyle}>
-    {children}
-  </div>
-);
-
-MockSortableItem.propTypes = {
-  children: PropTypes.node,
-  id: PropTypes.string,
-  componentStyle: PropTypes.shape({}),
-};
-
 jest.mock('../../../generic/DraggableList', () => ({
   __esModule: true,
   default: ({
@@ -161,6 +147,7 @@ jest.mock('../../../generic/DraggableList', () => ({
       {children}
     </div>
   ),
+  /* eslint-disable-next-line react/prop-types */
   SortableItem: ({ children, id, componentStyle }) => (
     <div data-testid="sortable-item" data-id={id} style={componentStyle}>
       {children}
