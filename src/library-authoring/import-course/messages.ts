@@ -313,6 +313,11 @@ const messages = defineMessages({
     defaultMessage: 'Reason For Failed import',
     description: 'Label for the Reason For Failed import field in the Reasons table in the import details',
   },
+  placeholderCardDescription: {
+    id: 'library-authoring.import-course.import-failed.placeholder.description',
+    defaultMessage: 'This content type is not currently supported',
+    description: 'Description text for placeholder card in library for blocks that failed to import',
+  },
 });
 
 export default messages;
