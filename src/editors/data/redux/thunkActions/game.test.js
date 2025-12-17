@@ -1,4 +1,4 @@
-import thunkActions from './game';
+import { loadGamesSettings, uploadGameImage, deleteGameImage } from './game';
 import * as requests from './requests';
 import { actions as gameActions } from '../game';
 import { actions as requestsActions } from '../requests';
@@ -68,18 +68,14 @@ describe('game thunkActions', () => {
     };
 
     beforeEach(() => {
-      requests.getGamesSettings.mockImplementation(({ onSuccess, onFailure }) => {
-        // Return a mock function that can be called to simulate the request
-        return jest.fn(() => {
-          if (onSuccess) {
-            onSuccess(mockResponse);
-          }
-        });
+      requests.getGamesSettings.mockImplementation(({ onSuccess }) => {
+        const mockFn = jest.fn(() => onSuccess && onSuccess(mockResponse));
+        return mockFn;
       });
     });
 
     it('should dispatch getGamesSettings request', () => {
-      thunkActions.loadGamesSettings()(dispatch);
+      loadGamesSettings()(dispatch);
 
       expect(requests.getGamesSettings).toHaveBeenCalledWith({
         onSuccess: expect.any(Function),
@@ -95,7 +91,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(mockResponse);
 
         expect(gameActions.updateType).toHaveBeenCalledWith('flashcards');
@@ -109,7 +105,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(mockResponse);
 
         expect(gameActions.setShuffleStatus).toHaveBeenCalledWith(true);
@@ -127,7 +123,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(responseWithShuffleFalse);
 
         expect(gameActions.setShuffleStatus).toHaveBeenCalledWith(false);
@@ -145,7 +141,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(responseWithTimerTrue);
 
         expect(gameActions.setTimerStatus).toHaveBeenCalledWith(true);
@@ -159,7 +155,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(mockResponse);
 
         expect(gameActions.setTimerStatus).toHaveBeenCalledWith(false);
@@ -192,7 +188,7 @@ describe('game thunkActions', () => {
           },
         ];
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(mockResponse);
 
         expect(gameActions.setList).toHaveBeenCalledWith(expectedFormattedCards);
@@ -242,7 +238,7 @@ describe('game thunkActions', () => {
           },
         ];
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(responseWithIncompleteCards);
 
         expect(gameActions.setList).toHaveBeenCalledWith(expectedFormattedCards);
@@ -256,7 +252,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnSuccess(emptyResponse);
 
         expect(gameActions.updateType).not.toHaveBeenCalled();
@@ -275,7 +271,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.loadGamesSettings()(dispatch);
+        loadGamesSettings()(dispatch);
         mockOnFailure(mockError);
 
         expect(requestsActions.failRequest).toHaveBeenCalledWith({
@@ -308,13 +304,14 @@ describe('game thunkActions', () => {
     };
 
     beforeEach(() => {
-      requests.uploadGamesImage.mockImplementation(({ onSuccess, onFailure }) => {
-        return jest.fn();
+      requests.uploadGamesImage.mockImplementation(({ onSuccess }) => {
+        const mockFn = jest.fn(() => onSuccess && onSuccess(mockSuccessResponse));
+        return mockFn;
       });
     });
 
     it('should dispatch uploadGamesImage request with correct parameters', () => {
-      thunkActions.uploadGameImage(mockParams)(dispatch);
+      uploadGameImage(mockParams)(dispatch);
 
       expect(requests.uploadGamesImage).toHaveBeenCalledWith({
         image: mockParams.imageFile,
@@ -331,7 +328,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.uploadGameImage(mockParams)(dispatch);
+        uploadGameImage(mockParams)(dispatch);
         mockOnSuccess(mockSuccessResponse);
 
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
@@ -354,7 +351,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.uploadGameImage(definitionParams)(dispatch);
+        uploadGameImage(definitionParams)(dispatch);
         mockOnSuccess(mockSuccessResponse);
 
         expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
@@ -377,7 +374,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.uploadGameImage(mockParams)(dispatch);
+        uploadGameImage(mockParams)(dispatch);
         mockOnSuccess(responseWithoutUrl);
 
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
@@ -396,7 +393,7 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
-        thunkActions.uploadGameImage(mockParams)(dispatch);
+        uploadGameImage(mockParams)(dispatch);
         mockOnFailure(mockError);
 
         expect(requestsActions.failRequest).toHaveBeenCalledWith({
@@ -428,13 +425,14 @@ describe('game thunkActions', () => {
       };
 
       beforeEach(() => {
-        requests.deleteGamesImage.mockImplementation(({ onSuccess, onFailure }) => {
-          return jest.fn();
+        requests.deleteGamesImage.mockImplementation(({ onSuccess }) => {
+          const mockFn = jest.fn(() => onSuccess && onSuccess(mockSuccessResponse));
+          return mockFn;
         });
       });
 
       it('should dispatch deleteGamesImage request with correct parameters', () => {
-        thunkActions.deleteGameImage(mockParams)(dispatch);
+        deleteGameImage(mockParams)(dispatch);
 
         expect(requests.deleteGamesImage).toHaveBeenCalledWith({
           key: mockParams.filePath,
@@ -451,7 +449,7 @@ describe('game thunkActions', () => {
             return jest.fn();
           });
 
-          thunkActions.deleteGameImage(mockParams)(dispatch);
+          deleteGameImage(mockParams)(dispatch);
           mockOnSuccess(mockSuccessResponse);
 
           expect(gameActions.updateTermImage).toHaveBeenCalledWith({
@@ -474,7 +472,7 @@ describe('game thunkActions', () => {
             return jest.fn();
           });
 
-          thunkActions.deleteGameImage(definitionParams)(dispatch);
+          deleteGameImage(definitionParams)(dispatch);
           mockOnSuccess(mockSuccessResponse);
 
           expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
@@ -502,7 +500,7 @@ describe('game thunkActions', () => {
             return jest.fn();
           });
 
-          thunkActions.deleteGameImage(mockParams)(dispatch);
+          deleteGameImage(mockParams)(dispatch);
           mockOnSuccess(failureResponse);
 
           expect(requestsActions.failRequest).toHaveBeenCalledWith({
@@ -527,7 +525,7 @@ describe('game thunkActions', () => {
             return jest.fn();
           });
 
-          thunkActions.deleteGameImage(mockParams)(dispatch);
+          deleteGameImage(mockParams)(dispatch);
           mockOnFailure(mockError);
 
           expect(requestsActions.failRequest).toHaveBeenCalledWith({
@@ -552,13 +550,13 @@ describe('game thunkActions', () => {
       };
 
       it('should not call deleteGamesImage API', () => {
-        thunkActions.deleteGameImage(mockParamsWithoutFilePath)(dispatch);
+        deleteGameImage(mockParamsWithoutFilePath)(dispatch);
 
         expect(requests.deleteGamesImage).not.toHaveBeenCalled();
       });
 
       it('should directly dispatch updateTermImage with empty string when imageType is term', () => {
-        thunkActions.deleteGameImage(mockParamsWithoutFilePath)(dispatch);
+        deleteGameImage(mockParamsWithoutFilePath)(dispatch);
 
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
           index: 1,
@@ -578,7 +576,7 @@ describe('game thunkActions', () => {
           imageType: 'definition',
         };
 
-        thunkActions.deleteGameImage(paramsWithoutFilePath)(dispatch);
+        deleteGameImage(paramsWithoutFilePath)(dispatch);
 
         expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
           index: 1,
@@ -599,7 +597,7 @@ describe('game thunkActions', () => {
           filePath: null,
         };
 
-        thunkActions.deleteGameImage(paramsWithNullFilePath)(dispatch);
+        deleteGameImage(paramsWithNullFilePath)(dispatch);
 
         expect(requests.deleteGamesImage).not.toHaveBeenCalled();
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
@@ -615,7 +613,7 @@ describe('game thunkActions', () => {
           filePath: undefined,
         };
 
-        thunkActions.deleteGameImage(paramsWithUndefinedFilePath)(dispatch);
+        deleteGameImage(paramsWithUndefinedFilePath)(dispatch);
 
         expect(requests.deleteGamesImage).not.toHaveBeenCalled();
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
@@ -628,11 +626,9 @@ describe('game thunkActions', () => {
 
   describe('module exports', () => {
     it('should export all thunk actions', () => {
-      expect(thunkActions).toEqual({
-        loadGamesSettings: expect.any(Function),
-        uploadGameImage: expect.any(Function),
-        deleteGameImage: expect.any(Function),
-      });
+      expect(loadGamesSettings).toEqual(expect.any(Function));
+      expect(uploadGameImage).toEqual(expect.any(Function));
+      expect(deleteGameImage).toEqual(expect.any(Function));
     });
   });
 });

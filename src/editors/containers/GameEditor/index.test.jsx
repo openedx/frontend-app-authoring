@@ -1,12 +1,16 @@
 import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import PropTypes from 'prop-types';
+import {
+  IntlProvider,
+} from '@edx/frontend-platform/i18n';
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 
-import { GameEditor, hooks, mapStateToProps, mapDispatchToProps } from './index';
-import messages from './messages';
+import {
+  GameEditor, hooks, mapStateToProps, mapDispatchToProps,
+} from './index';
 
 const mockConfig = {
   STUDIO_BASE_URL: 'http://localhost:18010',
@@ -59,21 +63,26 @@ jest.mock('../../data/redux', () => ({
 
 jest.mock('../EditorContainer', () => ({
   __esModule: true,
-  default: ({ children, validateEntry, getContent, onClose, isDirty }) => (
+  default: ({
+    children, validateEntry, getContent, onClose, isDirty,
+  }) => (
     <div data-testid="editor-container">
       <button
+        type="button"
         data-testid="validate-button"
         onClick={() => validateEntry && validateEntry()}
       >
         Validate
       </button>
       <button
+        type="button"
         data-testid="get-content-button"
         onClick={() => getContent && getContent()}
       >
         Get Content
       </button>
       <button
+        type="button"
         data-testid="close-button"
         onClick={() => onClose && onClose()}
       >
@@ -87,7 +96,9 @@ jest.mock('../EditorContainer', () => ({
 
 jest.mock('../ProblemEditor/components/EditProblemView/SettingsWidget/SettingsOption', () => ({
   __esModule: true,
-  default: ({ children, title, summary, className }) => (
+  default: ({
+    children, title, summary, className,
+  }) => (
     <div data-testid="settings-option" className={className}>
       <div data-testid="settings-title">{title}</div>
       <div data-testid="settings-summary">{summary}</div>
@@ -98,8 +109,11 @@ jest.mock('../ProblemEditor/components/EditProblemView/SettingsWidget/SettingsOp
 
 jest.mock('../../sharedComponents/Button', () => ({
   __esModule: true,
-  default: ({ children, onClick, variant, className, iconBefore }) => (
+  default: ({
+    children, onClick, variant, className, iconBefore,
+  }) => (
     <button
+      type="button"
       data-testid="custom-button"
       onClick={onClick}
       className={className}
@@ -111,17 +125,34 @@ jest.mock('../../sharedComponents/Button', () => ({
   ),
 }));
 
+// Mock component with PropTypes
+const MockSortableItem = ({ children, id, componentStyle }) => (
+  <div data-testid="sortable-item" data-id={id} style={componentStyle}>
+    {children}
+  </div>
+);
+
+MockSortableItem.propTypes = {
+  children: PropTypes.node,
+  id: PropTypes.string,
+  componentStyle: PropTypes.shape({}),
+};
+
 jest.mock('../../../generic/DraggableList', () => ({
   __esModule: true,
-  default: ({ children, itemList, setState, updateOrder, className }) => (
+  default: ({
+    children, setState, updateOrder, className,
+  }) => (
     <div data-testid="draggable-list" className={className}>
       <button
+        type="button"
         data-testid="set-state-button"
         onClick={() => setState && setState([])}
       >
         Set State
       </button>
       <button
+        type="button"
         data-testid="update-order-button"
         onClick={() => updateOrder && updateOrder()([])}
       >
@@ -180,15 +211,7 @@ const mockProps = {
 const renderWithIntl = (component) => render(
   <IntlProvider locale="en">
     {component}
-  </IntlProvider>
-);
-
-const renderWithProvider = (component, store) => render(
-  <Provider store={store}>
-    <IntlProvider locale="en">
-      {component}
-    </IntlProvider>
-  </Provider>
+  </IntlProvider>,
 );
 
 describe('GameEditor', () => {
@@ -224,7 +247,9 @@ describe('GameEditor', () => {
       const incompleteProps = {
         ...mockProps,
         list: [
-          { id: 'card-1', term: 'Term Only', definition: '', term_image: '', definition_image: '', editorOpen: true },
+          {
+            id: 'card-1', term: 'Term Only', definition: '', term_image: '', definition_image: '', editorOpen: true,
+          },
         ],
       };
       renderWithIntl(<GameEditor {...incompleteProps} />);
@@ -304,7 +329,7 @@ describe('GameEditor', () => {
       rerender(
         <IntlProvider locale="en">
           <GameEditor {...shuffleOnProps} />
-        </IntlProvider>
+        </IntlProvider>,
       );
 
       const offButtons = screen.getAllByText('Off');
@@ -435,7 +460,14 @@ describe('GameEditor', () => {
       const completeProps = {
         ...mockProps,
         list: [
-          { id: 'card-1', term: 'Term', definition: 'Definition', term_image: '', definition_image: '', editorOpen: true },
+          {
+            id: 'card-1',
+            term: 'Term',
+            definition: 'Definition',
+            term_image: '',
+            definition_image: '',
+            editorOpen: true,
+          },
         ],
       };
       renderWithIntl(<GameEditor {...completeProps} />);
@@ -449,8 +481,12 @@ describe('GameEditor', () => {
       const incompleteProps = {
         ...mockProps,
         list: [
-          { id: 'card-1', term: 'Term Only', definition: '', term_image: '', definition_image: '', editorOpen: true },
-          { id: 'card-2', term: '', definition: 'Definition Only', term_image: '', definition_image: '', editorOpen: true },
+          {
+            id: 'card-1', term: 'Term Only', definition: '', term_image: '', definition_image: '', editorOpen: true,
+          },
+          {
+            id: 'card-2', term: '', definition: 'Definition Only', term_image: '', definition_image: '', editorOpen: true,
+          },
         ],
       };
       renderWithIntl(<GameEditor {...incompleteProps} />);
@@ -468,7 +504,14 @@ describe('GameEditor', () => {
       const emptyProps = {
         ...mockProps,
         list: [
-          { id: 'card-1', term: '', definition: '', term_image: '', definition_image: '', editorOpen: true },
+          {
+            id: 'card-1',
+            term: '',
+            definition: '',
+            term_image: '',
+            definition_image: '',
+            editorOpen: true,
+          },
         ],
       };
       renderWithIntl(<GameEditor {...emptyProps} />);
@@ -493,7 +536,7 @@ describe('GameEditor', () => {
       rerender(
         <IntlProvider locale="en">
           <GameEditor {...mockProps} />
-        </IntlProvider>
+        </IntlProvider>,
       );
 
       expect(mockProps.loadGamesSettings).not.toHaveBeenCalled();
