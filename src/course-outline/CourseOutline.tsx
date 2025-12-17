@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   Container,
   Layout,
@@ -7,9 +8,11 @@ import {
   TransitionReplace,
   Toast,
   StandardModal,
+  Button,
+  ActionRow,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -44,7 +47,6 @@ import {
   getTimedExamsFlag,
 } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
@@ -61,8 +63,11 @@ import {
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { StatusBar } from './status-bar/StatusBar';
+import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -141,6 +146,9 @@ const CourseOutline = () => {
     resetScrollState,
   } = useCourseOutline({ courseId });
 
+  // Show the new actions bar if it is enabled in the configuration.
+  // This is a temporary flag until the new design feature is fully implemented.
+  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -314,8 +322,9 @@ const CourseOutline = () => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            title={intl.formatMessage(messages.headingTitle)}
+            title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
+            hideBorder
             headerActions={(
               <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
@@ -329,6 +338,23 @@ const CourseOutline = () => {
               />
             )}
           />
+          {showNewActionsBar
+            ? (
+              <StatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+              />
+            ) : (
+              <LegacyStatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+                openEnableHighlightsModal={openEnableHighlightsModal}
+                handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+              />
+            )}
+          <hr className="mt-4 mb-0 w-100 text-light-400" />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
             md={[{ span: 9 }, { span: 3 }]}
@@ -339,14 +365,24 @@ const CourseOutline = () => {
             <Layout.Element>
               <article>
                 <div>
+                  {showNewActionsBar && (
+                  <ActionRow className="mt-3">
+                    {Boolean(sectionsList.length) && (
+                    <Button
+                      variant="outline-primary"
+                      id="expand-collapse-all-button"
+                      data-testid="expand-collapse-all-button"
+                      iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                      onClick={headerNavigationsActions.handleExpandAll}
+                    >
+                      {isSectionsExpanded
+                        ? intl.formatMessage(headerMessages.collapseAllButton)
+                        : intl.formatMessage(headerMessages.expandAllButton)}
+                    </Button>
+                    )}
+                  </ActionRow>
+                  )}
                   <section className="course-outline-section">
-                    <StatusBar
-                      courseId={courseId}
-                      isLoading={isLoading}
-                      statusBarData={statusBarData}
-                      openEnableHighlightsModal={openEnableHighlightsModal}
-                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-                    />
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
                         {sections.length ? (

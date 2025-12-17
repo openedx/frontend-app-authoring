@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -6,10 +5,11 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getConfig, setConfig } from '@edx/frontend-platform/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import StatusBar from './StatusBar';
+import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import initializeStore from '@src/store';
 import messages from './messages';
-import initializeStore from '../../store';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
+import { LegacyStatusBar, LegacyStatusBarProps } from './LegacyStatusBar';
 
 let store;
 const mockPathname = '/foo-bar';
@@ -25,21 +25,22 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('../../generic/data/api', () => ({
-  ...jest.requireActual('../../generic/data/api'),
+jest.mock('@src/generic/data/api', () => ({
+  ...jest.requireActual('@src/generic/data/api'),
   getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
 }));
 
-jest.mock('../../help-urls/hooks', () => ({
+jest.mock('@src/help-urls/hooks', () => ({
   useHelpUrls: () => ({
     contentHighlights: 'content-highlights-link',
     socialSharing: 'social-sharing-link',
   }),
 }));
 
-const statusBarData = {
+const statusBarData: CourseOutlineStatusBar = {
   courseReleaseDate: 'Feb 05, 2013 at 05:00 UTC',
   isSelfPaced: true,
+  endDate: 'Feb 05, 2014 at 05:00 UTC',
   checklist: {
     totalCourseLaunchChecks: 5,
     completedCourseLaunchChecks: 1,
@@ -47,18 +48,17 @@ const statusBarData = {
     completedCourseBestPracticesChecks: 1,
   },
   highlightsEnabledForMessaging: true,
-  highlightsDocUrl: 'https://example.com/highlights-doc',
   videoSharingEnabled: true,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
 const queryClient = new QueryClient();
 
-const renderComponent = (props) => render(
+const renderComponent = (props?: Partial<LegacyStatusBarProps>) => render(
   <AppProvider store={store} messages={{}}>
     <QueryClientProvider client={queryClient}>
       <IntlProvider locale="en">
-        <StatusBar
+        <LegacyStatusBar
           courseId={courseId}
           isLoading={isLoading}
           openEnableHighlightsModal={openEnableHighlightsModalMock}
@@ -71,7 +71,7 @@ const renderComponent = (props) => render(
   </AppProvider>,
 );
 
-describe('<StatusBar />', () => {
+describe('<LegacyStatusBar />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -84,7 +84,7 @@ describe('<StatusBar />', () => {
     store = initializeStore();
   });
 
-  it('renders StatusBar component correctly', () => {
+  it('renders LegacyStatusBar component correctly', () => {
     const { getByText } = renderComponent();
 
     expect(getByText(messages.startDateTitle.defaultMessage)).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe('<StatusBar />', () => {
     expect(getByText(messages.videoSharingTitle.defaultMessage)).toBeInTheDocument();
   });
 
-  it('renders StatusBar when isSelfPaced is false', () => {
+  it('renders LegacyStatusBar when isSelfPaced is false', () => {
     const { getByText } = renderComponent({
       statusBarData: {
         ...statusBarData,

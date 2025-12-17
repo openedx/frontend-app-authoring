@@ -1,5 +1,7 @@
 const path = require('path');
 const { createConfig } = require('@openedx/frontend-build');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const webpack = require('webpack');
 
 const config = createConfig('webpack-prod', {
   resolve: {
@@ -14,6 +16,22 @@ const config = createConfig('webpack-prod', {
       constants: false,
     },
   },
+  // Silently ignore “module not found” errors for that exact specifier.
+  plugins: [
+    new webpack.NormalModuleReplacementPlugin(
+      /@edx\/frontend-plugin-notifications/,
+      (resource) => {
+        try {
+          // Try to resolve the real package. If it exists, do nothing.
+          require.resolve('@edx/frontend-plugin-notifications');
+        } catch (e) {
+          // Package not found → point to the stub we created.
+          // eslint-disable-next-line no-param-reassign
+          resource.request = path.resolve(__dirname, 'src/stubs/empty-notifications-plugin.tsx');
+        }
+      },
+    ),
+  ],
 });
 
 module.exports = config;

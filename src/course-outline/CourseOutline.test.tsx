@@ -1,4 +1,4 @@
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 import { logError } from '@edx/frontend-platform/logging';
@@ -17,6 +17,7 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { userEvent } from '@testing-library/user-event';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -182,12 +183,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component correctly', async () => {
-    const { getByText } = renderComponent();
+    renderComponent();
 
-    await waitFor(() => {
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Demonstration Course')).toBeInTheDocument();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
@@ -2485,5 +2484,21 @@ describe('<CourseOutline />', () => {
       expect(axiosMock.history.delete).toHaveLength(1);
     });
     expect(axiosMock.history.delete[0].url).toBe(getDownstreamApiUrl(courseSectionMock.id));
+  });
+
+  it('check that the new status bar and expand bar is shown when flag is set', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const btn = await screen.findByRole('button', { name: 'Collapse all' });
+    expect(btn).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Add' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'More actions' })).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(btn);
+    expect(await screen.findByRole('button', { name: 'Expand all' })).toBeInTheDocument();
   });
 });
