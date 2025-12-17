@@ -137,6 +137,7 @@ export const xblockQueryKeys = {
     }
     return ['hierarchy'];
   },
+  xblockLimits: () => [...xblockQueryKeys.all, 'limits'],
 };
 
 /**
@@ -985,6 +986,16 @@ export const useMigrationInfo = (sourcesKeys: string[], enabled: boolean = true)
   useQuery({
     queryKey: libraryAuthoringQueryKeys.migrationInfo(sourcesKeys),
     queryFn: enabled ? () => api.getMigrationInfo(sourcesKeys) : skipToken,
+  })
+);
+
+/**
+ * Returns the migration info of a given source list
+ */
+export const useLibraryBlockLimits = () => (
+  useQuery({
+    queryKey: xblockQueryKeys.xblockLimits(),
+    queryFn: api.getLibraryBlockLimits,
   })
 );
 

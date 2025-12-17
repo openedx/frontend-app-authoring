@@ -36,6 +36,11 @@ export const getBlockTypesMetaDataUrl = (libraryId: string) => `${getApiBaseUrl(
 export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
 
 /**
+ * Get the URL for library block limits.
+ */
+export const getLibraryBlockLimitsUrl = () => `${getApiBaseUrl()}/api/libraries/v2/block_limits/`;
+
+/**
  * Get the URL for restoring deleted library block.
  */
 export const getLibraryBlockRestoreUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}restore/`;
@@ -306,6 +311,10 @@ export interface LibraryBlockMetadata {
   isNew?: boolean;
 }
 
+export interface LibraryBlockLimits {
+  maxBlocksPerContentLibrary: number;
+}
+
 export interface UpdateLibraryDataRequest {
   id: string;
   title?: string;
@@ -484,6 +493,14 @@ export async function libraryPasteClipboard({
  */
 export async function getLibraryBlockMetadata(usageKey: string): Promise<LibraryBlockMetadata> {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockMetadataUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetch library block limits
+ */
+export async function getLibraryBlockLimits(): Promise<LibraryBlockLimits> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockLimitsUrl());
   return camelCaseObject(data);
 }
 
