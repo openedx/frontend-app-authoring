@@ -48,7 +48,7 @@ const BaseCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const itemIcon = getItemIcon(itemType);
+  const itemIcon = !props.isPlaceholder ? getItemIcon(itemType) : ExtensionOff;
   const intl = useIntl();
   const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-other';
 
@@ -67,7 +67,7 @@ const BaseCard = ({
         <Card.Header
           className={`library-item-header ${itemComponentStyle}`}
           title={
-            <Icon src={props.isPlaceholder ? ExtensionOff : itemIcon} className="library-item-header-icon my-2" />
+            <Icon src={itemIcon} className="library-item-header-icon my-2" />
           }
           actions={(
             <div
