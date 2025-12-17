@@ -367,7 +367,7 @@ export const GameEditor = ({
                               {type === 'flashcards' ? (
                                 <span className="d-inline-block align-middle pr-2">
                                   {card.term_image !== ''
-                                    ? <img className="img-preview" src={`${getConfig().STUDIO_BASE_URL}${card.term_image}`} alt="TERM_IMG_PRV" />
+                                    ? <img className="img-preview" src={card.term_image} alt="TERM_IMG_PRV" />
                                     : <Icon className="img-preview" src={InsertPhoto} />}
                                 </span>
                               )
@@ -378,7 +378,7 @@ export const GameEditor = ({
                               {type === 'flashcards' ? (
                                 <span className="d-inline-block align-middle pr-2">
                                   {card.definition_image !== ''
-                                    ? <img className="img-preview" src={`${getConfig().STUDIO_BASE_URL}${card.definition_image}`} alt="DEF_IMG_PRV" />
+                                    ? <img className="img-preview" src={card.definition_image} alt="DEF_IMG_PRV" />
                                     : <Icon className="img-preview" src={InsertPhoto} />}
                                 </span>
                               )
