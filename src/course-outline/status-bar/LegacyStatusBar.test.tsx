@@ -6,8 +6,8 @@ import { getConfig, setConfig } from '@edx/frontend-platform/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import initializeStore from '@src/store';
 import messages from './messages';
-import initializeStore from '../../store';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { LegacyStatusBar, LegacyStatusBarProps } from './LegacyStatusBar';
 
@@ -25,12 +25,12 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('../../generic/data/api', () => ({
-  ...jest.requireActual('../../generic/data/api'),
+jest.mock('@src/generic/data/api', () => ({
+  ...jest.requireActual('@src/generic/data/api'),
   getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
 }));
 
-jest.mock('../../help-urls/hooks', () => ({
+jest.mock('@src/help-urls/hooks', () => ({
   useHelpUrls: () => ({
     contentHighlights: 'content-highlights-link',
     socialSharing: 'social-sharing-link',

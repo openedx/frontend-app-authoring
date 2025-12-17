@@ -1,11 +1,11 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { NotificationsNone } from '@openedx/paragon/icons';
-import { HooKType, useDynamicHookShim } from './hooks';
+import { HookType, useDynamicHookShim } from './hooks';
 import messages from './messages';
 
 // Component that actually calls the loaded hook
-const NotificationHookConsumer = ({ hook }: { hook: () => HooKType }) => {
+const NotificationHookConsumer = ({ hook }: { hook: () => HookType }) => {
   // The hook is now called on **every** render of this component
   const { notificationAppData } = hook();
 

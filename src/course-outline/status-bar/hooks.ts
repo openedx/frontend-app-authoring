@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import React from 'react';
 
-export interface HooKType {
+export interface HookType {
   notificationAppData: {
     tabsCount?: {
       count?: number;
@@ -11,7 +11,7 @@ export interface HooKType {
 
 // Load the hook module asynchronously
 export function useDynamicHookShim() {
-  const [hook, setHook] = React.useState<(() => HooKType) | null>(null);
+  const [hook, setHook] = React.useState<(() => HookType) | null>(null);
 
   React.useEffect(() => {
     let cancelled = false;
