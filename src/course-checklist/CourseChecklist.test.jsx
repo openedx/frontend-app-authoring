@@ -46,9 +46,9 @@ describe('CourseChecklistPage', () => {
   });
   describe('renders', () => {
     describe('if enable_quality prop is true', () => {
-      it('two checklist components ', () => {
+      it('two checklist components ', async () => {
         renderComponent();
-        mockStore(200);
+        await mockStore(200);
 
         expect(screen.getByText(messages.launchChecklistLabel.defaultMessage)).toBeVisible();
 
@@ -67,7 +67,7 @@ describe('CourseChecklistPage', () => {
 
         it('correct content when the launch checklist has loaded', async () => {
           renderComponent();
-          mockStore(404);
+          await mockStore(404);
           await waitFor(() => {
             const { launchChecklistStatus } = store.getState().courseChecklist.loadingStatus;
 
@@ -79,7 +79,7 @@ describe('CourseChecklistPage', () => {
 
         it('correct content when the best practices checklist is loading', async () => {
           renderComponent();
-          mockStore(404);
+          await mockStore(404);
           await waitFor(() => {
             const { bestPracticeChecklistStatus } = store.getState().courseChecklist.loadingStatus;
 
@@ -100,9 +100,9 @@ describe('CourseChecklistPage', () => {
         });
       });
 
-      it('one checklist components ', () => {
+      it('one checklist components ', async () => {
         renderComponent();
-        mockStore(200);
+        await mockStore(200);
 
         expect(screen.getByText(messages.launchChecklistLabel.defaultMessage)).toBeVisible();
 
@@ -112,7 +112,7 @@ describe('CourseChecklistPage', () => {
       describe('an aria-live region with', () => {
         it('correct content when the launch checklist has loaded', async () => {
           renderComponent();
-          mockStore(404);
+          await mockStore(404);
           await waitFor(() => {
             const { launchChecklistStatus } = store.getState().courseChecklist.loadingStatus;
 
@@ -124,7 +124,7 @@ describe('CourseChecklistPage', () => {
 
         it('correct content when the best practices checklist is loading', async () => {
           renderComponent();
-          mockStore(404);
+          await mockStore(404);
           await waitFor(() => {
             const { bestPracticeChecklistStatus } = store.getState().courseChecklist.loadingStatus;
 
