@@ -1,4 +1,4 @@
-import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 interface ProblemEditorPluginSlotProps {
   blockType: string | null;
