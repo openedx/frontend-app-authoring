@@ -14,11 +14,11 @@
 The `ProblemEditorPluginSlot` is rendered inside the Problem Editor modal window for all major
 problem XBlock types:
 
-- single-select
-- multi-select
-- dropdown
-- numerical-input
-- text-input
+* single-select
+* multi-select
+* dropdown
+* numerical-input
+* text-input
 
 It is a **generic extension point** that can host any React component, such as:
 
