@@ -9,6 +9,8 @@
 ## Course Unit page
 * [`org.openedx.frontend.authoring.course_unit_header_actions.v1`](./CourseUnitHeaderActionsSlot/)
 * [`org.openedx.frontend.authoring.course_unit_sidebar.v1`](./CourseAuthoringUnitSidebarSlot/)
+* [`org.openedx.frontend.authoring.text_editor_plugin.v1`](./TextEditorPluginSlot/)
+* [`org.openedx.frontend.authoring.problem_editor_plugin.v1`](./ProblemEditorPluginSlot/)
 
 ## Other Slots
 * [`org.openedx.frontend.authoring.additional_course_content_plugin.v1`](./AdditionalCourseContentPluginSlot/)

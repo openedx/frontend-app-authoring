@@ -4,7 +4,6 @@ interface TextEditorPluginSlotProps {
   blockType: string;
 }
 
-
 export const TextEditorPluginSlot = ({
   blockType,
 }: TextEditorPluginSlotProps) => (
@@ -16,4 +15,3 @@ export const TextEditorPluginSlot = ({
     }}
   />
 );
-

@@ -26,27 +26,23 @@ It is a **generic extension point** that can host any React component, such as:
 - **Preview or analysis tools** (show how a problem will render, check grading logic)
 - **Integrations** (external content sources, tagging, metadata editors)
 
-By default, the slot is **empty**. Widgets are attached via `env.config.jsx` using the
-`@openedx/frontend-plugin-framework`.
-
-The only prop your component receives from the slot is:
-
-- `blockType` – the current problem block type.
-
 Your component is responsible for interacting with the editor state (if needed) using
 Redux, `window.tinymce`, CodeMirror, or other utilities provided by `frontend-app-authoring`.
 
-The slot is available in the **visual editor** mode. Advanced / raw editing is handled
-by the raw editor, and your component can still interact with the underlying state
-if it chooses to.
+## Examples
 
-## Example: Adding a component into `ProblemEditorPluginSlot`
+### Default content
 
-The following example configuration shows how to add a custom widget to the slot:
+![Problem editor with default content](./images/screenshot_default.png)
 
-```jsx
+### Replaced with custom component
+
+The following `env.config.tsx` will add a centered `h1` tag im Problem editor.
+
+![🦶 in Problem editor slot](./images/screenshot_custom.png)
+
+```tsx
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
-import { MyProblemEditorHelper } from '@example/my-problem-editor-helper';
 
 const config = {
   pluginSlots: {
@@ -57,8 +53,9 @@ const config = {
           widget: {
             id: 'my-problem-editor-helper',
             type: DIRECT_PLUGIN,
-            priority: 1,
-            RenderWidget: MyProblemEditorHelper,
+            RenderWidget: () => (
+              <h1 style={{ textAlign: 'center' }}>🦶</h1>
+            ),
           },
         },
       ]
@@ -69,24 +66,15 @@ const config = {
 export default config;
 ```
 
-## Example: Custom Implementation
+### Custom component with plugin props
 
-The following example shows a minimal helper component that uses `blockType`:
+![Paragon Alert component in Problem editor slot](./images/screenshot_with_alert.png)
+
+The following `env.config.tsx` example demonstrates how to add a custom component to the Problem Editor plugin slot that receives the plugin props. The example shows a Paragon Alert component that renders the current `blockType` provided by the slot:
 
 ```jsx
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
-import { Card } from '@openedx/paragon';
-
-const CustomProblemAssistant = ({ blockType }) => {
-  // Your custom implementation (example)
-  return (
-    <Card>
-      <Card.Body>
-        Custom component for {blockType} problem editor 🤗🤗🤗
-      </Card.Body>
-    </Card>
-  );
-};
+import { Alert } from '@openedx/paragon';
 
 const config = {
   pluginSlots: {
@@ -98,7 +86,13 @@ const config = {
             id: 'custom-problem-editor-assistant',
             priority: 1,
             type: DIRECT_PLUGIN,
-            RenderWidget: CustomProblemAssistant,
+            RenderWidget: ({ blockType }) => {
+              return (
+                <Alert variant="success">
+                  <Alert.Heading>Custom component for {blockType} problem editor 🤗🤗🤗</Alert.Heading>
+                </Alert>
+              );
+            },
           },
           op: PLUGIN_OPERATIONS.Insert,
         },
@@ -109,14 +103,3 @@ const config = {
 
 export default config;
 ```
-
-### Example: Screenshots
-
-**Default problem editor without a widget**
-
-![Screenshot with default Problem Editor](./images/default_problem_editor.png)
-
-**With a widget rendered in the slot**
-
-![Screenshot with component in ProblemEditorPluginSlot](./images/problem_editor_slot.png)
-
