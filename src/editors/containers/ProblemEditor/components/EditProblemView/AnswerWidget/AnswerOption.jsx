@@ -6,7 +6,6 @@ import {
   Icon,
   IconButton,
   Form,
-  Spinner,
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -45,7 +44,7 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
-  const { data = { is_valid: true }, mutate, isPending } = useValidateInputBlock();
+  const { data = { isValid: true }, mutate } = useValidateInputBlock();
 
   const staticRootUrl = isLibrary
     ? `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`
@@ -71,9 +70,10 @@ const AnswerOption = ({
         />
       );
     }
+
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
       return (
-        <Form.Group isInvalid={!data?.is_valid ?? true}>
+        <Form.Group isInvalid={!data?.isValid ?? true}>
           <Form.Control
             as="textarea"
             className="answer-option-textarea text-gray-500 small"
@@ -82,18 +82,17 @@ const AnswerOption = ({
             value={answer.title}
             onChange={(e) => {
               setAnswerTitle(e);
-              mutate(e.target.value);
+              if (problemType === ProblemTypeKeys.NUMERIC) {
+                mutate(e.target.value);
+              }
             }}
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
           />
-          {(!data?.is_valid ?? true) && (
+          {(!data?.isValid ?? true) && (
           <Form.Control.Feedback type="invalid">
             <FormattedMessage {...messages.answerNumericErrorText} />
           </Form.Control.Feedback>
-          )}
-          {isPending && (
-            <Spinner animation="border" className="mie-3 mt-3" screenReaderText="loading" />
           )}
         </Form.Group>
       );
