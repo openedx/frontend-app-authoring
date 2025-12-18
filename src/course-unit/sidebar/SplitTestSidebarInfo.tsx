@@ -45,7 +45,7 @@ const SplitTestSidebarInfo = () => {
         <hr className="course-split-test-sidebar-devider my-4" />
         <Hyperlink
           showLaunchIcon={false}
-          destination={getExternalLinkUrl('https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components')}
+          destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html')}
           className="btn btn-outline-primary btn-sm"
           target="_blank"
         >

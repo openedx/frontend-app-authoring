@@ -21,7 +21,7 @@ Use cases:
    - Help documentation
    - External tool integrations
 
-Currently, the following external URLs are wrapped with `getExternalLinkUrl` in the authoring application:
+Following external URLs are wrapped with `getExternalLinkUrl` in the authoring application:
 
 - 'https://www.edx.org/accessibility'
 - 'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html'
@@ -31,11 +31,13 @@ Currently, the following external URLs are wrapped with `getExternalLinkUrl` in 
 - 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html'
 - 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html'
 - 'https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types'
-- 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components'
+- 'https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html'
 - 'https://openai.com/api-data-privacy'
 - 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/create_new_library.html'
 - 'https://bigbluebutton.org/privacy-policy/'
 - 'https://creativecommons.org/about'
+
+Note: as new external URLs are added to the codebase, more URLs will be wrapped with `getExternalLinkUrl` and this list may not always be up to date.
 
 How to Override External URLs
 -----------------------------
