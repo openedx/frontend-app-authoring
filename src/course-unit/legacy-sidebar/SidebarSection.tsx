@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Card } from '@openedx/paragon';
 
-const Sidebar = ({ className = null, children = null, ...props }:SidebarProps) => (
+const SidebarSection = ({ className = null, children = null, ...props }:SidebarSectionProps) => (
   <Card
     className={classNames('course-unit-sidebar', className)}
     {...props}
@@ -10,9 +10,9 @@ const Sidebar = ({ className = null, children = null, ...props }:SidebarProps) =
   </Card>
 );
 
-interface SidebarProps {
+interface SidebarSectionProps {
   className?: string | null;
   children?: React.ReactNode | null;
 }
 
-export default Sidebar;
+export default SidebarSection;

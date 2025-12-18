@@ -1,4 +1,4 @@
-import messages from './sidebar/messages';
+import messages from './legacy-sidebar/messages';
 import addComponentMessages from './add-component/messages';
 
 export const getUnitReleaseStatus = (intl) => ({

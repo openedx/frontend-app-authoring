@@ -33,11 +33,23 @@ import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
+import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
 
 const CourseUnit = () => {
-  const { blockId } = useParams();
   const intl = useIntl();
+  const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+
+  if (courseId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing courseId.');
+  }
+
+  if (blockId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing blockId.');
+  }
+
   const {
     courseUnit,
     isLoading,
@@ -102,7 +114,7 @@ const CourseUnit = () => {
   }
 
   return (
-    <>
+    <UnitSidebarProvider>
       <Container size="xl" className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>
@@ -121,7 +133,7 @@ const CourseUnit = () => {
                   : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
                 aria-hidden={movedXBlockParams.isSuccess}
                 dismissible
-                actions={movedXBlockParams.isUndo ? null : [
+                actions={movedXBlockParams.isUndo ? undefined : [
                   <Button
                     onClick={handleRollbackMovedXBlock}
                     key="xblock-moved-alert-undo-move-button"
@@ -146,7 +158,6 @@ const CourseUnit = () => {
                 {
                   link: (
                     <Alert.Link
-                      className="ml-1"
                       href={courseUnit.upstreamInfo.upstreamLink}
                     >
                       {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
@@ -223,10 +234,11 @@ const CourseUnit = () => {
                   isUnitVerticalType={isUnitVerticalType}
                   isProblemBankType={isProblemBankType}
                   handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                  // @ts-expect-error - It is necessary to migrate the hooks to TypeScript
                   addComponentTemplateData={addComponentTemplateData}
                 />
               )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && (
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={
@@ -267,7 +279,7 @@ const CourseUnit = () => {
           errorMessage={errorMessage}
         />
       </div>
-    </>
+    </UnitSidebarProvider>
   );
 };
 

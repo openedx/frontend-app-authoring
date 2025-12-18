@@ -46,7 +46,7 @@ import { executeThunk } from '../utils';
 import pasteNotificationsMessages from './clipboard/paste-notification/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
-import { extractCourseUnitId } from './sidebar/utils';
+import { extractCourseUnitId } from './legacy-sidebar/utils';
 import CourseUnit from './CourseUnit';
 
 import tagsDrawerMessages from '../content-tags-drawer/messages';
@@ -57,7 +57,7 @@ import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants
 import moveModalMessages from './move-modal/messages';
 import xblockContainerIframeMessages from './xblock-container-iframe/messages';
 import headerNavigationsMessages from './header-navigations/messages';
-import sidebarMessages from './sidebar/messages';
+import sidebarMessages from './legacy-sidebar/messages';
 import messages from './messages';
 
 let axiosMock;
