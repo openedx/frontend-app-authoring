@@ -1,4 +1,4 @@
-import { skipToken, useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
 import { getCourseDetails, getCourseItem, getCourseLegacyLibRefUpdateTaskStatus, getCourseReadyToMigrateLegacyLibContentBlocks, migrateCourseReadyToMigrateLegacyLibContentBlocks } from './api';
 import { UserTaskStatus } from '@src/data/constants';
@@ -13,7 +13,7 @@ export const courseOutlineQueryKeys = {
   courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
   courseDetails: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId, 'details'],
   legacyLibReadyToMigrateBlocks: (courseId: string) => [...courseOutlineQueryKeys.all, courseId, 'legacyLibReadyToMigrateBlocks'],
-  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId: string) => [
+  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
     ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
     'status',
     { taskId },
@@ -57,12 +57,17 @@ export const useCourseLegacyLibReadyToMigrateBlocks = (courseId: string, enabled
 
 export const useMigrateCourseLegacyLibReadyToMigrateBlocks = (courseId: string) => useMutation({
   mutationFn: () => migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId),
-  gcTime: 60, // Cache for 1 minute to prevent rapid re-creation of backups
+  gcTime: 60, // Cache for 1 minute to prevent rapid re-run of updating references
 });
 
-export const checkMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (courseId: string, taskId: string): UseQueryOptions<UserTaskStatusWithUuid> => ({
+export const useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (courseId: string, taskId?: string): UseQueryResult<UserTaskStatusWithUuid> => useQuery({
   queryKey: courseOutlineQueryKeys.legacyLibReadyToMigrateBlocksStatus(courseId, taskId),
-  queryFn: () => getCourseLegacyLibRefUpdateTaskStatus(courseId, taskId),
-  refetchInterval: (query) => (query.state.data?.state === UserTaskStatus.Pending
-    || query.state.data?.state === UserTaskStatus.InProgress ? 2000 : false),
+  queryFn: taskId ? () => getCourseLegacyLibRefUpdateTaskStatus(courseId, taskId) : skipToken,
+  refetchInterval: (query) => {
+    return [
+      UserTaskStatus.Succeeded,
+      UserTaskStatus.Failed,
+      UserTaskStatus.Cancelled,
+    ].includes(query.state.data?.state || UserTaskStatus.InProgress) ? false : 2000
+  },
 })

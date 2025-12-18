@@ -1,9 +1,15 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
 import { Button } from "@openedx/paragon";
-import { useMemo, useState } from "react";
-import { useCourseLegacyLibReadyToMigrateBlocks, useMigrateCourseLegacyLibReadyToMigrateBlocks } from "../course-outline/data/apiHooks"
+import { useContext, useEffect, useMemo, useState } from "react";
+import {
+  useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions,
+  useCourseLegacyLibReadyToMigrateBlocks,
+  useMigrateCourseLegacyLibReadyToMigrateBlocks,
+} from "../course-outline/data/apiHooks"
+import { UserTaskStatus } from "../data/constants";
 import AlertMessage from "../generic/alert-message";
 import LoadingButton from "../generic/loading-button";
+import { ToastContext } from "../generic/toast-context";
 import messages from "./messages";
 
 interface Props {
@@ -12,13 +18,35 @@ interface Props {
 
 const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
   const intl = useIntl();
-  const [taskId, setTaskId] = useState<string|null>(null);
-  const { data, isPending } = useCourseLegacyLibReadyToMigrateBlocks(courseId);
+  const { showToast } = useContext(ToastContext);
+  const [taskId, setTaskId] = useState<string|undefined>(undefined);
+  const { data, isPending, refetch } = useCourseLegacyLibReadyToMigrateBlocks(courseId);
   const { mutateAsync } = useMigrateCourseLegacyLibReadyToMigrateBlocks(courseId);
+  const taskStatus = useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions(courseId, taskId);
+
+  useEffect(() => {
+    if (taskStatus.data?.state === UserTaskStatus.Succeeded) {
+      showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskCompleted));
+      setTaskId(undefined);
+      refetch();
+    } else if (taskStatus.data?.state === UserTaskStatus.Failed || taskStatus.data?.state === UserTaskStatus.Cancelled) {
+      showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskFailed));
+      setTaskId(undefined);
+      refetch();
+    } else if (taskId) {
+      showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskInProgress))
+    }
+  }, [taskStatus, taskId, refetch]);
 
   const migrateFn = async () => {
-    const taskId = await mutateAsync();
-    setTaskId(taskId);
+    await mutateAsync(undefined, {
+      onSuccess: (data) => {
+        setTaskId(data.uuid);
+      },
+      onError: () => {
+        setTaskId(undefined);
+      },
+    });
   }
 
   const alertCount = useMemo(() => data?.length || 0, [data]);

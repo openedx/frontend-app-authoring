@@ -141,6 +141,21 @@ const messages = defineMessages({
     defaultMessage: 'Update library references',
     description: 'Action button text of alert shown when course contains legacy library content references',
   },
+  legacyLibReadyToMigrateTaskCompleted: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.completed',
+    defaultMessage: 'Successfully updated all legacy library references',
+    description: 'Toast text when all legacy library references are updated.',
+  },
+  legacyLibReadyToMigrateTaskFailed: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.failed',
+    defaultMessage: 'Failed to update legacy library references',
+    description: 'Toast text when legacy library references fail to update.',
+  },
+  legacyLibReadyToMigrateTaskInProgress: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.in-progress',
+    defaultMessage: 'Updating library references...',
+    description: 'Toast text when updating legacy library references is in progress.',
+  },
 });
 
 export default messages;

@@ -45,7 +45,7 @@ export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}out
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
 export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
-export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}/${taskId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 /**
  * Get course outline index.
@@ -518,7 +518,7 @@ export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: st
 /**
  * Migrate legacy library blocks that ready to migrate to library v2 item bank in given course
  */
-export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<string> {
+export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<UserTaskStatusWithUuid> {
   const { data } = await getAuthenticatedHttpClient()
     .post(courseLegacyLibraryContentBlocks(courseId));
 
