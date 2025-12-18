@@ -1,6 +1,8 @@
 import { skipToken, useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
-import { getCourseDetails, getCourseItem, getCourseReadyToMigrateLegacyLibContentBlocks, migrateCourseReadyToMigrateLegacyLibContentBlocks } from './api';
+import { getCourseDetails, getCourseItem, getCourseLegacyLibRefUpdateTaskStatus, getCourseReadyToMigrateLegacyLibContentBlocks, migrateCourseReadyToMigrateLegacyLibContentBlocks } from './api';
+import { UserTaskStatus } from '@src/data/constants';
+import { UserTaskStatusWithUuid } from './types';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -58,9 +60,9 @@ export const useMigrateCourseLegacyLibReadyToMigrateBlocks = (courseId: string) 
   gcTime: 60, // Cache for 1 minute to prevent rapid re-creation of backups
 });
 
-// export const checkMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (courseId: string, taskId: string): UseQueryOptions => ({
-//   queryKey: courseOutlineQueryKeys.legacyLibReadyToMigrateBlocksStatus(courseId, taskId),
-//   queryFn: () => getCourseReadyToMigrateLegacyLibContentBlocks(courseId),
-//   refetchInterval: (query) => (query.state.data?.state === LibraryBackupStatus.Pending
-//     || query.state.data?.state === LibraryBackupStatus.Exporting ? 2000 : false),
-// })
+export const checkMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (courseId: string, taskId: string): UseQueryOptions<UserTaskStatusWithUuid> => ({
+  queryKey: courseOutlineQueryKeys.legacyLibReadyToMigrateBlocksStatus(courseId, taskId),
+  queryFn: () => getCourseLegacyLibRefUpdateTaskStatus(courseId, taskId),
+  refetchInterval: (query) => (query.state.data?.state === UserTaskStatus.Pending
+    || query.state.data?.state === UserTaskStatus.InProgress ? 2000 : false),
+})

@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { UsageKeyBlock, XBlock } from '@src/data/types';
-import { CourseOutline, CourseDetails } from './types';
+import { CourseOutline, CourseDetails, UserTaskStatusWithUuid } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -45,6 +45,7 @@ export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}out
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
 export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}/${taskId}/`;
 
 /**
  * Get course outline index.
@@ -520,6 +521,16 @@ export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: st
 export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient()
     .post(courseLegacyLibraryContentBlocks(courseId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Get task status of legacy library blocks reference update task.
+ */
+export async function getCourseLegacyLibRefUpdateTaskStatus(courseId: string, taskId: string): Promise<UserTaskStatusWithUuid> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(courseLegacyLibraryContentTaskStatus(courseId, taskId));
 
   return camelCaseObject(data);
 }
