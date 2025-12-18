@@ -135,3 +135,7 @@ export interface OutlinePageErrors {
   sectionLoadingApi?: OutlineError | null,
   courseLaunchApi?: OutlineError | null,
 }
+
+export interface UsageKeyBlock {
+  usageKey: string;
+}

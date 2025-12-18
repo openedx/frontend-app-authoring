@@ -33,6 +33,7 @@ import { useStudioHome } from '../studio-home/hooks';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
+import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
@@ -233,6 +234,7 @@ export const CourseLibraries = () => {
               notification={outOfSyncCount}
               className="px-2 mt-3"
             >
+              <LegacyLibContentBlockAlert courseId={courseId} />
               {renderReviewTabContent()}
             </Tab>
           </Tabs>

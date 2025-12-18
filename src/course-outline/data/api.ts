@@ -1,6 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { XBlock } from '@src/data/types';
+import { UsageKeyBlock, XBlock } from '@src/data/types';
 import { CourseOutline, CourseDetails } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -44,6 +44,7 @@ export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
 
 /**
  * Get course outline index.
@@ -501,4 +502,24 @@ export async function getTagsExportFile(courseId: string, courseName: string) {
   a.click();
 
   window.URL.revokeObjectURL(url);
+}
+
+/**
+ * Get all legacy library blocks that ready to migrate to library v2 item bank in given course
+ */
+export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<UsageKeyBlock[]> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(courseLegacyLibraryContentBlocks(courseId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Migrate legacy library blocks that ready to migrate to library v2 item bank in given course
+ */
+export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(courseLegacyLibraryContentBlocks(courseId));
+
+  return camelCaseObject(data);
 }
