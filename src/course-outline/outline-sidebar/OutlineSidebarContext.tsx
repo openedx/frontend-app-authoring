@@ -41,15 +41,15 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   }, [open]);
 
   const sidebarPages = {
-    help: {
-      component: OutlineHelpSidebar,
-      icon: HelpOutline,
-      title: intl.formatMessage(messages.sidebarButtonHelp),
-    },
     info: {
       component: OutlineInfoSidebar,
       icon: Info,
       title: intl.formatMessage(messages.sidebarButtonInfo),
+    },
+    help: {
+      component: OutlineHelpSidebar,
+      icon: HelpOutline,
+      title: intl.formatMessage(messages.sidebarButtonHelp),
     },
   } satisfies OutlineSidebarPages;
 
