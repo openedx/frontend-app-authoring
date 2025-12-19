@@ -32,7 +32,7 @@ const ContentTagChip = ({ tag }: { tag: Tag }) => {
   return (
     <Chip
       iconBefore={TagIcon}
-      className="mr-1 tag-snippet-chip"
+      className="mr-1 tag-snippet-chip small"
     >
       {lineageStr}
     </Chip>

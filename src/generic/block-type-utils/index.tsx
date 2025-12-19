@@ -36,8 +36,9 @@ export const ComponentIcon = ({
       src={getItemIcon(blockType)}
       screenReaderText={blockType}
       title={iconTitle}
+      size="sm"
     />
-    {text && <span className="ml-1 small">{text}</span>}
+    {text && <span className="ml-1 x-small">{text}</span>}
   </div>
 );
 
@@ -58,8 +59,9 @@ export const ComponentCountSnippet = ({ componentData }: ComponentCountSnippetPr
             src={getItemIcon('components')}
             title={intl.formatMessage(messages.componentTotal)}
             className="mr-1"
+            size="sm"
           />
-          <span className="small">
+          <span className="x-small">
             {`${totalCount} ${intl.formatMessage(messages.componentTotal)}`}
           </span>
         </div>
