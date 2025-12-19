@@ -35,6 +35,7 @@ const SelectionModal = ({
   isFetchError,
   isUploadError,
   isLibrary,
+  className,
 }) => {
   const intl = useIntl();
   const {
@@ -90,7 +91,7 @@ const SelectionModal = ({
           <SearchSort {...searchSortProps} />
         </div>
       )}
-      className="selection-modal"
+      className={`selection-modal ${className || ''}`}
     >
       {/*
         If the modal dialog content is zero height, it shows a bottom shadow
@@ -126,6 +127,7 @@ const SelectionModal = ({
 SelectionModal.defaultProps = {
   size: 'lg',
   isFullscreenScroll: true,
+  className: undefined,
 };
 
 SelectionModal.propTypes = {
@@ -163,6 +165,7 @@ SelectionModal.propTypes = {
   isFetchError: PropTypes.bool.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isLibrary: PropTypes.bool,
+  className: PropTypes.string,
 };
 
 export default SelectionModal;

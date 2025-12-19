@@ -45,6 +45,7 @@ const TextEditor = ({
   if (isLibrary) {
     staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
   }
+  const dynamicHeight = window.innerHeight - 200;
 
   if (!refReady) { return null; }
 
@@ -63,8 +64,8 @@ const TextEditor = ({
         editorRef={editorRef}
         editorContentHtml={editorContent}
         setEditorRef={setEditorRef}
-        minHeight={500}
-        maxHeight={500}
+        minHeight={dynamicHeight}
+        maxHeight={dynamicHeight}
         initializeEditor={initializeEditor}
         {...{
           images,

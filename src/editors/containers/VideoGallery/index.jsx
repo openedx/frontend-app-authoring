@@ -15,6 +15,7 @@ import { RequestKeys } from '../../data/constants/requests';
 import videoThumbnail from '../../data/images/videoThumbnail.svg';
 import VideoUploadEditor from '../VideoUploadEditor';
 import VideoEditor from '../VideoEditor';
+import './index.scss';
 
 const VideoGallery = ({ returnFunction, onCancel }) => {
   const intl = useIntl();
@@ -98,6 +99,7 @@ const VideoGallery = ({ returnFunction, onCancel }) => {
           isLoaded,
           isUploadError,
           isFetchError,
+          className: 'video-gallery-modal',
         }}
       />
       <StandardModal
@@ -107,6 +109,7 @@ const VideoGallery = ({ returnFunction, onCancel }) => {
         isOverflowVisible={false}
         size="xl"
         hasCloseButton={false}
+        className="video-upload-modal"
       >
         <div className="editor-page">
           <VideoUploadEditor

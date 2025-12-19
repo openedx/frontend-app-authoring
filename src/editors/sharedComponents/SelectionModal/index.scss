@@ -38,3 +38,18 @@
     max-width: 100%;
     max-height: 100%;
 }
+
+.pgn__modal.pgn__modal-xl.pgn__modal-default.selection-modal.video-gallery-modal {
+    margin: 0;
+    max-width: 100vw;
+    height: 100vh;
+}
+
+.video-gallery-modal ~ .pgn__modal-backdrop {
+    right: unset;
+}
+
+.pgn__modal.pgn__modal-xl.pgn__modal-default.video-gallery-modal {
+    max-width: 100vw;
+    margin: 0;
+}
