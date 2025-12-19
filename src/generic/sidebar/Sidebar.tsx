@@ -101,7 +101,7 @@ export function Sidebar<T extends SidebarPages>({
               id="dropdown-toggle-with-iconbutton"
               as={Button}
               variant="tertiary"
-              className="x-small text-primary font-weight-bold"
+              className="x-small text-primary font-weight-bold pl-0"
             >
               {pages[currentPageKey].title}
               <Icon src={pages[currentPageKey].icon} size="xs" className="ml-2" />
