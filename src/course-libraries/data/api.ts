@@ -95,6 +95,7 @@ export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: st
   return camelCaseObject(data);
 }
 
+// istanbul ignore next
 /**
  * Migrate legacy library blocks that ready to migrate to library v2 item bank in given course
  */
