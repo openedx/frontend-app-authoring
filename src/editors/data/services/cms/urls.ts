@@ -123,3 +123,7 @@ export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
 export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;
+
+export const validateNumericInputUrl = (({ studioEndpointUrl }) => (
+  `${studioEndpointUrl}/api/contentstore/v2/validate/numerical-input/`
+)) satisfies UrlFunction;
