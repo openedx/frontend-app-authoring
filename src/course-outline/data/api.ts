@@ -518,7 +518,9 @@ export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: st
 /**
  * Migrate legacy library blocks that ready to migrate to library v2 item bank in given course
  */
-export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<UserTaskStatusWithUuid> {
+export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(
+  courseId: string,
+): Promise<UserTaskStatusWithUuid> {
   const { data } = await getAuthenticatedHttpClient()
     .post(courseLegacyLibraryContentBlocks(courseId));
 
@@ -528,7 +530,10 @@ export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(courseId
 /**
  * Get task status of legacy library blocks reference update task.
  */
-export async function getCourseLegacyLibRefUpdateTaskStatus(courseId: string, taskId: string): Promise<UserTaskStatusWithUuid> {
+export async function getCourseLegacyLibRefUpdateTaskStatus(
+  courseId: string,
+  taskId: string,
+): Promise<UserTaskStatusWithUuid> {
   const { data } = await getAuthenticatedHttpClient()
     .get(courseLegacyLibraryContentTaskStatus(courseId, taskId));
 

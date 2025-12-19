@@ -23,14 +23,14 @@ import {
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useStudioHome } from '@src/studio-home/hooks';
+import NewsstandIcon from '@src/generic/NewsstandIcon';
 import getPageHeadTitle from '../generic/utils';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLinkSummary } from './data/api';
 import Loading from '../generic/Loading';
-import { useStudioHome } from '../studio-home/hooks';
-import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
 import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';

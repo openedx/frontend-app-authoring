@@ -1,5 +1,5 @@
 import { XBlock, XBlockActions } from '@src/data/types';
-import { UserTaskStatus } from '../../data/constants';
+import { UserTaskStatus } from '@src/data/constants';
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,

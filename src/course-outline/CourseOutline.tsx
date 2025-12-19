@@ -41,6 +41,7 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
@@ -68,7 +69,6 @@ import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
-import LegacyLibContentBlockAlert from '../course-libraries/LegacyLibContentBlockAlert';
 
 const CourseOutline = () => {
   const intl = useIntl();

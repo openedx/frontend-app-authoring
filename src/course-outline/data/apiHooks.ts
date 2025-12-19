@@ -1,7 +1,15 @@
-import { skipToken, useMutation, useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import {
+  skipToken, useMutation, useQuery, UseQueryResult,
+} from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
-import { getCourseDetails, getCourseItem, getCourseLegacyLibRefUpdateTaskStatus, getCourseReadyToMigrateLegacyLibContentBlocks, migrateCourseReadyToMigrateLegacyLibContentBlocks } from './api';
 import { UserTaskStatus } from '@src/data/constants';
+import {
+  getCourseDetails,
+  getCourseItem,
+  getCourseLegacyLibRefUpdateTaskStatus,
+  getCourseReadyToMigrateLegacyLibContentBlocks,
+  migrateCourseReadyToMigrateLegacyLibContentBlocks,
+} from './api';
 import { UserTaskStatusWithUuid } from './types';
 
 export const courseOutlineQueryKeys = {
@@ -60,14 +68,15 @@ export const useMigrateCourseLegacyLibReadyToMigrateBlocks = (courseId: string) 
   gcTime: 60, // Cache for 1 minute to prevent rapid re-run of updating references
 });
 
-export const useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (courseId: string, taskId?: string): UseQueryResult<UserTaskStatusWithUuid> => useQuery({
+export const useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions = (
+  courseId: string,
+  taskId?: string,
+): UseQueryResult<UserTaskStatusWithUuid> => useQuery({
   queryKey: courseOutlineQueryKeys.legacyLibReadyToMigrateBlocksStatus(courseId, taskId),
   queryFn: taskId ? () => getCourseLegacyLibRefUpdateTaskStatus(courseId, taskId) : skipToken,
-  refetchInterval: (query) => {
-    return [
-      UserTaskStatus.Succeeded,
-      UserTaskStatus.Failed,
-      UserTaskStatus.Cancelled,
-    ].includes(query.state.data?.state || UserTaskStatus.InProgress) ? false : 2000
-  },
-})
+  refetchInterval: (query) => ([
+    UserTaskStatus.Succeeded,
+    UserTaskStatus.Failed,
+    UserTaskStatus.Cancelled,
+  ].includes(query.state.data?.state || UserTaskStatus.InProgress) ? false : 2000),
+});

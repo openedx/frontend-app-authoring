@@ -128,7 +128,7 @@ const messages = defineMessages({
   },
   legacyLibReadyToMigrateAlertDescription: {
     id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.description',
-    defaultMessage: 'Legacy library references will no longer be supported and need to be udpated to receive future changes.',
+    defaultMessage: 'Legacy library references will no longer be supported and need to be updated to receive future changes.',
     description: 'Description of alert shown when course contains legacy library content references',
   },
   legacyLibReadyToMigrateAlertLearnMoreBtn: {
