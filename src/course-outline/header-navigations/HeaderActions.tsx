@@ -3,10 +3,14 @@ import {
   Button, Dropdown, Icon, OverlayTrigger, Stack, Tooltip,
 } from '@openedx/paragon';
 import {
-  Add as IconAdd, AutoGraph, FindInPage, HelpOutline, InfoOutline, ViewSidebar,
+  Add as IconAdd, FindInPage, ViewSidebar,
 } from '@openedx/paragon/icons';
 
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
+import type { SidebarPage } from '@src/generic/sidebar';
+
+import { useOutlineSidebarContext, OutlineSidebarPageKeys } from '../outline-sidebar/OutlineSidebarContext';
+
 import messages from './messages';
 
 export interface HeaderActionsProps {
@@ -25,6 +29,8 @@ const HeaderActions = ({
 }: HeaderActionsProps) => {
   const intl = useIntl();
   const { handleNewSection, lmsLink } = actions;
+
+  const { setCurrentPageKey, sidebarPages } = useOutlineSidebarContext();
 
   return (
     <Stack direction="horizontal" gap={3}>
@@ -74,24 +80,17 @@ const HeaderActions = ({
           <Icon src={ViewSidebar} />
         </Dropdown.Toggle>
         <Dropdown.Menu className="mt-1">
-          <Dropdown.Item>
-            <Stack direction="horizontal" gap={2}>
-              <Icon src={InfoOutline} />
-              {intl.formatMessage(messages.infoButton)}
-            </Stack>
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Stack direction="horizontal" gap={2}>
-              <Icon src={AutoGraph} />
-              {intl.formatMessage(messages.analyticsButton)}
-            </Stack>
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Stack direction="horizontal" gap={2}>
-              <Icon src={HelpOutline} />
-              {intl.formatMessage(messages.helpButton)}
-            </Stack>
-          </Dropdown.Item>
+          {Object.entries(sidebarPages).map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
+            <Dropdown.Item
+              key={key}
+              onClick={() => setCurrentPageKey(key)}
+            >
+              <Stack direction="horizontal" gap={2}>
+                <Icon src={page.icon} />
+                {page.title}
+              </Stack>
+            </Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       </Dropdown>
 

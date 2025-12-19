@@ -1,8 +1,10 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import SectionCard from './SectionCard';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -82,28 +84,30 @@ const section = {
 const onEditSectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SectionCard
-    section={section}
-    index={1}
-    canMoveItem={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
-    onOpenHighlightsModal={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onEditSectionSubmit={onEditSectionSubmit}
-    onDuplicateSubmit={jest.fn()}
-    isSectionsExpanded
-    onNewSubsectionSubmit={jest.fn()}
-    isSelfPaced={false}
-    isCustomRelativeDatesActive={false}
-    onAddSubsectionFromLibrary={jest.fn()}
-    resetScrollState={jest.fn()}
-    {...props}
-  >
-    <span>children</span>
-  </SectionCard>,
+  <OutlineSidebarProvider>
+    <SectionCard
+      section={section}
+      index={1}
+      canMoveItem={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenPublishModal={jest.fn()}
+      onOpenHighlightsModal={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenUnlinkModal={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onEditSectionSubmit={onEditSectionSubmit}
+      onDuplicateSubmit={jest.fn()}
+      isSectionsExpanded
+      onNewSubsectionSubmit={jest.fn()}
+      isSelfPaced={false}
+      isCustomRelativeDatesActive={false}
+      onAddSubsectionFromLibrary={jest.fn()}
+      resetScrollState={jest.fn()}
+      {...props}
+    >
+      <span>children</span>
+    </SectionCard>
+  </OutlineSidebarProvider>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
@@ -123,6 +127,32 @@ describe('<SectionCard />', () => {
 
     expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
     expect(screen.getByTestId('section-card__content')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('section-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render SectionCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('section-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('expands/collapses the card when the expand button is clicked', () => {

@@ -1,3 +1,4 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
@@ -5,6 +6,7 @@ import {
 import { XBlock } from '@src/data/types';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
@@ -106,29 +108,31 @@ const section: XBlock = {
 const onEditSubectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SubsectionCard
-    section={section}
-    subsection={subsection}
-    index={1}
-    isSelfPaced={false}
-    getPossibleMoves={jest.fn()}
-    onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
-    onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
-    onNewUnitSubmit={jest.fn()}
-    onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
-    isCustomRelativeDatesActive={false}
-    onEditSubmit={onEditSubectionSubmit}
-    onDuplicateSubmit={jest.fn()}
-    onOpenConfigureModal={jest.fn()}
-    onPasteClick={jest.fn()}
-    resetScrollState={jest.fn()}
-    isSectionsExpanded={false}
-    {...props}
-  >
-    <span>children</span>
-  </SubsectionCard>,
+  <OutlineSidebarProvider>
+    <SubsectionCard
+      section={section}
+      subsection={subsection}
+      index={1}
+      isSelfPaced={false}
+      getPossibleMoves={jest.fn()}
+      onOrderChange={jest.fn()}
+      onOpenPublishModal={jest.fn()}
+      onOpenDeleteModal={jest.fn()}
+      onOpenUnlinkModal={jest.fn()}
+      onNewUnitSubmit={jest.fn()}
+      onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
+      isCustomRelativeDatesActive={false}
+      onEditSubmit={onEditSubectionSubmit}
+      onDuplicateSubmit={jest.fn()}
+      onOpenConfigureModal={jest.fn()}
+      onPasteClick={jest.fn()}
+      resetScrollState={jest.fn()}
+      isSectionsExpanded={false}
+      {...props}
+    >
+      <span>children</span>
+    </SubsectionCard>
+  </OutlineSidebarProvider>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
@@ -148,6 +152,32 @@ describe('<SubsectionCard />', () => {
     renderComponent();
 
     expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('subsection-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render SubsectionCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('subsection-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('expands/collapses the card when the subsection button is clicked', async () => {

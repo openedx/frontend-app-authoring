@@ -15,6 +15,7 @@ export async function mockContentTaxonomyTagsData(contentId: string): Promise<an
     case thisMock.largeTagsId: return thisMock.largeTags;
     case thisMock.containerTagsId: return thisMock.largeTags;
     case thisMock.emptyTagsId: return thisMock.emptyTags;
+    case thisMock.veryLongTagsId: return thisMock.veryLongTags;
     default: throw new Error(`No mock has been set up for contentId "${contentId}"`);
   }
 }
@@ -205,6 +206,37 @@ mockContentTaxonomyTagsData.emptyTagsId = 'block-v1:EmptyTagsOrg+STC1+2023_1+typ
 mockContentTaxonomyTagsData.emptyTags = {
   taxonomies: [],
 };
+mockContentTaxonomyTagsData.veryLongTagsId = 'block-v1:VeryLongTagsOrg+STC1+2023_1+type@vertical+block@veryLongTagsId';
+mockContentTaxonomyTagsData.veryLongTags = {
+  taxonomies: [
+    {
+      name: 'ESDC Skills and Competencies',
+      taxonomyId: 1,
+      canTagObject: true,
+      tags: [
+        {
+          value: 'Technical Skills',
+          lineage: [
+            'Skills',
+            'Technical Skills Sub-Category',
+            'Technical Skills',
+          ],
+          canDeleteObjecttag: true,
+        },
+        {
+          value: 'Communication Abilities',
+          lineage: [
+            'Abilities',
+            'Cognitive Abilities',
+            'Communication Abilities',
+          ],
+          canDeleteObjecttag: true,
+        },
+      ],
+    },
+  ],
+};
+
 mockContentTaxonomyTagsData.containerTagsId = 'lct:StagedTagsOrg:lib:unit:container_tags';
 mockContentTaxonomyTagsData.applyMock = () => jest.spyOn(api, 'getContentTaxonomyTagsData').mockImplementation(mockContentTaxonomyTagsData);
 

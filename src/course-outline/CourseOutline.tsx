@@ -3,7 +3,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
   Container,
-  Layout,
   Row,
   TransitionReplace,
   Toast,
@@ -66,6 +65,7 @@ import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 
@@ -287,7 +287,7 @@ const CourseOutline = () => {
   }
 
   return (
-    <>
+    <OutlineSidebarProvider>
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
@@ -355,14 +355,8 @@ const CourseOutline = () => {
               />
             )}
           <hr className="mt-4 mb-0 w-100 text-light-400" />
-          <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 12 }, { span: 12 }]}
-            xs={[{ span: 12 }, { span: 12 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
-            <Layout.Element>
+          <div className="d-flex align-items-baseline flex-wrap">
+            <div className="flex-fill">
               <article>
                 <div>
                   {showNewActionsBar && (
@@ -382,7 +376,7 @@ const CourseOutline = () => {
                     )}
                   </ActionRow>
                   )}
-                  <section className="course-outline-section">
+                  <section>
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
                         {sections.length ? (
@@ -523,15 +517,13 @@ const CourseOutline = () => {
                   </section>
                 </div>
               </article>
-            </Layout.Element>
-            <Layout.Element>
-              <CourseAuthoringOutlineSidebarSlot
-                courseId={courseId}
-                courseName={courseName}
-                sections={sections}
-              />
-            </Layout.Element>
-          </Layout>
+            </div>
+            <CourseAuthoringOutlineSidebarSlot
+              courseId={courseId}
+              courseName={courseName}
+              sections={sections}
+            />
+          </div>
           <EnableHighlightsModal
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}
@@ -613,7 +605,7 @@ const CourseOutline = () => {
           {toastMessage}
         </Toast>
       )}
-    </>
+    </OutlineSidebarProvider>
   );
 };
 

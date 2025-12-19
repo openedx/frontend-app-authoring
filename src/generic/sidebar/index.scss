@@ -1,0 +1,25 @@
+.sidebar {
+  .dropdown-toggle {
+    padding: .2rem .5rem;
+    background-color: transparent !important;
+  }
+
+  .sidebar-toggle {
+     align-self: flex-start;
+
+    .pgn__icon-button-toggle__container {
+      flex-direction: column;
+      align-items: flex-center;
+
+      .btn-icon + .btn-icon {
+        margin-top: var(--pgn-spacing-spacer-1);
+        margin-inline-start: unset;
+      }
+    }
+
+    .rounded-iconbutton {
+      border-radius: var(--pgn-size-menu-base-border-radius);
+      border: 1px solid var(--btn-icon-color);
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { TaxonomyData } from '../../taxonomy/data/types';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
 
 /** A tag that has been applied to some content. */
 export interface Tag {
