@@ -68,6 +68,7 @@ import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
+import LegacyLibContentBlockAlert from '../course-libraries/LegacyLibContentBlockAlert';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -306,6 +307,7 @@ const CourseOutline = () => {
             savingStatus={savingStatus}
             errors={errors}
           />
+          <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage

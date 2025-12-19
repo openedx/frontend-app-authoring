@@ -1,5 +1,5 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
-import { Button } from "@openedx/paragon";
+import { Button, Hyperlink } from "@openedx/paragon";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
   useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions,
@@ -23,6 +23,7 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
   const { data, isPending, refetch } = useCourseLegacyLibReadyToMigrateBlocks(courseId);
   const { mutateAsync } = useMigrateCourseLegacyLibReadyToMigrateBlocks(courseId);
   const taskStatus = useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions(courseId, taskId);
+  const learnMoreUrl = 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/migrate_legacy_libraries.html#id8'
 
   useEffect(() => {
     if (taskStatus.data?.state === UserTaskStatus.Succeeded) {
@@ -63,8 +64,11 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
       variant="info"
       actions={[
         <Button
-          onClick={() => {}}
+          target="_blank"
+          as={Hyperlink}
           variant="tertiary"
+          showLaunchIcon={false}
+          destination={learnMoreUrl}
         >
           {intl.formatMessage(messages.legacyLibReadyToMigrateAlertLearnMoreBtn)}
         </Button>,
