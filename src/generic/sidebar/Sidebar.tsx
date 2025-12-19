@@ -95,7 +95,7 @@ export function Sidebar<T extends SidebarPages>({
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline mx-3" gap={2}>
       {isOpen && !!currentPageKey && (
-        <div className="mw-300px px-3 bg-white border-right pb-3">
+        <div className="sidebar-content p-2 bg-white border-right">
           <Dropdown data-testid="sidebar-dropdown">
             <Dropdown.Toggle
               id="dropdown-toggle-with-iconbutton"
