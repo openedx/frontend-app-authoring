@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Enter a definition',
     description: 'Error message when definition field is empty but term is filled',
   },
+  imageWithoutTextError: {
+    id: 'GameEditor.imageWithoutTextError',
+    defaultMessage: 'Text is required for flashcard images.',
+    description: 'Error message when a flashcard has an image but no text',
+  },
   settingsTitle: {
     id: 'GameEditor.settingsTitle',
     defaultMessage: 'Settings',

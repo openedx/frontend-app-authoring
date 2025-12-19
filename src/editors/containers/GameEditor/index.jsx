@@ -44,12 +44,23 @@ import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
 
 export const hooks = {
-  getContent: ({ type, settings, list }) => ({
-    gameType: type,
-    isShuffled: settings.shuffle,
-    hasTimer: settings.timer,
-    cards: list,
-  }),
+  getContent: ({ type, settings, list }) => {
+    // Filter out completely blank cards before saving (no text and no images)
+    const filledCards = list.filter((card) => {
+      const termText = (card.term || '').trim();
+      const definitionText = (card.definition || '').trim();
+      const hasText = termText !== '' || definitionText !== '';
+      const hasImages = !!card.term_image || !!card.definition_image;
+      return hasText || hasImages;
+    });
+
+    return {
+      gameType: type,
+      isShuffled: settings.shuffle,
+      hasTimer: settings.timer,
+      cards: filledCards,
+    };
+  },
 };
 
 export const GameEditor = ({
@@ -148,8 +159,21 @@ export const GameEditor = ({
     list.forEach((card, index) => {
       const termEmpty = !card.term.trim();
       const definitionEmpty = !card.definition.trim();
+      const hasTermImage = !!card.term_image;
+      const hasDefinitionImage = !!card.definition_image;
 
       if (termEmpty && definitionEmpty) {
+        // For flashcards, if there's an image but no text, show validation error
+        if (type === 'flashcards' && (hasTermImage || hasDefinitionImage)) {
+          if (hasTermImage) {
+            errors[`${index}_term`] = 'imageWithoutText';
+            hasErrors = true;
+          }
+          if (hasDefinitionImage) {
+            errors[`${index}_definition`] = 'imageWithoutText';
+            hasErrors = true;
+          }
+        }
         return;
       }
 
@@ -162,11 +186,23 @@ export const GameEditor = ({
         errors[`${index}_definition`] = true;
         hasErrors = true;
       }
+
+      // For flashcards, validate that images have accompanying text
+      if (type === 'flashcards') {
+        if (hasTermImage && termEmpty) {
+          errors[`${index}_term`] = 'imageWithoutText';
+          hasErrors = true;
+        }
+        if (hasDefinitionImage && definitionEmpty) {
+          errors[`${index}_definition`] = 'imageWithoutText';
+          hasErrors = true;
+        }
+      }
     });
 
     setValidationErrors(errors);
     return !hasErrors;
-  }, [list]);
+  }, [list, type]);
 
   const getDescriptionHeader = () => {
     switch (type) {
@@ -457,7 +493,9 @@ export const GameEditor = ({
                             <span>
                               {getCardErrors(card, index).termError && (
                                 <Form.Control.Feedback type="invalid" hasIcon={false}>
-                                  {intl.formatMessage(messages.termValidationError)}
+                                  {validationErrors[`${index}_term`] === 'imageWithoutText'
+                                    ? intl.formatMessage(messages.imageWithoutTextError)
+                                    : intl.formatMessage(messages.termValidationError)}
                                 </Form.Control.Feedback>
                               )}
                             </span>
@@ -488,7 +526,9 @@ export const GameEditor = ({
                             <span>
                               {getCardErrors(card, index).definitionError && (
                                 <Form.Control.Feedback type="invalid" hasIcon={false}>
-                                  {intl.formatMessage(messages.definitionValidationError)}
+                                  {validationErrors[`${index}_definition`] === 'imageWithoutText'
+                                    ? intl.formatMessage(messages.imageWithoutTextError)
+                                    : intl.formatMessage(messages.definitionValidationError)}
                                 </Form.Control.Feedback>
                               )}
                             </span>

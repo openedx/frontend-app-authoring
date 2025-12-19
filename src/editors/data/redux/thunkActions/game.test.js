@@ -244,7 +244,7 @@ describe('game thunkActions', () => {
         expect(gameActions.setList).toHaveBeenCalledWith(expectedFormattedCards);
       });
 
-      it('should not dispatch any actions when response data is empty', () => {
+      it('should dispatch actions with default values when response data is empty', () => {
         const emptyResponse = { data: {} };
         const mockOnSuccess = jest.fn();
         requests.getGamesSettings.mockImplementation(({ onSuccess }) => {
@@ -252,13 +252,22 @@ describe('game thunkActions', () => {
           return jest.fn();
         });
 
+        const expectedEmptyCard = [{
+          id: `card-${mockDate}-0`,
+          term: '',
+          term_image: '',
+          definition: '',
+          definition_image: '',
+          editorOpen: true,
+        }];
+
         loadGamesSettings()(dispatch);
         mockOnSuccess(emptyResponse);
 
-        expect(gameActions.updateType).not.toHaveBeenCalled();
-        expect(gameActions.setShuffleStatus).not.toHaveBeenCalled();
-        expect(gameActions.setTimerStatus).not.toHaveBeenCalled();
-        expect(gameActions.setList).not.toHaveBeenCalled();
+        expect(gameActions.updateType).toHaveBeenCalledWith('matching');
+        expect(gameActions.setShuffleStatus).toHaveBeenCalledWith(true);
+        expect(gameActions.setTimerStatus).toHaveBeenCalledWith(true);
+        expect(gameActions.setList).toHaveBeenCalledWith(expectedEmptyCard);
       });
     });
 

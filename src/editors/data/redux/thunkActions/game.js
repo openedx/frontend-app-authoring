@@ -17,25 +17,12 @@ export const loadGamesSettings = () => (dispatch) => {
     onSuccess: (response) => {
       const { data } = response;
 
-      if (data.game_type) {
-        dispatch(actions.game.updateType(data.game_type));
-      }
-
-      if (data.is_shuffled !== undefined) {
-        if (data.is_shuffled) {
-          dispatch(actions.game.setShuffleStatus(true));
-        } else {
-          dispatch(actions.game.setShuffleStatus(false));
-        }
-      }
-
-      if (data.has_timer !== undefined) {
-        if (data.has_timer) {
-          dispatch(actions.game.setTimerStatus(true));
-        } else {
-          dispatch(actions.game.setTimerStatus(false));
-        }
-      }
+      const gameType = data.game_type || 'matching';
+      dispatch(actions.game.updateType(gameType));
+      const isShuffled = data.is_shuffled !== undefined ? data.is_shuffled : true;
+      dispatch(actions.game.setShuffleStatus(isShuffled));
+      const hasTimer = data.has_timer !== undefined ? data.has_timer : true;
+      dispatch(actions.game.setTimerStatus(hasTimer));
 
       if (data.cards && data.cards.length > 0) {
         const formattedCards = data.cards.map((card, index) => ({
@@ -47,6 +34,16 @@ export const loadGamesSettings = () => (dispatch) => {
           editorOpen: true,
         }));
         dispatch(actions.game.setList(formattedCards));
+      } else {
+        const emptyCard = {
+          id: `card-${Date.now()}-0`,
+          term: '',
+          term_image: '',
+          definition: '',
+          definition_image: '',
+          editorOpen: true,
+        };
+        dispatch(actions.game.setList([emptyCard]));
       }
     },
     onFailure: (error) => {
