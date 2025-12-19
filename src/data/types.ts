@@ -1,4 +1,4 @@
-import { UserTaskStatus } from "./constants";
+import { UserTaskStatus } from './constants';
 
 export interface GroupTypes {
   id: number;

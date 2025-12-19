@@ -3,15 +3,15 @@ import { Button, Hyperlink } from '@openedx/paragon';
 import {
   useContext, useEffect, useMemo, useState,
 } from 'react';
+import { UserTaskStatus } from '@src/data/constants';
+import AlertMessage from '@src/generic/alert-message';
+import LoadingButton from '@src/generic/loading-button';
+import { ToastContext } from '@src/generic/toast-context';
 import {
   useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions,
   useCourseLegacyLibReadyToMigrateBlocks,
   useMigrateCourseLegacyLibReadyToMigrateBlocks,
 } from './data/apiHooks';
-import { UserTaskStatus } from '@src/data/constants';
-import AlertMessage from '@src/generic/alert-message';
-import LoadingButton from '@src/generic/loading-button';
-import { ToastContext } from '@src/generic/toast-context';
 import messages from './messages';
 
 interface Props {

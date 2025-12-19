@@ -5,9 +5,15 @@ import {
   useMutation,
   UseQueryResult,
 } from '@tanstack/react-query';
-import { UserTaskStatus } from '../../data/constants';
-import { UserTaskStatusWithUuid } from '../../data/types';
-import { getEntityLinksSummaryByDownstreamContext, getEntityLinks, getCourseReadyToMigrateLegacyLibContentBlocks, migrateCourseReadyToMigrateLegacyLibContentBlocks, getCourseLegacyLibRefUpdateTaskStatus } from './api';
+import { UserTaskStatus } from '@src/data/constants';
+import { UserTaskStatusWithUuid } from '@src/data/types';
+import {
+  getEntityLinksSummaryByDownstreamContext,
+  getEntityLinks,
+  getCourseReadyToMigrateLegacyLibContentBlocks,
+  migrateCourseReadyToMigrateLegacyLibContentBlocks,
+  getCourseLegacyLibRefUpdateTaskStatus,
+} from './api';
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
