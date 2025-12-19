@@ -7,7 +7,7 @@ import {
   useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions,
   useCourseLegacyLibReadyToMigrateBlocks,
   useMigrateCourseLegacyLibReadyToMigrateBlocks,
-} from '@src/course-outline/data/apiHooks';
+} from './data/apiHooks';
 import { UserTaskStatus } from '@src/data/constants';
 import AlertMessage from '@src/generic/alert-message';
 import LoadingButton from '@src/generic/loading-button';

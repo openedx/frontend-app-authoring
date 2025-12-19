@@ -1,5 +1,4 @@
 import { XBlock, XBlockActions } from '@src/data/types';
-import { UserTaskStatus } from '@src/data/constants';
 
 export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
@@ -77,16 +76,4 @@ export interface CourseOutlineState {
   enableTimedExams: boolean;
   pasteFileNotices: object;
   createdOn: null | Date;
-}
-
-export interface UserTaskStatusWithUuid {
-  name: string;
-  state: UserTaskStatus;
-  stateText: string;
-  completedSteps: number;
-  totalSteps: number;
-  attempts: number;
-  created: string;
-  modified: string;
-  uuid: string;
 }

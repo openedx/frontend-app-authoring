@@ -1,3 +1,5 @@
+import { UserTaskStatus } from "./constants";
+
 export interface GroupTypes {
   id: number;
   name: string;
@@ -138,4 +140,16 @@ export interface OutlinePageErrors {
 
 export interface UsageKeyBlock {
   usageKey: string;
+}
+
+export interface UserTaskStatusWithUuid {
+  name: string;
+  state: UserTaskStatus;
+  stateText: string;
+  completedSteps: number;
+  totalSteps: number;
+  attempts: number;
+  created: string;
+  modified: string;
+  uuid: string;
 }

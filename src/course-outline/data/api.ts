@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { UsageKeyBlock, XBlock } from '@src/data/types';
-import { CourseOutline, CourseDetails, UserTaskStatusWithUuid } from './types';
+import { XBlock } from '@src/data/types';
+import { CourseOutline, CourseDetails } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -503,39 +503,4 @@ export async function getTagsExportFile(courseId: string, courseName: string) {
   a.click();
 
   window.URL.revokeObjectURL(url);
-}
-
-/**
- * Get all legacy library blocks that ready to migrate to library v2 item bank in given course
- */
-export async function getCourseReadyToMigrateLegacyLibContentBlocks(courseId: string): Promise<UsageKeyBlock[]> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(courseLegacyLibraryContentBlocks(courseId));
-
-  return camelCaseObject(data);
-}
-
-/**
- * Migrate legacy library blocks that ready to migrate to library v2 item bank in given course
- */
-export async function migrateCourseReadyToMigrateLegacyLibContentBlocks(
-  courseId: string,
-): Promise<UserTaskStatusWithUuid> {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(courseLegacyLibraryContentBlocks(courseId));
-
-  return camelCaseObject(data);
-}
-
-/**
- * Get task status of legacy library blocks reference update task.
- */
-export async function getCourseLegacyLibRefUpdateTaskStatus(
-  courseId: string,
-  taskId: string,
-): Promise<UserTaskStatusWithUuid> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(courseLegacyLibraryContentTaskStatus(courseId, taskId));
-
-  return camelCaseObject(data);
 }
