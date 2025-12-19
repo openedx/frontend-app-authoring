@@ -1,3 +1,4 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
@@ -5,7 +6,7 @@ import {
 import { XBlock } from '@src/data/types';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
-import { SidebarProvider } from '../common/context/SidebarContext';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
@@ -107,7 +108,7 @@ const section: XBlock = {
 const onEditSubectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SidebarProvider>
+  <OutlineSidebarProvider>
     <SubsectionCard
       section={section}
       subsection={subsection}
@@ -131,7 +132,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     >
       <span>children</span>
     </SubsectionCard>
-  </SidebarProvider>,
+  </OutlineSidebarProvider>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
@@ -158,6 +159,10 @@ describe('<SubsectionCard />', () => {
   });
 
   it('render SubsectionCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
     const { container } = renderComponent();
 
     expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();

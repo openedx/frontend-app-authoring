@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import { useToggle } from '@openedx/paragon';
 import { HelpOutline, Info } from '@openedx/paragon/icons';
 
@@ -25,6 +26,8 @@ interface OutlineSidebarContextData {
   open: () => void;
   toggle: () => void;
   sidebarPages: OutlineSidebarPages;
+  selectedContainerId?: string;
+  openContainerInfoSidebar: (containerId: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
@@ -34,6 +37,14 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
   const [isOpen, open, , toggle] = useToggle(true);
+
+  const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
+
+  const openContainerInfoSidebar = useCallback((containerId: string) => {
+    if (getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true') {
+      setSelectedContainerId(containerId);
+    }
+  }, [setSelectedContainerId]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
@@ -61,6 +72,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      openContainerInfoSidebar,
     }),
     [
       currentPageKey,
@@ -69,6 +82,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      openContainerInfoSidebar,
     ],
   );
 

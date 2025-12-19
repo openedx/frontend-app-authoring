@@ -29,7 +29,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -78,7 +78,7 @@ const SectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerId, openContainerInfoSidebar } = useSidebarContext();
+  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;

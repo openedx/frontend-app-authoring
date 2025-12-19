@@ -1,9 +1,10 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import SectionCard from './SectionCard';
-import { SidebarProvider } from '../common/context/SidebarContext';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -83,7 +84,7 @@ const section = {
 const onEditSectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <SidebarProvider>
+  <OutlineSidebarProvider>
     <SectionCard
       section={section}
       index={1}
@@ -106,7 +107,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     >
       <span>children</span>
     </SectionCard>
-  </SidebarProvider>,
+  </OutlineSidebarProvider>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
@@ -133,6 +134,10 @@ describe('<SectionCard />', () => {
   });
 
   it('render SectionCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
     const { container } = renderComponent();
 
     expect(screen.getByTestId('section-card-header')).toBeInTheDocument();

@@ -25,7 +25,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -72,7 +72,7 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const { selectedContainerId, openContainerInfoSidebar } = useSidebarContext();
+  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
