@@ -10,6 +10,11 @@ import OutlineSidebar from './OutlineSidebar';
 
 const courseId = 'course-v1:TestOrg+TestCourse+2023_1';
 
+// Mock the useCourseDetails hook
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
+}));
+
 const renderComponent = () => render(
   <OutlineSidebar courseId={courseId} />,
   { extraWrapper: OutlineSidebarProvider },
@@ -36,7 +41,7 @@ describe('<OutlineSidebar>', () => {
 
     // Check that the new sidebar is rendered, with the Info page
     await waitFor(() => {
-      expect(screen.getByText('Course 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Course')).toBeInTheDocument();
     });
 
     const sidebarToggle = screen.getByTestId('sidebar-toggle');
@@ -48,14 +53,14 @@ describe('<OutlineSidebar>', () => {
     await userEvent.click(toggleButton);
 
     // Check that there are no more Info sidebar elements
-    expect(screen.queryByText('Course 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test Course')).not.toBeInTheDocument();
 
     // Show the sidebar
     await userEvent.click(toggleButton);
 
     // Check that the new sidebar is rendered, with the Info page
     await waitFor(() => {
-      expect(screen.getByText('Course 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Course')).toBeInTheDocument();
     });
 
     // Change page

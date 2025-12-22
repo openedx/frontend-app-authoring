@@ -6,11 +6,13 @@ import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
+import { useCourseDetails } from '../data/apiHooks';
 
 import messages from './messages';
 
 export const OutlineInfoSidebar = ({ courseId }: { courseId: string }) => {
   const intl = useIntl();
+  const { data: courseDetails } = useCourseDetails(courseId);
 
   const { data: componentData } = useGetBlockTypes(
     [`context_key = "${courseId}"`],
@@ -19,7 +21,7 @@ export const OutlineInfoSidebar = ({ courseId }: { courseId: string }) => {
   return (
     <div>
       <SidebarTitle
-        title="Course 1"
+        title={courseDetails?.title || ''}
         icon={SchoolOutline}
       />
       <SidebarContent>
