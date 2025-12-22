@@ -1,6 +1,11 @@
-import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  skipToken, useMutation, useQuery,
+} from '@tanstack/react-query';
 import { createCourseXblock } from '@src/course-unit/data/api';
-import { getCourseDetails, getCourseItem } from './api';
+import {
+  getCourseDetails,
+  getCourseItem,
+} from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -10,6 +15,12 @@ export const courseOutlineQueryKeys = {
   contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
   courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
   courseDetails: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId, 'details'],
+  legacyLibReadyToMigrateBlocks: (courseId: string) => [...courseOutlineQueryKeys.all, courseId, 'legacyLibReadyToMigrateBlocks'],
+  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
+    ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
+    'status',
+    { taskId },
+  ],
 };
 
 /**

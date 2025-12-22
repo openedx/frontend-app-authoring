@@ -121,6 +121,41 @@ const messages = defineMessages({
     defaultMessage: 'View Section in Course',
     description: 'Label of the button to see the section in the course',
   },
+  legacyLibReadyToMigrateAlertTitle: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.title',
+    defaultMessage: 'This course contains {count, plural, one {# legacy library reference} other {# legacy library references}}',
+    description: 'Title of alert shown when course contains legacy library content references',
+  },
+  legacyLibReadyToMigrateAlertDescription: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.description',
+    defaultMessage: 'Legacy library references will no longer be supported and need to be updated to receive future changes.',
+    description: 'Description of alert shown when course contains legacy library content references',
+  },
+  legacyLibReadyToMigrateAlertLearnMoreBtn: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.learnMoreBtn',
+    defaultMessage: 'Learn more',
+    description: 'Learn more button text of alert shown when course contains legacy library content references',
+  },
+  legacyLibReadyToMigrateAlertActionBtn: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.actionBtn',
+    defaultMessage: 'Update library references',
+    description: 'Action button text of alert shown when course contains legacy library content references',
+  },
+  legacyLibReadyToMigrateTaskCompleted: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.completed',
+    defaultMessage: 'Successfully updated all legacy library references',
+    description: 'Toast text when all legacy library references are updated.',
+  },
+  legacyLibReadyToMigrateTaskFailed: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.failed',
+    defaultMessage: 'Failed to update legacy library references',
+    description: 'Toast text when legacy library references fail to update.',
+  },
+  legacyLibReadyToMigrateTaskInProgress: {
+    id: 'course-authoring.course-libraries.legacyLibReadyToMigrate.alert.task.in-progress',
+    defaultMessage: 'Updating library references...',
+    description: 'Toast text when updating legacy library references is in progress.',
+  },
 });
 
 export default messages;

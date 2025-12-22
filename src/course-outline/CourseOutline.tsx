@@ -41,6 +41,7 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
@@ -306,6 +307,7 @@ const CourseOutline = () => {
             savingStatus={savingStatus}
             errors={errors}
           />
+          <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
