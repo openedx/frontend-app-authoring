@@ -39,7 +39,7 @@ const EmptyState = ({ hasSearchQuery }: EmptyStateProps) => (
 );
 
 interface SelectLibraryProps {
-  selectedLibrary: string;
+  selectedLibrary: string | undefined;
   setSelectedLibrary: (libraryKey: string) => void;
   itemType: ContentType;
 }
