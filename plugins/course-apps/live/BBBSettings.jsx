@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, getExternalLinkUrl } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@openedx/paragon';
 import PropTypes from 'prop-types';
@@ -93,7 +93,7 @@ const BbbSettings = ({
               <span data-testid="free-plan-message">
                 {intl.formatMessage(messages.freePlanMessage)}
                 <Hyperlink
-                  destination="https://bigbluebutton.org/privacy-policy/"
+                  destination={getExternalLinkUrl('https://bigbluebutton.org/privacy-policy/')}
                   target="_blank"
                   rel="noopener noreferrer"
                   showLaunchIcon
