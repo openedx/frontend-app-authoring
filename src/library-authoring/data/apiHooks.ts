@@ -165,8 +165,7 @@ export function invalidateComponentData(queryClient: QueryClient, contentLibrary
 export const useContentLibrary = (libraryId: string | undefined) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
-    queryFn: () => api.getContentLibrary(libraryId!),
-    enabled: libraryId !== undefined,
+    queryFn: libraryId ? () => api.getContentLibrary(libraryId!): skipToken,
   })
 );
 

@@ -268,7 +268,7 @@ const CourseOutline = () => {
 
   if (isLoadingDenied) {
     return (
-      <Container size="xl" className="px-4 mt-4">
+      <Container fluid className="px-4 mt-4">
         <PageAlerts
           courseId={courseId}
           notificationDismissUrl={notificationDismissUrl}
@@ -291,7 +291,7 @@ const CourseOutline = () => {
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
-      <Container size="xl" className="px-4">
+      <Container fluid className="px-4">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
             courseId={courseId}

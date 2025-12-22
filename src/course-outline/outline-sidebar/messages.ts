@@ -70,6 +70,11 @@ const messages = defineMessages({
     defaultMessage: 'Help',
     description: 'Button label for the help sidebar',
   },
+  sidebarButtonAdd: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-add',
+    defaultMessage: 'Add',
+    description: 'Button text for add button in sidebar',
+  },
   sidebarButtonInfo: {
     id: 'course-authoring.course-outline.sidebar.sidebar-button-info',
     defaultMessage: 'Info',
