@@ -1,24 +1,28 @@
-import { useContext } from 'react';
 import moment from 'moment/moment';
-import PropTypes from 'prop-types';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
 import {
   Button, Hyperlink, Form, Stack, useToggle,
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
-import { AppContext } from '@edx/frontend-platform/react';
 
-import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
-import TagCount from '../../generic/tag-count';
-import { useHelpUrls } from '../../help-urls/hooks';
-import { useWaffleFlags } from '../../data/apiHooks';
-import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { useContentTagsCount } from '../../generic/data/apiHooks';
+import { ReactNode } from 'react';
+import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
+import TagCount from '@src/generic/tag-count';
+import { useHelpUrls } from '@src/help-urls/hooks';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
+import { useContentTagsCount } from '@src/generic/data/apiHooks';
+import { getVideoSharingOptionText } from '@src/course-outline/utils';
 import messages from './messages';
-import { getVideoSharingOptionText } from '../utils';
 
-const StatusBarItem = ({ title, children }) => (
+interface StatusBarItemProps {
+  title: string,
+  children: ReactNode,
+}
+
+const StatusBarItem = ({ title, children }: StatusBarItemProps) => (
   <div className="d-flex flex-column justify-content-between">
     <h5>{title}</h5>
     <div className="d-flex align-items-center">
@@ -27,24 +31,22 @@ const StatusBarItem = ({ title, children }) => (
   </div>
 );
 
-StatusBarItem.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.node,
-};
+export interface LegacyStatusBarProps {
+  courseId: string,
+  isLoading: boolean,
+  openEnableHighlightsModal: () => void,
+  handleVideoSharingOptionChange: (value: string) => void,
+  statusBarData: CourseOutlineStatusBar,
+}
 
-StatusBarItem.defaultProps = {
-  children: null,
-};
-
-const StatusBar = ({
+export const LegacyStatusBar = ({
   statusBarData,
   isLoading,
   courseId,
   openEnableHighlightsModal,
   handleVideoSharingOptionChange,
-}) => {
+}: LegacyStatusBarProps) => {
   const intl = useIntl();
-  const { config } = useContext(AppContext);
   const waffleFlags = useWaffleFlags(courseId);
 
   const {
@@ -65,7 +67,7 @@ const StatusBar = ({
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
-  const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
+  const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
   const {
     contentHighlights: contentHighlightsUrl,
@@ -90,7 +92,7 @@ const StatusBar = ({
           >
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate
-                value={courseReleaseDateObj}
+                value={courseReleaseDateObj.toString()}
                 year="numeric"
                 month="short"
                 day="2-digit"
@@ -139,7 +141,7 @@ const StatusBar = ({
         {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
           <StatusBarItem title={intl.formatMessage(messages.courseTagsTitle)}>
             <div className="d-flex align-items-center">
-              <TagCount count={courseTagCount} />
+              <TagCount count={courseTagCount || 0} />
               { /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
               <a
                 className="small ml-2"
@@ -164,7 +166,7 @@ const StatusBar = ({
               <Form.Control
                 as="select"
                 defaultValue={videoSharingOptions}
-                onChange={(e) => handleVideoSharingOptionChange(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleVideoSharingOptionChange(e.target.value)}
               >
                 {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
                   <option
@@ -196,25 +198,3 @@ const StatusBar = ({
     </>
   );
 };
-
-StatusBar.propTypes = {
-  courseId: PropTypes.string.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  openEnableHighlightsModal: PropTypes.func.isRequired,
-  handleVideoSharingOptionChange: PropTypes.func.isRequired,
-  statusBarData: PropTypes.shape({
-    courseReleaseDate: PropTypes.string.isRequired,
-    isSelfPaced: PropTypes.bool.isRequired,
-    checklist: PropTypes.shape({
-      totalCourseLaunchChecks: PropTypes.number.isRequired,
-      completedCourseLaunchChecks: PropTypes.number.isRequired,
-      totalCourseBestPracticesChecks: PropTypes.number.isRequired,
-      completedCourseBestPracticesChecks: PropTypes.number.isRequired,
-    }),
-    highlightsEnabledForMessaging: PropTypes.bool.isRequired,
-    videoSharingEnabled: PropTypes.bool.isRequired,
-    videoSharingOptions: PropTypes.string.isRequired,
-  }).isRequired,
-};
-
-export default StatusBar;

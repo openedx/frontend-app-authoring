@@ -28,6 +28,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
+  const { readOnly } = useLibraryContext();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
   const {
@@ -90,9 +91,11 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
           <Dropdown.Item onClick={openCollection}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={openDeleteModal}>
-            <FormattedMessage {...messages.deleteCollection} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={openDeleteModal}>
+              <FormattedMessage {...messages.deleteCollection} />
+            </Dropdown.Item>
+          )}
         </Dropdown.Menu>
       </Dropdown>
       <DeleteModal

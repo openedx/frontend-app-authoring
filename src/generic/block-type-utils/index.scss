@@ -198,28 +198,3 @@
     }
   }
 }
-
-.component-style-import-placeholder {
-  background-color: #AB0E01;
-
-  .pgn__icon:not(.btn-icon-before) {
-    color: white;
-  }
-
-  .btn-icon {
-    &:hover, &:active, &:focus {
-      background-color: darken(#AB0E01, 15%);
-    }
-  }
-
-  .btn {
-    background-color: lighten(#AB0E01, 10%);
-    border: 0;
-
-    &:hover, &:active, &:focus {
-      background-color: lighten(#AB0E01, 20%);
-      border: 1px solid var(--pgn-color-primary-base);
-      margin: -1px;
-    }
-  }
-}
