@@ -61,6 +61,18 @@ describe('<AccessibilityPolicyForm />', () => {
       submitButton = screen.getByText(messages.accessibilityPolicyFormSubmitLabel.defaultMessage);
     });
 
+    it('renders in progress state', async () => {
+      axiosMock.onPost(getZendeskrUrl()).reply(
+        () => new Promise(() => {
+          // always in pending
+        }),
+      );
+
+      await user.click(submitButton);
+
+      expect(screen.getByRole('button', { name: /submitting/i })).toBeInTheDocument();
+    });
+
     it('shows correct success message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(200);
 

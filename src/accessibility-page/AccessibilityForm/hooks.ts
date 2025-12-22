@@ -29,6 +29,7 @@ const useAccessibility = (initialValues: AccessibilityFormData) => {
     enableReinitialize: true,
     validateOnBlur: false,
     validationSchema,
+    /* istanbul ignore next */
     onSubmit: () => {},
   });
 
