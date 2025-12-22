@@ -21,7 +21,6 @@ import {
   Plus,
   ExpandMore,
   ExpandLess,
-  InsertPhoto,
   MoreHoriz,
   InfoOutline,
   Check,
@@ -42,6 +41,7 @@ import SettingsOption from '../ProblemEditor/components/EditProblemView/Settings
 import Button from '../../sharedComponents/Button';
 import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
+import PictureIcon from './PictureIcon';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => {
@@ -201,6 +201,20 @@ export const GameEditor = ({
     });
 
     setValidationErrors(errors);
+
+    if (!hasErrors) {
+      let filteredList = list;
+      if (type === 'matching') {
+        filteredList = list.filter(card => card.term.trim() !== '' || card.definition.trim() !== '');
+      } else {
+        filteredList = list.filter(card => card.term.trim() !== '' || card.definition.trim() !== '' || card.term_image !== '' || card.definition_image !== '');
+      }
+
+      if (list.length === 0) { return false; }
+      setList(filteredList);
+    }
+
+    if (list.length === 0) { return false; }
     return !hasErrors;
   }, [list, type]);
 
@@ -283,10 +297,10 @@ export const GameEditor = ({
 
   const renderImageUploadButton = useCallback((index, imageType) => (
     <IconButton
-      src={InsertPhoto}
+      src={PictureIcon}
       iconAs={Icon}
       alt="IMG"
-      variant="primary"
+      variant="dark"
       onClick={() => document.getElementById(`${imageType}_image_upload|${index}`).click()}
     />
   ), []);
@@ -340,10 +354,7 @@ export const GameEditor = ({
               </Tooltip>
             )}
           >
-            <Icon
-              src={InfoOutline}
-              className="ml-2"
-            />
+            <Icon src={InfoOutline} />
           </OverlayTrigger>
         </div>
         <DraggableList
@@ -358,6 +369,7 @@ export const GameEditor = ({
                 id={card.id}
                 key={card.id}
                 buttonClassName="draggable-button"
+                buttonVariant="secondary"
                 actionStyle={{
                   position: 'absolute',
                   top: '12px',
@@ -367,7 +379,6 @@ export const GameEditor = ({
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
-                  marginBottom: '16px',
                   boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15)',
                   position: 'relative',
                   width: '100%',
@@ -401,10 +412,21 @@ export const GameEditor = ({
                           <span className="align-middle">
                             <span className="preview-term">
                               {type === 'flashcards' ? (
-                                <span className="d-inline-block align-middle pr-2">
+                                <span className={`d-flex align-items-center mr-2 img-preview-wrapper ${card.term_image !== '' ? 'with-img' : 'with-icon'}`}>
                                   {card.term_image !== ''
                                     ? <img className="img-preview" src={card.term_image} alt="TERM_IMG_PRV" />
-                                    : <Icon className="img-preview" src={InsertPhoto} />}
+                                    : (
+                                      <OverlayTrigger
+                                        placement="top"
+                                        overlay={(
+                                          <Tooltip id="no-term-image-tooltip">
+                                            {intl.formatMessage(messages.noImageLabel)}
+                                          </Tooltip>
+                                        )}
+                                      >
+                                        <Icon className="img-preview" src={PictureIcon} />
+                                      </OverlayTrigger>
+                                    )}
                                 </span>
                               )
                                 : ''}
@@ -412,10 +434,21 @@ export const GameEditor = ({
                             </span>
                             <span className="preview-definition">
                               {type === 'flashcards' ? (
-                                <span className="d-inline-block align-middle pr-2">
+                                <span className={`d-flex align-items-center mr-2 img-preview-wrapper ${card.definition_image !== '' ? 'with-img' : 'with-icon'}`}>
                                   {card.definition_image !== ''
                                     ? <img className="img-preview" src={card.definition_image} alt="DEF_IMG_PRV" />
-                                    : <Icon className="img-preview" src={InsertPhoto} />}
+                                    : (
+                                      <OverlayTrigger
+                                        placement="top"
+                                        overlay={(
+                                          <Tooltip id="no-definition-image-tooltip">
+                                            {intl.formatMessage(messages.noImageLabel)}
+                                          </Tooltip>
+                                        )}
+                                      >
+                                        <Icon className="img-preview" src={PictureIcon} />
+                                      </OverlayTrigger>
+                                    )}
                                 </span>
                               )
                                 : ''}
@@ -619,7 +652,7 @@ export const GameEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         {Object.keys(validationErrors).length > 0 && (
-          <Alert variant="danger" className="mt-2" icon={Info}>
+          <Alert variant="danger" className="mt-2" icon={Info} dismissible>
             <Alert.Heading className="font-size-normal">{intl.formatMessage(messages.validationErrorHeading)}</Alert.Heading>
             <p>{intl.formatMessage(messages.validationErrorAlert)}</p>
           </Alert>
