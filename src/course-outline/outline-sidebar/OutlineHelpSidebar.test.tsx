@@ -1,8 +1,12 @@
-import { initializeMocks, render, waitFor } from '../../testUtils';
-import { helpUrls } from '../../help-urls/__mocks__';
-import { getHelpUrlsApiUrl } from '../../help-urls/data/api';
+import { initializeMocks, render, waitFor } from '@src/testUtils';
+import { helpUrls } from '@src/help-urls/__mocks__';
+import { getHelpUrlsApiUrl } from '@src/help-urls/data/api';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import messages from './messages';
+
+const courseId = '123';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -11,11 +15,16 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+const extraWrapper = ({ children }) => (
+  <CourseAuthoringProvider courseId={courseId}>
+    {children}
+  </CourseAuthoringProvider>
+);
+
 let axiosMock;
 const mockPathname = '/foo-bar';
-const courseId = '123';
 
-const renderComponent = () => render(<OutlineHelpSidebar courseId={courseId} />, { path: mockPathname });
+const renderComponent = () => render(<OutlineHelpSidebar />, { path: mockPathname, extraWrapper });
 
 describe('<OutlineSidebar />', () => {
   beforeEach(() => {

@@ -4,20 +4,29 @@ import { userEvent } from '@testing-library/user-event';
 import {
   initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import OutlineSidebar from './OutlineSidebar';
-
-const courseId = 'course-v1:TestOrg+TestCourse+2023_1';
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
 }));
 
+const courseId = '123';
+
+const extraWrapper = ({ children }) => (
+  <CourseAuthoringProvider courseId={courseId}>
+    <OutlineSidebarProvider>
+      {children}
+    </OutlineSidebarProvider>
+  </CourseAuthoringProvider>
+);
+
 const renderComponent = () => render(
-  <OutlineSidebar courseId={courseId} />,
-  { extraWrapper: OutlineSidebarProvider },
+  <OutlineSidebar />,
+  { extraWrapper },
 );
 
 describe('<OutlineSidebar>', () => {

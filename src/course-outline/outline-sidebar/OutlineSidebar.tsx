@@ -7,11 +7,7 @@ import { Sidebar } from '@src/generic/sidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
-interface OutlineSideBarProps {
-  courseId: string;
-}
-
-const OutlineSideBar = ({ courseId }: OutlineSideBarProps) => {
+const OutlineSideBar = () => {
   const isMedium = useMediaQuery({ maxWidth: breakpoints.medium.maxWidth });
   const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
 
@@ -29,7 +25,7 @@ const OutlineSideBar = ({ courseId }: OutlineSideBarProps) => {
     const colSpan = isMedium ? 'col-12' : 'col-3';
     return (
       <div className={colSpan}>
-        <OutlineHelpSidebar courseId={courseId} />
+        <OutlineHelpSidebar />
       </div>
     );
   }
@@ -41,7 +37,6 @@ const OutlineSideBar = ({ courseId }: OutlineSideBarProps) => {
       setCurrentPageKey={setCurrentPageKey}
       isOpen={isOpen}
       toggle={toggle}
-      contentProps={{ courseId }}
     />
   );
 };
