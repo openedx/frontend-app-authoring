@@ -1,6 +1,7 @@
 .sidebar {
   .sidebar-content {
-      width: 400px;
+    flex: 0 1 auto;
+    max-width: 750px;
   }
 
   .dropdown-toggle {
@@ -38,8 +39,9 @@
       &:hover {
         border-width: 2px;
       }
-      
-      &.btn-icon-primary-active::before {
+
+      // Add a triangle to the active button
+      &.btn-icon-primary-active:before {
         content: "";
         border-right: 5px solid var(--pgn-color-primary-base);
         border-top: 5px solid transparent;

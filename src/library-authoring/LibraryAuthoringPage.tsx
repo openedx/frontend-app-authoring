@@ -163,6 +163,7 @@ const LibraryAuthoringPage = ({
   const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
   const {
     libraryId,
+    libraryIds,
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
@@ -223,7 +224,7 @@ const LibraryAuthoringPage = ({
   }, [navigateTo]);
 
   // Verify the migration task status
-  if (migrationId) {
+  if (migrationId && libraryId) {
     let deleteMigrationIdParam = false;
     if (migrationStatusData?.state === 'Succeeded') {
       // Check if any library migrations failed.
@@ -273,7 +274,7 @@ const LibraryAuthoringPage = ({
     );
   }
 
-  if (!libraryData) {
+  if (libraryId && !libraryData) {
     return <NotFoundAlert />;
   }
 
@@ -289,7 +290,13 @@ const LibraryAuthoringPage = ({
     />
   ) : undefined;
 
-  const extraFilter = [`context_key = "${libraryId}"`];
+  let extraFilter: string[] = [];
+  if (libraryId) {
+    extraFilter.push(`context_key = "${libraryId}"`);
+  }
+  if (libraryIds && libraryIds.length > 0) {
+    extraFilter.push(`context_key IN ["${libraryIds.join('","')}"]`);
+  }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }
@@ -336,32 +343,38 @@ const LibraryAuthoringPage = ({
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-        {!componentPickerMode && (
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            readOnly={readOnly}
-            isLibrary
-            containerProps={{
-              size: undefined,
-            }}
-          />
-        )}
+        {libraryData &&
+          <>
+            <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+            {!componentPickerMode && (
+              <Header
+                number={libraryData.slug}
+                title={libraryData.title}
+                org={libraryData.org}
+                contextId={libraryId}
+                readOnly={readOnly}
+                isLibrary
+                containerProps={{
+                  size: undefined,
+                }}
+              />
+            )}
+          </>
+        }
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
           >
-            <SubHeader
-              title={<SubHeaderTitle title={libraryData.title} />}
-              subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
-              breadcrumbs={breadcumbs}
-              headerActions={<HeaderActions />}
-              hideBorder
-            />
+            {libraryData &&
+              <SubHeader
+                title={<SubHeaderTitle title={libraryData.title} />}
+                subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
+                breadcrumbs={breadcumbs}
+                headerActions={<HeaderActions />}
+                hideBorder
+              />
+            }
             {visibleTabs.length > 1 && (
               <Tabs
                 variant="tabs"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack } from '@openedx/paragon';
 
 interface SidebarContentProps {
-  children: React.ReactNode | React.ReactNode[],
+  children: React.ReactNode | React.ReactNode[];
 }
 
 /**
