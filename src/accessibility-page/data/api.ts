@@ -8,12 +8,20 @@ ensureConfig([
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getZendeskrUrl = () => `${getApiBaseUrl()}/zendesk_proxy/v0`;
 
+export interface AccessibilityFormData {
+  name: string;
+  email: string;
+  message: string;
+}
+
 /**
  * Posts the form data to zendesk endpoint
- * @param {string} courseId
- * @returns {Promise<[{}]>}
  */
-export async function postAccessibilityForm({ name, email, message }) {
+export async function postAccessibilityForm({
+  name,
+  email,
+  message,
+}: AccessibilityFormData) {
   const data = {
     name,
     tags: ['studio_a11y'],

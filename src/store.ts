@@ -23,7 +23,6 @@ import { reducer as videosReducer } from './files-and-videos/videos-page/data/sl
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
 import { reducer as courseChecklistReducer } from './course-checklist/data/slice';
-import { reducer as accessibilityPageReducer } from './accessibility-page/data/slice';
 import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
@@ -55,7 +54,6 @@ export interface DeprecatedReduxState {
   courseOutline: Record<string, any>;
   courseUnit: Record<string, any>;
   courseChecklist: Record<string, any>;
-  accessibilityPage: Record<string, any>;
   certificates: Record<string, any>;
   groupConfigurations: InferState<typeof groupConfigurationsReducer>;
   textbooks: Record<string, any>;
@@ -84,7 +82,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
       courseChecklist: courseChecklistReducer,
-      accessibilityPage: accessibilityPageReducer,
       certificates: certificatesReducer,
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,

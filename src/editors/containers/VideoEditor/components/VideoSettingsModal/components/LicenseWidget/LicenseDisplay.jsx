@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import {
   Stack,
   Hyperlink,
@@ -30,7 +31,7 @@ const LicenseDisplay = ({
         {license === LicenseTypes.creativeCommons && (
           <Hyperlink
             className="text-primary-500 x-small"
-            destination="https://creativecommons.org/about"
+            destination={getExternalLinkUrl('https://creativecommons.org/about')}
             target="_blank"
           >
             <FormattedMessage {...messages.viewLicenseDetailsLabel} />

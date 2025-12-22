@@ -2191,7 +2191,7 @@ describe('<CourseUnit />', () => {
 
       const currentSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
       const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
-      const helpLinkUrl = 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components';
+      const helpLinkUrl = 'https://docs.openedx.org/en/latest/educators/references/course_development/parent_child_components.html';
 
       await waitFor(() => {
         const unitHeaderTitle = screen.getByTestId('unit-header-title');

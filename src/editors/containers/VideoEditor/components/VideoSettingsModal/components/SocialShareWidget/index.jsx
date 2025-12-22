@@ -5,6 +5,7 @@ import {
   FormattedMessage,
   useIntl,
 } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import {
   Hyperlink,
   Form,
@@ -30,7 +31,7 @@ const SocialShareWidget = ({
   const intl = useIntl();
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
-  const learnMoreLink = videoSharingLearnMoreLink || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
+  const learnMoreLink = videoSharingLearnMoreLink || getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html');
   const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
   const getSubtitle = () => {

@@ -17,6 +17,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     studioHomeData: {},
     studioHomeCoursesRequestParams: {
       currentPage: 1,
+      pageSize: 10,
       search: '',
       order: 'display_name',
       archivedOnly: undefined,
@@ -30,6 +31,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     ...initialState,
     studioHomeCoursesRequestParams: {
       currentPage: 2,
+      pageSize: 10,
       search: 'test',
       order: 'display_name',
       archivedOnly: true,
@@ -41,6 +43,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
 
   const payload = {
     currentPage: 2,
+    pageSize: 10,
     search: 'test',
     order: 'display_name',
     archivedOnly: true,

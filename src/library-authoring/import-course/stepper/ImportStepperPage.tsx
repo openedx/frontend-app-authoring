@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -7,17 +7,19 @@ import {
 } from '@openedx/paragon';
 
 import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
-import { useStudioHome } from '@src/studio-home/hooks';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import Loading from '@src/generic/Loading';
 
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import { ToastContext } from '@src/generic/toast-context';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
+import {
+  CourseImportFilterProvider,
+  useCourseImportFilter,
+} from '@src/studio-home/tabs-section/courses-tab/courses-filters/courses-imported-filter-modal/context';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
@@ -26,29 +28,11 @@ type MigrationStep = 'select-course' | 'review-details';
 
 export const MigrationStatus = ({
   courseId,
-  allVisibleCourseIds,
 }: MigrationStatusProps) => {
   const { libraryId } = useLibraryContext();
+  const { processedMigrationInfo } = useCourseImportFilter() || {};
 
-  const {
-    data: migrationInfoData,
-  } = useMigrationInfo(allVisibleCourseIds);
-
-  const processedMigrationInfo = useMemo(() => {
-    const result = {};
-    if (migrationInfoData) {
-      for (const libraries of Object.values(migrationInfoData)) {
-        // The map key in `migrationInfoData` is in camelCase.
-        // In the processed map, we use the key in its original form.
-        result[libraries[0].sourceKey] = libraries.map(item => item.targetKey);
-      }
-    }
-    return result;
-  }, [migrationInfoData]);
-
-  const isPreviouslyMigrated = (
-    courseId in processedMigrationInfo && processedMigrationInfo[courseId].includes(libraryId)
-  );
+  const isPreviouslyMigrated = processedMigrationInfo?.[courseId]?.includes(libraryId);
 
   if (!isPreviouslyMigrated) {
     return null;
@@ -56,7 +40,7 @@ export const MigrationStatus = ({
 
   return (
     <div
-      key={`${courseId}-${processedMigrationInfo[courseId].join('-')}`}
+      key={`${courseId}-${processedMigrationInfo?.[courseId].join('-')}`}
       className="previously-migrated-chip"
     >
       <Chip>
@@ -70,7 +54,7 @@ export const ImportStepperPage = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
-  const [selectedCourseId, setSelectedCourseId] = useState<string>();
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
   const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
@@ -79,11 +63,8 @@ export const ImportStepperPage = () => {
   // TODO: Modify single migration API to allow create collection
   const migrate = useBulkModulestoreMigrate();
 
-  // Load the courses list
-  // The loading state is handled in `CoursesList`
-  useStudioHome();
-
   const handleImportCourse = async () => {
+    // istanbul ignore if: this can never happen, just for satisfying type checker.
     if (!selectedCourseId) {
       return;
     }
@@ -140,11 +121,16 @@ export const ImportStepperPage = () => {
                     eventKey="select-course"
                     title={intl.formatMessage(messages.importCourseSelectCourseStep)}
                   >
-                    <CoursesList
+                    <CourseImportFilterProvider
                       selectedCourseId={selectedCourseId}
                       handleSelect={setSelectedCourseId}
-                      cardMigrationStatusWidget={MigrationStatus}
-                    />
+                    >
+                      <CoursesList
+                        selectedCourseId={selectedCourseId}
+                        handleSelect={setSelectedCourseId}
+                        cardMigrationStatusWidget={MigrationStatus}
+                      />
+                    </CourseImportFilterProvider>
                   </Stepper.Step>
                   <Stepper.Step
                     eventKey="review-details"
@@ -165,7 +151,7 @@ export const ImportStepperPage = () => {
                     </Button>
                     <Button
                       onClick={() => setCurrentStep('review-details')}
-                      disabled={selectedCourseId === undefined}
+                      disabled={!selectedCourseId}
                     >
                       <FormattedMessage {...messages.importCourseNext} />
                     </Button>

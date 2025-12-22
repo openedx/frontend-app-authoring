@@ -252,7 +252,7 @@ export class OLXParser {
       choice.forEach((element, index) => {
         const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
         const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
-        let title = element['#text'];
+        let title = String(element['#text']);
 
         if (isComplexAnswer && preservedAnswer) {
           title = this.richTextBuilder.build(preservedAnswer);
@@ -272,7 +272,7 @@ export class OLXParser {
     } else {
       const preservedAnswer = preservedAnswers[0].filter(answer => !Object.keys(answer).includes(`${option}hint`));
       const preservedFeedback = preservedAnswers[0].filter(answer => Object.keys(answer).includes(`${option}hint`));
-      let title = choice['#text'];
+      let title = String(choice['#text']);
 
       if (isComplexAnswer && preservedAnswer) {
         title = this.richTextBuilder.build(preservedAnswer);

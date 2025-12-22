@@ -9,6 +9,14 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.schedule-section.datepicker.utc',
     defaultMessage: 'UTC',
   },
+  timepickerAriaLabel: {
+    id: 'course-authoring.schedule.schedule-section.timepicker.aria-label',
+    defaultMessage: 'Time input field. Enter a time or use the arrow keys to adjust.',
+  },
+  timepickerScreenreaderHint: {
+    id: 'course-authoring.schedule.schedule-section.timepicker.screenreader-hint',
+    defaultMessage: 'Enter time in {timeFormat} or twelve-hour format, for example 6:00 PM.',
+  },
 });
 
 export default messages;

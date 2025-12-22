@@ -945,6 +945,38 @@ export const numberParseTestOLX = {
   </problem>`,
 };
 
+export const numericTextCoercionTestOLX = {
+  rawOLX: `<problem>
+  <multiplechoiceresponse>
+  <p>Select the correct number:</p>
+  <choicegroup type="MultipleChoice">
+      <choice correct="false">123</choice>
+      <choice correct="true">456</choice>
+      <choice correct="false">789</choice>
+    </choicegroup>
+  </multiplechoiceresponse>
+  </problem>`,
+  data: {
+    answers: [
+      {
+        id: 'A',
+        title: '123',
+        correct: false,
+      },
+      {
+        id: 'B',
+        title: '456',
+        correct: true,
+      },
+      {
+        id: 'C',
+        title: '789',
+        correct: false,
+      },
+    ],
+  },
+};
+
 export const solutionExplanationTest = {
   rawOLX: `<problem>
       How <code class="lang-matlab">99</code> long is the array <code class="lang-matlab">q</code> after the following loop runs?

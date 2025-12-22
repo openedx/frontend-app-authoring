@@ -1,5 +1,5 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
 import { Container } from '@openedx/paragon';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
@@ -23,9 +23,12 @@ const AccessibilityPage = () => {
         </title>
       </Helmet>
       <Header isHiddenMainMenu />
-      <Container size="xl" classNamae="px-4">
+      <Container size="xl" className="px-4">
         <AccessibilityBody
-          {...{ email: ACCESSIBILITY_EMAIL, communityAccessibilityLink: COMMUNITY_ACCESSIBILITY_LINK }}
+          {...{
+            email: ACCESSIBILITY_EMAIL,
+            communityAccessibilityLink: getExternalLinkUrl(COMMUNITY_ACCESSIBILITY_LINK),
+          }}
         />
         <AccessibilityForm accessibilityEmail={ACCESSIBILITY_EMAIL} />
       </Container>
@@ -33,7 +36,5 @@ const AccessibilityPage = () => {
     </>
   );
 };
-
-AccessibilityPage.propTypes = {};
 
 export default AccessibilityPage;

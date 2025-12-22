@@ -1,4 +1,3 @@
-// @ts-check
 import { initializeMocks, render, screen } from '../testUtils';
 import AccessibilityPage from './index';
 
