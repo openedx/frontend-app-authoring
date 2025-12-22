@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import React, { useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -45,14 +45,24 @@ import PictureIcon from './PictureIcon';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => {
-    // Filter out completely blank cards before saving (no text and no images)
-    const filledCards = list.filter((card) => {
-      const termText = (card.term || '').trim();
-      const definitionText = (card.definition || '').trim();
-      const hasText = termText !== '' || definitionText !== '';
-      const hasImages = !!card.term_image || !!card.definition_image;
-      return hasText || hasImages;
-    });
+    // Filter out cards based on game type requirements
+    let filledCards;
+
+    if (type === 'matching') {
+      filledCards = list.filter((card) => {
+        const termText = (card.term || '').trim();
+        const definitionText = (card.definition || '').trim();
+        return termText !== '' || definitionText !== '';
+      });
+    } else {
+      filledCards = list.filter((card) => {
+        const termText = (card.term || '').trim();
+        const definitionText = (card.definition || '').trim();
+        const hasText = termText !== '' || definitionText !== '';
+        const hasImages = !!card.term_image || !!card.definition_image;
+        return hasText || hasImages;
+      });
+    }
 
     return {
       gameType: type,
@@ -90,19 +100,20 @@ export const GameEditor = ({
   isDirty,
 }) => {
   const intl = useIntl();
-  const [cardsData, setCardsData] = React.useState(list);
-  const [settingsLoaded, setSettingsLoaded] = React.useState(false);
-  const [validationErrors, setValidationErrors] = React.useState({});
-  const [localInputValues, setLocalInputValues] = React.useState({});
+  const [cardsData, setCardsData] = useState(list);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [localInputValues, setLocalInputValues] = useState({});
+  const [isAlertVisible, setIsAlertVisible] = useState(true);
 
   const MAX_TERM_LENGTH = 120;
   const MAX_DEFINITION_LENGTH = 120;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCardsData(list);
   }, [list]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
       loadGamesSettings();
       setSettingsLoaded(true);
@@ -114,7 +125,7 @@ export const GameEditor = ({
     return localInputValues[key] !== undefined ? localInputValues[key] : cardsData[index]?.[field] || '';
   };
 
-  const handleInputChange = React.useCallback((index, field, value) => {
+  const handleInputChange = useCallback((index, field, value) => {
     const key = `${index}_${field}`;
 
     setLocalInputValues(prev => ({ ...prev, [key]: value }));
@@ -129,7 +140,7 @@ export const GameEditor = ({
     });
   }, []);
 
-  const handleInputBlur = React.useCallback((index, field) => {
+  const handleInputBlur = useCallback((index, field) => {
     const key = `${index}_${field}`;
     const value = localInputValues[key];
 
@@ -202,21 +213,32 @@ export const GameEditor = ({
 
     setValidationErrors(errors);
 
-    if (!hasErrors) {
-      let filteredList = list;
-      if (type === 'matching') {
-        filteredList = list.filter(card => card.term.trim() !== '' || card.definition.trim() !== '');
-      } else {
-        filteredList = list.filter(card => card.term.trim() !== '' || card.definition.trim() !== '' || card.term_image !== '' || card.definition_image !== '');
-      }
-
-      if (list.length === 0) { return false; }
-      setList(filteredList);
-    }
-
     if (list.length === 0) { return false; }
     return !hasErrors;
   }, [list, type]);
+
+  // Show alert when new validation errors appear
+  useEffect(() => {
+    if (Object.keys(validationErrors).length > 0) {
+      setIsAlertVisible(true);
+    }
+  }, [validationErrors]);
+
+  useEffect(() => {
+    if (Object.keys(validationErrors).length > 0) {
+      const cardsWithErrors = new Set();
+      Object.keys(validationErrors).forEach(key => {
+        const index = parseInt(key.split('_')[0], 10);
+        cardsWithErrors.add(index);
+      });
+
+      cardsWithErrors.forEach(index => {
+        if (list[index] && !list[index].editorOpen) {
+          toggleOpen({ index, isOpen: true });
+        }
+      });
+    }
+  }, [validationErrors, list, toggleOpen]);
 
   const getDescriptionHeader = () => {
     switch (type) {
@@ -284,7 +306,7 @@ export const GameEditor = ({
 
   const renderImageDisplay = useCallback((imageUrl, index, imageType) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
-      <img className="card-image" src={`${getConfig().STUDIO_BASE_URL}${imageUrl}`} alt={`${imageType.toUpperCase()}_IMG`} />
+      <img className="card-image" src={imageUrl} alt={`${imageType.toUpperCase()}_IMG`} />
       <IconButton
         src={DeleteOutline}
         iconAs={Icon}
@@ -387,7 +409,7 @@ export const GameEditor = ({
               >
                 <Collapsible.Advanced
                   className="card"
-                  defaultOpen={card.editorOpen}
+                  open={card.editorOpen}
                   onToggle={(isOpen) => toggleOpen({ index, isOpen })}
                 >
                   <input
@@ -651,8 +673,14 @@ export const GameEditor = ({
       validateEntry={validateAllCards}
     >
       <div className="editor-body h-75 overflow-auto">
-        {Object.keys(validationErrors).length > 0 && (
-          <Alert variant="danger" className="mt-2" icon={Info} dismissible>
+        {Object.keys(validationErrors).length > 0 && isAlertVisible && (
+          <Alert
+            variant="danger"
+            className="mt-2"
+            icon={Info}
+            dismissible
+            onClose={() => setIsAlertVisible(false)}
+          >
             <Alert.Heading className="font-size-normal">{intl.formatMessage(messages.validationErrorHeading)}</Alert.Heading>
             <p>{intl.formatMessage(messages.validationErrorAlert)}</p>
           </Alert>
@@ -703,23 +731,15 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = {
-  initializeEditor: actions.app.initializeEditor,
-
   setShuffleStatus: actions.game.setShuffleStatus,
-
   setTimerStatus: actions.game.setTimerStatus,
-
   updateType: actions.game.updateType,
-
   updateTerm: actions.game.updateTerm,
-  updateTermImage: actions.game.updateTermImage,
   updateDefinition: actions.game.updateDefinition,
-  updateDefinitionImage: actions.game.updateDefinitionImage,
   toggleOpen: actions.game.toggleOpen,
   setList: actions.game.setList,
   addCard: actions.game.addCard,
   removeCard: actions.game.removeCard,
-
   loadGamesSettings: thunkActions.game.loadGamesSettings,
   uploadGameImage: thunkActions.game.uploadGameImage,
   deleteGameImage: thunkActions.game.deleteGameImage,

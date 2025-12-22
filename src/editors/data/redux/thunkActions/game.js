@@ -3,6 +3,7 @@ import * as requests from './requests';
 import { actions as gameActions } from '../game';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
+import { getConfig } from '@edx/frontend-platform';
 
 const actions = {
   game: gameActions,
@@ -67,7 +68,12 @@ export const uploadGameImage = ({ index, imageFile, imageType }) => (dispatch) =
     onSuccess: (response) => {
       // Extract the URL from the response
       // Response format: { success: true, url: "/media/games/...", filename: "..." }
-      const imageUrl = response.data?.url;
+      let imageUrl = response.data?.url;
+
+      // Check if URL is already complete (starts with http/https) or needs studio base URL
+      if (imageUrl && !imageUrl.startsWith('http')) {
+        imageUrl = `${getConfig().STUDIO_BASE_URL}${imageUrl}`;
+      }
 
       if (imageType === 'term') {
         dispatch(actions.game.updateTermImage({ index, termImage: imageUrl }));
