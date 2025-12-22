@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import {
   FormattedMessage, FormattedDate, FormattedTime, useIntl,
 } from '@edx/frontend-platform/i18n';
@@ -7,26 +5,22 @@ import {
   ActionRow, Alert, Form, Stack, StatefulButton,
 } from '@openedx/paragon';
 
-import { RequestStatus } from '../../data/constants';
-import { STATEFUL_BUTTON_STATES } from '../../constants';
-import submitAccessibilityForm from '../data/thunks';
+import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import useAccessibility from './hooks';
 import messages from './messages';
 
-const AccessibilityForm = ({
-  accessibilityEmail,
-}) => {
+const AccessibilityForm = ({ accessibilityEmail }: { accessibilityEmail: string }) => {
   const intl = useIntl();
   const {
     errors,
     values,
     isFormFilled,
-    dispatch,
+    mutation,
     handleBlur,
     handleChange,
     hasErrorField,
     savingStatus,
-  } = useAccessibility({ name: '', email: '', message: '' }, intl);
+  } = useAccessibility({ name: '', email: '', message: '' });
 
   const formFields = [
     {
@@ -55,7 +49,7 @@ const AccessibilityForm = ({
   };
 
   const handleSubmit = () => {
-    dispatch(submitAccessibilityForm(values));
+    mutation.mutateAsync(values).catch(() => {});
   };
 
   const start = new Date('Mon Jan 29 2018 13:00:00 GMT (UTC)');
@@ -66,7 +60,7 @@ const AccessibilityForm = ({
       <h2 className="my-4">
         <FormattedMessage {...messages.accessibilityPolicyFormHeader} />
       </h2>
-      {savingStatus === RequestStatus.SUCCESSFUL && (
+      {savingStatus === 'success' && (
         <Alert variant="success">
           <Stack gap={2}>
             <div className="mb-2">
@@ -86,7 +80,7 @@ const AccessibilityForm = ({
           </Stack>
         </Alert>
       )}
-      {savingStatus === RequestStatus.FAILED && (
+      {savingStatus === 'error' && (
         <Alert variant="danger">
           <div data-testid="rate-limit-alert">
             <FormattedMessage
@@ -125,7 +119,7 @@ const AccessibilityForm = ({
           onClick={handleSubmit}
           disabled={!isFormFilled}
           state={
-            savingStatus === RequestStatus.IN_PROGRESS
+            savingStatus === 'pending'
               ? STATEFUL_BUTTON_STATES.pending
               : STATEFUL_BUTTON_STATES.default
           }
@@ -134,10 +128,6 @@ const AccessibilityForm = ({
       </ActionRow>
     </>
   );
-};
-
-AccessibilityForm.propTypes = {
-  accessibilityEmail: PropTypes.string.isRequired,
 };
 
 export default AccessibilityForm;

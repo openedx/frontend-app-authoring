@@ -44,6 +44,8 @@ export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}
 export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const exportTags = (courseId: string) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${courseId}/sync_discussion_topics`;
+export const courseLegacyLibraryContentBlocks = (courseId: string) => `${getApiBaseUrl()}/api/courses/v1/migrate_legacy_content_blocks/${courseId}/`;
+export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: string) => `${courseLegacyLibraryContentBlocks(courseId)}${taskId}/`;
 
 /**
  * Get course outline index.

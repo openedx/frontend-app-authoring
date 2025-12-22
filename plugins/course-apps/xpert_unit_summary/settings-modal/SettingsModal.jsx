@@ -1,4 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import {
   ActionRow,
   Alert,
@@ -276,7 +277,7 @@ const SettingsModal = ({
     <div className="py-1">
       <Hyperlink
         className="text-primary-500"
-        destination="https://openai.com/api-data-privacy"
+        destination={getExternalLinkUrl('https://openai.com/api-data-privacy')}
         target="_blank"
         rel="noreferrer noopener"
       >

@@ -3,6 +3,7 @@ import { render, screen, initializeMocks } from '@src/testUtils';
 import { selectors } from '@src/editors/data/redux';
 import AnswerOption from './AnswerOption';
 import * as hooks from './hooks';
+import * as reactQueryHooks from '../../../data/apiHooks';
 
 const { problem } = selectors;
 
@@ -100,5 +101,17 @@ describe('AnswerOption', () => {
     render(<AnswerOption {...myProps} answer={answerRange} />);
     expect(screen.getByText(answerRange.title)).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  test('shows numeric error feedback when data.isValid is false', () => {
+    // Mock useValidateInputBlock to simulate invalid state
+    // @ts-ignore-next-line
+    jest.spyOn(reactQueryHooks, 'useValidateInputBlock').mockReturnValue({ data: { isValid: false } });
+    jest.spyOn(problem, 'problemType').mockReturnValue('numericalresponse');
+    const myProps = { ...props, answer: { ...answerWithOnlyFeedback, isAnswerRange: false } };
+    render(<AnswerOption {...myProps} />);
+    expect(
+      screen.getByText('Error: This input type only supports numeric answers. Did you mean to make a Text input or Math expression input problem?'),
+    ).toBeInTheDocument();
   });
 });
