@@ -5,14 +5,16 @@ import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { useCourseDetails } from '../data/apiHooks';
 
 import messages from './messages';
 
-export const OutlineInfoSidebar = ({ courseId }: { courseId: string }) => {
+export const OutlineInfoSidebar = () => {
   const intl = useIntl();
+  const { courseId } = useCourseAuthoringContext();
   const { data: courseDetails } = useCourseDetails(courseId);
 
   const { data: componentData } = useGetBlockTypes(

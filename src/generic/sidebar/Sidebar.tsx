@@ -39,9 +39,6 @@ interface SidebarProps<T extends SidebarPages> {
   isOpen: boolean;
   /** Function that toggles the sidebar */
   toggle: () => void;
-  /** Props that are passed to the component that is rendered in the sidebar.
-   * This component is defined in the pages object */
-  contentProps: React.ComponentProps<T[keyof T]['component']>;
 }
 
 /**
@@ -74,7 +71,6 @@ interface SidebarProps<T extends SidebarPages> {
  *     currentPageKey="help"
  *     isOpen={isOpen}
  *     toggle={toggle}
- *     contentProps={{ courseId }}
  *   />
  *);
  * ```
@@ -86,7 +82,6 @@ export function Sidebar<T extends SidebarPages>({
   setCurrentPageKey,
   isOpen,
   toggle,
-  contentProps,
 }: SidebarProps<T>) {
   const intl = useIntl();
 
@@ -120,7 +115,7 @@ export function Sidebar<T extends SidebarPages>({
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <SidebarComponent {...contentProps} />
+          <SidebarComponent />
         </div>
       )}
       <div className="sidebar-toggle" data-testid="sidebar-toggle">

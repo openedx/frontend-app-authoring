@@ -3,20 +3,18 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { HelpSidebar } from '@src/generic/help-sidebar';
 import { useHelpUrls } from '@src/help-urls/hooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { getFormattedSidebarMessages } from './utils';
 
-interface OutlineHelpSidebarProps {
-  courseId: string;
-}
-
-const OutlineHelpSideBar = ({ courseId }: OutlineHelpSidebarProps) => {
+const OutlineHelpSideBar = () => {
   const intl = useIntl();
   const {
     visibility: learnMoreVisibilityUrl,
     grading: learnMoreGradingUrl,
     outline: learnMoreOutlineUrl,
   } = useHelpUrls(['visibility', 'grading', 'outline']);
+  const { courseId } = useCourseAuthoringContext();
 
   const sidebarMessages = getFormattedSidebarMessages(
     {

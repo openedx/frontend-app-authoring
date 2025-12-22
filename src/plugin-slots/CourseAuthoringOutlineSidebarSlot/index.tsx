@@ -16,7 +16,7 @@ export const CourseAuthoringOutlineSidebarSlot = ({
       sections,
     }}
   >
-    <OutlineSideBar courseId={courseId} />
+    <OutlineSideBar />
   </PluginSlot>
 );
 
