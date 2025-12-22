@@ -15,6 +15,7 @@ import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
+import { AtLeastOne } from '../../../types';
 
 export interface ComponentEditorInfo {
   usageKey: string;
@@ -22,9 +23,13 @@ export interface ComponentEditorInfo {
   onClose?: (data?:any) => void;
 }
 
-export type LibraryContextData = {
-  /** The ID of the current library */
+export type LibraryIdOneOrMore = {
   libraryId: string;
+  libraryIds: string[];
+}
+
+export type LibraryContextData = AtLeastOne<LibraryIdOneOrMore> & {
+  /** The ID of the current library */
   libraryData?: ContentLibrary;
   readOnly: boolean;
   canPublish: boolean;
@@ -65,9 +70,8 @@ export type LibraryContextData = {
  */
 const LibraryContext = createContext<LibraryContextData | undefined>(undefined);
 
-type LibraryProviderProps = {
+type LibraryProviderProps = AtLeastOne<LibraryIdOneOrMore> & {
   children?: React.ReactNode;
-  libraryId: string;
   showOnlyPublished?: boolean;
   extraFilter?: string[]
   // If set, will initialize the current collection and/or component from the current URL
@@ -86,6 +90,7 @@ type LibraryProviderProps = {
 export const LibraryProvider = ({
   children,
   libraryId,
+  libraryIds,
   showOnlyPublished = false,
   extraFilter = [],
   skipUrlUpdate = false,
@@ -115,7 +120,7 @@ export const LibraryProvider = ({
       action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
       scope: libraryId,
     },
-  });
+  }, typeof libraryId !== "undefined");
   const canPublish = userPermissions?.canPublish || false;
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
@@ -135,6 +140,7 @@ export const LibraryProvider = ({
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
       libraryId,
+      libraryIds: libraryIds || [],
       libraryData,
       collectionId,
       setCollectionId,
@@ -159,6 +165,7 @@ export const LibraryProvider = ({
     return contextValue;
   }, [
     libraryId,
+    libraryIds,
     libraryData,
     collectionId,
     setCollectionId,
