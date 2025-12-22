@@ -1,7 +1,8 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
-import { ContentTagsSnippet } from '@src/content-tags-drawer';
+import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
 
@@ -17,6 +18,8 @@ export const OutlineInfoSidebar = ({ courseId }: { courseId: string }) => {
   const { data: componentData } = useGetBlockTypes(
     [`context_key = "${courseId}"`],
   );
+
+  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
   return (
     <div>
@@ -34,10 +37,21 @@ export const OutlineInfoSidebar = ({ courseId }: { courseId: string }) => {
         <SidebarSection
           title={intl.formatMessage(messages.sidebarSectionTaxonomy)}
           icon={Tag}
+          actions={[
+            {
+              label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
+              onClick: openManageTagsDrawer,
+            },
+          ]}
         >
           <ContentTagsSnippet contentId={courseId} />
         </SidebarSection>
       </SidebarContent>
+      <ContentTagsDrawerSheet
+        id={courseId}
+        onClose={closeManageTagsDrawer}
+        showSheet={isManageTagsDrawerOpen}
+      />
     </div>
   );
 };

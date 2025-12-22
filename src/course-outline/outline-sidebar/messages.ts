@@ -83,6 +83,11 @@ const messages = defineMessages({
     defaultMessage: 'Taxonomy Alignments',
     description: 'Title of the taxonomy section in the sidebar',
   },
+  sidebarSectionTaxonomyManageTags: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-taxonomy.manage-tags-action',
+    defaultMessage: 'Manage tags',
+    description: 'Action to open the tags drawer',
+  },
 });
 
 export default messages;
