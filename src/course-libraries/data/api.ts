@@ -1,6 +1,6 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { UsageKeyBlock, UserTaskStatusWithUuid } from '@src/data/types';
+import type { UsageKeyBlock, UserTaskStatusWithUuid } from '@src/data/types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 

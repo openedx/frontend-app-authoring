@@ -6,7 +6,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query';
 import { UserTaskStatus } from '@src/data/constants';
-import { UserTaskStatusWithUuid } from '@src/data/types';
+import type { UserTaskStatusWithUuid } from '@src/data/types';
 import {
   getEntityLinksSummaryByDownstreamContext,
   getEntityLinks,
