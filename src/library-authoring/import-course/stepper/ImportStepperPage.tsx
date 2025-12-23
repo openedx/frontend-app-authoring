@@ -7,7 +7,6 @@ import {
 } from '@openedx/paragon';
 
 import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
-import { useStudioHome } from '@src/studio-home/hooks';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import Loading from '@src/generic/Loading';
 
@@ -63,10 +62,6 @@ export const ImportStepperPage = () => {
   // Using bulk migrate as it allows us to create collection automatically
   // TODO: Modify single migration API to allow create collection
   const migrate = useBulkModulestoreMigrate();
-
-  // Load the courses list
-  // The loading state is handled in `CoursesList`
-  useStudioHome();
 
   const handleImportCourse = async () => {
     if (!selectedCourseId) {

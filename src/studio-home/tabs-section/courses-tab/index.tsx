@@ -188,22 +188,12 @@ export const CoursesList: React.FC<Props> = ({
   const inSelectMode = handleSelect !== undefined;
 
   const handlePageSelected = (page) => {
-    const {
-      search,
-      order,
-      archivedOnly,
-      activeOnly,
-    } = studioHomeCoursesParams;
-
-    const customParams = {
-      search,
-      order,
-      archivedOnly,
-      activeOnly,
-    };
-
-    dispatch(fetchStudioHomeData(locationValue, false, { page, ...customParams }));
-    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page, isFiltered: true }));
+    dispatch(fetchStudioHomeData(locationValue, false, { ...studioHomeCoursesParams, page }));
+    dispatch(updateStudioHomeCoursesCustomParams({
+      ...studioHomeCoursesParams,
+      currentPage: page,
+      isFiltered: true,
+    }));
   };
 
   const handleCleanFilters = () => {

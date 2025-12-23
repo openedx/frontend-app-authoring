@@ -20,18 +20,15 @@ interface Props {
   children: ReactNode;
 }
 
+const PAGE_SIZE = 500;
+
 export const CourseImportFilterProvider = ({ children }: Props) => {
   const { libraryId } = useLibraryContext(true) || {};
   const dispatch = useDispatch();
   const [hidePreviouslyImportedCourses, setHidePreviouslyImportedCourses] = useState(true);
   const { courses, numPages } = useSelector(getStudioHomeData);
-  const {
-    currentPage,
-    search,
-    order,
-    archivedOnly,
-    activeOnly,
-  } = useSelector(getStudioHomeCoursesParams);
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
+  const { currentPage } = studioHomeCoursesParams;
   const { courseLoadingStatus } = useSelector(getLoadingStatuses);
   const allVisibleCourseIds = courses?.map(item => item.courseKey) || [];
   const locationValue = location.search ?? '';
@@ -55,32 +52,33 @@ export const CourseImportFilterProvider = ({ children }: Props) => {
     return hidePreviouslyImportedCourses && libraryId
       ? courses?.filter(course => !processedMigrationInfo[course.courseKey]?.includes(libraryId))
       : courses;
-  }, [hidePreviouslyImportedCourses, libraryId, processedMigrationInfo, courses, currentPage]);
+  }, [hidePreviouslyImportedCourses, libraryId, processedMigrationInfo, courses]);
 
   useEffect(() => {
+    // Fetch all studio home data for initial load to avoid pagingation
+    // This is required to avoid cases where we have very less number of non-imported courses per page
+    dispatch(updateStudioHomeCoursesCustomParams({ ...studioHomeCoursesParams, pageSize: PAGE_SIZE }));
+    dispatch(fetchStudioHomeData(locationValue, false, { ...studioHomeCoursesParams, page: 1, pageSize: PAGE_SIZE }));
+  }, []);
+
+  useEffect(() => {
+    // HACK: If there are no courses that were not imported in the current page, then we need to fetch
+    // the next page of courses.
+    // FIXME: This workaround causes page flicker when the next page has also has no courses that were not imported.
     if ((numPages > currentPage)
       && filteredCourses.length === 0
       && courseLoadingStatus !== RequestStatus.IN_PROGRESS) {
-      const customParams = {
-        search,
-        order,
-        archivedOnly,
-        activeOnly,
-      }
-      dispatch(fetchStudioHomeData(locationValue, false, { page: currentPage + 1, ...customParams }));
-      dispatch(updateStudioHomeCoursesCustomParams({ currentPage: currentPage + 1, isFiltered: true }));
+      dispatch(fetchStudioHomeData(locationValue, false, { ...studioHomeCoursesParams, page: currentPage + 1 }));
+      dispatch(updateStudioHomeCoursesCustomParams({ ...studioHomeCoursesParams, currentPage: currentPage + 1 }));
     }
   }, [
     numPages,
     filteredCourses,
     locationValue,
     courses,
-    search,
-    order,
-    archivedOnly,
-    activeOnly,
     dispatch,
     courseLoadingStatus,
+    studioHomeCoursesParams,
   ])
 
   const value = useMemo(() => ({

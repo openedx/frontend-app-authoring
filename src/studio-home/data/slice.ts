@@ -6,6 +6,7 @@ import { RequestStatus, type RequestStatusType } from '@src/data/constants';
 
 export interface Params {
   currentPage: number;
+  pageSize: number;
   search?: string;
   order?: string;
   archivedOnly?: boolean;
@@ -16,6 +17,7 @@ export interface Params {
 
 export const studioHomeCoursesRequestParamsDefault: Params = {
   currentPage: 1,
+  pageSize: 10,
   search: '',
   order: 'display_name',
   archivedOnly: undefined,
