@@ -1,4 +1,3 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getExternalLinkUrl } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';
@@ -37,7 +36,5 @@ const AccessibilityPage = () => {
     </>
   );
 };
-
-AccessibilityPage.propTypes = {};
 
 export default AccessibilityPage;
