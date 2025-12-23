@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -13,7 +13,6 @@ import Loading from '@src/generic/Loading';
 
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import { ToastContext } from '@src/generic/toast-context';
 import LoadingButton from '@src/generic/loading-button';
@@ -21,36 +20,20 @@ import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import { ReviewImportDetails } from './ReviewImportDetails';
 import messages from '../messages';
 import { HelpSidebar } from '../HelpSidebar';
+import {
+  CourseImportFilterProvider,
+  useCourseImportFilter,
+} from '@src/studio-home/tabs-section/courses-tab/courses-filters/courses-imported-filter-modal/context';
 
 type MigrationStep = 'select-course' | 'review-details';
 
 export const MigrationStatus = ({
   courseId,
-  allVisibleCourseIds,
 }: MigrationStatusProps) => {
   const { libraryId } = useLibraryContext();
+  const { processedMigrationInfo } = useCourseImportFilter() || {};
 
-  const {
-    data: migrationInfoData,
-  } = useMigrationInfo(allVisibleCourseIds);
-
-  const processedMigrationInfo = useMemo(() => {
-    const result = {};
-    if (migrationInfoData) {
-      for (const libraries of Object.values(migrationInfoData)) {
-        // The map key in `migrationInfoData` is in camelCase.
-        // In the processed map, we use the key in its original form.
-        if (libraries.length !== 0) {
-          result[libraries[0].sourceKey] = libraries.map(item => item.targetKey);
-        }
-      }
-    }
-    return result;
-  }, [migrationInfoData]);
-
-  const isPreviouslyMigrated = (
-    courseId in processedMigrationInfo && processedMigrationInfo[courseId].includes(libraryId)
-  );
+  const isPreviouslyMigrated = processedMigrationInfo?.[courseId]?.includes(libraryId);
 
   if (!isPreviouslyMigrated) {
     return null;
@@ -58,7 +41,7 @@ export const MigrationStatus = ({
 
   return (
     <div
-      key={`${courseId}-${processedMigrationInfo[courseId].join('-')}`}
+      key={`${courseId}-${processedMigrationInfo?.[courseId].join('-')}`}
       className="previously-migrated-chip"
     >
       <Chip>
@@ -142,11 +125,13 @@ export const ImportStepperPage = () => {
                     eventKey="select-course"
                     title={intl.formatMessage(messages.importCourseSelectCourseStep)}
                   >
-                    <CoursesList
-                      selectedCourseId={selectedCourseId}
-                      handleSelect={setSelectedCourseId}
-                      cardMigrationStatusWidget={MigrationStatus}
-                    />
+                    <CourseImportFilterProvider>
+                      <CoursesList
+                        selectedCourseId={selectedCourseId}
+                        handleSelect={setSelectedCourseId}
+                        cardMigrationStatusWidget={MigrationStatus}
+                      />
+                    </CourseImportFilterProvider>
                   </Stepper.Step>
                   <Stepper.Step
                     eventKey="review-details"

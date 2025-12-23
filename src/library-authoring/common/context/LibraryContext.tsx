@@ -186,9 +186,17 @@ export const LibraryProvider = ({
   );
 };
 
-export function useLibraryContext(): LibraryContextData {
+export function useLibraryContext(
+  allowEmtpy?: false,
+): LibraryContextData;                     // never undefined
+export function useLibraryContext(
+  allowEmtpy: true,
+): LibraryContextData | undefined;        // may be undefined
+export function useLibraryContext(
+  allowEmtpy?: boolean,
+): LibraryContextData | undefined {
   const ctx = useContext(LibraryContext);
-  if (ctx === undefined) {
+  if (!allowEmtpy && ctx === undefined) {
     /* istanbul ignore next */
     throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
   }

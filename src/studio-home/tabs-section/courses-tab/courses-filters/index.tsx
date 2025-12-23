@@ -5,14 +5,15 @@ import { debounce } from 'lodash';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import type { Dispatch } from 'redux';
 
-import { getStudioHomeCoursesParams } from '../../../data/selectors';
-import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
-import { fetchStudioHomeData } from '../../../data/thunks';
-import { LoadingSpinner } from '../../../../generic/Loading';
+import { getStudioHomeCoursesParams } from '@src/studio-home/data/selectors';
+import { updateStudioHomeCoursesCustomParams } from '@src/studio-home/data/slice';
+import { fetchStudioHomeData } from '@src/studio-home/data/thunks';
+import { LoadingSpinner } from '@src/generic/Loading';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 import './index.scss';
 import messages from './messages';
+import { CourseImportFilter } from './courses-imported-filter-modal';
 
 interface BaseFilter {
     currentPage: number;
@@ -139,6 +140,7 @@ const CoursesFilters = ({
 
       <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
       <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+      <CourseImportFilter />
     </div>
   );
 };

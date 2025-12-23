@@ -20,6 +20,10 @@ import { COURSE_CREATOR_STATES } from '@src/constants';
 import classNames from 'classnames';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
+import {
+  useCourseImportFilter,
+} from '@src/studio-home/tabs-section/courses-tab/courses-filters/courses-imported-filter-modal/context';
+import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 
 export const PrevToNextName = ({ from, to }: { from: React.ReactNode, to?: React.ReactNode }) => (
   <Stack direction="horizontal" gap={2}>
@@ -245,6 +249,12 @@ export const CardItem: React.FC<Props> = ({
   } = useSelector(getStudioHomeData);
   const waffleFlags = useWaffleFlags();
   const cardRef = useRef<HTMLDivElement>(null);
+  // const { hidePreviouslyImportedCourses , processedMigrationInfo } = useCourseImportFilter() || {};
+  // const { libraryId } = useLibraryContext(true) || {};
+  // const isPreviouslyMigrated = (
+  //   libraryId && processedMigrationInfo
+  //     && itemId in processedMigrationInfo && processedMigrationInfo[itemId].includes(libraryId)
+  // );
 
   const destinationUrl: string = path ?? (
     waffleFlags.useNewCourseOutlinePage && !isLibraries
@@ -280,6 +290,10 @@ export const CardItem: React.FC<Props> = ({
       cardRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [scrollIntoView]);
+
+  // if (hidePreviouslyImportedCourses && isPreviouslyMigrated) {
+  //   return null;
+  // }
 
   return (
     <div ref={cardRef} className="w-100">
