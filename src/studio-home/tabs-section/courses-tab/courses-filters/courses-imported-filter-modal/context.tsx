@@ -2,10 +2,10 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
 import { useDispatch, useSelector } from "react-redux";
 import { useMigrationInfo } from "@src/library-authoring/data/apiHooks";
 import { getLoadingStatuses, getStudioHomeCoursesParams, getStudioHomeData } from "@src/studio-home/data/selectors";
-import { useLibraryContext } from "../../../../../library-authoring/common/context/LibraryContext";
+import { useLibraryContext } from "@src/library-authoring/common/context/LibraryContext";
 import { fetchStudioHomeData } from '@src/studio-home/data/thunks';
-import { updateStudioHomeCoursesCustomParams } from "../../../../data/slice";
-import { RequestStatus } from "../../../../../data/constants";
+import { updateStudioHomeCoursesCustomParams } from "@src/studio-home/data/slice";
+import { RequestStatus } from "@src/data/constants";
 
 export interface CourseImportFilterContextType {
   processedMigrationInfo: Record<string, string[]>;
