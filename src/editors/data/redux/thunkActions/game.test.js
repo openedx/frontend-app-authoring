@@ -362,14 +362,13 @@ describe('game thunkActions', () => {
 
       it('should dispatch updateDefinitionImage when imageType is definition', () => {
         const definitionParams = { ...mockParams, imageType: 'definition' };
-        const mockOnSuccess = jest.fn();
         requests.uploadGamesImage.mockImplementation(({ onSuccess }) => {
-          mockOnSuccess.mockImplementation(onSuccess);
+          // Immediately call onSuccess to ensure code coverage
+          onSuccess(mockSuccessResponse);
           return jest.fn();
         });
 
         uploadGameImage(definitionParams)(dispatch);
-        mockOnSuccess(mockSuccessResponse);
 
         expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
           index: 0,
@@ -398,6 +397,64 @@ describe('game thunkActions', () => {
           index: 0,
           termImage: undefined,
         });
+      });
+
+      it('should handle definition image with full HTTP URL without prepending STUDIO_BASE_URL', () => {
+        const definitionParams = { ...mockParams, imageType: 'definition' };
+        const responseWithFullUrl = {
+          data: {
+            success: true,
+            url: 'https://s3.amazonaws.com/games/uploaded-image.jpg',
+          },
+        };
+        const mockOnSuccess = jest.fn();
+        requests.uploadGamesImage.mockImplementation(({ onSuccess }) => {
+          mockOnSuccess.mockImplementation(onSuccess);
+          return jest.fn();
+        });
+
+        uploadGameImage(definitionParams)(dispatch);
+        mockOnSuccess(responseWithFullUrl);
+
+        expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
+          index: 0,
+          definitionImage: 'https://s3.amazonaws.com/games/uploaded-image.jpg',
+        });
+        expect(dispatch).toHaveBeenCalledWith(
+          gameActions.updateDefinitionImage({
+            index: 0,
+            definitionImage: 'https://s3.amazonaws.com/games/uploaded-image.jpg',
+          }),
+        );
+      });
+
+      it('should prepend STUDIO_BASE_URL for definition image with relative path', () => {
+        const definitionParams = { ...mockParams, imageType: 'definition' };
+        const relativeUrlResponse = {
+          data: {
+            success: true,
+            url: '/media/games/definition-image.jpg',
+          },
+        };
+        const mockOnSuccess = jest.fn();
+        requests.uploadGamesImage.mockImplementation(({ onSuccess }) => {
+          mockOnSuccess.mockImplementation(onSuccess);
+          return jest.fn();
+        });
+
+        uploadGameImage(definitionParams)(dispatch);
+        mockOnSuccess(relativeUrlResponse);
+
+        expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
+          index: 0,
+          definitionImage: `${getConfig().STUDIO_BASE_URL}/media/games/definition-image.jpg`,
+        });
+        expect(dispatch).toHaveBeenCalledWith(
+          gameActions.updateDefinitionImage({
+            index: 0,
+            definitionImage: `${getConfig().STUDIO_BASE_URL}/media/games/definition-image.jpg`,
+          }),
+        );
       });
     });
 
@@ -483,14 +540,13 @@ describe('game thunkActions', () => {
 
         it('should dispatch updateDefinitionImage with empty string when imageType is definition', () => {
           const definitionParams = { ...mockParams, imageType: 'definition' };
-          const mockOnSuccess = jest.fn();
           requests.deleteGamesImage.mockImplementation(({ onSuccess }) => {
-            mockOnSuccess.mockImplementation(onSuccess);
+            // Immediately call onSuccess to ensure code coverage
+            onSuccess(mockSuccessResponse);
             return jest.fn();
           });
 
           deleteGameImage(definitionParams)(dispatch);
-          mockOnSuccess(mockSuccessResponse);
 
           expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
             index: 1,

@@ -72,7 +72,7 @@ width: 100%;
   object-fit: cover;
   max-height: 32px;
   max-width: 32px;
-  color: #707070;
+  color: var(--gray-500, #707070);
 }
 
 .card-image-area {
