@@ -1,9 +1,9 @@
+import { getConfig } from '@edx/frontend-platform';
 import { loadGamesSettings, uploadGameImage, deleteGameImage } from './game';
 import * as requests from './requests';
 import { actions as gameActions } from '../game';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
-import { getConfig } from '@edx/frontend-platform';
 
 // Mock the config
 jest.mock('@edx/frontend-platform', () => ({

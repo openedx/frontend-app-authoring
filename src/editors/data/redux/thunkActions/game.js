@@ -1,9 +1,9 @@
+import { getConfig } from '@edx/frontend-platform';
 import { StrictDict } from '../../../utils';
 import * as requests from './requests';
 import { actions as gameActions } from '../game';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
-import { getConfig } from '@edx/frontend-platform';
 
 const actions = {
   game: gameActions,

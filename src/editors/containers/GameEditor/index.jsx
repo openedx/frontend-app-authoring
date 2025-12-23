@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useMemo,
+} from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -26,7 +28,6 @@ import {
   Check,
   Info,
 } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
 import {
   actions,
   selectors,
@@ -224,21 +225,37 @@ export const GameEditor = ({
     }
   }, [validationErrors]);
 
-  useEffect(() => {
-    if (Object.keys(validationErrors).length > 0) {
-      const cardsWithErrors = new Set();
-      Object.keys(validationErrors).forEach(key => {
-        const index = parseInt(key.split('_')[0], 10);
-        cardsWithErrors.add(index);
-      });
+  const cardsWithErrors = useMemo(() => {
+    if (Object.keys(validationErrors).length === 0) {
+      return new Set();
+    }
+    const errorCards = new Set();
+    Object.keys(validationErrors).forEach(key => {
+      const index = parseInt(key.split('_')[0], 10);
+      errorCards.add(index);
+    });
+    return errorCards;
+  }, [validationErrors]);
 
-      cardsWithErrors.forEach(index => {
-        if (list[index] && !list[index].editorOpen) {
-          toggleOpen({ index, isOpen: true });
-        }
+  useEffect(() => {
+    if (cardsWithErrors.size === 0) {
+      return;
+    }
+
+    const cardsToExpand = [];
+    cardsWithErrors.forEach(index => {
+      if (list[index] && !list[index].editorOpen) {
+        cardsToExpand.push(index);
+      }
+    });
+
+    // Only call toggleOpen if there are actually cards to expand
+    if (cardsToExpand.length > 0) {
+      cardsToExpand.forEach(index => {
+        toggleOpen({ index, isOpen: true });
       });
     }
-  }, [validationErrors, list, toggleOpen]);
+  }, [cardsWithErrors, list, toggleOpen]);
 
   const getDescriptionHeader = () => {
     switch (type) {
@@ -697,7 +714,9 @@ GameEditor.propTypes = {
   blockFinished: PropTypes.bool.isRequired,
   blockId: PropTypes.string.isRequired,
   blockValue: PropTypes.shape({}),
-  list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  list: PropTypes.arrayOf(PropTypes.shape({
+    editorOpen: PropTypes.bool,
+  })).isRequired,
   updateTerm: PropTypes.func.isRequired,
   updateDefinition: PropTypes.func.isRequired,
   toggleOpen: PropTypes.func.isRequired,

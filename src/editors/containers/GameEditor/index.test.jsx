@@ -2,7 +2,6 @@ import React from 'react';
 import {
   IntlProvider,
 } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import {
   render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
