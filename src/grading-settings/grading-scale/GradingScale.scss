@@ -2,20 +2,20 @@
   display: flex;
   margin-top: 1.5rem;
   align-items: center;
-  margin-bottom: map-get($spacers, 6);
+  margin-bottom: var(--pgn-spacing-spacer-6);
 
   .grading-scale-segments-and-ticks {
     display: inline-block;
     height: 3.5rem;
     width: 100%;
-    border: 1px solid $black;
+    border: 1px solid var(--pgn-color-black);
     overflow: hidden;
 
     .grading-scale-tick {
       .grading-scale-tick-number {
         position: absolute;
         font-size: .6rem;
-        color: $black;
+        color: var(--pgn-color-black);
         top: 100%;
         transform: translate(-50%, 1.2rem);
         white-space: nowrap;
@@ -25,7 +25,7 @@
         content: "";
         position: absolute;
         left: 0;
-        background-color: $gray-400;
+        background-color: var(--pgn-color-gray-400);
         height: .3125rem;
         width: .125rem;
         transform: translate(-50%, .7rem);
@@ -40,10 +40,10 @@
       height: 100%;
       padding: 0 .4375rem;
       width: .625rem;
-      z-index: $zindex-dropdown !important;
+      z-index: var(--pgn-elevation-dropdown-zindex) !important;
 
       &:disabled {
-        color: $black;
+        color: var(--pgn-color-black);
       }
     }
 
@@ -86,7 +86,7 @@
       }
 
       .grading-scale-segment-content-title {
-        font: normal $font-weight-semi-bold 1rem/1 $font-family-base;
+        font: normal var(--pgn-typography-font-weight-semi-bold) 1rem/1 var(--pgn-typography-font-family-base);
         border: none;
         outline: none;
         background-color: transparent;
@@ -95,16 +95,16 @@
         text-align: end;
 
         &:disabled {
-          color: $black;
+          color: var(--pgn-color-black);
         }
       }
 
       .grading-scale-segment-content-number {
-        font: normal $font-weight-normal .75rem/1 $font-family-base;
-        color: $black;
+        font: normal var(--pgn-typography-font-weight-normal) .75rem/1 var(--pgn-typography-font-family-base);
+        color: var(--pgn-color-black);
 
         &:disabled {
-          color: $black;
+          color: var(--pgn-color-black);
         }
       }
     }

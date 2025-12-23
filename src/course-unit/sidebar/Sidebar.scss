@@ -1,29 +1,29 @@
 %base-font-params {
-  font-size: $font-size-sm;
-  line-height: $line-height-base;
+  font-size: var(--pgn-typography-font-size-sm);
+  line-height: var(--pgn-typography-line-height-base);
 }
 
 .course-unit-sidebar {
   .course-unit-sidebar-header {
-    padding: $spacer $spacer map-get($spacers, 3\.5);
+    padding: var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-3-5);
 
     .course-unit-sidebar-header-icon {
-      margin-right: map-get($spacers, 1);
+      margin-right: var(--pgn-spacing-spacer-1);
     }
 
     .course-unit-sidebar-header-title {
-      font-size: $font-size-base;
-      line-height: $line-height-base;
+      font-size: var(--pgn-typography-font-size-base);
+      line-height: var(--pgn-typography-line-height-base);
     }
   }
 
   .course-unit-sidebar-footer {
-    padding: 0 $spacer $spacer;
+    padding: 0 var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base);
 
     .course-unit-sidebar-visibility {
       .course-unit-sidebar-visibility-title {
-        font-weight: $font-weight-normal;
-        color: $gray-700;
+        font-weight: var(--pgn-typography-font-weight-normal);
+        color: var(--pgn-color-gray-700);
 
         @extend %base-font-params;
       }
@@ -33,46 +33,46 @@
       }
 
       .course-unit-sidebar-location-description {
-        font-size: $font-size-xs;
-        line-height: $line-height-base;
+        font-size: var(--pgn-typography-font-size-xs);
+        line-height: var(--pgn-typography-line-height-base);
         word-break: break-word;
       }
 
       .course-unit-sidebar-visibility-copy {
-        font-weight: $font-weight-bold;
-        color: $gray-700;
+        font-weight: var(--pgn-typography-font-weight-bold);
+        color: var(--pgn-color-gray-700);
 
         @extend %base-font-params;
       }
 
       .course-unit-sidebar-visibility-checkbox .pgn__form-label {
-        font-size: $font-size-sm;
-        line-height: $headings-line-height;
+        font-size: var(--pgn-typography-font-size-sm);
+        line-height: var(--pgn-typography-headings-line-height);
       }
     }
 
     .course-unit-sidebar-footer__divider {
-      margin: map-get($spacers, 3\.5) map-get($spacers, 0) map-get($spacers, 3\.5);
+      margin: var(--pgn-spacing-spacer-3-5) var(--pgn-spacing-spacer-0) var(--pgn-spacing-spacer-3-5);
     }
 
     .course-unit-sidebar-footer__discard-changes__btn + .course-unit-sidebar-footer__divider {
-      margin: map-get($spacers, 2) map-get($spacers, 0) map-get($spacers, 3\.5);
+      margin: var(--pgn-spacing-spacer-2) var(--pgn-spacing-spacer-0) var(--pgn-spacing-spacer-3-5);
     }
   }
 
   .course-unit-sidebar-date {
-    padding: 0 $spacer $spacer;
+    padding: 0 var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base);
 
     @extend %base-font-params;
 
     .course-unit-sidebar-date-stage {
-      font-weight: $font-weight-normal;
+      font-weight: var(--pgn-typography-font-weight-normal);
 
       @extend %base-font-params;
     }
 
     .course-unit-sidebar-date-timestamp {
-      color: $gray-700;
+      color: var(--pgn-color-gray-700);
 
       @extend %base-font-params;
     }
@@ -83,13 +83,13 @@
   }
 
   .course-split-test-sidebar {
-    padding: $spacer;
+    padding: var(--pgn-spacing-spacer-base);
 
     @extend %base-font-params;
 
     .course-split-test-sidebar-title {
-      font-size: $font-size-base;
-      line-height: $line-height-base;
+      font-size: var(--pgn-typography-font-size-base);
+      line-height: var(--pgn-typography-line-height-base);
     }
 
     .course-split-test-sidebar-devider {

@@ -7,7 +7,7 @@
   min-height: 300px;
 
   .pgn__dropzone {
-    background: $white;
+    background: var(--pgn-color-white);
     height: 100%;
     min-height: 18.75rem;
   }

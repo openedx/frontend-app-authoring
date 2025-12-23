@@ -26,3 +26,9 @@ export interface Section {
 export interface LinkCheckResult {
   sections: Section[];
 }
+
+export interface Filters {
+  brokenLinks: boolean,
+  lockedLinks: boolean,
+  externalForbiddenLinks: boolean,
+}

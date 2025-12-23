@@ -132,8 +132,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                   title={intl.formatMessage(messages.headingTitle)}
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p className="small">{intl.formatMessage(messages.description1)}</p>
-                <p className="small">{intl.formatMessage(messages.description2)}</p>
+                <p className="small opt-desc-mb">{intl.formatMessage(messages.description)}</p>
                 <Card>
                   <Card.Header
                     className="h3 px-3 text-black mb-4"
@@ -141,6 +140,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                   />
                   {isShowExportButton && (
                   <Card.Section className="px-3 py-1">
+                    <p className="small"> {lastScannedAt && `${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })}`}</p>
                     <Button
                       size="lg"
                       block
@@ -148,7 +148,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                       onClick={() => dispatch(startLinkCheck(courseId))}
                       iconBefore={SearchIcon}
                     >
-                      {intl.formatMessage(messages.buttonTitle)} {lastScannedAt && `(${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })})`}
+                      {intl.formatMessage(messages.buttonTitle)}
                     </Button>
                   </Card.Section>
                   )}

@@ -1,17 +1,17 @@
 .help-sidebar {
   .help-sidebar-about {
     .help-sidebar-about-title {
-      color: $black;
+      color: var(--pgn-color-black);
       margin-bottom: 1.25rem;
     }
 
     .help-sidebar-about-descriptions {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
       color: $text-color-base;
     }
 
     .help-sidebar-about-link {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
     }
   }
 
@@ -20,15 +20,15 @@
   }
 
   .help-sidebar-other-title {
-    font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-    color: $black;
+    font: normal var(--pgn-typography-font-weight-bold) 1.125rem/1.5rem var(--pgn-typography-font-family-base);
+    color: var(--pgn-color-black);
     margin-bottom: 1.25rem;
   }
 
   .sidebar-link {
-    font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+    font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
     line-height: 1.5rem;
-    color: $info-500;
+    color: var(--pgn-color-info-500);
     margin-bottom: .5rem;
   }
 }

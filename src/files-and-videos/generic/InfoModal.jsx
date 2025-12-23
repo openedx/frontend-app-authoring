@@ -48,9 +48,9 @@ const InfoModal = ({
       <ModalDialog.Header>
         <ModalDialog.Title>
           <div style={{ wordBreak: 'break-word' }}>
-            <Truncate lines={2} className="font-weight-bold small mt-3">
+            <Truncate.Deprecated lines={2} className="font-weight-bold small mt-3">
               {file?.displayName}
-            </Truncate>
+            </Truncate.Deprecated>
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>

@@ -359,9 +359,9 @@ const PageAlerts = ({
         }
         case API_ERROR_TYPES.serverError: {
           const description = (
-            <Truncate lines={2}>
+            <Truncate.Deprecated lines={2}>
               {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
-            </Truncate>
+            </Truncate.Deprecated>
           );
           return {
             key: k,

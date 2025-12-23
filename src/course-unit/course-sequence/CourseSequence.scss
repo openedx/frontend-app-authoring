@@ -12,10 +12,10 @@
     flex-grow: 1;
     position: relative;
     white-space: nowrap;
-    color: $gray-700;
+    color: var(--pgn-color-gray-700);
 
     &.btn-primary {
-      color: $white;
+      color: var(--pgn-color-white);
     }
 
     &:focus {
@@ -50,13 +50,13 @@
         text-align: left;
         overflow: hidden;
         min-width: 0;
-        margin: map-get($spacers, 0) $spacer;
+        margin: var(--pgn-spacing-spacer-0) var(--pgn-spacing-spacer-base);
         text-overflow: ellipsis;
       }
 
       &.btn-primary {
-        background-color: $primary-500;
-        color: $white;
+        background-color: var(--pgn-color-primary-500);
+        color: var(--pgn-color-white);
       }
     }
   }
@@ -69,15 +69,15 @@
 
   .sequence-navigation-prev-btn,
   .sequence-navigation-next-btn {
-    @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
+    @media (--pgn-size-breakpoint-max-width-xs) {
       min-width: fit-content;
-      padding-top: $spacer;
-      padding-bottom: $spacer;
+      padding-top: var(--pgn-spacing-spacer-base);
+      padding-bottom: var(--pgn-spacing-spacer-base);
     }
 
-    @media (min-width: map-get($grid-breakpoints, "sm")) {
-      padding-left: map-get($spacers, 4\.5);
-      padding-right: map-get($spacers, 4\.5);
+    @media (--pgn-size-breakpoint-min-width-sm) {
+      padding-left: var(--pgn-spacing-spacer-4-5);
+      padding-right: var(--pgn-spacing-spacer-4-5);
     }
   }
 }

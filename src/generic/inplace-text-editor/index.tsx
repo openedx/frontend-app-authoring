@@ -69,9 +69,9 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   // In that case, we show the new text instead of the original in read-only mode as an optimistic update.
   if (readOnly || pendingSaveText) {
     return (
-      <Truncate className={textClassName}>
+      <Truncate.Deprecated className={textClassName}>
         {pendingSaveText || text}
-      </Truncate>
+      </Truncate.Deprecated>
     );
   }
 
@@ -93,9 +93,9 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
         )
         : (
           <>
-            <Truncate className={textClassName}>
+            <Truncate.Deprecated className={textClassName}>
               {text}
-            </Truncate>
+            </Truncate.Deprecated>
             <IconButton
               src={Edit}
               iconAs={Icon}

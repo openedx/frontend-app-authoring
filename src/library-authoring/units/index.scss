@@ -3,8 +3,7 @@
     border-radius: 8px;
     padding: 0;
     margin-bottom: 1rem;
-    border: solid 1px $light-500;
-
+    border: solid 1px var(--pgn-color-light-500);
   }
 
   .pgn__card.clickable {
@@ -18,15 +17,15 @@
     }
 
     &.selected:not(:focus) {
-      outline: 2px $gray-700 solid;
+      outline: 2px var(--pgn-color-gray-700) solid;
     }
 
     &.selected:focus {
-      outline: 3px $gray-700 solid;
+      outline: 3px var(--pgn-color-gray-700) solid;
     }
 
     &:not(.selected):focus {
-      outline: 1px $gray-200 solid;
+      outline: 1px var(--pgn-color-gray-200) solid;
       outline-offset: 2px;
     }
 

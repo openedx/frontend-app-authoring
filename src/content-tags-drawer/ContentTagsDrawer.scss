@@ -16,7 +16,7 @@
 
   .tags-drawer-cancel-button:hover {
     background-color: transparent;
-    color: $gray-300 !important;
+    color: var(--pgn-color-gray-300) !important;
   }
 
   .other-description {
@@ -25,7 +25,7 @@
 
   .enable-taxonomies-button:not([disabled]):hover {
     background-color: transparent;
-    color: $info-900 !important;
+    color: var(--pgn-color-info-900) !important;
   }
 }
 
