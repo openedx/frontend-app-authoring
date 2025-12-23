@@ -3,6 +3,14 @@ import * as requests from './requests';
 import { actions as gameActions } from '../game';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
+import { getConfig } from '@edx/frontend-platform';
+
+// Mock the config
+jest.mock('@edx/frontend-platform', () => ({
+  getConfig: jest.fn(() => ({
+    STUDIO_BASE_URL: 'http://localhost:18010',
+  })),
+}));
 
 // Mock the requests module
 jest.mock('./requests', () => ({
@@ -342,12 +350,12 @@ describe('game thunkActions', () => {
 
         expect(gameActions.updateTermImage).toHaveBeenCalledWith({
           index: 0,
-          termImage: '/media/games/uploaded-image.jpg',
+          termImage: `${getConfig().STUDIO_BASE_URL}/media/games/uploaded-image.jpg`,
         });
         expect(dispatch).toHaveBeenCalledWith(
           gameActions.updateTermImage({
             index: 0,
-            termImage: '/media/games/uploaded-image.jpg',
+            termImage: `${getConfig().STUDIO_BASE_URL}/media/games/uploaded-image.jpg`,
           }),
         );
       });
@@ -365,12 +373,12 @@ describe('game thunkActions', () => {
 
         expect(gameActions.updateDefinitionImage).toHaveBeenCalledWith({
           index: 0,
-          definitionImage: '/media/games/uploaded-image.jpg',
+          definitionImage: `${getConfig().STUDIO_BASE_URL}/media/games/uploaded-image.jpg`,
         });
         expect(dispatch).toHaveBeenCalledWith(
           gameActions.updateDefinitionImage({
             index: 0,
-            definitionImage: '/media/games/uploaded-image.jpg',
+            definitionImage: `${getConfig().STUDIO_BASE_URL}/media/games/uploaded-image.jpg`,
           }),
         );
       });

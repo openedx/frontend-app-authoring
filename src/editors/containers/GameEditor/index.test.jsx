@@ -2,6 +2,7 @@ import React from 'react';
 import {
   IntlProvider,
 } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
@@ -392,7 +393,7 @@ describe('GameEditor', () => {
       renderWithIntl(<GameEditor {...mockProps} />);
 
       const termImage = screen.getByAltText('TERM_IMG');
-      expect(termImage).toHaveAttribute('src', 'http://localhost:18010/media/term.jpg');
+      expect(termImage).toHaveAttribute('src', '/media/term.jpg');
     });
 
     it('displays existing definition image', () => {
@@ -412,7 +413,7 @@ describe('GameEditor', () => {
       renderWithIntl(<GameEditor {...propsWithDefImage} />);
 
       const defImage = screen.getByAltText('DEFINITION_IMG');
-      expect(defImage).toHaveAttribute('src', 'http://localhost:18010/media/def.jpg');
+      expect(defImage).toHaveAttribute('src', '/media/def.jpg');
     });
 
     it('calls uploadGameImage when image is selected', () => {
@@ -563,7 +564,12 @@ describe('GameEditor', () => {
     it('handles null settings gracefully', () => {
       const nullSettingsProps = { ...mockProps, settings: null };
 
-      expect(() => renderWithIntl(<GameEditor {...nullSettingsProps} />)).toThrow();
+      // Mock console.error to suppress the expected error output
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      expect(() => renderWithIntl(<GameEditor {...nullSettingsProps} />)).toThrow('Cannot read properties of null');
+
+      consoleSpy.mockRestore();
     });
   });
 
