@@ -13,6 +13,8 @@
       "*.js",
       ".eslintrc.js",
       "src/**/*",
+      "tests/**/*",
+      "scripts/**/*",
       "plugins/**/*"
     ],
     "exclude": ["dist", "node_modules"]
