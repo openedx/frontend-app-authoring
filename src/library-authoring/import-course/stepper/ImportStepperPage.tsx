@@ -64,6 +64,7 @@ export const ImportStepperPage = () => {
   const migrate = useBulkModulestoreMigrate();
 
   const handleImportCourse = async () => {
+    // istanbul ignore if: this can never happen, just for satisfying type checker.
     if (!selectedCourseId) {
       return;
     }
