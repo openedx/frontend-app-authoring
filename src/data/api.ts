@@ -43,6 +43,11 @@ export const getModulestoreMigrationStatusUrl = (migrationId: string) => `${getS
  */
 export const bulkModulestoreMigrateUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/bulk_migration/`;
 
+/**
+ * Get the url for the API endpoint to get preview migration
+ */
+export const getPreviewModulestoreMigrationUrl = () => `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
+
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
   const apiPath = '/api/contentstore/v1/course_waffle_flags';
@@ -170,5 +175,32 @@ export async function bulkModulestoreMigrate(
 ): Promise<MigrateTaskStatusData> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(bulkModulestoreMigrateUrl(), snakeCaseObject(requestData));
+  return camelCaseObject(data);
+}
+
+export interface PreviewMigrationInfo {
+  state: string;
+  unssuported_blocks: number;
+  total_blocks: number;
+  total_components: number;
+  sections: number;
+  subsections: number;
+  units: number;
+}
+
+/**
+ * Get the preview for a modulestore migration given a source key and a library key
+ */
+export async function getPreviewModulestoreMigration(
+  libraryKey : string,
+  sourceKey: string,
+): Promise<PreviewMigrationInfo> {
+  const client = getAuthenticatedHttpClient();
+
+  const params = new URLSearchParams();
+  params.append('target_key', libraryKey);
+  params.append('source_key', sourceKey);
+
+  const { data } = await client.get(getPreviewModulestoreMigrationUrl(), { params });
   return camelCaseObject(data);
 }

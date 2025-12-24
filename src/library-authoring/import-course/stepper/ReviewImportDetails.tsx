@@ -11,6 +11,7 @@ import { useLibraryBlockLimits, useMigrationInfo } from '@src/library-authoring/
 import { useGetBlockTypes, useGetContentHits } from '@src/search-manager';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
+import { usePreviewMigration } from '@src/data/apiHooks';
 
 interface Props {
   courseId?: string;
@@ -148,17 +149,21 @@ export const ReviewImportDetails = ({
     `context_key = "${courseId}"`,
   ]);
   const {
-    data: libraryBlockLimits,
-    isPending: isPendinglibraryBlockLimits,
-  } = useLibraryBlockLimits();
-  const {
+    libraryId,
     libraryData,
   } = useLibraryContext();
 
+  const {
+    data: previewMigrationData,
+  } = usePreviewMigration(libraryId, courseId);
+
+  console.log(previewMigrationData);
+  
+
   useEffect(() => {
     // Mark complete to inform parent component of analysis completion.
-    markAnalysisComplete(!isBlockDataPending && !isPendinglibraryBlockLimits);
-  }, [isBlockDataPending, isPendinglibraryBlockLimits]);
+    markAnalysisComplete(!isBlockDataPending);
+  }, [isBlockDataPending]);
 
   /** Filter unsupported blocks by checking if the block type is in the library's list of unsupported blocks. */
   const unsupportedBlockTypes = useMemo(() => {
@@ -246,14 +251,7 @@ export const ReviewImportDetails = ({
     return (finalUnsupportedBlocks / (totalBlocks + finalUnsupportedBlocks)) * 100;
   }, [blockTypes, finalUnsupportedBlocks]);
 
-  const limitIsExceeded = useMemo(() => (
-    libraryBlockLimits !== undefined
-      && (libraryData?.numBlocks || 0) + (totalBlocks || 0) > libraryBlockLimits.maxBlocksPerContentLibrary
-  ), [libraryData?.numBlocks, totalBlocks, libraryBlockLimits?.maxBlocksPerContentLibrary]);
-
-  useEffect(() => {
-    setImportIsBlocked(limitIsExceeded);
-  }, [limitIsExceeded, setImportIsBlocked]);
+  const limitIsExceeded = false;
 
   return (
     <Stack gap={4}>
@@ -261,7 +259,7 @@ export const ReviewImportDetails = ({
         courseId={courseId}
         isBlockDataPending={isBlockDataPending}
         limitIsExceeded={limitIsExceeded}
-        limitNumber={libraryBlockLimits?.maxBlocksPerContentLibrary || 0}
+        limitNumber={0}
         unsupportedBlockPercentage={unsupportedBlockPercentage}
       />
       {!limitIsExceeded && (
