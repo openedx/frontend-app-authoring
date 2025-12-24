@@ -218,24 +218,26 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         isBlockDataPending={isBlockDataPending}
         unsupportedBlockPercentage={unsupportedBlockPercentage}
       />
-      <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
-      <SummaryCard
-        totalBlocks={totalBlocks}
-        totalComponents={totalComponents}
-        sections={blockTypes?.chapter}
-        subsections={blockTypes?.sequential}
-        units={blockTypes?.vertical}
-        unsupportedBlocks={totalUnsupportedBlocks}
-        isPending={isBlockDataPending}
-      />
+      <Stack gap={2}>
+        <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
+        <SummaryCard
+          totalBlocks={totalBlocks}
+          totalComponents={totalComponents}
+          sections={blockTypes?.chapter}
+          subsections={blockTypes?.sequential}
+          units={blockTypes?.vertical}
+          unsupportedBlocks={totalUnsupportedBlocks}
+          isPending={isBlockDataPending}
+        />
+      </Stack>
       {!isBlockDataPending && totalUnsupportedBlocks > 0
         && (
-        <>
+        <Stack gap={2}>
           <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
           <Stack className="align-items-center" gap={3}>
             <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
           </Stack>
-        </>
+        </Stack>
         )}
     </Stack>
   );
