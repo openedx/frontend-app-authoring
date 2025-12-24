@@ -151,13 +151,4 @@ describe('library data API', () => {
     await api.getContentLibraryV2List({ type: 'complex' });
     expect(axiosMock.history.get[0].url).toEqual(url);
   });
-
-  it('getLibraryBlockLimits', async () => {
-    const url = api.getLibraryBlockLimitsUrl();
-
-    axiosMock.onGet(url).reply(200, { some: 'data' });
-
-    await api.getLibraryBlockLimits();
-    expect(axiosMock.history.get[0].url).toEqual(url);
-  });
 });

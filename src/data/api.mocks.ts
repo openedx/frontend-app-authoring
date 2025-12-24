@@ -179,3 +179,61 @@ mockGetMigrationStatus.migrationStatusInProgressData = {
   ],
 } as api.MigrateTaskStatusData;
 mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getModulestoreMigrationStatus').mockImplementation(mockGetMigrationStatus);
+
+export async function mockGetPreviewModulestoreMigration(
+  // @ts-ignore-next-line
+  libraryKey: string,
+  sourceKey: string,
+): Promise<api.PreviewMigrationInfo> {
+  switch (sourceKey) {
+    case mockGetPreviewModulestoreMigration.sourceKeyGood:
+      return mockGetPreviewModulestoreMigration.goodData;
+    case mockGetPreviewModulestoreMigration.sourceKeyUnsupported:
+      return mockGetPreviewModulestoreMigration.unsupportedData;
+    case mockGetPreviewModulestoreMigration.sourceKeyBlockLimit:
+      return mockGetPreviewModulestoreMigration.blockLimitData;
+    case mockGetPreviewModulestoreMigration.sourceKeyBlockLoading:
+      return new Promise(() => {});
+    default:
+      /* istanbul ignore next */
+      throw new Error(`mockGetPreviewModulestoreMigration: unknown sourceKey "${sourceKey}"`);
+  }
+}
+mockGetPreviewModulestoreMigration.sourceKeyGood = 'course-v1:HarvardX+123+2023';
+mockGetPreviewModulestoreMigration.goodData = {
+  state: 'success',
+  unsupportedBlocks: 0,
+  unsupportedPercentage: 0,
+  blocksLimit: 1000,
+  totalBlocks: 10,
+  totalComponents: 5,
+  sections: 1,
+  subsections: 2,
+  units: 3,
+} as api.PreviewMigrationInfo;
+mockGetPreviewModulestoreMigration.sourceKeyUnsupported = 'course-v1:HarvardX+2+2023';
+mockGetPreviewModulestoreMigration.unsupportedData = {
+  state: 'partial',
+  unsupportedBlocks: 5,
+  unsupportedPercentage: 25,
+  blocksLimit: 1000,
+  totalBlocks: 20,
+  totalComponents: 10,
+  sections: 2,
+  subsections: 3,
+  units: 5,
+} as api.PreviewMigrationInfo;
+mockGetPreviewModulestoreMigration.sourceKeyBlockLimit = 'course-v1:HarvardX+3+2023';
+mockGetPreviewModulestoreMigration.blockLimitData = {
+  state: 'block_limit_reached',
+  unsupportedBlocks: 5,
+  unsupportedPercentage: 25,
+  blocksLimit: 1000,
+  totalBlocks: 20,
+  totalComponents: 10,
+  sections: 2,
+  subsections: 3,
+  units: 5,
+} as api.PreviewMigrationInfo;
+mockGetPreviewModulestoreMigration.sourceKeyBlockLoading = 'course-v1:HarvardX+4+2023';
+mockGetPreviewModulestoreMigration.applyMock = () => jest.spyOn(api, 'getPreviewModulestoreMigration').mockImplementation(mockGetPreviewModulestoreMigration);

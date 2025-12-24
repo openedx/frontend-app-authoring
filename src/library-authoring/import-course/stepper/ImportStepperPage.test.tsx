@@ -12,19 +12,52 @@ import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
-import { useGetBlockTypes } from '@src/search-manager';
 import { bulkModulestoreMigrateUrl } from '@src/data/api';
-import { useLibraryBlockLimits } from '@src/library-authoring/data/apiHooks';
+import { mockGetPreviewModulestoreMigration } from '@src/data/api.mocks';
 import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;
 mockGetMigrationInfo.applyMock();
 mockContentLibrary.applyMock();
+mockGetPreviewModulestoreMigration.applyMock();
 type StudioHomeState = DeprecatedReduxState['studioHome'];
 
 const libraryKey = mockContentLibrary.libraryId;
 const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
+
+const courses = [
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyGood,
+    displayName: 'Managing Risk in the Information Age',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '123',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLimit,
+    displayName: 'Course with a lot of components',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '3',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLoading,
+    displayName: 'Course with a loading',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '4',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+];
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -38,11 +71,6 @@ jest.mock('@src/search-manager', () => ({
   useGetContentHits: jest.fn().mockReturnValue({ isPending: true, data: null }),
 }));
 
-jest.mock('@src/library-authoring/data/apiHooks', () => ({
-  ...jest.requireActual('@src/library-authoring/data/apiHooks'),
-  useLibraryBlockLimits: jest.fn().mockReturnValue({ isPending: true, data: null }),
-}));
-
 const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
   // Generate a custom initial state based on studioHomeCoursesRequestParams
   const customInitialState: Partial<DeprecatedReduxState> = {
@@ -50,7 +78,7 @@ const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
     studioHome: {
       ...initialState.studioHome,
       studioHomeData: {
-        courses: studioHomeMock.courses,
+        courses,
         numPages,
         coursesCount,
       },
@@ -93,7 +121,6 @@ describe('<ImportStepperModal />', () => {
 
     // Renders the course list and previously imported chip
     expect(screen.getByText(/managing risk in the information age/i)).toBeInTheDocument();
-    expect(screen.getByText(/run 0/i)).toBeInTheDocument();
     expect(await screen.findByText('Previously Imported')).toBeInTheDocument();
 
     // Renders cancel and next step buttons
@@ -112,14 +139,11 @@ describe('<ImportStepperModal />', () => {
   });
 
   it('should go to review import details step', async () => {
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
-      isPending: false,
-      data: { maxBlocksPerContentLibrary: 100 },
-    });
     const user = userEvent.setup();
     renderComponent();
-    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
-      courseId: 'course-v1:HarvardX+123+2023',
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyBlockLoading;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
       title: 'Managing Risk in the Information Age',
       subtitle: '',
       org: 'HarvardX',
@@ -130,7 +154,7 @@ describe('<ImportStepperModal />', () => {
     expect(nextButton).toBeDisabled();
 
     // Select a course
-    const courseCard = screen.getAllByRole('radio')[0];
+    const courseCard = screen.getAllByRole('radio')[2];
     await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
@@ -148,44 +172,11 @@ describe('<ImportStepperModal />', () => {
   });
 
   it('should block import when content limit is reached', async () => {
-    (useLibraryBlockLimits as jest.Mock).mockReturnValue({
-      isPending: false,
-      data: { maxBlocksPerContentLibrary: 20 },
-    });
-
-    (useGetBlockTypes as jest.Mock).mockImplementation((args) => {
-      // Block types query for children of unsupported blocks
-      if (args.length === 2) {
-        return {
-          isPending: false,
-          data: {},
-        };
-      }
-
-      // Block types query from the course
-      if (args[0] === 'context_key = "course-v1:HarvardX+123+2023"') {
-        return {
-          isPending: false,
-          data: {
-            chapter: 1,
-            sequential: 2,
-            vertical: 3,
-            'problem-builder': 1,
-            html: 25,
-          },
-        };
-      }
-
-      return {
-        isPending: true,
-        data: null,
-      };
-    });
-
     const user = userEvent.setup();
     renderComponent();
-    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
-      courseId: 'course-v1:HarvardX+123+2023',
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyBlockLimit;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
       title: 'Managing Risk in the Information Age',
       subtitle: '',
       org: 'HarvardX',
@@ -196,7 +187,7 @@ describe('<ImportStepperModal />', () => {
     expect(nextButton).toBeDisabled();
 
     // Select a course
-    const courseCard = screen.getAllByRole('radio')[0];
+    const courseCard = screen.getAllByRole('radio')[1];
     await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
@@ -206,7 +197,7 @@ describe('<ImportStepperModal />', () => {
 
     expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /This import would exceed the Content Library limit of 20 items/i,
+      /This import would exceed the Content Library limit of 1000 items/i,
     )).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: /import course/i })).toBeDisabled();
@@ -236,21 +227,12 @@ describe('<ImportStepperModal />', () => {
   });
 
   it('should import selected course on button click', async () => {
-    (useGetBlockTypes as jest.Mock).mockReturnValue({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        html: 5,
-        problem: 3,
-      },
-    });
     const user = userEvent.setup();
     renderComponent();
     axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
-    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
-      courseId: 'course-v1:HarvardX+123+2023',
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyGood;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
       title: 'Managing Risk in the Information Age',
       subtitle: '',
       org: 'HarvardX',

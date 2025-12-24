@@ -179,10 +179,12 @@ export async function bulkModulestoreMigrate(
 }
 
 export interface PreviewMigrationInfo {
-  state: string;
-  unssuported_blocks: number;
-  total_blocks: number;
-  total_components: number;
+  state: 'partial' | 'success' | 'block_limit_reached';
+  unsupportedBlocks: number;
+  unsupportedPercentage: number;
+  blocksLimit: number;
+  totalBlocks: number;
+  totalComponents: number;
   sections: number;
   subsections: number;
   units: number;
@@ -192,7 +194,7 @@ export interface PreviewMigrationInfo {
  * Get the preview for a modulestore migration given a source key and a library key
  */
 export async function getPreviewModulestoreMigration(
-  libraryKey : string,
+  libraryKey: string,
   sourceKey: string,
 ): Promise<PreviewMigrationInfo> {
   const client = getAuthenticatedHttpClient();
