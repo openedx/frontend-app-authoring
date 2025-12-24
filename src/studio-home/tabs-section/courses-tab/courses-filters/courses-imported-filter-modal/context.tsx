@@ -72,14 +72,12 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
     dispatch(fetchStudioHomeData(undefined, false, { ...studioHomeCoursesParams, page: 1, pageSize: PAGE_SIZE }));
   }, []);
 
+  // istanbul ignore next
   useEffect(() => {
     // HACK: If there are no courses that were not imported in the current page, then we need to fetch
     // the next page of courses.
     // FIXME: This workaround causes page flicker when the next page has also has no courses that were not imported.
-    // istanbul ignore if
-    if ((numPages > currentPage)
-      && filteredCourses.length === 0
-      && !isCourseListLoading) {
+    if ((numPages > currentPage) && filteredCourses.length === 0 && !isCourseListLoading) {
       dispatch(fetchStudioHomeData(undefined, false, { ...studioHomeCoursesParams, page: currentPage + 1 }));
       dispatch(updateStudioHomeCoursesCustomParams({ ...studioHomeCoursesParams, currentPage: currentPage + 1 }));
     }
