@@ -188,10 +188,10 @@ export const LibraryProvider = ({
 
 export function useLibraryContext(
   allowEmtpy?: false,
-): LibraryContextData;                     // never undefined
+): LibraryContextData; // never undefined
 export function useLibraryContext(
   allowEmtpy: true,
-): LibraryContextData | undefined;        // may be undefined
+): LibraryContextData | undefined; // may be undefined
 export function useLibraryContext(
   allowEmtpy?: boolean,
 ): LibraryContextData | undefined {

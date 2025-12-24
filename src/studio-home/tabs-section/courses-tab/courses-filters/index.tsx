@@ -16,13 +16,13 @@ import messages from './messages';
 import { CourseImportFilter } from './courses-imported-filter-modal';
 
 interface BaseFilter {
-    currentPage: number;
-    search: string | undefined;
-    order: string | undefined;
-    isFiltered: boolean;
-    archivedOnly: boolean | undefined;
-    activeOnly: boolean | undefined;
-    cleanFilters: boolean;
+  currentPage: number;
+  search: string | undefined;
+  order: string | undefined;
+  isFiltered: boolean;
+  archivedOnly: boolean | undefined;
+  activeOnly: boolean | undefined;
+  cleanFilters: boolean;
 }
 
 /* regex to check if a string has only whitespace
@@ -35,7 +35,7 @@ interface Props {
   locationValue: string,
   onSubmitSearchField?: () => void,
   isLoading?: boolean,
-};
+}
 
 const CoursesFilters = ({
   dispatch,

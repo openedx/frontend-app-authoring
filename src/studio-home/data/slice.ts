@@ -6,7 +6,7 @@ import { RequestStatus, type RequestStatusType } from '@src/data/constants';
 
 export interface Params {
   currentPage: number;
-  pageSize: number;
+  pageSize?: number;
   search?: string;
   order?: string;
   archivedOnly?: boolean;

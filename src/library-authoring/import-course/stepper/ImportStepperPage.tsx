@@ -16,13 +16,13 @@ import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
 import { ToastContext } from '@src/generic/toast-context';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
-import { ReviewImportDetails } from './ReviewImportDetails';
-import messages from '../messages';
-import { HelpSidebar } from '../HelpSidebar';
 import {
   CourseImportFilterProvider,
   useCourseImportFilter,
 } from '@src/studio-home/tabs-section/courses-tab/courses-filters/courses-imported-filter-modal/context';
+import { ReviewImportDetails } from './ReviewImportDetails';
+import messages from '../messages';
+import { HelpSidebar } from '../HelpSidebar';
 
 type MigrationStep = 'select-course' | 'review-details';
 
