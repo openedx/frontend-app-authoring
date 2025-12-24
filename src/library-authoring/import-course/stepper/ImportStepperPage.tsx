@@ -54,7 +54,7 @@ export const ImportStepperPage = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
-  const [selectedCourseId, setSelectedCourseId] = useState<string>();
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
   const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
@@ -120,7 +120,10 @@ export const ImportStepperPage = () => {
                     eventKey="select-course"
                     title={intl.formatMessage(messages.importCourseSelectCourseStep)}
                   >
-                    <CourseImportFilterProvider>
+                    <CourseImportFilterProvider
+                      selectedCourseId={selectedCourseId}
+                      handleSelect={setSelectedCourseId}
+                    >
                       <CoursesList
                         selectedCourseId={selectedCourseId}
                         handleSelect={setSelectedCourseId}
@@ -147,7 +150,7 @@ export const ImportStepperPage = () => {
                     </Button>
                     <Button
                       onClick={() => setCurrentStep('review-details')}
-                      disabled={selectedCourseId === undefined}
+                      disabled={!selectedCourseId}
                     >
                       <FormattedMessage {...messages.importCourseNext} />
                     </Button>

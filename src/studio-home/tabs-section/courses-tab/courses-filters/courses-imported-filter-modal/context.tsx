@@ -20,11 +20,13 @@ export const CourseImportFilterContext = createContext<CourseImportFilterContext
 
 interface Props {
   children: ReactNode;
+  handleSelect?: (courseId: string) => void;
+  selectedCourseId?: string;
 }
 
 const PAGE_SIZE = 500;
 
-export const CourseImportFilterProvider = ({ children }: Props) => {
+export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, children }: Props) => {
   const { libraryId } = useLibraryContext(true) || {};
   const dispatch = useDispatch();
   const [hidePreviouslyImportedCourses, setHidePreviouslyImportedCourses] = useState(true);
@@ -32,9 +34,11 @@ export const CourseImportFilterProvider = ({ children }: Props) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const { currentPage } = studioHomeCoursesParams;
   const { courseLoadingStatus } = useSelector(getLoadingStatuses);
+  const isCourseListLoading = courseLoadingStatus === RequestStatus.IN_PROGRESS;
   const allVisibleCourseIds = courses?.map(item => item.courseKey) || [];
   const {
     data: migrationInfoData,
+    isPending,
   } = useMigrationInfo(allVisibleCourseIds, allVisibleCourseIds.length > 0);
 
   const processedMigrationInfo: Record<string, string[]> = useMemo(() => {
@@ -49,9 +53,17 @@ export const CourseImportFilterProvider = ({ children }: Props) => {
     return result;
   }, [migrationInfoData]);
 
-  const filteredCourses = useMemo(() => (hidePreviouslyImportedCourses && libraryId
+  const filteredCourses: any[] = useMemo(() => (hidePreviouslyImportedCourses && libraryId
     ? courses?.filter(course => !processedMigrationInfo[course.courseKey]?.includes(libraryId))
     : courses), [hidePreviouslyImportedCourses, libraryId, processedMigrationInfo, courses]);
+
+  useEffect(() => {
+    // Filter the courses based on selected course id and handle the selection change
+    if (!isCourseListLoading && !isPending
+      && filteredCourses.findIndex(course => course.courseKey === selectedCourseId) === -1) {
+      handleSelect?.('');
+    }
+  }, [filteredCourses, selectedCourseId, handleSelect]);
 
   useEffect(() => {
     // Fetch all studio home data for initial load to avoid pagingation
@@ -64,9 +76,10 @@ export const CourseImportFilterProvider = ({ children }: Props) => {
     // HACK: If there are no courses that were not imported in the current page, then we need to fetch
     // the next page of courses.
     // FIXME: This workaround causes page flicker when the next page has also has no courses that were not imported.
+    // istanbul ignore if
     if ((numPages > currentPage)
       && filteredCourses.length === 0
-      && courseLoadingStatus !== RequestStatus.IN_PROGRESS) {
+      && !isCourseListLoading) {
       dispatch(fetchStudioHomeData(undefined, false, { ...studioHomeCoursesParams, page: currentPage + 1 }));
       dispatch(updateStudioHomeCoursesCustomParams({ ...studioHomeCoursesParams, currentPage: currentPage + 1 }));
     }

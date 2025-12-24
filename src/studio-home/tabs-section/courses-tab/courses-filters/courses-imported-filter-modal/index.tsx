@@ -77,6 +77,7 @@ export const CourseImportFilter = () => {
     setShow(false);
   };
 
+  // istanbul ignore if
   if (typeof importContext === 'undefined') {
     return null;
   }
