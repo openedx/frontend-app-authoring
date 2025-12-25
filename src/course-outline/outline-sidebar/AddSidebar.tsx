@@ -7,6 +7,7 @@ import messages from './messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ComponentPicker } from '../../library-authoring';
 import { ContentType } from '../../library-authoring/routes';
+import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 
 export const AddSidebar = ({}: { courseId: string }) => {
   const intl = useIntl();
@@ -38,6 +39,7 @@ const ShowLibraryContent = () => {
       libraryIds={[]}
       selectLibrary={false}
       visibleTabs={[ContentType.home]}
+      FiltersComponent={SidebarFilters}
     />
   );
 }
