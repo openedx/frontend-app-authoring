@@ -4,13 +4,13 @@ import {
   useContext,
   useEffect,
   useState,
+  type ReactElement,
 } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow,
   Alert,
   Badge,
   Breadcrumb,
@@ -31,12 +31,7 @@ import Header from '@src/header';
 import NotFoundAlert from '@src/generic/NotFoundAlert';
 import { useStudioHome } from '@src/studio-home/hooks';
 import {
-  ClearFiltersButton,
-  FilterByBlockType,
-  FilterByTags,
   SearchContextProvider,
-  SearchKeywordsField,
-  SearchSortWidget,
   TypesFilterData,
 } from '@src/search-manager';
 import { ToastContext } from '@src/generic/toast-context';
@@ -49,8 +44,8 @@ import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
-import LibraryFilterByPublished from './generic/filter-by-published';
 import { libraryQueryPredicate } from './data/apiHooks';
+import { FiltersProps, MainFilters } from '@src/library-authoring/library-filters/MainFilters';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -133,13 +128,15 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
 };
 
 interface LibraryAuthoringPageProps {
-  returnToLibrarySelection?: () => void,
-  visibleTabs?: ContentType[],
+  returnToLibrarySelection?: () => void;
+  visibleTabs?: ContentType[];
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
 const LibraryAuthoringPage = ({
   returnToLibrarySelection,
   visibleTabs = allLibraryPageTabs,
+  FiltersComponent = MainFilters,
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
   const location = useLocation();
@@ -385,22 +382,7 @@ const LibraryAuthoringPage = ({
                 {visibleTabsToRender}
               </Tabs>
             )}
-            <ActionRow className="my-3">
-              <SearchKeywordsField className="mr-3" />
-              <FilterByTags />
-              {!(onlyOneType) && <FilterByBlockType />}
-              <LibraryFilterByPublished key={
-                // It is necessary to re-render `LibraryFilterByPublished` every time `FilterByBlockType`
-                // appears or disappears, this is because when the menu is opened it is rendered
-                // in a previous state, causing an inconsistency in its position.
-                // By changing the key we can re-render the component.
-                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
-              }
-              />
-              <ClearFiltersButton />
-              <ActionRow.Spacer />
-              <SearchSortWidget />
-            </ActionRow>
+            <FiltersComponent onlyOneType={onlyOneType} />
             <LibraryContent contentType={activeKey} />
           </SearchContextProvider>
         </Container>
