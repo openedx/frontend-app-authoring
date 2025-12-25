@@ -19,6 +19,7 @@ interface SortableItemProps {
   onKeyDown?: KeyboardEventHandler,
   disabled?: boolean,
   cardClassName?: string,
+  buttonVariant?: 'dark' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'light' | 'black' | 'brand',
 }
 
 const SortableItem = ({
@@ -32,6 +33,7 @@ const SortableItem = ({
   onKeyDown,
   disabled,
   cardClassName = '',
+  buttonVariant = 'light',
 }: SortableItemProps) => {
   const intl = useIntl();
   const {
@@ -76,7 +78,7 @@ const SortableItem = ({
             tooltipContent={intl.formatMessage(messages.tooltipContent)}
             src={DragIndicator}
             iconAs={Icon}
-            variant="light"
+            variant={buttonVariant}
             alt={intl.formatMessage(messages.tooltipContent)}
             {...attributes}
             {...listeners}

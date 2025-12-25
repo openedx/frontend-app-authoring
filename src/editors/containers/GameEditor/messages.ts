@@ -96,6 +96,11 @@ const messages = defineMessages({
     defaultMessage: 'No text',
     description: 'Label shown when a card has no text content.',
   },
+  noImageLabel: {
+    id: 'GameEditor.noImageLabel',
+    defaultMessage: 'No image',
+    description: 'Label shown when a card has no image content.',
+  },
   moveUpLabel: {
     id: 'GameEditor.moveUpLabel',
     defaultMessage: 'Move up',

@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import React, { useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useMemo,
+} from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -21,13 +23,11 @@ import {
   Plus,
   ExpandMore,
   ExpandLess,
-  InsertPhoto,
   MoreHoriz,
   InfoOutline,
   Check,
   Info,
 } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
 import {
   actions,
   selectors,
@@ -42,17 +42,28 @@ import SettingsOption from '../ProblemEditor/components/EditProblemView/Settings
 import Button from '../../sharedComponents/Button';
 import DraggableList, { SortableItem } from '../../../generic/DraggableList';
 import messages from './messages';
+import PictureIcon from './PictureIcon';
 
 export const hooks = {
   getContent: ({ type, settings, list }) => {
-    // Filter out completely blank cards before saving (no text and no images)
-    const filledCards = list.filter((card) => {
-      const termText = (card.term || '').trim();
-      const definitionText = (card.definition || '').trim();
-      const hasText = termText !== '' || definitionText !== '';
-      const hasImages = !!card.term_image || !!card.definition_image;
-      return hasText || hasImages;
-    });
+    // Filter out cards based on game type requirements
+    let filledCards;
+
+    if (type === 'matching') {
+      filledCards = list.filter((card) => {
+        const termText = (card.term || '').trim();
+        const definitionText = (card.definition || '').trim();
+        return termText !== '' || definitionText !== '';
+      });
+    } else {
+      filledCards = list.filter((card) => {
+        const termText = (card.term || '').trim();
+        const definitionText = (card.definition || '').trim();
+        const hasText = termText !== '' || definitionText !== '';
+        const hasImages = !!card.term_image || !!card.definition_image;
+        return hasText || hasImages;
+      });
+    }
 
     return {
       gameType: type,
@@ -90,19 +101,20 @@ export const GameEditor = ({
   isDirty,
 }) => {
   const intl = useIntl();
-  const [cardsData, setCardsData] = React.useState(list);
-  const [settingsLoaded, setSettingsLoaded] = React.useState(false);
-  const [validationErrors, setValidationErrors] = React.useState({});
-  const [localInputValues, setLocalInputValues] = React.useState({});
+  const [cardsData, setCardsData] = useState(list);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [localInputValues, setLocalInputValues] = useState({});
+  const [isAlertVisible, setIsAlertVisible] = useState(true);
 
   const MAX_TERM_LENGTH = 120;
   const MAX_DEFINITION_LENGTH = 120;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCardsData(list);
   }, [list]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (blockFinished && blockId && blockValue && !settingsLoaded) {
       loadGamesSettings();
       setSettingsLoaded(true);
@@ -114,7 +126,7 @@ export const GameEditor = ({
     return localInputValues[key] !== undefined ? localInputValues[key] : cardsData[index]?.[field] || '';
   };
 
-  const handleInputChange = React.useCallback((index, field, value) => {
+  const handleInputChange = useCallback((index, field, value) => {
     const key = `${index}_${field}`;
 
     setLocalInputValues(prev => ({ ...prev, [key]: value }));
@@ -129,7 +141,7 @@ export const GameEditor = ({
     });
   }, []);
 
-  const handleInputBlur = React.useCallback((index, field) => {
+  const handleInputBlur = useCallback((index, field) => {
     const key = `${index}_${field}`;
     const value = localInputValues[key];
 
@@ -201,8 +213,49 @@ export const GameEditor = ({
     });
 
     setValidationErrors(errors);
+
+    if (list.length === 0) { return false; }
     return !hasErrors;
   }, [list, type]);
+
+  // Show alert when new validation errors appear
+  useEffect(() => {
+    if (Object.keys(validationErrors).length > 0) {
+      setIsAlertVisible(true);
+    }
+  }, [validationErrors]);
+
+  const cardsWithErrors = useMemo(() => {
+    if (Object.keys(validationErrors).length === 0) {
+      return new Set();
+    }
+    const errorCards = new Set();
+    Object.keys(validationErrors).forEach(key => {
+      const index = parseInt(key.split('_')[0], 10);
+      errorCards.add(index);
+    });
+    return errorCards;
+  }, [validationErrors]);
+
+  useEffect(() => {
+    if (cardsWithErrors.size === 0) {
+      return;
+    }
+
+    const cardsToExpand = [];
+    cardsWithErrors.forEach(index => {
+      if (list[index] && !list[index].editorOpen) {
+        cardsToExpand.push(index);
+      }
+    });
+
+    // Only call toggleOpen if there are actually cards to expand
+    if (cardsToExpand.length > 0) {
+      cardsToExpand.forEach(index => {
+        toggleOpen({ index, isOpen: true });
+      });
+    }
+  }, [cardsWithErrors, list, toggleOpen]);
 
   const getDescriptionHeader = () => {
     switch (type) {
@@ -270,7 +323,7 @@ export const GameEditor = ({
 
   const renderImageDisplay = useCallback((imageUrl, index, imageType) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
-      <img className="card-image" src={`${getConfig().STUDIO_BASE_URL}${imageUrl}`} alt={`${imageType.toUpperCase()}_IMG`} />
+      <img className="card-image" src={imageUrl} alt={`${imageType.toUpperCase()}_IMG`} />
       <IconButton
         src={DeleteOutline}
         iconAs={Icon}
@@ -283,10 +336,10 @@ export const GameEditor = ({
 
   const renderImageUploadButton = useCallback((index, imageType) => (
     <IconButton
-      src={InsertPhoto}
+      src={PictureIcon}
       iconAs={Icon}
       alt="IMG"
-      variant="primary"
+      variant="dark"
       onClick={() => document.getElementById(`${imageType}_image_upload|${index}`).click()}
     />
   ), []);
@@ -340,10 +393,7 @@ export const GameEditor = ({
               </Tooltip>
             )}
           >
-            <Icon
-              src={InfoOutline}
-              className="ml-2"
-            />
+            <Icon src={InfoOutline} />
           </OverlayTrigger>
         </div>
         <DraggableList
@@ -358,6 +408,7 @@ export const GameEditor = ({
                 id={card.id}
                 key={card.id}
                 buttonClassName="draggable-button"
+                buttonVariant="secondary"
                 actionStyle={{
                   position: 'absolute',
                   top: '12px',
@@ -367,7 +418,6 @@ export const GameEditor = ({
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
-                  marginBottom: '16px',
                   boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15)',
                   position: 'relative',
                   width: '100%',
@@ -376,7 +426,7 @@ export const GameEditor = ({
               >
                 <Collapsible.Advanced
                   className="card"
-                  defaultOpen={card.editorOpen}
+                  open={card.editorOpen}
                   onToggle={(isOpen) => toggleOpen({ index, isOpen })}
                 >
                   <input
@@ -401,10 +451,21 @@ export const GameEditor = ({
                           <span className="align-middle">
                             <span className="preview-term">
                               {type === 'flashcards' ? (
-                                <span className="d-inline-block align-middle pr-2">
+                                <span className={`d-flex align-items-center mr-2 img-preview-wrapper ${card.term_image !== '' ? 'with-img' : 'with-icon'}`}>
                                   {card.term_image !== ''
                                     ? <img className="img-preview" src={card.term_image} alt="TERM_IMG_PRV" />
-                                    : <Icon className="img-preview" src={InsertPhoto} />}
+                                    : (
+                                      <OverlayTrigger
+                                        placement="top"
+                                        overlay={(
+                                          <Tooltip id="no-term-image-tooltip">
+                                            {intl.formatMessage(messages.noImageLabel)}
+                                          </Tooltip>
+                                        )}
+                                      >
+                                        <Icon className="img-preview" src={PictureIcon} />
+                                      </OverlayTrigger>
+                                    )}
                                 </span>
                               )
                                 : ''}
@@ -412,10 +473,21 @@ export const GameEditor = ({
                             </span>
                             <span className="preview-definition">
                               {type === 'flashcards' ? (
-                                <span className="d-inline-block align-middle pr-2">
+                                <span className={`d-flex align-items-center mr-2 img-preview-wrapper ${card.definition_image !== '' ? 'with-img' : 'with-icon'}`}>
                                   {card.definition_image !== ''
                                     ? <img className="img-preview" src={card.definition_image} alt="DEF_IMG_PRV" />
-                                    : <Icon className="img-preview" src={InsertPhoto} />}
+                                    : (
+                                      <OverlayTrigger
+                                        placement="top"
+                                        overlay={(
+                                          <Tooltip id="no-definition-image-tooltip">
+                                            {intl.formatMessage(messages.noImageLabel)}
+                                          </Tooltip>
+                                        )}
+                                      >
+                                        <Icon className="img-preview" src={PictureIcon} />
+                                      </OverlayTrigger>
+                                    )}
                                 </span>
                               )
                                 : ''}
@@ -618,8 +690,14 @@ export const GameEditor = ({
       validateEntry={validateAllCards}
     >
       <div className="editor-body h-75 overflow-auto">
-        {Object.keys(validationErrors).length > 0 && (
-          <Alert variant="danger" className="mt-2" icon={Info}>
+        {Object.keys(validationErrors).length > 0 && isAlertVisible && (
+          <Alert
+            variant="danger"
+            className="mt-2"
+            icon={Info}
+            dismissible
+            onClose={() => setIsAlertVisible(false)}
+          >
             <Alert.Heading className="font-size-normal">{intl.formatMessage(messages.validationErrorHeading)}</Alert.Heading>
             <p>{intl.formatMessage(messages.validationErrorAlert)}</p>
           </Alert>
@@ -636,7 +714,9 @@ GameEditor.propTypes = {
   blockFinished: PropTypes.bool.isRequired,
   blockId: PropTypes.string.isRequired,
   blockValue: PropTypes.shape({}),
-  list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  list: PropTypes.arrayOf(PropTypes.shape({
+    editorOpen: PropTypes.bool,
+  })).isRequired,
   updateTerm: PropTypes.func.isRequired,
   updateDefinition: PropTypes.func.isRequired,
   toggleOpen: PropTypes.func.isRequired,
@@ -670,23 +750,15 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = {
-  initializeEditor: actions.app.initializeEditor,
-
   setShuffleStatus: actions.game.setShuffleStatus,
-
   setTimerStatus: actions.game.setTimerStatus,
-
   updateType: actions.game.updateType,
-
   updateTerm: actions.game.updateTerm,
-  updateTermImage: actions.game.updateTermImage,
   updateDefinition: actions.game.updateDefinition,
-  updateDefinitionImage: actions.game.updateDefinitionImage,
   toggleOpen: actions.game.toggleOpen,
   setList: actions.game.setList,
   addCard: actions.game.addCard,
   removeCard: actions.game.removeCard,
-
   loadGamesSettings: thunkActions.game.loadGamesSettings,
   uploadGameImage: thunkActions.game.uploadGameImage,
   deleteGameImage: thunkActions.game.deleteGameImage,
