@@ -16,15 +16,18 @@ import SelectLibrary from './SelectLibrary';
 import messages from './messages';
 import { ContentType, allLibraryPageTabs } from '../routes';
 import { AtLeastOne } from '../../types';
+import { FiltersProps } from '@src/library-authoring/library-filters';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
   visibleTabs: ContentType[],
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
 const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   returnToLibrarySelection,
   visibleTabs,
+  FiltersComponent,
 }) => {
   const { collectionId } = useLibraryContext();
 
@@ -35,6 +38,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
     <LibraryAuthoringPage
       returnToLibrarySelection={returnToLibrarySelection}
       visibleTabs={visibleTabs}
+      FiltersComponent={FiltersComponent}
     />
   );
 };
@@ -57,6 +61,7 @@ type ComponentPickerProps = AtLeastOne<LibraryIdOneOrMore> & {
   onComponentSelected?: ComponentSelectedEvent,
   onChangeComponentSelection?: ComponentSelectionChangedEvent,
   selectLibrary?: boolean;
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
@@ -73,6 +78,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   onComponentSelected = defaultComponentSelectedCallback,
   onChangeComponentSelection = defaultSelectionChangedCallback,
   selectLibrary = true,
+  FiltersComponent,
 }) => {
   const [currentStep, setCurrentStep] = useState(!libraryId && selectLibrary ? 'select-library' : 'pick-components');
   const [selectedLibrary, setSelectedLibrary] = useState(libraryId);
@@ -136,6 +142,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
               <InnerComponentPicker
                 returnToLibrarySelection={returnToLibrarySelection}
                 visibleTabs={visibleTabs}
+                FiltersComponent={FiltersComponent}
               />
             </SidebarProvider>
           </LibraryProvider>
