@@ -47,7 +47,9 @@ export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, chi
       for (const libraries of Object.values(migrationInfoData)) {
         // The map key in `migrationInfoData` is in camelCase.
         // In the processed map, we use the key in its original form.
-        result[libraries[0]?.sourceKey] = libraries.map(item => item.targetKey);
+        if (libraries.length !== 0) {
+          result[libraries[0]?.sourceKey] = libraries.map(item => item.targetKey);
+        }
       }
     }
     return result;
