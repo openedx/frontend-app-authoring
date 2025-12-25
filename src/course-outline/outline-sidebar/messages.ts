@@ -65,6 +65,34 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.sidebar.section-4.link',
     defaultMessage: 'Learn more about content visibility settings',
   },
+  sidebarButtonHelp: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-help',
+    defaultMessage: 'Help',
+  },
+  sidebarButtonAdd: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-add',
+    defaultMessage: 'Add',
+    description: 'Button text for add button in sidebar',
+  },
+  sidebarButtonInfo: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-info',
+    defaultMessage: 'Info',
+  },
+  sidebarSectionSummary: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-summary',
+    defaultMessage: 'Course Content Summary',
+    description: 'Title of the summary section in the sidebar',
+  },
+  sidebarSectionTaxonomy: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-taxonomy',
+    defaultMessage: 'Taxonomy Alignments',
+    description: 'Title of the taxonomy section in the sidebar',
+  },
+  sidebarSectionTaxonomyManageTags: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-taxonomy.manage-tags-action',
+    defaultMessage: 'Manage tags',
+    description: 'Action to open the tags drawer',
+  },
 });
 
 export default messages;
