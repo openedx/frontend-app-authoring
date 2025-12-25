@@ -100,12 +100,6 @@ const ImportDetailsContent = () => {
         // The migrations of this block is failed
         counts.unsupported += 1;
         resultUnsupportedIds.push(block.sourceKey);
-
-        if (block.unsupportedReason) {
-          // Verify if the unsupported block has children
-          const match = block.unsupportedReason.match(/It has (\d+) children/);
-          counts.unsupported += match ? Number(match[1]) : 0;
-        }
       } else {
         counts.totalBlocks += 1;
         const blockType = getBlockType(block.sourceKey);

@@ -80,14 +80,27 @@ const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
 
 describe('<ImportStepperModal />', () => {
   it('should render correctly', async () => {
+    const user = userEvent.setup();
     renderComponent();
     // Renders the stepper header
     expect(await screen.findByText('Select Course')).toBeInTheDocument();
     expect(await screen.findByText('Review Import Details')).toBeInTheDocument();
 
-    // Renders the course list and previously imported chip
-    expect(screen.getByText(/managing risk in the information age/i)).toBeInTheDocument();
-    expect(screen.getByText(/run 0/i)).toBeInTheDocument();
+    // Renders the course list and hides previously imported courses
+    expect(screen.queryByText(/run 0/i)).toBeInTheDocument(); // not imported before
+
+    // Hides previously imported courses.
+    expect(screen.queryByText(/managing risk in the information age/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Previously Imported')).not.toBeInTheDocument();
+
+    // use filter modal to show previously imported courses.
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' }));
+    await user.click(await screen.findByRole('button', { name: 'Save' }));
+
+    // Renders previously imported courses and badge
+    expect(await screen.findByText(/managing risk in the information age/i)).toBeInTheDocument();
+    expect(await screen.findByText(/run 0/i)).toBeInTheDocument();
     expect(await screen.findByText('Previously Imported')).toBeInTheDocument();
 
     // Renders cancel and next step buttons
@@ -116,6 +129,11 @@ describe('<ImportStepperModal />', () => {
       description: 'This is a test course',
     });
 
+    // use filter modal to show previously imported courses.
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' }));
+    await user.click(await screen.findByRole('button', { name: 'Save' }));
+
     const nextButton = await screen.findByRole('button', { name: /next step/i });
     expect(nextButton).toBeDisabled();
 
@@ -137,7 +155,7 @@ describe('<ImportStepperModal />', () => {
     expect(await screen.findByText('Import Analysis in Progress')).toBeInTheDocument();
   });
 
-  it('the course should remain selected on back', async () => {
+  it('the course should remain selected on back only for non-imported courses', async () => {
     const user = userEvent.setup();
     renderComponent();
 
@@ -145,7 +163,7 @@ describe('<ImportStepperModal />', () => {
     expect(nextButton).toBeDisabled();
 
     // Select a course
-    const courseCard = screen.getAllByRole('radio')[0];
+    const courseCard = (await screen.findAllByRole('radio'))[0];
     await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
@@ -156,8 +174,53 @@ describe('<ImportStepperModal />', () => {
     const backButton = await screen.findByRole('button', { name: /back/i });
     await user.click(backButton);
 
-    expect(screen.getByText(/managing risk in the information age/i)).toBeInTheDocument();
+    expect(screen.getByText(/Run 0/i)).toBeInTheDocument();
     expect(courseCard).toBeChecked();
+    expect(nextButton).toBeEnabled();
+  });
+
+  it('should hide previously imported courses on page change', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    // use filter modal to show previously imported courses.
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' }));
+    await user.click(await screen.findByRole('button', { name: 'Save' }));
+
+    const nextButton = await screen.findByRole('button', { name: /next step/i });
+    expect(nextButton).toBeDisabled();
+
+    // Select a course
+    const courseCard = (await screen.findAllByRole('radio'))[0];
+    await user.click(courseCard);
+    expect(courseCard).toBeChecked();
+
+    // Click next
+    expect(nextButton).toBeEnabled();
+    await user.click(nextButton);
+
+    const backButton = await screen.findByRole('button', { name: /back/i });
+    await user.click(backButton);
+
+    expect(screen.queryByText(/managing risk in the information age/i)).not.toBeInTheDocument();
+    expect((await screen.findAllByRole('radio'))[0]).not.toBeChecked();
+
+    // should be disabled
+    expect(await screen.findByRole('button', { name: /next step/i })).toBeDisabled();
+  });
+
+  it('should reset checkbox if modal is closed or cancelled without saving', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    // use filter modal to show previously imported courses.
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' }));
+    await user.click(await screen.findByRole('button', { name: 'Cancel' }));
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    const checkbox = await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' });
+    expect(checkbox).not.toBeChecked();
   });
 
   it('should import selected course on button click', async () => {
@@ -173,6 +236,12 @@ describe('<ImportStepperModal />', () => {
     });
     const user = userEvent.setup();
     renderComponent();
+
+    // use filter modal to show previously imported courses.
+    await user.click(await screen.findByRole('button', { name: 'Filter settings' }));
+    await user.click(await screen.findByRole('checkbox', { name: 'Show Previously Imported Courses' }));
+    await user.click(await screen.findByRole('button', { name: 'Save' }));
+
     axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
     axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
       courseId: 'course-v1:HarvardX+123+2023',

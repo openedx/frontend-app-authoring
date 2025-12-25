@@ -120,7 +120,7 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /12.50% of content cannot be imported. For details see below./i,
+      /88% of course content will be imported into a collection in your library called Test Course. Some content will not be imported. For details see below./i,
     )).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('7/8')).toBeInTheDocument();
@@ -135,7 +135,7 @@ describe('ReviewImportDetails', () => {
     expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
-  it('considers children blocks of unsupportedBlocks', async () => {
+  it('skips children blocks from total counts', async () => {
     (useCourseDetails as jest.Mock).mockReturnValue({ isPending: false, data: { title: 'Test Course' } });
     (useMigrationInfo as jest.Mock).mockReturnValue({
       isPending: false,
@@ -161,7 +161,7 @@ describe('ReviewImportDetails', () => {
     }).mockReturnValueOnce({
       isPending: false,
       data: {
-        problem: 2,
+        problem: 2, // should be ignored from total count.
       },
     });
 
@@ -170,10 +170,10 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /25.00% of content cannot be imported. For details see below./i,
+      /90% of course content will be imported into a collection in your library called Test Course. Some content will not be imported. For details see below./i,
     )).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
-    expect(await screen.findByText('9/12')).toBeInTheDocument();
+    expect(await screen.findByText('9/10')).toBeInTheDocument();
     expect(await screen.findByText('Sections')).toBeInTheDocument();
     expect(await screen.findByText('1')).toBeInTheDocument();
     expect(await screen.findByText('Subsections')).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText('Units')).toBeInTheDocument();
     expect(await screen.findByText('3')).toBeInTheDocument();
     expect(await screen.findByText('Components')).toBeInTheDocument();
-    expect(await screen.findByText('3/6')).toBeInTheDocument();
+    expect(await screen.findByText('3/4')).toBeInTheDocument();
     expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 

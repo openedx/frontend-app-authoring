@@ -109,6 +109,7 @@ describe('<ImportDetailsPage />', () => {
   });
 
   it('should render Partial Succeeded state', async () => {
+    const user = userEvent.setup();
     mockGetModulestoreMigratedBlocksInfo.applyMockPartial();
     (useGetContentHits as jest.Mock).mockReturnValue({
       isPending: false,
@@ -143,12 +144,12 @@ describe('<ImportDetailsPage />', () => {
     expect(await screen.findByText(/partial import successful/i)).toBeInTheDocument();
 
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
-    expect(await screen.findByText('2/5')).toBeInTheDocument();
+    expect(await screen.findByText('2/3')).toBeInTheDocument();
     expect(await screen.findByText(/Components/i)).toBeInTheDocument();
-    expect(await screen.findByText('1/4')).toBeInTheDocument();
+    expect(await screen.findByText('1/2')).toBeInTheDocument();
 
     expect(await screen.findByText(
-      /40% of course test course has been imported successfully/i,
+      /66% of course test course has been imported successfully/i,
     )).toBeInTheDocument();
 
     expect(await screen.findByRole('cell', {
@@ -165,7 +166,7 @@ describe('<ImportDetailsPage />', () => {
       name: /view imported content/i,
     });
 
-    await viewImportedContentBtn.click();
+    await user.click(viewImportedContentBtn);
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/library/lib:Axim:TEST/collection/coll'));
   });
 });
