@@ -15,6 +15,7 @@ import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
   courseId: string;
+  courseUsageKey: string;
   courseDetails?: CourseDetailsData;
   courseDetailStatus: RequestStatusType;
   canChangeProviders: boolean;
@@ -51,7 +52,8 @@ export const CourseAuthoringProvider = ({
   const waffleFlags = useWaffleFlags();
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
-  const { courseStructure: { id: courseUsageKey } } = useSelector(getOutlineIndexData);
+  const { courseStructure } = useSelector(getOutlineIndexData);
+  const { id: courseUsageKey } = courseStructure || {};
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -114,6 +116,7 @@ export const CourseAuthoringProvider = ({
   const context = useMemo<CourseAuthoringContextData>(() => {
     return {
       courseId,
+      courseUsageKey,
       courseDetails,
       courseDetailStatus,
       canChangeProviders,
@@ -128,6 +131,7 @@ export const CourseAuthoringProvider = ({
     };
   }, [
     courseId,
+    courseUsageKey,
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
