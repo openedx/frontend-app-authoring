@@ -30,6 +30,7 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -44,16 +45,6 @@ interface SubsectionCardProps {
   onOpenDeleteModal: () => void,
   onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
-  onNewUnitSubmit: (subsectionId: string) => void,
-  onAddUnitFromLibrary: (options: {
-    type: string,
-    category?: string,
-    parentLocator: string,
-    displayName?: string,
-    boilerplate?: string,
-    stagedContent?: string,
-    libraryContentKey: string,
-  }) => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
@@ -77,8 +68,6 @@ const SubsectionCard = ({
   onOpenDeleteModal,
   onOpenUnlinkModal,
   onDuplicateSubmit,
-  onNewUnitSubmit,
-  onAddUnitFromLibrary,
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
@@ -100,7 +89,7 @@ const SubsectionCard = ({
     openAddLibraryUnitModal,
     closeAddLibraryUnitModal,
   ] = useToggle(false);
-  const { courseId } = useParams();
+  const { courseId, handleNewUnitSubmit, handleAddUnitFromLibrary } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -196,7 +185,7 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handleNewButtonClick = () => onNewUnitSubmit(id);
+  const handleNewButtonClick = () => handleNewUnitSubmit(id);
   const handlePasteButtonClick = () => onPasteClick(id, section.id);
 
   const titleComponent = (
@@ -260,14 +249,14 @@ const SubsectionCard = ({
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
-    onAddUnitFromLibrary({
+    handleAddUnitFromLibrary.mutateAsync({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Vertical,
       parentLocator: id,
       libraryContentKey: selectedUnit.usageKey,
     });
     closeAddLibraryUnitModal();
-  }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
+  }, [id, handleAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
   return (
     <>

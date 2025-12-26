@@ -73,7 +73,13 @@ import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
-  const { courseId } = useCourseAuthoringContext();
+  const {
+    courseId,
+    handleAddSubsectionFromLibrary,
+    handleAddUnitFromLibrary,
+    handleAddSectionFromLibrary,
+    handleNewSectionSubmit,
+  } = useCourseAuthoringContext();
 
   const {
     courseUsageKey,
@@ -123,13 +129,6 @@ const CourseOutline = () => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddUnitFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddSectionFromLibrary,
-    getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -413,9 +412,7 @@ const CourseOutline = () => {
                                     onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
-                                    onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
                                     resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
@@ -445,8 +442,6 @@ const CourseOutline = () => {
                                           onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
-                                          onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
                                           resetScrollState={resetScrollState}
@@ -480,7 +475,6 @@ const CourseOutline = () => {
                                                 onOpenUnlinkModal={openUnlinkModal}
                                                 onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                                getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
                                               />
