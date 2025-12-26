@@ -42,42 +42,6 @@ export async function getVerticalData(unitId: string): Promise<object> {
 }
 
 /**
- * Creates a new course XBlock.
- */
-export async function createCourseXblock({
-  type,
-  category,
-  parentLocator,
-  displayName,
-  boilerplate,
-  stagedContent,
-  libraryContentKey,
-}: {
-  type: string,
-  category?: string, // The category of the XBlock. Defaults to the type if not provided.
-  parentLocator: string,
-  displayName?: string,
-  boilerplate?: string,
-  stagedContent?: string,
-  libraryContentKey?: string, // component key from library if being imported.
-}) {
-  const body = {
-    type,
-    boilerplate,
-    category: category || type,
-    parent_locator: parentLocator,
-    display_name: displayName,
-    staged_content: stagedContent,
-    library_content_key: libraryContentKey,
-  };
-
-  const { data } = await getAuthenticatedHttpClient()
-    .post(postXBlockBaseApiUrl(), body);
-
-  return data;
-}
-
-/**
  * Handles the visibility and data of a course unit, such as publishing, resetting to default values,
  * and toggling visibility to students.
  */
