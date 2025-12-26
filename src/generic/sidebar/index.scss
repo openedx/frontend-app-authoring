@@ -1,7 +1,8 @@
 .sidebar {
   .sidebar-content {
     flex: 0 1 auto;
-    max-width: 650px;
+    max-width: 660px;
+    min-width: 500px;
   }
 
   .dropdown-toggle {
