@@ -15,7 +15,6 @@ import messages from './messages';
 
 export interface HeaderActionsProps {
   actions: {
-    handleNewSection: () => void,
     lmsLink: string,
   },
   courseActions: XBlockActions,
@@ -28,7 +27,7 @@ const HeaderActions = ({
   errors,
 }: HeaderActionsProps) => {
   const intl = useIntl();
-  const { handleNewSection, lmsLink } = actions;
+  const { lmsLink } = actions;
 
   const { setCurrentPageKey, sidebarPages } = useOutlineSidebarContext();
 
@@ -45,7 +44,7 @@ const HeaderActions = ({
         >
           <Button
             iconBefore={IconAdd}
-            onClick={handleNewSection}
+            onClick={() => setCurrentPageKey('add')}
             disabled={!(errors?.outlineIndexApi === undefined || errors?.outlineIndexApi === null)}
             variant="outline-primary"
           >

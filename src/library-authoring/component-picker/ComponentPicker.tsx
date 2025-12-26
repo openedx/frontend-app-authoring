@@ -15,7 +15,6 @@ import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
 import messages from './messages';
 import { ContentType, allLibraryPageTabs } from '../routes';
-import { AtLeastOne } from '../../types';
 import { FiltersProps } from '@src/library-authoring/library-filters';
 
 interface LibraryComponentPickerProps {
@@ -53,7 +52,7 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = AtLeastOne<LibraryIdOneOrMore> & {
+type ComponentPickerProps = Partial<LibraryIdOneOrMore> & {
   showOnlyPublished?: boolean,
   extraFilter?: string[],
   visibleTabs?: ContentType[],
