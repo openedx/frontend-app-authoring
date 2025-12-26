@@ -12,7 +12,6 @@ import { messageTypes } from '../constants';
 import {
   editUnitDisplayName,
   getVerticalData,
-  createCourseXblock,
   getCourseContainerChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
@@ -36,6 +35,7 @@ import {
   updateMovedXBlockParams,
 } from './slice';
 import { getNotificationMessage } from './utils';
+import { createCourseXblock } from '@src/course-outline/data/api';
 
 export function fetchCourseSectionVerticalData(courseId, sequenceId) {
   return async (dispatch) => {

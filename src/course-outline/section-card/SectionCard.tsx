@@ -29,6 +29,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -44,8 +45,6 @@ interface SectionCardProps {
   onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   isSectionsExpanded: boolean,
-  onNewSubsectionSubmit: (id: string) => void,
-  onAddSubsectionFromLibrary: (props: object) => {},
   index: number,
   canMoveItem: (oldIndex: number, newIndex: number) => boolean,
   onOrderChange: (oldIndex: number, newIndex: number) => void,
@@ -68,8 +67,6 @@ const SectionCard = ({
   onOpenUnlinkModal,
   onDuplicateSubmit,
   isSectionsExpanded,
-  onNewSubsectionSubmit,
-  onAddSubsectionFromLibrary,
   onOrderChange,
   resetScrollState,
 }: SectionCardProps) => {
@@ -85,7 +82,11 @@ const SectionCard = ({
     openAddLibrarySubsectionModal,
     closeAddLibrarySubsectionModal,
   ] = useToggle(false);
-  const { courseId } = useParams();
+  const {
+    courseId,
+    handleAddSubsectionFromLibrary,
+    handleNewSubsectionSubmit,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   // Expand the section if a search result should be shown/scrolled to
@@ -218,10 +219,6 @@ const SectionCard = ({
     onOpenHighlightsModal(section);
   };
 
-  const handleNewSubsectionSubmit = () => {
-    onNewSubsectionSubmit(id);
-  };
-
   const handleSectionMoveUp = () => {
     onOrderChange(index, index - 1);
   };
@@ -236,14 +233,14 @@ const SectionCard = ({
   * @returns {void}
   */
   const handleSelectLibrarySubsection = useCallback((selectedSubection: SelectedComponent) => {
-    onAddSubsectionFromLibrary({
+    handleAddSubsectionFromLibrary.mutateAsync({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Sequential,
       parentLocator: id,
       libraryContentKey: selectedSubection.usageKey,
     });
     closeAddLibrarySubsectionModal();
-  }, [id, onAddSubsectionFromLibrary, closeAddLibrarySubsectionModal]);
+  }, [id, handleAddSubsectionFromLibrary, closeAddLibrarySubsectionModal]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -345,7 +342,7 @@ const SectionCard = ({
                 {children}
                 {actions.childAddable && (
                   <OutlineAddChildButtons
-                    handleNewButtonClick={handleNewSubsectionSubmit}
+                    handleNewButtonClick={() => handleNewSubsectionSubmit(id)}
                     handleUseFromLibraryClick={openAddLibrarySubsectionModal}
                     childType={ContainerType.Subsection}
                   />
