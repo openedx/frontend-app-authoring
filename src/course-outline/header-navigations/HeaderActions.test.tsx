@@ -7,10 +7,7 @@ import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
-const handleNewSectionMock = jest.fn();
-
 const headerNavigationsActions = {
-  handleNewSection: handleNewSectionMock,
   lmsLink: '',
 };
 
@@ -58,7 +55,7 @@ describe('<HeaderActions />', () => {
 
     const addButton = await screen.findByRole('button', { name: messages.addButton.defaultMessage });
     fireEvent.click(addButton);
-    expect(handleNewSectionMock).toHaveBeenCalledTimes(1);
+    expect(setCurrentPageKeyMock).toHaveBeenCalledWith('add');
   });
 
   it('disables new section button if course outline fetch fails', async () => {
