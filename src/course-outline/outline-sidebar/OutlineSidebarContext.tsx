@@ -56,6 +56,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       component: AddSidebar,
       icon: Plus,
       title: intl.formatMessage(messages.sidebarButtonAdd),
+      hideFromActionMenu: true,
     },
   } satisfies OutlineSidebarPages;
 
