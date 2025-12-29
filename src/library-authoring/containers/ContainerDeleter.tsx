@@ -42,7 +42,7 @@ const ContainerDeleter = ({
   } = useSidebarContext();
   const {
     containerId: parentContainerId,
-  } = useLibraryContext();
+  } = useLibraryContext(false);
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);

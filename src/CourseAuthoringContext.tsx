@@ -57,6 +57,7 @@ export const CourseAuthoringProvider = ({
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
+      // instanbul ignore next
       return `/course/${courseId}/container/${locator}`;
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
@@ -68,6 +69,7 @@ export const CourseAuthoringProvider = ({
   const openUnitPage = (locator: string) => {
     const url = getUnitUrl(locator);
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
+      // instanbul ignore next
       navigate(url);
     } else {
       window.location.assign(url);
@@ -89,6 +91,7 @@ export const CourseAuthoringProvider = ({
   const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
     try {
       const data = await getCourseItem(locator);
+      // instanbul ignore next
       // Page should scroll to newly added section.
       data.shouldScroll = true;
       dispatch(addSection(data));

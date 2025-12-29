@@ -11,7 +11,7 @@ import messages from './messages';
 const ComponentInfoHeader = () => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;
