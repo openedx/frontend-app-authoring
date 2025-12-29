@@ -22,7 +22,7 @@ export const PublishDraftButton = ({
   onClick,
 }: PublishDraftButtonProps) => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
 
   return (
     <Button

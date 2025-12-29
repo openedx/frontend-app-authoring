@@ -40,7 +40,7 @@ const HeaderActions = () => {
   const intl = useIntl();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { collectionId, readOnly } = useLibraryContext();
+  const { collectionId, readOnly } = useLibraryContext(false);
   const {
     closeLibrarySidebar,
     openAddContentSidebar,

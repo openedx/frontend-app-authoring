@@ -25,7 +25,7 @@ interface Props {
 const ComponentRemover = ({ usageKey, index, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
-  const { containerId, showOnlyPublished } = useLibraryContext();
+  const { containerId, showOnlyPublished } = useLibraryContext(false);
   const { showToast } = useContext(ToastContext);
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);

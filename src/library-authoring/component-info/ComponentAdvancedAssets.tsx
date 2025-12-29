@@ -18,7 +18,7 @@ import messages from './messages';
 
 export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

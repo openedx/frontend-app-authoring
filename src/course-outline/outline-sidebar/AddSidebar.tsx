@@ -31,7 +31,7 @@ type AddContentButtonProps = {
 const getLastEditableParent = (blockList: Array<XBlock>) => {
   let index = 1;
   let lastBlock: XBlock;
-  while (index < blockList.length) {
+  while (index <= blockList.length) {
     lastBlock = blockList[blockList.length - index];
     if (lastBlock.actions.childAddable) {
       return lastBlock;

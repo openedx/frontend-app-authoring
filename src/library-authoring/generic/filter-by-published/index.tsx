@@ -9,7 +9,7 @@ import { FilterByPublished, PublishStatus } from '../../../search-manager';
  * when not relevant.
  */
 const LibraryFilterByPublished : React.FC<Record<never, never>> = () => {
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
 
   if (showOnlyPublished) {
     return (
