@@ -24,7 +24,6 @@ import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
-import WelcomeMessageSlot from '../plugin-slots/WelcomeMessageSlot';
 
 const StudioHome = () => {
   const intl = useIntl();
@@ -175,7 +174,6 @@ const StudioHome = () => {
               />
             </section>
           </article>
-          {userIsActive && <WelcomeMessageSlot defaultMessage="Welcome to Studio!" />}
           {getMainBody()}
         </section>
       </Container>

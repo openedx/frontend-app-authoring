@@ -15,7 +15,6 @@
 * [`org.openedx.frontend.authoring.additional_course_content_plugin.v1`](./AdditionalCourseContentPluginSlot/)
 * [`org.openedx.frontend.authoring.additional_course_plugin.v1`](./AdditionalCoursePluginSlot/)
 * [`org.openedx.frontend.authoring.video_transcript_additional_translations_component.v1`](./AdditionalTranslationsComponentSlot/)
-* [`org.openedx.frontend.authoring.welcome_message.v1`](./WelcomeMessageSlot/) - Example slot for demonstration
 
 ## Footer Slot
 * [`org.openedx.frontend.layout.studio_footer.v1`](./StudioFooterSlot/)
