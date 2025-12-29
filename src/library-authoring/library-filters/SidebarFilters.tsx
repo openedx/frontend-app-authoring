@@ -43,8 +43,8 @@ export const SidebarFilters = ({onlyOneType}: FiltersProps) => {
         />
       </Stack>
       {isOn && <Stack direction="horizontal">
-        <FilterByTags />
         {!(onlyOneType) && <FilterByBlockType />}
+        <FilterByTags />
         <ClearFiltersButton />
         <SearchSortWidget />
       </Stack>}

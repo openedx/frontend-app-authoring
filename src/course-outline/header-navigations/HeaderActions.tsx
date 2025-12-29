@@ -79,7 +79,8 @@ const HeaderActions = ({
           <Icon src={ViewSidebar} />
         </Dropdown.Toggle>
         <Dropdown.Menu className="mt-1">
-          {Object.entries(sidebarPages).map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
+          {Object.entries(sidebarPages).filter(([, page]) => !page.hideFromActionMenu)
+            .map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
             <Dropdown.Item
               key={key}
               onClick={() => setCurrentPageKey(key)}

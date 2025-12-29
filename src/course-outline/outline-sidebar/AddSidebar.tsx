@@ -213,7 +213,6 @@ const AddTabs = () => {
 
 /** Main Sidebar Component */
 export const AddSidebar = () => {
-  const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
 
   return (
