@@ -17,7 +17,7 @@ interface ModalComponentPreviewProps {
 
 const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
 
   return (
     <StandardModal
@@ -41,7 +41,7 @@ const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

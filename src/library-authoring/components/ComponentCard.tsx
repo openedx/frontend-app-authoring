@@ -16,7 +16,7 @@ type ComponentCardProps = {
 };
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
 

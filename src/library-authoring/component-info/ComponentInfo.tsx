@@ -107,7 +107,7 @@ const ComponentActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { openComponentEditor } = useLibraryContext();
+  const { openComponentEditor } = useLibraryContext(false);
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
   const canEdit = canEditComponent(componentId);
 
@@ -151,7 +151,7 @@ const ComponentActions = ({
 
 const ComponentInfo = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
 
   const {
     sidebarTab,

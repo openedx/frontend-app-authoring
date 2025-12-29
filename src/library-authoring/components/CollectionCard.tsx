@@ -28,7 +28,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
   const {
@@ -119,7 +119,7 @@ type CollectionCardProps = {
 
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { setCollectionId, showOnlyPublished } = useLibraryContext();
+  const { setCollectionId, showOnlyPublished } = useLibraryContext(false);
   const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
