@@ -83,7 +83,8 @@ const messages = defineMessages({
   },
   actionButtonPublishTitle: {
     id: 'course-authoring.course-unit.action-buttons.publish.title',
-    defaultMessage: 'Publish',
+    defaultMessage: 'Publish {role}',
+    description: 'Publish button text with optional role parameter. If role is provided, displays "Publish {role}", otherwise just "Publish".',
   },
   actionButtonDiscardChangesTitle: {
     id: 'course-authoring.course-unit.action-button.discard-changes.title',
