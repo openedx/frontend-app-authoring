@@ -58,7 +58,7 @@ const CourseAuthoringPage = ({ children }: Props) => {
             title={courseTitle}
             contextId={courseId}
             containerProps={{
-              size: "fluid",
+              size: 'fluid',
             }}
           />
         )

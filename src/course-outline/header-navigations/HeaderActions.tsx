@@ -81,16 +81,16 @@ const HeaderActions = ({
         <Dropdown.Menu className="mt-1">
           {Object.entries(sidebarPages).filter(([, page]) => !page.hideFromActionMenu)
             .map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
-            <Dropdown.Item
-              key={key}
-              onClick={() => setCurrentPageKey(key)}
-            >
-              <Stack direction="horizontal" gap={2}>
-                <Icon src={page.icon} />
-                {page.title}
-              </Stack>
-            </Dropdown.Item>
-          ))}
+              <Dropdown.Item
+                key={key}
+                onClick={() => setCurrentPageKey(key)}
+              >
+                <Stack direction="horizontal" gap={2}>
+                  <Icon src={page.icon} />
+                  {page.title}
+                </Stack>
+              </Dropdown.Item>
+            ))}
         </Dropdown.Menu>
       </Dropdown>
 

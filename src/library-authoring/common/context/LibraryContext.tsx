@@ -9,13 +9,13 @@ import {
 import { useParams } from 'react-router-dom';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
+import { AtLeastOne, RequireIf } from '@src/types';
 import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
-import { AtLeastOne } from '../../../types';
 
 export interface ComponentEditorInfo {
   usageKey: string;
@@ -26,7 +26,7 @@ export interface ComponentEditorInfo {
 export type LibraryIdOneOrMore = {
   libraryId: string;
   libraryIds: string[];
-}
+};
 
 export type LibraryContextData = AtLeastOne<LibraryIdOneOrMore> & {
   /** The ID of the current library */
@@ -120,9 +120,9 @@ export const LibraryProvider = ({
       action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
       scope: libraryId,
     },
-  }, typeof libraryId !== "undefined");
-  const canPublish = userPermissions?.canPublish || false;
-  const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
+  }, typeof libraryId !== 'undefined');
+  const canPublish = !libraryId || userPermissions?.canPublish || false;
+  const readOnly = !libraryId || !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params
   const params = useParams();
@@ -193,19 +193,17 @@ export const LibraryProvider = ({
   );
 };
 
-export function useLibraryContext(
-  allowEmtpy?: false,
-): LibraryContextData; // never undefined
-export function useLibraryContext(
-  allowEmtpy: true,
-): LibraryContextData | undefined; // may be undefined
-export function useLibraryContext(
-  allowEmtpy?: boolean,
-): LibraryContextData | undefined {
+export function useLibraryContext(requireLibraryId?: true | undefined): RequireIf<LibraryContextData, 'libraryId', true>;
+export function useLibraryContext(requireLibraryId: false): RequireIf<LibraryContextData, 'libraryId', false>;
+export function useLibraryContext(requireLibraryId: boolean = true): LibraryContextData {
   const ctx = useContext(LibraryContext);
-  if (!allowEmtpy && ctx === undefined) {
+  if (ctx === undefined) {
     /* istanbul ignore next */
     throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
+  }
+  if (requireLibraryId && !ctx.libraryId) {
+    /* istanbul ignore next */
+    throw new Error('useLibraryContext() was used in a component without a libraryId');
   }
   return ctx;
 }

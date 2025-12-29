@@ -119,11 +119,15 @@ const AddToCollectionsDrawer = ({
   onClose,
 }: CollectionsDrawerProps) => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
+  const { libraryId } = useLibraryContext(false);
+  const extraFilter = ['type = "collection"'];
+  if (libraryId) {
+    extraFilter.push(`context_key = "${libraryId}"`);
+  }
 
   return (
     <SearchContextProvider
-      extraFilter={[`context_key = "${libraryId}"`, 'type = "collection"']}
+      extraFilter={extraFilter}
       skipUrlUpdate
       skipBlockTypeFetch
     >
@@ -156,7 +160,7 @@ const EntityCollections = ({ collections, onManageClick }: {
   onManageClick: () => void;
 }) => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
 
   if (!collections?.length) {
     return (

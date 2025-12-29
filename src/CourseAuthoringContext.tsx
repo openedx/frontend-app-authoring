@@ -1,9 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { createContext, useContext, useMemo } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { CourseDetailsData } from './data/api';
-import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
-import { RequestStatus, RequestStatusType } from './data/constants';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +8,9 @@ import { addSection, addSubsection, updateSavingStatus } from '@src/course-outli
 import { addNewSectionQuery, addNewSubsectionQuery, addNewUnitQuery } from '@src/course-outline/data/thunk';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
+import { RequestStatus, RequestStatusType } from './data/constants';
+import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
+import { CourseDetailsData } from './data/api';
 
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
@@ -113,23 +113,21 @@ export const CourseAuthoringProvider = ({
   */
   const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
 
-  const context = useMemo<CourseAuthoringContextData>(() => {
-    return {
-      courseId,
-      courseUsageKey,
-      courseDetails,
-      courseDetailStatus,
-      canChangeProviders,
-      handleNewSectionSubmit,
-      handleNewSubsectionSubmit,
-      handleNewUnitSubmit,
-      handleAddSectionFromLibrary,
-      handleAddSubsectionFromLibrary,
-      handleAddUnitFromLibrary,
-      getUnitUrl,
-      openUnitPage,
-    };
-  }, [
+  const context = useMemo<CourseAuthoringContextData>(() => ({
+    courseId,
+    courseUsageKey,
+    courseDetails,
+    courseDetailStatus,
+    canChangeProviders,
+    handleNewSectionSubmit,
+    handleNewSubsectionSubmit,
+    handleNewUnitSubmit,
+    handleAddSectionFromLibrary,
+    handleAddSubsectionFromLibrary,
+    handleAddUnitFromLibrary,
+    getUnitUrl,
+    openUnitPage,
+  }), [
     courseId,
     courseUsageKey,
     courseDetails,

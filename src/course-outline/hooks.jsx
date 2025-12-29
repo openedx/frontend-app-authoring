@@ -9,6 +9,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   setCurrentItem,
@@ -57,7 +58,6 @@ import {
   syncDiscussionsTopics,
 } from './data/thunk';
 import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();

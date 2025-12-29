@@ -2,7 +2,7 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StandardModal, useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,8 +29,8 @@ import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import messages from './messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import messages from './messages';
 
 interface SubsectionCardProps {
   section: XBlock,
