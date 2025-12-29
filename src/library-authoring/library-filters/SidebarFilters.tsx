@@ -1,12 +1,16 @@
-import { Form, IconButton, Menu, SearchField, Stack, useToggle } from "@openedx/paragon"
-import { FiltersProps } from "."
-import { ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField, SearchSortWidget } from "@src/search-manager"
-import SearchFilterWidget from "@src/search-manager/SearchFilterWidget"
-import { FilterList, Newsstand } from "@openedx/paragon/icons"
+import {
+  Form, IconButton, Menu, SearchField, Stack, useToggle,
+} from '@openedx/paragon';
+import {
+  ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField, SearchSortWidget,
+} from '@src/search-manager';
+import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
+import { FilterList, Newsstand } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { useIntl } from "@edx/frontend-platform/i18n"
+import { FiltersProps } from '.';
 
-export const SidebarFilters = ({onlyOneType}: FiltersProps) => {
+export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   const intl = useIntl();
   const [isOn,,, toggle] = useToggle(false);
 
@@ -25,12 +29,11 @@ export const SidebarFilters = ({onlyOneType}: FiltersProps) => {
               onSubmit={() => {}}
               onChange={() => {}}
               onClear={() => {}}
-              value={''}
-              placeholder={''}
+              value=""
+              placeholder=""
               className="mx-3 mb-1"
             />
-            <Menu className="filter-by-refinement-menu" style={{ boxShadow: 'none' }}>
-            </Menu>
+            <Menu className="filter-by-refinement-menu" style={{ boxShadow: 'none' }} />
           </Form.Group>
         </SearchFilterWidget>
         <SearchKeywordsField />
@@ -42,13 +45,14 @@ export const SidebarFilters = ({onlyOneType}: FiltersProps) => {
           className="rounded-sm border ml-2"
         />
       </Stack>
-      {isOn && <Stack direction="horizontal">
+      {isOn && (
+      <Stack direction="horizontal">
         {!(onlyOneType) && <FilterByBlockType />}
         <FilterByTags />
         <ClearFiltersButton />
         <SearchSortWidget />
-      </Stack>}
+      </Stack>
+      )}
     </Stack>
-  )
-}
-
+  );
+};

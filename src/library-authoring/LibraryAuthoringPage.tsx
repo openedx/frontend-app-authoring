@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useState,
-  type ReactElement,
 } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
@@ -37,6 +36,8 @@ import {
 import { ToastContext } from '@src/generic/toast-context';
 import migrationMessages from '@src/legacy-libraries-migration/messages';
 
+import { FiltersProps } from '@src/library-authoring/library-filters';
+import { MainFilters } from '@src/library-authoring/library-filters/MainFilters';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
@@ -45,12 +46,11 @@ import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarCo
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
 import { libraryQueryPredicate } from './data/apiHooks';
-import { FiltersProps, MainFilters } from '@src/library-authoring/library-filters/MainFilters';
 
 const HeaderActions = () => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
 
   const {
     openAddContentSidebar,
@@ -108,7 +108,7 @@ const HeaderActions = () => {
 export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
   const { componentPickerMode } = useComponentPickerContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
@@ -166,7 +166,7 @@ const LibraryAuthoringPage = ({
     showOnlyPublished,
     extraFilter: contextExtraFilter,
     readOnly,
-  } = useLibraryContext();
+  } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -287,7 +287,7 @@ const LibraryAuthoringPage = ({
     />
   ) : undefined;
 
-  let extraFilter: string[] = [];
+  const extraFilter: string[] = [];
   if (libraryId) {
     extraFilter.push(`context_key = "${libraryId}"`);
   }
@@ -340,30 +340,32 @@ const LibraryAuthoringPage = ({
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        {libraryData &&
+        {libraryData
+          && (
           <>
             <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
             {!componentPickerMode && (
-              <Header
-                number={libraryData.slug}
-                title={libraryData.title}
-                org={libraryData.org}
-                contextId={libraryId}
-                readOnly={readOnly}
-                isLibrary
-                containerProps={{
-                  size: undefined,
-                }}
-              />
+            <Header
+              number={libraryData.slug}
+              title={libraryData.title}
+              org={libraryData.org}
+              contextId={libraryId}
+              readOnly={readOnly}
+              isLibrary
+              containerProps={{
+                size: undefined,
+              }}
+            />
             )}
           </>
-        }
+          )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
           >
-            {libraryData &&
+            {libraryData
+              && (
               <SubHeader
                 title={<SubHeaderTitle title={libraryData.title} />}
                 subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
@@ -371,7 +373,7 @@ const LibraryAuthoringPage = ({
                 headerActions={<HeaderActions />}
                 hideBorder
               />
-            }
+              )}
             {visibleTabs.length > 1 && (
               <Tabs
                 variant="tabs"

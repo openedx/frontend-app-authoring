@@ -42,7 +42,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { libraryId, openCreateCollectionModal, collectionId } = useLibraryContext();
+  const { libraryId, openCreateCollectionModal, collectionId } = useLibraryContext(false);
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
   /**

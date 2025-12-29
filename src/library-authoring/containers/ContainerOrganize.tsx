@@ -26,7 +26,7 @@ const ContainerOrganize = () => {
   const [tagsCollapseIsOpen, ,setTagsCollapseClose, toggleTags] = useToggle(true);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen, , toggleCollections] = useToggle(true);
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
   const { sidebarItemInfo, sidebarAction } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
 

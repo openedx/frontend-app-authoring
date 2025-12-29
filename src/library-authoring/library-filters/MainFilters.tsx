@@ -1,10 +1,12 @@
-import { ActionRow } from "@openedx/paragon"
-import LibraryFilterByPublished from "@src/library-authoring/generic/filter-by-published"
-import { FiltersProps } from "."
-import { useLibraryRoutes } from "@src/library-authoring/routes"
-import { ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField, SearchSortWidget } from "@src/search-manager"
+import { ActionRow } from '@openedx/paragon';
+import LibraryFilterByPublished from '@src/library-authoring/generic/filter-by-published';
+import { useLibraryRoutes } from '@src/library-authoring/routes';
+import {
+  ClearFiltersButton, FilterByBlockType, FilterByTags, SearchKeywordsField, SearchSortWidget,
+} from '@src/search-manager';
+import { FiltersProps } from '.';
 
-export const MainFilters = ({onlyOneType}: FiltersProps) => {
+export const MainFilters = ({ onlyOneType }: FiltersProps) => {
   const {
     insideCollections,
     insideUnits,
@@ -27,6 +29,5 @@ export const MainFilters = ({onlyOneType}: FiltersProps) => {
       <ActionRow.Spacer />
       <SearchSortWidget />
     </ActionRow>
-  )
-}
-
+  );
+};

@@ -14,7 +14,7 @@ interface EditableTitleProps {
 export const ContainerEditableTitle = ({ containerId, textClassName }: EditableTitleProps) => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext(false);
 
   const { data: container } = useContainer(containerId);
 

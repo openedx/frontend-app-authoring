@@ -55,7 +55,7 @@ interface ComponentBlockProps {
 /** Component header */
 const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const { showToast } = useContext(ToastContext);
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
@@ -129,7 +129,7 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 const ComponentBlock = ({
   block, readOnly, isDragging, index,
 }: ComponentBlockProps) => {
-  const { showOnlyPublished, openComponentEditor } = useLibraryContext();
+  const { showOnlyPublished, openComponentEditor } = useLibraryContext(false);
 
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
@@ -232,7 +232,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext(false);
 
   const readOnly = componentReadOnly || libraryReadOnly;
 

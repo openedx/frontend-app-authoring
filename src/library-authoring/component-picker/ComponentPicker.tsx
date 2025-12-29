@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Alert, Stepper } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { FiltersProps } from '@src/library-authoring/library-filters';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
@@ -15,7 +16,6 @@ import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
 import messages from './messages';
 import { ContentType, allLibraryPageTabs } from '../routes';
-import { FiltersProps } from '@src/library-authoring/library-filters';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
@@ -28,7 +28,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   visibleTabs,
   FiltersComponent,
 }) => {
-  const { collectionId } = useLibraryContext();
+  const { collectionId } = useLibraryContext(false);
 
   if (collectionId) {
     return <LibraryCollectionPage />;

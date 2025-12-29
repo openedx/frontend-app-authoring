@@ -32,6 +32,6 @@ export const useUserPermissions = (
   enabled: boolean = true,
 ) => useQuery<PermissionValidationAnswer, Error>({
   queryKey: adminConsoleQueryKeys.permissions(permissions),
-  queryFn: enabled ? () => validateUserPermissions(permissions): skipToken,
+  queryFn: enabled ? () => validateUserPermissions(permissions) : skipToken,
   retry: false,
 });
