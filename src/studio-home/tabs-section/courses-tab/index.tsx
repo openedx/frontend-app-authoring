@@ -26,10 +26,10 @@ import messages from '../messages';
 import CoursesFilters from './courses-filters';
 import ContactAdministrator from './contact-administrator';
 import './index.scss';
+import { useCourseImportFilter } from './courses-filters/courses-imported-filter-modal/context';
 
 export interface MigrationStatusProps {
   courseId: string;
-  allVisibleCourseIds: string[];
 }
 
 interface CardListProps {
@@ -62,10 +62,11 @@ const CardList = ({
   migrationStatusWidget,
 }: CardListProps) => {
   const {
-    courses,
+    courses: allCourses,
     numPages,
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
+  const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
 
   const isNotFilteringCourses = !isFiltered && !isLoading;
   const hasCourses = courses?.length > 0;
@@ -101,10 +102,7 @@ const CardList = ({
                 selectPosition={inSelectMode ? 'card' : undefined}
                 isSelected={inSelectMode && selectedCourseId === courseKey}
                 subtitleBeforeWidget={MigrationStatusWidget && (
-                  <MigrationStatusWidget
-                    courseId={courseKey}
-                    allVisibleCourseIds={courses?.map(item => item.courseKey) || []}
-                  />
+                  <MigrationStatusWidget courseId={courseKey} />
                 )}
               />
             ),
@@ -167,10 +165,11 @@ export const CoursesList: React.FC<Props> = ({
   const intl = useIntl();
   const location = useLocation();
   const {
-    courses,
+    courses: allCourses,
     coursesCount,
     courseCreatorStatus,
   } = useSelector(getStudioHomeData);
+  const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
   const {
     courseLoadingStatus,
   } = useSelector(getLoadingStatuses);
@@ -189,22 +188,12 @@ export const CoursesList: React.FC<Props> = ({
   const inSelectMode = handleSelect !== undefined;
 
   const handlePageSelected = (page) => {
-    const {
-      search,
-      order,
-      archivedOnly,
-      activeOnly,
-    } = studioHomeCoursesParams;
-
-    const customParams = {
-      search,
-      order,
-      archivedOnly,
-      activeOnly,
-    };
-
-    dispatch(fetchStudioHomeData(locationValue, false, { page, ...customParams }));
-    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page, isFiltered: true }));
+    dispatch(fetchStudioHomeData(locationValue, false, { ...studioHomeCoursesParams, page }));
+    dispatch(updateStudioHomeCoursesCustomParams({
+      ...studioHomeCoursesParams,
+      currentPage: page,
+      isFiltered: true,
+    }));
   };
 
   const handleCleanFilters = () => {
