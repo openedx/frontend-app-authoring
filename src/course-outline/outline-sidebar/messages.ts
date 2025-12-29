@@ -104,7 +104,7 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.sidebar.sidebar-section-add.add-existing-tab',
     defaultMessage: 'Add Existing',
     description: 'Tab title for adding existing library components in outline using sidebar',
-  }
+  },
 });
 
 export default messages;

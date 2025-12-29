@@ -7,7 +7,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';

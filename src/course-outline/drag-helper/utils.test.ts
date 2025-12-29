@@ -26,7 +26,7 @@ describe('possibleSubsectionMoves', () => {
     { actions: { draggable: true } },
     { actions: { draggable: true } },
     { actions: { draggable: true } },
-  ];
+  ] as unknown as XBlock[];
 
   const createMoveFunction = possibleSubsectionMoves(
     mockSections,
@@ -39,7 +39,7 @@ describe('possibleSubsectionMoves', () => {
     const mockNonDraggableSubsections = [
       { actions: { draggable: false } },
       { actions: { draggable: true } },
-    ];
+    ] as unknown as XBlock[];
 
     const createMove = possibleSubsectionMoves(
       mockSections,

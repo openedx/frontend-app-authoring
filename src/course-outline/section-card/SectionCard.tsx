@@ -6,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Bubble, Button, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -28,8 +28,8 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import messages from './messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import messages from './messages';
 
 interface SectionCardProps {
   section: XBlock,
@@ -194,7 +194,7 @@ const SectionCard = ({
   });
 
   // remove border when section is expanded
-  const borderStyle = getItemStatusBorder(!isExpanded ? sectionStatus : '');
+  const borderStyle = getItemStatusBorder(!isExpanded ? sectionStatus : undefined);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);

@@ -47,9 +47,11 @@ export const SidebarSection = ({
   <Stack gap={2}>
     <Stack direction="horizontal" gap={2}>
       {icon && <Icon src={icon} className="mr-1 text-primary" size="sm" />}
-      {title && <h3 className="h5 font-weight-bold text-primary mb-0">
+      {title && (
+      <h3 className="h5 font-weight-bold text-primary mb-0">
         {title}
-      </h3>}
+      </h3>
+      )}
       {actions && (
         <Dropdown className="ml-auto">
           <Dropdown.Toggle

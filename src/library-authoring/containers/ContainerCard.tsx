@@ -38,7 +38,7 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
   const intl = useIntl();
   const {
     libraryId, collectionId, containerId, readOnly,
-  } = useLibraryContext();
+  } = useLibraryContext(false);
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
@@ -211,7 +211,7 @@ type ContainerCardPreviewProps = {
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const {
     blockType: itemType,
     published,
@@ -256,7 +256,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {

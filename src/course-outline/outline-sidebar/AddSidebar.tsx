@@ -3,13 +3,12 @@ import { SchoolOutline } from '@openedx/paragon/icons';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 
-import messages from './messages';
 import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { ComponentPicker } from '../../library-authoring';
-import { ContentType } from '../../library-authoring/routes';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
-import { Button, Stack, Tab, Tabs } from '@openedx/paragon';
+import {
+  Button, Stack, Tab, Tabs,
+} from '@openedx/paragon';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
@@ -18,6 +17,9 @@ import { ComponentSelectedEvent } from '@src/library-authoring/common/context/Co
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { XBlock } from '@src/data/types';
+import { ContentType } from '../../library-authoring/routes';
+import { ComponentPicker } from '../../library-authoring';
+import messages from './messages';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 
@@ -37,7 +39,7 @@ const getLastEditableParent = (blockList: Array<XBlock>) => {
     index++;
   }
   return undefined;
-}
+};
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
@@ -68,7 +70,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       default:
         // istanbul ignore next: unreachable
         throw new Error(`Unrecognized block type ${blockType}`);
-    };
+    }
   }, [
     blockType,
     handleNewSectionSubmit,
@@ -84,7 +86,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       className="m-2"
       iconBefore={getItemIcon(blockType)}
       onClick={onCreateContent}
-      disabled={(!lastSection && blockType==='subsection') || (!lastSubsection && blockType==='unit')}
+      disabled={(!lastSection && blockType === 'subsection') || (!lastSubsection && blockType === 'unit')}
     >
       {name}
     </Button>
@@ -99,21 +101,21 @@ const AddNewContent = () => {
       <AddContentButton
         key="section"
         name={intl.formatMessage(contentMessages.sectionButton)}
-        blockType='section'
+        blockType="section"
       />
       <AddContentButton
         key="subsection"
         name={intl.formatMessage(contentMessages.subsectionButton)}
-        blockType='subsection'
+        blockType="subsection"
       />
       <AddContentButton
         key="unit"
         name={intl.formatMessage(contentMessages.unitButton)}
-        blockType='unit'
+        blockType="unit"
       />
     </Stack>
   );
-}
+};
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
@@ -160,7 +162,7 @@ const ShowLibraryContent = () => {
       default:
         // istanbul ignore next: unreachable
         throw new Error(`Unrecognized block type ${blockType}`);
-    };
+    }
   }, [
     courseUsageKey,
     handleAddSectionFromLibrary,
@@ -171,9 +173,9 @@ const ShowLibraryContent = () => {
   ]);
 
   const allowedBlocks = useMemo(() => {
-    let blocks: ContainerTypes[] = ['section'];
-    if (lastSection) blocks.push('subsection');
-    if (lastSubsection) blocks.push('unit');
+    const blocks: ContainerTypes[] = ['section'];
+    if (lastSection) { blocks.push('subsection'); }
+    if (lastSubsection) { blocks.push('unit'); }
     return blocks;
   }, [lastSection, lastSubsection, sectionsList]);
 
@@ -188,7 +190,7 @@ const ShowLibraryContent = () => {
       onComponentSelected={onComponentSelected}
     />
   );
-}
+};
 
 /** Tabs Component */
 const AddTabs = () => {
@@ -209,7 +211,7 @@ const AddTabs = () => {
       </Tab>
     </Tabs>
   );
-}
+};
 
 /** Main Sidebar Component */
 export const AddSidebar = () => {

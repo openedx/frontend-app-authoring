@@ -6,10 +6,10 @@ import {
 
 import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
-import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 import { ValueOf } from '@src/types';
+import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 
-type ItemBadgeStatusValue = ValueOf<typeof ITEM_BADGE_STATUS>;
+export type ItemBadgeStatusValue = ValueOf<typeof ITEM_BADGE_STATUS>;
 /**
  * Get section status depended on section info
  */
@@ -46,7 +46,7 @@ const getItemStatus = ({
 const getItemStatusBadgeContent = (
   status: ItemBadgeStatusValue,
   messages: Record<string, MessageDescriptor>,
-  intl: IntlShape
+  intl: IntlShape,
 ): any => {
   switch (status) {
     case ITEM_BADGE_STATUS.gated:
@@ -90,7 +90,7 @@ const getItemStatusBadgeContent = (
 /**
  * Get section border color
  */
-const getItemStatusBorder = (status: ItemBadgeStatusValue) => {
+const getItemStatusBorder = (status?: ItemBadgeStatusValue) => {
   switch (status) {
     case ITEM_BADGE_STATUS.live:
       return {
@@ -158,7 +158,7 @@ const getHighlightsFormValues = (currentHighlights: Array<string>): any => {
 const scrollToElement = (
   target: HTMLElement,
   alignWithTop: boolean = false,
-  highlight: boolean = false
+  highlight: boolean = false,
 ) => {
   if (target.getBoundingClientRect().bottom > window.innerHeight) {
     // if alignWithTop is set, the top of the target will be aligned to the top of visible area
