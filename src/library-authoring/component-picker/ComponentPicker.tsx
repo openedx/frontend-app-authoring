@@ -9,7 +9,7 @@ import {
   type ComponentSelectionChangedEvent,
   ComponentPickerProvider,
 } from '../common/context/ComponentPickerContext';
-import { LibraryIdOneOrMore, LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
+import { type LibraryIdOneOrMore, LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';

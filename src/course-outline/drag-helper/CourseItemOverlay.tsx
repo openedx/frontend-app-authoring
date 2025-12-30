@@ -1,7 +1,7 @@
 import { Col, Icon, Row } from '@openedx/paragon';
 import { ArrowRight, DragIndicator } from '@openedx/paragon/icons';
 import { ContainerType } from '@src/generic/key-utils';
-import { getItemStatusBorder, ItemBadgeStatusValue } from '../utils';
+import { getItemStatusBorder, type ItemBadgeStatusValue } from '../utils';
 
 interface ItemProps {
   displayName: string;
