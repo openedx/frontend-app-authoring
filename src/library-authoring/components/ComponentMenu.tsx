@@ -35,6 +35,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     collectionId,
     containerId,
     openComponentEditor,
+    readOnly,
   } = useLibraryContext();
 
   const {
@@ -103,9 +104,11 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
-          <FormattedMessage {...messages.menuEdit} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
+            <FormattedMessage {...messages.menuEdit} />
+          </Dropdown.Item>
+        )}
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
@@ -114,10 +117,12 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={openDeleteModal}>
-          <FormattedMessage {...messages.menuDelete} />
-        </Dropdown.Item>
-        {insideCollection && (
+        {!readOnly && (
+          <Dropdown.Item onClick={openDeleteModal}>
+            <FormattedMessage {...messages.menuDelete} />
+          </Dropdown.Item>
+        )}
+        {insideCollection && !readOnly && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage
               {...containerMessages.menuRemoveFromContainer}
@@ -127,9 +132,11 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
             />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...containerMessages.menuAddToCollection} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item onClick={showManageCollections}>
+            <FormattedMessage {...containerMessages.menuAddToCollection} />
+          </Dropdown.Item>
+        )}
       </Dropdown.Menu>
       {isDeleteModalOpen && (
         <ComponentDeleter

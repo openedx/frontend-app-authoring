@@ -72,6 +72,7 @@ export async function getCourseDetails(courseId: string, username: string): Prom
  */
 export const waffleFlagDefaults = {
   enableCourseOptimizer: false,
+  enableNotifications: false,
   enableCourseOptimizerCheckPrevRunLinks: false,
   useNewHomePage: true,
   useNewCustomPages: true,

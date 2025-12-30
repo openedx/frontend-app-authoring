@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Hyperlink, MailtoLink, Stack } from '@openedx/paragon';
 
@@ -8,6 +6,9 @@ import messages from './messages';
 const AccessibilityBody = ({
   communityAccessibilityLink,
   email,
+}: {
+  communityAccessibilityLink: string,
+  email: string,
 }) => (
   <div className="mt-5">
     <header>
@@ -89,10 +90,5 @@ const AccessibilityBody = ({
     </Stack>
   </div>
 );
-
-AccessibilityBody.propTypes = {
-  communityAccessibilityLink: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-};
 
 export default AccessibilityBody;

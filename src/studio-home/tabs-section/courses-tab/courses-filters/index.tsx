@@ -1,30 +1,48 @@
 import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
 import { debounce } from 'lodash';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import type { Dispatch } from 'redux';
 
-import { getStudioHomeCoursesParams } from '../../../data/selectors';
-import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
-import { fetchStudioHomeData } from '../../../data/thunks';
-import { LoadingSpinner } from '../../../../generic/Loading';
+import { getStudioHomeCoursesParams } from '@src/studio-home/data/selectors';
+import { updateStudioHomeCoursesCustomParams } from '@src/studio-home/data/slice';
+import { fetchStudioHomeData } from '@src/studio-home/data/thunks';
+import { LoadingSpinner } from '@src/generic/Loading';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 import './index.scss';
 import messages from './messages';
+import { CourseImportFilter } from './courses-imported-filter-modal';
+
+interface BaseFilter {
+  currentPage: number;
+  search: string | undefined;
+  order: string | undefined;
+  isFiltered: boolean;
+  archivedOnly: boolean | undefined;
+  activeOnly: boolean | undefined;
+  cleanFilters: boolean;
+}
 
 /* regex to check if a string has only whitespace
   example "    "
 */
 const regexOnlyWhiteSpaces = /^\s+$/;
 
+interface Props {
+  dispatch: Dispatch<any>,
+  locationValue: string,
+  onSubmitSearchField?: () => void,
+  isLoading?: boolean,
+}
+
 const CoursesFilters = ({
   dispatch,
-  locationValue,
+  locationValue = '',
   onSubmitSearchField,
   isLoading,
-}) => {
+}: Props) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
     order,
@@ -37,7 +55,7 @@ const CoursesFilters = ({
 
   const intl = useIntl();
 
-  const getFilterTypeData = (baseFilters) => ({
+  const getFilterTypeData = (baseFilters: BaseFilter) => ({
     archivedCourses: { ...baseFilters, archivedOnly: true, activeOnly: undefined },
     activeCourses: { ...baseFilters, activeOnly: true, archivedOnly: undefined },
     allCourses: { ...baseFilters, archivedOnly: undefined, activeOnly: undefined },
@@ -47,8 +65,8 @@ const CoursesFilters = ({
     oldestCourses: { ...baseFilters, order: 'created' },
   });
 
-  const handleMenuFilterItemSelected = (filterType) => {
-    const baseFilters = {
+  const handleMenuFilterItemSelected = (filterType: string | number) => {
+    const baseFilters: BaseFilter = {
       currentPage: 1,
       search,
       order,
@@ -73,7 +91,7 @@ const CoursesFilters = ({
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...customParams }, true));
   };
 
-  const handleSearchCourses = (searchValueDebounced) => {
+  const handleSearchCourses = (searchValueDebounced: string) => {
     const valueFormatted = searchValueDebounced.trim();
     const filterParams = {
       search: valueFormatted.length > 0 ? valueFormatted : '',
@@ -122,21 +140,9 @@ const CoursesFilters = ({
 
       <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
       <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+      <CourseImportFilter />
     </div>
   );
-};
-
-CoursesFilters.defaultProps = {
-  locationValue: '',
-  onSubmitSearchField: () => {},
-  isLoading: false,
-};
-
-CoursesFilters.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  locationValue: PropTypes.string,
-  onSubmitSearchField: PropTypes.func,
-  isLoading: PropTypes.bool,
 };
 
 export default CoursesFilters;

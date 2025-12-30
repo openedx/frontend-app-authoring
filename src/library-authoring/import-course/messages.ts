@@ -295,7 +295,7 @@ const messages = defineMessages({
     id: 'library-authoring.import-course.import-details.import-partial.alert.title',
     defaultMessage: '<p>{percentage}% of Course {courseName} has been imported successfully.'
     + ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>'
-    + '<p>Details of the import, including reasons some content was not abled to be imported are described below</p>',
+    + '<p>Details of the import, including reasons some content was not imported are described below</p>',
     description: 'Body of the import details page when the migration is in partial import.',
   },
   importPartialReasonTableBlockName: {
@@ -329,6 +329,11 @@ const messages = defineMessages({
     id: 'library-authoring.import-course.review-details.import-blocked.import-course-btn.tooltip',
     defaultMessage: 'Import not possible',
     description: 'Label for the tooltip for the import button in review details when the import is blocked',
+  },
+  placeholderCardDescription: {
+    id: 'library-authoring.import-course.import-failed.placeholder.description',
+    defaultMessage: 'This content type is not currently supported',
+    description: 'Description text for placeholder card in library for blocks that failed to import',
   },
 });
 

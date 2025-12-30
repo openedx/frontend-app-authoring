@@ -4,6 +4,8 @@ export interface CourseStructure {
   highlightsEnabledForMessaging: boolean,
   videoSharingEnabled: boolean,
   videoSharingOptions: string,
+  start: string,
+  end: string,
   actions: XBlockActions,
 }
 
@@ -33,6 +35,21 @@ export interface CourseDetails {
   description?: string;
 }
 
+export interface CourseOutlineStatusBar {
+  courseReleaseDate: string;
+  endDate: string;
+  highlightsEnabledForMessaging: boolean;
+  isSelfPaced: boolean;
+  checklist: {
+    totalCourseLaunchChecks: number;
+    completedCourseLaunchChecks: number;
+    totalCourseBestPracticesChecks: number;
+    completedCourseBestPracticesChecks: number;
+  };
+  videoSharingEnabled: boolean;
+  videoSharingOptions: string;
+}
+
 export interface CourseOutlineState {
   loadingStatus: {
     outlineIndexLoadingStatus: string;
@@ -48,19 +65,7 @@ export interface CourseOutlineState {
   };
   outlineIndexData: object;
   savingStatus: string;
-  statusBarData: {
-    courseReleaseDate: string;
-    highlightsEnabledForMessaging: boolean;
-    isSelfPaced: boolean;
-    checklist: {
-      totalCourseLaunchChecks: number;
-      completedCourseLaunchChecks: number;
-      totalCourseBestPracticesChecks: number;
-      completedCourseBestPracticesChecks: number;
-    };
-    videoSharingEnabled: boolean;
-    videoSharingOptions: string;
-  };
+  statusBarData: CourseOutlineStatusBar;
   sectionsList: Array<XBlock>;
   isCustomRelativeDatesActive: boolean;
   currentSection: XBlock | {};

@@ -36,7 +36,9 @@ type ContainerMenuProps = {
 
 export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { libraryId, collectionId, containerId } = useLibraryContext();
+  const {
+    libraryId, collectionId, containerId, readOnly,
+  } = useLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
@@ -116,9 +118,11 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
           <Dropdown.Item onClick={handleCopy}>
             <FormattedMessage {...messages.menuCopyContainer} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete}>
-            <FormattedMessage {...messages.menuDeleteContainer} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={confirmDelete}>
+              <FormattedMessage {...messages.menuDeleteContainer} />
+            </Dropdown.Item>
+          )}
           {(insideCollection || insideSection || insideSubsection) && (
             <Dropdown.Item onClick={handleRemove}>
               <FormattedMessage
@@ -129,9 +133,11 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
               />
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={showManageCollections}>
-            <FormattedMessage {...messages.menuAddToCollection} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={showManageCollections}>
+              <FormattedMessage {...messages.menuAddToCollection} />
+            </Dropdown.Item>
+          )}
         </Dropdown.Menu>
       </Dropdown>
       {isConfirmingDelete && (

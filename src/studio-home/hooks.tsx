@@ -49,26 +49,30 @@ const useStudioHome = () => {
   }
   const courseListQueryString = courseListQuery.size ? `?${courseListQuery.toString()}` : '';
   useEffect(() => {
-    dispatch(fetchStudioHomeData(courseListQueryString));
+    dispatch(fetchStudioHomeData(courseListQueryString, false, studioHomeCoursesParams));
     setShowNewCourseContainer(false);
   }, [courseListQueryString]);
 
   useEffect(() => {
     const firstPage = 1;
-    dispatch(fetchStudioHomeData(courseListQueryString, false, { page: firstPage, order: 'display_name' }));
+    dispatch(fetchStudioHomeData(courseListQueryString, false, {
+      ...studioHomeCoursesParams,
+      page: firstPage,
+      order: 'display_name',
+    }));
   }, []);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: '' }));
-      dispatch(fetchStudioHomeData());
+      dispatch(fetchStudioHomeData(undefined, false, studioHomeCoursesParams));
     }
   }, [courseCreatorSavingStatus]);
 
   useEffect(() => {
     if (deleteNotificationSavingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: '' }));
-      dispatch(fetchStudioHomeData());
+      dispatch(fetchStudioHomeData(undefined, false, studioHomeCoursesParams));
     } else if (deleteNotificationSavingStatus === RequestStatus.FAILED) {
       dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: '' }));
     }

@@ -61,3 +61,12 @@ export const VisibilityTypes = {
 export const TOTAL_LENGTH_KEY = 'total-length';
 
 export const MAX_TOTAL_LENGTH = 65;
+
+export enum UserTaskStatus {
+  Pending = 'Pending',
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+  InProgress = 'In Progress',
+  Cancelled = 'Cancelled',
+  Retrying = 'Retrying',
+}
