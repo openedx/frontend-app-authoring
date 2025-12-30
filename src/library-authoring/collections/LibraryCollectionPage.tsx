@@ -108,7 +108,7 @@ const LibraryCollectionPage = () => {
     extraFilter: contextExtraFilter,
     setCollectionId,
     readOnly,
-  } = useLibraryContext();
+  } = useLibraryContext(!!componentPickerMode);
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -120,7 +120,7 @@ const LibraryCollectionPage = () => {
 
   const { data: libraryData, isPending: isLibLoading } = useContentLibrary(libraryId);
 
-  if (!collectionId || !libraryId) {
+  if (!collectionId || (!componentPickerMode && !libraryId)) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     throw new Error('Rendered without collectionId or libraryId URL parameter');
   }
@@ -176,7 +176,10 @@ const LibraryCollectionPage = () => {
     />
   );
 
-  const extraFilter = [`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`];
+  const extraFilter = [`collections.key = "${collectionId}"`];
+  if (libraryId) {
+    extraFilter.push(`context_key = "${libraryId}"`);
+  }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }

@@ -53,6 +53,7 @@ type AddContentViewProps = {
   onCreateContent: (blockType: string) => void,
   isAddLibraryContentModalOpen: boolean,
   closeAddLibraryContentModal: () => void,
+  isComponentPicker?: boolean,
 };
 
 type AddAdvancedContentViewProps = {
@@ -87,9 +88,9 @@ const AddContentView = ({
   onCreateContent,
   isAddLibraryContentModalOpen,
   closeAddLibraryContentModal,
+  isComponentPicker,
 }: AddContentViewProps) => {
   const intl = useIntl();
-  const { componentPicker } = useLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -231,7 +232,7 @@ const AddContentView = ({
   return (
     <>
       {visibleButtons}
-      {componentPicker && visibleButtons.includes(existingContentButton) && (
+      {isComponentPicker && visibleButtons.includes(existingContentButton) && (
         <PickLibraryContentModal
           isOpen={isAddLibraryContentModalOpen}
           onClose={closeAddLibraryContentModal}
@@ -312,7 +313,8 @@ const AddContent = () => {
     openCreateCollectionModal,
     setCreateContainerModalType,
     openComponentEditor,
-  } = useLibraryContext();
+    componentPicker,
+  } = useLibraryContext(false);
   const {
     insideCollection,
     insideUnit,
@@ -431,7 +433,7 @@ const AddContent = () => {
     const clipboardBlockType = sharedClipboardData?.content?.blockType;
 
     // istanbul ignore if: this should never happen
-    if (!clipboardBlockType) {
+    if (!clipboardBlockType || !libraryId) {
       return;
     }
 
@@ -459,7 +461,7 @@ const AddContent = () => {
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
       openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
-    } else {
+    } else if (libraryId) {
       createBlockMutation.mutateAsync({
         libraryId,
         blockType,
@@ -519,6 +521,7 @@ const AddContent = () => {
           onCreateContent={onCreateContent}
           isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
           closeAddLibraryContentModal={closeAddLibraryContentModal}
+          isComponentPicker={!!componentPicker}
         />
       )}
     </Stack>
