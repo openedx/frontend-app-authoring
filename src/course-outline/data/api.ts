@@ -395,12 +395,14 @@ export async function createCourseXblock({
   libraryContentKey,
 }: {
   type: string,
-  category?: string, // The category of the XBlock. Defaults to the type if not provided.
+  /** The category of the XBlock. Defaults to the type if not provided. */
+  category?: string,
   parentLocator: string,
   displayName?: string,
   boilerplate?: string,
   stagedContent?: string,
-  libraryContentKey?: string, // component key from library if being imported.
+  /** component key from library if being imported. */
+  libraryContentKey?: string,
 }) {
   const body = {
     type,
