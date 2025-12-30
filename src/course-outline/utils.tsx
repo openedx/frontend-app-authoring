@@ -47,7 +47,7 @@ const getItemStatusBadgeContent = (
   status: ItemBadgeStatusValue,
   messages: Record<string, MessageDescriptor>,
   intl: IntlShape,
-): any => {
+) => {
   switch (status) {
     case ITEM_BADGE_STATUS.gated:
       return {

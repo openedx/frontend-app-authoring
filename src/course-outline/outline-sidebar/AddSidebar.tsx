@@ -16,7 +16,7 @@ import { useCallback, useMemo } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
-import { XBlock } from '@src/data/types';
+import type { XBlock } from '@src/data/types';
 import { ContentType } from '../../library-authoring/routes';
 import { ComponentPicker } from '../../library-authoring';
 import messages from './messages';
