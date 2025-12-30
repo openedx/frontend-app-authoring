@@ -516,40 +516,47 @@ export const useDeleteXBlockAsset = (usageKey: string) => {
 /**
  * Get the metadata for a collection in a library
  */
-export const useCollection = (libraryId: string, collectionId?: string) => (
+export const useCollection = (libraryId?: string, collectionId?: string) => (
   useQuery({
-    enabled: !!libraryId && !!collectionId,
     queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
-    queryFn: () => api.getCollectionMetadata(libraryId!, collectionId!),
+    queryFn: (!!libraryId && !!collectionId)
+      ? () => api.getCollectionMetadata(libraryId!, collectionId!)
+      : skipToken,
   })
 );
 
 /**
  * Use this mutation to update the fields of a collection in a library
  */
-export const useUpdateCollection = (libraryId: string, collectionId: string) => {
+export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
-  const collectionQueryKey = libraryAuthoringQueryKeys.collection(libraryId, collectionId);
   return useMutation({
-    mutationFn: (data: api.UpdateCollectionComponentsRequest) => (
+    mutationFn: async ({ libraryId, collectionId, data }:{
+      libraryId: string;
+      collectionId: string;
+      data: api.UpdateCollectionComponentsRequest;
+    }) => (
       api.updateCollectionMetadata(libraryId, collectionId, data)
     ),
-    onMutate: (data) => {
+    onMutate: (variables) => {
+      const collectionQueryKey = libraryAuthoringQueryKeys.collection(variables.libraryId, variables.collectionId);
       const previousData = queryClient.getQueryData(collectionQueryKey) as api.CollectionMetadata;
       queryClient.setQueryData(collectionQueryKey, {
         ...previousData,
-        ...data,
+        ...variables.data,
       });
 
       return { previousData };
     },
-    onError: (_err, _data, context) => {
+    onError: (_err, variables, context) => {
+      const collectionQueryKey = libraryAuthoringQueryKeys.collection(variables.libraryId, variables.collectionId);
       queryClient.setQueryData(collectionQueryKey, context?.previousData);
     },
-    onSettled: () => {
+    onSettled: (_data, _err, variables) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // collection list.
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      const collectionQueryKey = libraryAuthoringQueryKeys.collection(variables.libraryId, variables.collectionId);
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
       queryClient.invalidateQueries({ queryKey: collectionQueryKey });
     },
   });

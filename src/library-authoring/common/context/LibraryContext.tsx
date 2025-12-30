@@ -193,8 +193,14 @@ export const LibraryProvider = ({
   );
 };
 
+/**
+ * @param requireLibraryId - Optional flag indicating whether to require the library ID i.e.,
+ * the component only works when used inside a library.
+ * @returns The context data with the library ID or undefined.
+ */
 export function useLibraryContext(requireLibraryId?: true | undefined): RequireIf<LibraryContextData, 'libraryId', true>;
 export function useLibraryContext(requireLibraryId: false): RequireIf<LibraryContextData, 'libraryId', false>;
+export function useLibraryContext(requireLibraryId: boolean): LibraryContextData;
 export function useLibraryContext(requireLibraryId: boolean = true): LibraryContextData {
   const ctx = useContext(LibraryContext);
   if (ctx === undefined) {

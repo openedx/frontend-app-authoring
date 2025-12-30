@@ -38,14 +38,15 @@ const BlockCount = ({
 };
 
 const CollectionStatsWidget = () => {
-  const { libraryId } = useLibraryContext();
+  const { libraryId } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
   const collectionId = sidebarItemInfo?.id;
 
-  const { data: blockTypes } = useGetBlockTypes([
-    `context_key = "${libraryId}"`,
-    `collections.key = "${collectionId}"`,
-  ]);
+  const blockQuery = [`collections.key = "${collectionId}"`];
+  if (libraryId) {
+    blockQuery.push(`context_key = "${libraryId}"`);
+  }
+  const { data: blockTypes } = useGetBlockTypes(blockQuery);
 
   if (!blockTypes) {
     return null;
@@ -99,7 +100,7 @@ const CollectionStatsWidget = () => {
 const CollectionDetails = () => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const { libraryId, readOnly } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const collectionId = sidebarItemInfo?.id;
@@ -108,7 +109,7 @@ const CollectionDetails = () => {
     throw new Error('collectionId is required');
   }
 
-  const updateMutation = useUpdateCollection(libraryId, collectionId);
+  const updateMutation = useUpdateCollection();
   const { data: collection } = useCollection(libraryId, collectionId);
 
   const [description, setDescription] = useState(collection?.description || '');
@@ -125,11 +126,13 @@ const CollectionDetails = () => {
 
   const onSubmit = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     const newDescription = e.target.value;
-    if (newDescription === collection.description) {
+    if (!libraryId || newDescription === collection.description) {
       return;
     }
     updateMutation.mutateAsync({
-      description: newDescription,
+      libraryId,
+      collectionId,
+      data: { description: newDescription },
     }).then(() => {
       showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
     }).catch(() => {
