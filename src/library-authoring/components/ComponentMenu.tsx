@@ -36,7 +36,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     containerId,
     openComponentEditor,
     readOnly,
-  } = useLibraryContext();
+  } = useLibraryContext(false);
 
   const {
     sidebarItemInfo,
