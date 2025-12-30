@@ -44,7 +44,7 @@ const CollectionStatsWidget = () => {
 
   const blockQuery = [`collections.key = "${collectionId}"`];
   if (libraryId) {
-    blockQuery.push(`context_key = "${libraryId}"`);
+    blockQuery.splice(0, 0, `context_key = "${libraryId}"`);
   }
   const { data: blockTypes } = useGetBlockTypes(blockQuery);
 

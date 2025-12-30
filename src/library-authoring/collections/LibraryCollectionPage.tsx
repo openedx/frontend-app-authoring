@@ -178,7 +178,7 @@ const LibraryCollectionPage = () => {
 
   const extraFilter = [`collections.key = "${collectionId}"`];
   if (libraryId) {
-    extraFilter.push(`context_key = "${libraryId}"`);
+    extraFilter.splice(0, 0, `context_key = "${libraryId}"`);
   }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
