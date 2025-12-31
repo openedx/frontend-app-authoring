@@ -142,31 +142,27 @@ describe('<CourseUnit />', () => {
     const currentSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
     const currentSubSectionName = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[1].display_name;
 
-    await waitFor(() => {
-      const unitHeaderTitle = screen.getByTestId('unit-header-title');
-      expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
-      expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-      expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: currentSectionName })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
-    });
+    const unitHeaderTitle = await screen.findByTestId('unit-header-title');
+    expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
+    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+    expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: currentSectionName })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
   });
 
   it('renders the course unit iframe with correct attributes', async () => {
     render(<RootWrapper />);
 
-    await waitFor(() => {
-      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute('src', `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`);
-      expect(iframe).toHaveAttribute('allow', IFRAME_FEATURE_POLICY);
-      expect(iframe).toHaveAttribute('style', 'height: 0px;');
-      expect(iframe).toHaveAttribute('scrolling', 'no');
-      expect(iframe).toHaveAttribute('referrerpolicy', 'origin');
-      expect(iframe).toHaveAttribute('loading', 'lazy');
-      expect(iframe).toHaveAttribute('frameborder', '0');
-    });
+    const iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('src', `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`);
+    expect(iframe).toHaveAttribute('allow', IFRAME_FEATURE_POLICY);
+    expect(iframe).toHaveAttribute('style', 'height: 0px;');
+    expect(iframe).toHaveAttribute('scrolling', 'no');
+    expect(iframe).toHaveAttribute('referrerpolicy', 'origin');
+    expect(iframe).toHaveAttribute('loading', 'lazy');
+    expect(iframe).toHaveAttribute('frameborder', '0');
   });
 
   it('adjusts iframe height dynamically based on courseXBlockDropdownHeight postMessage event', async () => {
@@ -184,29 +180,25 @@ describe('<CourseUnit />', () => {
   it('displays an error alert when a studioAjaxError message is received', async () => {
     render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.studioAjaxError, {
-        error: 'Some error text...',
-      });
+    const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblocksIframe).toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.studioAjaxError, {
+      error: 'Some error text...',
     });
-    expect(screen.getByTestId('saving-error-alert')).toBeInTheDocument();
+    expect(await screen.findByTestId('saving-error-alert')).toBeInTheDocument();
   });
 
   it('renders XBlock iframe and opens legacy edit modal on editXBlock message', async () => {
     render(<RootWrapper />);
+    
+    const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblocksIframe).toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.editXBlock, { id: blockId });
 
-    await waitFor(() => {
-      const xblocksIframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.editXBlock, { id: blockId });
-
-      const legacyXBlockEditModalIframe = screen.getByTitle(
-        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
-      );
-      expect(legacyXBlockEditModalIframe).toBeInTheDocument();
-    });
+    const legacyXBlockEditModalIframe = await screen.findByTitle(
+      xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+    );
+    expect(legacyXBlockEditModalIframe).toBeInTheDocument();  
   });
 
   it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {
@@ -222,31 +214,27 @@ describe('<CourseUnit />', () => {
   it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
     render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.closeXBlockEditorModal, { id: blockId });
+    const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblocksIframe).toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.closeXBlockEditorModal, { id: blockId });
 
-      const legacyXBlockEditModalIframe = screen.queryByTitle(
-        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
-      );
-      expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
-    });
+    const legacyXBlockEditModalIframe = screen.queryByTitle(
+      xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+    );
+    expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
   });
 
   it('closes legacy edit modal and updates course unit sidebar after saveEditedXBlockData message', async () => {
     render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.saveEditedXBlockData);
+    const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblocksIframe).toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.saveEditedXBlockData);
 
-      const legacyXBlockEditModalIframe = screen.queryByTitle(
-        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
-      );
-      expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
-    });
+    const legacyXBlockEditModalIframe = screen.queryByTitle(
+      xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+    );
+    expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
 
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -259,33 +247,26 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await waitFor(() => {
-      const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.sidebarBodyNote.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).queryByRole('button', {
-          name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
-        }),
-      ).toBeInTheDocument();
-    });
+    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
+    expect(
+      within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar).queryByRole('button', {
+        name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
+      }),
+    ).toBeInTheDocument();
   });
 
   it('updates course unit sidebar after receiving refreshPositions message', async () => {
     render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-      simulatePostMessageEvent(messageTypes.refreshPositions);
-    });
+    const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(xblocksIframe).toBeInTheDocument();
+    simulatePostMessageEvent(messageTypes.refreshPositions);
 
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -298,23 +279,18 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await waitFor(() => {
-      const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).getByText(sidebarMessages.sidebarBodyNote.defaultMessage),
-      ).toBeInTheDocument();
-      expect(
-        within(courseUnitSidebar).queryByRole('button', {
-          name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
-        }),
-      ).toBeInTheDocument();
-    });
+    const courseUnitSidebar = await screen.findByTestId('course-unit-sidebar');
+    expect(
+      within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(courseUnitSidebar).queryByRole('button', {
+        name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
+      }),
+    ).toBeInTheDocument();
   });
 
   it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
@@ -424,8 +400,7 @@ describe('<CourseUnit />', () => {
       expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
@@ -568,8 +543,7 @@ describe('<CourseUnit />', () => {
     expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
@@ -740,8 +714,7 @@ describe('<CourseUnit />', () => {
     expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
@@ -935,8 +908,7 @@ describe('<CourseUnit />', () => {
     expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
@@ -1018,8 +990,7 @@ describe('<CourseUnit />', () => {
     expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-    expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
@@ -1042,8 +1013,7 @@ describe('<CourseUnit />', () => {
       expect(screen.getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(sidebarMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
