@@ -36,3 +36,10 @@
     padding-left: 0;
   }
 }
+
+.course-import {
+  .row {
+    // Make the row grow to fill the remaining vertial space
+    flex-grow: 1;
+  }
+}
