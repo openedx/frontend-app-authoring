@@ -8,6 +8,7 @@ import {
   replaceEqualDeep,
   keepPreviousData,
   skipToken,
+  UseQueryResult,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { type MeiliSearch } from 'meilisearch';
@@ -243,13 +244,16 @@ export const useUpdateLibraryMetadata = () => {
 /**
  * Builds the query to fetch list of V2 Libraries
  */
-export const useContentLibraryV2List = (customParams: api.GetLibrariesV2CustomParams) => (
-  useQuery({
+export function useContentLibraryV2List(customParams: api.GetLibrariesV2CustomParamsPagination): UseQueryResult<api.LibrariesV2Response, Error>;
+export function useContentLibraryV2List(customParams: api.GetLibrariesV2CustomParamsNoPagination): UseQueryResult<api.ContentLibrary[], Error>;
+export function useContentLibraryV2List(customParams: api.GetLibrariesV2CustomParams): UseQueryResult<api.LibrariesV2Response | api.ContentLibrary[], Error>;
+export function useContentLibraryV2List(customParams: api.GetLibrariesV2CustomParams): UseQueryResult<api.LibrariesV2Response | api.ContentLibrary[], Error> {
+  return useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
     queryFn: () => api.getContentLibraryV2List(customParams),
     placeholderData: keepPreviousData,
   })
-);
+};
 
 /** Publish all changes in the library. */
 export const useCommitLibraryChanges = () => {

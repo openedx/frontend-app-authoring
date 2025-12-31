@@ -160,7 +160,7 @@ const LibraryAuthoringPage = ({
   const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
   const {
     libraryId,
-    libraryIds,
+    selectedLibraries,
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
@@ -291,8 +291,8 @@ const LibraryAuthoringPage = ({
   if (libraryId) {
     extraFilter.push(`context_key = "${libraryId}"`);
   }
-  if (libraryIds && libraryIds.length > 0) {
-    extraFilter.push(`context_key IN ["${libraryIds.join('","')}"]`);
+  if (selectedLibraries && selectedLibraries.length > 0) {
+    extraFilter.push(`context_key IN ["${selectedLibraries.join('","')}"]`);
   }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
