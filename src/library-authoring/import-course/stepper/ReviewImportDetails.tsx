@@ -115,7 +115,8 @@ const Banner = ({
           <FormattedMessage
             {...messages.importCourseAnalysisCompleteSomeContentBody}
             values={{
-              unsupportedBlockPercentage: unsupportedBlockPercentage.toFixed(2),
+              supportedBlockPercentage: (100 - unsupportedBlockPercentage).toFixed(0),
+              courseName: data?.title || '',
             }}
           />
         </p>

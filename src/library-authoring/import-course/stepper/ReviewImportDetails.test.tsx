@@ -119,7 +119,7 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Complete/i)).toBeInTheDocument();
     expect(await screen.findByText(
-      /25.00% of content cannot be imported. For details see below./i,
+      /75% of course content will be imported into a collection in your library called Test Course. Some content will not be imported. For details see below./i,
     )).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('15/20')).toBeInTheDocument();
