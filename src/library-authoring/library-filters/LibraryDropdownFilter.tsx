@@ -1,55 +1,99 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
-import { Form, Menu, MenuItem, SearchField } from "@openedx/paragon";
+import { ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip } from "@openedx/paragon";
 import { Newsstand } from "@openedx/paragon/icons";
+import Loading from "@src/generic/Loading";
+import { useLibraryContext } from "@src/library-authoring/common/context/LibraryContext";
 import { useContentLibraryV2List } from "@src/library-authoring/data/apiHooks";
-import SearchFilterWidget from "@src/search-manager/SearchFilterWidget"
-import { useState } from "react";
+import { debounce, truncate } from "lodash";
+import { useCallback, useEffect, useState } from "react";
 import messages from './messages';
 
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
-  const {
-    data,
-    isPending,
-    isError,
-  } = useContentLibraryV2List({ pagination: false, search });
+  const {selectedLibraries, setSelectedLibraries} = useLibraryContext(false);
+  const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
+  const { data, isPending } = useContentLibraryV2List({ pagination: false, search });
+
+  const handleSearch = useCallback(
+    // Perform search after 500ms
+    debounce((term) => setSearch(term.trim()), 500),
+    [setSearch],
+  );
+
+  const onChange = (libraryId: string) => {
+    setSelectedLibraries((prev) => {
+      if (prev.includes(libraryId)) {
+        return prev.filter((id) => id !== libraryId);
+      } else {
+        return [...prev, libraryId];
+      }
+    });
+  }
+
+  useEffect(() => {
+    const baseName = intl.formatMessage(messages.librariesFilterBtnText)
+    if (!selectedLibraries.length) {
+      setLabel(baseName);
+    } else if (selectedLibraries.length === 1) {
+      setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (selectedLibraries.length > 1) {
+      setLabel(`${selectedLibraries.length} Libraries`);
+    }
+  }, [label, selectedLibraries])
 
   const libraryMenuItems = data?.map((library) => (
-    <MenuItem
+    <Dropdown.Item
       key={library.id}
       as={Form.Checkbox}
       value={library.id}
-      onChange={() => {}}
+      onChange={() => onChange(library.id)}
+      className="py-2 my-1 overflow-auto"
     >
       <div>
-        {library.title}
+        {truncate(library.title, { length: 50})}
       </div>
-    </MenuItem>
+    </Dropdown.Item>
   ));
 
   return (
-    <SearchFilterWidget
-      appliedFilters={[]}
-      label={intl.formatMessage(messages.librariesFilterBtnText)}
-      clearFilter={() => {}}
-      icon={Newsstand}
-      btnSize="md"
+    <Dropdown
+      as={ButtonGroup}
+      autoClose="outside"
     >
-      <Form.Group className="pt-3 mb-0">
+      <OverlayTrigger
+        placement='auto'
+        overlay={
+          <Tooltip variant="light" id='library-filter-tooltip'>
+            {label}
+          </Tooltip>
+        }
+      >
+        <Dropdown.Toggle
+          iconBefore={Newsstand}
+          className="text-overflow text-primary-500 p-2 px-4 mr-2"
+        >
+          {truncate(label, { length: 30})}
+        </Dropdown.Toggle>
+      </OverlayTrigger>
+      <Dropdown.Menu className="my-1">
         <SearchField
-          onSubmit={() => {}}
-          onChange={setSearch}
+          onSubmit={handleSearch}
+          onChange={handleSearch}
           onClear={() => setSearch('')}
           value={search}
-          placeholder=""
-          className="mx-3 mb-1"
+          placeholder={intl.formatMessage(messages.librariesFilterBtnPlaceholder)}
+          className="mx-1 border-0"
         />
-        <Menu className="filter-by-refinement-menu" style={{ boxShadow: 'none' }}>
-          {libraryMenuItems}
-        </Menu>
-      </Form.Group>
-    </SearchFilterWidget>
+        <Dropdown.Divider className="mb-0" />
+        <Scrollable
+          className="m-0 p-0"
+          style={{'height': '25vh'}}
+        >
+          {isPending ? <Loading /> : libraryMenuItems}
+        </Scrollable>
+      </Dropdown.Menu>
+    </Dropdown>
   )
 }
 

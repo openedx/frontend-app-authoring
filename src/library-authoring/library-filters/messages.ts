@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'All libraries',
     description: 'Button text for libraries filter',
   },
+  librariesFilterBtnPlaceholder: {
+    id: 'course-authoring.library-authoring.library-filters.libraries.filter.placeholder',
+    defaultMessage: 'Search Library Name',
+    description: 'Button text for libraries filter',
+  },
   additionalFilterBtnAltText: {
     id: 'course-authoring.library-authoring.library-filters.additional.filter.alt-btn',
     defaultMessage: 'See more',

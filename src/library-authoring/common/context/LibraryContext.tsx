@@ -28,7 +28,8 @@ export type LibraryIdOneOrMore = {
   libraryIds: string[];
 };
 
-export type LibraryContextData = AtLeastOne<LibraryIdOneOrMore> & {
+export type LibraryContextData = {
+  libraryId?: string;
   /** The ID of the current library */
   libraryData?: ContentLibrary;
   readOnly: boolean;
@@ -58,6 +59,8 @@ export type LibraryContextData = AtLeastOne<LibraryIdOneOrMore> & {
   closeComponentEditor: (data?:any) => void;
   componentPicker?: typeof ComponentPicker;
   blockTypesData?: Record<string, BlockTypeMetadata>;
+  selectedLibraries: string[];
+  setSelectedLibraries: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 /**
@@ -99,6 +102,7 @@ export const LibraryProvider = ({
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [createContainerModalType, setCreateContainerModalType] = useState<ContainerType | undefined>(undefined);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
+  const [selectedLibraries, setSelectedLibraries] = useState<string[]>(libraryIds || []);
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
       prev?.onClose?.(data);
@@ -140,7 +144,6 @@ export const LibraryProvider = ({
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
       libraryId,
-      libraryIds: libraryIds || [],
       libraryData,
       collectionId,
       setCollectionId,
@@ -160,12 +163,13 @@ export const LibraryProvider = ({
       openComponentEditor,
       closeComponentEditor,
       componentPicker,
+      selectedLibraries,
+      setSelectedLibraries,
     };
 
     return contextValue;
   }, [
     libraryId,
-    libraryIds,
     libraryData,
     collectionId,
     setCollectionId,
@@ -184,6 +188,8 @@ export const LibraryProvider = ({
     openComponentEditor,
     closeComponentEditor,
     componentPicker,
+    selectedLibraries,
+    setSelectedLibraries,
   ]);
 
   return (
