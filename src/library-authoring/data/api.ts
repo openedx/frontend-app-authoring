@@ -266,6 +266,14 @@ export interface GetLibrariesV2CustomParams {
   search?: string,
 }
 
+export interface GetLibrariesV2CustomParamsNoPagination extends GetLibrariesV2CustomParams {
+  pagination: false,
+}
+
+export interface GetLibrariesV2CustomParamsPagination extends GetLibrariesV2CustomParams {
+  pagination?: true,
+}
+
 export type LibraryAssetResponse = {
   path: string,
   size: number,
@@ -387,7 +395,9 @@ export async function updateLibraryMetadata(libraryData: UpdateLibraryDataReques
 /**
  * Get a list of content libraries.
  */
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
+export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParamsNoPagination): Promise<ContentLibrary[]>
+export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParamsPagination): Promise<LibrariesV2Response>
+export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response | ContentLibrary[]> {
   // Set default params if not passed in
   const customParamsDefaults = {
     type: customParams.type || 'complex',
