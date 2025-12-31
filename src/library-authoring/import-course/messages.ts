@@ -181,12 +181,12 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteSomeContentBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
-    defaultMessage: '{unsupportedBlockPercentage}% of content cannot be imported. For details see below.',
+    defaultMessage: '{supportedBlockPercentage}% of course content will be imported into a collection in your library called {courseName}. Some content will not be imported. For details see below.',
     description: 'Body of the info card when course import analysis is complete and some data can be imported.',
   },
   importCourseAnalysisDetailsUnsupportedBlocksBody: {
     id: 'library-authoring.import-course.review-details.analysis-details.unsupportedBlocks.body',
-    defaultMessage: 'The following block types cannot be imported into your library because they\'re are not yet supported. These block types will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
+    defaultMessage: 'Some block types cannot be imported into your library because they’re not yet supported. These blocks will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
     description: 'Body of analysis details when some unsupported blocks are present',
   },
   importCourseComponentsUnsupportedInfo: {
