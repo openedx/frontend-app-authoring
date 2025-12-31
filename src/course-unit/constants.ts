@@ -16,6 +16,9 @@ export const UNIT_VISIBILITY_STATES = {
 export const ICON_COLOR_VARIANTS = {
   BLACK: '#000',
   GREEN: '#0D7D4D',
+  ORANGE: '#B4610E',
+  PRIMARY: '#0A3055',
+  INFO: '#006DAA',
 };
 
 export const PUBLISH_TYPES = {

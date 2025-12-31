@@ -9,7 +9,7 @@ import PublishControls from './PublishControls';
 import LocationInfo from './LocationInfo';
 import SplitTestSidebarInfo from './SplitTestSidebarInfo';
 
-type XBlock = {
+export type XBlock = {
   id: string,
   name: string,
   blockType: string,

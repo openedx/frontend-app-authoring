@@ -19,6 +19,8 @@ export const CourseAuthoringUnitSidebarSlot = (
     }}
   >
     <UnitSidebar
+      unitTitle={unitTitle}
+      childrenBlocks={xBlocks}
       legacySidebarProps={{
         unitTitle,
         xBlocks,

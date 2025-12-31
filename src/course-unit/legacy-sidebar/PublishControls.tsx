@@ -1,21 +1,26 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
-import { InfoOutline as InfoOutlineIcon } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { Icon, Stack, useToggle } from '@openedx/paragon';
+import { InfoOutline as InfoOutlineIcon, Person } from '@openedx/paragon/icons';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import ModalNotification from '@src/generic/modal-notification';
+import { useIframe } from '@src/generic/hooks/context/hooks';
 import useCourseUnitData from './hooks';
-import { useIframe } from '../../generic/hooks/context/hooks';
 import { editCourseUnitVisibilityAndData } from '../data/thunk';
-import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
+import { SidebarFooter, SidebarHeader } from './components';
 import { PUBLISH_TYPES, messageTypes } from '../constants';
 import { getCourseUnitData } from '../data/selectors';
 import messages from './messages';
-import ModalNotification from '../../generic/modal-notification';
+import ReleaseInfoComponent from './components/ReleaseInfoComponent';
 
 interface PublishControlsProps {
   blockId?: string,
+  hideCopyButton?: boolean,
 }
 
-const PublishControls = ({ blockId }: PublishControlsProps) => {
+const PublishControls = ({
+  blockId,
+  hideCopyButton = false,
+}: PublishControlsProps) => {
   const unitData = useSelector(getCourseUnitData);
   const {
     title,
@@ -23,12 +28,20 @@ const PublishControls = ({ blockId }: PublishControlsProps) => {
     releaseLabel,
     visibilityState,
     visibleToStaffOnly,
+    publishCardClass,
   } = useCourseUnitData(unitData);
   const intl = useIntl();
   const { sendMessageToIframe } = useIframe();
 
   const [isDiscardModalOpen, openDiscardModal, closeDiscardModal] = useToggle(false);
   const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
+
+  const {
+    editedOn,
+    editedBy,
+    publishedBy,
+    publishedOn,
+  } = unitData;
 
   const dispatch = useDispatch();
 
@@ -54,21 +67,78 @@ const PublishControls = ({ blockId }: PublishControlsProps) => {
   };
 
   return (
-    <>
-      <SidebarHeader
-        title={title}
-        visibilityState={visibilityState}
-      />
-      <SidebarBody
-        releaseLabel={releaseLabel}
-        visibleToStaffOnly={visibleToStaffOnly}
-      />
+    <div className={`course-unit-publish-controls ${publishCardClass}`}>
+      <div className="text-primary-700">
+        <SidebarHeader
+          title={title}
+          visibilityState={visibilityState}
+        />
+      </div>
+      <Stack gap={3}>
+        <Stack className="ml-3" gap={1}>
+          {editedOn && (
+            <>
+              <span className="heading-label">
+                <FormattedMessage {...messages.publishInfoDraftSaved} />
+              </span>
+              <Stack direction="horizontal" gap={1} className="text-primary-700">
+                {editedBy && (
+                  <>
+                    <Icon src={Person} />
+                    <span>
+                      {editedBy}
+                    </span>
+                    <span>
+                      -
+                    </span>
+                  </>
+                )}
+                <span>
+                  {editedOn}
+                </span>
+              </Stack>
+            </>
+          )}
+          {publishedOn && (
+            <>
+              <span className="heading-label">
+                <FormattedMessage {...messages.publishLastPublished} />
+              </span>
+              <Stack direction="horizontal" gap={1} className="text-primary-700">
+                {publishedBy && (
+                  <>
+                    <Icon src={Person} />
+                    <span>
+                      {publishedBy}
+                    </span>
+                    <span>
+                      -
+                    </span>
+                  </>
+                )}
+                <span>
+                  {publishedOn}
+                </span>
+              </Stack>
+            </>
+          )}
+        </Stack>
+        <Stack className="ml-3 mb-2">
+          <span className="heading-label">
+            {releaseLabel}
+          </span>
+          <div className="text-primary-700">
+            <ReleaseInfoComponent />
+          </div>
+        </Stack>
+      </Stack>
       <SidebarFooter
         locationId={locationId}
         openDiscardModal={openDiscardModal}
         openVisibleModal={openVisibleModal}
         handlePublishing={handleCourseUnitPublish}
         visibleToStaffOnly={visibleToStaffOnly}
+        hideCopyButton={hideCopyButton}
       />
       <ModalNotification
         title={intl.formatMessage(messages.modalDiscardUnitChangesTitle)}
@@ -90,7 +160,7 @@ const PublishControls = ({ blockId }: PublishControlsProps) => {
         message={intl.formatMessage(messages.modalMakeVisibilityDescription)}
         icon={InfoOutlineIcon}
       />
-    </>
+    </div>
   );
 };
 

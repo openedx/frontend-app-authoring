@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Form } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 
-import { getCourseUnitData } from '../../../data/selectors';
-import { editCourseUnitVisibilityAndData } from '../../../data/thunk';
-import { PUBLISH_TYPES } from '../../../constants';
-import { getVisibilityTitle } from '../../utils';
+import { getCourseUnitData } from '@src/course-unit/data/selectors';
+import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import messages from '../../messages';
 
 interface UnitVisibilityInfoProps {
@@ -18,14 +17,10 @@ const UnitVisibilityInfo = ({
   openVisibleModal,
   visibleToStaffOnly,
 }: UnitVisibilityInfoProps) => {
-  const intl = useIntl();
   const { blockId } = useParams();
   const dispatch = useDispatch();
   const {
-    published,
-    hasChanges,
     staffLockFrom,
-    releasedToStudents,
     hasExplicitStaffLock,
   } = useSelector(getCourseUnitData);
 
@@ -36,22 +31,25 @@ const UnitVisibilityInfo = ({
   return (
     <>
       <small className="course-unit-sidebar-visibility-title">
-        {getVisibilityTitle(intl, releasedToStudents, published, hasChanges)}
+        <FormattedMessage {...messages.visibilityVisibleToTitle} />
       </small>
       {visibleToStaffOnly ? (
         <>
           <h6 className="course-unit-sidebar-visibility-copy">
-            {intl.formatMessage(messages.visibilityStaffOnlyTitle)}
+            <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
           </h6>
           {!hasExplicitStaffLock && (
             <span className="course-unit-sidebar-visibility-section mb-2">
-              {intl.formatMessage(messages.visibilityHasExplicitStaffLockText, { sectionName: staffLockFrom })}
+              <FormattedMessage
+                {...messages.visibilityHasExplicitStaffLockText}
+                values={{ sectionName: staffLockFrom }}
+              />
             </span>
           )}
         </>
       ) : (
         <h6 className="course-unit-sidebar-visibility-copy">
-          {intl.formatMessage(messages.visibilityStaffAndLearnersTitle)}
+          <FormattedMessage {...messages.visibilityStaffAndLearnersTitle} />
         </h6>
       )}
       <Form.Checkbox
@@ -60,7 +58,7 @@ const UnitVisibilityInfo = ({
         onChange={hasExplicitStaffLock ? null : handleCourseUnitVisibility}
         onClick={hasExplicitStaffLock ? openVisibleModal : null}
       >
-        {intl.formatMessage(messages.visibilityCheckboxTitle)}
+        <FormattedMessage {...messages.visibilityCheckboxTitle} />
       </Form.Checkbox>
     </>
   );

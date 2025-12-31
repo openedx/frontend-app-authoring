@@ -35,11 +35,13 @@ const messages = defineMessages({
   },
   publishInfoDraftSaved: {
     id: 'course-authoring.course-unit.publish.info.draft.saved',
-    defaultMessage: 'Draft saved on {editedOn} by {editedBy}',
+    defaultMessage: 'DRAFT SAVED',
+    description: 'Label for the draft date in the publish info section',
   },
   publishLastPublished: {
     id: 'course-authoring.course-unit.publish.info.last.published',
-    defaultMessage: 'Last published {publishedOn} by {publishedBy}',
+    defaultMessage: 'LAST PUBLISHED',
+    description: 'Label for the last published date in the publish info section',
   },
   releaseInfoUnscheduled: {
     id: 'course-authoring.course-unit.release.info.unscheduled',
@@ -56,6 +58,11 @@ const messages = defineMessages({
   visibilityWillBeVisibleToTitle: {
     id: 'course-authoring.course-unit.visibility.will-be-visible-to.title',
     defaultMessage: 'WILL BE VISIBLE TO',
+  },
+  visibilityVisibleToTitle: {
+    id: 'course-authoring.course-unit.visibility.visible-to.title',
+    defaultMessage: 'VISIBLE TO',
+    description: 'Label for visibility section in the unit sidebar',
   },
   unitLocationTitle: {
     id: 'course-authoring.course-unit.unit-location.title',

@@ -1,13 +1,19 @@
 import { getConfig } from '@edx/frontend-platform';
 import { Sidebar } from '@src/generic/sidebar';
-import LegacySidebar, { LegacySidebarProps } from '../legacy-sidebar';
+import LegacySidebar, { LegacySidebarProps, XBlock } from '../legacy-sidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 
-export const UnitSidebar = ({
-  legacySidebarProps,
-}: {
+export type UnitSidebarProps = {
+  unitTitle: string,
+  childrenBlocks: XBlock[],
   legacySidebarProps: LegacySidebarProps,
-}) => {
+};
+
+export const UnitSidebar = ({
+  unitTitle,
+  childrenBlocks,
+  legacySidebarProps, // Can be deleted when the legacy sidebar is deprecated
+}: UnitSidebarProps) => {
   const showNewSidebar = getConfig().ENABLE_UNIT_PAGE_NEW_DESIGN?.toString().toLowerCase() === 'true';
 
   const {
@@ -31,7 +37,10 @@ export const UnitSidebar = ({
       setCurrentPageKey={setCurrentPageKey}
       isOpen={isOpen}
       toggle={toggle}
-      contentProps={{}}
+      contentProps={{
+        unitTitle,
+        childrenBlocks,
+      }}
     />
   );
 };
