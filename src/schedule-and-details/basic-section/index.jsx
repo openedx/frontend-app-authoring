@@ -81,9 +81,7 @@ const BasicSection = ({
   const renderPageBanner = () => (
     <PageBannerSlot
       show={showPageBanner}
-      dismissible
       onDismiss={() => setShowPageBanner(false)}
-      className="align-items-start"
     >
       <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle, { platformName })}</h4>
       <span className="text text-gray-700 text-left">

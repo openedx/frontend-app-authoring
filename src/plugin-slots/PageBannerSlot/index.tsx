@@ -4,37 +4,29 @@ import { PageBanner } from '@openedx/paragon';
 
 export interface PageBannerSlotProps {
   show: boolean;
-  dismissible: boolean;
   onDismiss: () => void;
-  className: string;
   children: ReactNode;
-  variant?: string;
-  dismissAltText?: string;
 }
 
 const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
   show,
-  dismissible,
   onDismiss,
-  className,
-  children,
-  variant = 'info',
-  dismissAltText = 'Dismiss',
+  children
 }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
     idAliases={['page_banner_slot']}
     pluginProps={{
-      show, dismissible, onDismiss, className, variant, dismissAltText,
+      show, onDismiss
     }}
   >
-    <div className={className}>
+    <div className="align-items-start">
       <PageBanner
         show={show}
-        dismissible={dismissible}
+        dismissible={true}
         onDismiss={onDismiss}
-        variant={variant as any}
-        dismissAltText={dismissAltText}
+        variant={'light'}
+        dismissAltText={'Close'}
       >
         {children}
       </PageBanner>
