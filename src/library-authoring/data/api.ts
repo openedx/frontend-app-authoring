@@ -409,7 +409,7 @@ export async function getContentLibraryV2List(
 ): Promise<LibrariesV2Response>;
 export async function getContentLibraryV2List(
   customParams: GetLibrariesV2CustomParams
-): Promise<LibrariesV2Response>;
+): Promise<LibrariesV2Response | ContentLibrary[]>;
 export async function getContentLibraryV2List(
   customParams: GetLibrariesV2CustomParams,
 ): Promise<LibrariesV2Response | ContentLibrary[]> {
