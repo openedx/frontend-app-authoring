@@ -10,6 +10,7 @@ import {
   getModulestoreMigrationStatus,
   BulkMigrateRequestData,
   getCourseDetails,
+  getPreviewModulestoreMigration,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -19,6 +20,7 @@ export const migrationQueryKeys = {
    * Base key for data specific to a migration task
    */
   migrationTask: (migrationId?: string | null) => [...migrationQueryKeys.all, migrationId],
+  migrationPreview: (library_key: string, source_key?: string) => [...migrationQueryKeys.all, 'preview', source_key, library_key],
 };
 
 export const courseDetailsKey = {
@@ -81,6 +83,16 @@ export const useModulestoreMigrationStatus = (migrationId: string | null, refetc
     queryKey: migrationQueryKeys.migrationTask(migrationId),
     queryFn: migrationId ? () => getModulestoreMigrationStatus(migrationId!) : skipToken,
     refetchInterval,
+  })
+);
+
+/**
+ * Get the preview migration given a library key and a source key
+ */
+export const usePreviewMigration = (libraryKey: string, sourceKey?: string) => (
+  useQuery({
+    queryKey: migrationQueryKeys.migrationPreview(libraryKey, sourceKey),
+    queryFn: sourceKey ? () => getPreviewModulestoreMigration(libraryKey, sourceKey) : skipToken,
   })
 );
 
