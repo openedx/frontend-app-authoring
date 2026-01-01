@@ -25,7 +25,7 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
-  const { containerId: currentUnitId } = useLibraryContext();
+  const { containerId: currentUnitId } = useLibraryContext(false);
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();

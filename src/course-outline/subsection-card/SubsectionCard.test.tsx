@@ -8,7 +8,7 @@ import SubsectionCard from './SubsectionCard';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
-const handleOnAddUnitFromLibrary = jest.fn();
+const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn() };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -19,6 +19,14 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
+  }),
+}));
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    handleNewUnitSubmit: jest.fn(),
+    handleAddUnitFromLibrary: handleOnAddUnitFromLibrary,
   }),
 }));
 
@@ -116,8 +124,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
     onOpenUnlinkModal={jest.fn()}
-    onNewUnitSubmit={jest.fn()}
-    onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
     isCustomRelativeDatesActive={false}
     onEditSubmit={onEditSubectionSubmit}
     onDuplicateSubmit={jest.fn()}
@@ -322,8 +328,8 @@ describe('<SubsectionCard />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
+    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalled();
+    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       category: 'vertical',

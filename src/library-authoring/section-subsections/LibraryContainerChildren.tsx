@@ -48,7 +48,7 @@ const ContainerRow = ({
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext(false);
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -127,7 +127,7 @@ const ContainerRow = ({
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
+  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext(false);
   const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);

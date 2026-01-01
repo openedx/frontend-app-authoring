@@ -5,7 +5,6 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '@src/generic/processing-notification/data/slice';
-import { createCourseXblock } from '@src/course-unit/data/api';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,
@@ -13,7 +12,6 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
-  addNewCourseItem,
   deleteCourseItem,
   duplicateCourseItem,
   editItemDisplayName,
@@ -32,7 +30,7 @@ import {
   setVideoSharingOption,
   setCourseItemOrderList,
   pasteBlock,
-  dismissNotification, createDiscussionsTopics,
+  dismissNotification, createDiscussionsTopics, createCourseXblock,
 } from './api';
 import {
   addSection,
@@ -532,11 +530,11 @@ function addNewCourseItemQuery(
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await addNewCourseItem(
+      await createCourseXblock({
         parentLocator,
-        category,
+        type: category,
         displayName,
-      ).then(async (result) => {
+      }).then(async (result) => {
         if (result) {
           await addItemFn(result);
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -590,34 +588,6 @@ export function addNewUnitQuery(parentLocator: string, callback: { (locator: any
       COURSE_BLOCK_NAMES.vertical.name,
       async (result) => callback(result.locator),
     ));
-  };
-}
-
-export function addUnitFromLibrary(body: {
-  type: string;
-  category?: string;
-  parentLocator: string;
-  displayName?: string;
-  boilerplate?: string;
-  stagedContent?: string;
-  libraryContentKey?: string;
-}, callback: (arg0: any) => void) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await createCourseXblock(body).then(async (result) => {
-        if (result) {
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-          callback(result.locator);
-        }
-      });
-    } catch /* istanbul ignore next */ {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
   };
 }
 

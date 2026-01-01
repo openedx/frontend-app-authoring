@@ -33,7 +33,7 @@ const ContainerRemover = ({
     sidebarItemInfo,
     closeLibrarySidebar,
   } = useSidebarContext();
-  const { containerId, showOnlyPublished } = useLibraryContext();
+  const { containerId, showOnlyPublished } = useLibraryContext(false);
   const { showToast } = useContext(ToastContext);
 
   const removeContainerMutation = useRemoveContainerChildren(containerId);

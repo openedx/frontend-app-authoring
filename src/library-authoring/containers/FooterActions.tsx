@@ -18,7 +18,7 @@ export const FooterActions = ({
 }: FooterActionsProps) => {
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const { openAddContentSidebar } = useSidebarContext();
-  const { readOnly, setCreateContainerModalType } = useLibraryContext();
+  const { readOnly, setCreateContainerModalType } = useLibraryContext(false);
   const addContent = () => {
     if (addContentType) {
       setCreateContainerModalType(addContentType);

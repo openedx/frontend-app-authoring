@@ -3,12 +3,13 @@ import { useLocation } from 'react-router-dom';
 import { Alert, Stepper } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { FiltersProps } from '@src/library-authoring/library-filters';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
   ComponentPickerProvider,
 } from '../common/context/ComponentPickerContext';
-import { LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
+import { type LibraryIdOneOrMore, LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
@@ -19,13 +20,15 @@ import { ContentType, allLibraryPageTabs } from '../routes';
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
   visibleTabs: ContentType[],
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
 const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   returnToLibrarySelection,
   visibleTabs,
+  FiltersComponent,
 }) => {
-  const { collectionId } = useLibraryContext();
+  const { collectionId } = useLibraryContext(false);
 
   if (collectionId) {
     return <LibraryCollectionPage />;
@@ -34,6 +37,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
     <LibraryAuthoringPage
       returnToLibrarySelection={returnToLibrarySelection}
       visibleTabs={visibleTabs}
+      FiltersComponent={FiltersComponent}
     />
   );
 };
@@ -48,19 +52,21 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = {
-  libraryId?: string,
+type ComponentPickerProps = Partial<LibraryIdOneOrMore> & {
   showOnlyPublished?: boolean,
   extraFilter?: string[],
   visibleTabs?: ContentType[],
   componentPickerMode?: 'single' | 'multiple',
   onComponentSelected?: ComponentSelectedEvent,
   onChangeComponentSelection?: ComponentSelectionChangedEvent,
+  selectLibrary?: boolean;
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */
   libraryId,
+  libraryIds,
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
@@ -70,9 +76,11 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
    */
   onComponentSelected = defaultComponentSelectedCallback,
   onChangeComponentSelection = defaultSelectionChangedCallback,
+  selectLibrary = true,
+  FiltersComponent,
 }) => {
-  const [currentStep, setCurrentStep] = useState(!libraryId ? 'select-library' : 'pick-components');
-  const [selectedLibrary, setSelectedLibrary] = useState(libraryId || '');
+  const [currentStep, setCurrentStep] = useState(!libraryId && selectLibrary ? 'select-library' : 'pick-components');
+  const [selectedLibrary, setSelectedLibrary] = useState(libraryId);
 
   const location = useLocation();
 
@@ -118,6 +126,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
         <ComponentPickerProvider {...componentPickerProviderProps}>
           <LibraryProvider
             libraryId={selectedLibrary}
+            libraryIds={libraryIds || []}
             showOnlyPublished={calcShowOnlyPublished}
             extraFilter={extraFilter}
             skipUrlUpdate
@@ -132,6 +141,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
               <InnerComponentPicker
                 returnToLibrarySelection={returnToLibrarySelection}
                 visibleTabs={visibleTabs}
+                FiltersComponent={FiltersComponent}
               />
             </SidebarProvider>
           </LibraryProvider>

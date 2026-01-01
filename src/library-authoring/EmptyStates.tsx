@@ -17,7 +17,7 @@ export const NoComponents = ({
   addBtnText?: MessageDescriptor;
   handleBtnClick: () => void;
 }) => {
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
 
   return (
     <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">

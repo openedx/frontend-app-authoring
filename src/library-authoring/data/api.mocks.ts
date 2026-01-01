@@ -17,6 +17,10 @@ export const mockGetContentLibraryV2List = {
   applyMock: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
     camelCaseObject(contentLibrariesListV2),
   ),
+  applyMockNoPagination: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+    camelCaseObject(contentLibrariesListV2.results),
+  ),
+  applyMockNoPaginationEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue([] as api.ContentLibrary[]),
   applyMockError: () => jest.spyOn(api, 'getContentLibraryV2List').mockRejectedValue(
     createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
   ),
