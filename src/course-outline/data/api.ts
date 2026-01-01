@@ -382,19 +382,40 @@ export async function duplicateCourseItem(itemId: string, parentId: string): Pro
 }
 
 /**
- * Add new course item like section, subsection or unit.
- * @param {string} parentLocator
- * @param {string} category
- * @param {string} displayName
- * @returns {Promise<Object>}
+ * Creates a new course XBlock. Can be used to create any type of block
+ * and also import a content from library.
  */
-export async function addNewCourseItem(parentLocator: string, category: string, displayName: string): Promise<object> {
+export async function createCourseXblock({
+  type,
+  category,
+  parentLocator,
+  displayName,
+  boilerplate,
+  stagedContent,
+  libraryContentKey,
+}: {
+  type: string,
+  /** The category of the XBlock. Defaults to the type if not provided. */
+  category?: string,
+  parentLocator: string,
+  displayName?: string,
+  boilerplate?: string,
+  stagedContent?: string,
+  /** component key from library if being imported. */
+  libraryContentKey?: string,
+}) {
+  const body = {
+    type,
+    boilerplate,
+    category: category || type,
+    parent_locator: parentLocator,
+    display_name: displayName,
+    staged_content: stagedContent,
+    library_content_key: libraryContentKey,
+  };
+
   const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(), {
-      parent_locator: parentLocator,
-      category,
-      display_name: displayName,
-    });
+    .post(getXBlockBaseApiUrl(), body);
 
   return data;
 }

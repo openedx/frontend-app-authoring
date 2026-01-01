@@ -98,12 +98,12 @@ const ContainerActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
+  const { libraryId } = useLibraryContext(false);
   const { componentPickerMode } = useComponentPickerContext();
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
 
-  const showOpenButton = !componentPickerMode && !(
+  const showOpenButton = libraryId && !componentPickerMode && !(
     insideUnit || insideSubsection || insideSection
   );
 

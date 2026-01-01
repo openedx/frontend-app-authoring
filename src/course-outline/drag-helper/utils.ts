@@ -170,7 +170,7 @@ export const possibleSubsectionMoves = (
   sections: XBlock[],
   sectionIndex: number,
   section: XBlock,
-  subsections: string | any[],
+  subsections: XBlock[],
 ) => (index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
     return {};

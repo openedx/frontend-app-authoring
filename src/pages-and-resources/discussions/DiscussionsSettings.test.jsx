@@ -58,9 +58,9 @@ function renderComponent(route) {
   const wrapper = render(
     <AppProvider store={store} wrapWithRouter={false}>
       <QueryClientProvider client={queryClient}>
-        <CourseAuthoringProvider courseId={courseId}>
-          <PagesAndResourcesProvider courseId={courseId}>
-            <MemoryRouter initialEntries={[`${route}`]}>
+        <MemoryRouter initialEntries={[`${route}`]}>
+          <CourseAuthoringProvider courseId={courseId}>
+            <PagesAndResourcesProvider courseId={courseId}>
               <Routes>
                 <Route
                   path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
@@ -72,9 +72,9 @@ function renderComponent(route) {
                 />
               </Routes>
               <LocationDisplay />
-            </MemoryRouter>
-          </PagesAndResourcesProvider>
-        </CourseAuthoringProvider>
+            </PagesAndResourcesProvider>
+          </CourseAuthoringProvider>
+        </MemoryRouter>
       </QueryClientProvider>
     </AppProvider>,
   );

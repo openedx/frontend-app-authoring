@@ -16,7 +16,7 @@ import messages from './messages';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { readOnly, isLoadingLibraryData } = useLibraryContext();
+  const { readOnly, isLoadingLibraryData } = useLibraryContext(false);
   const { sidebarItemInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;

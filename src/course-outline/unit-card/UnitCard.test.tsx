@@ -18,6 +18,13 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
 const section = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
@@ -87,7 +94,6 @@ const renderComponent = (props?: object) => render(
     onOpenConfigureModal={jest.fn()}
     onEditSubmit={jest.fn()}
     onDuplicateSubmit={jest.fn()}
-    getTitleLink={(id) => `/some/${id}`}
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
     discussionsSettings={{

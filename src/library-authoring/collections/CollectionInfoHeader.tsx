@@ -11,7 +11,7 @@ import messages from './messages';
 const CollectionInfoHeader = () => {
   const intl = useIntl();
 
-  const { libraryId, readOnly } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const collectionId = sidebarItemInfo?.id;
@@ -23,14 +23,15 @@ const CollectionInfoHeader = () => {
 
   const { data: collection } = useCollection(libraryId, collectionId);
 
-  const updateMutation = useUpdateCollection(libraryId, collectionId);
+  const updateMutation = useUpdateCollection();
   const { showToast } = useContext(ToastContext);
 
   const handleSaveTitle = async (newTitle: string) => {
+    if (!libraryId) {
+      return;
+    }
     try {
-      await updateMutation.mutateAsync({
-        title: newTitle,
-      });
+      await updateMutation.mutateAsync({ libraryId, collectionId, data: { title: newTitle } });
       showToast(intl.formatMessage(messages.updateCollectionSuccessMsg));
     } catch {
       showToast(intl.formatMessage(messages.updateCollectionErrorMsg));

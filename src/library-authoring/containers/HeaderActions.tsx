@@ -16,7 +16,7 @@ export const HeaderActions = ({
   infoBtnText,
   addContentBtnText,
 }: HeaderActionsProps) => {
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext(false);
   const {
     closeLibrarySidebar,
     sidebarItemInfo,

@@ -57,6 +57,9 @@ const CourseAuthoringPage = ({ children }: Props) => {
             org={courseOrg}
             title={courseTitle}
             contextId={courseId}
+            containerProps={{
+              size: 'fluid',
+            }}
           />
         )
         )}

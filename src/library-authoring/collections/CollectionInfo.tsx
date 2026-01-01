@@ -26,7 +26,7 @@ const CollectionInfo = () => {
   const intl = useIntl();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { libraryId, setCollectionId } = useLibraryContext();
+  const { libraryId, setCollectionId } = useLibraryContext(false);
   const { sidebarItemInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
@@ -39,7 +39,7 @@ const CollectionInfo = () => {
     throw new Error('collectionId is required');
   }
 
-  const collectionUsageKey = buildCollectionUsageKey(libraryId, collectionId);
+  const collectionUsageKey = libraryId ? buildCollectionUsageKey(libraryId, collectionId) : undefined;
 
   const { insideCollection, navigateTo } = useLibraryRoutes();
   const showOpenCollectionButton = !insideCollection || componentPickerMode;

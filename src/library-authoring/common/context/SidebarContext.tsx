@@ -187,7 +187,7 @@ export const SidebarProvider = ({
 
   // Set the initial sidebar state based on the URL parameters and context.
   const { selectedItemId, index: indexParam } = useParams();
-  const { collectionId, containerId } = useLibraryContext();
+  const { collectionId, containerId } = useLibraryContext(false);
   const { componentPickerMode } = useComponentPickerContext();
 
   useEffect(() => {

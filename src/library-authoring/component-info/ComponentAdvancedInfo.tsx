@@ -22,7 +22,7 @@ import { ComponentAdvancedAssets } from './ComponentAdvancedAssets';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext(false);
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

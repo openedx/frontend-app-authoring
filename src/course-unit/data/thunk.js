@@ -8,11 +8,11 @@ import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { RequestStatus } from '@src/data/constants';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { updateModel, updateModels } from '@src/generic/model-store';
+import { createCourseXblock } from '@src/course-outline/data/api';
 import { messageTypes } from '../constants';
 import {
   editUnitDisplayName,
   getVerticalData,
-  createCourseXblock,
   getCourseContainerChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
