@@ -1,19 +1,59 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
+import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
 import { ButtonGroup, Dropdown, Form, OverlayTrigger, Scrollable, SearchField, Tooltip } from "@openedx/paragon";
 import { Newsstand } from "@openedx/paragon/icons";
 import Loading from "@src/generic/Loading";
 import { useLibraryContext } from "@src/library-authoring/common/context/LibraryContext";
+import { ContentLibrary } from "@src/library-authoring/data/api";
 import { useContentLibraryV2List } from "@src/library-authoring/data/apiHooks";
 import { debounce, truncate } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import messages from './messages';
+
+interface LibraryItemsProps {
+  isPending: boolean;
+  data?: ContentLibrary[];
+  onChange: (id: string) => void;
+}
+
+const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
+  if (isPending) {
+    return <Loading />
+  }
+
+  if (!data ||data.length === 0) {
+    return <span className="p-3">
+    <FormattedMessage {...messages.librariesFilterBtnEmpty} />
+    </span>
+  }
+
+  return (
+    <Scrollable
+      className="m-0 p-0"
+      style={{'max-height': '25vh'}}
+    >
+      {data?.map((library) => (
+        <Dropdown.Item
+          key={library.id}
+          as={Form.Checkbox}
+          value={library.id}
+          onChange={() => onChange(library.id)}
+          className="py-2 my-1 overflow-auto"
+        >
+          <div>
+            {truncate(library.title, { length: 50})}
+          </div>
+        </Dropdown.Item>
+      ))}
+    </Scrollable>
+  );
+}
 
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
   const {selectedLibraries, setSelectedLibraries} = useLibraryContext(false);
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
-  const { data, isPending } = useContentLibraryV2List({ pagination: false, search });
+  const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
 
   const handleSearch = useCallback(
     // Perform search after 500ms
@@ -40,21 +80,7 @@ export const LibraryDropdownFilter = () => {
     } else if (selectedLibraries.length > 1) {
       setLabel(`${selectedLibraries.length} Libraries`);
     }
-  }, [label, selectedLibraries])
-
-  const libraryMenuItems = data?.map((library) => (
-    <Dropdown.Item
-      key={library.id}
-      as={Form.Checkbox}
-      value={library.id}
-      onChange={() => onChange(library.id)}
-      className="py-2 my-1 overflow-auto"
-    >
-      <div>
-        {truncate(library.title, { length: 50})}
-      </div>
-    </Dropdown.Item>
-  ));
+  }, [label, selectedLibraries, data])
 
   return (
     <Dropdown
@@ -86,12 +112,7 @@ export const LibraryDropdownFilter = () => {
           className="mx-1 border-0"
         />
         <Dropdown.Divider className="mb-0" />
-        <Scrollable
-          className="m-0 p-0"
-          style={{'height': '25vh'}}
-        >
-          {isPending ? <Loading /> : libraryMenuItems}
-        </Scrollable>
+        <LibraryItems isPending={isPending} data={data} onChange={onChange}/>
       </Dropdown.Menu>
     </Dropdown>
   )
