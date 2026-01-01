@@ -35,7 +35,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
       className="m-0 p-0"
       style={{ 'max-height': '25vh' }}
     >
-      {data?.map((library) => (
+      {data.map((library) => (
         <Dropdown.Item
           key={library.id}
           as={Form.Checkbox}
@@ -87,6 +87,7 @@ export const LibraryDropdownFilter = () => {
 
   return (
     <Dropdown
+      id="library-filter-dropdown"
       as={ButtonGroup}
       autoClose="outside"
     >
@@ -99,6 +100,7 @@ export const LibraryDropdownFilter = () => {
         )}
       >
         <Dropdown.Toggle
+          id="library-filter-dropdown-toggle"
           iconBefore={Newsstand}
           className="text-overflow text-primary-500 p-2 px-4 mr-2"
         >
