@@ -271,7 +271,7 @@ export interface GetLibrariesV2CustomParamsNoPagination extends GetLibrariesV2Cu
 }
 
 export interface GetLibrariesV2CustomParamsPagination extends GetLibrariesV2CustomParams {
-  pagination: true,
+  pagination?: true,
 }
 
 export type LibraryAssetResponse = {
@@ -393,7 +393,7 @@ export async function updateLibraryMetadata(libraryData: UpdateLibraryDataReques
 }
 
 function isNoPagination(
-  params: GetLibrariesV2CustomParams
+  params: GetLibrariesV2CustomParams,
 ): params is GetLibrariesV2CustomParamsNoPagination {
   return params.pagination === false;
 }
@@ -401,10 +401,18 @@ function isNoPagination(
 /**
  * Get a list of content libraries.
  */
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParamsNoPagination): Promise<ContentLibrary[]>;
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParamsPagination): Promise<LibrariesV2Response>;
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response>;
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response | ContentLibrary[]> {
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsNoPagination
+): Promise<ContentLibrary[]>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsPagination
+): Promise<LibrariesV2Response>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams
+): Promise<LibrariesV2Response>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams,
+): Promise<LibrariesV2Response | ContentLibrary[]> {
   // Set default params if not passed in
   const customParamsDefaults = {
     type: customParams.type || 'complex',

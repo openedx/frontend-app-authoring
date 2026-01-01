@@ -6,9 +6,9 @@ import {
 } from '@src/search-manager';
 import { FilterList } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { LibraryDropdownFilter } from '@src/library-authoring/library-filters/LibraryDropdownFilter';
 import messages from './messages';
 import { FiltersProps } from '.';
-import { LibraryDropdownFilter } from '@src/library-authoring/library-filters/LibraryDropdownFilter';
 
 export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
   const intl = useIntl();
