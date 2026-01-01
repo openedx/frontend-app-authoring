@@ -25,8 +25,8 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
         show={show}
         dismissible
         onDismiss={onDismiss}
-        variant='light'
-        dismissAltText='Close'
+        variant="light"
+        dismissAltText="Close"
       >
         {children}
       </PageBanner>
