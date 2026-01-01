@@ -9,7 +9,12 @@ const messages = defineMessages({
   librariesFilterBtnPlaceholder: {
     id: 'course-authoring.library-authoring.library-filters.libraries.filter.placeholder',
     defaultMessage: 'Search Library Name',
-    description: 'Button text for libraries filter',
+    description: 'Placeholder text for libraries filter',
+  },
+  librariesFilterBtnEmpty: {
+    id: 'course-authoring.library-authoring.library-filters.libraries.filter.mmpty',
+    defaultMessage: 'No libraries found!',
+    description: 'When no libraries are found',
   },
   additionalFilterBtnAltText: {
     id: 'course-authoring.library-authoring.library-filters.additional.filter.alt-btn',
