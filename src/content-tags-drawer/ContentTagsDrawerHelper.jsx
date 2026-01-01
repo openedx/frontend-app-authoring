@@ -407,7 +407,6 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         tags: tags.contentTags.map(t => t.value),
       });
     });
-    // @ts-ignore
     updateTags.mutate({ tagsData });
   }, [tagsByTaxonomy]);
 
