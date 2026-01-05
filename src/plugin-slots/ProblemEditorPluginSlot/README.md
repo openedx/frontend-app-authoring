@@ -29,6 +29,26 @@ It is a **generic extension point** that can host any React component, such as:
 Your component is responsible for interacting with the editor state (if needed) using
 Redux, `window.tinymce`, CodeMirror, or other utilities provided by `frontend-app-authoring`.
 
+#### Interacting with Editor State (Reading State from Redux)
+
+```jsx
+import { useSelector } from 'react-redux';
+import { selectors } from 'CourseAuthoring/editors/data/redux';
+
+const MyComponent = ({ blockType }) => {
+  // Read problem state
+  const problemState = useSelector(selectors.problem.completeState);
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const showRawEditor = useSelector(selectors.app.showRawEditor);
+  
+  // Access problem data
+  const question = problemState?.question || '';
+  const answers = problemState?.answers || [];
+  
+  return <div>Question: {question}</div>;
+};
+```
+
 ## Examples
 
 ### Default content
