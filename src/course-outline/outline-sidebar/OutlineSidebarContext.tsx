@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -22,8 +23,13 @@ export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
 export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
 export type OutlineFlow = {
+  flowType: 'use-section';
+  parentLocator?: string;
+  parentTitle?: string;
+} | {
   flowType: OutlineFlowType;
   parentLocator: string;
+  parentTitle: string;
 }
 
 interface OutlineSidebarContextData {
@@ -52,7 +58,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     (value: OutlineSidebarPageKeys) => value,
   );
   const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
-  const [isOpen, open, , toggle] = useToggle(true);
+  const [isOpen, open, close, toggle] = useToggle(true);
 
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
@@ -64,18 +70,32 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const stopCurrentFlow = useCallback(() => {
     setCurrentFlow(null);
+    close();
   }, [setCurrentFlow]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
+    setCurrentFlow(null);
     open();
-    stopCurrentFlow();
-  }, [open, currentFlow, stopCurrentFlow]);
+  }, [open, setCurrentFlow]);
 
   const startCurrentFlow = useCallback((flow: OutlineFlow) => {
     setCurrentPageKey('add');
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        stopCurrentFlow();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   const sidebarPages = {
     info: {

@@ -99,11 +99,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
-  const [
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
-  ] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -316,9 +311,6 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
     handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,

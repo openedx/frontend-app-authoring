@@ -76,6 +76,21 @@ const messages = defineMessages({
     defaultMessage: 'Select section',
     description: 'Section modal picker title text in outline',
   },
+  placeholderSectionText: {
+    id: 'course-authoring.course-outline.placeholder.section.title',
+    defaultMessage: 'Adding Library Section',
+    description: 'Placeholder section text while adding library section',
+  },
+  placeholderSubsectionText: {
+    id: 'course-authoring.course-outline.placeholder.subsection.title',
+    defaultMessage: 'Adding Library Subsection',
+    description: 'Placeholder subsection text while adding library subsection',
+  },
+  placeholderUnitText: {
+    id: 'course-authoring.course-outline.placeholder.unit.title',
+    defaultMessage: 'Adding Library Unit',
+    description: 'Placeholder unit text while adding library unit',
+  },
 });
 
 export default messages;

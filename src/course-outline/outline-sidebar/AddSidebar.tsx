@@ -129,15 +129,15 @@ const ShowLibraryContent = () => {
     handleAddUnitFromLibrary,
   } = useCourseAuthoringContext();
   const sectionsList: Array<XBlock> = useSelector(getSectionsList);
-  const { currentFlow } = useOutlineSidebarContext();
+  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
 
   const lastSection = getLastEditableParent(sectionsList);
   const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
 
-  const onComponentSelected: ComponentSelectedEvent = useCallback(({ usageKey, blockType }) => {
+  const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
       case 'section':
-        handleAddSectionFromLibrary.mutateAsync({
+        await handleAddSectionFromLibrary.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
           parentLocator: courseUsageKey,
@@ -147,7 +147,7 @@ const ShowLibraryContent = () => {
       case 'subsection':
         const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
         if (sectionParentId) {
-          handleAddSubsectionFromLibrary.mutateAsync({
+          await handleAddSubsectionFromLibrary.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
             parentLocator: sectionParentId,
@@ -158,7 +158,7 @@ const ShowLibraryContent = () => {
       case 'unit':
         const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
         if (subsectionParentId) {
-          handleAddUnitFromLibrary.mutateAsync({
+          await handleAddUnitFromLibrary.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
@@ -170,6 +170,7 @@ const ShowLibraryContent = () => {
         // istanbul ignore next: unreachable
         throw new Error(`Unrecognized block type ${blockType}`);
     }
+    stopCurrentFlow();
   }, [
     courseUsageKey,
     handleAddSectionFromLibrary,
@@ -177,14 +178,25 @@ const ShowLibraryContent = () => {
     handleAddUnitFromLibrary,
     lastSection,
     lastSubsection,
+    currentFlow,
+    stopCurrentFlow,
   ]);
 
   const allowedBlocks = useMemo(() => {
-    const blocks: ContainerTypes[] = ['section'];
-    if (currentFlow?.flowType === 'use-subsection' || lastSection) { blocks.push('subsection'); }
-    if (currentFlow?.flowType === 'use-unit' || lastSubsection) { blocks.push('unit'); }
-    return blocks;
-  }, [lastSection, lastSubsection, sectionsList]);
+    switch (currentFlow?.flowType) {
+      case 'use-section':
+        return ['section'];
+      case 'use-subsection':
+        return ['subsection'];
+      case 'use-unit':
+        return ['unit'];
+      default:
+        const blocks: ContainerTypes[] = ['section'];
+        if (lastSection) { blocks.push('subsection'); }
+        if (lastSubsection) { blocks.push('unit'); }
+        return blocks;
+    }
+  }, [lastSection, lastSubsection, sectionsList, currentFlow]);
 
   return (
     <MultiLibraryProvider>
@@ -210,6 +222,23 @@ const AddTabs = () => {
     }
   }, [currentFlow, setKey]);
 
+  const tabTitle = useMemo(() => {
+    switch (currentFlow?.flowType) {
+      case 'use-section':
+        return intl.formatMessage(messages.sidebarTabsAddExisitingSectionToParent);
+      case 'use-subsection':
+        return intl.formatMessage(messages.sidebarTabsAddExisitingSubsectionToParent, {
+          name: currentFlow.parentTitle,
+        });
+      case 'use-unit':
+        return intl.formatMessage(messages.sidebarTabsAddExisitingUnitToParent, {
+          name: currentFlow.parentTitle,
+        });
+      default:
+        return intl.formatMessage(messages.sidebarTabsAddExisiting);
+    }
+  }, [currentFlow, intl]);
+
   return (
     <Tabs
       variant="tabs"
@@ -222,7 +251,7 @@ const AddTabs = () => {
       <Tab disabled={!!currentFlow} eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
         <AddNewContent />
       </Tab>
-      <Tab eventKey="addExisting" title={intl.formatMessage(messages.sidebarTabsAddExisiting)}>
+      <Tab eventKey="addExisting" title={tabTitle}>
         <ShowLibraryContent />
       </Tab>
     </Tabs>

@@ -1,10 +1,10 @@
-import React, {
+import {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { StandardModal, useToggle } from '@openedx/paragon';
+import { useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -20,18 +20,15 @@ import TitleButton from '@src/course-outline/card-header/TitleButton';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
-import { ContentType } from '@src/library-authoring/routes';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
-import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -86,13 +83,9 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const [
-    isAddLibraryUnitModalOpen,
-    openAddLibraryUnitModal,
-    closeAddLibraryUnitModal,
-  ] = useToggle(false);
-  const { courseId, handleNewUnitSubmit, handleAddUnitFromLibrary } = useCourseAuthoringContext();
+  const { courseId, handleNewUnitSubmit } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  const { startCurrentFlow } = useOutlineSidebarContext();
 
   const {
     id,
@@ -250,16 +243,6 @@ const SubsectionCard = ({
       && !section.upstreamInfo?.upstreamRef
   );
 
-  const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
-    handleAddUnitFromLibrary.mutateAsync({
-      type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Vertical,
-      parentLocator: id,
-      libraryContentKey: selectedUnit.usageKey,
-    });
-    closeAddLibraryUnitModal();
-  }, [id, handleAddUnitFromLibrary, closeAddLibraryUnitModal]);
-
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
       openContainerInfoSidebar(subsection.id);
@@ -358,9 +341,14 @@ const SubsectionCard = ({
                 <>
                   <OutlineAddChildButtons
                     handleNewButtonClick={handleNewButtonClick}
-                    handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    handleUseFromLibraryClick={() => startCurrentFlow({
+                      flowType: 'use-unit',
+                      parentLocator: subsection.id,
+                      parentTitle: subsection.displayName,
+                    })}
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
+                    parentLocator={subsection.id}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent
@@ -376,21 +364,6 @@ const SubsectionCard = ({
           )}
         </div>
       </SortableItem>
-      <StandardModal
-        title={intl.formatMessage(messages.unitPickerModalTitle)}
-        isOpen={isAddLibraryUnitModalOpen}
-        onClose={closeAddLibraryUnitModal}
-        isOverflowVisible={false}
-        size="xl"
-      >
-        <LibraryAndComponentPicker
-          showOnlyPublished
-          extraFilter={['block_type = "unit"']}
-          componentPickerMode="single"
-          onComponentSelected={handleSelectLibraryUnit}
-          visibleTabs={[ContentType.units]}
-        />
-      </StandardModal>
       {blockSyncData && (
         <PreviewLibraryXBlockChanges
           blockData={blockSyncData}
