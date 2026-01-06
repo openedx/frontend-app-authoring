@@ -12,7 +12,7 @@ import {
 import { getIconBorderStyleColor, getItemIcon } from '@src/generic/block-type-utils';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
@@ -21,6 +21,7 @@ import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import messages from './messages';
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 
@@ -121,15 +122,17 @@ const AddNewContent = () => {
 
 /** Add Existing Content Tab Section */
 const ShowLibraryContent = () => {
-  const sectionsList: Array<XBlock> = useSelector(getSectionsList);
-  const lastSection = getLastEditableParent(sectionsList);
-  const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
   const {
     courseUsageKey,
     handleAddSectionFromLibrary,
     handleAddSubsectionFromLibrary,
     handleAddUnitFromLibrary,
   } = useCourseAuthoringContext();
+  const sectionsList: Array<XBlock> = useSelector(getSectionsList);
+  const { currentFlow } = useOutlineSidebarContext();
+
+  const lastSection = getLastEditableParent(sectionsList);
+  const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(({ usageKey, blockType }) => {
     switch (blockType) {
@@ -142,21 +145,23 @@ const ShowLibraryContent = () => {
         });
         break;
       case 'subsection':
-        if (lastSection) {
+        const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
+        if (sectionParentId) {
           handleAddSubsectionFromLibrary.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
-            parentLocator: lastSection.id,
+            parentLocator: sectionParentId,
             libraryContentKey: usageKey,
           });
         }
         break;
       case 'unit':
-        if (lastSubsection) {
+        const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
+        if (subsectionParentId) {
           handleAddUnitFromLibrary.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
-            parentLocator: lastSubsection.id,
+            parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
           });
         }
@@ -176,8 +181,8 @@ const ShowLibraryContent = () => {
 
   const allowedBlocks = useMemo(() => {
     const blocks: ContainerTypes[] = ['section'];
-    if (lastSection) { blocks.push('subsection'); }
-    if (lastSubsection) { blocks.push('unit'); }
+    if (currentFlow?.flowType === 'use-subsection' || lastSection) { blocks.push('subsection'); }
+    if (currentFlow?.flowType === 'use-unit' || lastSubsection) { blocks.push('unit'); }
     return blocks;
   }, [lastSection, lastSubsection, sectionsList]);
 
@@ -197,15 +202,24 @@ const ShowLibraryContent = () => {
 /** Tabs Component */
 const AddTabs = () => {
   const intl = useIntl();
+  const { currentFlow } = useOutlineSidebarContext();
+  const [key, setKey] = useState('addNew');
+  useEffect(() => {
+    if (currentFlow) {
+      setKey('addExisting');
+    }
+  }, [currentFlow, setKey]);
 
   return (
     <Tabs
       variant="tabs"
-      defaultActiveKey="addNew"
       className="my-2 d-flex justify-content-around"
       id="add-content-tabs"
+      activeKey={key}
+      onSelect={setKey}
+      mountOnEnter
     >
-      <Tab eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
+      <Tab disabled={!!currentFlow} eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
         <AddNewContent />
       </Tab>
       <Tab eventKey="addExisting" title={intl.formatMessage(messages.sidebarTabsAddExisiting)}>

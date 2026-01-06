@@ -30,7 +30,7 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
-import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -72,24 +72,15 @@ const SectionCard = ({
   resetScrollState,
 }: SectionCardProps) => {
   const currentRef = useRef(null);
-  const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
-  const [
-    isAddLibrarySubsectionModalOpen,
-    openAddLibrarySubsectionModal,
-    closeAddLibrarySubsectionModal,
-  ] = useToggle(false);
-  const {
-    courseId,
-    handleAddSubsectionFromLibrary,
-    handleNewSubsectionSubmit,
-  } = useCourseAuthoringContext();
+  const { courseId, handleNewSubsectionSubmit } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  const { startCurrentFlow } = useOutlineSidebarContext();
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -228,21 +219,6 @@ const SectionCard = ({
   const handleSectionMoveDown = () => {
     onOrderChange(index, index + 1);
   };
-
-  /**
-  * Callback to handle the selection of a library subsection to be imported to course.
-  * @param {Object} selectedSubection - The selected subsection details.
-  * @returns {void}
-  */
-  const handleSelectLibrarySubsection = useCallback((selectedSubection: SelectedComponent) => {
-    handleAddSubsectionFromLibrary.mutateAsync({
-      type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Sequential,
-      parentLocator: id,
-      libraryContentKey: selectedSubection.usageKey,
-    });
-    closeAddLibrarySubsectionModal();
-  }, [id, handleAddSubsectionFromLibrary, closeAddLibrarySubsectionModal]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -383,7 +359,7 @@ const SectionCard = ({
                 {actions.childAddable && (
                   <OutlineAddChildButtons
                     handleNewButtonClick={() => handleNewSubsectionSubmit(id)}
-                    handleUseFromLibraryClick={openAddLibrarySubsectionModal}
+                    handleUseFromLibraryClick={() => startCurrentFlow({ flowType: 'use-subsection', parentLocator: section.id })}
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                   />
@@ -393,21 +369,6 @@ const SectionCard = ({
           </div>
         </div>
       </SortableItem>
-      <StandardModal
-        title={intl.formatMessage(messages.subsectionPickerModalTitle)}
-        isOpen={isAddLibrarySubsectionModalOpen}
-        onClose={closeAddLibrarySubsectionModal}
-        isOverflowVisible={false}
-        size="xl"
-      >
-        <LibraryAndComponentPicker
-          showOnlyPublished
-          extraFilter={['block_type = "subsection"']}
-          componentPickerMode="single"
-          onComponentSelected={handleSelectLibrarySubsection}
-          visibleTabs={[ContentType.subsections]}
-        />
-      </StandardModal>
       {blockSyncData && (
         <PreviewLibraryXBlockChanges
           blockData={blockSyncData}
