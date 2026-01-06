@@ -17,8 +17,8 @@ import { ComponentSelectedEvent } from '@src/library-authoring/common/context/Co
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import type { XBlock } from '@src/data/types';
-import { ContentType } from '../../library-authoring/routes';
-import { ComponentPicker } from '../../library-authoring';
+import { ContentType } from '@src/library-authoring/routes';
+import { ComponentPicker } from '@src/library-authoring';
 import messages from './messages';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
