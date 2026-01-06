@@ -68,17 +68,6 @@ const getLeafTags = (tree) => {
  * @param {StagedTagData[]} stagedContentTags
  *       - Array of staged tags represented as objects with value/label
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} taxonomyAndTagsData
- * @returns {{
- *      tagChangeHandler: (tagSelectableBoxValue: string, checked: boolean) => void,
- *      removeAppliedTagHandler: (tagSelectableBoxValue: string) => void,
- *      appliedContentTagsTree: Record<string, TagTreeEntry>,
- *      stagedContentTagsTree: Record<string, TagTreeEntry>,
- *      contentTagsCount: number,
- *      checkedTags: any,
- *      commitStagedTagsToGlobal: () => void,
- *      updateTags: import('@tanstack/react-query').UseMutationResult<
- *                  any, unknown, { tagsData: Promise<UpdateTagsData[]>; }, unknown
- *      >
  * }}
  */
 const useContentTagsCollapsibleHelper = (

@@ -17,16 +17,21 @@ import {
 } from './api';
 import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
-import { UpdateTagsData } from './types';
+import type { UpdateTagsData } from './types';
 
 /**
  * Builds the query to get the taxonomy tags
- * @param taxonomyId The id of the taxonomy to fetch tags for
- * @param parentTag The tag whose children we're loading, if any
- * @param searchTerm The term passed in to perform search on tags
- * @param numPages How many pages of tags to load at this level
  */
-export const useTaxonomyTagsData = (taxonomyId: number, parentTag: string | null = null, numPages = 1, searchTerm = '') => {
+export const useTaxonomyTagsData = (
+  /** The id of the taxonomy to fetch tags for */
+  taxonomyId: number,
+  /** The tag whose children we're loading, if any */
+  parentTag: string | null = null,
+  /** How many pages of tags to load at this level */
+  numPages = 1,
+  /** The term passed in to perform search on tags */
+  searchTerm = '',
+) => {
   const queryClient = useQueryClient();
 
   const queryFn = async ({ queryKey }) => {
@@ -128,7 +133,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
   const { containerId } = useParams();
 
   return useMutation({
-    mutationFn: ({ tagsData }: { tagsData: Promise<UpdateTagsData[]> }) => (
+    mutationFn: ({ tagsData }: { tagsData: UpdateTagsData[] }) => (
       updateContentTaxonomyTags(contentId, tagsData)
     ),
     onSettled: () => {

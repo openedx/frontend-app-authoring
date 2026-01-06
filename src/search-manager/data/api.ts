@@ -338,7 +338,9 @@ export const fetchBlockTypes = async (
     }],
   });
 
-  return results[0].facetDistribution?.block_type ?? {};
+  const blockTypeFacet = results[0].facetDistribution?.block_type;
+
+  return blockTypeFacet ? camelCaseObject(blockTypeFacet) : {};
 };
 
 /** Information about a single tag in the tag tree, as returned by fetchAvailableTagOptions() */

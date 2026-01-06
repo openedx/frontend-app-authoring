@@ -21,6 +21,10 @@
       margin: -1px;
     }
   }
+
+  span {
+    color: white;
+  }
 }
 
 .component-style-html {
@@ -45,6 +49,10 @@
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
+  }
+
+  span {
+    color: white;
   }
 }
 
@@ -71,6 +79,10 @@
       margin: -1px;
     }
   }
+
+  span {
+    color: black;
+  }
 }
 
 .component-style-video {
@@ -95,6 +107,10 @@
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
+  }
+
+  span {
+    color: white;
   }
 }
 
@@ -121,6 +137,10 @@
       margin: -1px;
     }
   }
+
+  span {
+    color: white;
+  }
 }
 
 .component-style-sequential {
@@ -145,6 +165,10 @@
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
+  }
+
+  span {
+    color: white;
   }
 }
 
@@ -172,6 +196,10 @@
       margin: -1px;
     }
   }
+
+  span {
+    color: white;
+  }
 }
 
 .component-style-other {
@@ -196,5 +224,9 @@
       border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
+  }
+
+  span {
+    color: white;
   }
 }
