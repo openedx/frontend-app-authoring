@@ -26,7 +26,7 @@ const TitleLink = ({
       to={titleLink}
       title={title}
     >
-      <span className={`${namePrefix}-card-title mb-0 text-left`}>
+      <span className={`${namePrefix}-card-title truncate-1-line mb-0 text-left`}>
         {title}
       </span>
     </Button>
