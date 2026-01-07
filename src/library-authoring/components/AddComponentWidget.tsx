@@ -27,9 +27,9 @@ const buildCollectionComponents = (
   collectionUsageKey: string,
 ): SelectedComponent[] => hits
   .filter((hit) => hit.type === 'library_block' && hit.collections?.key?.includes(collectionUsageKey))
-  .map((hit) => ({
+  .map((hit: ContentHit) => ({
     usageKey: hit.usageKey,
-    blockType: hit.type,
+    blockType: hit.blockType,
     collectionKeys: (hit as ContentHit).collections?.key,
   }));
 
