@@ -11,7 +11,7 @@ import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { ContainerType } from '../../../generic/key-utils';
 
-import type { LibraryAndComponentPicker } from '../../component-picker';
+import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
@@ -54,7 +54,7 @@ export type LibraryContextData = {
   /** If an onClose callback is provided, it will be called when the editor is closed. */
   openComponentEditor: (usageKey: string, onClose?: (data?:any) => void, blockType?:string) => void;
   closeComponentEditor: (data?:any) => void;
-  componentPicker?: typeof LibraryAndComponentPicker;
+  componentPicker?: typeof ComponentPicker;
   blockTypesData?: Record<string, BlockTypeMetadata>;
 };
 
@@ -79,7 +79,7 @@ type LibraryProviderProps = {
    * directly importing it to avoid the import cycle:
    * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
    * Sidebar > AddContent > LibraryAndComponentPicker */
-  componentPicker?: typeof LibraryAndComponentPicker;
+  componentPicker?: typeof ComponentPicker;
 };
 
 /**

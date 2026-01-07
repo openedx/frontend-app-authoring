@@ -11,7 +11,7 @@ import { LibraryBackupPage } from './backup-restore';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
-import { LibraryAndComponentPicker } from './component-picker';
+import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 import { CreateCollectionModal } from './create-collection';
 import { CreateContainerModal } from './create-container';
@@ -45,7 +45,7 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
        * directly importing it to avoid the import cycle:
        * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
        * Sidebar > AddContent > LibraryAndComponentPicker */
-      componentPicker={LibraryAndComponentPicker}
+      componentPicker={ComponentPicker}
     >
       <SidebarProvider>
         {children ?? <Outlet />}

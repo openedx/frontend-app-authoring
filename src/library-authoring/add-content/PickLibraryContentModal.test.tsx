@@ -10,7 +10,7 @@ import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import mockResult from '../__mocks__/library-search.json';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { LibraryAndComponentPicker } from '../component-picker';
+import { ComponentPicker } from '../component-picker';
 import * as api from '../data/api';
 import {
   mockContentLibrary,
@@ -64,7 +64,7 @@ const render = (context: ContextType) => baseRender(
     extraWrapper: ({ children }) => (
       <LibraryProvider
         libraryId={libraryId}
-        componentPicker={LibraryAndComponentPicker}
+        componentPicker={ComponentPicker}
       >
         {children}
       </LibraryProvider>
