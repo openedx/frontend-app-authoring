@@ -9,9 +9,10 @@ const Context = React.createContext<MultiLibraryContextProps | undefined>(undefi
 
 export const MultiLibraryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedLibraries, setSelectedLibraries] = React.useState<string[]>([]);
-  const context = React.useMemo(() => {
-    return { selectedLibraries, setSelectedLibraries };
-  }, [selectedLibraries, setSelectedLibraries]);
+  const context = React.useMemo(() => ({
+    selectedLibraries,
+    setSelectedLibraries,
+  }), [selectedLibraries, setSelectedLibraries]);
 
   return (
     <Context.Provider value={context}>
@@ -21,13 +22,13 @@ export const MultiLibraryProvider: React.FC<{ children: React.ReactNode }> = ({ 
 };
 
 export const useMultiLibraryContext = (): MultiLibraryContextProps => {
-  const ctx = React.useContext(Context)
+  const ctx = React.useContext(Context);
   if (ctx === undefined) {
     /* istanbul ignore next */
     return {
       selectedLibraries: [],
       setSelectedLibraries: () => {},
-    }
+    };
   }
   return ctx;
 };

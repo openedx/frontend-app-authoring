@@ -4,6 +4,7 @@ import { Alert, Stepper } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { FiltersProps } from '@src/library-authoring/library-filters';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
@@ -52,20 +53,76 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = {
-  libraryId?: string,
+type PickerProps = {
   showOnlyPublished?: boolean,
   extraFilter?: string[],
   visibleTabs?: ContentType[],
   componentPickerMode?: 'single' | 'multiple',
   onComponentSelected?: ComponentSelectedEvent,
   onChangeComponentSelection?: ComponentSelectionChangedEvent,
-  selectLibrary?: boolean;
   FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
+/** A component picker that allows the user to select one or more components */
+export const ComponentPicker = ({
+  /** Restrict the component picker to a specific library */
+  libraryId,
+  showOnlyPublished,
+  extraFilter,
+  componentPickerMode = 'single',
+  visibleTabs = allLibraryPageTabs,
+  /** This default callback is used to send the selected component back to the parent window,
+   * when the component picker is used in an iframe.
+   */
+  onComponentSelected = defaultComponentSelectedCallback,
+  onChangeComponentSelection = defaultSelectionChangedCallback,
+  FiltersComponent,
+  returnToLibrarySelection,
+}: PickerProps & LibraryComponentPickerProps & { libraryId?: string }) => {
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const variant = queryParams.get('variant') || 'draft';
+  const calcShowOnlyPublished = variant === 'published' || showOnlyPublished;
+
+  const restrictToLibrary = !!libraryId;
+
+  const componentPickerProviderProps = componentPickerMode === 'single' ? {
+    componentPickerMode,
+    onComponentSelected,
+    restrictToLibrary,
+  } : {
+    componentPickerMode,
+    onChangeComponentSelection,
+    restrictToLibrary,
+  };
+
+  return (
+    <PublishedFilterContextProvider showOnlyPublished={calcShowOnlyPublished}>
+      <ComponentPickerProvider
+        {...componentPickerProviderProps}
+        extraFilter={extraFilter}
+      >
+        <SidebarProvider>
+          { calcShowOnlyPublished
+            && (
+              <Alert variant="info" className="m-2">
+                <FormattedMessage {...messages.pickerInfoBanner} />
+              </Alert>
+            )}
+          <InnerComponentPicker
+            returnToLibrarySelection={returnToLibrarySelection}
+            visibleTabs={visibleTabs}
+            FiltersComponent={FiltersComponent}
+          />
+        </SidebarProvider>
+      </ComponentPickerProvider>
+    </PublishedFilterContextProvider>
+  );
+};
+
 /** A component picker that allows the user to select one or more components from a library. */
-export const LibraryAndComponentPicker: React.FC<ComponentPickerProps> = ({
+export const LibraryAndComponentPicker: React.FC<PickerProps> = ({
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
@@ -119,62 +176,5 @@ export const LibraryAndComponentPicker: React.FC<ComponentPickerProps> = ({
         </LibraryProvider>
       </Stepper.Step>
     </Stepper>
-  );
-};
-
-/** A component picker that allows the user to select one or more components */
-export const ComponentPicker = ({
-  /** Restrict the component picker to a specific library */
-  libraryId,
-  showOnlyPublished,
-  extraFilter,
-  componentPickerMode = 'single',
-  visibleTabs = allLibraryPageTabs,
-  /** This default callback is used to send the selected component back to the parent window,
-   * when the component picker is used in an iframe.
-   */
-  onComponentSelected = defaultComponentSelectedCallback,
-  onChangeComponentSelection = defaultSelectionChangedCallback,
-  FiltersComponent,
-  returnToLibrarySelection,
-}: ComponentPickerProps & LibraryComponentPickerProps ) => {
-  const location = useLocation();
-
-  const queryParams = new URLSearchParams(location.search);
-  const variant = queryParams.get('variant') || 'draft';
-  const calcShowOnlyPublished = variant === 'published' || showOnlyPublished;
-
-  const restrictToLibrary = !!libraryId;
-
-  const componentPickerProviderProps = componentPickerMode === 'single' ? {
-    componentPickerMode,
-    onComponentSelected,
-    restrictToLibrary,
-  } : {
-    componentPickerMode,
-    onChangeComponentSelection,
-    restrictToLibrary,
-  };
-
-  return (
-    <ComponentPickerProvider
-      {...componentPickerProviderProps}
-      showOnlyPublished={calcShowOnlyPublished}
-      extraFilter={extraFilter}
-    >
-      <SidebarProvider>
-        { calcShowOnlyPublished
-          && (
-          <Alert variant="info" className="m-2">
-            <FormattedMessage {...messages.pickerInfoBanner} />
-          </Alert>
-          )}
-        <InnerComponentPicker
-          returnToLibrarySelection={returnToLibrarySelection}
-          visibleTabs={visibleTabs}
-          FiltersComponent={FiltersComponent}
-        />
-      </SidebarProvider>
-    </ComponentPickerProvider>
   );
 };

@@ -19,6 +19,7 @@ import Loading from '@src/generic/Loading';
 import TagCount from '@src/generic/tag-count';
 import { ToastContext } from '@src/generic/toast-context';
 import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
@@ -31,7 +32,6 @@ import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -56,7 +56,7 @@ interface ComponentBlockProps {
 /** Component header */
 const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
@@ -131,7 +131,7 @@ const ComponentBlock = ({
   block, readOnly, isDragging, index,
 }: ComponentBlockProps) => {
   const { openComponentEditor } = useOptionalLibraryContext();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
@@ -235,7 +235,7 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
   const { showToast } = useContext(ToastContext);
 
   const { readOnly: libraryReadOnly } = useOptionalLibraryContext();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const readOnly = componentReadOnly || libraryReadOnly;
 

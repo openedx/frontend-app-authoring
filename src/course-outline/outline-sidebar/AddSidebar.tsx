@@ -19,8 +19,8 @@ import { ContainerType } from '@src/generic/key-utils';
 import type { XBlock } from '@src/data/types';
 import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
-import messages from './messages';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
+import messages from './messages';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 

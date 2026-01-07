@@ -12,6 +12,7 @@ import { Delete, MoreVert } from '@openedx/paragon/icons';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { type CollectionHit } from '@src/search-manager';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
@@ -118,7 +119,8 @@ type CollectionCardProps = {
 };
 
 const CollectionCard = ({ hit } : CollectionCardProps) => {
-  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { setCollectionId } = useOptionalLibraryContext();
   const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 

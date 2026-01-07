@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useLibraryRoutes } from '../routes';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -100,7 +101,8 @@ const HeaderActions = () => {
 const LibraryCollectionPage = () => {
   const intl = useIntl();
 
-  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     libraryId,
     collectionId,

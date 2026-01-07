@@ -14,8 +14,8 @@ import {
   useUpdateContainerChildren,
 } from '@src/library-authoring/data/apiHooks';
 import { LibraryBlockMetadata } from '@src/library-authoring/data/api';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import messages from './messages';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 interface Props {
   usageKey: string;
@@ -28,7 +28,7 @@ const ComponentRemover = ({ usageKey, index, close }: Props) => {
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { containerId } = useOptionalLibraryContext();
   const { showToast } = useContext(ToastContext);
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);
   const updateContainerChildrenMutation = useUpdateContainerChildren(containerId);

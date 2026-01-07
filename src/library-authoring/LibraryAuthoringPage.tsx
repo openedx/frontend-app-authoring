@@ -38,6 +38,8 @@ import migrationMessages from '@src/legacy-libraries-migration/messages';
 
 import { FiltersProps } from '@src/library-authoring/library-filters';
 import { MainFilters } from '@src/library-authoring/library-filters/MainFilters';
+import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
@@ -46,7 +48,6 @@ import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarCo
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
 import { libraryQueryPredicate } from './data/apiHooks';
-import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -161,9 +162,9 @@ const LibraryAuthoringPage = ({
   const {
     componentPickerMode,
     restrictToLibrary,
-    showOnlyPublished,
     extraFilter: pickerExtraFilter,
   } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     libraryId,
     libraryData,
@@ -309,7 +310,6 @@ const LibraryAuthoringPage = ({
   if (pickerExtraFilter) {
     extraFilter.push(...pickerExtraFilter);
   }
-
 
   const activeTypeFilters = {
     components: 'type = "library_block"',

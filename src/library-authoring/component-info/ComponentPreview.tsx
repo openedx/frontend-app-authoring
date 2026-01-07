@@ -2,12 +2,12 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, StandardModal, useToggle } from '@openedx/paragon';
 import { OpenInFull } from '@openedx/paragon/icons';
 
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 interface ModalComponentPreviewProps {
   isOpen: boolean;
@@ -17,7 +17,7 @@ interface ModalComponentPreviewProps {
 
 const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   return (
     <StandardModal
@@ -41,7 +41,7 @@ const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

@@ -3,6 +3,7 @@ import {
   ActionRow,
 } from '@openedx/paragon';
 
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
@@ -16,7 +17,8 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
-  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const {
     blockType,

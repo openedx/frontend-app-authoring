@@ -24,6 +24,7 @@ import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHoo
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import BaseCard from '@src/library-authoring/components/BaseCard';
 import AddComponentWidget from '@src/library-authoring/components/AddComponentWidget';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
@@ -211,7 +212,7 @@ type ContainerCardPreviewProps = {
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     blockType: itemType,
     published,
@@ -255,7 +256,8 @@ type ContainerCardProps = {
 };
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
-  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {

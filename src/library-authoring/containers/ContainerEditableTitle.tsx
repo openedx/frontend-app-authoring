@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useContext } from 'react';
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
@@ -16,7 +16,7 @@ export const ContainerEditableTitle = ({ containerId, textClassName }: EditableT
   const intl = useIntl();
 
   const { readOnly } = useOptionalLibraryContext();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const { data: container } = useContainer(containerId);
 

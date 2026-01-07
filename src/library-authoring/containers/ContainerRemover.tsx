@@ -14,7 +14,7 @@ import {
 } from '@src/library-authoring/data/apiHooks';
 import messages from '@src/library-authoring/components/messages';
 import { Container } from '@src/library-authoring/data/api';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 
 type ContainerRemoverProps = {
   close: () => void,
@@ -35,7 +35,7 @@ const ContainerRemover = ({
     closeLibrarySidebar,
   } = useSidebarContext();
   const { containerId } = useOptionalLibraryContext();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
 
   const removeContainerMutation = useRemoveContainerChildren(containerId);

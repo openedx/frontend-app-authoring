@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -26,7 +27,6 @@ import { useLibraryRoutes } from '../routes';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { skipIfUnwantedTarget, useRunOnNextRender } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
-import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -49,7 +49,7 @@ const ContainerRow = ({
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -129,7 +129,7 @@ export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryCont
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
   const { readOnly: libReadOnly } = useOptionalLibraryContext();
-  const { showOnlyPublished } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);
