@@ -18,7 +18,7 @@ import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import type { XBlock } from '@src/data/types';
 import { ContentType } from '@src/library-authoring/routes';
-import { LibraryAndComponentPicker } from '@src/library-authoring';
+import { ComponentPicker } from '@src/library-authoring';
 import messages from './messages';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
@@ -180,10 +180,9 @@ const ShowLibraryContent = () => {
   }, [lastSection, lastSubsection, sectionsList]);
 
   return (
-    <LibraryAndComponentPicker
+    <ComponentPicker
       showOnlyPublished
       extraFilter={[`block_type IN [${allowedBlocks.join(',')}]`]}
-      selectLibrary={false}
       visibleTabs={[ContentType.home]}
       FiltersComponent={SidebarFilters}
       onComponentSelected={onComponentSelected}
