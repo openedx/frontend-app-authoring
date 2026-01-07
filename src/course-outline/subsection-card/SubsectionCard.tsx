@@ -20,7 +20,7 @@ import TitleButton from '@src/course-outline/card-header/TitleButton';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
@@ -353,7 +353,7 @@ const SubsectionCard = ({
         isOverflowVisible={false}
         size="xl"
       >
-        <ComponentPicker
+        <LibraryAndComponentPicker
           showOnlyPublished
           extraFilter={['block_type = "unit"']}
           componentPickerMode="single"

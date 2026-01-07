@@ -1,1 +1,1 @@
-export { ComponentPicker } from './ComponentPicker';
+export { LibraryAndComponentPicker } from './ComponentPicker';

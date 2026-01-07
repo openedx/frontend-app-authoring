@@ -64,7 +64,7 @@ type ComponentPickerProps = {
   FiltersComponent?: React.ComponentType<FiltersProps>;
 };
 
-export const ComponentPicker: React.FC<ComponentPickerProps> = ({
+export const LibraryAndComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */
   libraryId,
   showOnlyPublished,

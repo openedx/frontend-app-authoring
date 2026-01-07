@@ -28,9 +28,9 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     collectionId,
     containerId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
-     * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-     * Sidebar > AddContent > ComponentPicker */
-    componentPicker: ComponentPicker,
+     * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+     * Sidebar > AddContent > LibraryAndComponentPicker */
+    componentPicker: LibraryAndComponentPicker,
   } = useLibraryContext();
 
   const {
@@ -99,7 +99,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   }
 
   // istanbul ignore if: this should never happen, just here to satisfy type checker
-  if (!(collectionId || containerId) || !ComponentPicker) {
+  if (!(collectionId || containerId) || !LibraryAndComponentPicker) {
     throw new Error('collectionId/containerId and componentPicker are required');
   }
 
@@ -123,7 +123,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         </ActionRow>
       )}
     >
-      <ComponentPicker
+      <LibraryAndComponentPicker
         libraryId={libraryId}
         componentPickerMode="multiple"
         onChangeComponentSelection={setSelectedComponents}

@@ -21,7 +21,7 @@ import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
 import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
@@ -359,7 +359,7 @@ const SectionCard = ({
         isOverflowVisible={false}
         size="xl"
       >
-        <ComponentPicker
+        <LibraryAndComponentPicker
           showOnlyPublished
           extraFilter={['block_type = "subsection"']}
           componentPickerMode="single"

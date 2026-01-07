@@ -96,9 +96,9 @@ jest.mock('./data/api', () => ({
   getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('@src/library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({

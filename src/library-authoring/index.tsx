@@ -1,5 +1,5 @@
 export { default as LibraryLayout } from './LibraryLayout';
-export { ComponentPicker } from './component-picker';
+export { LibraryAndComponentPicker } from './component-picker';
 export { type SelectedComponent } from './common/context/ComponentPickerContext';
 export { CreateLibrary, CreateLibraryModal } from './create-library';
 export { CreateLegacyLibrary } from './create-legacy-library';

@@ -34,7 +34,7 @@ import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
@@ -565,7 +565,7 @@ const CourseOutline = () => {
           isOverflowVisible={false}
           size="xl"
         >
-          <ComponentPicker
+          <LibraryAndComponentPicker
             showOnlyPublished
             extraFilter={['block_type = "section"']}
             componentPickerMode="single"

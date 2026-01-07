@@ -11,7 +11,7 @@ import { LibraryBackupPage } from './backup-restore';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
-import { ComponentPicker } from './component-picker';
+import { LibraryAndComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 import { CreateCollectionModal } from './create-collection';
 import { CreateContainerModal } from './create-container';
@@ -43,9 +43,9 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
-       * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-       * Sidebar > AddContent > ComponentPicker */
-      componentPicker={ComponentPicker}
+       * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+       * Sidebar > AddContent > LibraryAndComponentPicker */
+      componentPicker={LibraryAndComponentPicker}
     >
       <SidebarProvider>
         {children ?? <Outlet />}
