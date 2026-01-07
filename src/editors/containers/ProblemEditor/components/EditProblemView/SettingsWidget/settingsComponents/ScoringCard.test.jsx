@@ -4,6 +4,7 @@ import {
 } from '@src/testUtils';
 import ScoringCard from './ScoringCard';
 import { selectors } from '../../../../../../data/redux';
+import { GradingMethodKeys } from '../../../../../../data/constants/problem';
 
 const { app } = selectors;
 
@@ -14,6 +15,7 @@ describe('ScoringCard', () => {
       unlimited: false,
       number: 5,
     },
+    gradingMethod: GradingMethodKeys.LAST_SCORE,
     updateSettings: jest.fn().mockName('args.updateSettings'),
   };
 
@@ -56,6 +58,17 @@ describe('ScoringCard', () => {
     expect(pointsButton).toBeInTheDocument();
     expect(pointsButton.value).toBe('0');
     fireEvent.change(pointsButton, { target: { value: '0.1' } });
+    expect(props.updateSettings).toHaveBeenCalled();
+  });
+
+  test('should call updateSettings when changing grading method', () => {
+    render(<ScoringCard {...props} />);
+    fireEvent.click(screen.getByText('Scoring'));
+    const gradingSelect = screen.getByRole('combobox', { name: 'Grading method' });
+    expect(gradingSelect).toBeInTheDocument();
+    expect(gradingSelect.value).toBe(GradingMethodKeys.LAST_SCORE);
+    
+    fireEvent.change(gradingSelect, { target: { value: GradingMethodKeys.HIGHEST_SCORE } });
     expect(props.updateSettings).toHaveBeenCalled();
   });
 

@@ -82,6 +82,16 @@ const messages = defineMessages({
     defaultMessage: 'Points',
     description: 'Scoring weight input label',
   },
+  scoringGradingMethodInputLabel: {
+    id: 'authoring.problemeditor.settings.scoring.grading.method.inputLabel',
+    defaultMessage: 'Grading Method',
+    description: 'Grading method input label',
+  },
+  gradingMethodSummary: {
+    id: 'authoring.problemeditor.settings.scoring.grading.method',
+    defaultMessage: '{gradingMethod}',
+    description: 'Summary text for scoring grading method',
+  },
   unlimitedAttemptsSummary: {
     id: 'authoring.problemeditor.settings.scoring.unlimited',
     defaultMessage: 'Unlimited attempts',
@@ -107,6 +117,11 @@ const messages = defineMessages({
     defaultMessage: 'Specify point weight and the number of answer attempts',
     description: 'Descriptive text for scoring settings',
   },
+  scoringSettingsLabelWithGradingMethod: {
+    id: 'authoring.problemeditor.settings.scoring.label.withGradingMethod',
+    defaultMessage: 'Specify grading method, point weight and the number of answer attempts',
+    description: 'Descriptive text for scoring settings when grading method is enabled',
+  },
   attemptsHint: {
     id: 'authoring.problemeditor.settings.scoring.attempts.hint',
     defaultMessage: 'If a default value is not set in advanced settings, unlimited attempts are allowed',
@@ -116,6 +131,11 @@ const messages = defineMessages({
     id: 'authoring.problemeditor.settings.scoring.weight.hint',
     defaultMessage: 'If a value is not set, the problem is worth one point',
     description: 'Summary text for scoring weight',
+  },
+  gradingMethodHint: {
+    id: 'authoring.problemeditor.settings.scoring.grading.method.hint',
+    defaultMessage: 'Define the grading method for this problem. By default, it is the score of the last submission made by the student.',
+    description: 'Summary text for scoring grading method',
   },
   showAnswerSettingsTitle: {
     id: 'authoring.problemeditor.settings.showAnswer.title',
