@@ -24,24 +24,30 @@ type NoComponentPickerType = {
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
+  showOnlyPublished?: never;
+  extraFilter?: never;
 };
 
-type ComponentPickerSingleType = {
+type BasePickerType = {
+  restrictToLibrary: boolean;
+  showOnlyPublished: boolean;
+  extraFilter: string[],
+}
+
+type ComponentPickerSingleType = BasePickerType & {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
-  restrictToLibrary: boolean;
 };
 
-type ComponentPickerMultipleType = {
+type ComponentPickerMultipleType = BasePickerType & {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   selectedComponents: SelectedComponent[];
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
-  restrictToLibrary: boolean;
 };
 
 type ComponentPickerContextData = ComponentPickerSingleType | ComponentPickerMultipleType;
@@ -54,18 +60,23 @@ type ComponentPickerContextData = ComponentPickerSingleType | ComponentPickerMul
  */
 const ComponentPickerContext = createContext<ComponentPickerContextData | undefined>(undefined);
 
-export type ComponentPickerSingleProps = {
+type BasePickerProps = {
+  restrictToLibrary?: boolean;
+  /** Only show published components */
+  showOnlyPublished?: boolean;
+  extraFilter?: string[],
+}
+
+export type ComponentPickerSingleProps = BasePickerProps & {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   onChangeComponentSelection?: never;
-  restrictToLibrary?: boolean;
 };
 
-export type ComponentPickerMultipleProps = {
+export type ComponentPickerMultipleProps = BasePickerProps & {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
-  restrictToLibrary?: boolean;
 };
 
 type ComponentPickerProps = ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -83,6 +94,8 @@ export const ComponentPickerProvider = ({
   restrictToLibrary = false,
   onComponentSelected,
   onChangeComponentSelection,
+  showOnlyPublished = false,
+  extraFilter,
 }: ComponentPickerProviderProps) => {
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
 
@@ -123,6 +136,8 @@ export const ComponentPickerProvider = ({
           componentPickerMode,
           restrictToLibrary,
           onComponentSelected,
+          showOnlyPublished,
+          extraFilter: extraFilter || [],
         };
       case 'multiple':
         return {
@@ -131,6 +146,8 @@ export const ComponentPickerProvider = ({
           selectedComponents,
           addComponentToSelectedComponents,
           removeComponentFromSelectedComponents,
+          showOnlyPublished,
+          extraFilter: extraFilter || [],
         };
       default:
         // istanbul ignore next: this should never happen
@@ -144,6 +161,8 @@ export const ComponentPickerProvider = ({
     removeComponentFromSelectedComponents,
     selectedComponents,
     onChangeComponentSelection,
+    showOnlyPublished,
+    extraFilter,
   ]);
 
   return (

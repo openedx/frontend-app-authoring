@@ -5,7 +5,6 @@ import {
 
 import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -16,9 +15,8 @@ type ComponentCardProps = {
 };
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
-  const { showOnlyPublished } = useLibraryContext(false);
   const { openComponentInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
-  const { componentPickerMode } = useComponentPickerContext();
+  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
 
   const {
     blockType,

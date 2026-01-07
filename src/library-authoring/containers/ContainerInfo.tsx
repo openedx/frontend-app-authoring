@@ -17,7 +17,7 @@ import { InfoOutline, MoreVert } from '@openedx/paragon/icons';
 import { useClipboard } from '@src/generic/clipboard';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   type ContainerInfoTab,
   CONTAINER_INFO_TABS,
@@ -98,7 +98,7 @@ const ContainerActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext(false);
+  const { libraryId } = useOptionalLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);

@@ -6,7 +6,7 @@ import {
   BookOpen, ExpandLess, ExpandMore, Tag,
 } from '@openedx/paragon/icons';
 
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ContentTagsDrawer, useContentTaxonomyTagsData } from '../../content-tags-drawer';
 import { useLibraryBlockMetadata, useUpdateComponentCollections } from '../data/apiHooks';
@@ -16,7 +16,7 @@ import messages from './messages';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { readOnly, isLoadingLibraryData } = useLibraryContext(false);
+  const { readOnly, isLoadingLibraryData } = useOptionalLibraryContext();
   const { sidebarItemInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;

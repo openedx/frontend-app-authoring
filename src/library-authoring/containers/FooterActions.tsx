@@ -2,7 +2,7 @@ import { Button, useToggle } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { type ContainerType } from '../../generic/key-utils';
 import { PickLibraryContentModal } from '../add-content';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 
 interface FooterActionsProps {
@@ -18,10 +18,10 @@ export const FooterActions = ({
 }: FooterActionsProps) => {
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const { openAddContentSidebar } = useSidebarContext();
-  const { readOnly, setCreateContainerModalType } = useLibraryContext(false);
+  const { readOnly, setCreateContainerModalType } = useOptionalLibraryContext();
   const addContent = () => {
     if (addContentType) {
-      setCreateContainerModalType(addContentType);
+      setCreateContainerModalType?.(addContentType);
     } else {
       openAddContentSidebar();
     }

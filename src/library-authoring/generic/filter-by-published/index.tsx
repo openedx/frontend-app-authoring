@@ -1,6 +1,6 @@
 import React from 'react';
-import { useLibraryContext } from '../../common/context/LibraryContext';
 import { FilterByPublished, PublishStatus } from '../../../search-manager';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 /**
  * When browsing library content for insertion into a course, we only show published
@@ -9,7 +9,7 @@ import { FilterByPublished, PublishStatus } from '../../../search-manager';
  * when not relevant.
  */
 const LibraryFilterByPublished : React.FC<Record<never, never>> = () => {
-  const { showOnlyPublished } = useLibraryContext(false);
+  const { showOnlyPublished } = useComponentPickerContext();
 
   if (showOnlyPublished) {
     return (

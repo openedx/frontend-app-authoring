@@ -11,7 +11,7 @@ import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
   useUpdateContainer,
@@ -26,6 +26,7 @@ import { useLibraryRoutes } from '../routes';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { skipIfUnwantedTarget, useRunOnNextRender } from '../../utils';
 import { ContainerMenu } from '../containers/ContainerCard';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 interface LibraryContainerChildrenProps {
   containerKey: string;
@@ -48,7 +49,7 @@ const ContainerRow = ({
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
-  const { showOnlyPublished } = useLibraryContext(false);
+  const { showOnlyPublished } = useComponentPickerContext();
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -127,7 +128,8 @@ const ContainerRow = ({
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext(false);
+  const { readOnly: libReadOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = useComponentPickerContext();
   const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);

@@ -3,15 +3,17 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useUpdateXBlockFields, useXBlockFields } from '../data/apiHooks';
 import messages from './messages';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 const ComponentInfoHeader = () => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext(false);
+  const { readOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = useComponentPickerContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

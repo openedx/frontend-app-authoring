@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import {
   useUpdateXBlockOLX,
@@ -19,10 +19,12 @@ import {
 } from '../data/apiHooks';
 import messages from './messages';
 import { ComponentAdvancedAssets } from './ComponentAdvancedAssets';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, showOnlyPublished } = useLibraryContext(false);
+  const { readOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = useComponentPickerContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

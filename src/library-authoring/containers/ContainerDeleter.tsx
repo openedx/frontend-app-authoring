@@ -10,7 +10,7 @@ import { type ContainerHit } from '@src/search-manager';
 import { useEntityLinks } from '@src/course-libraries/data/apiHooks';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useContentFromSearchIndex, useDeleteContainer, useRestoreContainer } from '../data/apiHooks';
 import messages from './messages';
 
@@ -42,7 +42,7 @@ const ContainerDeleter = ({
   } = useSidebarContext();
   const {
     containerId: parentContainerId,
-  } = useLibraryContext(false);
+  } = useOptionalLibraryContext();
   const deleteContainerMutation = useDeleteContainer(containerId);
   const restoreContainerMutation = useRestoreContainer(containerId);
   const { showToast } = useContext(ToastContext);

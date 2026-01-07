@@ -41,7 +41,7 @@ import { MainFilters } from '@src/library-authoring/library-filters/MainFilters'
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
-import { useLibraryContext } from './common/context/LibraryContext';
+import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
@@ -50,7 +50,7 @@ import { libraryQueryPredicate } from './data/apiHooks';
 const HeaderActions = () => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext(false);
+  const { readOnly } = useOptionalLibraryContext();
 
   const {
     openAddContentSidebar,
@@ -108,7 +108,7 @@ const HeaderActions = () => {
 export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext(false);
+  const { readOnly } = useOptionalLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
@@ -157,16 +157,20 @@ const LibraryAuthoringPage = ({
     librariesV2Enabled,
   } = useStudioHome();
 
-  const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
+  const {
+    componentPickerMode,
+    restrictToLibrary,
+    showOnlyPublished,
+    extraFilter: pickerExtraFilter,
+  } = useComponentPickerContext();
   const {
     libraryId,
     selectedLibraries,
     libraryData,
     isLoadingLibraryData,
-    showOnlyPublished,
     extraFilter: contextExtraFilter,
     readOnly,
-  } = useLibraryContext(false);
+  } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -301,6 +305,10 @@ const LibraryAuthoringPage = ({
   if (contextExtraFilter) {
     extraFilter.push(...contextExtraFilter);
   }
+  if (pickerExtraFilter) {
+    extraFilter.push(...pickerExtraFilter);
+  }
+
 
   const activeTypeFilters = {
     components: 'type = "library_block"',

@@ -4,7 +4,7 @@ import { Warning } from '@openedx/paragon/icons';
 
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import {
   useContainer,
@@ -15,6 +15,7 @@ import {
 } from '@src/library-authoring/data/apiHooks';
 import { LibraryBlockMetadata } from '@src/library-authoring/data/api';
 import messages from './messages';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 interface Props {
   usageKey: string;
@@ -25,8 +26,9 @@ interface Props {
 const ComponentRemover = ({ usageKey, index, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
-  const { containerId, showOnlyPublished } = useLibraryContext(false);
+  const { containerId } = useOptionalLibraryContext();
   const { showToast } = useContext(ToastContext);
+  const { showOnlyPublished } = useComponentPickerContext();
 
   const removeContainerItemMutation = useRemoveContainerChildren(containerId);
   const updateContainerChildrenMutation = useUpdateContainerChildren(containerId);

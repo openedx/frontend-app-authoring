@@ -29,7 +29,7 @@ import {
 import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
@@ -40,7 +40,7 @@ const HeaderActions = () => {
   const intl = useIntl();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { collectionId, readOnly } = useLibraryContext(false);
+  const { collectionId, readOnly } = useOptionalLibraryContext();
   const {
     closeLibrarySidebar,
     openAddContentSidebar,
@@ -100,15 +100,14 @@ const HeaderActions = () => {
 const LibraryCollectionPage = () => {
   const intl = useIntl();
 
-  const { componentPickerMode } = useComponentPickerContext();
+  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
   const {
     libraryId,
     collectionId,
-    showOnlyPublished,
     extraFilter: contextExtraFilter,
     setCollectionId,
     readOnly,
-  } = useLibraryContext(!!componentPickerMode);
+  } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -168,7 +167,7 @@ const LibraryCollectionPage = () => {
         },
         {
           label: intl.formatMessage(messages.returnToLibrary),
-          onClick: () => { setCollectionId(undefined); },
+          onClick: () => { setCollectionId?.(undefined); },
         },
       ]}
       spacer={<Icon src={ArrowBack} size="sm" />}

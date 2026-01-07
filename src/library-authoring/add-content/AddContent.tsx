@@ -28,7 +28,7 @@ import {
   useAddItemsToCollection,
   useAddItemsToContainer,
 } from '../data/apiHooks';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import { useLibraryRoutes } from '../routes';
@@ -314,7 +314,7 @@ const AddContent = () => {
     setCreateContainerModalType,
     openComponentEditor,
     componentPicker,
-  } = useLibraryContext(false);
+  } = useOptionalLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -460,7 +460,7 @@ const AddContent = () => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
-      openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
+      openComponentEditor?.('', (data) => data && linkComponent(data.id), blockType);
     } else if (libraryId) {
       createBlockMutation.mutateAsync({
         libraryId,
@@ -485,7 +485,7 @@ const AddContent = () => {
     if (blockType === 'paste') {
       onPaste();
     } else if (blockType === 'collection') {
-      openCreateCollectionModal();
+      openCreateCollectionModal?.();
     } else if (blockType === 'libraryContent') {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
@@ -495,7 +495,7 @@ const AddContent = () => {
       ContainerType.Subsection,
       ContainerType.Section,
     ].includes(blockType as ContainerType)) {
-      setCreateContainerModalType(blockType as ContainerType);
+      setCreateContainerModalType?.(blockType as ContainerType);
     } else {
       onCreateBlock(blockType);
     }

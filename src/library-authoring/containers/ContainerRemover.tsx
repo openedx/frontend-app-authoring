@@ -8,12 +8,13 @@ import { ToastContext } from '@src/generic/toast-context';
 import { getBlockType } from '@src/generic/key-utils';
 
 import { useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import {
   useContainer, useContainerChildren, useRemoveContainerChildren, useUpdateContainerChildren,
 } from '@src/library-authoring/data/apiHooks';
 import messages from '@src/library-authoring/components/messages';
 import { Container } from '@src/library-authoring/data/api';
+import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
 
 type ContainerRemoverProps = {
   close: () => void,
@@ -33,7 +34,8 @@ const ContainerRemover = ({
     sidebarItemInfo,
     closeLibrarySidebar,
   } = useSidebarContext();
-  const { containerId, showOnlyPublished } = useLibraryContext(false);
+  const { containerId } = useOptionalLibraryContext();
+  const { showOnlyPublished } = useComponentPickerContext();
   const { showToast } = useContext(ToastContext);
 
   const removeContainerMutation = useRemoveContainerChildren(containerId);

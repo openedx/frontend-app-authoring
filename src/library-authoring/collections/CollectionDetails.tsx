@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { getItemIcon } from '../../generic/block-type-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { BlockTypeLabel, useGetBlockTypes } from '../../search-manager';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
@@ -38,7 +38,7 @@ const BlockCount = ({
 };
 
 const CollectionStatsWidget = () => {
-  const { libraryId } = useLibraryContext(false);
+  const { libraryId } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
   const collectionId = sidebarItemInfo?.id;
 
@@ -100,7 +100,7 @@ const CollectionStatsWidget = () => {
 const CollectionDetails = () => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const { libraryId, readOnly } = useLibraryContext(false);
+  const { libraryId, readOnly } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const collectionId = sidebarItemInfo?.id;

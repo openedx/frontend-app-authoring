@@ -9,7 +9,6 @@ import {
 import { useParams } from 'react-router-dom';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
-import { AtLeastOne, RequireIf } from '@src/types';
 import { ContainerType } from '../../../generic/key-utils';
 
 import type { ComponentPicker } from '../../component-picker';
@@ -29,7 +28,7 @@ export type LibraryIdOneOrMore = {
 };
 
 export type LibraryContextData = {
-  libraryId?: string;
+  libraryId: string;
   /** The ID of the current library */
   libraryData?: ContentLibrary;
   readOnly: boolean;
@@ -40,8 +39,6 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   containerId: string | undefined;
   setContainerId: (containerId?: string) => void;
-  // Only show published components
-  showOnlyPublished: boolean;
   // Additional filtering
   extraFilter?: string[];
   // "Create New Collection" modal
@@ -73,9 +70,9 @@ export type LibraryContextData = {
  */
 const LibraryContext = createContext<LibraryContextData | undefined>(undefined);
 
-type LibraryProviderProps = AtLeastOne<LibraryIdOneOrMore> & {
+type LibraryProviderProps = {
+  libraryId: string;
   children?: React.ReactNode;
-  showOnlyPublished?: boolean;
   extraFilter?: string[]
   // If set, will initialize the current collection and/or component from the current URL
   skipUrlUpdate?: boolean;
@@ -93,8 +90,6 @@ type LibraryProviderProps = AtLeastOne<LibraryIdOneOrMore> & {
 export const LibraryProvider = ({
   children,
   libraryId,
-  libraryIds,
-  showOnlyPublished = false,
   extraFilter = [],
   skipUrlUpdate = false,
   componentPicker,
@@ -102,7 +97,7 @@ export const LibraryProvider = ({
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [createContainerModalType, setCreateContainerModalType] = useState<ContainerType | undefined>(undefined);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
-  const [selectedLibraries, setSelectedLibraries] = useState<string[]>(libraryIds || []);
+  const [selectedLibraries, setSelectedLibraries] = useState<string[]>([]);
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
       prev?.onClose?.(data);
@@ -152,7 +147,6 @@ export const LibraryProvider = ({
       readOnly,
       canPublish,
       isLoadingLibraryData: isLoadingLibraryData || isLoadingUserPermissions,
-      showOnlyPublished,
       extraFilter,
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
@@ -179,7 +173,6 @@ export const LibraryProvider = ({
     canPublish,
     isLoadingLibraryData,
     isLoadingUserPermissions,
-    showOnlyPublished,
     extraFilter,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
@@ -199,23 +192,16 @@ export const LibraryProvider = ({
   );
 };
 
-/**
- * @param requireLibraryId - Optional flag indicating whether to require the library ID i.e.,
- * the component only works when used inside a library.
- * @returns The context data with the library ID or undefined.
- */
-export function useLibraryContext(requireLibraryId?: true | undefined): RequireIf<LibraryContextData, 'libraryId', true>;
-export function useLibraryContext(requireLibraryId: false): RequireIf<LibraryContextData, 'libraryId', false>;
-export function useLibraryContext(requireLibraryId: boolean): LibraryContextData;
-export function useLibraryContext(requireLibraryId: boolean = true): LibraryContextData {
+export function useLibraryContext(): LibraryContextData {
   const ctx = useContext(LibraryContext);
   if (ctx === undefined) {
     /* istanbul ignore next */
     throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
   }
-  if (requireLibraryId && !ctx.libraryId) {
-    /* istanbul ignore next */
-    throw new Error('useLibraryContext() was used in a component without a libraryId');
-  }
   return ctx;
+}
+
+export function useOptionalLibraryContext(): Partial<LibraryContextData> {
+  const ctx = useContext(LibraryContext);
+  return ctx || {};
 }

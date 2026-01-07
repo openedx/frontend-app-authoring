@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import messages from './messages';
@@ -11,7 +11,7 @@ import messages from './messages';
 const CollectionInfoHeader = () => {
   const intl = useIntl();
 
-  const { libraryId, readOnly } = useLibraryContext(false);
+  const { libraryId, readOnly } = useOptionalLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const collectionId = sidebarItemInfo?.id;

@@ -3,7 +3,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useGetContentHits, useSearchContext } from '@src/search-manager';
 import { useLoadOnScroll } from '@src/hooks';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import { useLibraryContext } from './common/context/LibraryContext';
+import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
@@ -42,7 +42,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { libraryId, openCreateCollectionModal, collectionId } = useLibraryContext(false);
+  const { libraryId, openCreateCollectionModal, collectionId } = useOptionalLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
   /**

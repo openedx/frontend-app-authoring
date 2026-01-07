@@ -9,7 +9,7 @@ import {
   type ComponentSelectionChangedEvent,
   ComponentPickerProvider,
 } from '../common/context/ComponentPickerContext';
-import { type LibraryIdOneOrMore, LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
+import { LibraryProvider, useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarProvider } from '../common/context/SidebarContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
@@ -28,7 +28,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   visibleTabs,
   FiltersComponent,
 }) => {
-  const { collectionId } = useLibraryContext(false);
+  const { collectionId } = useOptionalLibraryContext();
 
   if (collectionId) {
     return <LibraryCollectionPage />;
@@ -52,7 +52,8 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = Partial<LibraryIdOneOrMore> & {
+type ComponentPickerProps = {
+  libraryId?: string,
   showOnlyPublished?: boolean,
   extraFilter?: string[],
   visibleTabs?: ContentType[],
@@ -66,7 +67,6 @@ type ComponentPickerProps = Partial<LibraryIdOneOrMore> & {
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */
   libraryId,
-  libraryIds,
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
@@ -80,7 +80,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   FiltersComponent,
 }) => {
   const [currentStep, setCurrentStep] = useState(!libraryId && selectLibrary ? 'select-library' : 'pick-components');
-  const [selectedLibrary, setSelectedLibrary] = useState(libraryId);
+  const [selectedLibrary, setSelectedLibrary] = useState(libraryId || '');
 
   const location = useLocation();
 
@@ -123,12 +123,13 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <ComponentPickerProvider {...componentPickerProviderProps}>
+        <ComponentPickerProvider
+          {...componentPickerProviderProps}
+          showOnlyPublished={calcShowOnlyPublished}
+          extraFilter={extraFilter}
+        >
           <LibraryProvider
             libraryId={selectedLibrary}
-            libraryIds={libraryIds || []}
-            showOnlyPublished={calcShowOnlyPublished}
-            extraFilter={extraFilter}
             skipUrlUpdate
           >
             <SidebarProvider>

@@ -18,7 +18,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
@@ -38,7 +38,7 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
   const intl = useIntl();
   const {
     libraryId, collectionId, containerId, readOnly,
-  } = useLibraryContext(false);
+  } = useOptionalLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
@@ -211,7 +211,7 @@ type ContainerCardPreviewProps = {
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext(false);
+  const { showOnlyPublished } = useComponentPickerContext();
   const {
     blockType: itemType,
     published,
@@ -255,8 +255,7 @@ type ContainerCardProps = {
 };
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
-  const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext(false);
+  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {

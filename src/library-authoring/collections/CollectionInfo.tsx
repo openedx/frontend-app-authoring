@@ -8,7 +8,7 @@ import {
 import { useCallback } from 'react';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   type CollectionInfoTab,
   COLLECTION_INFO_TABS,
@@ -26,7 +26,7 @@ const CollectionInfo = () => {
   const intl = useIntl();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { libraryId, setCollectionId } = useLibraryContext(false);
+  const { libraryId, setCollectionId } = useOptionalLibraryContext();
   const { sidebarItemInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
@@ -46,7 +46,7 @@ const CollectionInfo = () => {
 
   const handleOpenCollection = useCallback(() => {
     if (componentPickerMode) {
-      setCollectionId(collectionId);
+      setCollectionId?.(collectionId);
     } else {
       navigateTo({ collectionId });
     }

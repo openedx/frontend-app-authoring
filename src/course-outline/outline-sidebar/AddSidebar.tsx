@@ -183,7 +183,6 @@ const ShowLibraryContent = () => {
     <ComponentPicker
       showOnlyPublished
       extraFilter={[`block_type IN [${allowedBlocks.join(',')}]`]}
-      libraryIds={[]}
       selectLibrary={false}
       visibleTabs={[ContentType.home]}
       FiltersComponent={SidebarFilters}

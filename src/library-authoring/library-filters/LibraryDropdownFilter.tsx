@@ -4,7 +4,7 @@ import {
 } from '@openedx/paragon';
 import { Newsstand } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { ContentLibrary } from '@src/library-authoring/data/api';
 import { useContentLibraryV2List } from '@src/library-authoring/data/apiHooks';
 import { debounce, truncate } from 'lodash';
@@ -55,7 +55,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
-  const { selectedLibraries, setSelectedLibraries } = useLibraryContext(false);
+  const { selectedLibraries, setSelectedLibraries } = useOptionalLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
 
@@ -66,7 +66,7 @@ export const LibraryDropdownFilter = () => {
   );
 
   const onChange = (libraryId: string) => {
-    setSelectedLibraries((prev) => {
+    setSelectedLibraries?.((prev) => {
       if (prev.includes(libraryId)) {
         return prev.filter((id) => id !== libraryId);
       }
@@ -76,7 +76,7 @@ export const LibraryDropdownFilter = () => {
 
   useEffect(() => {
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
-    if (!selectedLibraries.length) {
+    if (!selectedLibraries || !selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);

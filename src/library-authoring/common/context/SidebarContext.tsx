@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 import { LibQueryParamKeys, useLibraryRoutes } from '@src/library-authoring/routes';
 import { useComponentPickerContext } from './ComponentPickerContext';
-import { useLibraryContext } from './LibraryContext';
+import { useOptionalLibraryContext } from './LibraryContext';
 
 export enum SidebarBodyItemId {
   AddContent = 'add-content',
@@ -187,7 +187,7 @@ export const SidebarProvider = ({
 
   // Set the initial sidebar state based on the URL parameters and context.
   const { selectedItemId, index: indexParam } = useParams();
-  const { collectionId, containerId } = useLibraryContext(false);
+  const { collectionId, containerId } = useOptionalLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   useEffect(() => {

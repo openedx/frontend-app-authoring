@@ -13,7 +13,7 @@ import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { type CollectionHit } from '@src/search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
@@ -28,7 +28,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
-  const { readOnly } = useLibraryContext(false);
+  const { readOnly } = useOptionalLibraryContext();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
   const {
@@ -118,8 +118,8 @@ type CollectionCardProps = {
 };
 
 const CollectionCard = ({ hit } : CollectionCardProps) => {
-  const { componentPickerMode } = useComponentPickerContext();
-  const { setCollectionId, showOnlyPublished } = useLibraryContext(false);
+  const { componentPickerMode, showOnlyPublished } = useComponentPickerContext();
+  const { setCollectionId } = useOptionalLibraryContext();
   const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -154,7 +154,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       // In component picker mode, we want to open the sidebar or the collection
       // without changing the URL
     } else if (doubleClicked) {
-      setCollectionId(collectionId);
+      setCollectionId?.(collectionId);
     } else {
       openCollectionInfoSidebar(collectionId);
     }
