@@ -29,7 +29,7 @@ const initialState: EditorState['problem'] = {
         unlimited: true,
         number: null,
       },
-      gradingMethod: GradingMethodKeys.LAST_SCORE
+      gradingMethod: GradingMethodKeys.LAST_SCORE,
     },
     hints: [],
     timeBetween: 0,

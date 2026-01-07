@@ -51,7 +51,12 @@ const ScoringCard = ({
   return (
     <SettingsOption
       title={intl.formatMessage(messages.scoringSettingsTitle)}
-      summary={getScoringSummary(scoring.weight, scoring.attempts.number, scoring.attempts.unlimited, scoring.gradingMethod)}
+      summary={getScoringSummary(
+        scoring.weight,
+        scoring.attempts.number,
+        scoring.attempts.unlimited,
+        scoring.gradingMethod,
+      )}
       className="scoringCard"
     >
       <div className="mb-4">
