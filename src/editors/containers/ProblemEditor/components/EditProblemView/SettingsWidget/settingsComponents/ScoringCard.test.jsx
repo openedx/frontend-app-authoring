@@ -67,7 +67,7 @@ describe('ScoringCard', () => {
     const gradingSelect = screen.getByRole('combobox', { name: 'Grading method' });
     expect(gradingSelect).toBeInTheDocument();
     expect(gradingSelect.value).toBe(GradingMethodKeys.LAST_SCORE);
-    
+
     fireEvent.change(gradingSelect, { target: { value: GradingMethodKeys.HIGHEST_SCORE } });
     expect(props.updateSettings).toHaveBeenCalled();
   });
