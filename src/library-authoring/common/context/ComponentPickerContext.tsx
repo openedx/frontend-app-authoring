@@ -9,9 +9,20 @@ import {
 export interface SelectedComponent {
   usageKey: string;
   blockType: string;
+  collectionKeys?: string[];
 }
 
-export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type CollectionStatus = 'selected' | 'indeterminate';
+
+export interface SelectedCollection {
+  key: string;
+  status: CollectionStatus;
+}
+
+export type ComponentSelectedEvent = (
+  selectedComponent: SelectedComponent,
+  collectionComponents?: SelectedComponent[] | number
+) => void;
 export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
 
 type NoComponentPickerType = {
@@ -21,6 +32,7 @@ type NoComponentPickerType = {
    */
   onComponentSelected?: never;
   selectedComponents?: never;
+  selectedCollections?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
@@ -36,6 +48,7 @@ type ComponentPickerSingleType = BasePickerType & {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   selectedComponents?: never;
+  selectedCollections?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
 };
@@ -44,6 +57,7 @@ type ComponentPickerMultipleType = BasePickerType & {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   selectedComponents: SelectedComponent[];
+  selectedCollections: SelectedCollection[];
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
 };
@@ -94,36 +108,150 @@ export const ComponentPickerProvider = ({
   extraFilter,
 }: ComponentPickerProviderProps) => {
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<SelectedCollection[]>([]);
+
+  /**
+   * Updates the selectedCollections state based on how many components are selected.
+   * @param collectionKey - The key of the collection to update
+   * @param selectedCount - Number of components currently selected in the collection
+   * @param totalCount - Total number of components in the collection
+   */
+  const updateCollectionStatus = useCallback((
+    collectionKey: string,
+    selectedCount: number,
+    totalCount: number,
+  ) => {
+    setSelectedCollections((prevSelectedCollections) => {
+      const filteredCollections = prevSelectedCollections.filter(
+        (collection) => collection.key !== collectionKey,
+      );
+
+      if (selectedCount === 0) {
+        return filteredCollections;
+      }
+      if (selectedCount >= totalCount) {
+        return [...filteredCollections, { key: collectionKey, status: 'selected' as CollectionStatus }];
+      }
+      return [...filteredCollections, { key: collectionKey, status: 'indeterminate' as CollectionStatus }];
+    });
+  }, []);
+
+  /**
+   * Finds the common collection key between a component and selected components.
+   */
+  const findCommonCollectionKey = useCallback((
+    componentKeys: string[] | undefined,
+    components: SelectedComponent[],
+  ): string | undefined => {
+    if (!componentKeys?.length || !components.length) {
+      return undefined;
+    }
+    const firstComponentKeys = components[0].collectionKeys;
+    return firstComponentKeys?.find((key) => componentKeys.includes(key));
+  }, []);
 
   const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
     selectedComponent: SelectedComponent,
+    collectionComponents?: SelectedComponent[] | number,
   ) => {
+    const componentsToAdd = Array.isArray(collectionComponents) && collectionComponents.length
+      ? collectionComponents
+      : [selectedComponent];
+
     setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+      const existingKeys = new Set(prevSelectedComponents.map((c) => c.usageKey));
+      const newComponents = componentsToAdd.filter((c) => !existingKeys.has(c.usageKey));
+
+      if (newComponents.length === 0) {
         return prevSelectedComponents;
       }
-      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
+
+      const newSelectedComponents = [...prevSelectedComponents, ...newComponents];
+
+      // Handle collection selection (when selecting entire collection)
+      if (Array.isArray(collectionComponents) && collectionComponents.length) {
+        const selectedKeys = new Set(newSelectedComponents.map((c) => c.usageKey));
+        const allComponentsSelected = collectionComponents.every((c) => selectedKeys.has(c.usageKey));
+
+        if (allComponentsSelected) {
+          updateCollectionStatus(
+            selectedComponent.usageKey,
+            collectionComponents.length,
+            collectionComponents.length,
+          );
+        }
+      }
+
+      // Handle individual component selection (with total count)
+      if (typeof collectionComponents === 'number') {
+        const componentCollectionKeys = selectedComponent.collectionKeys;
+        const selectedCollectionComponents = newSelectedComponents.filter(
+          (component) => component.collectionKeys?.some(
+            (key) => componentCollectionKeys?.includes(key),
+          ),
+        );
+
+        const collectionKey = findCommonCollectionKey(
+          componentCollectionKeys,
+          selectedCollectionComponents,
+        );
+
+        if (collectionKey) {
+          updateCollectionStatus(
+            collectionKey,
+            selectedCollectionComponents.length,
+            collectionComponents,
+          );
+        }
+      }
+
       onChangeComponentSelection?.(newSelectedComponents);
       return newSelectedComponents;
     });
-  }, []);
+  }, [onChangeComponentSelection, updateCollectionStatus, findCommonCollectionKey]);
 
   const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
     selectedComponent: SelectedComponent,
+    collectionComponents?: SelectedComponent[] | number,
   ) => {
+    const componentsToRemove = Array.isArray(collectionComponents) && collectionComponents.length
+      ? collectionComponents
+      : [selectedComponent];
+    const usageKeysToRemove = new Set(componentsToRemove.map((c) => c.usageKey));
+
     setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
-        return prevSelectedComponents;
-      }
       const newSelectedComponents = prevSelectedComponents.filter(
-        (component) => component.usageKey !== selectedComponent.usageKey,
+        (component) => !usageKeysToRemove.has(component.usageKey),
       );
+
+      if (typeof collectionComponents === 'number') {
+        // Update collection status based on remaining components
+        const componentCollectionKeys = selectedComponent.collectionKeys;
+        const collectionKey = componentCollectionKeys?.[0];
+
+        if (collectionKey) {
+          const remainingCollectionComponents = newSelectedComponents.filter(
+            (component) => component.collectionKeys?.includes(collectionKey),
+          );
+          updateCollectionStatus(
+            collectionKey,
+            remainingCollectionComponents.length,
+            collectionComponents,
+          );
+        }
+      } else {
+        // Fallback: remove collections that have no remaining components
+        setSelectedCollections((prevSelectedCollections) => prevSelectedCollections.filter(
+          (collection) => newSelectedComponents.some(
+            (component) => component.collectionKeys?.includes(collection.key),
+          ),
+        ));
+      }
+
       onChangeComponentSelection?.(newSelectedComponents);
       return newSelectedComponents;
     });
-  }, []);
+  }, [onChangeComponentSelection, updateCollectionStatus]);
 
   const context = useMemo<ComponentPickerContextData>(() => {
     switch (componentPickerMode) {
@@ -138,6 +266,7 @@ export const ComponentPickerProvider = ({
         return {
           componentPickerMode,
           restrictToLibrary,
+          selectedCollections,
           selectedComponents,
           addComponentToSelectedComponents,
           removeComponentFromSelectedComponents,
@@ -156,6 +285,7 @@ export const ComponentPickerProvider = ({
     selectedComponents,
     onChangeComponentSelection,
     extraFilter,
+    selectedCollections,
   ]);
 
   return (

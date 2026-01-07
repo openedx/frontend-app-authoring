@@ -25,6 +25,7 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
+    collections,
     publishStatus,
   } = hit;
   const componentDescription: string = (
@@ -56,7 +57,11 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <AddComponentWidget usageKey={usageKey} blockType={blockType} />
+            <AddComponentWidget
+              usageKey={usageKey}
+              blockType={blockType}
+              collectionKeys={collections?.key ?? undefined}
+            />
           ) : (
             <ComponentMenu usageKey={usageKey} />
           )}

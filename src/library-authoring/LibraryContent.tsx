@@ -45,6 +45,10 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
   const { libraryId, openCreateCollectionModal, collectionId } = useOptionalLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
+  const filteredHits = contentType === ContentType.collections
+    ? hits.filter((hit) => hit.type === 'collection')
+    : hits;
+
   /**
   * Placeholder blocks represent fake blocks for failed imports from other sources, such as courses.
   * They should only be displayed when viewing all components in the home tab of the library and the
@@ -103,7 +107,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
 
   return (
     <div className="library-cards-grid">
-      {hits.map((contentHit) => {
+      {filteredHits.map((contentHit) => {
         const CardComponent = LibraryItemCard[contentHit.type] || ComponentCard;
 
         return <CardComponent key={contentHit.id} hit={contentHit} />;
