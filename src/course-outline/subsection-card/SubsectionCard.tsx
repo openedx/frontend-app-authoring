@@ -271,9 +271,10 @@ const SubsectionCard = ({
     closeAddLibraryUnitModal();
   }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
-  const onClickCard = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
+    if (!preventNodeEvents || e.target === e.currentTarget) {
       openContainerInfoSidebar(subsection.id);
+      setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);
 
@@ -294,7 +295,7 @@ const SubsectionCard = ({
           background: '#f8f7f6',
           ...borderStyle,
         }}
-        onClick={onClickCard}
+        onClick={(e) => onClickCard(e, true)}
       >
         <div
           className={classNames(
@@ -323,6 +324,7 @@ const SubsectionCard = ({
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
+                onClickCard={(e) => onClickCard(e, true)}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -336,7 +338,16 @@ const SubsectionCard = ({
                 extraActionsComponent={extraActionsComponent}
                 readyToSync={upstreamInfo?.readyToSync}
               />
-              <div className="subsection-card__content item-children" data-testid="subsection-card__content">
+              {
+                /* This is a special case; we can skip accessibility here since the
+                SectionCard handles that. This onClick allows the user to select the card
+                by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                className="subsection-card__content item-children"
+                data-testid="subsection-card__content"
+                onClick={(e) => onClickCard(e, false)}
+              >
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}
                   isCustomRelativeDatesActive={isCustomRelativeDatesActive}
@@ -356,6 +367,7 @@ const SubsectionCard = ({
                   <OutlineAddChildButtons
                     handleNewButtonClick={handleNewButtonClick}
                     handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (

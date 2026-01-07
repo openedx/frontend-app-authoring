@@ -11,6 +11,7 @@ import {
   Icon,
   IconButton,
   IconButtonWithTooltip,
+  Stack,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -48,6 +49,7 @@ interface CardHeaderProps {
   onClickMoveUp: () => void;
   onClickMoveDown: () => void;
   onClickCopy?: () => void;
+  onClickCard?: (e: React.MouseEvent) => void;
   titleComponent: ReactNode;
   namePrefix: string;
   proctoringExamConfigurationLink?: string,
@@ -90,6 +92,7 @@ const CardHeader = ({
   onClickMoveUp,
   onClickMoveDown,
   onClickCopy,
+  onClickCard,
   titleComponent,
   namePrefix,
   actions,
@@ -154,10 +157,16 @@ const CardHeader = ({
 
   return (
     <>
-      <div
+      {
+        /* This is a special case; we can skip accessibility here since the
+           {Container}Card handles that. This onClick allows the user to select the card
+           by clicking on white areas of this component. */
+      }
+      <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
         className="item-card-header"
         data-testid={`${namePrefix}-card-header`}
         ref={cardHeaderRef}
+        onClick={onClickCard}
       >
         {isFormOpen ? (
           <Form.Group className="m-0 w-75">
@@ -178,7 +187,7 @@ const CardHeader = ({
             />
           </Form.Group>
         ) : (
-          <>
+          <Stack direction="horizontal" gap={2}>
             {titleComponent}
             <IconButtonWithTooltip
               className="item-card-button-icon"
@@ -190,7 +199,7 @@ const CardHeader = ({
               // @ts-ignore
               disabled={isSaving}
             />
-          </>
+          </Stack>
         )}
         <div className="ml-auto d-flex">
           {(isVertical || isSequential) && (

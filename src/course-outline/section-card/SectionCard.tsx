@@ -271,9 +271,10 @@ const SectionCard = ({
 
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
-  const onClickCard = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
+    if (!preventNodeEvents || e.target === e.currentTarget) {
       openContainerInfoSidebar(section.id);
+      setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);
 
@@ -292,7 +293,7 @@ const SectionCard = ({
           padding: '1.75rem',
           ...borderStyle,
         }}
-        onClick={onClickCard}
+        onClick={(e) => onClickCard(e, true)}
       >
         <div
           className={classNames(
@@ -321,6 +322,7 @@ const SectionCard = ({
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}
+                onClickCard={(e) => onClickCard(e, true)}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -333,7 +335,15 @@ const SectionCard = ({
               />
             )}
             <div className="section-card__content" data-testid="section-card__content">
-              <div className="outline-section__status mb-1">
+              {
+                /* This is a special case; we can skip accessibility here since the
+                SectionCard handles that. This onClick allows the user to select the card
+                by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                className="outline-section__status mb-1"
+                onClick={(e) => onClickCard(e, true)}
+              >
                 <Button
                   className="p-0 bg-transparent"
                   data-destid="section-card-highlights-button"
@@ -346,11 +356,20 @@ const SectionCard = ({
                   <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
                 </Button>
               </div>
-              <XBlockStatus
-                isSelfPaced={isSelfPaced}
-                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                blockData={section}
-              />
+              {
+                /* This is a special case; we can skip accessibility here since the
+                SectionCard handles that. This onClick allows the user to select the card
+                by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                onClick={(e) => onClickCard(e, false)}
+              >
+                <XBlockStatus
+                  isSelfPaced={isSelfPaced}
+                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                  blockData={section}
+                />
+              </div>
             </div>
             {isExpanded && (
               <div
@@ -362,6 +381,7 @@ const SectionCard = ({
                   <OutlineAddChildButtons
                     handleNewButtonClick={handleNewSubsectionSubmit}
                     handleUseFromLibraryClick={openAddLibrarySubsectionModal}
+                    onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                   />
                 )}
