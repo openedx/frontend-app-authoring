@@ -364,6 +364,32 @@ export const RandomizationTypes = StrictDict({
   },
 } as const);
 
+export const GradingMethodKeys = StrictDict({
+  LAST_SCORE: 'last_score',
+  HIGHEST_SCORE: 'highest_score',
+  AVERAGE_SCORE: 'average_score',
+  FIRST_SCORE: 'first_score',
+});
+
+export const GradingMethod = StrictDict({
+  [GradingMethodKeys.LAST_SCORE]: {
+    id: 'authoring.problemeditor.settings.gradingmethod.last_score',
+    defaultMessage: 'Last score (Default)',
+  },
+  [GradingMethodKeys.HIGHEST_SCORE]: {
+    id: 'authoring.problemeditor.settings.gradingmethod.highest_score',
+    defaultMessage: 'Highest score',
+  },
+  [GradingMethodKeys.AVERAGE_SCORE]: {
+    id: 'authoring.problemeditor.settings.gradingmethod.average_score',
+    defaultMessage: 'Average score',
+  },
+  [GradingMethodKeys.FIRST_SCORE]: {
+    id: 'authoring.problemeditor.settings.gradingmethod.first_score',
+    defaultMessage: 'First score',
+  },
+});
+
 export const RichTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT] as const;
 
 export const settingsOlxAttributes = [
@@ -374,6 +400,7 @@ export const settingsOlxAttributes = [
   '@_show_reset_button',
   '@_submission_wait_seconds',
   '@_attempts_before_showanswer_button',
+  '@_grading_method',
 ] as const;
 
 export const ignoredOlxAttributes = [

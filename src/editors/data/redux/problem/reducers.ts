@@ -2,7 +2,7 @@ import { has } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
-import { ProblemTypeKeys, RichTextProblems } from '../../constants/problem';
+import { GradingMethodKeys, ProblemTypeKeys, RichTextProblems } from '../../constants/problem';
 import { ToleranceTypes } from '../../../containers/ProblemEditor/components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 import type { EditorState } from '..';
 
@@ -29,6 +29,7 @@ const initialState: EditorState['problem'] = {
         unlimited: true,
         number: null,
       },
+      gradingMethod: GradingMethodKeys.LAST_SCORE
     },
     hints: [],
     timeBetween: 0,

@@ -33,6 +33,7 @@ describe('SettingsWidget', () => {
       maxAttempts: 2,
       showanswer: 'finished',
       showResetButton: false,
+      gradingMethod: 'last_score',
     },
     images: {},
     isLibrary: false,
