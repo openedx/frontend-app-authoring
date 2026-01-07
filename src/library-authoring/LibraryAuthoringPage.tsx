@@ -46,6 +46,7 @@ import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarCo
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
 import { libraryQueryPredicate } from './data/apiHooks';
+import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -165,12 +166,12 @@ const LibraryAuthoringPage = ({
   } = useComponentPickerContext();
   const {
     libraryId,
-    selectedLibraries,
     libraryData,
     isLoadingLibraryData,
     extraFilter: contextExtraFilter,
     readOnly,
   } = useOptionalLibraryContext();
+  const { selectedLibraries } = useMultiLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {

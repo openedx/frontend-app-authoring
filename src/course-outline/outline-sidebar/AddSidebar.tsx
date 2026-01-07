@@ -20,6 +20,7 @@ import type { XBlock } from '@src/data/types';
 import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import messages from './messages';
+import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 
@@ -180,13 +181,15 @@ const ShowLibraryContent = () => {
   }, [lastSection, lastSubsection, sectionsList]);
 
   return (
-    <ComponentPicker
-      showOnlyPublished
-      extraFilter={[`block_type IN [${allowedBlocks.join(',')}]`]}
-      visibleTabs={[ContentType.home]}
-      FiltersComponent={SidebarFilters}
-      onComponentSelected={onComponentSelected}
-    />
+    <MultiLibraryProvider>
+      <ComponentPicker
+        showOnlyPublished
+        extraFilter={[`block_type IN [${allowedBlocks.join(',')}]`]}
+        visibleTabs={[ContentType.home]}
+        FiltersComponent={SidebarFilters}
+        onComponentSelected={onComponentSelected}
+      />
+    </MultiLibraryProvider>
   );
 };
 

@@ -4,7 +4,7 @@ import {
 } from '@openedx/paragon';
 import { Newsstand } from '@openedx/paragon/icons';
 import Loading from '@src/generic/Loading';
-import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { ContentLibrary } from '@src/library-authoring/data/api';
 import { useContentLibraryV2List } from '@src/library-authoring/data/apiHooks';
 import { debounce, truncate } from 'lodash';
@@ -55,7 +55,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
-  const { selectedLibraries, setSelectedLibraries } = useOptionalLibraryContext();
+  const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
 
@@ -76,7 +76,7 @@ export const LibraryDropdownFilter = () => {
 
   useEffect(() => {
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
-    if (!selectedLibraries || !selectedLibraries.length) {
+    if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
