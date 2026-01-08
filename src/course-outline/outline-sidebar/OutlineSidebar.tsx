@@ -13,6 +13,7 @@ const OutlineSideBar = () => {
 
   const {
     currentPageKey,
+    currentProps,
     setCurrentPageKey,
     isOpen,
     toggle,
@@ -37,6 +38,7 @@ const OutlineSideBar = () => {
       setCurrentPageKey={setCurrentPageKey}
       isOpen={isOpen}
       toggle={toggle}
+      contentProps={currentProps}
     />
   );
 };

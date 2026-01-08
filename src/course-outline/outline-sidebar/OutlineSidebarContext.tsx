@@ -18,10 +18,12 @@ import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'align';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
+export type OutlineSidebarPageProps = Record<string, any>;
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys) => void;
+  currentProps?: OutlineSidebarPageProps;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, props?: OutlineSidebarPageProps) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
@@ -34,10 +36,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const intl = useIntl();
 
   const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
+  const [currentProps, setCurrentPageProps] = useState<OutlineSidebarPageProps>();
   const [isOpen, open, , toggle] = useToggle(true);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
+  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, props?: OutlineSidebarPageProps) => {
     setCurrentPageKeyState(pageKey);
+    setCurrentPageProps(props);
     open();
   }, [open]);
 
@@ -62,6 +66,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
       currentPageKey,
+      currentProps,
       setCurrentPageKey,
       sidebarPages,
       isOpen,
@@ -70,6 +75,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }),
     [
       currentPageKey,
+      currentProps,
       setCurrentPageKey,
       sidebarPages,
       isOpen,
