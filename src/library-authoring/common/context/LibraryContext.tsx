@@ -22,14 +22,9 @@ export interface ComponentEditorInfo {
   onClose?: (data?:any) => void;
 }
 
-export type LibraryIdOneOrMore = {
-  libraryId: string;
-  libraryIds: string[];
-};
-
 export type LibraryContextData = {
-  libraryId: string;
   /** The ID of the current library */
+  libraryId: string;
   libraryData?: ContentLibrary;
   readOnly: boolean;
   canPublish: boolean;
