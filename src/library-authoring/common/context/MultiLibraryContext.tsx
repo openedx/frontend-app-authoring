@@ -1,3 +1,4 @@
+import { useStickyState } from '@src/hooks';
 import React from 'react';
 
 interface MultiLibraryContextProps {
@@ -8,7 +9,7 @@ interface MultiLibraryContextProps {
 const Context = React.createContext<MultiLibraryContextProps | undefined>(undefined);
 
 export const MultiLibraryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedLibraries, setSelectedLibraries] = React.useState<string[]>([]);
+  const [selectedLibraries, setSelectedLibraries] = useStickyState<string[]>([], 'outline-library-filter');
   const context = React.useMemo(() => ({
     selectedLibraries,
     setSelectedLibraries,

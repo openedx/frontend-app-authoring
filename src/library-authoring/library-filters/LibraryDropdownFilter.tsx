@@ -18,6 +18,7 @@ interface LibraryItemsProps {
 }
 
 const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
+  const { selectedLibraries } = useMultiLibraryContext();
   if (isPending) {
     return <Loading />;
   }
@@ -42,6 +43,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
           value={library.id}
           onChange={() => onChange(library.id)}
           className="py-2 my-1 overflow-auto"
+          checked={selectedLibraries.includes(library.id)}
         >
           <div>
             {truncate(library.title, { length: 50 })}
