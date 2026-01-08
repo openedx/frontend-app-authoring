@@ -109,7 +109,7 @@ export const CollectionDropdownFilter = () => {
         placement="auto"
         overlay={(
           <Tooltip variant="light" id="library-filter-tooltip">
-            {label}
+            {label || intl.formatMessage(messages.collectionFilterBtnText)}
           </Tooltip>
         )}
       >
