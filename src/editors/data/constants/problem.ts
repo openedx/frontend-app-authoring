@@ -371,6 +371,8 @@ export const GradingMethodKeys = StrictDict({
   FIRST_SCORE: 'first_score',
 });
 
+export type GradingMethodKey = typeof GradingMethodKeys[keyof typeof GradingMethodKeys];
+
 export const GradingMethod = StrictDict({
   [GradingMethodKeys.LAST_SCORE]: {
     id: 'authoring.problemeditor.settings.gradingmethod.last_score',
