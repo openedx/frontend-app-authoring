@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Collections filter',
     description: 'Button aria label text for collections filter',
   },
+  collectionFilterBtnHelp: {
+    id: 'course-authoring.library-authoring.library-filters.collection.filter.btn-help',
+    defaultMessage: 'Select only one library to filter by collection',
+    description: 'Tooltip when more than one library is selected and collection filter is disabled',
+  },
   librariesFilterBtnPlaceholder: {
     id: 'course-authoring.library-authoring.library-filters.libraries.filter.placeholder',
     defaultMessage: 'Search Library Name',

@@ -109,7 +109,9 @@ export const CollectionDropdownFilter = () => {
         placement="auto"
         overlay={(
           <Tooltip variant="light" id="library-filter-tooltip">
-            {label || intl.formatMessage(messages.collectionFilterBtnText)}
+            {selectedLibraries.length !== 1
+              ? intl.formatMessage(messages.collectionFilterBtnHelp)
+              : label || intl.formatMessage(messages.collectionFilterBtnText)}
           </Tooltip>
         )}
       >
