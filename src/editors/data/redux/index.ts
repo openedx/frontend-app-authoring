@@ -9,7 +9,7 @@ import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
 import type { RequestKeys, RequestStates } from '../constants/requests';
-import { AdvancedProblemType, GradingMethodKeys, ProblemType } from '../constants/problem';
+import { AdvancedProblemType, type GradingMethodKey, ProblemType } from '../constants/problem';
 
 export { default as thunkActions } from './thunkActions';
 
@@ -176,7 +176,7 @@ export interface EditorState {
       scoring: {
         weight: number;
         attempts: { unlimited: boolean; number: number | null; };
-        gradingMethod: GradingMethodKeys.LAST_SCORE;
+        gradingMethod: GradingMethodKey;
       },
       hints: any[];
       timeBetween: number;
