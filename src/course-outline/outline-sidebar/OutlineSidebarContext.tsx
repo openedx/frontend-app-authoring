@@ -5,6 +5,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
 import { HelpOutline, Info, Tag } from '@openedx/paragon/icons';
@@ -17,7 +18,11 @@ import messages from './messages';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'align';
-export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
+export type OutlineSidebarPages = {
+  info: SidebarPage;
+  help: SidebarPage;
+  align?: SidebarPage;
+};
 export type OutlineSidebarPageProps = Record<string, any>;
 
 interface OutlineSidebarContextData {
@@ -45,17 +50,21 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     open();
   }, [open]);
 
+  const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
+
   const sidebarPages = {
     info: {
       component: OutlineInfoSidebar,
       icon: Info,
       title: intl.formatMessage(messages.sidebarButtonInfo),
     },
-    align: {
-      component: OutlineAlignSidebar,
-      icon: Tag,
-      title: intl.formatMessage(messages.sidebarButtonAlign),
-    },
+    ...(showAlignSidebar && {
+      align: {
+        component: OutlineAlignSidebar,
+        icon: Tag,
+        title: intl.formatMessage(messages.sidebarButtonAlign),
+      },
+    }),
     help: {
       component: OutlineHelpSidebar,
       icon: HelpOutline,
