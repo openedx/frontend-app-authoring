@@ -197,7 +197,7 @@ export function useStateWithUrlSearchParam<Type>(
  */
 export function useStickyState<T>(
   defaultValue: T,
-  key: string
+  key: string,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
     const stickyValue = window.localStorage.getItem(key);

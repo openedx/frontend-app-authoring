@@ -172,7 +172,7 @@ const LibraryAuthoringPage = ({
     extraFilter: contextExtraFilter,
     readOnly,
   } = useOptionalLibraryContext();
-  const { selectedLibraries } = useMultiLibraryContext();
+  const { selectedLibraries, selectedCollections } = useMultiLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -299,6 +299,9 @@ const LibraryAuthoringPage = ({
   }
   if (selectedLibraries && selectedLibraries.length > 0) {
     extraFilter.push(`context_key IN ["${selectedLibraries.join('","')}"]`);
+  }
+  if (selectedCollections && selectedCollections.length > 0) {
+    extraFilter.push(`collections.key IN ["${selectedCollections.join('","')}"]`);
   }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');

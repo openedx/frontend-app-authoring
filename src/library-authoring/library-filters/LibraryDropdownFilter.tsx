@@ -83,7 +83,7 @@ export const LibraryDropdownFilter = () => {
     } else if (selectedLibraries.length === 1) {
       setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
     } else if (selectedLibraries.length > 1) {
-      setLabel(`${selectedLibraries.length} Libraries`);
+      setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
   }, [label, selectedLibraries, data]);
 

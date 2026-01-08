@@ -11,10 +11,30 @@ const messages = defineMessages({
     defaultMessage: 'Search Library Name',
     description: 'Placeholder text for libraries filter',
   },
+  collectionFilterBtnPlaceholder: {
+    id: 'course-authoring.library-authoring.library-filters.collection.filter.placeholder',
+    defaultMessage: 'Search Collection Name',
+    description: 'Placeholder text for collection filter',
+  },
+  collectionFilterBtnEmpty: {
+    id: 'course-authoring.library-authoring.library-filters.collection.filter.empty',
+    defaultMessage: 'No collections found!',
+    description: 'When no collections are found',
+  },
   librariesFilterBtnEmpty: {
-    id: 'course-authoring.library-authoring.library-filters.libraries.filter.mmpty',
+    id: 'course-authoring.library-authoring.library-filters.libraries.filter.empty',
     defaultMessage: 'No libraries found!',
     description: 'When no libraries are found',
+  },
+  librariesFilterBtnCount: {
+    id: 'course-authoring.library-authoring.library-filters.libraries.filter.count',
+    defaultMessage: '{count} Libraries',
+    description: 'When more than 1 libraries are selected',
+  },
+  collectionsFilterBtnCount: {
+    id: 'course-authoring.library-authoring.library-filters.collection.filter.count',
+    defaultMessage: '{count} Collections',
+    description: 'When more than 1 Collections are selected',
   },
   additionalFilterBtnAltText: {
     id: 'course-authoring.library-authoring.library-filters.additional.filter.alt-btn',
