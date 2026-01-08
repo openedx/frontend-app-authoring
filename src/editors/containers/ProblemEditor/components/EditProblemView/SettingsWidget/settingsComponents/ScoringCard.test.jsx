@@ -64,7 +64,7 @@ describe('ScoringCard', () => {
   test('should call updateSettings when changing grading method', () => {
     render(<ScoringCard {...props} />);
     fireEvent.click(screen.getByText('Scoring'));
-    const gradingSelect = screen.getByRole('combobox', { name: 'Grading method' });
+    const gradingSelect = screen.getByRole('combobox', { name: 'Grading Method' });
     expect(gradingSelect).toBeInTheDocument();
     expect(gradingSelect.value).toBe(GradingMethodKeys.LAST_SCORE);
 
