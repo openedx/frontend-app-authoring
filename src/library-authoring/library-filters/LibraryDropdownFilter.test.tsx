@@ -9,8 +9,8 @@ mockContentLibrary.applyMock();
 
 const mockSetValue = jest.fn();
 let mockValue: string[] = [];
-jest.mock('@src/library-authoring/common/context/LibraryContext', () => ({
-  useLibraryContext: () => ({
+jest.mock('@src/library-authoring/common/context/MultiLibraryContext', () => ({
+  useMultiLibraryContext: () => ({
     selectedLibraries: mockValue,
     setSelectedLibraries: mockSetValue,
   }),

@@ -33,7 +33,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
   return (
     <Scrollable
       className="m-0 p-0"
-      style={{ 'max-height': '25vh' }}
+      style={{ maxHeight: '25vh' }}
     >
       {data.map((library) => (
         <Dropdown.Item
