@@ -3,6 +3,10 @@
     flex: 0 1 auto;
     max-width: 700px;
     min-width: 650px;
+    overflow-y: auto;
+    min-height: 100vh;
+    height: 100%;
+    max-height: 300vh;
   }
 
   .dropdown-toggle {

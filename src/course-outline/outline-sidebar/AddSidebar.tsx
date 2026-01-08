@@ -7,9 +7,9 @@ import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
-  Button, Stack, Tab, Tabs,
+  Button, Icon, Stack, Tab, Tabs,
 } from '@openedx/paragon';
-import { getItemIcon } from '@src/generic/block-type-utils';
+import { getIconBorderStyleColor, getItemIcon } from '@src/generic/block-type-utils';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
 import { useCallback, useMemo } from 'react';
@@ -83,13 +83,17 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
 
   return (
     <Button
-      variant="outline-primary"
-      className="m-2"
-      iconBefore={getItemIcon(blockType)}
+      variant="tertiary shadow"
+      className="mx-2 justify-content-start px-4 font-weight-bold"
       onClick={onCreateContent}
       disabled={(!lastSection && blockType === 'subsection') || (!lastSubsection && blockType === 'unit')}
     >
-      {name}
+      <Stack direction="horizontal" gap={3}>
+        <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
+          <Icon size="lg" src={getItemIcon(blockType)} />
+        </span>
+        {name}
+      </Stack>
     </Button>
   );
 };
