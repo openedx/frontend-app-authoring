@@ -105,7 +105,7 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
     // Add all parents as a single object containing list of links
     // This is converted to overflow menu by OverflowLinks component
     links.push({
-      label: parents.displayName || [],
+      label: parents.displayName || '',
       to: parents.key?.map((parentKey) => `/library/${libraryId}/${parentType}/${parentKey}`) || [],
       containerType,
     });
@@ -114,6 +114,8 @@ export const ParentBreadcrumbs = ({ libraryData, parents, containerType }: Paren
   return (
     <Breadcrumb
       ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+      // @ts-ignore FIXME: <Breadcrumb> uses `label` as a key, so it shouldn't be an array (string[]),
+      // even if our custom <OverflowLinks> is handling arrays properly.
       links={links}
       linkAs={OverflowLinks}
     />

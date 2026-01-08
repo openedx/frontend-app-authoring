@@ -50,7 +50,7 @@ const MoveModal: FC<IUseMoveModalParams> = ({
         { label: breadcrumb, 'data-parent-index': index }
       ))}
       activeLabel={breadcrumbs[breadcrumbs.length - 1]}
-      clickHandler={({ target }) => handleBreadcrumbsClick(target.dataset.parentIndex)}
+      clickHandler={({ currentTarget }) => handleBreadcrumbsClick(currentTarget.dataset.parentIndex!)}
     />
   ), [isExtraSmall, breadcrumbs, handleBreadcrumbsClick]);
 

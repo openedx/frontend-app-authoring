@@ -1,10 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
-
 import {
   Alert,
-  Breadcrumb, Button, Card, Icon, Stack,
+  Button,
+  Card,
+  Icon,
+  Stack,
 } from '@openedx/paragon';
-import { ArrowBack, Add, Delete } from '@openedx/paragon/icons';
+import {
+  Add,
+  ArrowBack,
+  ChevronRight,
+  Delete,
+} from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
@@ -148,25 +155,15 @@ const CompareContainersWidgetInner = ({
       return title;
     }
     return (
-      <Breadcrumb
-        ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-        links={[
-          {
-            // This raises failed prop-type error as label expects a string but it works without any issues
-            label: <Stack direction="horizontal" gap={1}><Icon size="xs" src={ArrowBack} />Back</Stack>,
-            onClick: onBackBtnClick,
-            variant: 'link',
-            className: 'px-0 text-gray-900',
-          },
-          {
-            label: title,
-            variant: 'link',
-            className: 'px-0 text-gray-900',
-            disabled: true,
-          },
-        ]}
-        linkAs={Button}
-      />
+      <Stack direction="horizontal" gap={1}>
+        <Button variant="link" className="px-0" onClick={onBackBtnClick}>
+          {/* We could also use iconBefore={ArrowBack} on the <Button> above but it's a bit too big that way. */}
+          <Icon size="xs" src={ArrowBack} className="mr-1" />
+          {intl.formatMessage(messages.breadcrumbBackLabel)}
+        </Button>
+        <Icon size="md" src={ChevronRight} />
+        <span role="heading" aria-level={3}>{title}</span>
+      </Stack>
     );
   }, [parent]);
 
