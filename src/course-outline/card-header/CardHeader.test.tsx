@@ -8,6 +8,7 @@ import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
 import { RequestStatus } from '../../data/constants';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -79,6 +80,7 @@ const renderComponent = (props?: object, entry = '/') => {
       routerProps: {
         initialEntries: [entry],
       },
+      extraWrapper: OutlineSidebarProvider,
     },
   );
 };
