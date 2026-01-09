@@ -22,6 +22,7 @@ import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 
@@ -48,36 +49,55 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   const sectionsList = useSelector(getSectionsList);
   const lastSection = getLastEditableParent(sectionsList);
   const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
+  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
   const {
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
+    courseUsageKey,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
   } = useCourseAuthoringContext();
 
-  const onCreateContent = useCallback(() => {
+  const onCreateContent = useCallback(async () => {
     switch (blockType) {
       case 'section':
-        handleNewSectionSubmit();
+        await handleAddSection.mutateAsync({
+          type: ContainerType.Chapter,
+          parentLocator: courseUsageKey,
+          displayName: COURSE_BLOCK_NAMES.chapter.name,
+        });
         break;
       case 'subsection':
-        if (lastSection) {
-          handleNewSubsectionSubmit(lastSection.id);
+        const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
+        if (sectionParentId) {
+          await handleAddSubsection.mutateAsync({
+            type: ContainerType.Sequential,
+            parentLocator: sectionParentId,
+            displayName: COURSE_BLOCK_NAMES.sequential.name,
+          });
         }
         break;
       case 'unit':
-        if (lastSubsection) {
-          handleNewUnitSubmit(lastSubsection.id);
+        const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
+        if (subsectionParentId) {
+          await handleAddUnit.mutateAsync({
+            type: ContainerType.Vertical,
+            parentLocator: subsectionParentId,
+            displayName: COURSE_BLOCK_NAMES.vertical.name,
+          });
         }
         break;
       default:
         // istanbul ignore next: unreachable
         throw new Error(`Unrecognized block type ${blockType}`);
     }
+    stopCurrentFlow();
   }, [
     blockType,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
+    courseUsageKey,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
+    currentFlow,
     lastSection,
     lastSubsection,
   ]);
@@ -102,20 +122,53 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
+  const { currentFlow } = useOutlineSidebarContext();
+  const btns = useCallback(() => {
+    switch (currentFlow?.flowType) {
+      case 'use-section':
+        return (
+          <AddContentButton
+            name={intl.formatMessage(contentMessages.sectionButton)}
+            blockType="section"
+          />
+        );
+      case 'use-subsection':
+        return (
+          <AddContentButton
+            name={intl.formatMessage(contentMessages.subsectionButton)}
+            blockType="subsection"
+          />
+        );
+      case 'use-unit':
+        return (
+          <AddContentButton
+            name={intl.formatMessage(contentMessages.unitButton)}
+            blockType="unit"
+          />
+        );
+      default:
+        return (
+          <>
+            <AddContentButton
+              name={intl.formatMessage(contentMessages.sectionButton)}
+              blockType="section"
+            />
+            <AddContentButton
+              name={intl.formatMessage(contentMessages.subsectionButton)}
+              blockType="subsection"
+            />
+            <AddContentButton
+              name={intl.formatMessage(contentMessages.unitButton)}
+              blockType="unit"
+            />
+          </>
+        );
+    }
+  }, [currentFlow, intl]);
+
   return (
     <Stack gap={2}>
-      <AddContentButton
-        name={intl.formatMessage(contentMessages.sectionButton)}
-        blockType="section"
-      />
-      <AddContentButton
-        name={intl.formatMessage(contentMessages.subsectionButton)}
-        blockType="subsection"
-      />
-      <AddContentButton
-        name={intl.formatMessage(contentMessages.unitButton)}
-        blockType="unit"
-      />
+      {btns()}
     </Stack>
   );
 };
@@ -124,9 +177,9 @@ const AddNewContent = () => {
 const ShowLibraryContent = () => {
   const {
     courseUsageKey,
-    handleAddSectionFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
   } = useCourseAuthoringContext();
   const sectionsList: Array<XBlock> = useSelector(getSectionsList);
   const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
@@ -137,7 +190,7 @@ const ShowLibraryContent = () => {
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
       case 'section':
-        await handleAddSectionFromLibrary.mutateAsync({
+        await handleAddSection.mutateAsync({
           type: COMPONENT_TYPES.libraryV2,
           category: ContainerType.Chapter,
           parentLocator: courseUsageKey,
@@ -147,7 +200,7 @@ const ShowLibraryContent = () => {
       case 'subsection':
         const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
         if (sectionParentId) {
-          await handleAddSubsectionFromLibrary.mutateAsync({
+          await handleAddSubsection.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Sequential,
             parentLocator: sectionParentId,
@@ -158,7 +211,7 @@ const ShowLibraryContent = () => {
       case 'unit':
         const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
         if (subsectionParentId) {
-          await handleAddUnitFromLibrary.mutateAsync({
+          await handleAddUnit.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
@@ -173,9 +226,9 @@ const ShowLibraryContent = () => {
     stopCurrentFlow();
   }, [
     courseUsageKey,
-    handleAddSectionFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
     lastSection,
     lastSubsection,
     currentFlow,
@@ -222,23 +275,6 @@ const AddTabs = () => {
     }
   }, [currentFlow, setKey]);
 
-  const tabTitle = useMemo(() => {
-    switch (currentFlow?.flowType) {
-      case 'use-section':
-        return intl.formatMessage(messages.sidebarTabsAddExisitingSectionToParent);
-      case 'use-subsection':
-        return intl.formatMessage(messages.sidebarTabsAddExisitingSubsectionToParent, {
-          name: currentFlow.parentTitle,
-        });
-      case 'use-unit':
-        return intl.formatMessage(messages.sidebarTabsAddExisitingUnitToParent, {
-          name: currentFlow.parentTitle,
-        });
-      default:
-        return intl.formatMessage(messages.sidebarTabsAddExisiting);
-    }
-  }, [currentFlow, intl]);
-
   return (
     <Tabs
       variant="tabs"
@@ -248,10 +284,10 @@ const AddTabs = () => {
       onSelect={setKey}
       mountOnEnter
     >
-      <Tab disabled={!!currentFlow} eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
+      <Tab eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
         <AddNewContent />
       </Tab>
-      <Tab eventKey="addExisting" title={tabTitle}>
+      <Tab eventKey="addExisting" title={intl.formatMessage(messages.sidebarTabsAddExisiting)}>
         <ShowLibraryContent />
       </Tab>
     </Tabs>
@@ -260,13 +296,25 @@ const AddTabs = () => {
 
 /** Main Sidebar Component */
 export const AddSidebar = () => {
+  const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
+  const { currentFlow } = useOutlineSidebarContext();
+  const titleAndIcon = useMemo(() => {
+    switch (currentFlow?.flowType) {
+      case 'use-subsection':
+        return { title: currentFlow.parentTitle, icon: getItemIcon('section') };
+      case 'use-unit':
+        return { title: currentFlow.parentTitle, icon: getItemIcon('subsection') };
+      default:
+        return { title: courseDetails?.name || '', icon: SchoolOutline };
+    }
+  }, [currentFlow, intl, getItemIcon]);
 
   return (
     <div>
       <SidebarTitle
-        title={courseDetails?.name || ''}
-        icon={SchoolOutline}
+        title={titleAndIcon.title}
+        icon={titleAndIcon.icon}
       />
       <SidebarContent>
         <SidebarSection>

@@ -5,7 +5,6 @@ import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSection, addSubsection, updateSavingStatus } from '@src/course-outline/data/slice';
-import { addNewSectionQuery, addNewSubsectionQuery, addNewUnitQuery } from '@src/course-outline/data/thunk';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { RequestStatus, RequestStatusType } from './data/constants';
@@ -19,12 +18,9 @@ export type CourseAuthoringContextData = {
   courseDetails?: CourseDetailsData;
   courseDetailStatus: RequestStatusType;
   canChangeProviders: boolean;
-  handleAddSectionFromLibrary: ReturnType<typeof useCreateCourseBlock>;
-  handleAddSubsectionFromLibrary: ReturnType<typeof useCreateCourseBlock>;
-  handleAddUnitFromLibrary: ReturnType<typeof useCreateCourseBlock>;
-  handleNewSectionSubmit: () => void;
-  handleNewSubsectionSubmit: (sectionId: string) => void;
-  handleNewUnitSubmit: (subsectionId: string) => void;
+  handleAddSection: ReturnType<typeof useCreateCourseBlock>;
+  handleAddSubsection: ReturnType<typeof useCreateCourseBlock>;
+  handleAddUnit: ReturnType<typeof useCreateCourseBlock>;
   openUnitPage: (locator: string) => void;
   getUnitUrl: (locator: string) => string;
 };
@@ -76,19 +72,7 @@ export const CourseAuthoringProvider = ({
     }
   };
 
-  const handleNewSectionSubmit = () => {
-    dispatch(addNewSectionQuery(courseUsageKey));
-  };
-
-  const handleNewSubsectionSubmit = (sectionId: string) => {
-    dispatch(addNewSubsectionQuery(sectionId));
-  };
-
-  const handleNewUnitSubmit = (subsectionId: string) => {
-    dispatch(addNewUnitQuery(subsectionId, openUnitPage));
-  };
-
-  const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
+  const addSectionToCourse = async (locator: string) => {
     try {
       const data = await getCourseItem(locator);
       // instanbul ignore next
@@ -98,9 +82,9 @@ export const CourseAuthoringProvider = ({
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  });
+  }
 
-  const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
+  const addSubsectionToCourse = async (locator: string, parentLocator: string) => {
     try {
       const data = await getCourseItem(locator);
       data.shouldScroll = true;
@@ -109,12 +93,14 @@ export const CourseAuthoringProvider = ({
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  });
+  }
 
+  const handleAddSection = useCreateCourseBlock(addSectionToCourse);
+  const handleAddSubsection = useCreateCourseBlock(addSubsectionToCourse);
   /**
   * import a unit block from library and redirect user to this unit page.
   */
-  const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
+  const handleAddUnit = useCreateCourseBlock(openUnitPage);
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
@@ -122,12 +108,9 @@ export const CourseAuthoringProvider = ({
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddSectionFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
     getUnitUrl,
     openUnitPage,
   }), [
@@ -136,12 +119,9 @@ export const CourseAuthoringProvider = ({
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddSectionFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
     getUnitUrl,
     openUnitPage,
   ]);

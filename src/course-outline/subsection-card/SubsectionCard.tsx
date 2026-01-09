@@ -28,7 +28,6 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
-import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -83,9 +82,8 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId, handleNewUnitSubmit } = useCourseAuthoringContext();
+  const { courseId } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
-  const { startCurrentFlow } = useOutlineSidebarContext();
 
   const {
     id,
@@ -180,7 +178,6 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handleNewButtonClick = () => handleNewUnitSubmit(id);
   const handlePasteButtonClick = () => onPasteClick(id, section.id);
 
   const titleComponent = (
@@ -340,15 +337,10 @@ const SubsectionCard = ({
               {actions.childAddable && (
                 <>
                   <OutlineAddChildButtons
-                    handleNewButtonClick={handleNewButtonClick}
-                    handleUseFromLibraryClick={() => startCurrentFlow({
-                      flowType: 'use-unit',
-                      parentLocator: subsection.id,
-                      parentTitle: subsection.displayName,
-                    })}
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
                     parentLocator={subsection.id}
+                    parentTitle={subsection.displayName}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent

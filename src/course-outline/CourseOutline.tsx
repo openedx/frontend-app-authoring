@@ -59,25 +59,25 @@ import { useCourseOutline } from './hooks';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
-import { OutlineAddSectionButtons } from './OutlineAddChildButtons';
+import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
+import { ContainerType } from '@src/generic/key-utils';
 
 const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
   const {
     courseId,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
-    handleAddSectionFromLibrary,
-    handleNewSectionSubmit,
+    courseUsageKey,
+    handleAddSubsection,
+    handleAddUnit,
+    handleAddSection,
   } = useCourseAuthoringContext();
 
   const {
-    courseUsageKey,
     courseName,
     savingStatus,
     statusBarData,
@@ -470,16 +470,20 @@ const CourseOutline = () => {
                               </SortableContext>
                             </DraggableList>
                             {courseActions.childAddable && (
-                              <OutlineAddSectionButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
+                              <OutlineAddChildButtons
+                                childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
+                                parentTitle={courseName}
                               />
                             )}
                           </>
                         ) : (
                           <EmptyPlaceholder>
                             {courseActions.childAddable && (
-                              <OutlineAddSectionButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
+                              <OutlineAddChildButtons
+                                childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
+                                parentTitle={courseName}
                                 btnVariant="primary"
                                 btnClasses="mt-1"
                               />
@@ -542,9 +546,9 @@ const CourseOutline = () => {
           // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
-            || handleAddUnitFromLibrary.isPending
-            || handleAddSubsectionFromLibrary.isPending
-            || handleAddSectionFromLibrary.isPending
+            || handleAddUnit.isPending
+            || handleAddSubsection.isPending
+            || handleAddSection.isPending
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

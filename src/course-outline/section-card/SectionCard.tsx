@@ -26,7 +26,6 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
-import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -74,9 +73,8 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
-  const { courseId, handleNewSubsectionSubmit } = useCourseAuthoringContext();
+  const { courseId } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
-  const { startCurrentFlow } = useOutlineSidebarContext();
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -354,15 +352,10 @@ const SectionCard = ({
                 {children}
                 {actions.childAddable && (
                   <OutlineAddChildButtons
-                    handleNewButtonClick={() => handleNewSubsectionSubmit(id)}
-                    handleUseFromLibraryClick={() => startCurrentFlow({
-                      flowType: 'use-subsection',
-                      parentLocator: section.id,
-                      parentTitle: section.displayName,
-                    })}
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                     parentLocator={section.id}
+                    parentTitle={section.displayName}
                   />
                 )}
               </div>

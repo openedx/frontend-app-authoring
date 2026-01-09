@@ -58,7 +58,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     (value: OutlineSidebarPageKeys) => value,
   );
   const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
-  const [isOpen, open, close, toggle] = useToggle(true);
+  const [isOpen, open, , toggle] = useToggle(true);
 
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
@@ -70,7 +70,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const stopCurrentFlow = useCallback(() => {
     setCurrentFlow(null);
-    close();
   }, [setCurrentFlow]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
