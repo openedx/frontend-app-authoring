@@ -104,17 +104,14 @@ const AddNewContent = () => {
   return (
     <Stack gap={2}>
       <AddContentButton
-        key="section"
         name={intl.formatMessage(contentMessages.sectionButton)}
         blockType="section"
       />
       <AddContentButton
-        key="subsection"
         name={intl.formatMessage(contentMessages.subsectionButton)}
         blockType="subsection"
       />
       <AddContentButton
-        key="unit"
         name={intl.formatMessage(contentMessages.unitButton)}
         blockType="unit"
       />

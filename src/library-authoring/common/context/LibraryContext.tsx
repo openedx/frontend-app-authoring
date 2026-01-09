@@ -191,5 +191,5 @@ export function useLibraryContext(): LibraryContextData {
 
 export function useOptionalLibraryContext(): Partial<LibraryContextData> {
   const ctx = useContext(LibraryContext);
-  return ctx || {};
+  return ctx || { readOnly: true };
 }

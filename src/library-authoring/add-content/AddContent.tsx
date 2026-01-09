@@ -28,7 +28,7 @@ import {
   useAddItemsToCollection,
   useAddItemsToContainer,
 } from '../data/apiHooks';
-import { useOptionalLibraryContext } from '../common/context/LibraryContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import { useLibraryRoutes } from '../routes';
@@ -314,7 +314,7 @@ const AddContent = () => {
     setCreateContainerModalType,
     openComponentEditor,
     componentPicker,
-  } = useOptionalLibraryContext();
+  } = useLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -433,7 +433,7 @@ const AddContent = () => {
     const clipboardBlockType = sharedClipboardData?.content?.blockType;
 
     // istanbul ignore if: this should never happen
-    if (!clipboardBlockType || !libraryId) {
+    if (!clipboardBlockType) {
       return;
     }
 
@@ -461,7 +461,7 @@ const AddContent = () => {
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
       openComponentEditor?.('', (data) => data && linkComponent(data.id), blockType);
-    } else if (libraryId) {
+    } else {
       createBlockMutation.mutateAsync({
         libraryId,
         blockType,
