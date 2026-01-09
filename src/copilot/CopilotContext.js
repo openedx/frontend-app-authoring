@@ -44,8 +44,8 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
 
   // const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
-  const [enabledCopilot, setEnabledCopilot] = useState(true);
-  const [showCopilotIcon, setShowCopilotIcon] = useState(true);
+  const [enabledCopilot, setEnabledCopilot] = useState(false);
+  const [showCopilotIcon, setShowCopilotIcon] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
   const [isDocked, setIsDocked] = useState(true);
@@ -566,6 +566,8 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       } catch (err) {
         console.log('Failed to load menu-config for Copilot:', err);
       }
+      setEnabledCopilot(false);
+      setShowCopilotIcon(false);
     };
 
     fetchMenuConfig();
