@@ -121,8 +121,12 @@ export const CollectionDropdownFilter = () => {
           className="text-overflow text-primary-500 py-2 px-4 mr-2"
           disabled={selectedLibraries.length !== 1}
           size="sm"
-          ariaLabel={intl.formatMessage(messages.collectionFilterBtnText)}
         >
+          {!label && (
+          <span className="sr-only">
+            {intl.formatMessage(messages.collectionFilterBtnText)}
+          </span>
+          )}
           {truncate(label, { length: 30 })}
         </Dropdown.Toggle>
       </OverlayTrigger>

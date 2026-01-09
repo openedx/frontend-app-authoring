@@ -108,7 +108,7 @@ describe('AddSidebar component', () => {
     await user.click(toggleBtn);
     expect(await screen.findByRole('button', { name: 'Type' })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Tags' })).toBeInTheDocument();
-    expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Collections filter' })).toBeInTheDocument();
   });
 
   it('calls appropriate handlers on new button click', async () => {
