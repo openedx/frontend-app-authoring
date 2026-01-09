@@ -8,7 +8,7 @@ import {
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { ComponentPicker } from '@src/library-authoring/component-picker';
+import { LibraryAndComponentPicker } from '@src/library-authoring/component-picker';
 import { ContentType } from '@src/library-authoring/routes';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
@@ -276,7 +276,7 @@ const AddComponent = ({
             )
           }
         >
-          <ComponentPicker
+          <LibraryAndComponentPicker
             showOnlyPublished
             extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
             visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}

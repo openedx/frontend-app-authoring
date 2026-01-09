@@ -34,7 +34,7 @@ import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
@@ -73,7 +73,13 @@ import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
-  const { courseId } = useCourseAuthoringContext();
+  const {
+    courseId,
+    handleAddSubsectionFromLibrary,
+    handleAddUnitFromLibrary,
+    handleAddSectionFromLibrary,
+    handleNewSectionSubmit,
+  } = useCourseAuthoringContext();
 
   const {
     courseUsageKey,
@@ -123,13 +129,6 @@ const CourseOutline = () => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddUnitFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddSectionFromLibrary,
-    getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -269,7 +268,7 @@ const CourseOutline = () => {
 
   if (isLoadingDenied) {
     return (
-      <Container size="xl" className="px-4 mt-4">
+      <Container fluid className="px-3 mt-4">
         <PageAlerts
           courseId={courseId}
           notificationDismissUrl={notificationDismissUrl}
@@ -292,7 +291,7 @@ const CourseOutline = () => {
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
-      <Container size="xl" className="px-4">
+      <Container fluid className="px-3">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
             courseId={courseId}
@@ -413,9 +412,7 @@ const CourseOutline = () => {
                                     onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
-                                    onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
                                     resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
@@ -445,8 +442,6 @@ const CourseOutline = () => {
                                           onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
-                                          onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
                                           resetScrollState={resetScrollState}
@@ -480,7 +475,6 @@ const CourseOutline = () => {
                                                 onOpenUnlinkModal={openUnlinkModal}
                                                 onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                                getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
                                               />
@@ -571,7 +565,7 @@ const CourseOutline = () => {
           isOverflowVisible={false}
           size="xl"
         >
-          <ComponentPicker
+          <LibraryAndComponentPicker
             showOnlyPublished
             extraFilter={['block_type = "section"']}
             componentPickerMode="single"

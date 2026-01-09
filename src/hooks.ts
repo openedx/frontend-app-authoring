@@ -190,3 +190,26 @@ export function useStateWithUrlSearchParam<Type>(
   // Return the computed value and wrapped set state function
   return [returnValue, returnSetter];
 }
+
+/**
+ * Creates a custom React hook that manages the state of a given value persistently across sessions.
+ * The stored value is kept in `window.localStorage`.
+ */
+export function useStickyState<T>(
+  defaultValue: T,
+  key: string,
+): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [value, setValue] = useState<T>(() => {
+    const stickyValue = window.localStorage.getItem(key);
+
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : defaultValue;
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+
+  return [value, setValue];
+}

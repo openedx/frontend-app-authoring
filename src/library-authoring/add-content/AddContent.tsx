@@ -53,6 +53,7 @@ type AddContentViewProps = {
   onCreateContent: (blockType: string) => void,
   isAddLibraryContentModalOpen: boolean,
   closeAddLibraryContentModal: () => void,
+  isComponentPicker?: boolean,
 };
 
 type AddAdvancedContentViewProps = {
@@ -87,9 +88,9 @@ const AddContentView = ({
   onCreateContent,
   isAddLibraryContentModalOpen,
   closeAddLibraryContentModal,
+  isComponentPicker,
 }: AddContentViewProps) => {
   const intl = useIntl();
-  const { componentPicker } = useLibraryContext();
   const {
     insideCollection,
     insideUnit,
@@ -231,7 +232,7 @@ const AddContentView = ({
   return (
     <>
       {visibleButtons}
-      {componentPicker && visibleButtons.includes(existingContentButton) && (
+      {isComponentPicker && visibleButtons.includes(existingContentButton) && (
         <PickLibraryContentModal
           isOpen={isAddLibraryContentModalOpen}
           onClose={closeAddLibraryContentModal}
@@ -312,6 +313,7 @@ const AddContent = () => {
     openCreateCollectionModal,
     setCreateContainerModalType,
     openComponentEditor,
+    componentPicker,
   } = useLibraryContext();
   const {
     insideCollection,
@@ -458,7 +460,7 @@ const AddContent = () => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
-      openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
+      openComponentEditor?.('', (data) => data && linkComponent(data.id), blockType);
     } else {
       createBlockMutation.mutateAsync({
         libraryId,
@@ -483,7 +485,7 @@ const AddContent = () => {
     if (blockType === 'paste') {
       onPaste();
     } else if (blockType === 'collection') {
-      openCreateCollectionModal();
+      openCreateCollectionModal?.();
     } else if (blockType === 'libraryContent') {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
@@ -493,7 +495,7 @@ const AddContent = () => {
       ContainerType.Subsection,
       ContainerType.Section,
     ].includes(blockType as ContainerType)) {
-      setCreateContainerModalType(blockType as ContainerType);
+      setCreateContainerModalType?.(blockType as ContainerType);
     } else {
       onCreateBlock(blockType);
     }
@@ -519,6 +521,7 @@ const AddContent = () => {
           onCreateContent={onCreateContent}
           isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
           closeAddLibraryContentModal={closeAddLibraryContentModal}
+          isComponentPicker={!!componentPicker}
         />
       )}
     </Stack>

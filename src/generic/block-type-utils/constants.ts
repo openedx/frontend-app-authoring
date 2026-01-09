@@ -89,3 +89,13 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   collection: 'component-style-collection',
   other: 'component-style-other',
 };
+
+export const ICON_BORDER_STYLE_COLOR_MAP = {
+  vertical: 'icon-with-border-vertical',
+  unit: 'icon-with-border-vertical',
+  sequential: 'icon-with-border-sequential',
+  subsection: 'icon-with-border-sequential',
+  chapter: 'icon-with-border-chapter',
+  section: 'icon-with-border-chapter',
+  other: 'icon-with-border-other',
+};
