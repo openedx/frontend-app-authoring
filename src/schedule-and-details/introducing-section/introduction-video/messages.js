@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   courseIntroductionVideoDelete: {
     id: 'course-authoring.schedule-section.introducing.introduction-video.delete',
-    defaultMessage: 'Delete current video',
+    defaultMessage: 'Delete',
   },
   courseIntroductionVideoHelpText: {
     id: 'course-authoring.schedule-section.introducing.introduction-video.help-text',
@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   courseIntroductionVideoPlaceholder: {
     id: 'course-authoring.schedule-section.introducing.introduction-video.placeholder',
-    defaultMessage: 'YouTube video ID',
+    defaultMessage: 'Video ID',
   },
 });
 

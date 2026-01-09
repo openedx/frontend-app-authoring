@@ -15,6 +15,15 @@ const isValidImageUrl = (url) => {
   );
 };
 
+const isVideoUrl = (url) => {
+  return typeof url === 'string' && (
+    url.match(/\.(mp4|webm|ogg|mov)(?=\?|$)/i) ||
+    url.includes('youtube.com') ||
+    url.includes('youtu.be') ||
+    url.includes('vimeo.com')
+  );
+};
+
 
 const TAB_WIDTH = 60;
 
@@ -228,6 +237,7 @@ const Copilot = () => {
                     description: t(messages.fieldDescription),
                     cardImage: t(messages.fieldCardImage),
                     bannerImage: t(messages.fieldBannerImage),
+                    introVideo: t(messages.fieldIntroVideo),
                   };
 
                   return Object.keys(grouped).map(field => (
@@ -238,16 +248,19 @@ const Copilot = () => {
                       <div className="pinned-group-items">
                         {grouped[field].map((sug) => {
                           const isImage = isValidImageUrl(sug.value);
+                          const isVideo = isVideoUrl(sug.value);
                           return (
                             <div
                               key={`${sug.field}-${sug.value}`}
-                              className={`pinned-item ${isImage ? 'image' : 'text'}`}
+                              className={`pinned-item ${isImage ? 'image': isVideo ? 'video' : 'text'}`}
                               onClick={() => insertPinnedSuggestion(sug)}
                               title={t(messages.tooltipClickToInsert)}
                             >
                               {isImage ? (
                                 <img src={sug.value} alt="Pinned" />
-                              ) : (
+                              ) : isVideo ? (
+                                <video src={sug.value} controls className="pinned-video" />
+                              ) :(
                                 <div>{sug.value}</div>
                               )}
                               <button
@@ -288,6 +301,7 @@ const Copilot = () => {
                     {item.type === 'suggestions' && (
                       item.content.map((sug) => {
                         const isImage = isValidImageUrl(sug.value);
+                        const isVideo = isVideoUrl(sug.value);
                         const isPinned = pinnedSuggestions.some(p => p.value === sug.value && p.field === sug.field);
 
                         const suggestionEl = isImage ? (
@@ -298,7 +312,14 @@ const Copilot = () => {
                             className={`suggestion image-suggestion ${selectedSuggestion === sug.value ? 'selected' : ''}`}
                             onClick={() => handleSelectSuggestion(sug)}
                           />
-                        ) : (
+                        ) : isVideo ? (
+                            <video
+                              src={sug.value}
+                              controls
+                              className={`suggestion video-suggestion ${selectedSuggestion === sug.value ? 'selected' : ''}`}
+                              onClick={() => handleSelectSuggestion(sug)}
+                            />
+                          ) : (
                           <div
                             key={`${sug.field}-${sug.value}`}
                             className={`suggestion ${selectedSuggestion === sug ? 'selected' : ''}`}
@@ -326,12 +347,18 @@ const Copilot = () => {
                       })
                     )}
                     {item.type === 'image' && (
-                      <div className="message-container user">
+                      <div className="message-container video">
                         <img
                           src={item.content?.value || item.content}
                           alt={t(messages.altSelectedImage)}
                           className="image-message"
                         />
+                      </div>
+                    )}
+
+                    {item.type === "video" && (
+                      <div className="message-container user">
+                        <video src={item.content?.value || item.content} controls className="video-message" />
                       </div>
                     )}
 

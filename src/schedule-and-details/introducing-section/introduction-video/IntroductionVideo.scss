@@ -7,4 +7,10 @@
     padding: .75rem;
     height: 23.375rem;
   }
+  .introduction-video iframe,
+  .introduction-video video {
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+  }
 }

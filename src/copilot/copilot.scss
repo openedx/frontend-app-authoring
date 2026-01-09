@@ -173,6 +173,9 @@
                     // position: relative;
                     border-radius: 6px;
                     overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     border: 1px solid var(--border-color);
                     cursor: pointer;
                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -191,6 +194,11 @@
 
                     img {
                         width: 84px;
+                        object-fit: cover;
+                    }
+
+                    video {
+                        width: 240px;
                         object-fit: cover;
                     }
 
@@ -353,14 +361,14 @@
                             position: relative;
                         }
 
-                        .image-message {
+                        .image-message, .video-message {
                             max-width: 240px;
                             border-radius: 12px;
                             overflow: hidden;
                             border: 1px solid var(--border-color);
                             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-                            img {
+                            img, video {
                                 width: 100%;
                                 height: auto;
                                 display: block;
@@ -401,7 +409,8 @@
                             box-shadow: 0 0 0 1px var(--primary-alt);
                         }
 
-                        &.image-suggestion {
+                        &.image-suggestion ,
+                        &.video-suggestion{
                             padding: 0;
                             border-radius: 12px;
                             overflow: hidden;
@@ -417,7 +426,7 @@
                                 box-shadow: 0 0 0 2px var(--primary-alt);
                             }
 
-                            img {
+                            img, video {
                                 width: 100%;
                                 height: auto;
                                 display: block;

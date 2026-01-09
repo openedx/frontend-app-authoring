@@ -115,20 +115,19 @@ const PSCourseForm = ({
 
   // copilotcode
   const {
-    openCopilot,
     isOpen,
     title,
     shortDescription,
     description,
     cardImage,
     bannerImage,
+    introVideo,
     updateTitle,
     updateShortDescription,
     updateDescription,
     updateCardImage,
     updateBannerImage,
-    setAiResponse,
-    setButtons,
+    updateIntroVideo,
     handleAIButtonClick,
     aiLoading,
     showCopilotIcon,
@@ -176,6 +175,88 @@ const PSCourseForm = ({
       }
     }
   }, [bannerImage, editedValues.bannerImageAssetPath]);
+  useEffect(() => {
+    if (introVideo && introVideo !== editedValues.introVideo) {
+      console.log('Updating introVideo with:', introVideo);
+      handleInputChange('introVideo', introVideo);
+      handleValuesChange?.(introVideo, 'introVideo');
+      onFieldChange?.(introVideo, 'introVideo');
+    }
+  }, [introVideo, editedValues.introVideo]);
+
+    // Auto-scroll and highlight any field updated by Copilot
+  useEffect(() => {
+    // Helper to find the closest form group or section for a field
+    const scrollToField = (fieldName, valueFromCopilot, currentFormValue) => {
+      // Only trigger if Copilot just set a new non-empty value
+      if (!valueFromCopilot || valueFromCopilot.trim() === '' || valueFromCopilot === currentFormValue) {
+        return;
+      }
+
+      let targetElement = null;
+
+      switch (fieldName) {
+        case 'title':
+        case 'shortDescription':
+        case 'description':
+          // These are in .title-section
+          targetElement = document.querySelector('.title-section');
+          break;
+
+        case 'courseImageAssetPath':
+          // Card image upload section
+          targetElement = document.querySelector('.custom-image-upload-section-ps-form:nth-of-type(1)');
+          break;
+
+        case 'bannerImageAssetPath':
+          // Banner image upload section
+          targetElement = document.querySelector('.custom-image-upload-section-ps-form:nth-of-type(2)');
+          break;
+
+        case 'introVideo':
+          // Introduction video section (last form group in media-section)
+          targetElement = document.querySelector('.media-section .form-group:last-child')
+                         || document.querySelector('.introduction-video')
+                         || document.querySelector('.embed-video-container');
+          break;
+
+        default:
+          return;
+      }
+
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        // Gentle highlight feedback
+        targetElement.style.transition = 'background-color 1.5s ease';
+        targetElement.style.backgroundColor = 'rgba(0, 123, 255, 0.12)'; // soft blue
+        targetElement.style.borderRadius = '8px';
+        targetElement.style.padding = '4px'; // small padding for visual pop
+
+        setTimeout(() => {
+          targetElement.style.backgroundColor = '';
+          targetElement.style.padding = '';
+        }, 2000);
+      }
+    };
+
+    // Check each Copilot field
+    scrollToField('title', title, editedValues.title);
+    scrollToField('shortDescription', shortDescription, editedValues.shortDescription);
+    scrollToField('description', description, editedValues.description);
+    scrollToField('courseImageAssetPath', cardImage, editedValues.courseImageAssetPath);
+    scrollToField('bannerImageAssetPath', bannerImage, editedValues.bannerImageAssetPath);
+    scrollToField('introVideo', introVideo, editedValues.introVideo);
+  }, [
+    title, shortDescription, description,
+    cardImage, bannerImage, introVideo,
+    editedValues.title, editedValues.shortDescription, editedValues.description,
+    editedValues.courseImageAssetPath, editedValues.bannerImageAssetPath, editedValues.introVideo
+  ]);
   //end
 
   //   const { allowedOrganizations } = useSelector(getStudioHomeData);
@@ -328,6 +409,8 @@ const PSCourseForm = ({
         updateCardImage(value);
       } else if (field === 'bannerImageAssetPath') {
         updateBannerImage(value);
+      }else if (field === 'introVideo') {
+        updateIntroVideo(value);
       }
     }
 
@@ -1722,6 +1805,7 @@ const PSCourseForm = ({
                             intl={intl}
                             introVideo={editedValues.introVideo}
                             onChange={(value) => handleVideoChange(value, 'introVideo')}
+                            editedValues={editedValues}
                           />
                         </Form.Group>
                       </Stack>

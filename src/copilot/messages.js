@@ -87,6 +87,10 @@ const messages = defineMessages({
     id: 'copilot.field.bannerImage',
     defaultMessage: 'Banner Image',
   },
+  fieldIntroVideo: {
+    id: 'copilot.field.introVidoe',
+    defaultMessage: 'Intro Video',
+  },
   continueTitle: {
     id: 'copilot.continue.title',
     defaultMessage: 'Create a title using Copilot. Click Continue.',
@@ -106,6 +110,10 @@ const messages = defineMessages({
   continueBannerImage: {
     id: 'copilot.continue.bannerImage',
     defaultMessage: 'Create a Banner Image. Click Continue.'
+  },
+  continueIntroVideo: {
+    id: 'copilot.continue.introVideo',
+    defaultMessage: 'Create a Intro Video. Click Continue.',
   },
   tooltipClickToInsert: {
     id: 'copilot.tooltip.clickToInsert',

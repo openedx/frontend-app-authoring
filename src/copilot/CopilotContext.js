@@ -7,12 +7,20 @@ import { getConfig } from '@edx/frontend-platform';
 const CopilotContext = createContext(null);
 export const useCopilot = () => useContext(CopilotContext);
 
-// const BASE_API_URL = 'https://staging.titaned.com';
 
 const isValidImageUrl = (url) => {
   return typeof url === 'string' && (
     url.match(/\.(jpeg|jpg|png|gif|webp|bmp|svg)(?=\?|$)/i) ||
     url.match(/^https?:\/\/(www\.)?picsum\.photos\/.+/i)
+  );
+};
+
+const isVideoUrl = (url) => {
+  return typeof url === 'string' && (
+    url.match(/\.(mp4|webm|ogg|mov)(?=\?|$)/i) ||
+    url.includes('youtube.com') ||
+    url.includes('youtu.be') ||
+    url.includes('vimeo.com')
   );
 };
 
@@ -26,7 +34,6 @@ const debounce = (func, wait) => {
 
 export const CopilotProvider = ({ children, initialConfig = { width: 400, height: 83, position: 'right' } }) => {
   const { formatMessage } = useIntl();
-  // const t = (msg, values) => formatMessage(msg, values);
   const t = (msg, values) => {
     if (!msg || !msg.id) {
       console.warn('Missing message id in CopilotContext:', msg);
@@ -37,8 +44,8 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
 
 
   // const STUDIO_BASE = getConfig().STUDIO_BASE_URL?.replace(/\/+$/, '') ?? '';
-  const [enabledCopilot, setEnabledCopilot] = useState(false);
-  const [showCopilotIcon, setShowCopilotIcon] = useState(false);
+  const [enabledCopilot, setEnabledCopilot] = useState(true);
+  const [showCopilotIcon, setShowCopilotIcon] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [fieldData, setFieldData] = useState({ name: '', value: '' });
   const [isDocked, setIsDocked] = useState(true);
@@ -59,6 +66,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const [description, setDescription] = useState('');
   const [cardImage, setCardImage] = useState('');
   const [bannerImage, setBannerImage] = useState('');
+  const [introVideo, setIntroVideo] = useState('');
   const [aiResponse, setAiResponse] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
@@ -69,7 +77,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const [userAnswers, setUserAnswers] = useState({});
   const [pinnedSuggestions, setPinnedSuggestions] = useState([]);
   const [aiLoading, setAiLoading] = useState({
-    title: false, shortDescription: false, description: false, cardImage: false, bannerImage: false,
+    title: false, shortDescription: false, description: false, cardImage: false, bannerImage: false, introVideo: false,
   });
   const [lastFailedAction, setLastFailedAction] = useState(null);
 
@@ -102,28 +110,10 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   };
 
-  // const getToken = async () => {
-  //   const res = await fetch(`${BASE_API_URL}/oauth2/access_token`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //     body: new URLSearchParams({
-  //       grant_type: "password",
-  //       client_id: "mrClisF8yB0nCcrDxCXQQkk1IKr5k4x0j8DN8wwZ",
-  //       username: "admin",
-  //       password: "edx",
-  //     }),
-  //   });
-  //   if (!res.ok) throw new Error("Token fetch failed");
-  //   const data = await res.json();
-  //   return data.access_token;
-  // };
-
-  // const client = getAuthenticatedHttpClient();
-
   const handleAIButtonClick = async (fieldName, fieldValue) => {
     let effectiveValue = fieldValue?.trim() || "";
-    if (!effectiveValue && !['cardImage', 'bannerImage'].includes(fieldName)) return;
-    if (['cardImage', 'bannerImage'].includes(fieldName)) {
+    if (!effectiveValue && !['cardImage', 'bannerImage', 'introVideo'].includes(fieldName)) return;
+    if (['cardImage', 'bannerImage', 'introVideo'].includes(fieldName)) {
       effectiveValue = title?.trim() || "";
       if (!effectiveValue) return;
     }
@@ -139,19 +129,21 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         description: { url: 'suggest-full-descriptions/', key: 'user_long_description' },
         cardImage: { url: 'suggest-images/', key: 'title' },
         bannerImage: { url: 'suggest-images/', key: 'title' },
+        introVideo: { url: 'suggest-videos/', key: 'title' },
       }[fieldName];
 
-      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      //   body: JSON.stringify({ [config.key]: effectiveValue }),
-      // });
-      // const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${config.url}`, {
-      //   [config.key]: effectiveValue,
-      // });
-      // if (!res.ok) throw new Error("Suggestion failed");
-      // return await res.json();
+      // for local api fetch 
 
+      // try {
+      //   const res = await getAuthenticatedHttpClient().post(
+      //     `LMS_API_DOMAIN/chat/v1/${config.url}`,
+      //     { [config.key]: effectiveValue }
+      //   );
+      //   return res.data;
+
+      // } catch (err) {
+      //   throw new Error("Suggestion failed");
+      // }
       try {
         const res = await getAuthenticatedHttpClient().post(
           `${getConfig().LMS_BASE_URL}/chat/v1/${config.url}`,
@@ -178,6 +170,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const updateDescription = (v) => setDescription(v);
   const updateCardImage = (v) => setCardImage(v);
   const updateBannerImage = (v) => setBannerImage(v);
+  const updateIntroVideo = (v) => setIntroVideo(v);
 
   const getReadableFieldName = (field) => t(messages[`field${field.charAt(0).toUpperCase() + field.slice(1)}`]);
 
@@ -254,21 +247,6 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     setSize({ w, h });
   };
 
-  // const pinSuggestion = (sug) => {
-  //   if (!pinnedSuggestions.some(p => p.value === sug.value && p.field === sug.field)) {
-  //     setPinnedSuggestions(prev => [...prev, sug]);
-  //   }
-  // };
-
-  // const unpinSuggestion = (sug) => {
-  //   setPinnedSuggestions(prev => prev.filter(p => !(p.value === sug.value && p.field === sug.field)));
-  // };
-
-  // const insertPinnedSuggestion = (sug) => {
-  //   handleSelectSuggestion(sug);
-  //   // setPinnedSuggestions([]); // Clear all pinned
-  // };
-
   // Field order for sorting
   const FIELD_ORDER = {
     title: 0,
@@ -276,6 +254,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     description: 2,
     cardImage: 3,
     bannerImage: 4,
+    introVideo: 5,
   };
 
   // Helper: Sort pinned suggestions by field order
@@ -322,34 +301,36 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       description: { url: 'suggest-full-descriptions/', bodyKey: 'user_long_description' },
       cardImage: { url: 'suggest-images/', bodyKey: 'title' },
       bannerImage: { url: 'suggest-images/', bodyKey: 'title' },
+      introVideo: {url: 'suggest-videos/', bodyKey: 'title'},
     };
     return map[field] || map.title;
   };
 
   const getPreviousValue = (field) => {
-    const map = { shortDescription: title, description: shortDescription || title, cardImage: title, bannerImage: title };
+    const map = { shortDescription: title, description: shortDescription || title, cardImage: title, bannerImage: title, introVideo: title };
     return (map[field] || '')?.trim();
   };
 
   const getCurrentFieldValue = (field) => {
-    const map = { title, shortDescription, description, cardImage: title, bannerImage: title };
+    const map = { title, shortDescription, description, cardImage: title, bannerImage: title, introVideo: title };
     return (map[field] || '')?.trim();
   };
 
   const fetchQuestions = async (field) => {
     setChatHistory(prev => [...prev, { type: 'text', sender: 'user', content: t(messages.customizeRequest) }]);
     const action = async () => {
-      // const token = await getToken();
-      // const res = await fetch(`${BASE_API_URL}/chat/v1/prediction-questions/`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      // });
+      // for local api fetch
 
+      // try {
+      //   const res = await getAuthenticatedHttpClient().post(
+      //     `LMS_API_DOMAIN/chat/v1/prediction-questions/`,
+      //     {}
+      //   );
+      //   return res.data;
 
-      // const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/prediction-questions/`, {});
-      // if (!res.ok) throw new Error("Failed to fetch questions");
-      // return await res.json();
-
+      // } catch (err) {
+      //   throw new Error("Failed to fetch questions");
+      // }
       try {
         const res = await getAuthenticatedHttpClient().post(
           `${getConfig().LMS_BASE_URL}/chat/v1/prediction-questions/`,
@@ -379,21 +360,23 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
 
     const action = async () => {
-      // const token = await getToken();
-      // const config = getApiConfig(field);
-      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      //   body: JSON.stringify({ [config.bodyKey]: value, ...(more && { more_suggestions: true }) }),
-      // });
 
       const cfg = getApiConfig(field);
       const payload = { [cfg.bodyKey]: value, };
       if (more) payload.more_suggestions = true;
 
-      // const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${cfg.url}`, payload);
-      // if (!res.ok) throw new Error("Failed to fetch suggestions");
-      // return await res.json();
+      // for local api url
+
+      // try {
+      //   const res = await getAuthenticatedHttpClient().post(
+      //     `LMS_API_DOMAIN/chat/v1/${cfg.url}`,
+      //     payload
+      //   );
+      //   return res.data;
+
+      // } catch (err) {
+      //   throw new Error("Failed to fetch suggestions");
+      // }
 
       try {
         const res = await getAuthenticatedHttpClient().post(
@@ -414,22 +397,26 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const submitCustomAnswers = async (field = fieldData.name) => {
     setChatHistory(prev => [...prev, { type: 'text', sender: 'ai', content: t(messages.generating) }]);
     const action = async () => {
-      // const token = await getToken();
-      // const config = getApiConfig(field);
-      // const res = await fetch(`${BASE_API_URL}/chat/v1/${config.url}`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      //   body: JSON.stringify({ [config.bodyKey]: getCurrentFieldValue(field), ...userAnswers, custom_flow: true }),
-      // });
       const cfg = getApiConfig(field);
       const payload = {
         [cfg.bodyKey]: getCurrentFieldValue(field),
         ...userAnswers,
         custom_flow: true,
       };
-      // const res = await getAuthenticatedHttpClient().post(`${getConfig().LMS_BASE_URL}/chat/v1/${cfg.url}`, payload);
-      // if (!res.ok) throw new Error("Failed to submit answers");
-      // return await res.json();
+
+      // for local api fetch
+
+      // try {
+      //   const res = await getAuthenticatedHttpClient().post(
+      //     `LMS_API_DOMAIN/chat/v1/${cfg.url}`,
+      //     payload
+      //   );
+
+      //   return res.data;
+
+      // } catch (err) {
+      //   throw new Error("Failed to submit answers");
+      // }
 
       try {
         const res = await getAuthenticatedHttpClient().post(
@@ -484,17 +471,8 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       case 'customize':
         handleCustomize();
         break;
-      // case 'continue':
-      //   const next = { title: 'shortDescription', shortDescription: 'description', description: 'cardImage', cardImage: 'bannerImage' };
-      //   const nextField = next[fieldData.name];
-      //   if (nextField) {
-      //     setFieldData({ name: nextField, value: '' });
-      //     setPrompt('');
-      //     fetchSuggestions(getCurrentFieldValue(fieldData.name), nextField);
-      //   }
-      //   break;
       case 'continue': {
-        const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage'];
+        const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage', 'introVideo'];
         const currentIndex = fieldOrder.indexOf(fieldData.name);
         const remainingFields = fieldOrder.slice(currentIndex + 1);
 
@@ -506,6 +484,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
             description,
             cardImage,
             bannerImage,
+            introVideo,
           }[f];
           return !value || value.trim() === '';
         });
@@ -571,14 +550,14 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   };
 
   useEffect(() => {
-    // const client = getAuthenticatedHttpClient();
-    // const LMS_BASE = getConfig().LMS_BASE_URL?.replace(/\/+$/, '') ?? '';
 
     const fetchMenuConfig = async () => {
       try {
+
+        // for local api fetch
+
+        // const response = await getAuthenticatedHttpClient().get(`STUDIO_API_DOMAIN/titaned/api/v1/menu-config/`);
         const response = await getAuthenticatedHttpClient().get(`${getConfig().STUDIO_BASE_URL}/titaned/api/v1/menu-config/`);
-        // const response = await getAuthenticatedHttpClient().get('https://studio.staging.titaned.com/titaned/api/v1/menu-config/');
-        // const response = await client.get(`${LMS_BASE}/titaned/api/v1/mfe_context/`);
 
         const data = response.data;
 
@@ -586,8 +565,6 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         setShowCopilotIcon(!!data.show_copilot_icon);
       } catch (err) {
         console.log('Failed to load menu-config for Copilot:', err);
-        setEnabledCopilot(false);
-        setShowCopilotIcon(false);
       }
     };
 
@@ -608,91 +585,6 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     }
   }, [dragging, resizing]);
 
-  // useEffect(() => {
-  //   // SELECTORS — Adjust if your app uses different classes
-  //   const sidebar = document.querySelector('.sidebar, [data-testid="sidebar"], #sidebar, .pgn__sidebar');
-  //   const navbar = document.querySelector('.navbar, header, [data-testid="navbar"], .pgn__navbar');
-  //   const feedbackBanner = document.querySelector('.feedback-banner, .alert, .toast, [data-testid="feedback-banner"], .pgn__alert');
-
-  //   // Avoid running if elements don't exist
-  //   if (!sidebar && !navbar && !feedbackBanner) return;
-
-  //   let latestSidebar = 0;
-  //   let latestNavbar = 0;
-  //   let latestFeedback = 0;
-
-  //   const updateLayout = () => {
-  //     const sidebarRect = sidebar?.getBoundingClientRect();
-  //     const navbarRect = navbar?.getBoundingClientRect();
-  //     const feedbackRect = feedbackBanner?.getBoundingClientRect();
-
-  //     const newSidebar = sidebarRect ? sidebarRect.width : 0;
-  //     const newNavbar = navbarRect ? navbarRect.height : 0;
-  //     const newFeedback = feedbackRect ? feedbackRect.height : 0;
-
-  //     if (
-  //       newSidebar !== latestSidebar ||
-  //       newNavbar !== latestNavbar ||
-  //       newFeedback !== latestFeedback
-  //     ) {
-  //       latestSidebar = newSidebar;
-  //       latestNavbar = newNavbar;
-  //       latestFeedback = newFeedback;
-
-  //       setSidebarWidth(newSidebar);
-  //       setNavbarHeight(newNavbar);
-  //       setFeedbackBannerHeight(newFeedback);
-
-  //       // Auto-resize fullscreen
-  //       if (isFullScreen) {
-  //         setSize({
-  //           w: window.innerWidth - newSidebar - 40,
-  //           h: window.innerHeight - newFeedback - newNavbar - 16
-  //         });
-  //         setPos({
-  //           x: newSidebar + 20,
-  //           y: newFeedback + newNavbar + 15
-  //         });
-  //       }
-  //     }
-  //   };
-
-  //   // ResizeObserver for size changes
-  //   const resizeObserver = new ResizeObserver(debounce(updateLayout, 50));
-
-  //   if (sidebar) resizeObserver.observe(sidebar);
-  //   if (navbar) resizeObserver.observe(navbar);
-  //   if (feedbackBanner) resizeObserver.observe(feedbackBanner);
-
-  //   // MutationObserver for show/hide (class changes, etc.)
-  //   const mutationObserver = new MutationObserver(debounce(updateLayout, 100));
-  //   mutationObserver.observe(document.body, {
-  //     childList: true,
-  //     subtree: true,
-  //     attributes: true,
-  //     attributeFilter: ['class', 'style']
-  //   });
-
-  //   // Initial measure
-  //   updateLayout();
-
-  //   // Cleanup
-  //   return () => {
-  //     resizeObserver.disconnect();
-  //     mutationObserver.disconnect();
-  //   };
-  // }, [isFullScreen]); // Re-run if fullscreen state changes
-
-  // useEffect(() => {
-  //   if (isFullScreen) {
-  //     const resize = debounce(() => {
-  //       setSize({ w: window.innerWidth - sidebarWidth - 40, h: window.innerHeight - feedbackBannerHeight - navbarHeight - 16 });
-  //       setPos({ x: sidebarWidth + 20, y: feedbackBannerHeight + navbarHeight + 15 });
-  //     }, 100);
-  //     window.addEventListener('resize', resize); resize();
-  //     return () => window.removeEventListener('resize', resize);
-  //   }
-  // }, [isFullScreen, sidebarWidth, feedbackBannerHeight, navbarHeight]);
 
   // PERFECT FEEDBACK BANNER + SIDEBAR + NAVBAR DETECTION
   useEffect(() => {
@@ -809,15 +701,15 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
   const insertSuggestion = (sug, add = true) => {
     const value = typeof sug === 'string' ? sug : sug.value;
     const targetField = typeof sug === 'string' ? fieldData.name : sug.field;
-    const map = { title: updateTitle, shortDescription: updateShortDescription, description: updateDescription, cardImage: updateCardImage, bannerImage: updateBannerImage };
+    const map = { title: updateTitle, shortDescription: updateShortDescription, description: updateDescription, cardImage: updateCardImage, bannerImage: updateBannerImage, introVideo: updateIntroVideo };
     map[targetField]?.(value);
     if (add) {
-      const messageContent = isValidImageUrl(value)
-        ? { value }
-        : value;
+      const messageContent = isValidImageUrl(value) || isVideoUrl(value)
+      ? { value }
+      : value;
 
       setChatHistory(prev => [...prev, {
-        type: isValidImageUrl(value) ? 'image' : 'text',
+        type: isVideoUrl(value) ? 'video' : isValidImageUrl(value) ? 'image' : 'text',
         sender: 'user',
         content: messageContent
       }]);
@@ -843,6 +735,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
       description: updateDescription,
       cardImage: updateCardImage,
       bannerImage: updateBannerImage,
+      introVideo: updateIntroVideo,
     };
 
     updaters[targetField]?.(value);
@@ -861,7 +754,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     ]);
 
     // ✅ Find next EMPTY field (same logic as your 'continue' case)
-    const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage'];
+    const fieldOrder = ['title', 'shortDescription', 'description', 'cardImage', 'bannerImage', 'introVideo'];
     const currentIndex = fieldOrder.indexOf(targetField);
     const remainingFields = fieldOrder.slice(currentIndex + 1);
 
@@ -872,6 +765,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
         description,
         cardImage,
         bannerImage,
+        introVideo,
       }[f];
       return !value || value.trim() === '';
     });
@@ -899,7 +793,7 @@ export const CopilotProvider = ({ children, initialConfig = { width: 400, height
     chatHistory, selectedSuggestion, prompt, setPrompt, buttons, questions, currentQuestionIndex,
     handleSelectSuggestion, sendPrompt, handleButtonAction, handleAnswer, handleAIButtonClick, aiLoading,
     t, retryLastAction, getReadableFieldName, sidebarWidth, feedbackBannerHeight, navbarHeight, pinnedSuggestions,
-    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions, enabledCopilot, showCopilotIcon, openCopilotReview,
+    pinSuggestion, unpinSuggestion, insertPinnedSuggestion, getSortedPinnedSuggestions, enabledCopilot, showCopilotIcon, openCopilotReview, introVideo, updateIntroVideo,
   };
 
   return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;

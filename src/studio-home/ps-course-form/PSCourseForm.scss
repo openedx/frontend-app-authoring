@@ -481,6 +481,11 @@ body {
         margin-left: 0.25rem;
         font-weight: bold;
     }
+    .form-group-custom{
+        .pgn__form-label{
+            display: flex;
+        }
+    }
 
     .form-group-custom .pgn__form-label,
     // Override font for labels within DatepickerControl
