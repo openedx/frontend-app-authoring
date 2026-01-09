@@ -328,9 +328,9 @@ const SubsectionCard = ({
                 readyToSync={upstreamInfo?.readyToSync}
               />
               {
-                /* This is a special case; we can skip accessibility here since the
-                SectionCard handles that. This onClick allows the user to select the card
-                by clicking on white areas of this component. */
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SubsectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
               }
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 className="subsection-card__content item-children"

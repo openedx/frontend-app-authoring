@@ -1,4 +1,5 @@
 import type { IntlShape, MessageDescriptor } from 'react-intl';
+import { getConfig } from '@edx/frontend-platform';
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
@@ -204,6 +205,13 @@ const getVideoSharingOptionText = (
   }
 };
 
+/**
+ * Returns `true` if the new design for the course outline is enabled
+ */
+const isOutlineNewDesignEnabled = () => (
+  getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true'
+);
+
 export {
   getItemStatus,
   getItemStatusBadgeContent,
@@ -211,4 +219,5 @@ export {
   getHighlightsFormValues,
   getVideoSharingOptionText,
   scrollToElement,
+  isOutlineNewDesignEnabled,
 };

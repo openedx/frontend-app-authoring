@@ -333,9 +333,9 @@ const SectionCard = ({
             )}
             <div className="section-card__content" data-testid="section-card__content">
               {
-                /* This is a special case; we can skip accessibility here since the
-                SectionCard handles that. This onClick allows the user to select the card
-                by clicking on white areas of this component. */
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
               }
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 className="outline-section__status mb-1"
@@ -355,9 +355,9 @@ const SectionCard = ({
                 </Button>
               </div>
               {
-                /* This is a special case; we can skip accessibility here since the
-                SectionCard handles that. This onClick allows the user to select the card
-                by clicking on white areas of this component. */
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
               }
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 /* istanbul ignore next */

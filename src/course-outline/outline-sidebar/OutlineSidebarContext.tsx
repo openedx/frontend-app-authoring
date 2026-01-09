@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import { useToggle } from '@openedx/paragon';
 import { HelpOutline, Info, Plus } from '@openedx/paragon/icons';
 
@@ -16,6 +15,7 @@ import { OutlineInfoSidebar } from './OutlineInfoSidebar';
 
 import messages from './messages';
 import { AddSidebar } from './AddSidebar';
+import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
@@ -42,7 +42,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
   const openContainerInfoSidebar = useCallback((containerId: string) => {
-    if (getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true') {
+    if (isOutlineNewDesignEnabled()) {
       setSelectedContainerId(containerId);
     }
   }, [setSelectedContainerId]);
