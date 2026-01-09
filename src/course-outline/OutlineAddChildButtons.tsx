@@ -97,6 +97,8 @@ const OutlineAddChildButtons = ({
     newButton: messages.newUnitButton,
     importButton: messages.useUnitFromLibraryButton,
   };
+  let onNewCreateContent: () => Promise<void>;
+  let flowType: OutlineFlowType;
 
   switch (childType) {
     case ContainerType.Section:
@@ -104,74 +106,43 @@ const OutlineAddChildButtons = ({
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
       };
+      onNewCreateContent = () => handleAddSection.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+      flowType = 'use-section';
       break;
     case ContainerType.Subsection:
       messageMap = {
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
       };
+      onNewCreateContent = () => handleAddSubsection.mutateAsync({
+        type: ContainerType.Sequential,
+        parentLocator,
+        displayName: COURSE_BLOCK_NAMES.sequential.name,
+      });
+      flowType = 'use-subsection';
       break;
     case ContainerType.Unit:
       messageMap = {
         newButton: messages.newUnitButton,
         importButton: messages.useUnitFromLibraryButton,
       };
+      onNewCreateContent = () => handleAddUnit.mutateAsync({
+        type: ContainerType.Vertical,
+        parentLocator,
+        displayName: COURSE_BLOCK_NAMES.vertical.name,
+      });
+      flowType = 'use-unit';
       break;
     default:
-      break;
+      // istanbul ignore next: unreachable
+      throw new Error(`Unrecognized block type ${childType}`);
   }
 
-  const onNewCreateContent = useCallback(async () => {
-    switch (childType) {
-      case ContainerType.Section:
-        await handleAddSection.mutateAsync({
-          type: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          displayName: COURSE_BLOCK_NAMES.chapter.name,
-        });
-        break;
-      case ContainerType.Subsection:
-        await handleAddSubsection.mutateAsync({
-          type: ContainerType.Sequential,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.sequential.name,
-        });
-        break;
-      case ContainerType.Unit:
-        await handleAddUnit.mutateAsync({
-          type: ContainerType.Vertical,
-          parentLocator,
-          displayName: COURSE_BLOCK_NAMES.vertical.name,
-        });
-        break;
-      default:
-        // istanbul ignore next: unreachable
-        throw new Error(`Unrecognized block type ${childType}`);
-    }
-  }, [
-    childType,
-    courseUsageKey,
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
-  ]);
-
   const onUseLibraryContent = useCallback(async () => {
-    let flowType: OutlineFlowType;
-    switch (childType) {
-      case ContainerType.Section:
-        flowType = 'use-section';
-        break;
-      case ContainerType.Subsection:
-        flowType = 'use-subsection';
-        break;
-      case ContainerType.Unit:
-        flowType = 'use-unit';
-        break;
-      default:
-        // istanbul ignore next: unreachable
-        throw new Error(`Unrecognized block type ${childType}`);
-    }
     startCurrentFlow({
       flowType,
       parentLocator,
