@@ -20,6 +20,13 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    getUnitUrl: (id: string) => `/some/${id}`,
+  }),
+}));
+
 const section = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@section+block@0',
   displayName: 'Section Name',
@@ -76,33 +83,31 @@ const unit = {
 } satisfies Partial<XBlock> as XBlock;
 
 const renderComponent = (props?: object) => render(
-  <OutlineSidebarProvider>
-    <UnitCard
-      section={section}
-      subsection={subsection}
-      unit={unit}
-      index={1}
-      getPossibleMoves={jest.fn()}
-      onOrderChange={jest.fn()}
-      onOpenPublishModal={jest.fn()}
-      onOpenDeleteModal={jest.fn()}
-      onOpenUnlinkModal={jest.fn()}
-      onOpenConfigureModal={jest.fn()}
-      onEditSubmit={jest.fn()}
-      onDuplicateSubmit={jest.fn()}
-      getTitleLink={(id) => `/some/${id}`}
-      isSelfPaced={false}
-      isCustomRelativeDatesActive={false}
-      discussionsSettings={{
-        providerType: '',
-        enableGradedUnits: false,
-      }}
-      {...props}
-    />
-  </OutlineSidebarProvider>,
+  <UnitCard
+    section={section}
+    subsection={subsection}
+    unit={unit}
+    index={1}
+    getPossibleMoves={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    onEditSubmit={jest.fn()}
+    onDuplicateSubmit={jest.fn()}
+    isSelfPaced={false}
+    isCustomRelativeDatesActive={false}
+    discussionsSettings={{
+      providerType: '',
+      enableGradedUnits: false,
+    }}
+    {...props}
+  />,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
+    extraWrapper: OutlineSidebarProvider,
   },
 );
 

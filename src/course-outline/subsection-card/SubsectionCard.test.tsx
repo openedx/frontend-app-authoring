@@ -10,7 +10,7 @@ import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
-const handleOnAddUnitFromLibrary = jest.fn();
+const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn() };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -24,6 +24,14 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    handleNewUnitSubmit: jest.fn(),
+    handleAddUnitFromLibrary: handleOnAddUnitFromLibrary,
+  }),
+}));
+
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: () => ({
@@ -31,9 +39,9 @@ jest.mock('react-redux', () => ({
   }),
 }));
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('@src/library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
@@ -108,37 +116,34 @@ const section: XBlock = {
 const onEditSubectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <OutlineSidebarProvider>
-    <SubsectionCard
-      section={section}
-      subsection={subsection}
-      index={1}
-      isSelfPaced={false}
-      getPossibleMoves={jest.fn()}
-      onOrderChange={jest.fn()}
-      onOpenPublishModal={jest.fn()}
-      onOpenDeleteModal={jest.fn()}
-      onOpenUnlinkModal={jest.fn()}
-      onNewUnitSubmit={jest.fn()}
-      onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
-      isCustomRelativeDatesActive={false}
-      onEditSubmit={onEditSubectionSubmit}
-      onDuplicateSubmit={jest.fn()}
-      onOpenConfigureModal={jest.fn()}
-      onPasteClick={jest.fn()}
-      resetScrollState={jest.fn()}
-      isSectionsExpanded={false}
-      {...props}
-    >
-      <span>children</span>
-    </SubsectionCard>
-  </OutlineSidebarProvider>,
+  <SubsectionCard
+    section={section}
+    subsection={subsection}
+    index={1}
+    isSelfPaced={false}
+    getPossibleMoves={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
+    isCustomRelativeDatesActive={false}
+    onEditSubmit={onEditSubectionSubmit}
+    onDuplicateSubmit={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    onPasteClick={jest.fn()}
+    resetScrollState={jest.fn()}
+    isSectionsExpanded={false}
+    {...props}
+  >
+    <span>children</span>
+  </SubsectionCard>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },
+    extraWrapper: OutlineSidebarProvider,
   },
 );
 
@@ -352,8 +357,8 @@ describe('<SubsectionCard />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
+    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalled();
+    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       category: 'vertical',

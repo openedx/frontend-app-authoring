@@ -6,6 +6,7 @@ import {
   COMPONENT_TYPE_ICON_MAP,
   STRUCTURAL_TYPE_ICONS,
   COMPONENT_TYPE_STYLE_COLOR_MAP,
+  ICON_BORDER_STYLE_COLOR_MAP,
 } from './constants';
 
 import messages from './messages';
@@ -16,6 +17,10 @@ export function getItemIcon(blockType: string): React.ComponentType {
 
 export function getComponentStyleColor(blockType: string): string {
   return COMPONENT_TYPE_STYLE_COLOR_MAP[blockType] ?? COMPONENT_TYPE_STYLE_COLOR_MAP.other;
+}
+
+export function getIconBorderStyleColor(blockType: string): string {
+  return ICON_BORDER_STYLE_COLOR_MAP[blockType] ?? ICON_BORDER_STYLE_COLOR_MAP.other;
 }
 
 interface ComponentIconProps {

@@ -1,6 +1,12 @@
 .sidebar {
   .sidebar-content {
-      width: 400px;
+    flex: 0 1 auto;
+    max-width: 700px;
+    min-width: 650px;
+    overflow-y: auto;
+    min-height: 100vh;
+    height: 100%;
+    max-height: 300vh;
   }
 
   .dropdown-toggle {
@@ -38,7 +44,8 @@
       &:hover {
         border-width: 2px;
       }
-      
+
+      // Add a triangle to the active button
       &.btn-icon-primary-active::before {
         content: "";
         border-right: 5px solid var(--pgn-color-primary-base);

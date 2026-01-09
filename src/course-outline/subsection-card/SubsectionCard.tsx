@@ -2,7 +2,7 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback, ReactNode, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StandardModal, useToggle } from '@openedx/paragon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ import TitleButton from '@src/course-outline/card-header/TitleButton';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
@@ -29,6 +29,7 @@ import OutlineAddChildButtons from '@src/course-outline/OutlineAddChildButtons';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
@@ -45,16 +46,6 @@ interface SubsectionCardProps {
   onOpenDeleteModal: () => void,
   onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
-  onNewUnitSubmit: (subsectionId: string) => void,
-  onAddUnitFromLibrary: (options: {
-    type: string,
-    category?: string,
-    parentLocator: string,
-    displayName?: string,
-    boilerplate?: string,
-    stagedContent?: string,
-    libraryContentKey: string,
-  }) => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
@@ -78,8 +69,6 @@ const SubsectionCard = ({
   onOpenDeleteModal,
   onOpenUnlinkModal,
   onDuplicateSubmit,
-  onNewUnitSubmit,
-  onAddUnitFromLibrary,
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
@@ -102,7 +91,7 @@ const SubsectionCard = ({
     openAddLibraryUnitModal,
     closeAddLibraryUnitModal,
   ] = useToggle(false);
-  const { courseId } = useParams();
+  const { courseId, handleNewUnitSubmit, handleAddUnitFromLibrary } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -198,7 +187,7 @@ const SubsectionCard = ({
     onOrderChange(section, moveDownDetails);
   };
 
-  const handleNewButtonClick = () => onNewUnitSubmit(id);
+  const handleNewButtonClick = () => handleNewUnitSubmit(id);
   const handlePasteButtonClick = () => onPasteClick(id, section.id);
 
   const titleComponent = (
@@ -262,14 +251,14 @@ const SubsectionCard = ({
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit: SelectedComponent) => {
-    onAddUnitFromLibrary({
+    handleAddUnitFromLibrary.mutateAsync({
       type: COMPONENT_TYPES.libraryV2,
       category: ContainerType.Vertical,
       parentLocator: id,
       libraryContentKey: selectedUnit.usageKey,
     });
     closeAddLibraryUnitModal();
-  }, [id, onAddUnitFromLibrary, closeAddLibraryUnitModal]);
+  }, [id, handleAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
@@ -392,7 +381,7 @@ const SubsectionCard = ({
         isOverflowVisible={false}
         size="xl"
       >
-        <ComponentPicker
+        <LibraryAndComponentPicker
           showOnlyPublished
           extraFilter={['block_type = "unit"']}
           componentPickerMode="single"

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
@@ -25,6 +25,7 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
@@ -38,7 +39,6 @@ interface UnitCardProps {
   onOpenDeleteModal: () => void;
   onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
-  getTitleLink: (locator: string) => string;
   index: number;
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
@@ -65,7 +65,6 @@ const UnitCard = ({
   onOpenDeleteModal,
   onOpenUnlinkModal,
   onDuplicateSubmit,
-  getTitleLink,
   onOrderChange,
   discussionsSettings,
 }: UnitCardProps) => {
@@ -80,7 +79,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId } = useParams();
+  const { courseId, getUnitUrl } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -177,7 +176,7 @@ const UnitCard = ({
   const titleComponent = (
     <TitleLink
       title={displayName}
-      titleLink={getTitleLink(id)}
+      titleLink={getUnitUrl(id)}
       namePrefix={namePrefix}
       prefixIcon={(
         <UpstreamInfoIcon

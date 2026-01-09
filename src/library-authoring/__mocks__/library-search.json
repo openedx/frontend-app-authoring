@@ -525,13 +525,101 @@
           "published": {
             "display_name": "Published Test Unit"
           }
+        },
+        {
+          "display_name": "Test subsection",
+          "block_id": "test-subsection-9284e2",
+          "id": "lctAximTESTunittest-subsection-9284e2-a9a4386e",
+          "type": "library_container",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1742221203.895054,
+          "modified": 1742221203.895054,
+          "usage_key": "lct:org:lib:subsection:test-unit-9a207",
+          "block_type": "subsection",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "num_children": 0,
+          "_formatted": {
+            "display_name": "Test subsection",
+            "block_id": "test-subsection-9284e2",
+            "id": "lctAximTESTunittest-subsection-9284e2-a9a4386e",
+            "type": "library_container",
+            "breadcrumbs": [
+              {
+                "display_name": "Test Library"
+              }
+            ],
+            "created": "1742221203.895054",
+            "modified": "1742221203.895054",
+            "usage_key": "lct:org:lib:unit:test-subsection-9a207",
+            "block_type": "subsection",
+            "context_key": "lib:Axim:TEST",
+            "org": "Axim",
+            "access_id": "15",
+            "num_children": "0",
+            "published": {
+              "display_name": "Published Test subsection"
+            }
+          },
+          "published": {
+            "display_name": "Published Test subsection"
+          }
+        },
+        {
+          "display_name": "Test section",
+          "block_id": "test-section-9284e2",
+          "id": "lctAximTESTunittest-section-9284e2-a9a4386e",
+          "type": "library_container",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1742221203.895054,
+          "modified": 1742221203.895054,
+          "usage_key": "lct:org:lib:section:test-unit-9a207",
+          "block_type": "section",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "num_children": 0,
+          "_formatted": {
+            "display_name": "Test section",
+            "block_id": "test-section-9284e2",
+            "id": "lctAximTESTunittest-section-9284e2-a9a4386e",
+            "type": "library_container",
+            "breadcrumbs": [
+              {
+                "display_name": "Test Library"
+              }
+            ],
+            "created": "1742221203.895054",
+            "modified": "1742221203.895054",
+            "usage_key": "lct:org:lib:unit:test-section-9a207",
+            "block_type": "section",
+            "context_key": "lib:Axim:TEST",
+            "org": "Axim",
+            "access_id": "15",
+            "num_children": "0",
+            "published": {
+              "display_name": "Published Test section"
+            }
+          },
+          "published": {
+            "display_name": "Published Test section"
+          }
         }
       ],
       "query": "",
       "processingTimeMs": 1,
       "limit": 20,
       "offset": 0,
-      "estimatedTotalHits": 10
+      "estimatedTotalHits": 19
     },
     {
       "indexUid": "studio_content",

@@ -9,6 +9,7 @@ import {
 import { ContainerType } from '@src/generic/key-utils';
 import type { ToastActionData } from '@src/generic/toast-context';
 import { mockContentSearchConfig, mockSearchResult, hydrateSearchResult } from '@src/search-manager/data/api.mock';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   mockContentLibrary,
   mockGetContainerChildren,
@@ -111,19 +112,18 @@ const render = (
     path,
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        showOnlyPublished={showOnlyPublished}
-      >
-        <SidebarProvider
-          initialSidebarItemInfo={{
-            id: containerId,
-            type: SidebarBodyItemId.ContainerInfo,
-          }}
-        >
-          {children}
-        </SidebarProvider>
-      </LibraryProvider>
+      <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+        <LibraryProvider libraryId={libraryId}>
+          <SidebarProvider
+            initialSidebarItemInfo={{
+              id: containerId,
+              type: SidebarBodyItemId.ContainerInfo,
+            }}
+          >
+            {children}
+          </SidebarProvider>
+        </LibraryProvider>
+      </PublishedFilterContextProvider>
     ),
   });
 };
@@ -249,8 +249,8 @@ let mockShowToast: { (message: string, action?: ToastActionData): void; mock?: a
           'i',
         ))).toBeInTheDocument();
       }
-      expect(await screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
-      expect(await screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
+      expect(screen.queryAllByText('Will Publish').length).toBe(willPublishCount);
+      expect(screen.queryAllByText('Draft').length).toBe(4 - willPublishCount);
 
       // Click on the confirm Cancel button
       const publishCancel = await screen.findByRole('button', { name: 'Cancel' });

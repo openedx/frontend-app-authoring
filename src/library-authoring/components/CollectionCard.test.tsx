@@ -2,6 +2,7 @@ import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
 import { mockContentLibrary } from '@src/library-authoring/data/api.mocks';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import {
   initializeMocks, render as baseRender, screen, waitFor, within, fireEvent,
 } from '../../testUtils';
@@ -54,12 +55,11 @@ const render = (
   path: '/library/:libraryId',
   params: { libraryId: libId },
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libId}
-      showOnlyPublished={showOnlyPublished}
-    >
-      {children}
-    </LibraryProvider>
+    <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+      <LibraryProvider libraryId={libId}>
+        {children}
+      </LibraryProvider>
+    </PublishedFilterContextProvider>
   ),
 });
 

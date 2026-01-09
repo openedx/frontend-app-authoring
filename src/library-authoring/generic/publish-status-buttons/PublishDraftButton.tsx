@@ -1,7 +1,7 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 
 import messages from './messages';
 
@@ -22,7 +22,7 @@ export const PublishDraftButton = ({
   onClick,
 }: PublishDraftButtonProps) => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
 
   return (
     <Button

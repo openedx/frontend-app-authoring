@@ -8,15 +8,16 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { useToggle } from '@openedx/paragon';
-import { HelpOutline, Info } from '@openedx/paragon/icons';
+import { HelpOutline, Info, Plus } from '@openedx/paragon/icons';
 
 import type { SidebarPage } from '@src/generic/sidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { OutlineInfoSidebar } from './OutlineInfoSidebar';
 
 import messages from './messages';
+import { AddSidebar } from './AddSidebar';
 
-export type OutlineSidebarPageKeys = 'help' | 'info';
+export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
 
 interface OutlineSidebarContextData {
@@ -61,6 +62,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       component: OutlineHelpSidebar,
       icon: HelpOutline,
       title: intl.formatMessage(messages.sidebarButtonHelp),
+    },
+    add: {
+      component: AddSidebar,
+      icon: Plus,
+      title: intl.formatMessage(messages.sidebarButtonAdd),
+      hideFromActionMenu: true,
     },
   } satisfies OutlineSidebarPages;
 

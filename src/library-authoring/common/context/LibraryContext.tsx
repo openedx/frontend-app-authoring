@@ -34,8 +34,6 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   containerId: string | undefined;
   setContainerId: (containerId?: string) => void;
-  // Only show published components
-  showOnlyPublished: boolean;
   // Additional filtering
   extraFilter?: string[];
   // "Create New Collection" modal
@@ -66,17 +64,16 @@ export type LibraryContextData = {
 const LibraryContext = createContext<LibraryContextData | undefined>(undefined);
 
 type LibraryProviderProps = {
-  children?: React.ReactNode;
   libraryId: string;
-  showOnlyPublished?: boolean;
+  children?: React.ReactNode;
   extraFilter?: string[]
   // If set, will initialize the current collection and/or component from the current URL
   skipUrlUpdate?: boolean;
 
   /** The component picker modal to use. We need to pass it as a reference instead of
    * directly importing it to avoid the import cycle:
-   * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-   * Sidebar > AddContent > ComponentPicker */
+   * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+   * Sidebar > AddContent > LibraryAndComponentPicker */
   componentPicker?: typeof ComponentPicker;
 };
 
@@ -86,7 +83,6 @@ type LibraryProviderProps = {
 export const LibraryProvider = ({
   children,
   libraryId,
-  showOnlyPublished = false,
   extraFilter = [],
   skipUrlUpdate = false,
   componentPicker,
@@ -115,9 +111,9 @@ export const LibraryProvider = ({
       action: CONTENT_LIBRARY_PERMISSIONS.PUBLISH_LIBRARY_CONTENT,
       scope: libraryId,
     },
-  });
-  const canPublish = userPermissions?.canPublish || false;
-  const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
+  }, typeof libraryId !== 'undefined');
+  const canPublish = !libraryId || userPermissions?.canPublish || false;
+  const readOnly = !libraryId || !!componentPickerMode || !libraryData?.canEditLibrary;
 
   // Parse the initial collectionId and/or container ID(s) from the current URL params
   const params = useParams();
@@ -143,7 +139,6 @@ export const LibraryProvider = ({
       readOnly,
       canPublish,
       isLoadingLibraryData: isLoadingLibraryData || isLoadingUserPermissions,
-      showOnlyPublished,
       extraFilter,
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
@@ -168,7 +163,6 @@ export const LibraryProvider = ({
     canPublish,
     isLoadingLibraryData,
     isLoadingUserPermissions,
-    showOnlyPublished,
     extraFilter,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
@@ -186,19 +180,16 @@ export const LibraryProvider = ({
   );
 };
 
-export function useLibraryContext(
-  allowEmtpy?: false,
-): LibraryContextData; // never undefined
-export function useLibraryContext(
-  allowEmtpy: true,
-): LibraryContextData | undefined; // may be undefined
-export function useLibraryContext(
-  allowEmtpy?: boolean,
-): LibraryContextData | undefined {
+export function useLibraryContext(): LibraryContextData {
   const ctx = useContext(LibraryContext);
-  if (!allowEmtpy && ctx === undefined) {
+  if (ctx === undefined) {
     /* istanbul ignore next */
     throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
   }
   return ctx;
+}
+
+export function useOptionalLibraryContext(): Partial<LibraryContextData> {
+  const ctx = useContext(LibraryContext);
+  return ctx || { readOnly: true };
 }

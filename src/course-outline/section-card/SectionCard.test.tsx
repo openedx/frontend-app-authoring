@@ -18,6 +18,14 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    handleAddSubsectionFromLibrary: jest.fn(),
+    handleNewSubsectionSubmit: jest.fn(),
+  }),
+}));
+
 const unit = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
 };
@@ -84,36 +92,33 @@ const section = {
 const onEditSectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
-  <OutlineSidebarProvider>
-    <SectionCard
-      section={section}
-      index={1}
-      canMoveItem={jest.fn()}
-      onOrderChange={jest.fn()}
-      onOpenPublishModal={jest.fn()}
-      onOpenHighlightsModal={jest.fn()}
-      onOpenDeleteModal={jest.fn()}
-      onOpenUnlinkModal={jest.fn()}
-      onOpenConfigureModal={jest.fn()}
-      onEditSectionSubmit={onEditSectionSubmit}
-      onDuplicateSubmit={jest.fn()}
-      isSectionsExpanded
-      onNewSubsectionSubmit={jest.fn()}
-      isSelfPaced={false}
-      isCustomRelativeDatesActive={false}
-      onAddSubsectionFromLibrary={jest.fn()}
-      resetScrollState={jest.fn()}
-      {...props}
-    >
-      <span>children</span>
-    </SectionCard>
-  </OutlineSidebarProvider>,
+  <SectionCard
+    section={section}
+    index={1}
+    canMoveItem={jest.fn()}
+    onOrderChange={jest.fn()}
+    onOpenPublishModal={jest.fn()}
+    onOpenHighlightsModal={jest.fn()}
+    onOpenDeleteModal={jest.fn()}
+    onOpenUnlinkModal={jest.fn()}
+    onOpenConfigureModal={jest.fn()}
+    onEditSectionSubmit={onEditSectionSubmit}
+    onDuplicateSubmit={jest.fn()}
+    isSectionsExpanded
+    isSelfPaced={false}
+    isCustomRelativeDatesActive={false}
+    resetScrollState={jest.fn()}
+    {...props}
+  >
+    <span>children</span>
+  </SectionCard>,
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
     routerProps: {
       initialEntries: [entry],
     },
+    extraWrapper: OutlineSidebarProvider,
   },
 );
 
