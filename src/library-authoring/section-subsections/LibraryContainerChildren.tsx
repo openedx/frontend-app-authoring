@@ -7,11 +7,12 @@ import {
 } from '@openedx/paragon';
 import { Description } from '@openedx/paragon/icons';
 import { InplaceTextEditor } from '@src/generic/inplace-text-editor';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import { ContainerType, getBlockType } from '../../generic/key-utils';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   useContainerChildren,
   useUpdateContainer,
@@ -48,7 +49,7 @@ const ContainerRow = ({
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const updateMutation = useUpdateContainer(container.originalId, containerKey);
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
@@ -127,7 +128,8 @@ const ContainerRow = ({
 export const LibraryContainerChildren = ({ containerKey, readOnly }: LibraryContainerChildrenProps) => {
   const intl = useIntl();
   const [orderedChildren, setOrderedChildren] = useState<LibraryContainerMetadataWithUniqueId[]>([]);
-  const { showOnlyPublished, readOnly: libReadOnly } = useLibraryContext();
+  const { readOnly: libReadOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { navigateTo } = useLibraryRoutes();
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
   const [activeDraggingId, setActiveDraggingId] = useState<string | null>(null);

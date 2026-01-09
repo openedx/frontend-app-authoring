@@ -1,0 +1,96 @@
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+  startDateTitle: {
+    id: 'course-authoring.course-outline.status-bar.start-date',
+    defaultMessage: 'Start date',
+  },
+  pacingTypeTitle: {
+    id: 'course-authoring.course-outline.status-bar.pacing-type',
+    defaultMessage: 'Pacing type',
+  },
+  pacingTypeSelfPaced: {
+    id: 'course-authoring.course-outline.status-bar.pacing-type.self-paced',
+    defaultMessage: 'Self-paced',
+  },
+  pacingTypeInstructorPaced: {
+    id: 'course-authoring.course-outline.status-bar.pacing-type.instructor-Paced',
+    defaultMessage: 'Instructor-paced',
+  },
+  checklistTitle: {
+    id: 'course-authoring.course-outline.status-bar.checklists',
+    defaultMessage: 'Checklists',
+  },
+  checklistCompleted: {
+    id: 'course-authoring.course-outline.status-bar.checklists.completed',
+    defaultMessage: 'completed',
+  },
+  notificationMetadataTitle: {
+    id: 'course-authoring.course-outline.status-bar.notification-metadata',
+    defaultMessage: '{count, plural, one {{count} notification} other {{count} notifications}}',
+    description: 'Metadata notifications text in course outline',
+  },
+  highlightEmailsTitle: {
+    id: 'course-authoring.course-outline.status-bar.highlight-emails',
+    defaultMessage: 'Course highlight emails',
+  },
+  highlightEmailsButton: {
+    id: 'course-authoring.course-outline.status-bar.highlight-emails.button',
+    defaultMessage: 'Enable now',
+  },
+  highlightEmailsEnabled: {
+    id: 'course-authoring.course-outline.status-bar.highlight-emails.enabled',
+    defaultMessage: 'Enabled',
+  },
+  highlightEmailsLink: {
+    id: 'course-authoring.course-outline.status-bar.highlight-emails.link',
+    defaultMessage: 'Learn more',
+  },
+  courseTagsTitle: {
+    id: 'course-authoring.course-outline.status-bar.course-tags',
+    defaultMessage: 'Course tags',
+    description: 'Course tags header in course outline',
+  },
+  courseManageTagsLink: {
+    id: 'course-authoring.course-outline.status-bar.course-manage-tags-link',
+    defaultMessage: 'Manage tags',
+    description: 'Opens the drawer to edit content tags',
+  },
+  videoSharingTitle: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
+    defaultMessage: 'Video Sharing',
+  },
+  videoSharingLink: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.link',
+    defaultMessage: 'Learn more',
+  },
+  videoSharingPerVideoText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.perVideo.text',
+    defaultMessage: 'Per Video',
+  },
+  videoSharingAllOffText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOff.text',
+    defaultMessage: 'No Videos',
+  },
+  videoSharingAllOnText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
+    defaultMessage: 'All Videos',
+  },
+  activeBadgeText: {
+    id: 'course-authoring.course-outline.status-bar.active.badge.text',
+    defaultMessage: 'Active',
+    description: 'Active Badge shown in course outline when the course is active, i.e., course has started and not ended yet.',
+  },
+  archivedBadgeText: {
+    id: 'course-authoring.course-outline.status-bar.archived.badge.text',
+    defaultMessage: 'Archived',
+    description: 'Archived Badge shown in course outline when the course is archived, i.e., ended',
+  },
+  upcomingBadgeText: {
+    id: 'course-authoring.course-outline.status-bar.upcoming.badge.text',
+    defaultMessage: 'Upcoming',
+    description: 'Upcoming Badge shown in course outline when the course has not started yet.',
+  },
+});
+
+export default messages;

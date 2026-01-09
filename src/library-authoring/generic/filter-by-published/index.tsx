@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLibraryContext } from '../../common/context/LibraryContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { FilterByPublished, PublishStatus } from '../../../search-manager';
 
 /**
@@ -9,7 +9,7 @@ import { FilterByPublished, PublishStatus } from '../../../search-manager';
  * when not relevant.
  */
 const LibraryFilterByPublished : React.FC<Record<never, never>> = () => {
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   if (showOnlyPublished) {
     return (

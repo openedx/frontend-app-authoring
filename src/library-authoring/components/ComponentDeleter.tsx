@@ -8,7 +8,7 @@ import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { type ContentHit } from '@src/search-manager';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   useContentFromSearchIndex,
   useDeleteLibraryBlock,
@@ -25,7 +25,7 @@ const ComponentDeleter = ({ usageKey, close }: Props) => {
   const intl = useIntl();
   const { sidebarItemInfo, closeLibrarySidebar } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
-  const { containerId: currentUnitId } = useLibraryContext();
+  const { containerId: currentUnitId } = useOptionalLibraryContext();
   const sidebarComponentUsageKey = sidebarItemInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();

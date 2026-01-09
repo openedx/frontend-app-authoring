@@ -230,3 +230,24 @@ export function createAxiosError({ code, message, path }: { code: number, messag
   );
   return error;
 }
+
+/*
+ * Utility to get the inner text of an element safely.
+ */
+const getInnerText = (element: Element | null): string => {
+  if (!element) {
+    return '';
+  }
+  return (element.textContent ?? '')
+    .split('\n')
+    .filter((text) => text && !/^\s+$/.test(text))
+    .map((text) => text.trim())
+    .join(' ');
+};
+
+export const matchInnerText = (
+  nodeName: string,
+  textToMatch: string,
+) => (_: string, element: Element | null) => !!element
+    && element.nodeName === nodeName
+    && getInnerText(element) === textToMatch;

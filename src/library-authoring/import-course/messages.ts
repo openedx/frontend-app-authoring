@@ -181,12 +181,12 @@ const messages = defineMessages({
   },
   importCourseAnalysisCompleteSomeContentBody: {
     id: 'library-authoring.import-course.review-details.analysis-complete.100.body',
-    defaultMessage: '{unsupportedBlockPercentage}% of content cannot be imported. For details see below.',
+    defaultMessage: '{supportedBlockPercentage}% of course content will be imported into a collection in your library called {courseName}. Some content will not be imported. For details see below.',
     description: 'Body of the info card when course import analysis is complete and some data can be imported.',
   },
   importCourseAnalysisDetailsUnsupportedBlocksBody: {
     id: 'library-authoring.import-course.review-details.analysis-details.unsupportedBlocks.body',
-    defaultMessage: 'The following block types cannot be imported into your library because they\'re are not yet supported. These block types will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
+    defaultMessage: 'Some block types cannot be imported into your library because they’re not yet supported. These blocks will be replaced with a placeholder block in the library. For more information, reference the Help & Support sidebar.',
     description: 'Body of analysis details when some unsupported blocks are present',
   },
   importCourseComponentsUnsupportedInfo: {
@@ -295,7 +295,7 @@ const messages = defineMessages({
     id: 'library-authoring.import-course.import-details.import-partial.alert.title',
     defaultMessage: '<p>{percentage}% of Course {courseName} has been imported successfully.'
     + ' Imported Course content can be edited and remixed in your Library, and reused in Courses.</p>'
-    + '<p>Details of the import, including reasons some content was not abled to be imported are described below</p>',
+    + '<p>Details of the import, including reasons some content was not imported are described below</p>',
     description: 'Body of the import details page when the migration is in partial import.',
   },
   importPartialReasonTableBlockName: {
@@ -312,6 +312,11 @@ const messages = defineMessages({
     id: 'library-authoring.import-course.import-details.reasons-table.reason',
     defaultMessage: 'Reason For Failed import',
     description: 'Label for the Reason For Failed import field in the Reasons table in the import details',
+  },
+  placeholderCardDescription: {
+    id: 'library-authoring.import-course.import-failed.placeholder.description',
+    defaultMessage: 'This content type is not currently supported',
+    description: 'Description text for placeholder card in library for blocks that failed to import',
   },
 });
 

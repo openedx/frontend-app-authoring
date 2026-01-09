@@ -91,7 +91,8 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           <FormattedMessage
             {...messages.importCourseAnalysisCompleteSomeContentBody}
             values={{
-              unsupportedBlockPercentage: unsupportedBlockPercentage.toFixed(2),
+              supportedBlockPercentage: (100 - unsupportedBlockPercentage).toFixed(0),
+              courseName: data?.title || '',
             }}
           />
         </p>
@@ -207,8 +208,8 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
     if (!blockTypes || !totalBlocks) {
       return 0;
     }
-    return (finalUnssupportedBlocks / (totalBlocks + finalUnssupportedBlocks)) * 100;
-  }, [blockTypes, finalUnssupportedBlocks]);
+    return (totalUnsupportedBlocks / (totalBlocks + totalUnsupportedBlocks)) * 100;
+  }, [blockTypes, totalUnsupportedBlocks]);
 
   return (
     <Stack gap={4}>
@@ -217,24 +218,26 @@ export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) =
         isBlockDataPending={isBlockDataPending}
         unsupportedBlockPercentage={unsupportedBlockPercentage}
       />
-      <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
-      <SummaryCard
-        totalBlocks={totalBlocks}
-        totalComponents={totalComponents}
-        sections={blockTypes?.chapter}
-        subsections={blockTypes?.sequential}
-        units={blockTypes?.vertical}
-        unsupportedBlocks={finalUnssupportedBlocks}
-        isPending={isBlockDataPending}
-      />
-      {!isBlockDataPending && finalUnssupportedBlocks > 0
+      <Stack gap={2}>
+        <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
+        <SummaryCard
+          totalBlocks={totalBlocks}
+          totalComponents={totalComponents}
+          sections={blockTypes?.chapter}
+          subsections={blockTypes?.sequential}
+          units={blockTypes?.vertical}
+          unsupportedBlocks={totalUnsupportedBlocks}
+          isPending={isBlockDataPending}
+        />
+      </Stack>
+      {!isBlockDataPending && totalUnsupportedBlocks > 0
         && (
-        <>
+        <Stack gap={2}>
           <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
           <Stack className="align-items-center" gap={3}>
             <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
           </Stack>
-        </>
+        </Stack>
         )}
     </Stack>
   );

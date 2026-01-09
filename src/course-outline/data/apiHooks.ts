@@ -1,6 +1,5 @@
 import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
-import { createCourseXblock } from '@src/course-unit/data/api';
-import { getCourseDetails, getCourseItem } from './api';
+import { createCourseXblock, getCourseDetails, getCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -10,6 +9,12 @@ export const courseOutlineQueryKeys = {
   contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
   courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
   courseDetails: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId, 'details'],
+  legacyLibReadyToMigrateBlocks: (courseId: string) => [...courseOutlineQueryKeys.all, courseId, 'legacyLibReadyToMigrateBlocks'],
+  legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
+    ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
+    'status',
+    { taskId },
+  ],
 };
 
 /**
@@ -18,11 +23,11 @@ export const courseOutlineQueryKeys = {
  * Can also be used to import block from library by passing `libraryContentKey` in request body
  */
 export const useCreateCourseBlock = (
-  callback?: ((locator?: string, parentLocator?: string) => void),
+  callback?: ((locator: string, parentLocator: string) => void),
 ) => useMutation({
   mutationFn: createCourseXblock,
-  onSettled: async (data) => {
-    callback?.(data?.locator, data.parent_locator);
+  onSettled: async (data: { locator: string, parent_locator: string }) => {
+    callback?.(data.locator, data.parent_locator);
   },
 });
 

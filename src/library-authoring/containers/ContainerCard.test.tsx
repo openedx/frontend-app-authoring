@@ -6,6 +6,7 @@ import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
 } from '@src/testUtils';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
@@ -73,12 +74,11 @@ const render = (
     path,
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        showOnlyPublished={showOnlyPublished}
-      >
-        {children}
-      </LibraryProvider>
+      <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+        <LibraryProvider libraryId={libraryId}>
+          {children}
+        </LibraryProvider>
+      </PublishedFilterContextProvider>
     ),
   });
 };
@@ -492,5 +492,41 @@ describe('<ContainerCard />', () => {
       expect(axiosMock.history.post.length).toBe(1);
     });
     expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  test.each([
+    ContainerType.Unit,
+    ContainerType.Subsection,
+    ContainerType.Section,
+  ])('should not show delete and add to collection buttons when library is read-only for %s', async (containerType) => {
+    const containerHit = getContainerHitSample(containerType);
+    const user = userEvent.setup();
+
+    // Render with read-only library
+    baseRender(<ContainerCard hit={containerHit} />, {
+      path: '/library/:libraryId',
+      params: { libraryId: mockContentLibrary.libraryIdReadOnly },
+      extraWrapper: ({ children }) => (
+        <LibraryProvider libraryId={mockContentLibrary.libraryIdReadOnly}>
+          {children}
+        </LibraryProvider>
+      ),
+    });
+
+    // Open menu
+    const menu = await screen.findByTestId('container-card-menu-toggle');
+    expect(menu).toBeInTheDocument();
+    await user.click(menu);
+
+    // Delete and Add to collection buttons should not be visible in readonly mode
+    const deleteOption = screen.queryByRole('button', { name: 'Delete' });
+    expect(deleteOption).not.toBeInTheDocument();
+
+    const addToCollectionOption = screen.queryByRole('button', { name: 'Add to collection' });
+    expect(addToCollectionOption).not.toBeInTheDocument();
+
+    // Copy button should still be visible
+    const copyOption = screen.queryByRole('button', { name: 'Copy to clipboard' });
+    expect(copyOption).toBeInTheDocument();
   });
 });

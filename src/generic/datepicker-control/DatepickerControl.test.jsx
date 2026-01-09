@@ -48,4 +48,40 @@ describe('<DatepickerControl />', () => {
       convertToStringFromDate('06/16/2023'),
     );
   });
+
+  it('renders time picker with accessibility hint', () => {
+    const { getByText, getByPlaceholderText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText=""
+      />,
+    );
+    const input = getByPlaceholderText('HH:MM');
+
+    expect(
+      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
+    ).toBeInTheDocument();
+    expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
+  });
+
+  it('renders time picker with accessibility hint and help text', () => {
+    const { getByText, getByPlaceholderText } = render(
+      <RootWrapper
+        {...props}
+        type={DATEPICKER_TYPES.time}
+        value="2025-01-01T10:00:00Z"
+        helpText="This is help text"
+      />,
+    );
+    const input = getByPlaceholderText('HH:MM');
+
+    expect(
+      getByText('Enter time in HH:MM or twelve-hour format, for example 6:00 PM.'),
+    ).toBeInTheDocument();
+    expect(getByText('This is help text')).toBeInTheDocument();
+    expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
+    expect(input.getAttribute('aria-describedby')).toContain('fooControlName-helptext');
+  });
 });

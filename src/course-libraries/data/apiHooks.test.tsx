@@ -3,8 +3,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { renderHook, waitFor } from '@testing-library/react';
-import { getEntityLinksByDownstreamContextUrl } from './api';
-import { useEntityLinks } from './apiHooks';
+import { courseLegacyLibraryContentBlocks, courseLegacyLibraryContentTaskStatus, getEntityLinksByDownstreamContextUrl } from './api';
+import { useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions, useCourseLegacyLibReadyToMigrateBlocks, useEntityLinks } from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -73,5 +73,37 @@ describe('course libraries api hooks', () => {
       no_page: true,
       content_type: undefined,
     });
+  });
+
+  it('should return ready to migrate blocks', async () => {
+    const courseId = 'course-v1:some+key';
+    const url = courseLegacyLibraryContentBlocks(courseId);
+    axiosMock.onGet(url).reply(200, []);
+    const { result } = renderHook(() => useCourseLegacyLibReadyToMigrateBlocks(courseId), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should check tasks status', async () => {
+    const courseId = 'course-v1:some+key';
+    const taskId = 'some-id';
+    const uuid = '1f8831dd-6f90-48df-a503-c0d0e957a331';
+    const url = courseLegacyLibraryContentTaskStatus(courseId, taskId);
+    axiosMock.onGet(url).reply(200, {
+      task_id: 'some-id',
+      status: 'Succeeded',
+      status_text: 'Succeeded',
+      uuid,
+    });
+    const { result } = renderHook(() => useCheckMigrateCourseLegacyLibReadyToMigrateBlocksOptions(courseId, taskId), {
+      wrapper,
+    });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(result.current.data?.uuid).toEqual(uuid);
   });
 });

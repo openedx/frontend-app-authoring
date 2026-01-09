@@ -1,0 +1,47 @@
+.upstream-info-icon {
+  border: 1px solid var(--pgn-color-light-800);
+  color: var(--pgn-color-primary-500);
+
+  &.sync-state {
+    &:hover {
+      border-color: var(--pgn-color-primary-500);
+      background-color: var(--pgn-color-primary-500);
+      color: white;
+    }
+  }
+
+  // Sizes with one icon:
+
+  &.size-one-md {
+    width: 32px;
+    height: 26px;
+  }
+
+  &.size-one-sm {
+    width: 28px;
+    height: 22px;
+  }
+
+  &.size-one-xs {
+    width: 24px;
+    height: 18px;
+  }
+
+
+  // Sizes with two icons:
+
+  &.size-two-md {
+    width: 60px;
+    height: 26px;
+  }
+
+  &.size-two-sm {
+    width: 46px;
+    height: 22px;
+  }
+
+  &.size-two-xs {
+    width: 36px;
+    height: 18px;
+  }
+}

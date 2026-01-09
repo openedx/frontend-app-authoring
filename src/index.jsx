@@ -17,7 +17,7 @@ import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
 
 import {
-  ComponentPicker,
+  LibraryAndComponentPicker,
   CreateLibrary,
   CreateLegacyLibrary,
   LibraryLayout,
@@ -74,7 +74,7 @@ const App = () => {
         <Route
           path="/component-picker"
           element={(
-            <ComponentPicker
+            <LibraryAndComponentPicker
               extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
               visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
             />
@@ -83,7 +83,7 @@ const App = () => {
         <Route
           path="/component-picker/multiple"
           element={(
-            <ComponentPicker
+            <LibraryAndComponentPicker
               componentPickerMode="multiple"
               extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
               visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
@@ -175,6 +175,7 @@ initialize({
         ENABLE_CERTIFICATE_PAGE: process.env.ENABLE_CERTIFICATE_PAGE || 'false',
         ENABLE_COURSE_IMPORT_IN_LIBRARY: process.env.ENABLE_COURSE_IMPORT_IN_LIBRARY || 'false',
         ENABLE_UNIT_PAGE_NEW_DESIGN: process.env.ENABLE_UNIT_PAGE_NEW_DESIGN || 'false',
+        ENABLE_COURSE_OUTLINE_NEW_DESIGN: process.env.ENABLE_COURSE_OUTLINE_NEW_DESIGN || 'false',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',

@@ -23,16 +23,17 @@ import {
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import getPageHeadTitle from '../generic/utils';
+import { useStudioHome } from '@src/studio-home/hooks';
+import NewsstandIcon from '@src/generic/NewsstandIcon';
+import getPageHeadTitle from '@src/generic/utils';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import Loading from '@src/generic/Loading';
 import messages from './messages';
-import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLinkSummary } from './data/api';
-import Loading from '../generic/Loading';
-import { useStudioHome } from '../studio-home/hooks';
-import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
+import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
@@ -198,7 +199,7 @@ export const CourseLibraries = () => {
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all && (
+          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ? (
             <Button
               variant="primary"
               onClick={onAlertReview}
@@ -206,7 +207,7 @@ export const CourseLibraries = () => {
             >
               {intl.formatMessage(messages.reviewUpdatesBtn)}
             </Button>
-          )}
+          ) : null}
           hideBorder
         />
         <section className="mb-4">
@@ -233,6 +234,7 @@ export const CourseLibraries = () => {
               notification={outOfSyncCount}
               className="px-2 mt-3"
             >
+              <LegacyLibContentBlockAlert courseId={courseId} />
               {renderReviewTabContent()}
             </Tab>
           </Tabs>

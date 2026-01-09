@@ -1,15 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   Container,
-  Layout,
   Row,
   TransitionReplace,
   Toast,
   StandardModal,
+  Button,
+  ActionRow,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { CheckCircle as CheckCircleIcon } from '@openedx/paragon/icons';
+import { CheckCircle as CheckCircleIcon, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import {
   arrayMove,
@@ -32,19 +34,19 @@ import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
 import { ContainerType } from '@src/generic/key-utils';
-import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
@@ -61,13 +63,23 @@ import {
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
+import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
+import { StatusBar } from './status-bar/StatusBar';
+import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 
 const CourseOutline = () => {
   const intl = useIntl();
   const location = useLocation();
-  const { courseId } = useCourseAuthoringContext();
+  const {
+    courseId,
+    handleAddSubsectionFromLibrary,
+    handleAddUnitFromLibrary,
+    handleAddSectionFromLibrary,
+    handleNewSectionSubmit,
+  } = useCourseAuthoringContext();
 
   const {
     courseUsageKey,
@@ -117,13 +129,6 @@ const CourseOutline = () => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleAddUnitFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddSectionFromLibrary,
-    getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -141,6 +146,9 @@ const CourseOutline = () => {
     resetScrollState,
   } = useCourseOutline({ courseId });
 
+  // Show the new actions bar if it is enabled in the configuration.
+  // This is a temporary flag until the new design feature is fully implemented.
+  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -260,7 +268,7 @@ const CourseOutline = () => {
 
   if (isLoadingDenied) {
     return (
-      <Container size="xl" className="px-4 mt-4">
+      <Container fluid className="px-3 mt-4">
         <PageAlerts
           courseId={courseId}
           notificationDismissUrl={notificationDismissUrl}
@@ -279,11 +287,11 @@ const CourseOutline = () => {
   }
 
   return (
-    <>
+    <OutlineSidebarProvider>
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
-      <Container size="xl" className="px-4">
+      <Container fluid className="px-3">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
             courseId={courseId}
@@ -298,6 +306,7 @@ const CourseOutline = () => {
             savingStatus={savingStatus}
             errors={errors}
           />
+          <LegacyLibContentBlockAlert courseId={courseId} />
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
@@ -314,8 +323,9 @@ const CourseOutline = () => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            title={intl.formatMessage(messages.headingTitle)}
+            title={courseName}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
+            hideBorder
             headerActions={(
               <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
@@ -329,24 +339,45 @@ const CourseOutline = () => {
               />
             )}
           />
-          <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 12 }, { span: 12 }]}
-            xs={[{ span: 12 }, { span: 12 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
-            <Layout.Element>
+          {showNewActionsBar
+            ? (
+              <StatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+              />
+            ) : (
+              <LegacyStatusBar
+                courseId={courseId}
+                isLoading={isLoading}
+                statusBarData={statusBarData}
+                openEnableHighlightsModal={openEnableHighlightsModal}
+                handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+              />
+            )}
+          <hr className="mt-4 mb-0 w-100 text-light-400" />
+          <div className="d-flex align-items-baseline flex-wrap">
+            <div className="flex-fill">
               <article>
                 <div>
-                  <section className="course-outline-section">
-                    <StatusBar
-                      courseId={courseId}
-                      isLoading={isLoading}
-                      statusBarData={statusBarData}
-                      openEnableHighlightsModal={openEnableHighlightsModal}
-                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-                    />
+                  {showNewActionsBar && (
+                  <ActionRow className="mt-3">
+                    {Boolean(sectionsList.length) && (
+                    <Button
+                      variant="outline-primary"
+                      id="expand-collapse-all-button"
+                      data-testid="expand-collapse-all-button"
+                      iconBefore={isSectionsExpanded ? CloseFullscreen : OpenInFull}
+                      onClick={headerNavigationsActions.handleExpandAll}
+                    >
+                      {isSectionsExpanded
+                        ? intl.formatMessage(headerMessages.collapseAllButton)
+                        : intl.formatMessage(headerMessages.expandAllButton)}
+                    </Button>
+                    )}
+                  </ActionRow>
+                  )}
+                  <section>
                     {!errors?.outlineIndexApi && (
                       <div className="pt-4">
                         {sections.length ? (
@@ -381,9 +412,7 @@ const CourseOutline = () => {
                                     onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
-                                    onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                     onOrderChange={updateSectionOrderByIndex}
-                                    onAddSubsectionFromLibrary={handleAddSubsectionFromLibrary.mutateAsync}
                                     resetScrollState={resetScrollState}
                                   >
                                     <SortableContext
@@ -413,8 +442,6 @@ const CourseOutline = () => {
                                           onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
-                                          onNewUnitSubmit={handleNewUnitSubmit}
-                                          onAddUnitFromLibrary={handleAddUnitFromLibrary.mutateAsync}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
                                           resetScrollState={resetScrollState}
@@ -448,7 +475,6 @@ const CourseOutline = () => {
                                                 onOpenUnlinkModal={openUnlinkModal}
                                                 onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                                getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
                                               />
@@ -487,15 +513,13 @@ const CourseOutline = () => {
                   </section>
                 </div>
               </article>
-            </Layout.Element>
-            <Layout.Element>
-              <CourseAuthoringOutlineSidebarSlot
-                courseId={courseId}
-                courseName={courseName}
-                sections={sections}
-              />
-            </Layout.Element>
-          </Layout>
+            </div>
+            <CourseAuthoringOutlineSidebarSlot
+              courseId={courseId}
+              courseName={courseName}
+              sections={sections}
+            />
+          </div>
           <EnableHighlightsModal
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}
@@ -541,7 +565,7 @@ const CourseOutline = () => {
           isOverflowVisible={false}
           size="xl"
         >
-          <ComponentPicker
+          <LibraryAndComponentPicker
             showOnlyPublished
             extraFilter={['block_type = "section"']}
             componentPickerMode="single"
@@ -577,7 +601,7 @@ const CourseOutline = () => {
           {toastMessage}
         </Toast>
       )}
-    </>
+    </OutlineSidebarProvider>
   );
 };
 

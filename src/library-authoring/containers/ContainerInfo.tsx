@@ -8,15 +8,16 @@ import {
   Icon,
   IconButton,
   useToggle,
+  Alert,
 } from '@openedx/paragon';
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { MoreVert } from '@openedx/paragon/icons';
+import { InfoOutline, MoreVert } from '@openedx/paragon/icons';
 
 import { useClipboard } from '@src/generic/clipboard';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   type ContainerInfoTab,
   CONTAINER_INFO_TABS,
@@ -97,12 +98,12 @@ const ContainerActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
+  const { libraryId } = useOptionalLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const { insideUnit, insideSubsection, insideSection } = useLibraryRoutes();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
 
-  const showOpenButton = !componentPickerMode && !(
+  const showOpenButton = libraryId && !componentPickerMode && !(
     insideUnit || insideSubsection || insideSection
   );
 
@@ -149,6 +150,15 @@ const ContainerActions = ({
   );
 };
 
+/* istanbul ignore next */
+/* istanbul ignore next */
+const ContainerSettings = () => (
+  <Alert icon={InfoOutline} variant="info">
+    <p>
+      <FormattedMessage {...messages.containerSettingsMsg} />
+    </p>
+  </Alert>
+);
 const ContainerInfo = () => {
   const intl = useIntl();
   const {
@@ -222,7 +232,7 @@ const ContainerInfo = () => {
         {renderTab(
           CONTAINER_INFO_TABS.Settings,
           intl.formatMessage(messages.settingsTabTitle),
-          // TODO: container settings component
+          <ContainerSettings />,
         )}
       </Tabs>
     </Stack>

@@ -12,6 +12,7 @@ import {
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { getExternalLinkUrl } from '@edx/frontend-platform';
 import {
   AdvancedProblemType,
   AdvanceProblems,
@@ -91,7 +92,7 @@ const AdvanceTypeSelect: React.FC<Props> = ({
         </Form.RadioSet>
       </Form.Group>
       <Hyperlink
-        destination="https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types"
+        destination={getExternalLinkUrl('https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types')}
         target="_blank"
       >
         <FormattedMessage {...messages.learnMoreAdvancedButtonLabel} />

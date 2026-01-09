@@ -12,7 +12,7 @@ import ComponentCount from '@src/generic/component-count';
 import TagCount from '@src/generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '@src/search-manager';
 import { skipIfUnwantedTarget } from '@src/utils';
-import { Report } from '@openedx/paragon/icons';
+import { ExtensionOff } from '@openedx/paragon/icons';
 import messages from './messages';
 
 type BaseCardProps = {
@@ -48,9 +48,9 @@ const BaseCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const itemIcon = getItemIcon(itemType);
+  const itemIcon = !props.isPlaceholder ? getItemIcon(itemType) : ExtensionOff;
   const intl = useIntl();
-  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-import-placeholder';
+  const itemComponentStyle = !props.isPlaceholder ? getComponentStyleColor(itemType) : 'component-style-other';
 
   return (
     <Container className="library-item-card selected">
@@ -67,7 +67,7 @@ const BaseCard = ({
         <Card.Header
           className={`library-item-header ${itemComponentStyle}`}
           title={
-            <Icon src={props.isPlaceholder ? Report : itemIcon} className="library-item-header-icon my-2" />
+            <Icon src={itemIcon} className="library-item-header-icon my-2" />
           }
           actions={(
             <div

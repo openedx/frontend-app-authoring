@@ -12,8 +12,9 @@ import { Delete, MoreVert } from '@openedx/paragon/icons';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { ToastContext } from '@src/generic/toast-context';
 import { type CollectionHit } from '@src/search-manager';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
@@ -28,6 +29,7 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
+  const { readOnly } = useOptionalLibraryContext();
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarItemInfo } = useSidebarContext();
   const {
@@ -90,9 +92,11 @@ const CollectionMenu = ({ hit } : CollectionMenuProps) => {
           <Dropdown.Item onClick={openCollection}>
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={openDeleteModal}>
-            <FormattedMessage {...messages.deleteCollection} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={openDeleteModal}>
+              <FormattedMessage {...messages.deleteCollection} />
+            </Dropdown.Item>
+          )}
         </Dropdown.Menu>
       </Dropdown>
       <DeleteModal
@@ -116,7 +120,8 @@ type CollectionCardProps = {
 
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { setCollectionId, showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
+  const { setCollectionId } = useOptionalLibraryContext();
   const { openCollectionInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -151,7 +156,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       // In component picker mode, we want to open the sidebar or the collection
       // without changing the URL
     } else if (doubleClicked) {
-      setCollectionId(collectionId);
+      setCollectionId?.(collectionId);
     } else {
       openCollectionInfoSidebar(collectionId);
     }

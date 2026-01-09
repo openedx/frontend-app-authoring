@@ -10,7 +10,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
-import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { ComponentIcon } from '@src/generic/block-type-utils';
 import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { type ContainerHit, Highlight, PublishStatus } from '@src/search-manager';
@@ -18,12 +18,13 @@ import { ToastContext } from '@src/generic/toast-context';
 import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import BaseCard from '@src/library-authoring/components/BaseCard';
 import AddComponentWidget from '@src/library-authoring/components/AddComponentWidget';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
@@ -36,7 +37,9 @@ type ContainerMenuProps = {
 
 export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { libraryId, collectionId, containerId } = useLibraryContext();
+  const {
+    libraryId, collectionId, containerId, readOnly,
+  } = useOptionalLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
@@ -116,9 +119,11 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
           <Dropdown.Item onClick={handleCopy}>
             <FormattedMessage {...messages.menuCopyContainer} />
           </Dropdown.Item>
-          <Dropdown.Item onClick={confirmDelete}>
-            <FormattedMessage {...messages.menuDeleteContainer} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={confirmDelete}>
+              <FormattedMessage {...messages.menuDeleteContainer} />
+            </Dropdown.Item>
+          )}
           {(insideCollection || insideSection || insideSubsection) && (
             <Dropdown.Item onClick={handleRemove}>
               <FormattedMessage
@@ -129,9 +134,11 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
               />
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={showManageCollections}>
-            <FormattedMessage {...messages.menuAddToCollection} />
-          </Dropdown.Item>
+          {!readOnly && (
+            <Dropdown.Item onClick={showManageCollections}>
+              <FormattedMessage {...messages.menuAddToCollection} />
+            </Dropdown.Item>
+          )}
         </Dropdown.Menu>
       </Dropdown>
       {isConfirmingDelete && (
@@ -165,17 +172,14 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
         childKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
           const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
-          let classNames;
 
           if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
             // Show the first N-1 blocks as item icons
             // (or all N blocks if no hidden children)
-            classNames = `rounded p-1 ${getComponentStyleColor(blockType)}`;
             blockPreview = (
-              <Icon
-                src={getItemIcon(blockType)}
-                screenReaderText={blockType}
-                title={usageKey}
+              <ComponentIcon
+                blockType={blockType}
+                iconTitle={usageKey}
               />
             );
           } else {
@@ -192,7 +196,6 @@ const UnitcardPreview = ({ childKeys, showMaxChildren = 5 }: UnitCardPreviewProp
               // A container can have multiple instances of the same block
               // eslint-disable-next-line react/no-array-index-key
               key={`${usageKey}-${idx}`}
-              className={classNames}
             >
               {blockPreview}
             </div>
@@ -209,7 +212,7 @@ type ContainerCardPreviewProps = {
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     blockType: itemType,
     published,
@@ -254,7 +257,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {

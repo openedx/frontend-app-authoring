@@ -12,7 +12,7 @@ import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
@@ -35,7 +35,8 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     collectionId,
     containerId,
     openComponentEditor,
-  } = useLibraryContext();
+    readOnly,
+  } = useOptionalLibraryContext();
 
   const {
     sidebarItemInfo,
@@ -70,7 +71,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
 
   const handleEdit = useCallback(() => {
     openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    openComponentEditor(usageKey);
+    openComponentEditor?.(usageKey);
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {
@@ -103,9 +104,11 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
-          <FormattedMessage {...messages.menuEdit} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item {...(canEdit ? { onClick: handleEdit } : { disabled: true })}>
+            <FormattedMessage {...messages.menuEdit} />
+          </Dropdown.Item>
+        )}
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
@@ -114,10 +117,12 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
             <FormattedMessage {...messages.removeComponentFromUnitMenu} />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={openDeleteModal}>
-          <FormattedMessage {...messages.menuDelete} />
-        </Dropdown.Item>
-        {insideCollection && (
+        {!readOnly && (
+          <Dropdown.Item onClick={openDeleteModal}>
+            <FormattedMessage {...messages.menuDelete} />
+          </Dropdown.Item>
+        )}
+        {insideCollection && !readOnly && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage
               {...containerMessages.menuRemoveFromContainer}
@@ -127,9 +132,11 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
             />
           </Dropdown.Item>
         )}
-        <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...containerMessages.menuAddToCollection} />
-        </Dropdown.Item>
+        {!readOnly && (
+          <Dropdown.Item onClick={showManageCollections}>
+            <FormattedMessage {...containerMessages.menuAddToCollection} />
+          </Dropdown.Item>
+        )}
       </Dropdown.Menu>
       {isDeleteModalOpen && (
         <ComponentDeleter

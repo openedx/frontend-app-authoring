@@ -3,7 +3,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useGetContentHits, useSearchContext } from '@src/search-manager';
 import { useLoadOnScroll } from '@src/hooks';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import { useLibraryContext } from './common/context/LibraryContext';
+import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
@@ -25,7 +25,7 @@ type LibraryContentProps = {
   contentType?: ContentType;
 };
 
-const LibraryItemCard = {
+export const LibraryItemCard = {
   collection: CollectionCard,
   library_block: ComponentCard,
   library_container: ContainerCard,
@@ -42,7 +42,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { libraryId, openCreateCollectionModal, collectionId } = useLibraryContext();
+  const { libraryId, openCreateCollectionModal, collectionId } = useOptionalLibraryContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
   const { insideCollection } = useLibraryRoutes();
   /**
@@ -53,11 +53,11 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
   */
   const showPlaceholderBlocks = ([ContentType.home].includes(contentType) || insideCollection) && !isFiltered;
   const { data: placeholderBlocks } = useMigrationBlocksInfo(
-    libraryId,
+    libraryId!,
     collectionId,
     true,
     undefined,
-    showPlaceholderBlocks,
+    !!libraryId && showPlaceholderBlocks,
   );
   // Fetch unsupported blocks usage_key information from meilisearch index.
   const { data: placeholderData } = useGetContentHits(

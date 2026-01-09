@@ -30,7 +30,7 @@ const ImportDetailsContent = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const [enableRefeshState, setEnableRefreshState] = useState(true);
-  const { libraryId } = useLibraryContext();
+  const { libraryId, libraryData } = useLibraryContext();
   const { courseId, migrationTaskId } = useParams();
   const { showToast } = useContext(ToastContext);
   const [disableReimport, setDisableReimport] = useState(false);
@@ -100,12 +100,6 @@ const ImportDetailsContent = () => {
         // The migrations of this block is failed
         counts.unsupported += 1;
         resultUnsupportedIds.push(block.sourceKey);
-
-        if (block.unsupportedReason) {
-          // Verify if the unsupported block has children
-          const match = block.unsupportedReason.match(/It has (\d+) children/);
-          counts.unsupported += match ? Number(match[1]) : 0;
-        }
       } else {
         counts.totalBlocks += 1;
         const blockType = getBlockType(block.sourceKey);
@@ -228,7 +222,25 @@ const ImportDetailsContent = () => {
   if (migrationStatus === 'Succeeded') {
     return (
       <Stack gap={3}>
-        <Alert variant="success" icon={CheckCircle}>
+        <Helmet>
+          <title>
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importSuccessfulAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
+        <Alert
+          variant="success"
+          icon={CheckCircle}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={() => navigate(collectionLink())}
+            >
+              <FormattedMessage {...messages.viewImportedContentButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importSuccessfulAlertTitle} />
           </Alert.Heading>
@@ -260,21 +272,31 @@ const ImportDetailsContent = () => {
             }}
           />
         </p>
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={() => navigate(collectionLink())}
-          >
-            <FormattedMessage {...messages.viewImportedContentButton} />
-          </Button>
-        </div>
       </Stack>
     );
   } if (migrationStatus === 'Failed') {
     return (
       <Stack gap={3}>
-        <Alert variant="danger" icon={Info}>
+        <Helmet>
+          <title>
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importFailedAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
+        <Alert
+          variant="danger"
+          icon={Info}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={handleImportCourse}
+              disabled={disableReimport}
+            >
+              <FormattedMessage {...messages.importFailedRetryImportButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importFailedAlertTitle} />
           </Alert.Heading>
@@ -291,22 +313,30 @@ const ImportDetailsContent = () => {
         <p>
           <FormattedMessage {...messages.importFailedDetailsSectionBody} />
         </p>
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={handleImportCourse}
-            disabled={disableReimport}
-          >
-            <FormattedMessage {...messages.importFailedRetryImportButton} />
-          </Button>
-        </div>
       </Stack>
     );
   } if (migrationStatus === 'Partial Succeeded') {
     return (
       <Stack gap={3}>
-        <Alert variant="warning" icon={WarningFilled}>
+        <Helmet>
+          <title>
+            {libraryData?.title || ''} | {intl.formatMessage(messages.importPartialAlertTitle)} | {process.env.SITE_NAME}
+          </title>
+        </Helmet>
+        <Alert
+          variant="warning"
+          icon={WarningFilled}
+          stacked
+          actions={[
+            <Button
+              variant="outline-primary"
+              iconAfter={ArrowForward}
+              onClick={() => navigate(collectionLink())}
+            >
+              <FormattedMessage {...messages.viewImportedContentButton} />
+            </Button>,
+          ]}
+        >
           <Alert.Heading>
             <FormattedMessage {...messages.importPartialAlertTitle} />
           </Alert.Heading>
@@ -370,16 +400,6 @@ const ImportDetailsContent = () => {
             <DataTable.TableFooter />
           </DataTable>
         )}
-
-        <div className="w-100 d-flex justify-content-end">
-          <Button
-            variant="outline-primary"
-            iconAfter={ArrowForward}
-            onClick={() => navigate(collectionLink())}
-          >
-            <FormattedMessage {...messages.viewImportedContentButton} />
-          </Button>
-        </div>
       </Stack>
     );
   }
@@ -423,17 +443,13 @@ export interface MigrationSummary {
 export const ImportDetailsPage = () => {
   const intl = useIntl();
   const { libraryId, libraryData, readOnly } = useLibraryContext();
-  const { courseId } = useParams();
-  const {
-    data: courseDetails,
-  } = useCourseDetails(courseId);
 
   return (
     <div className="d-flex">
+      <Helmet>
+        <title>{libraryData?.title || ''} | {process.env.SITE_NAME}</title>
+      </Helmet>
       <div className="flex-grow-1">
-        <Helmet>
-          <title>{courseDetails?.title ?? ''} | {process.env.SITE_NAME}</title>
-        </Helmet>
         <Header
           number={libraryData?.slug}
           title={libraryData?.title}
