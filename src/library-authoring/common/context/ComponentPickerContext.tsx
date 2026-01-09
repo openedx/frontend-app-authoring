@@ -146,8 +146,15 @@ export const ComponentPickerProvider = ({
     if (!componentKeys?.length || !components.length) {
       return undefined;
     }
-    const firstComponentKeys = components[0].collectionKeys;
-    return firstComponentKeys?.find((key) => componentKeys.includes(key));
+
+    for (const component of components) {
+      const commonKey = component.collectionKeys?.find((key) => componentKeys.includes(key));
+      if (commonKey) {
+        return commonKey;
+      }
+    }
+
+    return undefined;
   }, []);
 
   const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
@@ -170,16 +177,11 @@ export const ComponentPickerProvider = ({
 
       // Handle collection selection (when selecting entire collection)
       if (Array.isArray(collectionComponents) && collectionComponents.length) {
-        const selectedKeys = new Set(newSelectedComponents.map((c) => c.usageKey));
-        const allComponentsSelected = collectionComponents.every((c) => selectedKeys.has(c.usageKey));
-
-        if (allComponentsSelected) {
-          updateCollectionStatus(
-            selectedComponent.usageKey,
-            collectionComponents.length,
-            collectionComponents.length,
-          );
-        }
+        updateCollectionStatus(
+          selectedComponent.usageKey,
+          collectionComponents.length,
+          collectionComponents.length,
+        );
       }
 
       // Handle individual component selection (with total count)
@@ -208,7 +210,7 @@ export const ComponentPickerProvider = ({
       onChangeComponentSelection?.(newSelectedComponents);
       return newSelectedComponents;
     });
-  }, [onChangeComponentSelection, updateCollectionStatus, findCommonCollectionKey]);
+  }, []);
 
   const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
     selectedComponent: SelectedComponent,
@@ -225,9 +227,8 @@ export const ComponentPickerProvider = ({
       );
 
       if (typeof collectionComponents === 'number') {
-        // Update collection status based on remaining components
         const componentCollectionKeys = selectedComponent.collectionKeys;
-        const collectionKey = componentCollectionKeys?.[0];
+        const collectionKey = findCommonCollectionKey(componentCollectionKeys, componentsToRemove);
 
         if (collectionKey) {
           const remainingCollectionComponents = newSelectedComponents.filter(
@@ -251,7 +252,7 @@ export const ComponentPickerProvider = ({
       onChangeComponentSelection?.(newSelectedComponents);
       return newSelectedComponents;
     });
-  }, [onChangeComponentSelection, updateCollectionStatus]);
+  }, []);
 
   const context = useMemo<ComponentPickerContextData>(() => {
     switch (componentPickerMode) {
