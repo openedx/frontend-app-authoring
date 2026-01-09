@@ -1,6 +1,7 @@
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import { XBlock } from '@src/data/types';
 import UnitCard from './UnitCard';
@@ -8,6 +9,7 @@ import cardMessages from '../card-header/messages';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
+const mockUseUnitHandler = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -16,6 +18,10 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
   }),
+}));
+
+jest.mock('./data/hooks', () => ({
+  useUnitHandler: (...args: unknown[]) => mockUseUnitHandler(...args),
 }));
 
 const section = {
@@ -104,16 +110,17 @@ const renderComponent = (props?: object) => render(
 describe('<UnitCard />', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags({ enableUnitExpandedView: true });
+    mockUseUnitHandler.mockReset();
+    mockUseUnitHandler.mockReturnValue({
+      data: undefined, isLoading: false, isError: false, error: null,
+    });
   });
 
   it('render UnitCard component correctly', async () => {
     const { findByTestId } = renderComponent();
 
     expect(await findByTestId('unit-card-header')).toBeInTheDocument();
-    expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute(
-      'href',
-      '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
-    );
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -236,5 +243,23 @@ describe('<UnitCard />', () => {
     fireEvent.click(ignoreButton);
 
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('shows an error alert when unit components fail to load', async () => {
+    const errorMessage = 'Failed to load unit components';
+    mockUseUnitHandler.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error(errorMessage),
+    });
+
+    renderComponent();
+
+    const expandButton = await screen.findByTestId('unit-card-header__expanded-btn');
+    fireEvent.click(expandButton);
+
+    expect(await screen.findByText(/unable to load unit components/i)).toBeInTheDocument();
+    expect(screen.queryByText(errorMessage)).not.toBeInTheDocument();
   });
 });

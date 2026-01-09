@@ -8,10 +8,13 @@ export interface AlertErrorProps {
   error: unknown;
   title?: string;
   onDismiss?: () => void;
+  showErrorBody?: boolean;
 }
 
 /* eslint-disable react/prop-types */
-const AlertError: React.FC<AlertErrorProps> = ({ error, title, onDismiss }) => {
+const AlertError: React.FC<AlertErrorProps> = ({
+  error, title, onDismiss, showErrorBody = true,
+}) => {
   const intl = useIntl();
   let errorDetails: string | undefined;
   if (error instanceof Object && (error as any).response?.data) {
@@ -31,12 +34,18 @@ const AlertError: React.FC<AlertErrorProps> = ({ error, title, onDismiss }) => {
       onClose={onDismiss}
     >
       {title && <Alert.Heading>{title}</Alert.Heading>}
-      {error instanceof Object && 'message' in error ? String(error.message) : String(error)}
-      <br />
-      {errorDetails && (
-        <pre>
-          {errorDetails}
-        </pre>
+      {showErrorBody && (
+        <>
+          {error instanceof Object && 'message' in error ? String(error.message) : String(error)}
+          {errorDetails && (
+            <>
+              <br />
+              <pre>
+                {errorDetails}
+              </pre>
+            </>
+          )}
+        </>
       )}
     </Alert>
   );

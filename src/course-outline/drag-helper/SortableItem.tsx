@@ -60,6 +60,7 @@ const SortableItem = ({
     marginBottom: '1.5rem',
     borderRadius: '0.35rem',
     boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
+    flexWrap: 'nowrap',
     ...componentStyle,
   };
 
@@ -69,7 +70,7 @@ const SortableItem = ({
       style={style}
       className="mx-0"
     >
-      <Col className="extend-margin px-0">
+      <Col className="extend-margin px-0" style={{ minWidth: 0 }}>
         {children}
       </Col>
       {isDraggable && (

@@ -3,12 +3,17 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
+import { useToggle, Icon, IconButtonWithTooltip } from '@openedx/paragon';
+import { EditOutline as EditIcon } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { useIntl } from '@edx/frontend-platform/i18n';
+
+import { useWaffleFlags } from '@src/data/apiHooks';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
@@ -16,6 +21,7 @@ import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
+import TitleButton from '@src/course-outline/card-header/TitleButton';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
 import XBlockStatus from '@src/course-outline/xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '@src/course-outline/utils';
@@ -24,6 +30,10 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
+import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import AlertError from '@src/generic/alert-error';
+import { useUnitHandler } from './data/hooks';
+import messages from './messages';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -69,11 +79,14 @@ const UnitCard = ({
 }: UnitCardProps) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
+  const intl = useIntl();
+  const waffleFlags = useWaffleFlags();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
@@ -93,6 +106,14 @@ const UnitCard = ({
     discussionEnabled,
     upstreamInfo,
   } = unit;
+
+  // Fetch unit components when expanded (only if flag is enabled)
+  const {
+    data: unitData,
+    isLoading: isLoadingComponents,
+    isError: isComponentsError,
+    error: componentsError,
+  } = useUnitHandler(id, isExpanded && waffleFlags.enableUnitExpandedView);
 
   const blockSyncData = useMemo(() => {
     if (!upstreamInfo?.readyToSync) {
@@ -158,6 +179,21 @@ const UnitCard = ({
     copyToClipboard(id);
   };
 
+  const handleExpandContent = () => {
+    setIsExpanded((prevState) => !prevState);
+  };
+
+  const handleComponentClick = (blockId?: string) => {
+    const baseUrl = getTitleLink(id);
+    window.location.href = blockId ? `${baseUrl}#${blockId}` : baseUrl;
+  };
+
+  const handleComponentEdit = (e: React.MouseEvent, blockType: string, blockId: string) => {
+    e.stopPropagation();
+    const editorUrl = `/course/${courseId}/editor/${blockType}/${blockId}`;
+    window.location.href = editorUrl;
+  };
+
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
     if (courseId) {
@@ -165,7 +201,15 @@ const UnitCard = ({
     }
   }, [dispatch, section, queryClient, courseId]);
 
-  const titleComponent = (
+  const titleComponent = waffleFlags.enableUnitExpandedView ? (
+    <TitleButton
+      title={displayName}
+      isExpanded={isExpanded}
+      onTitleClick={handleExpandContent}
+      namePrefix={namePrefix}
+      prefixIcon={<UpstreamInfoIcon upstreamInfo={upstreamInfo} size="sm" />}
+    />
+  ) : (
     <TitleLink
       title={displayName}
       titleLink={getTitleLink(id)}
@@ -267,6 +311,81 @@ const UnitCard = ({
               blockData={unit}
             />
           </div>
+
+          {/* Components section - shown when expanded like section/subsection */}
+          {waffleFlags.enableUnitExpandedView && isExpanded && (
+            <div className="unit-card__components p-3" data-testid="unit-card__components">
+              {(() => {
+                if (isComponentsError) {
+                  return (
+                    <AlertError
+                      error={componentsError}
+                      title={intl.formatMessage(messages.componentsLoadError)}
+                      showErrorBody={false}
+                    />
+                  );
+                }
+                if (isLoadingComponents) {
+                  return <div className="text-center p-3">{intl.formatMessage(messages.loadingComponents)}</div>;
+                }
+                if (unitData?.components && unitData.components.length > 0) {
+                  return (
+                    <div className="components-list">
+                      {unitData.components.map((component) => {
+                        const ComponentIcon = getItemIcon(component.blockType);
+                        const colorClass = getComponentStyleColor(component.blockType);
+
+                        return (
+                          <div
+                            key={component.blockId}
+                            className={`component-item d-flex align-items-center justify-content-between p-2 mb-2 border rounded ${colorClass}`}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => handleComponentClick(component.blockId)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleComponentClick(component.blockId);
+                              }
+                            }}
+                          >
+                            <div className="d-flex align-items-center component-info">
+                              <Icon src={ComponentIcon} className="mr-2 text-dark" />
+                              <span className="component-name">{component.displayName}</span>
+                            </div>
+                            <IconButtonWithTooltip
+                              className="component-card-button-icon btn-icon btn-icon-primary btn-icon-md"
+                              data-testid="component-edit-button"
+                              alt={intl.formatMessage(messages.editComponent)}
+                              tooltipContent={<div>{intl.formatMessage(messages.editComponent)}</div>}
+                              iconAs={EditIcon}
+                              onClick={(e) => handleComponentEdit(e, component.blockType, component.blockId)}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+                return (
+                  <div
+                    className="text-center text-muted p-3"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleComponentClick()}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleComponentClick();
+                      }
+                    }}
+                  >
+                    {intl.formatMessage(messages.noComponents)}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
       </SortableItem>
       {blockSyncData && (

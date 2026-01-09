@@ -4,9 +4,9 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import AlertError from '.';
 
-const RootWrapper = ({ error }: { error: unknown }) => (
+const RootWrapper = ({ error, showErrorBody = true }: { error: unknown, showErrorBody?: boolean }) => (
   <IntlProvider locale="en">
-    <AlertError error={error} />
+    <AlertError error={error} showErrorBody={showErrorBody} />
   </IntlProvider>
 );
 
@@ -35,5 +35,11 @@ describe('<AlertMessage />', () => {
     const { getByText } = render(<RootWrapper error={error} />);
     expect(getByText(/this is an error message/i)).toBeInTheDocument();
     expect(getByText(/\{ "message": "this is a response body" \}/i)).toBeInTheDocument();
+  });
+
+  test('hides error body when requested', () => {
+    const error = new Error('Hidden body');
+    const { queryByText } = render(<RootWrapper error={error} showErrorBody={false} />);
+    expect(queryByText(/Hidden body/i)).not.toBeInTheDocument();
   });
 });
