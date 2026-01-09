@@ -64,12 +64,13 @@ const AddComponentWidget = ({
 
   const { hits } = useSearchContext();
 
-  // Memoize collection data to avoid recalculating on every render
   const collectionData = useMemo(() => {
+    // When selecting a collection: retrieve all its components to enable bulk selection
     if (isCollection) {
       return buildCollectionComponents(hits, usageKey);
     }
-    // For individual components, get the collection key and count sibling hits
+    // When selecting an individual component: get the total count of components in its collection
+    // This count is used to determine if the entire collection should be marked as selected
     const componentCollectionKey = (hits.find((hit) => hit.usageKey === usageKey) as ContentHit)?.collections?.key;
     return countCollectionHits(hits, componentCollectionKey);
   }, [hits, usageKey, isCollection]);
