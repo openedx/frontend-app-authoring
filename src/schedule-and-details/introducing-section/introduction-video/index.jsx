@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import AIButton from '../../../studio-home/ps-course-form/AIButton';
 // src\studio-home\ps-course-form\AIButton.jsx
-import { CopilotProvider, useCopilot } from '../../../copilot/CopilotContext';
+import { useCopilot } from '../../../copilot/CopilotContext';
 
 
 const IntroductionVideo = ({ intl, introVideo, onChange,editedValues }) => {
@@ -47,7 +47,6 @@ const IntroductionVideo = ({ intl, introVideo, onChange,editedValues }) => {
   } = useCopilot();
 
   return (
-    <CopilotProvider>
     <Form.Group className="form-group-custom">
       <div className="mb-2">
         <Form.Label className='video-title'>
@@ -123,7 +122,6 @@ const IntroductionVideo = ({ intl, introVideo, onChange,editedValues }) => {
         {intl.formatMessage(messages.courseIntroductionVideoHelpText)}
       </Form.Control.Feedback>
     </Form.Group>
-    </CopilotProvider>
   );
 };
 
