@@ -39,6 +39,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
       case 'use-unit':
         return intl.formatMessage(messages.placeholderUnitText);
       default:
+        // istanbul ignore next: this should never happen
         throw new Error('Unknown flow type');
     }
   };
@@ -362,6 +363,7 @@ const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
       <NewOutlineAddChildButtons {...props} />
     );
   }
+  // istanbul ignore next: legacy code, should be removed soon.
   return (
     <LegacyOutlineAddChildButtons {...props} />
   );

@@ -1,5 +1,7 @@
 import { courseOutlineIndexMock } from '@src/course-outline/__mocks__';
-import { initializeMocks, render, screen } from '@src/testUtils';
+import {
+  initializeMocks, render, screen, waitFor,
+} from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 import mockResult from '@src/library-authoring/__mocks__/library-search.json';
 import { mockContentSearchConfig, mockSearchResult } from '@src/search-manager/data/api.mock';
@@ -10,7 +12,12 @@ import {
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
 } from '@src/library-authoring/data/api.mocks';
-import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import {
+  OutlineFlow,
+  OutlineFlowType,
+  OutlineSidebarProvider,
+} from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import fetchMock from 'fetch-mock-jest';
 import { AddSidebar } from './AddSidebar';
 
 const handleAddSection = { mutateAsync: jest.fn() };
@@ -23,6 +30,7 @@ mockGetContentLibraryV2List.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 
+const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -44,6 +52,15 @@ jest.mock('@src/studio-home/hooks', () => ({
     isLoadingPage: false,
     isFailedLoadingPage: false,
     librariesV2Enabled: true,
+  }),
+}));
+
+let currentFlow: OutlineFlow | null = null;
+jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    ...jest.requireActual('../outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    currentFlow,
   }),
 }));
 
@@ -74,6 +91,21 @@ describe('AddSidebar component', () => {
     initializeMocks();
     mockSearchResult({
       ...searchResult,
+    });
+    // The Meilisearch client-side API uses fetch, not Axios.
+    fetchMock.mockReset();
+    fetchMock.post(searchEndpoint, (_url, req) => {
+      const requestData = JSON.parse((req.body ?? '') as string);
+      const query = requestData?.queries[0]?.q ?? '';
+      // We have to replace the query (search keywords) in the mock results with the actual query,
+      // because otherwise Instantsearch will update the UI and change the query,
+      // leading to unexpected results in the test cases.
+      const newMockResult = { ...mockResult };
+      newMockResult.results[0].query = query;
+      // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
+      // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      return newMockResult;
     });
   });
 
@@ -177,6 +209,51 @@ describe('AddSidebar component', () => {
       category: 'chapter',
       parentLocator: 'course-usage-key',
       libraryContentKey: searchResult.results[0].hits[2].usage_key,
+    });
+  });
+
+  ['section', 'subsection', 'unit'].forEach((category) => {
+    it(`shows appropriate existing and new content based on ${category} use button click`, async () => {
+      const user = userEvent.setup();
+      const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+      const firstSection = sectionList[0];
+      const firstSubsection = firstSection.childInfo.children[0];
+      currentFlow = {
+        flowType: `use-${category}` as OutlineFlowType,
+        parentLocator: category === 'subsection' ? firstSection.id : firstSubsection.id,
+        parentTitle: category === 'subsection' ? firstSection.displayName : firstSubsection.displayName!,
+      };
+      renderComponent();
+      // Check existing tab content is rendered by default
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
+        const requestData = JSON.parse((req.body ?? '') as string);
+        const requestedFilter = requestData?.queries[0].filter;
+        return requestedFilter?.[2] === `block_type IN ["${category}"]`;
+      });
+
+      await user.click(await screen.findByRole('tab', { name: 'Add New' }));
+      // Only category button should be visible
+      const section = screen.queryByRole('button', { name: 'Section' });
+      const subsection = screen.queryByRole('button', { name: 'Subsection' });
+      const unit = screen.queryByRole('button', { name: 'Unit' });
+      switch (category) {
+        case 'section':
+          expect(section).toBeInTheDocument();
+          expect(subsection).not.toBeInTheDocument();
+          expect(unit).not.toBeInTheDocument();
+          break;
+        case 'subsection':
+          expect(section).not.toBeInTheDocument();
+          expect(subsection).toBeInTheDocument();
+          expect(unit).not.toBeInTheDocument();
+          break;
+        default:
+          expect(section).not.toBeInTheDocument();
+          expect(subsection).not.toBeInTheDocument();
+          expect(unit).toBeInTheDocument();
+          break;
+      }
     });
   });
 });
