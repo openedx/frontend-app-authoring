@@ -1,5 +1,5 @@
-import { Button, Col, Row, Stack } from '@openedx/paragon';
-import { Add as IconAdd, Newsstand } from '@openedx/paragon/icons';
+import { Button, Col, IconButton, Row, Stack } from '@openedx/paragon';
+import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
@@ -14,7 +14,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
-  const { currentFlow } = useOutlineSidebarContext();
+  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
   const {
     handleAddSection,
     handleAddSubsection,
@@ -49,7 +49,14 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
             || handleAddUnit.isPending) && (
             <LoadingSpinner />
           )}
-          <h3>{getTitle()}</h3>
+          <h3 className='mb-0'>{getTitle()}</h3>
+          <IconButton
+            src={Close}
+            alt="Close"
+            onClick={stopCurrentFlow}
+            variant="dark"
+            className="ml-auto"
+          />
         </Stack>
       </Col>
     </Row>
