@@ -10,14 +10,12 @@ import {
   mockGetContentLibraryV2List,
   mockLibraryBlockMetadata,
 } from '@src/library-authoring/data/api.mocks';
+import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { AddSidebar } from './AddSidebar';
 
-const handleNewSectionSubmit = jest.fn();
-const handleNewSubsectionSubmit = jest.fn();
-const handleNewUnitSubmit = jest.fn();
-const handleAddSectionFromLibrary = { mutateAsync: jest.fn() };
-const handleAddSubsectionFromLibrary = { mutateAsync: jest.fn() };
-const handleAddUnitFromLibrary = { mutateAsync: jest.fn() };
+const handleAddSection = { mutateAsync: jest.fn() };
+const handleAddSubsection = { mutateAsync: jest.fn() };
+const handleAddUnit = { mutateAsync: jest.fn() };
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -30,12 +28,9 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey: 'course-usage-key',
     courseDetails: { name: 'Test course' },
-    handleNewSubsectionSubmit,
-    handleNewUnitSubmit,
-    handleNewSectionSubmit,
-    handleAddSectionFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
   }),
 }));
 
@@ -52,7 +47,13 @@ jest.mock('@src/studio-home/hooks', () => ({
   }),
 }));
 
-const renderComponent = () => render(<AddSidebar />);
+const extraWrapper = ({ children }) => (
+  <OutlineSidebarProvider>
+    {children}
+  </OutlineSidebarProvider>
+);
+
+const renderComponent = () => render(<AddSidebar />, { extraWrapper });
 const searchResult = {
   ...mockResult,
   results: [
@@ -113,6 +114,9 @@ describe('AddSidebar component', () => {
 
   it('calls appropriate handlers on new button click', async () => {
     const user = userEvent.setup();
+    const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const lastSection = sectionList[3];
+    const lastSubsection = lastSection.childInfo.children[0];
     renderComponent();
 
     // Validate handler for adding section, subsection and unit
@@ -120,11 +124,23 @@ describe('AddSidebar component', () => {
     const subsection = await screen.findByRole('button', { name: 'Subsection' });
     const unit = await screen.findByRole('button', { name: 'Unit' });
     await user.click(section);
-    expect(handleNewSectionSubmit).toHaveBeenCalled();
+    expect(handleAddSection.mutateAsync).toHaveBeenCalledWith({
+      type: 'chapter',
+      parentLocator: 'course-usage-key',
+      displayName: 'Section',
+    });
     await user.click(subsection);
-    expect(handleNewSubsectionSubmit).toHaveBeenCalled();
+    expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
+      type: 'sequential',
+      parentLocator: lastSection.id,
+      displayName: 'Subsection',
+    });
     await user.click(unit);
-    expect(handleNewUnitSubmit).toHaveBeenCalled();
+    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+      type: 'vertical',
+      parentLocator: lastSubsection.id,
+      displayName: 'Unit',
+    });
   });
 
   it('calls appropriate handlers on existing button click', async () => {
@@ -140,7 +156,7 @@ describe('AddSidebar component', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(handleAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,
@@ -148,7 +164,7 @@ describe('AddSidebar component', () => {
     });
     // second one is subsection as per mock
     await user.click(addBtns[1]);
-    expect(handleAddSubsectionFromLibrary.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'sequential',
       parentLocator: lastSection.id,
@@ -156,7 +172,7 @@ describe('AddSidebar component', () => {
     });
     // third one is section as per mock
     await user.click(addBtns[2]);
-    expect(handleAddSectionFromLibrary.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddSection.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'chapter',
       parentLocator: 'course-usage-key',

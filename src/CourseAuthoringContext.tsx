@@ -82,7 +82,7 @@ export const CourseAuthoringProvider = ({
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  }
+  };
 
   const addSubsectionToCourse = async (locator: string, parentLocator: string) => {
     try {
@@ -93,7 +93,7 @@ export const CourseAuthoringProvider = ({
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  }
+  };
 
   const handleAddSection = useCreateCourseBlock(addSectionToCourse);
   const handleAddSubsection = useCreateCourseBlock(addSubsectionToCourse);

@@ -5,7 +5,6 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '@src/generic/processing-notification/data/slice';
-import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
@@ -30,11 +29,9 @@ import {
   setVideoSharingOption,
   setCourseItemOrderList,
   pasteBlock,
-  dismissNotification, createDiscussionsTopics, createCourseXblock,
+  dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
-  addSection,
-  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,

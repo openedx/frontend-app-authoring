@@ -1,16 +1,17 @@
-import { Button, Col, IconButton, Row, Stack } from '@openedx/paragon';
+import {
+  Button, Col, IconButton, Row, Stack,
+} from '@openedx/paragon';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
-import messages from './messages';
 import { OutlineFlowType, useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
-
+import messages from './messages';
 
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
@@ -49,7 +50,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
             || handleAddUnit.isPending) && (
             <LoadingSpinner />
           )}
-          <h3 className='mb-0'>{getTitle()}</h3>
+          <h3 className="mb-0">{getTitle()}</h3>
           <IconButton
             src={Close}
             alt="Close"
@@ -154,7 +155,7 @@ const OutlineAddChildButtons = ({
       flowType,
       parentLocator,
       parentTitle,
-    })
+    });
   }, [
     childType,
     parentLocator,

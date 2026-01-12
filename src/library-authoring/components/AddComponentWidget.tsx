@@ -44,7 +44,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
     } finally {
       setIsLoading?.(false);
     }
-  }
+  };
 
   if (componentPickerMode === 'single') {
     return (
@@ -54,9 +54,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
         disabled={isLoading}
         onClick={onClick}
       >
-        <>
-          <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
-        </>
+        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
       </Button>
     );
   }

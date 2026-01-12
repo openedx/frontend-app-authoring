@@ -10,6 +10,19 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn().mockReturnValue({ librariesV2Enabled: true }),
 }));
 
+const handleAddSection = { mutateAsync: jest.fn() };
+const handleAddSubsection = { mutateAsync: jest.fn() };
+const handleAddUnit = { mutateAsync: jest.fn() };
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    getUnitUrl: (id: string) => `/some/${id}`,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
+  }),
+}));
+
 [
   { containerType: ContainerType.Section },
   { containerType: ContainerType.Subsection },
@@ -27,6 +40,8 @@ jest.mock('react-redux', () => ({
         handleNewButtonClick={newClickHandler}
         handleUseFromLibraryClick={useFromLibClickHandler}
         childType={containerType}
+        parentLocator=""
+        parentTitle=""
       />);
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });

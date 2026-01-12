@@ -12,7 +12,9 @@ import {
 import { getIconBorderStyleColor, getItemIcon } from '@src/generic/block-type-utils';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
@@ -20,9 +22,9 @@ import type { XBlock } from '@src/data/types';
 import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
 import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
-import { COURSE_BLOCK_NAMES } from '@src/constants';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 

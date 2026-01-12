@@ -11,13 +11,13 @@ import { useToggle } from '@openedx/paragon';
 import { HelpOutline, Info, Plus } from '@openedx/paragon/icons';
 
 import type { SidebarPage } from '@src/generic/sidebar';
+import { useStateWithUrlSearchParam } from '@src/hooks';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { OutlineInfoSidebar } from './OutlineInfoSidebar';
 
 import messages from './messages';
 import { AddSidebar } from './AddSidebar';
 import { isOutlineNewDesignEnabled } from '../utils';
-import { useStateWithUrlSearchParam } from '@src/hooks';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
@@ -30,7 +30,7 @@ export type OutlineFlow = {
   flowType: OutlineFlowType;
   parentLocator: string;
   parentTitle: string;
-}
+};
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;

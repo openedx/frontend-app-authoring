@@ -35,6 +35,7 @@ import { NOTIFICATION_MESSAGES } from '@src/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
+import { ContainerType } from '@src/generic/key-utils';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
@@ -64,7 +65,6 @@ import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext'
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
-import { ContainerType } from '@src/generic/key-utils';
 
 const CourseOutline = () => {
   const intl = useIntl();
