@@ -156,8 +156,6 @@ const slice = createSlice({
       });
     },
     addSubsection: (state: CourseOutlineState, { payload }) => {
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log("(anon) payload: ", payload); // __AUTO_GENERATED_PRINT_VAR_END__
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id === payload.parentLocator) {
           section.childInfo.children = [

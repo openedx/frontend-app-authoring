@@ -40,7 +40,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
 
   return (
     <Row
-      className="mx-0 py-3 px-4 border-dashed border-gray-500 shadow-lg rounded bg-white"
+      className="mx-0 py-3 px-4 border-dashed border-gray-500 shadow-lg rounded bg-white w-100"
     >
       <Col className="py-3">
         <Stack direction="horizontal" gap={3}>

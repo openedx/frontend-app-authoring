@@ -23,6 +23,8 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
     selectedComponents,
+    isLoading,
+    setIsLoading,
   } = useComponentPickerContext();
 
   // istanbul ignore if: this should never happen
@@ -35,16 +37,26 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
     return null;
   }
 
+  const onClick = async () => {
+    setIsLoading?.(true);
+    try {
+      await onComponentSelected?.({ usageKey, blockType });
+    } finally {
+      setIsLoading?.(false);
+    }
+  }
+
   if (componentPickerMode === 'single') {
     return (
       <Button
         variant="outline-primary"
         iconBefore={AddCircleOutline}
-        onClick={() => {
-          onComponentSelected({ usageKey, blockType });
-        }}
+        disabled={isLoading}
+        onClick={onClick}
       >
-        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
+        <>
+          <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
+        </>
       </Button>
     );
   }
