@@ -52,6 +52,8 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   const lastSection = getLastEditableParent(sectionsList);
   const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
   const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
+  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
+  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
   const {
     courseUsageKey,
     handleAddSection,
@@ -69,7 +71,6 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         });
         break;
       case 'subsection':
-        const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
         if (sectionParentId) {
           await handleAddSubsection.mutateAsync({
             type: ContainerType.Sequential,
@@ -79,7 +80,6 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         }
         break;
       case 'unit':
-        const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
         if (subsectionParentId) {
           await handleAddUnit.mutateAsync({
             type: ContainerType.Vertical,
@@ -188,6 +188,8 @@ const ShowLibraryContent = () => {
 
   const lastSection = getLastEditableParent(sectionsList);
   const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
+  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
+  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
@@ -200,7 +202,6 @@ const ShowLibraryContent = () => {
         });
         break;
       case 'subsection':
-        const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
         if (sectionParentId) {
           await handleAddSubsection.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
@@ -211,7 +212,6 @@ const ShowLibraryContent = () => {
         }
         break;
       case 'unit':
-        const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
         if (subsectionParentId) {
           await handleAddUnit.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
@@ -238,6 +238,7 @@ const ShowLibraryContent = () => {
   ]);
 
   const allowedBlocks = useMemo(() => {
+    const blocks: ContainerTypes[] = ['section'];
     switch (currentFlow?.flowType) {
       case 'use-section':
         return ['section'];
@@ -246,7 +247,6 @@ const ShowLibraryContent = () => {
       case 'use-unit':
         return ['unit'];
       default:
-        const blocks: ContainerTypes[] = ['section'];
         if (lastSection) { blocks.push('subsection'); }
         if (lastSubsection) { blocks.push('unit'); }
         return blocks;

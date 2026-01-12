@@ -6,21 +6,12 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
-import { HelpOutline, Info, Plus } from '@openedx/paragon/icons';
 
-import type { SidebarPage } from '@src/generic/sidebar';
 import { useStateWithUrlSearchParam } from '@src/hooks';
-import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
-
-import messages from './messages';
-import { AddSidebar } from './AddSidebar';
 import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
-export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
 export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
 export type OutlineFlow = {
   flowType: 'use-section';
@@ -41,16 +32,12 @@ interface OutlineSidebarContextData {
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
-  sidebarPages: OutlineSidebarPages;
-  selectedContainerId?: string;
   openContainerInfoSidebar: (containerId: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
-  const intl = useIntl();
-
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
     'info',
     'sidebar',
@@ -96,25 +83,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     };
   }, []);
 
-  const sidebarPages = {
-    info: {
-      component: OutlineInfoSidebar,
-      icon: Info,
-      title: intl.formatMessage(messages.sidebarButtonInfo),
-    },
-    help: {
-      component: OutlineHelpSidebar,
-      icon: HelpOutline,
-      title: intl.formatMessage(messages.sidebarButtonHelp),
-    },
-    add: {
-      component: AddSidebar,
-      icon: Plus,
-      title: intl.formatMessage(messages.sidebarButtonAdd),
-      hideFromActionMenu: true,
-    },
-  } satisfies OutlineSidebarPages;
-
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
       currentPageKey,
@@ -122,7 +90,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
-      sidebarPages,
       isOpen,
       open,
       toggle,
@@ -135,7 +102,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
-      sidebarPages,
       isOpen,
       open,
       toggle,
