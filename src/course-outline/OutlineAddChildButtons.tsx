@@ -1,6 +1,7 @@
 import {
-  Button, Col, IconButton, Row, Stack,
+  Button, Col, IconButton, Row, Stack, StandardModal, useToggle,
 } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
@@ -11,6 +12,9 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { ContentType } from '@src/library-authoring/routes';
 import messages from './messages';
 
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
@@ -64,19 +68,22 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   );
 };
 
-interface NewChildButtonsProps {
+interface BaseProps {
   handleNewButtonClick?: () => void;
-  handleUseFromLibraryClick?: () => void;
   onClickCard?: (e: React.MouseEvent) => void;
   childType: ContainerType;
   btnVariant?: string;
   btnClasses?: string;
   btnSize?: 'sm' | 'md' | 'lg' | 'inline';
   parentLocator: string;
+}
+
+interface NewChildButtonsProps extends BaseProps {
+  handleUseFromLibraryClick?: () => void;
   parentTitle: string;
 }
 
-const OutlineAddChildButtons = ({
+const NewOutlineAddChildButtons = ({
   handleNewButtonClick,
   handleUseFromLibraryClick,
   onClickCard,
@@ -191,6 +198,169 @@ const OutlineAddChildButtons = ({
         )}
       </Stack>
     </>
+  );
+};
+
+// istanbul ignore next: legacy code, should be removed soon.
+const LegacyOutlineAddChildButtons = ({
+  handleNewButtonClick,
+  childType,
+  btnVariant = 'outline-primary',
+  btnClasses = 'mt-4 border-gray-500 rounded-0',
+  btnSize,
+  parentLocator,
+  onClickCard,
+}: BaseProps) => {
+  // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
+  // as it has a useEffect that fetches course waffle flags whenever
+  // location.search is updated. Course search updates location.search when
+  // user types, which will then trigger the useEffect and reload the page.
+  // See https://github.com/openedx/frontend-app-authoring/pull/1938.
+  const { librariesV2Enabled } = useSelector(getStudioHomeData);
+  const intl = useIntl();
+  const {
+    courseUsageKey,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddUnit,
+  } = useCourseAuthoringContext();
+  const [
+    isAddLibrarySectionModalOpen,
+    openAddLibrarySectionModal,
+    closeAddLibrarySectionModal,
+  ] = useToggle(false);
+  let messageMap = {
+    newButton: messages.newUnitButton,
+    importButton: messages.useUnitFromLibraryButton,
+  };
+  let onNewCreateContent: () => Promise<void>;
+  let onUseLibraryContent: (selected: SelectedComponent) => Promise<void>;
+  let visibleTabs: ContentType[] = [];
+  let query: string[] = [];
+
+  switch (childType) {
+    case ContainerType.Section:
+      messageMap = {
+        newButton: messages.newSectionButton,
+        importButton: messages.useSectionFromLibraryButton,
+      };
+      onNewCreateContent = () => handleAddSection.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddSection.mutateAsync({
+        type: COMPONENT_TYPES.libraryV2,
+        category: ContainerType.Chapter,
+        parentLocator: courseUsageKey,
+        libraryContentKey: selected.usageKey,
+      });
+      visibleTabs = [ContentType.sections];
+      query = ['block_type = "section"'];
+      break;
+    case ContainerType.Subsection:
+      messageMap = {
+        newButton: messages.newSubsectionButton,
+        importButton: messages.useSubsectionFromLibraryButton,
+      };
+      onNewCreateContent = () => handleAddSubsection.mutateAsync({
+        type: ContainerType.Sequential,
+        parentLocator,
+        displayName: COURSE_BLOCK_NAMES.sequential.name,
+      });
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddSubsection.mutateAsync({
+        type: COMPONENT_TYPES.libraryV2,
+        category: ContainerType.Sequential,
+        parentLocator,
+        libraryContentKey: selected.usageKey,
+      });
+      visibleTabs = [ContentType.subsections];
+      query = ['block_type = "subsection"'];
+      break;
+    case ContainerType.Unit:
+      messageMap = {
+        newButton: messages.newUnitButton,
+        importButton: messages.useUnitFromLibraryButton,
+      };
+      onNewCreateContent = () => handleAddUnit.mutateAsync({
+        type: ContainerType.Vertical,
+        parentLocator,
+        displayName: COURSE_BLOCK_NAMES.vertical.name,
+      });
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddUnit.mutateAsync({
+        type: COMPONENT_TYPES.libraryV2,
+        category: ContainerType.Vertical,
+        parentLocator,
+        libraryContentKey: selected.usageKey,
+      });
+      visibleTabs = [ContentType.units];
+      query = ['block_type = "unit"'];
+      break;
+    default:
+      // istanbul ignore next: unreachable
+      throw new Error(`Unrecognized block type ${childType}`);
+  }
+
+  const handleOnComponentSelected = (selected: SelectedComponent) => {
+    onUseLibraryContent(selected);
+    closeAddLibrarySectionModal();
+  };
+
+  return (
+    <>
+      <Stack direction="horizontal" gap={3} onClick={onClickCard}>
+        <Button
+          className={btnClasses}
+          variant={btnVariant}
+          iconBefore={IconAdd}
+          size={btnSize}
+          block
+          onClick={handleNewButtonClick || onNewCreateContent}
+        >
+          {intl.formatMessage(messageMap.newButton)}
+        </Button>
+        {librariesV2Enabled && (
+          <Button
+            className={btnClasses}
+            variant={btnVariant}
+            iconBefore={Newsstand}
+            block
+            size={btnSize}
+            onClick={openAddLibrarySectionModal}
+          >
+            {intl.formatMessage(messageMap.importButton)}
+          </Button>
+        )}
+      </Stack>
+      <StandardModal
+        title={intl.formatMessage(messages.sectionPickerModalTitle)}
+        isOpen={isAddLibrarySectionModalOpen}
+        onClose={closeAddLibrarySectionModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <LibraryAndComponentPicker
+          showOnlyPublished
+          extraFilter={query}
+          componentPickerMode="single"
+          onComponentSelected={handleOnComponentSelected}
+          visibleTabs={visibleTabs}
+        />
+      </StandardModal>
+    </>
+  );
+};
+
+// istanbul ignore next: just a wrapper.
+const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
+  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
+  if (showNewActionsBar) {
+    return (
+      <NewOutlineAddChildButtons {...props} />
+    );
+  }
+  return (
+    <LegacyOutlineAddChildButtons {...props} />
   );
 };
 
