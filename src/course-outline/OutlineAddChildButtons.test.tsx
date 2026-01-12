@@ -1,8 +1,10 @@
 import userEvent from '@testing-library/user-event';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { ContainerType } from '@src/generic/key-utils';
 import {
   initializeMocks, render, screen, waitFor,
 } from '@src/testUtils';
+import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('react-redux', () => ({
@@ -34,6 +36,10 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     });
 
     it('renders and behaves correctly', async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+      });
       const newClickHandler = jest.fn();
       const useFromLibClickHandler = jest.fn();
       render(<OutlineAddChildButtons
@@ -42,7 +48,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
         childType={containerType}
         parentLocator=""
         parentTitle=""
-      />);
+      />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
       expect(newBtn).toBeInTheDocument();

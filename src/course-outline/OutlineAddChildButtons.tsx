@@ -232,6 +232,7 @@ const LegacyOutlineAddChildButtons = ({
   let messageMap = {
     newButton: messages.newUnitButton,
     importButton: messages.useUnitFromLibraryButton,
+    modalTitle: messages.unitPickerModalTitle,
   };
   let onNewCreateContent: () => Promise<void>;
   let onUseLibraryContent: (selected: SelectedComponent) => Promise<void>;
@@ -243,6 +244,7 @@ const LegacyOutlineAddChildButtons = ({
       messageMap = {
         newButton: messages.newSectionButton,
         importButton: messages.useSectionFromLibraryButton,
+        modalTitle: messages.sectionPickerModalTitle,
       };
       onNewCreateContent = () => handleAddSection.mutateAsync({
         type: ContainerType.Chapter,
@@ -262,6 +264,7 @@ const LegacyOutlineAddChildButtons = ({
       messageMap = {
         newButton: messages.newSubsectionButton,
         importButton: messages.useSubsectionFromLibraryButton,
+        modalTitle: messages.subsectionPickerModalTitle,
       };
       onNewCreateContent = () => handleAddSubsection.mutateAsync({
         type: ContainerType.Sequential,
@@ -281,6 +284,7 @@ const LegacyOutlineAddChildButtons = ({
       messageMap = {
         newButton: messages.newUnitButton,
         importButton: messages.useUnitFromLibraryButton,
+        modalTitle: messages.unitPickerModalTitle,
       };
       onNewCreateContent = () => handleAddUnit.mutateAsync({
         type: ContainerType.Vertical,
@@ -333,7 +337,7 @@ const LegacyOutlineAddChildButtons = ({
         )}
       </Stack>
       <StandardModal
-        title={intl.formatMessage(messages.sectionPickerModalTitle)}
+        title={intl.formatMessage(messageMap.modalTitle)}
         isOpen={isAddLibrarySectionModalOpen}
         onClose={closeAddLibrarySectionModal}
         isOverflowVisible={false}
@@ -351,7 +355,6 @@ const LegacyOutlineAddChildButtons = ({
   );
 };
 
-// istanbul ignore next: just a wrapper.
 const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
   const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   if (showNewActionsBar) {

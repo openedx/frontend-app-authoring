@@ -27,8 +27,7 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleNewUnitSubmit: jest.fn(),
-    handleAddUnitFromLibrary: handleOnAddUnitFromLibrary,
+    handleAddUnit: handleOnAddUnitFromLibrary,
   }),
 }));
 
@@ -46,7 +45,7 @@ jest.mock('@src/library-authoring/component-picker', () => ({
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
         usageKey: containerKey,
-        blockType: 'unti',
+        blockType: 'unit',
       });
     };
     return (
