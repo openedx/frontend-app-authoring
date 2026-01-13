@@ -37,6 +37,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
     return null;
   }
 
+  /** disables button while the onComponentSelected operation is pending */
   const onClick = async () => {
     setIsLoading?.(true);
     try {

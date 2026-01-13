@@ -17,6 +17,13 @@ import { LibraryAndComponentPicker, type SelectedComponent } from '@src/library-
 import { ContentType } from '@src/library-authoring/routes';
 import messages from './messages';
 
+/**
+ * Placeholder component that is displayed when a user clicks the "Use content from library" button.
+ * Shows a loading spinner when the component is selected and being added to the course.
+ * Finally it is hidden once the add component operation is complete and the content is successfully
+ * added to the course.
+ * @param props.parentLocator The locator of the parent flow item to which the content will be added.
+ */
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
   const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
@@ -116,6 +123,7 @@ const NewOutlineAddChildButtons = ({
   let onNewCreateContent: () => Promise<void>;
   let flowType: OutlineFlowType;
 
+  // Based on the childType, determine the correct action and messages to display.
   switch (childType) {
     case ContainerType.Section:
       messageMap = {
@@ -158,6 +166,9 @@ const NewOutlineAddChildButtons = ({
       throw new Error(`Unrecognized block type ${childType}`);
   }
 
+  /**
+  * Starts add flow in sidebar when `Use content from library` button is clicked.
+  */
   const onUseLibraryContent = useCallback(async () => {
     startCurrentFlow({
       flowType,
@@ -203,6 +214,10 @@ const NewOutlineAddChildButtons = ({
 };
 
 // istanbul ignore next: legacy code, should be removed soon.
+/**
+ * Legacy component for adding child blocks in Studio.
+ * Uses the old flow of opening a modal to allow user to select content from library.
+ */
 const LegacyOutlineAddChildButtons = ({
   handleNewButtonClick,
   childType,
@@ -356,6 +371,9 @@ const LegacyOutlineAddChildButtons = ({
   );
 };
 
+/**
+ * Wrapper component that displays the correct component based on the configuration.
+ */
 const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
   const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
   if (showNewActionsBar) {

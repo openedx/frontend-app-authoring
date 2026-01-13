@@ -56,6 +56,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }
   }, [setSelectedContainerId]);
 
+  /**
+  * Stops current add content flow.
+  * This will cause the sidebar to switch back to its normal state and clear out any placeholder containers.
+  */
   const stopCurrentFlow = useCallback(() => {
     setCurrentFlow(null);
   }, [setCurrentFlow]);
@@ -66,6 +70,11 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     open();
   }, [open, setCurrentFlow]);
 
+  /**
+  * Starts add content flow.
+  * The sidebar enters an add content flow which allows user to add content in a specific container.
+  * A placeholder container is added in the location when the flow is started.
+  */
   const startCurrentFlow = useCallback((flow: OutlineFlow) => {
     setCurrentPageKey('add');
     setCurrentFlow(flow);
