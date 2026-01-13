@@ -4,7 +4,7 @@ import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { OutlineInfoSidebar } from './OutlineInfoSidebar';
 import messages from './messages';
 import { AddSidebar } from './AddSidebar';
-import { OutlineSidebarPageKeys } from './OutlineSidebarContext';
+import type { OutlineSidebarPageKeys } from './OutlineSidebarContext';
 
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
 

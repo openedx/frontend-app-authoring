@@ -13,8 +13,8 @@ import {
   mockLibraryBlockMetadata,
 } from '@src/library-authoring/data/api.mocks';
 import {
-  OutlineFlow,
-  OutlineFlowType,
+  type OutlineFlow,
+  type OutlineFlowType,
   OutlineSidebarProvider,
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';

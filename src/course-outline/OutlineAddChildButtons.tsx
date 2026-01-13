@@ -7,13 +7,13 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
-import { OutlineFlowType, useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { type OutlineFlowType, useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { LibraryAndComponentPicker, type SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import messages from './messages';
 
