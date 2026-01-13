@@ -213,7 +213,6 @@ const NewOutlineAddChildButtons = ({
   );
 };
 
-// istanbul ignore next: legacy code, should be removed soon.
 /**
  * Legacy component for adding child blocks in Studio.
  * Uses the old flow of opening a modal to allow user to select content from library.
@@ -381,7 +380,6 @@ const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
       <NewOutlineAddChildButtons {...props} />
     );
   }
-  // istanbul ignore next: legacy code, should be removed soon.
   return (
     <LegacyOutlineAddChildButtons {...props} />
   );
