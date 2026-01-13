@@ -16,7 +16,7 @@ export const OutlineAlignSidebar = ({ contentId }: { contentId?: string }) => {
 
   const {
     data: contentData,
-  } = useContentData(contentId, true);
+  } = useContentData(contentId);
 
   return (
     <div>
