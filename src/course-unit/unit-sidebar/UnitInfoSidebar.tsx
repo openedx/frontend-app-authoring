@@ -5,18 +5,14 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 import { useMemo } from 'react';
 import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
-import { XBlock } from '../legacy-sidebar';
 import messages from './messages';
 import PublishControls from '../legacy-sidebar/PublishControls';
+import { useUnitSidebarContext } from './UnitSidebarContext';
 
-type UnitInfoSidebarProps = {
-  unitTitle: string;
-  childrenBlocks: XBlock[];
-};
-
-export const UnitInfoSidebar = ({ unitTitle, childrenBlocks }: UnitInfoSidebarProps) => {
+export const UnitInfoSidebar = () => {
   const intl = useIntl();
   const { blockId } = useParams();
+  const { title, childrenBlocks } = useUnitSidebarContext();
 
   if (blockId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -34,7 +30,7 @@ export const UnitInfoSidebar = ({ unitTitle, childrenBlocks }: UnitInfoSidebarPr
   return (
     <div>
       <SidebarTitle
-        title={unitTitle}
+        title={title}
         icon={getItemIcon('unit')}
       />
       <SidebarContent>

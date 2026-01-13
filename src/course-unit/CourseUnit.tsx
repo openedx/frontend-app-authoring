@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
-  Alert, Container, Layout, Button, TransitionReplace,
+  Alert, Container, Button, TransitionReplace,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -26,7 +26,7 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
+import { useCourseUnit, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
@@ -61,7 +61,7 @@ const CourseUnit = () => {
     savingStatus,
     isTitleEditFormOpen,
     isUnitVerticalType,
-    isUnitLibraryType,
+    isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
     staticFileNotices,
@@ -86,7 +86,6 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
-  const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   const readOnly = !!courseUnit.readOnly;
 
@@ -114,8 +113,8 @@ const CourseUnit = () => {
   }
 
   return (
-    <UnitSidebarProvider>
-      <Container size="xl" className="course-unit px-4">
+    <UnitSidebarProvider title={unitTitle} childrenBlocks={courseVerticalChildren.children}>
+      <Container fluid className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>
             {movedXBlockParams.isSuccess ? (
@@ -203,8 +202,8 @@ const CourseUnit = () => {
               showPasteUnit={showPasteUnit}
             />
           )}
-          <Layout {...layoutGrid}>
-            <Layout.Element>
+          <div className="d-flex align-items-baseline">
+            <div className="flex-fill">
               {currentlyVisibleToStudents && (
                 <AlertMessage
                   className="course-unit__alert"
@@ -254,8 +253,8 @@ const CourseUnit = () => {
                 courseId={courseId}
               />
               <IframePreviewLibraryXBlockChanges />
-            </Layout.Element>
-            <Layout.Element>
+            </div>
+            {!isUnitLegacyLibraryType && (
               <CourseAuthoringUnitSidebarSlot
                 courseId={courseId}
                 blockId={blockId}
@@ -265,8 +264,8 @@ const CourseUnit = () => {
                 isUnitVerticalType={isUnitVerticalType}
                 isSplitTestType={isSplitTestType}
               />
-            </Layout.Element>
-          </Layout>
+            )}
+          </div>
         </section>
       </Container>
       <div className="alert-toast">

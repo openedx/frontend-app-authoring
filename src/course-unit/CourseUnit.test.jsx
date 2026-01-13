@@ -190,7 +190,7 @@ describe('<CourseUnit />', () => {
 
   it('renders XBlock iframe and opens legacy edit modal on editXBlock message', async () => {
     render(<RootWrapper />);
-    
+
     const xblocksIframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
     expect(xblocksIframe).toBeInTheDocument();
     simulatePostMessageEvent(messageTypes.editXBlock, { id: blockId });
@@ -198,7 +198,7 @@ describe('<CourseUnit />', () => {
     const legacyXBlockEditModalIframe = await screen.findByTitle(
       xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
     );
-    expect(legacyXBlockEditModalIframe).toBeInTheDocument();  
+    expect(legacyXBlockEditModalIframe).toBeInTheDocument();
   });
 
   it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {

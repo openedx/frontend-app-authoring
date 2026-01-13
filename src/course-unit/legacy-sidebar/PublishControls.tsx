@@ -67,15 +67,15 @@ const PublishControls = ({
   };
 
   return (
-    <div className={`course-unit-publish-controls ${publishCardClass}`}>
-      <div className="text-primary-700">
+    <div className={`course-unit-publish-controls border p-3 ${publishCardClass}`}>
+      <div className="text-primary-700 mb-4">
         <SidebarHeader
           title={title}
           visibilityState={visibilityState}
         />
       </div>
       <Stack gap={3}>
-        <Stack className="ml-3" gap={1}>
+        <Stack gap={1}>
           {editedOn && (
             <>
               <span className="heading-label">
@@ -123,7 +123,7 @@ const PublishControls = ({
             </>
           )}
         </Stack>
-        <Stack className="ml-3 mb-2">
+        <Stack className="mb-2">
           <span className="heading-label">
             {releaseLabel}
           </span>
