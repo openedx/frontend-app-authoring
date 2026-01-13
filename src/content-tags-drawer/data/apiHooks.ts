@@ -119,7 +119,7 @@ export const useContentTaxonomyTagsData = (contentId: string) => (
 export const useContentData = (contentId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: ['contentData', contentId],
-    queryFn: (enabled && contentId) ? () => getContentData(contentId) : skipToken
+    queryFn: (enabled && contentId) ? () => getContentData(contentId) : skipToken,
   })
 );
 

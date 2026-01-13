@@ -2,7 +2,6 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
-import { getConfig, setConfig } from '@edx/frontend-platform';
 import { XBlock } from '@src/data/types';
 import SectionCard from './SectionCard';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';

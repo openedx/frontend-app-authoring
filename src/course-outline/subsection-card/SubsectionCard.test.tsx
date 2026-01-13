@@ -1,6 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
