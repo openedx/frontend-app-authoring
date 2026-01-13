@@ -222,7 +222,7 @@ const ShowLibraryContent = () => {
         }
         break;
       default:
-        // istanbul ignore next: unreachable
+        // istanbul ignore next: should not happen
         throw new Error(`Unrecognized block type ${blockType}`);
     }
     stopCurrentFlow();
