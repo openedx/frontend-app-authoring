@@ -30,6 +30,7 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface SectionCardProps {
   section: XBlock,
@@ -74,6 +75,7 @@ const SectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
+  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
@@ -266,6 +268,13 @@ const SectionCard = ({
 
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
+  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
+    if (!preventNodeEvents || e.target === e.currentTarget) {
+      openContainerInfoSidebar(section.id);
+      setIsExpanded(true);
+    }
+  }, [openContainerInfoSidebar]);
+
   return (
     <>
       <SortableItem
@@ -281,9 +290,16 @@ const SectionCard = ({
           padding: '1.75rem',
           ...borderStyle,
         }}
+        onClick={(e) => onClickCard(e, true)}
       >
         <div
-          className={`section-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames(
+            'section-card',
+            {
+              highlight: isScrolledToElement,
+              'outline-card-selected': section.id === selectedContainerId,
+            },
+          )}
           data-testid="section-card"
           ref={currentRef}
         >
@@ -303,6 +319,7 @@ const SectionCard = ({
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}
+                onClickCard={(e) => onClickCard(e, true)}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -315,7 +332,18 @@ const SectionCard = ({
               />
             )}
             <div className="section-card__content" data-testid="section-card__content">
-              <div className="outline-section__status mb-1">
+              {
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                className="outline-section__status mb-1"
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, true)
+                }
+              >
                 <Button
                   className="p-0 bg-transparent"
                   data-destid="section-card-highlights-button"
@@ -328,11 +356,23 @@ const SectionCard = ({
                   <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
                 </Button>
               </div>
-              <XBlockStatus
-                isSelfPaced={isSelfPaced}
-                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                blockData={section}
-              />
+              {
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, false)
+                }
+              >
+                <XBlockStatus
+                  isSelfPaced={isSelfPaced}
+                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                  blockData={section}
+                />
+              </div>
             </div>
             {isExpanded && (
               <div
@@ -344,6 +384,7 @@ const SectionCard = ({
                   <OutlineAddChildButtons
                     handleNewButtonClick={() => handleNewSubsectionSubmit(id)}
                     handleUseFromLibraryClick={openAddLibrarySubsectionModal}
+                    onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                   />
                 )}

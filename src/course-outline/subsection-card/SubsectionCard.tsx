@@ -31,6 +31,7 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -77,6 +78,7 @@ const SubsectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
+  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
@@ -258,6 +260,13 @@ const SubsectionCard = ({
     closeAddLibraryUnitModal();
   }, [id, handleAddUnitFromLibrary, closeAddLibraryUnitModal]);
 
+  const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
+    if (!preventNodeEvents || e.target === e.currentTarget) {
+      openContainerInfoSidebar(subsection.id);
+      setIsExpanded(true);
+    }
+  }, [openContainerInfoSidebar]);
+
   return (
     <>
       <SortableItem
@@ -275,9 +284,16 @@ const SubsectionCard = ({
           background: '#f8f7f6',
           ...borderStyle,
         }}
+        onClick={(e) => onClickCard(e, true)}
       >
         <div
-          className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames(
+            'subsection-card',
+            {
+              highlight: isScrolledToElement,
+              'outline-card-selected': subsection.id === selectedContainerId,
+            },
+          )}
           data-testid="subsection-card"
           ref={currentRef}
         >
@@ -297,6 +313,7 @@ const SubsectionCard = ({
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
+                onClickCard={(e) => onClickCard(e, true)}
                 isFormOpen={isFormOpen}
                 closeForm={closeForm}
                 onEditSubmit={handleEditSubmit}
@@ -310,7 +327,19 @@ const SubsectionCard = ({
                 extraActionsComponent={extraActionsComponent}
                 readyToSync={upstreamInfo?.readyToSync}
               />
-              <div className="subsection-card__content item-children" data-testid="subsection-card__content">
+              {
+                /* This is a special case; we can skip accessibility here (tabbing and select with keyboard) since the
+                `SortableItem` component handles that for the whole `SubsectionCard`.
+                This `onClick` allows the user to select the Card by clicking on white areas of this component. */
+              }
+              <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
+                className="subsection-card__content item-children"
+                data-testid="subsection-card__content"
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, false)
+                }
+              >
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}
                   isCustomRelativeDatesActive={isCustomRelativeDatesActive}
@@ -330,6 +359,7 @@ const SubsectionCard = ({
                   <OutlineAddChildButtons
                     handleNewButtonClick={handleNewButtonClick}
                     handleUseFromLibraryClick={openAddLibraryUnitModal}
+                    onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
