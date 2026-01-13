@@ -32,6 +32,7 @@ interface OutlineSidebarContextData {
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
+  selectedContainerId?: string;
   openContainerInfoSidebar: (containerId: string) => void;
 }
 
