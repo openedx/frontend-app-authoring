@@ -339,8 +339,10 @@ const SectionCard = ({
               }
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 className="outline-section__status mb-1"
-                /* istanbul ignore next */
-                onClick={(e) => onClickCard(e, true)}
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, true)
+                }
               >
                 <Button
                   className="p-0 bg-transparent"
@@ -360,8 +362,10 @@ const SectionCard = ({
                 This `onClick` allows the user to select the Card by clicking on white areas of this component. */
               }
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-                /* istanbul ignore next */
-                onClick={(e) => onClickCard(e, false)}
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, false)
+                }
               >
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}

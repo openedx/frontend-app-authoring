@@ -335,8 +335,10 @@ const SubsectionCard = ({
               <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
                 className="subsection-card__content item-children"
                 data-testid="subsection-card__content"
-                /* istanbul ignore next */
-                onClick={(e) => onClickCard(e, false)}
+                onClick={
+                  /* istanbul ignore next */
+                  (e) => onClickCard(e, false)
+                }
               >
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}
