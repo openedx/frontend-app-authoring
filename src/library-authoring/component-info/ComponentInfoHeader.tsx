@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useUpdateXBlockFields, useXBlockFields } from '../data/apiHooks';
 import messages from './messages';
@@ -11,7 +12,8 @@ import messages from './messages';
 const ComponentInfoHeader = () => {
   const intl = useIntl();
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const usageKey = sidebarItemInfo?.id;

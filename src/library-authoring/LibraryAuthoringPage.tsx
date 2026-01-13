@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow,
   Alert,
   Badge,
   Breadcrumb,
@@ -31,31 +30,29 @@ import Header from '@src/header';
 import NotFoundAlert from '@src/generic/NotFoundAlert';
 import { useStudioHome } from '@src/studio-home/hooks';
 import {
-  ClearFiltersButton,
-  FilterByBlockType,
-  FilterByTags,
   SearchContextProvider,
-  SearchKeywordsField,
-  SearchSortWidget,
   TypesFilterData,
 } from '@src/search-manager';
 import { ToastContext } from '@src/generic/toast-context';
 import migrationMessages from '@src/legacy-libraries-migration/messages';
 
+import { FiltersProps } from '@src/library-authoring/library-filters';
+import { MainFilters } from '@src/library-authoring/library-filters/MainFilters';
+import { useMultiLibraryContext } from '@src/library-authoring/common/context/MultiLibraryContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
-import { useLibraryContext } from './common/context/LibraryContext';
+import { useOptionalLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyItemId, useSidebarContext } from './common/context/SidebarContext';
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 import messages from './messages';
-import LibraryFilterByPublished from './generic/filter-by-published';
 import { libraryQueryPredicate } from './data/apiHooks';
 
 const HeaderActions = () => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
 
   const {
     openAddContentSidebar,
@@ -113,7 +110,7 @@ const HeaderActions = () => {
 export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
@@ -133,13 +130,15 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
 };
 
 interface LibraryAuthoringPageProps {
-  returnToLibrarySelection?: () => void,
-  visibleTabs?: ContentType[],
+  returnToLibrarySelection?: () => void;
+  visibleTabs?: ContentType[];
+  FiltersComponent?: React.ComponentType<FiltersProps>;
 }
 
 const LibraryAuthoringPage = ({
   returnToLibrarySelection,
   visibleTabs = allLibraryPageTabs,
+  FiltersComponent = MainFilters,
 }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
   const location = useLocation();
@@ -160,15 +159,20 @@ const LibraryAuthoringPage = ({
     librariesV2Enabled,
   } = useStudioHome();
 
-  const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
+  const {
+    componentPickerMode,
+    restrictToLibrary,
+    extraFilter: pickerExtraFilter,
+  } = useComponentPickerContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     libraryId,
     libraryData,
     isLoadingLibraryData,
-    showOnlyPublished,
     extraFilter: contextExtraFilter,
     readOnly,
-  } = useLibraryContext();
+  } = useOptionalLibraryContext();
+  const { selectedLibraries, selectedCollections } = useMultiLibraryContext();
   const { sidebarItemInfo } = useSidebarContext();
 
   const {
@@ -223,7 +227,7 @@ const LibraryAuthoringPage = ({
   }, [navigateTo]);
 
   // Verify the migration task status
-  if (migrationId) {
+  if (migrationId && libraryId) {
     let deleteMigrationIdParam = false;
     if (migrationStatusData?.state === 'Succeeded') {
       // Check if any library migrations failed.
@@ -273,7 +277,7 @@ const LibraryAuthoringPage = ({
     );
   }
 
-  if (!libraryData) {
+  if (libraryId && !libraryData) {
     return <NotFoundAlert />;
   }
 
@@ -289,13 +293,25 @@ const LibraryAuthoringPage = ({
     />
   ) : undefined;
 
-  const extraFilter = [`context_key = "${libraryId}"`];
+  const extraFilter: string[] = [];
+  if (libraryId) {
+    extraFilter.push(`context_key = "${libraryId}"`);
+  }
+  if (selectedLibraries && selectedLibraries.length > 0) {
+    extraFilter.push(`context_key IN ["${selectedLibraries.join('","')}"]`);
+  }
+  if (selectedCollections && selectedCollections.length > 0) {
+    extraFilter.push(`collections.key IN ["${selectedCollections.join('","')}"]`);
+  }
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }
 
   if (contextExtraFilter) {
     extraFilter.push(...contextExtraFilter);
+  }
+  if (pickerExtraFilter) {
+    extraFilter.push(...pickerExtraFilter);
   }
 
   const activeTypeFilters = {
@@ -336,32 +352,40 @@ const LibraryAuthoringPage = ({
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-        {!componentPickerMode && (
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            readOnly={readOnly}
-            isLibrary
-            containerProps={{
-              size: undefined,
-            }}
-          />
-        )}
+        {libraryData
+          && (
+          <>
+            <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+            {!componentPickerMode && (
+            <Header
+              number={libraryData.slug}
+              title={libraryData.title}
+              org={libraryData.org}
+              contextId={libraryId}
+              readOnly={readOnly}
+              isLibrary
+              containerProps={{
+                size: undefined,
+              }}
+            />
+            )}
+          </>
+          )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
           >
-            <SubHeader
-              title={<SubHeaderTitle title={libraryData.title} />}
-              subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
-              breadcrumbs={breadcumbs}
-              headerActions={<HeaderActions />}
-              hideBorder
-            />
+            {libraryData
+              && (
+              <SubHeader
+                title={<SubHeaderTitle title={libraryData.title} />}
+                subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
+                breadcrumbs={breadcumbs}
+                headerActions={<HeaderActions />}
+                hideBorder
+              />
+              )}
             {visibleTabs.length > 1 && (
               <Tabs
                 variant="tabs"
@@ -372,22 +396,7 @@ const LibraryAuthoringPage = ({
                 {visibleTabsToRender}
               </Tabs>
             )}
-            <ActionRow className="my-3">
-              <SearchKeywordsField className="mr-3" />
-              <FilterByTags />
-              {!(onlyOneType) && <FilterByBlockType />}
-              <LibraryFilterByPublished key={
-                // It is necessary to re-render `LibraryFilterByPublished` every time `FilterByBlockType`
-                // appears or disappears, this is because when the menu is opened it is rendered
-                // in a previous state, causing an inconsistency in its position.
-                // By changing the key we can re-render the component.
-                !(insideCollections || insideUnits) ? 'filter-published-1' : 'filter-published-2'
-              }
-              />
-              <ClearFiltersButton />
-              <ActionRow.Spacer />
-              <SearchSortWidget />
-            </ActionRow>
+            <FiltersComponent onlyOneType={onlyOneType} />
             <LibraryContent contentType={activeKey} />
           </SearchContextProvider>
         </Container>

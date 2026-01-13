@@ -27,7 +27,7 @@ interface Props {
 const PAGE_SIZE = 500;
 
 export const CourseImportFilterProvider = ({ handleSelect, selectedCourseId, children }: Props) => {
-  const { libraryId } = useLibraryContext(true) || {};
+  const { libraryId } = useLibraryContext();
   const dispatch = useDispatch();
   const [hidePreviouslyImportedCourses, setHidePreviouslyImportedCourses] = useState(true);
   const { courses, numPages } = useSelector(getStudioHomeData);

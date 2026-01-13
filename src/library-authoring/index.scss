@@ -19,3 +19,9 @@
   min-height: 1rem;
   min-width: 1rem;
 }
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

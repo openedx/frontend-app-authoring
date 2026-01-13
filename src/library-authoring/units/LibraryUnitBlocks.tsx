@@ -19,7 +19,8 @@ import Loading from '@src/generic/Loading';
 import TagCount from '@src/generic/tag-count';
 import { ToastContext } from '@src/generic/toast-context';
 import { skipIfUnwantedTarget, useRunOnNextRender } from '@src/utils';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
@@ -55,7 +56,7 @@ interface ComponentBlockProps {
 /** Component header */
 const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { showToast } = useContext(ToastContext);
   const { setSidebarAction, openItemSidebar } = useSidebarContext();
 
@@ -129,7 +130,8 @@ const BlockHeader = ({ block, index, readOnly }: ComponentBlockProps) => {
 const ComponentBlock = ({
   block, readOnly, isDragging, index,
 }: ComponentBlockProps) => {
-  const { showOnlyPublished, openComponentEditor } = useLibraryContext();
+  const { openComponentEditor } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const { sidebarItemInfo, openItemSidebar } = useSidebarContext();
 
@@ -146,7 +148,7 @@ const ComponentBlock = ({
     const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
-      openComponentEditor(block.originalId);
+      openComponentEditor?.(block.originalId);
     }
   }, [block, openItemSidebar, canEditComponent, openComponentEditor, readOnly]);
 
@@ -232,7 +234,8 @@ export const LibraryUnitBlocks = ({ unitId, readOnly: componentReadOnly }: Libra
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { readOnly: libraryReadOnly, showOnlyPublished } = useLibraryContext();
+  const { readOnly: libraryReadOnly } = useOptionalLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
 
   const readOnly = componentReadOnly || libraryReadOnly;
 

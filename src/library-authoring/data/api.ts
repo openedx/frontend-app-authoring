@@ -266,6 +266,14 @@ export interface GetLibrariesV2CustomParams {
   search?: string,
 }
 
+export interface GetLibrariesV2CustomParamsNoPagination extends GetLibrariesV2CustomParams {
+  pagination: false,
+}
+
+export interface GetLibrariesV2CustomParamsPagination extends GetLibrariesV2CustomParams {
+  pagination?: true,
+}
+
 export type LibraryAssetResponse = {
   path: string,
   size: number,
@@ -384,10 +392,27 @@ export async function updateLibraryMetadata(libraryData: UpdateLibraryDataReques
   return camelCaseObject(data);
 }
 
+function isNoPagination(
+  params: GetLibrariesV2CustomParams,
+): params is GetLibrariesV2CustomParamsNoPagination {
+  return params.pagination === false;
+}
+
 /**
  * Get a list of content libraries.
  */
-export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsNoPagination
+): Promise<ContentLibrary[]>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParamsPagination
+): Promise<LibrariesV2Response>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams
+): Promise<LibrariesV2Response | ContentLibrary[]>;
+export async function getContentLibraryV2List(
+  customParams: GetLibrariesV2CustomParams,
+): Promise<LibrariesV2Response | ContentLibrary[]> {
   // Set default params if not passed in
   const customParamsDefaults = {
     type: customParams.type || 'complex',
@@ -400,7 +425,16 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
   const customParamsFormated = snakeCaseObject(customParamsDefaults);
   const { data } = await getAuthenticatedHttpClient()
     .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
-  return camelCaseObject(data);
+  const camel = camelCaseObject(data);
+
+  // Narrow the return type based on pagination flag
+  if (isNoPagination(customParams)) {
+    // `camel` is known to be an array of ContentLibrary
+    return camel as ContentLibrary[];
+  }
+
+  // otherwise it matches the paginated response shape
+  return camel as LibrariesV2Response;
 }
 
 /**

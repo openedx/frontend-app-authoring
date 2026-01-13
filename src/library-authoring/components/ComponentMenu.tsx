@@ -12,7 +12,7 @@ import { useClipboard } from '@src/generic/clipboard';
 import { getBlockType } from '@src/generic/key-utils';
 import { ToastContext } from '@src/generic/toast-context';
 
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import containerMessages from '@src/library-authoring/containers/messages';
@@ -36,7 +36,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
     containerId,
     openComponentEditor,
     readOnly,
-  } = useLibraryContext();
+  } = useOptionalLibraryContext();
 
   const {
     sidebarItemInfo,
@@ -71,7 +71,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
 
   const handleEdit = useCallback(() => {
     openItemSidebar(usageKey, SidebarBodyItemId.ComponentInfo);
-    openComponentEditor(usageKey);
+    openComponentEditor?.(usageKey);
   }, [usageKey, openItemSidebar, openComponentEditor]);
 
   const scheduleJumpToCollection = useRunOnNextRender(() => {

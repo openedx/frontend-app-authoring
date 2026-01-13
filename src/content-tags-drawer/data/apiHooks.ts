@@ -5,6 +5,7 @@ import {
   useQueries,
   useMutation,
   useQueryClient,
+  skipToken,
 } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { TagData, TagListData } from '@src/taxonomy/data/types';
@@ -118,8 +119,7 @@ export const useContentTaxonomyTagsData = (contentId: string) => (
 export const useContentData = (contentId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: ['contentData', contentId],
-    queryFn: () => getContentData(contentId!),
-    enabled: enabled || !!contentId,
+    queryFn: (enabled && contentId) ? () => getContentData(contentId) : skipToken
   })
 );
 

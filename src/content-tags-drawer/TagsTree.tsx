@@ -118,20 +118,19 @@ interface TagsTreeProps {
  *   }
  * };
  *
- * @param props - The component props.
- * @param props.tags - Array of taxonomy tags that are applied to the content.
- * @param props.rootDepth - Depth of the parent tag (root), used to render tabs for the tree.
- * @param props.parentKey - Key of the parent tag.
- * @param props.lineage - Lineage of the tag.
- * @param props.removeTagHandler - Function that is called when removing tags from the tree.
- * @param props.afterTagsComponent - Optional component to render after the tags components.
  */
 const TagsTree = ({
+  /** Array of taxonomy tags that are applied to the content. */
   tags,
+  /** Depth of the parent tag (root), used to render tabs for the tree. */
   rootDepth = 0,
+  /** Key of the parent tag. */
   parentKey,
+  /** Lineage of the tag. */
   lineage = [],
+  /** Function that is called when removing tags from the tree. */
   removeTagHandler,
+  /** Optional component to render after the tags components. */
   afterTagsComponent,
 }: TagsTreeProps) => {
   const { isEditMode } = useContext(ContentTagsDrawerContext);

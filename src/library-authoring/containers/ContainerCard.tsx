@@ -18,12 +18,13 @@ import { ToastContext } from '@src/generic/toast-context';
 import { useRunOnNextRender } from '@src/utils';
 
 import { useComponentPickerContext } from '@src/library-authoring/common/context/ComponentPickerContext';
-import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
+import { useOptionalLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { SidebarActions, SidebarBodyItemId, useSidebarContext } from '@src/library-authoring/common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '@src/library-authoring/data/apiHooks';
 import { useLibraryRoutes } from '@src/library-authoring/routes';
 import BaseCard from '@src/library-authoring/components/BaseCard';
 import AddComponentWidget from '@src/library-authoring/components/AddComponentWidget';
+import { usePublishedFilterContext } from '@src/library-authoring/common/context/PublishedFilterContext';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
 import ContainerRemover from './ContainerRemover';
@@ -38,7 +39,7 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
   const intl = useIntl();
   const {
     libraryId, collectionId, containerId, readOnly,
-  } = useLibraryContext();
+  } = useOptionalLibraryContext();
   const {
     sidebarItemInfo,
     closeLibrarySidebar,
@@ -211,7 +212,7 @@ type ContainerCardPreviewProps = {
 
 const ContainerCardPreview = ({ hit }: ContainerCardPreviewProps) => {
   const intl = useIntl();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const {
     blockType: itemType,
     published,
@@ -256,7 +257,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = usePublishedFilterContext();
   const { openContainerInfoSidebar, openItemSidebar, sidebarItemInfo } = useSidebarContext();
 
   const {

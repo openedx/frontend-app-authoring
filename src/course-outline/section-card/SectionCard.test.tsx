@@ -26,6 +26,14 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    handleAddSubsectionFromLibrary: jest.fn(),
+    handleNewSubsectionSubmit: jest.fn(),
+  }),
+}));
+
 const unit = {
   id: 'block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
 };
@@ -105,10 +113,8 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
     isSectionsExpanded
-    onNewSubsectionSubmit={jest.fn()}
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
-    onAddSubsectionFromLibrary={jest.fn()}
     resetScrollState={jest.fn()}
     {...props}
   >

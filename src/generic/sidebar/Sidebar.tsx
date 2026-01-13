@@ -18,6 +18,7 @@ export interface SidebarPage {
   component: React.ComponentType;
   icon: React.ComponentType;
   title: string;
+  hideFromActionMenu?: boolean;
 }
 
 type SidebarPages = Record<string, SidebarPage>;
@@ -92,7 +93,7 @@ export function Sidebar<T extends SidebarPages>({
   const SidebarComponent = pages[currentPageKey].component;
 
   return (
-    <Stack direction="horizontal" className="sidebar align-items-baseline mx-3" gap={2}>
+    <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
       {isOpen && !!currentPageKey && (
         <div className="sidebar-content p-2 bg-white border-right">
           <Dropdown data-testid="sidebar-dropdown">

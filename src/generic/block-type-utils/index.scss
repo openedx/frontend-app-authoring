@@ -230,3 +230,39 @@
     color: white;
   }
 }
+
+.icon-with-border-chapter {
+  background-color: white;
+  border: 1px solid #45009E;
+
+  .pgn__icon {
+    color: #45009E;
+  }
+}
+
+.icon-with-border-sequential {
+  background-color: white;
+  border: 1px solid #EA3E3E;
+
+  .pgn__icon {
+    color: #EA3E3E;
+  }
+}
+
+.icon-with-border-vertical {
+  background-color: white;
+  border: 1px solid #0B8E77;
+
+  .pgn__icon {
+    color: #0B8E77;
+  }
+}
+
+.icon-with-border-default {
+  background-color: white;
+  border: 1px solid #005C9E;
+
+  .pgn__icon {
+    color: #005C9E;
+  }
+}
