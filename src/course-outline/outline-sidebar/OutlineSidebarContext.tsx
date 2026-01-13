@@ -15,6 +15,7 @@ import { OutlineInfoSidebar } from './OutlineInfoSidebar';
 
 import messages from './messages';
 import { AddSidebar } from './AddSidebar';
+import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
 export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
@@ -26,6 +27,8 @@ interface OutlineSidebarContextData {
   open: () => void;
   toggle: () => void;
   sidebarPages: OutlineSidebarPages;
+  selectedContainerId?: string;
+  openContainerInfoSidebar: (containerId: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
@@ -35,6 +38,14 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
   const [isOpen, open, , toggle] = useToggle(true);
+
+  const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
+
+  const openContainerInfoSidebar = useCallback((containerId: string) => {
+    if (isOutlineNewDesignEnabled()) {
+      setSelectedContainerId(containerId);
+    }
+  }, [setSelectedContainerId]);
 
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
@@ -68,6 +79,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      openContainerInfoSidebar,
     }),
     [
       currentPageKey,
@@ -76,6 +89,8 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      openContainerInfoSidebar,
     ],
   );
 

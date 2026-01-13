@@ -1,3 +1,4 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
@@ -5,6 +6,7 @@ import {
 import { XBlock } from '@src/data/types';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -105,6 +107,7 @@ const renderComponent = (props?: object) => render(
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
+    extraWrapper: OutlineSidebarProvider,
   },
 );
 
@@ -121,6 +124,33 @@ describe('<UnitCard />', () => {
       'href',
       '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
     );
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render UnitCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('unit-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('hides header based on isHeaderVisible flag', async () => {

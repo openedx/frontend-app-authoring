@@ -9,6 +9,7 @@ import messages from './messages';
 interface NewChildButtonsProps {
   handleNewButtonClick: () => void;
   handleUseFromLibraryClick: () => void;
+  onClickCard?: (e: React.MouseEvent) => void;
   childType: ContainerType;
   btnVariant?: string;
   btnClasses?: string;
@@ -18,6 +19,7 @@ interface NewChildButtonsProps {
 const OutlineAddChildButtons = ({
   handleNewButtonClick,
   handleUseFromLibraryClick,
+  onClickCard,
   childType,
   btnVariant = 'outline-primary',
   btnClasses = 'mt-4 border-gray-500 rounded-0',
@@ -59,7 +61,7 @@ const OutlineAddChildButtons = ({
   }
 
   return (
-    <Stack direction="horizontal" gap={3}>
+    <Stack direction="horizontal" gap={3} onClick={onClickCard}>
       <Button
         className={btnClasses}
         variant={btnVariant}

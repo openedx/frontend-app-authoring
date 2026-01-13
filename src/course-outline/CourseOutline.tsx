@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import {
   Container,
   Row,
@@ -69,6 +68,7 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
+import { isOutlineNewDesignEnabled } from './utils';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -148,7 +148,7 @@ const CourseOutline = () => {
 
   // Show the new actions bar if it is enabled in the configuration.
   // This is a temporary flag until the new design feature is fully implemented.
-  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
+  const showNewActionsBar = isOutlineNewDesignEnabled();
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
