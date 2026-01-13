@@ -19,7 +19,7 @@ import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
-import UnitTab from './UnitTab';
+import { UnitTab } from './UnitTab';
 
 const ConfigureModal = ({
   isOpen,

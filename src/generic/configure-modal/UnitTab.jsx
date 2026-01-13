@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Form } from '@openedx/paragon';
 import {
@@ -10,7 +9,108 @@ import classNames from 'classnames';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 
-const UnitTab = ({
+export const DiscussionEditComponent = ({
+  discussionEnabled,
+  handleDiscussionChange,
+}) => (
+  <>
+    <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
+      <FormattedMessage {...messages.discussionEnabledCheckbox} />
+    </Form.Checkbox>
+    <p className="x-small font-weight-bold"><FormattedMessage {...messages.discussionEnabledDescription} /></p>
+  </>
+);
+
+export const AccessEditComponent = ({
+  selectedPartitionIndex,
+  setFieldValue,
+  userPartitionInfo,
+  selectedGroups,
+}) => {
+  const intl = useIntl();
+  const checkIsDeletedGroup = (group) => {
+    const isGroupSelected = selectedGroups.includes(group.id.toString());
+
+    return group.deleted && isGroupSelected;
+  };
+
+  const handleSelect = (e) => {
+    setFieldValue('selectedPartitionIndex', parseInt(e.target.value, 10));
+    setFieldValue('selectedGroups', selectedGroups);
+  };
+
+  return (
+    <>
+      <Form.Label as="legend" className="font-weight-bold">
+        <FormattedMessage {...messages.restrictAccessTo} />
+      </Form.Label>
+      <Form.Control
+        as="select"
+        name="groupSelect"
+        value={selectedPartitionIndex}
+        onChange={handleSelect}
+        data-testid="group-type-select"
+      >
+        <option value="-1" key="-1">
+          {userPartitionInfo.selectedPartitionIndex === -1
+            ? intl.formatMessage(messages.unitSelectGroupType)
+            : intl.formatMessage(messages.unitAllLearnersAndStaff)}
+        </option>
+        {userPartitionInfo.selectablePartitions.map((partition, index) => (
+          <option
+            key={partition.id}
+            value={index}
+          >
+            {partition.name}
+          </option>
+        ))}
+      </Form.Control>
+
+      {selectedPartitionIndex >= 0 && userPartitionInfo.selectablePartitions.length && (
+        <Form.Group controlId="select-groups-checkboxes">
+          <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
+          <div
+            role="group"
+            className="d-flex flex-column"
+            data-testid="group-checkboxes"
+            aria-labelledby="select-groups-checkboxes"
+          >
+            {userPartitionInfo.selectablePartitions[selectedPartitionIndex].groups.map((group) => (
+              <Form.Group
+                key={group.id}
+                className="pgn__form-checkbox"
+              >
+                <Field
+                  as={Form.Control}
+                  className="flex-grow-0 mr-1"
+                  controlClassName="pgn__form-checkbox-input mr-1"
+                  type="checkbox"
+                  value={`${group.id}`}
+                  name="selectedGroups"
+                />
+                <div>
+                  <Form.Label
+                    className={classNames({ 'text-danger': checkIsDeletedGroup(group) })}
+                    isInline
+                  >
+                    {group.name}
+                  </Form.Label>
+                  {group.deleted && (
+                    <Form.Control.Feedback type="invalid" hasIcon={false}>
+                      <FormattedMessage {...messages.unitSelectDeletedGroupErrorMessage} />
+                    </Form.Control.Feedback>
+                  )}
+                </div>
+              </Form.Group>
+            ))}
+          </div>
+        </Form.Group>
+      )}
+    </>
+  );
+};
+
+export const UnitTab = ({
   isXBlockComponent,
   category,
   values,
@@ -18,7 +118,6 @@ const UnitTab = ({
   showWarning,
   userPartitionInfo,
 }) => {
-  const intl = useIntl();
   const {
     isVisibleToStaffOnly,
     selectedPartitionIndex,
@@ -32,17 +131,6 @@ const UnitTab = ({
 
   const handleDiscussionChange = (e) => {
     setFieldValue('discussionEnabled', e.target.checked);
-  };
-
-  const handleSelect = (e) => {
-    setFieldValue('selectedPartitionIndex', parseInt(e.target.value, 10));
-    setFieldValue('selectedGroups', []);
-  };
-
-  const checkIsDeletedGroup = (group) => {
-    const isGroupSelected = selectedGroups.includes(group.id.toString());
-
-    return group.deleted && isGroupSelected;
   };
 
   const getAccessBlockTitle = () => {
@@ -78,81 +166,22 @@ const UnitTab = ({
             <FormattedMessage {...getAccessBlockTitle()} />
           </h4>
           <hr />
-          <Form.Label as="legend" className="font-weight-bold">
-            <FormattedMessage {...messages.restrictAccessTo} />
-          </Form.Label>
-          <Form.Control
-            as="select"
-            name="groupSelect"
-            value={selectedPartitionIndex}
-            onChange={handleSelect}
-            data-testid="group-type-select"
-          >
-            <option value="-1" key="-1">
-              {userPartitionInfo.selectedPartitionIndex === -1
-                ? intl.formatMessage(messages.unitSelectGroupType)
-                : intl.formatMessage(messages.unitAllLearnersAndStaff)}
-            </option>
-            {userPartitionInfo.selectablePartitions.map((partition, index) => (
-              <option
-                key={partition.id}
-                value={index}
-              >
-                {partition.name}
-              </option>
-            ))}
-          </Form.Control>
-
-          {selectedPartitionIndex >= 0 && userPartitionInfo.selectablePartitions.length && (
-            <Form.Group controlId="select-groups-checkboxes">
-              <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
-              <div
-                role="group"
-                className="d-flex flex-column"
-                data-testid="group-checkboxes"
-                aria-labelledby="select-groups-checkboxes"
-              >
-                {userPartitionInfo.selectablePartitions[selectedPartitionIndex].groups.map((group) => (
-                  <Form.Group
-                    key={group.id}
-                    className="pgn__form-checkbox"
-                  >
-                    <Field
-                      as={Form.Control}
-                      className="flex-grow-0 mr-1"
-                      controlClassName="pgn__form-checkbox-input mr-1"
-                      type="checkbox"
-                      value={`${group.id}`}
-                      name="selectedGroups"
-                    />
-                    <div>
-                      <Form.Label
-                        className={classNames({ 'text-danger': checkIsDeletedGroup(group) })}
-                        isInline
-                      >
-                        {group.name}
-                      </Form.Label>
-                      {group.deleted && (
-                        <Form.Control.Feedback type="invalid" hasIcon={false}>
-                          {intl.formatMessage(messages.unitSelectDeletedGroupErrorMessage)}
-                        </Form.Control.Feedback>
-                      )}
-                    </div>
-                  </Form.Group>
-                ))}
-              </div>
-            </Form.Group>
-          )}
+          <AccessEditComponent
+            selectedPartitionIndex={selectedPartitionIndex}
+            setFieldValue={setFieldValue}
+            userPartitionInfo={userPartitionInfo}
+            selectedGroups={selectedGroups}
+          />
         </Form.Group>
       )}
       {!isXBlockComponent && (
         <>
           <h4 className="mt-4"><FormattedMessage {...messages.discussionEnabledSectionTitle} /></h4>
           <hr />
-          <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
-            <FormattedMessage {...messages.discussionEnabledCheckbox} />
-          </Form.Checkbox>
-          <p className="x-small font-weight-bold"><FormattedMessage {...messages.discussionEnabledDescription} /></p>
+          <DiscussionEditComponent
+            discussionEnabled={discussionEnabled}
+            handleDiscussionChange={handleDiscussionChange}
+          />
         </>
       )}
     </>
@@ -197,5 +226,3 @@ UnitTab.propTypes = {
     selectedPartitionIndex: PropTypes.number.isRequired,
   }).isRequired,
 };
-
-export default UnitTab;

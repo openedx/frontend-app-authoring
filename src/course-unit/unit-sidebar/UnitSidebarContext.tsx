@@ -14,23 +14,11 @@ interface UnitSidebarContextData {
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
-  title: string;
-  childrenBlocks: XBlock[];
-}
-
-interface UnitSidebarProviderProps {
-  children?: React.ReactNode;
-  title?: string;
-  childrenBlocks?: XBlock[];
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
-export const UnitSidebarProvider = ({
-  children,
-  title = '',
-  childrenBlocks = [],
-}: UnitSidebarProviderProps) => {
+export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [isOpen, open,, toggle] = useToggle(true);
 
@@ -46,8 +34,6 @@ export const UnitSidebarProvider = ({
       isOpen,
       open,
       toggle,
-      title,
-      childrenBlocks,
     }),
     [
       currentPageKey,
@@ -55,8 +41,6 @@ export const UnitSidebarProvider = ({
       isOpen,
       open,
       toggle,
-      title,
-      childrenBlocks,
     ],
   );
 
