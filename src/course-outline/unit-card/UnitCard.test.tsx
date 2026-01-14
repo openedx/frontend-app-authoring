@@ -2,14 +2,16 @@ import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
+
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
-const mockSetCurrentPageKey = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -17,13 +19,6 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
   useIgnoreLibraryBlockChanges: () => ({
     mutateAsync: mockUseIgnoreLibraryBlockChanges,
-  }),
-}));
-
-jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
-  ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
-  useOutlineSidebarContext: () => ({
-    setCurrentPageKey: mockSetCurrentPageKey,
   }),
 }));
 
@@ -114,7 +109,7 @@ const renderComponent = (props?: object) => render(
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
-    extraWrapper: OutlineSidebarProvider,
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -286,6 +281,7 @@ describe('<UnitCard />', () => {
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
     });
     renderComponent();
     const element = await screen.findByTestId('unit-card');
@@ -302,6 +298,29 @@ describe('<UnitCard />', () => {
   });
 
   it('should open align sidebar', async () => {
+    const mockSetCurrentPageKey = jest.fn();
+
+    const testSidebarPage = {
+      component: OutlineInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+      }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',

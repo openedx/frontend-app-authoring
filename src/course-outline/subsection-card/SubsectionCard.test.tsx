@@ -4,9 +4,11 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
@@ -14,7 +16,6 @@ const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn() };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
-const mockSetCurrentPageKey = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -56,13 +57,6 @@ jest.mock('@src/library-authoring/component-picker', () => ({
       </button>
     );
   },
-}));
-
-jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
-  ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
-  useOutlineSidebarContext: () => ({
-    setCurrentPageKey: mockSetCurrentPageKey,
-  }),
 }));
 
 const unit = {
@@ -151,7 +145,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     routerProps: {
       initialEntries: [entry],
     },
-    extraWrapper: OutlineSidebarProvider,
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -423,6 +417,7 @@ describe('<SubsectionCard />', () => {
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
     });
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
@@ -439,6 +434,29 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should open align sidebar', async () => {
+    const mockSetCurrentPageKey = jest.fn();
+
+    const testSidebarPage = {
+      component: OutlineInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+      }));
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
