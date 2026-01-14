@@ -1,15 +1,17 @@
 import moment, { Moment } from 'moment/moment';
-import { FormattedDate, FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
-import { Cached, ChecklistRtl, Description, Event } from '@openedx/paragon/icons';
+import {
+  Cached, ChecklistRtl, Description, Event,
+} from '@openedx/paragon/icons';
 import { useWaffleFlags } from '@src/data/apiHooks';
+import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
-import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
   const now = moment().utc();
@@ -46,7 +48,7 @@ const UnpublishedBadgeStatus = () => (
     variant="light"
   >
     <Stack direction="horizontal" gap={2}>
-      <Icon size='xs' src={Description} />
+      <Icon size="xs" src={Description} />
       <FormattedMessage {...messages.unpublishedBadgeText} />
     </Stack>
   </Badge>
@@ -66,8 +68,8 @@ const LibraryUpdates = ({ courseId }: { courseId: string }) => {
       className="small text-gray-700"
       to={url}
     >
-      <Stack direction='horizontal' gap={2}>
-        <Icon size='sm' src={Cached} />
+      <Stack direction="horizontal" gap={2}>
+        <Icon size="sm" src={Cached} />
         <FormattedMessage
           {...messages.libraryUpdatesText}
           values={{ count: outOfSyncCount }}
@@ -75,7 +77,7 @@ const LibraryUpdates = ({ courseId }: { courseId: string }) => {
       </Stack>
     </Link>
   );
-}
+};
 
 const CourseDates = ({
   startDate, endDate, startDateRaw, datesLink,
@@ -93,7 +95,7 @@ const CourseDates = ({
         to={datesLink}
       >
         <Stack direction="horizontal" gap={2}>
-          <Icon size='sm' className="mb-1" src={Event} />
+          <Icon size="sm" className="mb-1" src={Event} />
           {startDateRaw}
         </Stack>
       </Link>
@@ -106,7 +108,7 @@ const CourseDates = ({
       to={datesLink}
     >
       <Stack direction="horizontal" gap={2}>
-        <Icon size='sm' className="mb-1" src={Event} />
+        <Icon size="sm" className="mb-1" src={Event} />
         <FormattedDate
           value={startDate.toString()}
           year="numeric"
@@ -156,8 +158,8 @@ const Checklists = ({ courseId, checklist }: {
       <Icon src={ChecklistRtl} size="md" className="mr-2" />
       {checkListTitle} <FormattedMessage {...messages.checklistCompleted} />
     </Link>
-  )
-}
+  );
+};
 
 export interface StatusBarProps {
   courseId: string;

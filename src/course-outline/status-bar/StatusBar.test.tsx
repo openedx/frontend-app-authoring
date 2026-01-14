@@ -20,6 +20,7 @@ const statusBarData: CourseOutlineStatusBar = {
   highlightsEnabledForMessaging: true,
   videoSharingEnabled: true,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
+  hasChanges: true,
 };
 
 const renderComponent = (props?: Partial<StatusBarProps>) => render(

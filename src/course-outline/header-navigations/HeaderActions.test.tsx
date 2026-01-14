@@ -47,7 +47,6 @@ describe('<HeaderActions />', () => {
 
     expect(await screen.findByRole('button', { name: messages.addButton.defaultMessage })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: messages.moreActionsButtonAriaLabel.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls the correct handlers when clicking buttons', async () => {

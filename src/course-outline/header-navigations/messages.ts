@@ -47,7 +47,7 @@ const messages = defineMessages({
   viewLiveButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.view-live.tooltip',
     defaultMessage: 'Click to open the courseware in the LMS in a new tab',
-    description: 'Tooltip text of view live button'
+    description: 'Tooltip text of view live button',
   },
 });
 
