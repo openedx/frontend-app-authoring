@@ -34,14 +34,20 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.header-navigations.button.view-live',
     defaultMessage: 'View live',
   },
-  moreActionsButtonAriaLabel: {
-    id: 'course-authoring.course-outline.header-navigations.button.more-actions.aria-label',
-    defaultMessage: 'More actions',
-    description: 'More actions button aria label in course outline',
+  courseInfoButtonTooltip: {
+    id: 'course-authoring.course-outline.header-navigations.button.course.info.tooltip',
+    defaultMessage: 'Click to open course info in sidebar',
+    description: 'Tooltip text of course info button',
+  },
+  courseInfoButton: {
+    id: 'course-authoring.course-outline.header-navigations.button.course.info',
+    defaultMessage: 'Course info',
+    description: 'Course info button in course outline header',
   },
   viewLiveButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.view-live.tooltip',
     defaultMessage: 'Click to open the courseware in the LMS in a new tab',
+    description: 'Tooltip text of view live button'
   },
 });
 
