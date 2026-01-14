@@ -67,6 +67,7 @@
         },
         {
           "display_name": "Collection 2",
+          "block_id": "col2",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 58",
           "id": 2,
           "type": "collection",
@@ -99,6 +100,7 @@
         },
         {
           "display_name": "Collection 3",
+          "block_id": "col3",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 57",
           "id": 3,
           "type": "collection",
@@ -131,6 +133,7 @@
         },
         {
           "display_name": "Collection 4",
+          "block_id": "col4",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 56",
           "id": 4,
           "type": "collection",
@@ -163,6 +166,7 @@
         },
         {
           "display_name": "Collection 5",
+          "block_id": "col5",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 55",
           "id": 5,
           "type": "collection",
@@ -195,6 +199,7 @@
         },
         {
           "display_name": "Collection 6",
+          "block_id": "col6",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 54",
           "id": 6,
           "type": "collection",

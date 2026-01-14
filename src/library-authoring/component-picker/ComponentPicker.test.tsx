@@ -312,7 +312,7 @@ describe('<LibraryAndComponentPicker />', () => {
     onChange.mockClear();
 
     // Select another component
-    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[1]);
+    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[7]);
     await waitFor(() => expect(onChange).toHaveBeenCalledWith([
       {
         usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',

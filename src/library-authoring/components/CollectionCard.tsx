@@ -20,6 +20,7 @@ import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
 import messages from './messages';
+import AddComponentWidget from './AddComponentWidget';
 
 type CollectionMenuProps = {
   hit: CollectionHit,
@@ -169,9 +170,16 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
       description={description}
       tags={tags}
       numChildren={numChildrenCount}
-      actions={!componentPickerMode && (
+      actions={(
         <ActionRow>
-          <CollectionMenu hit={hit} />
+          {componentPickerMode ? (
+            <AddComponentWidget
+              isCollection
+              usageKey={collectionId}
+              blockType={itemType}
+            />
+          ) : (
+            <CollectionMenu hit={hit} />)}
         </ActionRow>
       )}
       onSelect={selectCollection}
