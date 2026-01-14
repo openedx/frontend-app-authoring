@@ -4,7 +4,7 @@ import { getConfig } from '@edx/frontend-platform/config';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
-import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { Cached, ChecklistRtl, Description, Event } from '@openedx/paragon/icons';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import messages from './messages';
@@ -129,6 +129,36 @@ const CourseDates = ({
   );
 };
 
+const Checklists = ({ courseId, checklist }: {
+  courseId: string;
+  checklist: ChecklistType;
+}) => {
+  const {
+    completedCourseLaunchChecks,
+    completedCourseBestPracticesChecks,
+    totalCourseLaunchChecks,
+    totalCourseBestPracticesChecks,
+  } = checklist;
+
+  const completed = completedCourseLaunchChecks + completedCourseBestPracticesChecks;
+  const total = totalCourseLaunchChecks + totalCourseBestPracticesChecks;
+
+  if (completed === total) {
+    return null;
+  }
+
+  const checkListTitle = `${completed}/${total}`;
+  return (
+    <Link
+      className="small text-primary-500 d-flex"
+      to={`/course/${courseId}/checklists`}
+    >
+      <Icon src={ChecklistRtl} size="md" className="mr-2" />
+      {checkListTitle} <FormattedMessage {...messages.checklistCompleted} />
+    </Link>
+  )
+}
+
 export interface StatusBarProps {
   courseId: string;
   isLoading: boolean;
@@ -140,7 +170,6 @@ export const StatusBar = ({
   isLoading,
   courseId,
 }: StatusBarProps) => {
-  const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);
 
   const {
@@ -150,16 +179,8 @@ export const StatusBar = ({
     hasChanges,
   } = statusBarData;
 
-  const {
-    completedCourseLaunchChecks,
-    completedCourseBestPracticesChecks,
-    totalCourseLaunchChecks,
-    totalCourseBestPracticesChecks,
-  } = checklist;
-
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const endDateObj = moment.utc(endDate);
-  const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
   if (isLoading) {
@@ -176,13 +197,7 @@ export const StatusBar = ({
         startDateRaw={courseReleaseDate}
         datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
       />
-      <Link
-        className="small text-primary-500 d-flex"
-        to={`/course/${courseId}/checklists`}
-      >
-        <Icon src={ChecklistRtl} size="md" className="mr-2" />
-        {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
-      </Link>
+      <Checklists courseId={courseId} checklist={checklist} />
       <LibraryUpdates courseId={courseId} />
       <NotificationStatusIcon />
     </Stack>
