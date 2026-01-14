@@ -5,10 +5,11 @@ import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
-import { ChecklistRtl } from '@openedx/paragon/icons';
+import { Cached, ChecklistRtl, Description, Event } from '@openedx/paragon/icons';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
+import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
   const now = moment().utc();
@@ -23,13 +24,13 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
       );
     case now.isBefore(startDate):
       return (
-        <Badge className="px-3 py-2 bg-white text-success-400 border border-success-500" variant="success">
+        <Badge className="px-3 py-2" variant="info">
           <FormattedMessage {...messages.upcomingBadgeText} />
         </Badge>
       );
     case endDate.isValid() && endDate.isBefore(now):
       return (
-        <Badge className="px-3 py-2" variant="light">
+        <Badge className="px-3 py-2 bg-gray-500" variant="secondary">
           <FormattedMessage {...messages.archivedBadgeText} />
         </Badge>
       );
@@ -38,6 +39,43 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
       return null;
   }
 };
+
+const UnpublishedBadgeStatus = () => (
+  <Badge
+    className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal"
+    variant="light"
+  >
+    <Stack direction="horizontal" gap={2}>
+      <Icon size='xs' src={Description} />
+      <FormattedMessage {...messages.unpublishedBadgeText} />
+    </Stack>
+  </Badge>
+);
+
+const LibraryUpdates = ({ courseId }: { courseId: string }) => {
+  const { data } = useEntityLinksSummaryByDownstreamContext(courseId);
+  const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
+  const url = `/course/${courseId}/libraries?tab=review`;
+
+  if (!outOfSyncCount || outOfSyncCount === 0) {
+    return null;
+  }
+
+  return (
+    <Link
+      className="small text-gray-700"
+      to={url}
+    >
+      <Stack direction='horizontal' gap={2}>
+        <Icon size='sm' src={Cached} />
+        <FormattedMessage
+          {...messages.libraryUpdatesText}
+          values={{ count: outOfSyncCount }}
+        />
+      </Stack>
+    </Link>
+  );
+}
 
 const CourseDates = ({
   startDate, endDate, startDateRaw, datesLink,
@@ -54,7 +92,10 @@ const CourseDates = ({
         className="small"
         to={datesLink}
       >
-        {startDateRaw}
+        <Stack direction="horizontal" gap={2}>
+          <Icon size='sm' className="mb-1" src={Event} />
+          {startDateRaw}
+        </Stack>
       </Link>
     );
   }
@@ -64,23 +105,26 @@ const CourseDates = ({
       className="small text-gray-700"
       to={datesLink}
     >
-      <FormattedDate
-        value={startDate.toString()}
-        year="numeric"
-        month="short"
-        day="2-digit"
-      />
-      {endDate.isValid() && (
-        <>
-          {' - '}
-          <FormattedDate
-            value={endDate.toString()}
-            year="numeric"
-            month="short"
-            day="2-digit"
-          />
-        </>
-      )}
+      <Stack direction="horizontal" gap={2}>
+        <Icon size='sm' className="mb-1" src={Event} />
+        <FormattedDate
+          value={startDate.toString()}
+          year="numeric"
+          month="short"
+          day="2-digit"
+        />
+        {endDate.isValid() && (
+          <>
+            {' - '}
+            <FormattedDate
+              value={endDate.toString()}
+              year="numeric"
+              month="short"
+              day="2-digit"
+            />
+          </>
+        )}
+      </Stack>
     </Link>
   );
 };
@@ -103,6 +147,7 @@ export const StatusBar = ({
     endDate,
     courseReleaseDate,
     checklist,
+    hasChanges,
   } = statusBarData;
 
   const {
@@ -124,13 +169,13 @@ export const StatusBar = ({
   return (
     <Stack direction="horizontal" gap={4}>
       <CourseBadge startDate={courseReleaseDateObj} endDate={endDateObj} />
+      {hasChanges && <UnpublishedBadgeStatus />}
       <CourseDates
         startDate={courseReleaseDateObj}
         endDate={endDateObj}
         startDateRaw={courseReleaseDate}
         datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
       />
-      <NotificationStatusIcon />
       <Link
         className="small text-primary-500 d-flex"
         to={`/course/${courseId}/checklists`}
@@ -138,6 +183,8 @@ export const StatusBar = ({
         <Icon src={ChecklistRtl} size="md" className="mr-2" />
         {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
       </Link>
+      <LibraryUpdates courseId={courseId} />
+      <NotificationStatusIcon />
     </Stack>
   );
 };

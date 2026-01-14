@@ -7,6 +7,7 @@ export interface CourseStructure {
   start: string,
   end: string,
   actions: XBlockActions,
+  hasChanges: boolean,
 }
 
 // TODO: Create interface for all `Object` fields in courseOutline
@@ -48,6 +49,7 @@ export interface CourseOutlineStatusBar {
   };
   videoSharingEnabled: boolean;
   videoSharingOptions: string;
+  hasChanges: boolean;
 }
 
 export interface CourseOutlineState {
