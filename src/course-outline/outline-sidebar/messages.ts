@@ -125,6 +125,21 @@ const messages = defineMessages({
     defaultMessage: 'Adding unit to {name}',
     description: 'Tab title for adding existing library unit to a specific parent in outline using sidebar',
   },
+  sectionContentSummaryText: {
+    id: 'course-authoring.course-outline.sidebar.section.content-summary-text',
+    defaultMessage: 'Section Content Summary',
+    description: 'Title of the summary section in the section info sidebar',
+  },
+  publishContainerButton: {
+    id: 'course-authoring.course-outline.sidebar.generic.publish.button',
+    defaultMessage: 'Publish Changes',
+    description: 'Publish button text',
+  },
+  draftText: {
+    id: 'course-authoring.course-outline.sidebar.generic.draft.button',
+    defaultMessage: '(Draft)',
+    description: 'Draft text in publish button',
+  }
 });
 
 export default messages;
