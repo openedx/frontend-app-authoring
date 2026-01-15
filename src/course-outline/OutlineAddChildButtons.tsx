@@ -1,7 +1,6 @@
 import {
   Button, Col, IconButton, Row, Stack, StandardModal, useToggle,
 } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
 import { Add as IconAdd, Close, Newsstand } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
@@ -15,6 +14,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { LibraryAndComponentPicker, type SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
+import { isOutlineNewDesignEnabled } from '@src/course-outline/utils';
 import messages from './messages';
 
 /**
@@ -374,7 +374,7 @@ const LegacyOutlineAddChildButtons = ({
  * Wrapper component that displays the correct component based on the configuration.
  */
 const OutlineAddChildButtons = (props: NewChildButtonsProps) => {
-  const showNewActionsBar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
+  const showNewActionsBar = isOutlineNewDesignEnabled();
   if (showNewActionsBar) {
     return (
       <NewOutlineAddChildButtons {...props} />
