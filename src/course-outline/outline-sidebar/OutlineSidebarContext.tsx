@@ -55,12 +55,6 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
 
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
-  const openContainerInfoSidebar = useCallback((containerId: string) => {
-    if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerId(containerId);
-    }
-  }, [setSelectedContainerId]);
-
   /**
   * Stops current add content flow.
   * This will cause the sidebar to switch back to its normal state and clear out any placeholder containers.
@@ -76,6 +70,13 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     open();
   }, [open, setCurrentFlow]);
 
+  const openContainerInfoSidebar = useCallback((containerId: string) => {
+    if (isOutlineNewDesignEnabled()) {
+      setSelectedContainerId(containerId);
+      setCurrentPageKey('info');
+    }
+  }, [setSelectedContainerId]);
+
   /**
   * Starts add content flow.
   * The sidebar enters an add content flow which allows user to add content in a specific container.
@@ -90,6 +91,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         stopCurrentFlow();
+        setSelectedContainerId(undefined);
       }
     };
     window.addEventListener('keydown', handleEsc);

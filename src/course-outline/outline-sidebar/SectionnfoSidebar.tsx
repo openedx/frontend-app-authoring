@@ -5,33 +5,33 @@ import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useCourseDetails } from '../data/apiHooks';
 
 import messages from './messages';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import Loading from '@src/generic/Loading';
+import { LibraryReferenceCard } from './LibraryReferenceCard';
+import { PublishButon } from './PublishButon';
 
-export const OutlineInfoSidebar = () => {
+interface Props {
+  sectionId: string;
+}
+
+export const SectionInfoSidebar = ({ sectionId }: Props) => {
   const intl = useIntl();
-  const { courseId } = useCourseAuthoringContext();
-  const { data: courseDetails } = useCourseDetails(courseId);
-
   const { data: componentData } = useGetBlockTypes(
-    [`context_key = "${courseId}"`],
+    [`breadcrumbs.usage_key = "${sectionId}"`],
   );
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
   return (
-    <div>
-      <SidebarTitle
-        title={courseDetails?.title || ''}
-        icon={SchoolOutline}
-      />
+    <>
       <SidebarContent>
+        <LibraryReferenceCard />
         <SidebarSection
-          title={intl.formatMessage(messages.sidebarSectionSummary)}
+          title={intl.formatMessage(messages.sectionContentSummaryText)}
           icon={SchoolOutline}
         >
           {componentData && <ComponentCountSnippet componentData={componentData} />}
@@ -46,14 +46,33 @@ export const OutlineInfoSidebar = () => {
             },
           ]}
         >
-          <ContentTagsSnippet contentId={courseId} />
+          <ContentTagsSnippet contentId={sectionId} />
         </SidebarSection>
       </SidebarContent>
       <ContentTagsDrawerSheet
-        id={courseId}
+        id={sectionId}
         onClose={closeManageTagsDrawer}
         showSheet={isManageTagsDrawerOpen}
       />
-    </div>
+    </>
   );
 };
+
+export const SectionSidebar = ({ sectionId }: Props) => {
+  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return (
+    <>
+      <SidebarTitle
+        title={sectionData?.displayName || ''}
+        icon={SchoolOutline}
+      />
+      <PublishButon onClick={() => {}} />
+    <SectionInfoSidebar sectionId={sectionId} />
+    </>
+  );
+}
