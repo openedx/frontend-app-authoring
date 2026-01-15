@@ -3,19 +3,13 @@ import { Alert, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
 import { usePreviewMigration } from '@src/data/apiHooks';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
-
-interface Props {
-  courseId?: string;
-  markAnalysisComplete: (analysisCompleted: boolean) => void;
-  setImportIsBlocked: (importIsBlocked: boolean) => void;
-}
 
 interface BannerProps {
   courseId?: string;
@@ -139,11 +133,7 @@ const Banner = ({
   );
 };
 
-export const ReviewImportDetails = ({
-  courseId,
-  markAnalysisComplete,
-  setImportIsBlocked,
-}: Props) => {
+export const ReviewImportDetails = ({ courseId }: { courseId: string }) => {
   const { libraryId } = useLibraryContext();
 
   const {
@@ -155,12 +145,6 @@ export const ReviewImportDetails = ({
   const unssuportedBlocks = previewMigrationData?.unsupportedBlocks || 0;
   const totalBlocks = (previewMigrationData?.totalBlocks || 0) - unssuportedBlocks;
   const totalComponents = (previewMigrationData?.totalComponents || 0) - unssuportedBlocks;
-
-  useEffect(() => {
-    // Mark complete to inform parent component of analysis completion.
-    markAnalysisComplete(!isPreviewMigrationPending);
-    setImportIsBlocked(limitIsExceeded);
-  }, [isPreviewMigrationPending, limitIsExceeded]);
 
   return (
     <Stack gap={4}>

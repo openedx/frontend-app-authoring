@@ -10,8 +10,6 @@ import messages from '../messages';
 mockContentLibrary.applyMock();
 mockGetPreviewModulestoreMigration.applyMock();
 const { libraryId } = mockContentLibrary;
-const markAnalysisComplete = jest.fn();
-const setImportIsBlocked = jest.fn();
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
@@ -45,15 +43,10 @@ describe('ReviewImportDetails', () => {
   });
 
   it('renders loading spinner when isPending is true', async () => {
-    render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
-      courseId="test-course-id"
-      setImportIsBlocked={setImportIsBlocked}
-    />);
+    render(<ReviewImportDetails courseId="test-course-id" />);
 
     const spinners = await screen.findAllByRole('status');
     spinners.every((spinner) => expect(spinner.textContent).toEqual('Loading...'));
-    expect(markAnalysisComplete).toHaveBeenCalledWith(false);
   });
 
   it('renders import progress status when isBlockDataPending or migrationInfoIsPending is true', async () => {
@@ -63,15 +56,10 @@ describe('ReviewImportDetails', () => {
       data: null,
     });
 
-    render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
-      courseId="test-course-id"
-      setImportIsBlocked={setImportIsBlocked}
-    />);
+    render(<ReviewImportDetails courseId="test-course-id" />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis in Progress/i)).toBeInTheDocument();
-    expect(markAnalysisComplete).toHaveBeenCalledWith(false);
   });
 
   it('renders warning when reimport', async () => {
@@ -87,11 +75,7 @@ describe('ReviewImportDetails', () => {
       },
     });
 
-    render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
-      courseId={courseKey}
-      setImportIsBlocked={setImportIsBlocked}
-    />);
+    render(<ReviewImportDetails courseId={courseKey} />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
     expect(await screen.findByText(/Import Analysis Completed: Reimport/i)).toBeInTheDocument();
@@ -100,7 +84,6 @@ describe('ReviewImportDetails', () => {
         .replace('{courseName}', 'Test Course')
         .replace('{libraryName}', 'Library title'),
     )).toBeInTheDocument();
-    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
   it('renders warning when unsupportedBlockPercentage > 0', async () => {
@@ -111,9 +94,7 @@ describe('ReviewImportDetails', () => {
     });
 
     render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
       courseId={mockGetPreviewModulestoreMigration.sourceKeyUnsupported}
-      setImportIsBlocked={setImportIsBlocked}
     />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
@@ -131,7 +112,6 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText('5')).toBeInTheDocument();
     expect(await screen.findByText('Components')).toBeInTheDocument();
     expect(await screen.findByText('5/10')).toBeInTheDocument();
-    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 
   it('renders warning when components exceed the limit', async () => {
@@ -142,9 +122,7 @@ describe('ReviewImportDetails', () => {
     });
 
     render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
       courseId={mockGetPreviewModulestoreMigration.sourceKeyBlockLimit}
-      setImportIsBlocked={setImportIsBlocked}
     />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
@@ -152,8 +130,6 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText(
       /This import would exceed the Content Library limit of 1000 items/i,
     )).toBeInTheDocument();
-    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
-    expect(setImportIsBlocked).toHaveBeenCalledWith(true);
   });
 
   it('renders success alert when no unsupported blocks', async () => {
@@ -164,9 +140,7 @@ describe('ReviewImportDetails', () => {
     });
 
     render(<ReviewImportDetails
-      markAnalysisComplete={markAnalysisComplete}
       courseId={mockGetPreviewModulestoreMigration.sourceKeyGood}
-      setImportIsBlocked={setImportIsBlocked}
     />);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
@@ -184,6 +158,5 @@ describe('ReviewImportDetails', () => {
     expect(await screen.findByText('3')).toBeInTheDocument();
     expect(await screen.findByText('Components')).toBeInTheDocument();
     expect(await screen.findByText('5')).toBeInTheDocument();
-    expect(markAnalysisComplete).toHaveBeenCalledWith(true);
   });
 });

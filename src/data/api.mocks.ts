@@ -181,8 +181,7 @@ mockGetMigrationStatus.migrationStatusInProgressData = {
 mockGetMigrationStatus.applyMock = () => jest.spyOn(api, 'getModulestoreMigrationStatus').mockImplementation(mockGetMigrationStatus);
 
 export async function mockGetPreviewModulestoreMigration(
-  // @ts-ignore-next-line
-  libraryKey: string,
+  _: string,
   sourceKey: string,
 ): Promise<api.PreviewMigrationInfo> {
   switch (sourceKey) {
