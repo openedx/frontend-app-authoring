@@ -64,13 +64,7 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const extraWrapper = ({ children }) => (
-  <OutlineSidebarProvider>
-    {children}
-  </OutlineSidebarProvider>
-);
-
-const renderComponent = () => render(<AddSidebar />, { extraWrapper });
+const renderComponent = () => render(<AddSidebar />, { extraWrapper: OutlineSidebarProvider });
 const searchResult = {
   ...mockResult,
   results: [
