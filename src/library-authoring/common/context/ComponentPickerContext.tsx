@@ -11,7 +11,7 @@ export interface SelectedComponent {
   blockType: string;
 }
 
-export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void | Promise<void>;
 export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
 
 type NoComponentPickerType = {
@@ -25,11 +25,15 @@ type NoComponentPickerType = {
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
   extraFilter?: never;
+  isLoading?: never;
+  setIsLoading?: never;
 };
 
 type BasePickerType = {
   restrictToLibrary: boolean;
   extraFilter: string[],
+  isLoading?: boolean;
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type ComponentPickerSingleType = BasePickerType & {
@@ -94,6 +98,7 @@ export const ComponentPickerProvider = ({
   extraFilter,
 }: ComponentPickerProviderProps) => {
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
     selectedComponent: SelectedComponent,
@@ -133,6 +138,8 @@ export const ComponentPickerProvider = ({
           restrictToLibrary,
           onComponentSelected,
           extraFilter: extraFilter || [],
+          isLoading,
+          setIsLoading,
         };
       case 'multiple':
         return {
@@ -142,6 +149,8 @@ export const ComponentPickerProvider = ({
           addComponentToSelectedComponents,
           removeComponentFromSelectedComponents,
           extraFilter: extraFilter || [],
+          isLoading,
+          setIsLoading,
         };
       default:
         // istanbul ignore next: this should never happen
@@ -156,6 +165,8 @@ export const ComponentPickerProvider = ({
     selectedComponents,
     onChangeComponentSelection,
     extraFilter,
+    isLoading,
+    setIsLoading,
   ]);
 
   return (

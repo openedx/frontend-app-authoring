@@ -4,13 +4,14 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import userEvent from '@testing-library/user-event';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
-const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn() };
+const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -27,8 +28,9 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleNewUnitSubmit: jest.fn(),
-    handleAddUnitFromLibrary: handleOnAddUnitFromLibrary,
+    handleAddUnit: handleOnAddUnitFromLibrary,
+    handleAddSubsection: {},
+    handleAddSection: {},
   }),
 }));
 
@@ -46,7 +48,7 @@ jest.mock('@src/library-authoring/component-picker', () => ({
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
         usageKey: containerKey,
-        blockType: 'unti',
+        blockType: 'unit',
       });
     };
     return (
@@ -340,6 +342,11 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should add unit from library', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    const user = userEvent.setup();
     renderComponent();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
@@ -349,15 +356,14 @@ describe('<SubsectionCard />', () => {
       name: /use unit from library/i,
     });
     expect(useUnitFromLibraryButton).toBeInTheDocument();
-    fireEvent.click(useUnitFromLibraryButton);
+    await user.click(useUnitFromLibraryButton);
 
     expect(await screen.findByText('Select unit'));
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
+    await user.click(dummyBtn);
 
-    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalled();
     expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
