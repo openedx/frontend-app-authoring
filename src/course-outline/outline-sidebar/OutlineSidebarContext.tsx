@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useToggle } from '@openedx/paragon';
 
-import { useStateWithUrlSearchParam } from '@src/hooks';
+import { useEscapeClick, useStateWithUrlSearchParam } from '@src/hooks';
 import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
@@ -86,6 +86,14 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentPageKey('add');
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
+
+  useEscapeClick({
+    onEscape: () => {
+      stopCurrentFlow();
+      setSelectedContainerId(undefined);
+    },
+    dependency: [stopCurrentFlow, selectedContainerId],
+  });
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {

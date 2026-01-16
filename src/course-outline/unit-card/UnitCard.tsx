@@ -37,7 +37,6 @@ interface UnitCardProps {
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
-  onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void,
@@ -63,7 +62,6 @@ const UnitCard = ({
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   onOrderChange,
   discussionsSettings,
@@ -79,7 +77,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId, getUnitUrl } = useCourseAuthoringContext();
+  const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -261,7 +259,7 @@ const UnitCard = ({
             onClickConfigure={onOpenConfigureModal}
             onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={onOpenUnlinkModal}
+            onClickUnlink={() => openUnlinkModal({ value: unit, sectionId: section.id })}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
