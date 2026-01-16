@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { MessageDescriptor } from 'react-intl';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Form, Icon, IconButton, Stack, useToggle,
+  Badge, Form, Icon, IconButton, OverlayTrigger, Stack, Tooltip, useToggle,
 } from '@openedx/paragon';
 import {
   EditOutline as EditIcon,
   Groups,
-  Lock,
   QuestionAnswer,
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
@@ -18,79 +18,93 @@ import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 import { UNIT_VISIBILITY_STATES } from '../constants';
+import { isUnitPageNewDesignEnabled } from '../utils';
 
 const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
   const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
   const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
+  let groupsCount = 0;
+  if (hasGroups) {
+    groupsCount = selectedGroupsLabel.split(",").length;
+  }
 
   let visibilityChipData = {
-    variant: 'success',
-    className: 'bg-white text-success-400 border border-success-500',
-    text: messages.statusBarUpcomingBadge,
-  };
-  let publishStatusChipData = {
-    variant: 'light',
-    className: '',
-    text: messages.statusBarUnpublishedBadge,
+    variant: 'warning',
+    className: 'draft-badge',
+    text: messages.statusBarDraftNeverPublished,
+  } as {
+    variant: string,
+    className?: string,
+    text: MessageDescriptor,
   };
 
   if (courseUnit.currentlyVisibleToStudents) {
     visibilityChipData = {
       variant: 'success',
-      className: '',
       text: messages.statusBarLiveBadge,
     };
-  } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.ready) {
+  } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly) {
     visibilityChipData = {
-      variant: 'success',
-      className: 'bg-white text-success-400 border border-success-500',
-      text: messages.statusBarReadyBadge,
+      variant: 'secondary',
+      text: messages.statusBarStaffOnly,
     };
-  }
-
-  if (courseUnit.published) {
-    if (courseUnit.hasChanges) {
-      publishStatusChipData = {
-        variant: 'warning',
-        className: 'bg-warning-500 text-primary-700 border border-warning-300',
-        text: messages.statusBarDraftChangesBadge,
-      };
-    } else {
-      publishStatusChipData = {
-        variant: 'success',
-        className: '',
-        text: messages.statusBarPublishedBadge,
-      };
-    }
+  } else if (courseUnit.published) {
+    visibilityChipData = {
+      variant: 'info',
+      text: messages.statusBarScheduledBadge,
+    };
   }
 
   return (
     <Stack direction="horizontal" gap={3}>
       <Badge
         variant={visibilityChipData.variant}
-        className={`px-3 py-2 ${visibilityChipData.className}`}
+        className={`px-3 py-2 ${visibilityChipData.className || ''}`}
       >
         <FormattedMessage {...visibilityChipData.text} />
       </Badge>
-      <Badge
-        variant={publishStatusChipData.variant}
-        className={`px-3 py-2 ${publishStatusChipData.className}`}
-      >
-        <FormattedMessage {...publishStatusChipData.text} />
-      </Badge>
-      {courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly && (
-        <Stack direction="horizontal" gap={1}>
-          <Icon src={Lock} />
-          <FormattedMessage {...messages.statusBarStaffOnly} />
-        </Stack>
+      {courseUnit.published && courseUnit.hasChanges && (
+        <Badge
+          variant='warning'
+          className='px-3 py-2 draft-badge'
+        >
+          <FormattedMessage {...messages.statusBarDraftChangesBadge} />
+        </Badge>
       )}
-      {hasGroups && (
+      {groupsCount === 1 && (
         <Stack direction="horizontal" gap={1}>
           <Icon src={Groups} />
           <span>
-            {selectedGroupsLabel}
+            <FormattedMessage
+              {...messages.statusBarGroupAccessOneGroup}
+              values={{
+                groupName: selectedGroupsLabel
+              }}
+            />
           </span>
         </Stack>
+      )}
+      {groupsCount > 1 && (
+        <OverlayTrigger
+          placement='top'
+          overlay={
+            <Tooltip id='unit-group-access-tooltip'>
+              {selectedGroupsLabel}
+            </Tooltip>
+          }
+        >
+          <Stack direction="horizontal" gap={1}>
+            <Icon src={Groups} />
+            <span>
+              <FormattedMessage
+                {...messages.statusBarGroupAccessMultipleGroup}
+                values={{
+                  groupsCount,
+                }}
+              />
+            </span>
+          </Stack>
+        </OverlayTrigger>
       )}
       {courseUnit.discussionEnabled && (
         <Stack direction="horizontal" gap={1}>
@@ -152,7 +166,7 @@ const HeaderTitle = ({
 
   return (
     <>
-      <div className="d-flex align-items-center lead" data-testid="unit-header-title">
+      <div className="unit-header-title d-flex align-items-center lead" data-testid="unit-header-title">
         {isTitleEditFormOpen ? (
           <Form.Group className="m-0">
             <Form.Control
@@ -172,16 +186,18 @@ const HeaderTitle = ({
         ) : unitTitle}
         <IconButton
           alt={intl.formatMessage(messages.altButtonEdit)}
-          className="ml-1 flex-shrink-0"
+          className="ml-1 flex-shrink-0 edit-button"
           iconAs={EditIcon}
           onClick={handleTitleEdit}
         />
-        <IconButton
-          alt={intl.formatMessage(messages.altButtonSettings)}
-          className="flex-shrink-0"
-          iconAs={SettingsIcon}
-          onClick={openConfigureModal}
-        />
+        {!isUnitPageNewDesignEnabled() && (
+          <IconButton
+            alt={intl.formatMessage(messages.altButtonSettings)}
+            className="flex-shrink-0"
+            iconAs={SettingsIcon}
+            onClick={openConfigureModal}
+          />
+        )}
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={closeConfigureModal}
@@ -191,9 +207,11 @@ const HeaderTitle = ({
           isXBlockComponent={isXBlockComponent}
         />
       </div>
-      <div className="h5 mt-2 font-weight-normal">
-        <StatusBar courseUnit={currentItemData} />
-      </div>
+      {isUnitPageNewDesignEnabled() && (
+        <div className="unit-header-status-bar h5 mt-2 font-weight-normal">
+          <StatusBar courseUnit={currentItemData} />
+        </div>
+      )}
     </>
   );
 };

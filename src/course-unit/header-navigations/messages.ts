@@ -36,6 +36,11 @@ const messages = defineMessages({
     defaultMessage: 'Align',
     description: 'The unit align menu text',
   },
+  infoButton: {
+    id: 'course-authoring.course-unit.button.unit-info',
+    defaultMessage: 'Unit Info',
+    description: 'The unit info button text',
+  },
 });
 
 export default messages;

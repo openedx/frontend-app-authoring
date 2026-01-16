@@ -2,3 +2,28 @@
   font-size: var(--pgn-typography-font-size-sm);
   font-weight: var(--pgn-typography-font-weight-normal);
 }
+
+.unit-header-title {
+  .edit-button {
+    opacity: 0;
+    transition: opacity .3s linear;
+    margin-right: .5rem;
+
+    &:focus {
+      opacity: 1;
+    }
+  }
+
+  &:hover {
+    .edit-button {
+      opacity: 1;
+    }
+  }
+}
+
+.unit-header-status-bar {
+  .draft-badge {
+   background-color: #B4610E; 
+   color: white;
+  }
+}
