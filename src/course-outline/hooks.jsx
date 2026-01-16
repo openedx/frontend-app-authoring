@@ -7,7 +7,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { RequestStatus } from '@src/data/constants';
-import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ContainerType } from '@src/generic/key-utils';
@@ -99,7 +98,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -209,19 +207,6 @@ const useCourseOutline = ({ courseId }) => {
         return;
     }
     closeDeleteModal();
-  };
-
-  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
-
-  const handleUnlinkItemSubmit = async () => {
-    // istanbul ignore if: this should never happen
-    if (!currentItem.id) {
-      return;
-    }
-
-    await unlinkDownstream(currentItem.id);
-    dispatch(fetchCourseOutlineIndexQuery(courseId));
-    closeUnlinkModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
@@ -338,11 +323,7 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeDeleteModal,
     openDeleteModal,
-    isUnlinkModalOpen,
-    closeUnlinkModal,
-    openUnlinkModal,
     handleDeleteItemSubmit,
-    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,

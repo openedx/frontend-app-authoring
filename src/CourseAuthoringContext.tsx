@@ -1,5 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
@@ -10,6 +10,15 @@ import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { RequestStatus, RequestStatusType } from './data/constants';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { CourseDetailsData } from './data/api';
+import { useToggleWithValue } from '@src/hooks';
+import { XBlock } from '@src/data/types';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
+
+type UnlinkModalState = {
+  value: XBlock;
+  sectionId: string;
+}
 
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
@@ -23,6 +32,11 @@ export type CourseAuthoringContextData = {
   handleAddUnit: ReturnType<typeof useCreateCourseBlock>;
   openUnitPage: (locator: string) => void;
   getUnitUrl: (locator: string) => string;
+  isUnlinkModalOpen: boolean;
+  currentUnlinkModalData?: UnlinkModalState;
+  openUnlinkModal: (value: UnlinkModalState) => void;
+  closeUnlinkModal: () => void;
+  handleUnlinkItemSubmit: () => Promise<void>;
 };
 
 /**
@@ -50,6 +64,7 @@ export const CourseAuthoringProvider = ({
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
   const { courseStructure } = useSelector(getOutlineIndexData);
   const { id: courseUsageKey } = courseStructure || {};
+  const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<UnlinkModalState>();
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -58,6 +73,23 @@ export const CourseAuthoringProvider = ({
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
   };
+
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
+  /** Handle the submit of the item unlinking XBlock from library counterpart. */
+  const handleUnlinkItemSubmit = useCallback(async () => {
+    // istanbul ignore if: this should never happen
+    if (!currentUnlinkModalData) {
+      return;
+    }
+
+    await unlinkDownstream(currentUnlinkModalData.value.id, {
+      onSuccess: () => {
+        dispatch(fetchCourseSectionQuery([currentUnlinkModalData.sectionId]))
+        closeUnlinkModal();
+      },
+    });
+  }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal, fetchCourseSectionQuery]);
 
   /**
    * Open the unit page for a given locator.
@@ -113,6 +145,11 @@ export const CourseAuthoringProvider = ({
     handleAddUnit,
     getUnitUrl,
     openUnitPage,
+    isUnlinkModalOpen,
+    openUnlinkModal,
+    closeUnlinkModal,
+    currentUnlinkModalData,
+    handleUnlinkItemSubmit,
   }), [
     courseId,
     courseUsageKey,
@@ -124,6 +161,11 @@ export const CourseAuthoringProvider = ({
     handleAddUnit,
     getUnitUrl,
     openUnitPage,
+    isUnlinkModalOpen,
+    openUnlinkModal,
+    closeUnlinkModal,
+    currentUnlinkModalData,
+    handleUnlinkItemSubmit,
   ]);
 
   return (

@@ -39,7 +39,6 @@ interface SectionCardProps {
   onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
-  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   isSectionsExpanded: boolean,
   index: number,
@@ -61,7 +60,6 @@ const SectionCard = ({
   onEditSectionSubmit,
   savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   isSectionsExpanded,
   onOrderChange,
@@ -74,7 +72,7 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   // Expand the section if a search result should be shown/scrolled to
@@ -286,7 +284,7 @@ const SectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={onOpenUnlinkModal}
+                onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}

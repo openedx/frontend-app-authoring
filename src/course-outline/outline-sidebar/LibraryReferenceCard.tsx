@@ -95,12 +95,12 @@ const TopLevelTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
 }
 
 interface Props {
-  sectionId?: string;
+  itemId?: string;
 }
 
-export const LibraryReferenceCard = ({ sectionId }: Props) => {
-  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
-  if (!sectionData?.upstreamInfo?.upstreamRef) {
+export const LibraryReferenceCard = ({ itemId }: Props) => {
+  const { data: itemData, isLoading } = useCourseItemData(itemId);
+  if (!itemData?.upstreamInfo?.upstreamRef) {
     return null;
   }
 
@@ -112,8 +112,8 @@ export const LibraryReferenceCard = ({ sectionId }: Props) => {
             <Icon src={Newsstand} />
             <h4 className="mb-0"><FormattedMessage {...messages.libraryReferenceCardText} /></h4>
           </Stack>
-          <HasTopParentTextAndButton upstreamInfo={sectionData.upstreamInfo} displayName={sectionData.displayName} />
-          <TopLevelTextAndButton upstreamInfo={sectionData.upstreamInfo} displayName={sectionData.displayName} />
+          <HasTopParentTextAndButton upstreamInfo={itemData.upstreamInfo} displayName={itemData.displayName} />
+          <TopLevelTextAndButton upstreamInfo={itemData.upstreamInfo} displayName={itemData.displayName} />
         </Stack>
       </Card.Section>
     </Card>
