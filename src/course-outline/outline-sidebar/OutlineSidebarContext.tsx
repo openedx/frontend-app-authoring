@@ -32,13 +32,17 @@ export type OutlineSidebarPageProps = Record<string, any>;
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  currentProps?: OutlineSidebarPageProps;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, props?: OutlineSidebarPageProps) => void;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, currentContainerId?: string) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
   sidebarPages: OutlineSidebarPages;
+  // The Id of the container when is selected
   selectedContainerId?: string;
+  // The Id of the container used in the current sidebar page
+  // The container is not necessarily selected to open a selected sidebar.
+  // Example: Align sidebar
+  currentContainerId?: string;
   openContainerInfoSidebar: (containerId: string) => void;
 }
 
@@ -48,7 +52,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const intl = useIntl();
 
   const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
-  const [currentProps, setCurrentPageProps] = useState<OutlineSidebarPageProps>();
+  const [currentContainerId, setCurrentContainerId] = useState<string>();
   const [isOpen, open, , toggle] = useToggle(true);
 
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
@@ -59,9 +63,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }
   }, [setSelectedContainerId]);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, props?: OutlineSidebarPageProps) => {
+  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, containerId?: string) => {
     setCurrentPageKeyState(pageKey);
-    setCurrentPageProps(props);
+    setCurrentContainerId(containerId);
     open();
   }, [open]);
 
@@ -96,24 +100,24 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
       currentPageKey,
-      currentProps,
       setCurrentPageKey,
       sidebarPages,
       isOpen,
       open,
       toggle,
       selectedContainerId,
+      currentContainerId,
       openContainerInfoSidebar,
     }),
     [
       currentPageKey,
-      currentProps,
       setCurrentPageKey,
       sidebarPages,
       isOpen,
       open,
       toggle,
       selectedContainerId,
+      currentContainerId,
       openContainerInfoSidebar,
     ],
   );

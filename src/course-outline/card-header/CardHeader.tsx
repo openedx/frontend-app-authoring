@@ -119,7 +119,7 @@ const CardHeader = ({
   const openManageTagsDrawer = useCallback(() => {
     const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
     if (showNewSidebar) {
-      setCurrentPageKey('align', { contentId: cardId });
+      setCurrentPageKey('align', cardId);
     } else {
       openLegacyTagsDrawer();
     }

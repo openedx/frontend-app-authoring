@@ -4,11 +4,13 @@ import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseDetails } from '@src/data/apiHooks';
 import { SidebarTitle } from '@src/generic/sidebar';
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
-export const OutlineAlignSidebar = ({ contentId }: { contentId?: string }) => {
+export const OutlineAlignSidebar = () => {
   const { courseId } = useCourseAuthoringContext();
+  const { currentContainerId } = useOutlineSidebarContext();
 
-  const sidebarContentId = contentId || courseId;
+  const sidebarContentId = currentContainerId || courseId;
 
   const {
     data: courseData,
@@ -16,7 +18,7 @@ export const OutlineAlignSidebar = ({ contentId }: { contentId?: string }) => {
 
   const {
     data: contentData,
-  } = useContentData(contentId);
+  } = useContentData(currentContainerId);
 
   return (
     <div>
