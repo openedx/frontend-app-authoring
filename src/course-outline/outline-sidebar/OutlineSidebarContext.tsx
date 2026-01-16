@@ -2,42 +2,36 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
-import {
-  HelpOutline, Info, Tag, Plus,
-} from '@openedx/paragon/icons';
 
-import type { SidebarPage } from '@src/generic/sidebar';
-import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
-
-import messages from './messages';
-import { OutlineAlignSidebar } from './OutlineAlignSidebar';
-import { AddSidebar } from './AddSidebar';
+import { useStateWithUrlSearchParam } from '@src/hooks';
 import { isOutlineNewDesignEnabled } from '../utils';
 
-export type OutlineSidebarPageKeys = 'help' | 'info' | 'align' | 'add';
-export type OutlineSidebarPages = {
-  info: SidebarPage;
-  help: SidebarPage;
-  add: SidebarPage;
-  align?: SidebarPage;
+export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
+export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
+export type OutlineFlow = {
+  flowType: 'use-section';
+  parentLocator?: string;
+  parentTitle?: string;
+} | {
+  flowType: OutlineFlowType;
+  parentLocator: string;
+  parentTitle: string;
 };
-export type OutlineSidebarPageProps = Record<string, any>;
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, currentContainerId?: string) => void;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, containerId?: string) => void;
+  currentFlow: OutlineFlow | null;
+  startCurrentFlow: (flow: OutlineFlow) => void;
+  stopCurrentFlow: () => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
-  sidebarPages: OutlineSidebarPages;
-  // The Id of the container when is selected
   selectedContainerId?: string;
   // The Id of the container used in the current sidebar page
   // The container is not necessarily selected to open a selected sidebar.
@@ -49,10 +43,14 @@ interface OutlineSidebarContextData {
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
-  const intl = useIntl();
-
-  const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
   const [currentContainerId, setCurrentContainerId] = useState<string>();
+  const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
+    'info',
+    'sidebar',
+    (value: string) => value as OutlineSidebarPageKeys,
+    (value: OutlineSidebarPageKeys) => value,
+  );
+  const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
   const [isOpen, open, , toggle] = useToggle(true);
 
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
@@ -63,45 +61,51 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }
   }, [setSelectedContainerId]);
 
+  /**
+  * Stops current add content flow.
+  * This will cause the sidebar to switch back to its normal state and clear out any placeholder containers.
+  */
+  const stopCurrentFlow = useCallback(() => {
+    setCurrentFlow(null);
+  }, [setCurrentFlow]);
+
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, containerId?: string) => {
     setCurrentPageKeyState(pageKey);
+    setCurrentFlow(null);
     setCurrentContainerId(containerId);
     open();
-  }, [open]);
+  }, [open, setCurrentFlow]);
 
-  const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
+  /**
+  * Starts add content flow.
+  * The sidebar enters an add content flow which allows user to add content in a specific container.
+  * A placeholder container is added in the location when the flow is started.
+  */
+  const startCurrentFlow = useCallback((flow: OutlineFlow) => {
+    setCurrentPageKey('add');
+    setCurrentFlow(flow);
+  }, [setCurrentFlow, setCurrentPageKey]);
 
-  const sidebarPages = {
-    info: {
-      component: OutlineInfoSidebar,
-      icon: Info,
-      title: intl.formatMessage(messages.sidebarButtonInfo),
-    },
-    ...(showAlignSidebar && {
-      align: {
-        component: OutlineAlignSidebar,
-        icon: Tag,
-        title: intl.formatMessage(messages.sidebarButtonAlign),
-      },
-    }),
-    help: {
-      component: OutlineHelpSidebar,
-      icon: HelpOutline,
-      title: intl.formatMessage(messages.sidebarButtonHelp),
-    },
-    add: {
-      component: AddSidebar,
-      icon: Plus,
-      title: intl.formatMessage(messages.sidebarButtonAdd),
-      hideFromActionMenu: true,
-    },
-  } satisfies OutlineSidebarPages;
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        stopCurrentFlow();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
       currentPageKey,
       setCurrentPageKey,
-      sidebarPages,
+      currentFlow,
+      startCurrentFlow,
+      stopCurrentFlow,
       isOpen,
       open,
       toggle,
@@ -112,7 +116,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     [
       currentPageKey,
       setCurrentPageKey,
-      sidebarPages,
+      currentFlow,
+      startCurrentFlow,
+      stopCurrentFlow,
       isOpen,
       open,
       toggle,

@@ -26,8 +26,8 @@ export const useCreateCourseBlock = (
   callback?: ((locator: string, parentLocator: string) => void),
 ) => useMutation({
   mutationFn: createCourseXblock,
-  onSettled: async (data: { locator: string, parent_locator: string }) => {
-    callback?.(data.locator, data.parent_locator);
+  onSettled: async (data: { locator: string }, _err, variables) => {
+    callback?.(data.locator, variables.parentLocator);
   },
 });
 

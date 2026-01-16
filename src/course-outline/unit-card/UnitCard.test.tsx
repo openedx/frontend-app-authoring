@@ -319,6 +319,9 @@ describe('<UnitCard />', () => {
         isOpen: true,
         open: jest.fn(),
         toggle: jest.fn(),
+        currentFlow: null,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
       }));
     setConfig({
@@ -337,7 +340,7 @@ describe('<UnitCard />', () => {
     await fireEvent.click(manageTagsBtn);
 
     await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', { contentId: unit.id });
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', unit.id);
     });
   });
 });

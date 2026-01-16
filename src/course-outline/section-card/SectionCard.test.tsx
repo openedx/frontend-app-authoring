@@ -351,6 +351,9 @@ describe('<SectionCard />', () => {
         isOpen: true,
         open: jest.fn(),
         toggle: jest.fn(),
+        currentFlow: null,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
       }));
     setConfig({
@@ -369,7 +372,7 @@ describe('<SectionCard />', () => {
     await fireEvent.click(manageTagsBtn);
 
     await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', { contentId: section.id });
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', section.id);
     });
   });
 });

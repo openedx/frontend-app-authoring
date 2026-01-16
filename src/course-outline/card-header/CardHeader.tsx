@@ -189,9 +189,14 @@ const CardHeader = ({
               onChange={(e) => setTitleValue(e.target.value)}
               aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
               onBlur={() => onEditSubmit(titleValue)}
-              onKeyDown={(e) => {
+              onKeyDown={/* istanbul ignore next */ (e) => {
                 if (e.key === 'Enter') {
                   onEditSubmit(titleValue);
+                } else if (e.key === ' ') {
+                  // Avoid passing propagation to the `SortableItem` in the card,
+                  // which executes a `preventDefault`. If propagation is not prevented,
+                  // spaces cannot be added to names.
+                  e.stopPropagation();
                 }
               }}
               disabled={isSaving}

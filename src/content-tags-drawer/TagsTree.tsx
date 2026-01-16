@@ -41,7 +41,7 @@ const TagComponent = ({
   lineage,
   removeTagHandler,
   canDelete = false,
-  explicit = false,
+  explicit,
   afterComponent,
 }: TagComponentProps) => {
   const intl = useIntl();

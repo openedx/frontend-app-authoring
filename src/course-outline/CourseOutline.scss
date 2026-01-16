@@ -8,3 +8,7 @@
 @import "./publish-modal/PublishModal";
 @import "./xblock-status/XBlockStatus";
 @import "./drag-helper/SortableItem";
+
+.border-dashed {
+  border: dashed;
+}
