@@ -75,6 +75,9 @@ const CourseOutline = () => {
     handleAddSubsection,
     handleAddUnit,
     handleAddSection,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    handleUnlinkItemSubmit,
   } = useCourseAuthoringContext();
 
   const {
@@ -96,16 +99,13 @@ const CourseOutline = () => {
     isPublishModalOpen,
     isConfigureModalOpen,
     isDeleteModalOpen,
-    isUnlinkModalOpen,
     closeHighlightsModal,
     closePublishModal,
     handleConfigureModalClose,
     closeDeleteModal,
-    closeUnlinkModal,
     openPublishModal,
     openConfigureModal,
     openDeleteModal,
-    openUnlinkModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
@@ -117,7 +117,6 @@ const CourseOutline = () => {
     handlePublishItemSubmit,
     handleEditSubmit,
     handleDeleteItemSubmit,
-    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
@@ -390,7 +389,6 @@ const CourseOutline = () => {
                                     onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
-                                    onOpenUnlinkModal={openUnlinkModal}
                                     onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
@@ -420,7 +418,6 @@ const CourseOutline = () => {
                                           savingStatus={savingStatus}
                                           onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
-                                          onOpenUnlinkModal={openUnlinkModal}
                                           onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
@@ -454,7 +451,6 @@ const CourseOutline = () => {
                                                 onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
-                                                onOpenUnlinkModal={openUnlinkModal}
                                                 onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                 onOrderChange={updateUnitOrderByIndex}

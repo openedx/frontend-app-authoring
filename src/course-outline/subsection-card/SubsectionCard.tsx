@@ -41,7 +41,6 @@ interface SubsectionCardProps {
   onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
-  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
@@ -64,7 +63,6 @@ const SubsectionCard = ({
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   onOrderChange,
   onOpenConfigureModal,
@@ -83,7 +81,7 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -289,7 +287,7 @@ const SubsectionCard = ({
                 onClickPublish={onOpenPublishModal}
                 onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={onOpenUnlinkModal}
+                onClickUnlink={() => openUnlinkModal({ value: subsection, sectionId: section.id })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
