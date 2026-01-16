@@ -1,7 +1,8 @@
 import { useOutlineSidebarContext } from "./OutlineSidebarContext";
 import { CourseInfoSidebar } from "./CourseInfoSidebar"
 import { ContainerType, getBlockType } from "@src/generic/key-utils";
-import { SectionSidebar } from "./SectionnfoSidebar";
+import { SectionSidebar } from "./SectionInfoSidebar";
+import { SubsectionSidebar } from "@src/course-outline/outline-sidebar/SubsectionInfoSidebar";
 
 export const InfoSidebar = () => {
   const { selectedContainerId } = useOutlineSidebarContext();
@@ -18,7 +19,7 @@ export const InfoSidebar = () => {
       return <SectionSidebar sectionId={selectedContainerId} />
     case ContainerType.Sequential:
     case ContainerType.Subsection:
-      return <div>Subsection sidebar</div>;
+      return <SubsectionSidebar subsectionId={selectedContainerId} />
     case ContainerType.Vertical:
     case ContainerType.Unit:
       return <div>Unit sidebar</div>;

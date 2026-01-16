@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle } from '@openedx/paragon';
+import { Tab, Tabs, useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
@@ -15,13 +16,13 @@ import { LibraryReferenceCard } from './LibraryReferenceCard';
 import { PublishButon } from './PublishButon';
 
 interface Props {
-  sectionId: string;
+  subsectionId: string;
 }
 
-export const SectionInfoSidebar = ({ sectionId }: Props) => {
+const SubsectionInfoSidebar = ({ subsectionId }: Props) => {
   const intl = useIntl();
   const { data: componentData } = useGetBlockTypes(
-    [`breadcrumbs.usage_key = "${sectionId}"`],
+    [`breadcrumbs.usage_key = "${subsectionId}"`],
   );
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
@@ -29,7 +30,7 @@ export const SectionInfoSidebar = ({ sectionId }: Props) => {
   return (
     <>
       <SidebarContent>
-        <LibraryReferenceCard />
+        <LibraryReferenceCard sectionId={subsectionId} />
         <SidebarSection
           title={intl.formatMessage(messages.sectionContentSummaryText)}
           icon={SchoolOutline}
@@ -46,11 +47,11 @@ export const SectionInfoSidebar = ({ sectionId }: Props) => {
             },
           ]}
         >
-          <ContentTagsSnippet contentId={sectionId} />
+          <ContentTagsSnippet contentId={subsectionId} />
         </SidebarSection>
       </SidebarContent>
       <ContentTagsDrawerSheet
-        id={sectionId}
+        id={subsectionId}
         onClose={closeManageTagsDrawer}
         showSheet={isManageTagsDrawerOpen}
       />
@@ -58,8 +59,10 @@ export const SectionInfoSidebar = ({ sectionId }: Props) => {
   );
 };
 
-export const SectionSidebar = ({ sectionId }: Props) => {
-  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
+export const SubsectionSidebar = ({ subsectionId }: Props) => {
+  const intl = useIntl();
+  const [tab, setTab] = useState<'info' | 'settings'>('info');
+  const { data: sectionData, isLoading } = useCourseItemData(subsectionId);
 
   if (isLoading) {
     return <Loading />;
@@ -72,7 +75,21 @@ export const SectionSidebar = ({ sectionId }: Props) => {
         icon={SchoolOutline}
       />
       <PublishButon onClick={() => {}} />
-    <SectionInfoSidebar sectionId={sectionId} />
+      <Tabs
+        variant="tabs"
+        className="my-2 d-flex justify-content-around"
+        id="add-content-tabs"
+        activeKey={tab}
+        onSelect={setTab}
+        mountOnEnter
+      >
+        <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
+          <SubsectionInfoSidebar subsectionId={subsectionId} />
+        </Tab>
+        <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
+          <div>Settings</div>
+        </Tab>
+      </Tabs>
     </>
   );
 }
