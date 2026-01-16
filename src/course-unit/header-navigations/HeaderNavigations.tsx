@@ -54,17 +54,18 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
           <ButtonGroup>
             <Button
               variant="outline-primary"
-              onClick={handleViewLive}
-              iconBefore={FindInPage}
-            >
-              {intl.formatMessage(messages.viewLiveButton)}
-            </Button>
-            <Button
-              variant="outline-primary"
               onClick={handlePreview}
+              iconBefore={FindInPage}
             >
               {intl.formatMessage(messages.previewButton)}
             </Button>
+            <Button
+              variant="outline-primary"
+              onClick={handleViewLive}
+            >
+              {intl.formatMessage(messages.viewLiveButton)}
+            </Button>
+
           </ButtonGroup>
         </Stack>
       )}

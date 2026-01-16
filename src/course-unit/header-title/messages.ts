@@ -58,7 +58,7 @@ const messages = defineMessages({
   },
   statusBarGroupAccessMultipleGroup: {
     id: 'course-authoring.course-unit.status-bar.access.multiple-group',
-    defaultMessage: 'Access: {groupsCount} groups',
+    defaultMessage: 'Access: {groupsCount} Groups',
     description: 'Text in the status bar when the access for the unit is for one group',
   },
 });
