@@ -21,46 +21,6 @@ const messages = defineMessages({
     defaultMessage: 'Access to this unit is restricted to: {selectedGroupsLabel}',
     description: 'Group visibility accessibility text for Unit',
   },
-  statusBarLiveBadge: {
-    id: 'course-authoring.course-unit.status-bar.visibility.chip',
-    defaultMessage: 'Live',
-    description: 'Text for the Live Badge in the status bar.',
-  },
-  statusBarStaffOnly: {
-    id: 'course-authoring.course-unit.status-bar.visibility.staff-only',
-    defaultMessage: 'Staff Only',
-    description: 'Text for the Staff Only Badge in the status bar.',
-  },
-  statusBarScheduledBadge: {
-    id: 'course-authoring.course-unit.status-bar.visibility.scheduled',
-    defaultMessage: 'Scheduled',
-    description: 'Text for the Upcoming Badge in the status bar.',
-  },
-  statusBarDraftChangesBadge: {
-    id: 'course-authoring.course-unit.status-bar.publish-status.draft-changes',
-    defaultMessage: 'Unpublished changes',
-    description: 'Text for the Draft Changes Badge in the status bar.',
-  },
-  statusBarDiscussionsEnabled: {
-    id: 'course-authoring.course-unit.status-bar.discussions-enabled',
-    defaultMessage: 'Discussions Enabled',
-    description: 'Text for the Discussions enabled Badge in the status bar.',
-  },
-  statusBarDraftNeverPublished: {
-    id: 'course-authoring.course-unit.status-bar.visibility.draft',
-    defaultMessage: 'Draft (Never Published)',
-    description: 'Text for the Discussions enabled Badge in the status bar.',
-  },
-  statusBarGroupAccessOneGroup: {
-    id: 'course-authoring.course-unit.status-bar.access.one-group',
-    defaultMessage: 'Access: {groupName}',
-    description: 'Text in the status bar when the access for the unit is for one group',
-  },
-  statusBarGroupAccessMultipleGroup: {
-    id: 'course-authoring.course-unit.status-bar.access.multiple-group',
-    defaultMessage: 'Access: {groupsCount} Groups',
-    description: 'Text in the status bar when the access for the unit is for one group',
-  },
 });
 
 export default messages;

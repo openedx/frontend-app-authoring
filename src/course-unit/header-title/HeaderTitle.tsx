@@ -1,139 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { MessageDescriptor } from 'react-intl';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Form, Icon, IconButton, OverlayTrigger, Stack, Tooltip, useToggle,
+  Form, IconButton, useToggle,
 } from '@openedx/paragon';
 import {
-  AccessTimeFilled,
-  CheckCircle,
   EditOutline as EditIcon,
-  Groups,
-  Lock,
-  QuestionAnswer,
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
 
 import ConfigureModal from '@src/generic/configure-modal/ConfigureModal';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
-import DraftIcon from '@src/generic/DraftIcon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
-import { UNIT_VISIBILITY_STATES } from '../constants';
 import { isUnitPageNewDesignEnabled } from '../utils';
-
-const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
-  const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
-  const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
-  let groupsCount = 0;
-  if (hasGroups) {
-    groupsCount = selectedGroupsLabel.split(',').length;
-  }
-
-  let visibilityChipData = {
-    variant: 'warning',
-    className: 'draft-badge',
-    text: messages.statusBarDraftNeverPublished,
-    icon: DraftIcon,
-  } as {
-    variant: string,
-    className?: string,
-    text: MessageDescriptor,
-    icon: React.ComponentType,
-  };
-
-  if (courseUnit.currentlyVisibleToStudents) {
-    visibilityChipData = {
-      variant: 'success',
-      text: messages.statusBarLiveBadge,
-      icon: CheckCircle,
-    };
-  } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly) {
-    visibilityChipData = {
-      variant: 'secondary',
-      text: messages.statusBarStaffOnly,
-      icon: Lock,
-    };
-  } else if (courseUnit.published) {
-    visibilityChipData = {
-      variant: 'info',
-      text: messages.statusBarScheduledBadge,
-      icon: AccessTimeFilled,
-    };
-  }
-
-  return (
-    <Stack direction="horizontal" gap={3}>
-      <Badge
-        variant={visibilityChipData.variant}
-        className={`px-3 py-2 ${visibilityChipData.className || ''}`}
-      >
-        <Stack direction="horizontal" gap={2}>
-          <Icon size="xs" src={visibilityChipData.icon} />
-          <span className="badge-label">
-            <FormattedMessage {...visibilityChipData.text} />
-          </span>
-        </Stack>
-      </Badge>
-      {courseUnit.published && courseUnit.hasChanges && (
-        <Badge
-          variant="warning"
-          className="px-3 py-2 draft-badge"
-        >
-          <Stack direction="horizontal" gap={1}>
-            <Icon size="xs" src={DraftIcon} />
-            <span className="badge-label">
-              <FormattedMessage {...messages.statusBarDraftChangesBadge} />
-            </span>
-          </Stack>
-        </Badge>
-      )}
-      {groupsCount === 1 && (
-        <Stack direction="horizontal" gap={1}>
-          <Icon src={Groups} />
-          <span>
-            <FormattedMessage
-              {...messages.statusBarGroupAccessOneGroup}
-              values={{
-                groupName: selectedGroupsLabel,
-              }}
-            />
-          </span>
-        </Stack>
-      )}
-      {groupsCount > 1 && (
-        <OverlayTrigger
-          placement="top"
-          overlay={(
-            <Tooltip id="unit-group-access-tooltip">
-              {selectedGroupsLabel}
-            </Tooltip>
-          )}
-        >
-          <Stack direction="horizontal" gap={1}>
-            <Icon src={Groups} />
-            <span>
-              <FormattedMessage
-                {...messages.statusBarGroupAccessMultipleGroup}
-                values={{
-                  groupsCount,
-                }}
-              />
-            </span>
-          </Stack>
-        </OverlayTrigger>
-      )}
-      {courseUnit.discussionEnabled && (
-        <Stack direction="horizontal" gap={1}>
-          <Icon src={QuestionAnswer} />
-          <FormattedMessage {...messages.statusBarDiscussionsEnabled} />
-        </Stack>
-      )}
-    </Stack>
-  );
-};
 
 type HeaderTitleProps = {
   unitTitle: string;
@@ -184,54 +65,47 @@ const HeaderTitle = ({
   }, [unitTitle]);
 
   return (
-    <>
-      <div className="unit-header-title d-flex align-items-center lead" data-testid="unit-header-title">
-        {isTitleEditFormOpen ? (
-          <Form.Group className="m-0">
-            <Form.Control
-              ref={(e) => e && e.focus()}
-              value={titleValue}
-              name="displayName"
-              onChange={(e) => setTitleValue(e.target.value)}
-              aria-label={intl.formatMessage(messages.ariaLabelButtonEdit)}
-              onBlur={() => handleTitleEditSubmit(titleValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleTitleEditSubmit(titleValue);
-                }
-              }}
-            />
-          </Form.Group>
-        ) : unitTitle}
-        <IconButton
-          alt={intl.formatMessage(messages.altButtonEdit)}
-          className="ml-1 flex-shrink-0 edit-button"
-          iconAs={EditIcon}
-          onClick={handleTitleEdit}
-        />
-        {!isUnitPageNewDesignEnabled() && (
-          <IconButton
-            alt={intl.formatMessage(messages.altButtonSettings)}
-            className="flex-shrink-0"
-            iconAs={SettingsIcon}
-            onClick={openConfigureModal}
+    <div className="unit-header-title d-flex align-items-center lead" data-testid="unit-header-title">
+      {isTitleEditFormOpen ? (
+        <Form.Group className="m-0">
+          <Form.Control
+            ref={(e) => e && e.focus()}
+            value={titleValue}
+            name="displayName"
+            onChange={(e) => setTitleValue(e.target.value)}
+            aria-label={intl.formatMessage(messages.ariaLabelButtonEdit)}
+            onBlur={() => handleTitleEditSubmit(titleValue)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleTitleEditSubmit(titleValue);
+              }
+            }}
           />
-        )}
-        <ConfigureModal
-          isOpen={isConfigureModalOpen}
-          onClose={closeConfigureModal}
-          onConfigureSubmit={onConfigureSubmit}
-          currentItemData={currentItemData}
-          isSelfPaced={false}
-          isXBlockComponent={isXBlockComponent}
-        />
-      </div>
-      {isUnitPageNewDesignEnabled() && (
-        <div className="unit-header-status-bar h5 mt-2 font-weight-normal">
-          <StatusBar courseUnit={currentItemData} />
-        </div>
+        </Form.Group>
+      ) : unitTitle}
+      <IconButton
+        alt={intl.formatMessage(messages.altButtonEdit)}
+        className="ml-1 flex-shrink-0 edit-button"
+        iconAs={EditIcon}
+        onClick={handleTitleEdit}
+      />
+      {!isUnitPageNewDesignEnabled() && (
+      <IconButton
+        alt={intl.formatMessage(messages.altButtonSettings)}
+        className="flex-shrink-0"
+        iconAs={SettingsIcon}
+        onClick={openConfigureModal}
+      />
       )}
-    </>
+      <ConfigureModal
+        isOpen={isConfigureModalOpen}
+        onClose={closeConfigureModal}
+        onConfigureSubmit={onConfigureSubmit}
+        currentItemData={currentItemData}
+        isSelfPaced={false}
+        isXBlockComponent={isXBlockComponent}
+      />
+    </div>
   );
 };
 
