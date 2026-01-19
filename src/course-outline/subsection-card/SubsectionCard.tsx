@@ -241,7 +241,7 @@ const SubsectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id);
+      openContainerInfoSidebar(subsection.id, section.id);
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);

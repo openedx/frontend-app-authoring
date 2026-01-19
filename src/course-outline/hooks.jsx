@@ -58,11 +58,13 @@ import {
   syncDiscussionsTopics,
 } from './data/thunk';
 import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { handleAddSection } = useCourseAuthoringContext();
+  const { selectedContainerId, clearSelection } = useOutlineSidebarContext();
 
   const {
     reindexLink,
@@ -206,6 +208,9 @@ const useCourseOutline = ({ courseId }) => {
         break;
       default:
         return;
+    }
+    if (selectedContainerId === currentItem.id) {
+      clearSelection();
     }
     closeDeleteModal();
   };
