@@ -29,8 +29,8 @@ const SectionInfoSidebar = ({ sectionId }: Props) => {
 
   return (
     <>
+      <LibraryReferenceCard itemId={sectionId} />
       <SidebarContent>
-        <LibraryReferenceCard sectionId={sectionId} />
         <SidebarSection
           title={intl.formatMessage(messages.sectionContentSummaryText)}
           icon={SchoolOutline}

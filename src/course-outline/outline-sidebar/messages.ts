@@ -130,6 +130,11 @@ const messages = defineMessages({
     defaultMessage: 'Section Content Summary',
     description: 'Title of the summary section in the section info sidebar',
   },
+  subsectionContentSummaryText: {
+    id: 'course-authoring.course-outline.sidebar.subsection.content-summary-text',
+    defaultMessage: 'Subsection Content Summary',
+    description: 'Title of the summary section in the subsection info sidebar',
+  },
   publishContainerButton: {
     id: 'course-authoring.course-outline.sidebar.generic.publish.button',
     defaultMessage: 'Publish Changes',
