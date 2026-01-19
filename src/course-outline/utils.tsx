@@ -1,3 +1,5 @@
+import type { IntlShape, MessageDescriptor } from 'react-intl';
+import { getConfig } from '@edx/frontend-platform';
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
@@ -5,19 +7,22 @@ import {
 
 import DraftIcon from '@src/generic/DraftIcon';
 import { VisibilityTypes } from '@src/data/constants';
+import { ValueOf } from '@src/types';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 
+export type ItemBadgeStatusValue = ValueOf<typeof ITEM_BADGE_STATUS>;
 /**
  * Get section status depended on section info
- * @param {bool} published - value from section info
- * @param {string} visibilityState - value from section info
- * @returns {ITEM_BADGE_STATUS[keyof ITEM_BADGE_STATUS]}
  */
 const getItemStatus = ({
   published,
   visibilityState,
   hasChanges,
-}) => {
+}: {
+  published: boolean;
+  visibilityState: string;
+  hasChanges?: boolean;
+}): ItemBadgeStatusValue => {
   switch (true) {
     case visibilityState === VisibilityTypes.STAFF_ONLY:
       return ITEM_BADGE_STATUS.staffOnly;
@@ -38,13 +43,12 @@ const getItemStatus = ({
 
 /**
  * Get section badge status content
- * @param {string} status - value from on getItemStatus util
- * @returns {
- *   badgeTitle: string,
- *   badgeIcon: node,
- * }
  */
-const getItemStatusBadgeContent = (status, messages, intl) => {
+const getItemStatusBadgeContent = (
+  status: ItemBadgeStatusValue,
+  messages: Record<string, MessageDescriptor>,
+  intl: IntlShape,
+) => {
   switch (status) {
     case ITEM_BADGE_STATUS.gated:
       return {
@@ -86,12 +90,8 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
 
 /**
  * Get section border color
- * @param {string} status - value from on getItemStatus util
- * @returns {
- *   borderLeft: string,
- * }
  */
-const getItemStatusBorder = (status) => {
+const getItemStatusBorder = (status?: ItemBadgeStatusValue) => {
   switch (status) {
     case ITEM_BADGE_STATUS.live:
       return {
@@ -128,16 +128,8 @@ const getItemStatusBorder = (status) => {
 
 /**
  * Get formatted highlights form values
- * @param {Array<string>} currentHighlights - section highlights
- * @returns {
- *   highlight_1: string,
- *   highlight_2: string,
- *   highlight_3: string,
- *   highlight_4: string,
- *   highlight_5: string,
- * }
  */
-const getHighlightsFormValues = (currentHighlights) => {
+const getHighlightsFormValues = (currentHighlights: Array<string>): any => {
   const initialFormValues = {
     highlight_1: '',
     highlight_2: '',
@@ -163,15 +155,12 @@ const getHighlightsFormValues = (currentHighlights) => {
 
 /**
  * Method to scroll into view port, if it's outside the viewport
- *
- * @param {Object} target - DOM Element
- * @param {boolean} alignWithTop (optional) - Whether top of the target will be aligned to
- *                                            the top of viewpoint. (default: false)
- * @param {boolean} highlight (optional) - Whether highlight the target after scrolling.
- *                                            (default: false)
- * @returns {undefined}
  */
-const scrollToElement = (target, alignWithTop = false, highlight = false) => {
+const scrollToElement = (
+  target: HTMLElement,
+  alignWithTop: boolean = false,
+  highlight: boolean = false,
+) => {
   if (target.getBoundingClientRect().bottom > window.innerHeight) {
     // if alignWithTop is set, the top of the target will be aligned to the top of visible area
     // of the scrollable ancestor, Otherwise, the bottom of the target will be aligned to the
@@ -199,7 +188,11 @@ const scrollToElement = (target, alignWithTop = false, highlight = false) => {
  * @param {string} id - option id
  * @returns {string} - text to display
  */
-const getVideoSharingOptionText = (id, messages, intl) => {
+const getVideoSharingOptionText = (
+  id: ValueOf<typeof VIDEO_SHARING_OPTIONS>,
+  messages: Record<string, MessageDescriptor>,
+  intl: IntlShape,
+): string => {
   switch (id) {
     case VIDEO_SHARING_OPTIONS.perVideo:
       return intl.formatMessage(messages.videoSharingPerVideoText);
@@ -212,6 +205,13 @@ const getVideoSharingOptionText = (id, messages, intl) => {
   }
 };
 
+/**
+ * Returns `true` if the new design for the course outline is enabled
+ */
+const isOutlineNewDesignEnabled = () => (
+  getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true'
+);
+
 export {
   getItemStatus,
   getItemStatusBadgeContent,
@@ -219,4 +219,5 @@ export {
   getHighlightsFormValues,
   getVideoSharingOptionText,
   scrollToElement,
+  isOutlineNewDesignEnabled,
 };

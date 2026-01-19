@@ -6,6 +6,7 @@ import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
 } from '@src/testUtils';
+import { PublishedFilterContextProvider } from '@src/library-authoring/common/context/PublishedFilterContext';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
@@ -73,12 +74,11 @@ const render = (
     path,
     params,
     extraWrapper: ({ children }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        showOnlyPublished={showOnlyPublished}
-      >
-        {children}
-      </LibraryProvider>
+      <PublishedFilterContextProvider showOnlyPublished={showOnlyPublished}>
+        <LibraryProvider libraryId={libraryId}>
+          {children}
+        </LibraryProvider>
+      </PublishedFilterContextProvider>
     ),
   });
 };

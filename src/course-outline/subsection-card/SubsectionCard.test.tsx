@@ -1,14 +1,17 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import userEvent from '@testing-library/user-event';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
+import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
-const handleOnAddUnitFromLibrary = jest.fn();
+const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -22,6 +25,15 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
   }),
 }));
 
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    handleAddUnit: handleOnAddUnitFromLibrary,
+    handleAddSubsection: {},
+    handleAddSection: {},
+  }),
+}));
+
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: () => ({
@@ -29,14 +41,14 @@ jest.mock('react-redux', () => ({
   }),
 }));
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('@src/library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
         usageKey: containerKey,
-        blockType: 'unti',
+        blockType: 'unit',
       });
     };
     return (
@@ -116,8 +128,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
     onOpenUnlinkModal={jest.fn()}
-    onNewUnitSubmit={jest.fn()}
-    onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
     isCustomRelativeDatesActive={false}
     onEditSubmit={onEditSubectionSubmit}
     onDuplicateSubmit={jest.fn()}
@@ -135,6 +145,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     routerProps: {
       initialEntries: [entry],
     },
+    extraWrapper: OutlineSidebarProvider,
   },
 );
 
@@ -148,6 +159,32 @@ describe('<SubsectionCard />', () => {
     renderComponent();
 
     expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('subsection-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render SubsectionCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('subsection-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('subsection-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('expands/collapses the card when the subsection button is clicked', async () => {
@@ -305,6 +342,11 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should add unit from library', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    const user = userEvent.setup();
     renderComponent();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
@@ -314,16 +356,15 @@ describe('<SubsectionCard />', () => {
       name: /use unit from library/i,
     });
     expect(useUnitFromLibraryButton).toBeInTheDocument();
-    fireEvent.click(useUnitFromLibraryButton);
+    await user.click(useUnitFromLibraryButton);
 
     expect(await screen.findByText('Select unit'));
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
+    await user.click(dummyBtn);
 
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
-    expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
+    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
       category: 'vertical',

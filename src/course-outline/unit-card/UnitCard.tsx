@@ -4,10 +4,11 @@ import {
   useMemo,
   useRef,
 } from 'react';
+import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
@@ -24,6 +25,8 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -36,7 +39,6 @@ interface UnitCardProps {
   onOpenDeleteModal: () => void;
   onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
-  getTitleLink: (locator: string) => string;
   index: number;
   getPossibleMoves: (index: number, step: number) => void,
   onOrderChange: (section: XBlock, moveDetails: any) => void,
@@ -63,13 +65,13 @@ const UnitCard = ({
   onOpenDeleteModal,
   onOpenUnlinkModal,
   onDuplicateSubmit,
-  getTitleLink,
   onOrderChange,
   discussionsSettings,
 }: UnitCardProps) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
@@ -77,7 +79,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId } = useParams();
+  const { courseId, getUnitUrl } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
 
   const {
@@ -165,10 +167,16 @@ const UnitCard = ({
     }
   }, [dispatch, section, queryClient, courseId]);
 
+  const onClickCard = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      openContainerInfoSidebar(unit.id);
+    }
+  }, [openContainerInfoSidebar]);
+
   const titleComponent = (
     <TitleLink
       title={displayName}
-      titleLink={getTitleLink(id)}
+      titleLink={getUnitUrl(id)}
       namePrefix={namePrefix}
       prefixIcon={(
         <UpstreamInfoIcon
@@ -229,9 +237,16 @@ const UnitCard = ({
           background: '#fdfdfd',
           ...borderStyle,
         }}
+        onClick={onClickCard}
       >
         <div
-          className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
+          className={classNames(
+            'unit-card',
+            {
+              highlight: isScrolledToElement,
+              'outline-card-selected': unit.id === selectedContainerId,
+            },
+          )}
           data-testid="unit-card"
           ref={currentRef}
         >
@@ -249,6 +264,7 @@ const UnitCard = ({
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
+            onClickCard={onClickCard}
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}

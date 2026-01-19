@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useQueryClient } from '@tanstack/react-query';
 
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
-import { useWaffleFlags } from '@src/data/apiHooks';
 import { RequestStatus } from '@src/data/constants';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { ContainerType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
-  addSection,
-  addSubsection,
   setCurrentItem,
   setCurrentSection,
   resetScrollField,
@@ -35,9 +33,6 @@ import {
   getCreatedOn,
 } from './data/selectors';
 import {
-  addNewSectionQuery,
-  addNewSubsectionQuery,
-  addNewUnitQuery,
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
   deleteCourseUnitQuery,
@@ -63,15 +58,12 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { useCreateCourseBlock } from './data/apiHooks';
-import { getCourseItem } from './data/api';
 import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const waffleFlags = useWaffleFlags(courseId);
+  const { handleAddSection } = useCourseAuthoringContext();
 
   const {
     reindexLink,
@@ -108,11 +100,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
-  const [
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
-  ] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -120,67 +107,18 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(pasteClipboardContent(parentLocator, sectionId));
   };
 
-  const handleNewSectionSubmit = () => {
-    dispatch(addNewSectionQuery(courseStructure.id));
-  };
-
-  const handleNewSubsectionSubmit = (sectionId) => {
-    dispatch(addNewSubsectionQuery(sectionId));
-  };
-
-  const getUnitUrl = (locator) => {
-    if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
-      return `/course/${courseId}/container/${locator}`;
-    }
-    return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
-  };
-
-  const openUnitPage = (locator) => {
-    const url = getUnitUrl(locator);
-    if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
-      navigate(url);
-    } else {
-      window.location.assign(url);
-    }
-  };
-
-  const handleNewUnitSubmit = (subsectionId) => {
-    dispatch(addNewUnitQuery(subsectionId, openUnitPage));
-  };
-
-  /**
-  * import a unit block from library and redirect user to this unit page.
-  */
-  const handleAddUnitFromLibrary = useCreateCourseBlock(openUnitPage);
-
-  const handleAddSubsectionFromLibrary = useCreateCourseBlock(async (locator, parentLocator) => {
-    try {
-      const data = await getCourseItem(locator);
-      data.shouldScroll = true;
-      // Page should scroll to newly added subsection.
-      dispatch(addSubsection({ parentLocator, data }));
-    } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  });
-
   const resetScrollState = () => {
     dispatch(resetScrollField());
   };
 
-  const handleAddSectionFromLibrary = useCreateCourseBlock(async (locator) => {
-    try {
-      const data = await getCourseItem(locator);
-      // Page should scroll to newly added section.
-      data.shouldScroll = true;
-      dispatch(addSection(data));
-    } catch {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  });
-
   const headerNavigationsActions = {
-    handleNewSection: handleNewSectionSubmit,
+    handleNewSection: () => {
+      handleAddSection.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseStructure?.id,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+    },
     handleReIndex: () => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
@@ -380,9 +318,6 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
     handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
@@ -411,14 +346,6 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
-    handleNewSectionSubmit,
-    handleNewSubsectionSubmit,
-    getUnitUrl,
-    openUnitPage,
-    handleNewUnitSubmit,
-    handleAddUnitFromLibrary,
-    handleAddSubsectionFromLibrary,
-    handleAddSectionFromLibrary,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,

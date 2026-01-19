@@ -14,12 +14,18 @@ const Icon1 = () => <div>Icon 1</div>;
 const Icon2 = () => <div>Icon 2</div>;
 const pages = {
   page1: {
-    title: 'Page 1',
+    title: {
+      id: 'page-1',
+      defaultMessage: 'Page 1',
+    },
     component: Component1,
     icon: Icon1,
   },
   page2: {
-    title: 'Page 2',
+    title: {
+      id: 'page-2',
+      defaultMessage: 'Page 2',
+    },
     component: Component2,
     icon: Icon2,
   },

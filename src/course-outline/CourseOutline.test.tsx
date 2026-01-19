@@ -96,9 +96,9 @@ jest.mock('./data/api', () => ({
   getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
 
-// Mock ComponentPicker to call onComponentSelected on click
+// Mock LibraryAndComponentPicker to call onComponentSelected on click
 jest.mock('@src/library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => {
+  LibraryAndComponentPicker: (props) => {
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
@@ -354,8 +354,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId } = renderComponent();
-    let elements = await findAllByTestId('section-card');
+    const user = userEvent.setup();
+    renderComponent();
+    let elements = await screen.findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -378,9 +379,9 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
     const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
-    await act(async () => fireEvent.click(newSectionButton));
+    await user.click(newSectionButton);
 
-    elements = await findAllByTestId('section-card');
+    elements = await screen.findAllByTestId('section-card');
     expect(elements.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
@@ -438,8 +439,9 @@ describe('<CourseOutline />', () => {
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
     expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
-      parent_locator: subsection.id,
+      type: COURSE_BLOCK_NAMES.vertical.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
+      parent_locator: subsection.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
     }));
   });
@@ -2495,7 +2497,7 @@ describe('<CourseOutline />', () => {
     const btn = await screen.findByRole('button', { name: 'Collapse all' });
     expect(btn).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'Add' })).toBeInTheDocument();
+    expect((await screen.findAllByRole('button', { name: 'Add' })).length).toEqual(2);
     expect(await screen.findByRole('button', { name: 'More actions' })).toBeInTheDocument();
     const user = userEvent.setup();
     await user.click(btn);

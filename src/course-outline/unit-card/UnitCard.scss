@@ -11,5 +11,7 @@
     line-height: var(--pgn-typography-headings-line-height);
     color: var(--pgn-color-headings-base);
     align-self: center;
+    min-width: 10px !important;
+    max-width: 300px;
   }
 }

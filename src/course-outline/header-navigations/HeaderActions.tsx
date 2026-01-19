@@ -5,17 +5,17 @@ import {
 import {
   Add as IconAdd, FindInPage, ViewSidebar,
 } from '@openedx/paragon/icons';
+import { OUTLINE_SIDEBAR_PAGES } from '@src/course-outline/outline-sidebar/constants';
 
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import type { SidebarPage } from '@src/generic/sidebar';
 
-import { useOutlineSidebarContext, OutlineSidebarPageKeys } from '../outline-sidebar/OutlineSidebarContext';
+import { type OutlineSidebarPageKeys, useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 import messages from './messages';
 
 export interface HeaderActionsProps {
   actions: {
-    handleNewSection: () => void,
     lmsLink: string,
   },
   courseActions: XBlockActions,
@@ -28,9 +28,9 @@ const HeaderActions = ({
   errors,
 }: HeaderActionsProps) => {
   const intl = useIntl();
-  const { handleNewSection, lmsLink } = actions;
+  const { lmsLink } = actions;
 
-  const { setCurrentPageKey, sidebarPages } = useOutlineSidebarContext();
+  const { setCurrentPageKey } = useOutlineSidebarContext();
 
   return (
     <Stack direction="horizontal" gap={3}>
@@ -45,7 +45,7 @@ const HeaderActions = ({
         >
           <Button
             iconBefore={IconAdd}
-            onClick={handleNewSection}
+            onClick={() => setCurrentPageKey('add')}
             disabled={!(errors?.outlineIndexApi === undefined || errors?.outlineIndexApi === null)}
             variant="outline-primary"
           >
@@ -80,17 +80,18 @@ const HeaderActions = ({
           <Icon src={ViewSidebar} />
         </Dropdown.Toggle>
         <Dropdown.Menu className="mt-1">
-          {Object.entries(sidebarPages).map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
-            <Dropdown.Item
-              key={key}
-              onClick={() => setCurrentPageKey(key)}
-            >
-              <Stack direction="horizontal" gap={2}>
-                <Icon src={page.icon} />
-                {page.title}
-              </Stack>
-            </Dropdown.Item>
-          ))}
+          {Object.entries(OUTLINE_SIDEBAR_PAGES).filter(([, page]) => !page.hideFromActionMenu)
+            .map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
+              <Dropdown.Item
+                key={key}
+                onClick={() => setCurrentPageKey(key)}
+              >
+                <Stack direction="horizontal" gap={2}>
+                  <Icon src={page.icon} />
+                  {intl.formatMessage(page.title)}
+                </Stack>
+              </Dropdown.Item>
+            ))}
         </Dropdown.Menu>
       </Dropdown>
 

@@ -17,7 +17,7 @@ import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
 
 import {
-  ComponentPicker,
+  LibraryAndComponentPicker,
   CreateLibrary,
   CreateLegacyLibrary,
   LibraryLayout,
@@ -74,7 +74,7 @@ const App = () => {
         <Route
           path="/component-picker"
           element={(
-            <ComponentPicker
+            <LibraryAndComponentPicker
               extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
               visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}
             />
@@ -83,7 +83,7 @@ const App = () => {
         <Route
           path="/component-picker/multiple"
           element={(
-            <ComponentPicker
+            <LibraryAndComponentPicker
               componentPickerMode="multiple"
               extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
               visibleTabs={[ContentType.home, ContentType.components, ContentType.collections]}

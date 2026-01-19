@@ -28,6 +28,7 @@ const SearchFilterWidget: React.FC<{
   clearFilter: () => void,
   icon: React.ComponentType;
   skipLabelUpdate?: boolean;
+  btnSize?: 'sm' | 'md' | 'lg';
 }> = ({ appliedFilters, ...props }) => {
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
@@ -44,7 +45,7 @@ const SearchFilterWidget: React.FC<{
         <Button
           ref={setTarget}
           variant={appliedFilters.length ? 'light' : 'outline-primary'}
-          size="sm"
+          size={props.btnSize || 'sm'}
           onClick={open}
           iconBefore={props.icon}
           iconAfter={ArrowDropDown}

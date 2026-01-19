@@ -43,8 +43,8 @@ const LibraryLayoutWrapper: React.FC<React.PropsWithChildren> = ({ children }) =
       libraryId={libraryId}
       /** NOTE: The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
-       * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-       * Sidebar > AddContent > ComponentPicker */
+       * LibraryAndComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+       * Sidebar > AddContent > LibraryAndComponentPicker */
       componentPicker={ComponentPicker}
     >
       <SidebarProvider>

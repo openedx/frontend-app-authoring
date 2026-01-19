@@ -14,7 +14,7 @@ import {
 import { getBlockType } from '@src/generic/key-utils';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useOptionalLibraryContext } from '../common/context/LibraryContext';
 import {
   type ComponentInfoTab,
   COMPONENT_INFO_TABS,
@@ -107,7 +107,7 @@ const ComponentActions = ({
   hasUnpublishedChanges: boolean,
 }) => {
   const intl = useIntl();
-  const { openComponentEditor } = useLibraryContext();
+  const { openComponentEditor } = useOptionalLibraryContext();
   const [isPublisherOpen, openPublisher, closePublisher] = useToggle(false);
   const canEdit = canEditComponent(componentId);
 
@@ -125,7 +125,7 @@ const ComponentActions = ({
   return (
     <div className="d-flex flex-wrap">
       <Button
-        {...(canEdit ? { onClick: () => openComponentEditor(componentId) } : { disabled: true })}
+        {...(canEdit ? { onClick: () => openComponentEditor?.(componentId) } : { disabled: true })}
         variant="outline-primary"
         className="m-1 text-nowrap flex-grow-1"
       >
@@ -151,7 +151,7 @@ const ComponentActions = ({
 
 const ComponentInfo = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
+  const { readOnly } = useOptionalLibraryContext();
 
   const {
     sidebarTab,

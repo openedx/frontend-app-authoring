@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { PermissionValidationAnswer, PermissionValidationQuery } from '@src/authz/types';
 import { validateUserPermissions } from './api';
 
@@ -29,8 +29,9 @@ const adminConsoleQueryKeys = {
  */
 export const useUserPermissions = (
   permissions: PermissionValidationQuery,
+  enabled: boolean = true,
 ) => useQuery<PermissionValidationAnswer, Error>({
   queryKey: adminConsoleQueryKeys.permissions(permissions),
-  queryFn: () => validateUserPermissions(permissions),
+  queryFn: enabled ? () => validateUserPermissions(permissions) : skipToken,
   retry: false,
 });

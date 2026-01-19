@@ -1,8 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button,
-  OverlayTrigger,
-  Tooltip,
+  IconButtonWithTooltip,
+  Stack,
 } from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
@@ -29,32 +28,23 @@ const TitleButton = ({
   const titleTooltipMessage = intl.formatMessage(messages.expandTooltip);
 
   return (
-    <OverlayTrigger
-      placement="bottom"
-      overlay={(
-        <Tooltip
-          id={`${title}-${titleTooltipMessage}`}
-        >
-          {titleTooltipMessage}
-        </Tooltip>
-      )}
-    >
-      <Button
-        iconBefore={isExpanded ? ArrowDownIcon : ArrowRightIcon}
-        variant="tertiary"
+    <Stack direction="horizontal">
+      <IconButtonWithTooltip
+        src={isExpanded ? ArrowDownIcon : ArrowRightIcon}
         data-testid={`${namePrefix}-card-header__expanded-btn`}
+        alt={title}
+        tooltipContent={<div>{titleTooltipMessage}</div>}
         className="item-card-header__title-btn"
         onClick={onTitleClick}
-        title={title}
-      >
-        <div className="mr-2">
-          {prefixIcon}
-        </div>
-        <span className={`${namePrefix}-card-title mb-0 truncate-1-line`}>
-          {title}
-        </span>
-      </Button>
-    </OverlayTrigger>
+        size="inline"
+      />
+      <div className="mr-2">
+        {prefixIcon}
+      </div>
+      <span className={`${namePrefix}-card-title mb-0 truncate-1-line`}>
+        {title}
+      </span>
+    </Stack>
   );
 };
 

@@ -5,15 +5,12 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '@src/generic/processing-notification/data/slice';
-import { createCourseXblock } from '@src/course-unit/data/api';
-import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
-  addNewCourseItem,
   deleteCourseItem,
   duplicateCourseItem,
   editItemDisplayName,
@@ -35,8 +32,6 @@ import {
   dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
-  addSection,
-  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -515,109 +510,6 @@ export function duplicateUnitQuery(unitId: string, subsectionId: string, section
         unitId: itemId, // To scroll to the newly duplicated unit
       })),
     ));
-  };
-}
-
-/**
- * Generic function to add any course item. See wrapper functions below for specific implementations.
- */
-function addNewCourseItemQuery(
-  parentLocator: string,
-  category: string,
-  displayName: string,
-  addItemFn: (data: any) => Promise<any>,
-) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await addNewCourseItem(
-        parentLocator,
-        category,
-        displayName,
-      ).then(async (result) => {
-        if (result) {
-          await addItemFn(result);
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-export function addNewSectionQuery(parentLocator: string) {
-  return async (dispatch) => {
-    dispatch(addNewCourseItemQuery(
-      parentLocator,
-      COURSE_BLOCK_NAMES.chapter.id,
-      COURSE_BLOCK_NAMES.chapter.name,
-      async (result) => {
-        const data = await getCourseItem(result.locator);
-        // Page should scroll to newly created section.
-        data.shouldScroll = true;
-        dispatch(addSection(data));
-      },
-    ));
-  };
-}
-
-export function addNewSubsectionQuery(parentLocator: string) {
-  return async (dispatch) => {
-    dispatch(addNewCourseItemQuery(
-      parentLocator,
-      COURSE_BLOCK_NAMES.sequential.id,
-      COURSE_BLOCK_NAMES.sequential.name,
-      async (result) => {
-        const data = await getCourseItem(result.locator);
-        // Page should scroll to newly created subsection.
-        data.shouldScroll = true;
-        dispatch(addSubsection({ parentLocator, data }));
-      },
-    ));
-  };
-}
-
-export function addNewUnitQuery(parentLocator: string, callback: { (locator: any): void }) {
-  return async (dispatch) => {
-    dispatch(addNewCourseItemQuery(
-      parentLocator,
-      COURSE_BLOCK_NAMES.vertical.id,
-      COURSE_BLOCK_NAMES.vertical.name,
-      async (result) => callback(result.locator),
-    ));
-  };
-}
-
-export function addUnitFromLibrary(body: {
-  type: string;
-  category?: string;
-  parentLocator: string;
-  displayName?: string;
-  boilerplate?: string;
-  stagedContent?: string;
-  libraryContentKey?: string;
-}, callback: (arg0: any) => void) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await createCourseXblock(body).then(async (result) => {
-        if (result) {
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-          callback(result.locator);
-        }
-      });
-    } catch /* istanbul ignore next */ {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
   };
 }
 
