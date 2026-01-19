@@ -5,9 +5,9 @@ import { Stack } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import TagsSidebarControls from '@src/content-tags-drawer/tags-sidebar-controls';
 import SidebarSection from './SidebarSection';
-import PublishControls from './PublishControls';
 import LocationInfo from './LocationInfo';
 import SplitTestSidebarInfo from './SplitTestSidebarInfo';
+import PublishControls from '../unit-sidebar/unit-info/PublishControls';
 
 export type XBlock = {
   id: string,
@@ -34,7 +34,7 @@ const LegacySidebar = ({
   const { courseId } = useCourseAuthoringContext();
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} className="px-4">
       {isUnitVerticalType && (
         <PluginSlot
           id="org.openedx.frontend.authoring.course_unit_sidebar.v1"

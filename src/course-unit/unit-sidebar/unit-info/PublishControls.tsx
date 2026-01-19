@@ -4,13 +4,14 @@ import { InfoOutline as InfoOutlineIcon, Person } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import ModalNotification from '@src/generic/modal-notification';
 import { useIframe } from '@src/generic/hooks/context/hooks';
-import useCourseUnitData from './hooks';
-import { editCourseUnitVisibilityAndData } from '../data/thunk';
-import { SidebarFooter, SidebarHeader } from './components';
-import { PUBLISH_TYPES, messageTypes } from '../constants';
-import { getCourseUnitData } from '../data/selectors';
+import { getCourseUnitData } from '@src/course-unit/data/selectors';
+import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import { messageTypes, PUBLISH_TYPES } from '@src/course-unit/constants';
+import { SidebarFooter, SidebarHeader } from '@src/course-unit/legacy-sidebar/components';
+import useCourseUnitData from '@src/course-unit/legacy-sidebar/hooks';
+import ReleaseInfoComponent from '@src/course-unit/legacy-sidebar/components/ReleaseInfoComponent';
 import messages from './messages';
-import ReleaseInfoComponent from './components/ReleaseInfoComponent';
+import UnitVisibilityInfo from './UnitVisibilityInfo';
 
 interface PublishControlsProps {
   blockId?: string,
@@ -132,12 +133,15 @@ const PublishControls = ({
           </div>
         </Stack>
       </Stack>
+      <UnitVisibilityInfo
+        openVisibleModal={openVisibleModal}
+        visibleToStaffOnly={visibleToStaffOnly}
+        userPartitionInfo={unitData.userPartitionInfo}
+      />
       <SidebarFooter
         locationId={locationId}
         openDiscardModal={openDiscardModal}
-        openVisibleModal={openVisibleModal}
         handlePublishing={handleCourseUnitPublish}
-        visibleToStaffOnly={visibleToStaffOnly}
         hideCopyButton={hideCopyButton}
       />
       <ModalNotification

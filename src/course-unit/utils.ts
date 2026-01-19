@@ -1,3 +1,5 @@
+import { getConfig } from '@edx/frontend-platform';
+
 /**
  * Adapts API URL paths to the application's internal URL format based on predefined conditions.
  *
@@ -43,3 +45,7 @@ export const subsectionFirstUnitEditUrl = (
   const url = `/course/${courseId}/subsection/${subsectionId}`;
   return url;
 };
+
+export const isUnitPageNewDesignEnabled = () => (
+  getConfig().ENABLE_UNIT_PAGE_NEW_DESIGN?.toString().toLowerCase() === 'true'
+);

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Alert, Form } from '@openedx/paragon';
 import {
   FormattedMessage, useIntl,
@@ -9,9 +8,42 @@ import classNames from 'classnames';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 
+export type UserpartitionInfo = {
+  selectablePartitions: {
+    groups: {
+      deleted: boolean,
+      id: number,
+      name: string,
+      selected: boolean,
+    }[],
+    id: number,
+    name: string,
+    scheme: string,
+  }[],
+  selectedGroupsLabel?: string,
+  selectedPartitionIndex: number,
+};
+
+export interface UnitTabProps {
+  isXBlockComponent: boolean,
+  category?: string,
+  values: {
+    isVisibleToStaffOnly: boolean,
+    discussionEnabled: boolean,
+    selectedPartitionIndex: number,
+    selectedGroups: string[],
+  },
+  setFieldValue: (key: string, value: any) => void,
+  showWarning: boolean,
+  userPartitionInfo: UserpartitionInfo,
+}
+
 export const DiscussionEditComponent = ({
   discussionEnabled,
   handleDiscussionChange,
+}: {
+  discussionEnabled: boolean,
+  handleDiscussionChange: (e: any) => void,
 }) => (
   <>
     <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
@@ -21,12 +53,19 @@ export const DiscussionEditComponent = ({
   </>
 );
 
+export interface AccessEditComponentProps {
+  selectedPartitionIndex: number,
+  setFieldValue: (key: string, value: any) => void,
+  userPartitionInfo: UserpartitionInfo,
+  selectedGroups: string[],
+}
+
 export const AccessEditComponent = ({
   selectedPartitionIndex,
   setFieldValue,
   userPartitionInfo,
   selectedGroups,
-}) => {
+}: AccessEditComponentProps) => {
   const intl = useIntl();
   const checkIsDeletedGroup = (group) => {
     const isGroupSelected = selectedGroups.includes(group.id.toString());
@@ -41,7 +80,7 @@ export const AccessEditComponent = ({
 
   return (
     <>
-      <Form.Label as="legend" className="font-weight-bold">
+      <Form.Label className="font-weight-bold">
         <FormattedMessage {...messages.restrictAccessTo} />
       </Form.Label>
       <Form.Control
@@ -111,13 +150,13 @@ export const AccessEditComponent = ({
 };
 
 export const UnitTab = ({
-  isXBlockComponent,
+  isXBlockComponent = false,
   category,
   values,
   setFieldValue,
   showWarning,
   userPartitionInfo,
-}) => {
+}: UnitTabProps) => {
   const {
     isVisibleToStaffOnly,
     selectedPartitionIndex,
@@ -186,43 +225,4 @@ export const UnitTab = ({
       )}
     </>
   );
-};
-
-UnitTab.defaultProps = {
-  isXBlockComponent: false,
-  category: undefined,
-};
-
-UnitTab.propTypes = {
-  isXBlockComponent: PropTypes.bool,
-  category: PropTypes.string,
-  values: PropTypes.shape({
-    isVisibleToStaffOnly: PropTypes.bool.isRequired,
-    discussionEnabled: PropTypes.bool,
-    selectedPartitionIndex: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]).isRequired,
-    selectedGroups: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.string),
-      PropTypes.array,
-    ]),
-  }).isRequired,
-  setFieldValue: PropTypes.func.isRequired,
-  showWarning: PropTypes.bool.isRequired,
-  userPartitionInfo: PropTypes.shape({
-    selectablePartitions: PropTypes.arrayOf(PropTypes.shape({
-      groups: PropTypes.arrayOf(PropTypes.shape({
-        deleted: PropTypes.bool.isRequired,
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        selected: PropTypes.bool.isRequired,
-      }).isRequired).isRequired,
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      scheme: PropTypes.string.isRequired,
-    }).isRequired).isRequired,
-    selectedGroupsLabel: PropTypes.string,
-    selectedPartitionIndex: PropTypes.number.isRequired,
-  }).isRequired,
 };

@@ -2,7 +2,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Tag } from '@openedx/paragon/icons';
 import { ContentTagsSnippet } from '@src/content-tags-drawer';
 import configureMessages from '@src/generic/configure-modal/messages';
@@ -13,11 +13,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
 import { Form, Formik } from 'formik';
-import { editCourseUnitVisibilityAndData } from '../data/thunk';
-import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '../constants';
-import { getCourseUnitData, getCourseVerticalChildren } from '../data/selectors';
-import PublishControls from '../legacy-sidebar/PublishControls';
-import messages from './messages';
+import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
+import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
+import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
+import messages from '../messages';
+import PublishControls from './PublishControls';
+import { useUnitSidebarContext } from '../UnitSidebarContext';
 
 const UnitInfoDetails = () => {
   const intl = useIntl();
@@ -29,13 +30,15 @@ const UnitInfoDetails = () => {
     throw new Error('Error: route is missing blockId.');
   }
 
-  // @ts-ignore
-  const componentData: Record<string, number> = useMemo(() => courseVerticalChildren.children.reduce<Record<string, number>>(
-    (acc, { blockType }) => {
-      acc[blockType] = (acc[blockType] ?? 0) + 1;
-      return acc;
-    },
-    {},
+  const componentData: Record<string, number> = useMemo(() => (
+    // @ts-ignore
+    courseVerticalChildren.children.reduce<Record<string, number>>(
+      (acc, { blockType }) => {
+        acc[blockType] = (acc[blockType] ?? 0) + 1;
+        return acc;
+      },
+      {},
+    )
   ), [courseVerticalChildren.children]);
 
   return (
@@ -93,7 +96,7 @@ const UnitInfoSettings = () => {
       groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
     }
     await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
-    resetForm({ data });
+    resetForm({ values: data });
   };
 
   const getSelectedGroups = () => {
@@ -101,7 +104,7 @@ const UnitInfoSettings = () => {
       return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
         ?.groups
         .filter(({ selected }) => selected)
-        .map(({ id }) => `${id}`)
+        .map(({ groupId }) => `${groupId}`)
         || [];
     }
     return [];
@@ -176,12 +179,20 @@ export const UnitInfoSidebar = () => {
   const intl = useIntl();
   const { blockId } = useParams();
   const currentItemData = useSelector(getCourseUnitData);
-  const [tab, setTab] = useState<'details' | 'settings'>('details');
+  const {
+    currentTabKey,
+    setCurrentTabKey,
+  } = useUnitSidebarContext();
 
   if (blockId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     throw new Error('Error: route is missing blockId.');
   }
+
+  useEffect(() => {
+    // Set default Tab key
+    setCurrentTabKey('details');
+  }, []);
 
   return (
     <div>
@@ -191,15 +202,23 @@ export const UnitInfoSidebar = () => {
       />
       <Tabs
         id="unit-info-sidebar-tabs"
-        activeKey={tab}
-        onSelect={(t) => setTab(t)}
+        activeKey={currentTabKey}
+        onSelect={setCurrentTabKey}
       >
-        <Tab eventKey="details" title={intl.formatMessage(messages.sidebarInfoDetailsTab)}>
+        <Tab
+          eventKey="details"
+          title={intl.formatMessage(messages.sidebarInfoDetailsTab)}
+          tabClassName="w-100 text-center"
+        >
           <div className="mt-4">
             <UnitInfoDetails />
           </div>
         </Tab>
-        <Tab eventKey="settings" title={intl.formatMessage(messages.sidebarInfoSettingsTab)}>
+        <Tab
+          eventKey="settings"
+          title={intl.formatMessage(messages.sidebarInfoSettingsTab)}
+          tabClassName="w-100 text-center"
+        >
           <div className="mt-4">
             <UnitInfoSettings />
           </div>

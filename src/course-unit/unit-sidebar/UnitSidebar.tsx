@@ -1,8 +1,8 @@
-import { getConfig } from '@edx/frontend-platform';
 import { Sidebar } from '@src/generic/sidebar';
 import LegacySidebar, { LegacySidebarProps } from '../legacy-sidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 import { useUnitSidebarPages } from './unitSidebarPages';
+import { isUnitPageNewDesignEnabled } from '../utils';
 
 export type UnitSidebarProps = {
   legacySidebarProps: LegacySidebarProps,
@@ -11,8 +11,6 @@ export type UnitSidebarProps = {
 export const UnitSidebar = ({
   legacySidebarProps, // Can be deleted when the legacy sidebar is deprecated
 }: UnitSidebarProps) => {
-  const showNewSidebar = getConfig().ENABLE_UNIT_PAGE_NEW_DESIGN?.toString().toLowerCase() === 'true';
-
   const {
     currentPageKey,
     setCurrentPageKey,
@@ -22,7 +20,7 @@ export const UnitSidebar = ({
 
   const sidebarPages = useUnitSidebarPages();
 
-  if (!showNewSidebar) {
+  if (!isUnitPageNewDesignEnabled()) {
     return (
       <LegacySidebar {...legacySidebarProps} />
     );
