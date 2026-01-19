@@ -11,7 +11,7 @@ import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 import { isOutlineNewDesignEnabled } from '../utils';
 
-export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
+export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
 export type OutlineFlow = {
   flowType: 'use-section';
@@ -25,7 +25,7 @@ export type OutlineFlow = {
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys) => void;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, containerId?: string) => void;
   currentFlow: OutlineFlow | null;
   startCurrentFlow: (flow: OutlineFlow) => void;
   stopCurrentFlow: () => void;
@@ -33,12 +33,17 @@ interface OutlineSidebarContextData {
   open: () => void;
   toggle: () => void;
   selectedContainerId?: string;
+  // The Id of the container used in the current sidebar page
+  // The container is not necessarily selected to open a selected sidebar.
+  // Example: Align sidebar
+  currentContainerId?: string;
   openContainerInfoSidebar: (containerId: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
+  const [currentContainerId, setCurrentContainerId] = useState<string>();
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
     'info',
     'sidebar',
@@ -64,9 +69,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(null);
   }, [setCurrentFlow]);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
+  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, containerId?: string) => {
     setCurrentPageKeyState(pageKey);
     setCurrentFlow(null);
+    setCurrentContainerId(containerId);
     open();
   }, [open, setCurrentFlow]);
 
@@ -104,6 +110,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       open,
       toggle,
       selectedContainerId,
+      currentContainerId,
       openContainerInfoSidebar,
     }),
     [
@@ -116,6 +123,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       open,
       toggle,
       selectedContainerId,
+      currentContainerId,
       openContainerInfoSidebar,
     ],
   );

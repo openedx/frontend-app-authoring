@@ -1,23 +1,54 @@
-// @ts-check
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Stack, IconButton } from '@openedx/paragon';
-import { Tag, Close } from '@openedx/paragon/icons';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  Icon, Stack, IconButton, OverlayTrigger, Tooltip,
+} from '@openedx/paragon';
+import { Tag, Close, Lock } from '@openedx/paragon/icons';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
+import { TagTree } from './ContentTagsCollapsible';
+
+const LibraryLockIcon = ({ key }: { key: string }) => (
+  <OverlayTrigger
+    placement="top"
+    overlay={(
+      <Tooltip
+        id={`tooltip-lock-${key}`}
+      >
+        <FormattedMessage {...messages.libraryLockIconTooltip} />
+      </Tooltip>
+    )}
+  >
+    <Icon
+      src={Lock}
+      size="xs"
+      className="ml-1"
+      data-testid="lock-icon"
+    />
+  </OverlayTrigger>
+);
+
+interface TagComponentProps {
+  value: string;
+  lineage: string[];
+  canDelete: boolean;
+  explicit: boolean;
+  removeTagHandler?: (value: string) => void;
+  afterComponent?: React.ReactNode;
+}
 
 const TagComponent = ({
   value,
-  canDelete,
-  explicit,
-  removeTagHandler,
   lineage,
-}) => {
+  removeTagHandler,
+  canDelete = false,
+  explicit,
+  afterComponent,
+}: TagComponentProps) => {
   const intl = useIntl();
 
   const handleClick = React.useCallback(() => {
-    if (explicit && canDelete) {
+    if (explicit && canDelete && removeTagHandler) {
       removeTagHandler(lineage.join(','));
     }
   }, [explicit, lineage, canDelete, removeTagHandler]);
@@ -38,23 +69,19 @@ const TagComponent = ({
           className="tags-tree-delete-button ml-2 text-gray-600"
         />
       )}
+      {afterComponent}
     </Stack>
   );
 };
 
-TagComponent.propTypes = {
-  value: PropTypes.string.isRequired,
-  canDelete: PropTypes.bool,
-  explicit: PropTypes.bool,
-  lineage: PropTypes.arrayOf(PropTypes.string).isRequired,
-  removeTagHandler: PropTypes.func,
-};
-
-TagComponent.defaultProps = {
-  removeTagHandler: undefined,
-  canDelete: false,
-  explicit: false,
-};
+interface TagsTreeProps {
+  tags: TagTree;
+  parentKey?: string;
+  rootDepth?: number;
+  lineage?: string[];
+  removeTagHandler?: (value: string) => void;
+  afterTagsComponent?: React.ReactNode;
+}
 
 /**
  * Component that renders Tags under a Taxonomy in the nested tree format.
@@ -92,23 +119,21 @@ TagComponent.defaultProps = {
  *   }
  * };
  *
- * @param {Object} props - The component props.
- * @param {Object} props.tags - Array of taxonomy tags that are applied to the content.
- * @param {number} props.rootDepth - Depth of the parent tag (root), used to render tabs for the tree.
- * @param {string} props.parentKey - Key of the parent tag.
- * @param {string[]} props.lineage - Lineage of the tag.
- * @param {(
- *   tagSelectableBoxValue: string,
- *   checked: boolean
- * ) => void} props.removeTagHandler - Function that is called when removing tags from the tree.
  */
 const TagsTree = ({
+  /** Array of taxonomy tags that are applied to the content. */
   tags,
-  rootDepth,
+  /** Depth of the parent tag (root), used to render tabs for the tree. */
+  rootDepth = 0,
+  /** Key of the parent tag. */
   parentKey,
-  lineage,
+  /** Lineage of the tag. */
+  lineage = [],
+  /** Function that is called when removing tags from the tree. */
   removeTagHandler,
-}) => {
+  /** Optional component to render after the tags components. */
+  afterTagsComponent,
+}: TagsTreeProps) => {
   const { isEditMode } = useContext(ContentTagsDrawerContext);
 
   if (Object.keys(tags).length === 0) {
@@ -132,6 +157,11 @@ const TagsTree = ({
               explicit={tags[key].explicit}
               lineage={[...lineage, encodeURIComponent(key)]}
               removeTagHandler={removeTagHandler}
+              afterComponent={isEditMode && tags[key].explicit && tags[key].isCopied && (
+                // So far, `isCopied` is only used to check if the tag has been imported from a library.
+                // If another function is added to `isCopied`, this may change.
+                <LibraryLockIcon key={key} />
+              )}
             />
           </div>
           { tags[key].children
@@ -142,27 +172,13 @@ const TagsTree = ({
                 parentKey={key}
                 lineage={[...lineage, encodeURIComponent(key)]}
                 removeTagHandler={removeTagHandler}
+                afterTagsComponent={afterTagsComponent}
               />
             )}
         </div>
       ))}
     </div>
   );
-};
-
-TagsTree.propTypes = {
-  tags: PropTypes.shape({}).isRequired,
-  parentKey: PropTypes.string,
-  rootDepth: PropTypes.number,
-  lineage: PropTypes.arrayOf(PropTypes.string),
-  removeTagHandler: PropTypes.func,
-};
-
-TagsTree.defaultProps = {
-  rootDepth: 0,
-  parentKey: undefined,
-  lineage: [],
-  removeTagHandler: undefined,
 };
 
 export default TagsTree;

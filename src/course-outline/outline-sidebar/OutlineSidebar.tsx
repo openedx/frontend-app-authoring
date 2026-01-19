@@ -3,13 +3,14 @@ import { useMediaQuery } from 'react-responsive';
 
 import { Sidebar } from '@src/generic/sidebar';
 
-import { OUTLINE_SIDEBAR_PAGES } from '@src/course-outline/outline-sidebar/constants';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import { isOutlineNewDesignEnabled } from '../utils';
+import { getOutlineSidebarPages } from './sidebarPages';
 
 const OutlineSideBar = () => {
   const isMedium = useMediaQuery({ maxWidth: breakpoints.medium.maxWidth });
+  const sidebarPages = getOutlineSidebarPages();
 
   const {
     currentPageKey,
@@ -31,7 +32,7 @@ const OutlineSideBar = () => {
 
   return (
     <Sidebar
-      pages={OUTLINE_SIDEBAR_PAGES}
+      pages={sidebarPages}
       currentPageKey={currentPageKey}
       setCurrentPageKey={setCurrentPageKey}
       isOpen={isOpen}

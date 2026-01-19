@@ -8,6 +8,7 @@ export interface Tag {
   lineage: string[];
   canChangeObjecttag: boolean;
   canDeleteObjecttag: boolean;
+  isCopied: boolean;
 }
 
 /** A list of the tags from one taxonomy that are applied to a content object. */

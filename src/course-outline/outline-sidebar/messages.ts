@@ -80,6 +80,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Button label for the info sidebar',
   },
+  sidebarButtonAlign: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-align',
+    defaultMessage: 'Align',
+    description: 'Alt text for the align button in the outline sidebar',
+  },
   sidebarSectionSummary: {
     id: 'course-authoring.course-outline.sidebar.sidebar-section-summary',
     defaultMessage: 'Course Content Summary',
