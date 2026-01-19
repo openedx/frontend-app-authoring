@@ -212,27 +212,27 @@ const CardHeader = ({
               tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
               onClick={onClickEdit}
-                // @ts-ignore
+              // @ts-ignore
               disabled={isSaving}
             />
           </Stack>
         )}
         <div className="ml-auto d-flex">
           {(isVertical || isSequential) && (
-          <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge || false} />
+            <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge || false} />
           )}
           { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
-          <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
+            <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
           {readyToSync && (
-          <IconButtonWithTooltip
-            data-testid={`${namePrefix}-sync-button`}
-            alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
-            iconAs={SyncIcon}
-            tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
-            onClick={onClickSync}
-          />
+            <IconButtonWithTooltip
+              data-testid={`${namePrefix}-sync-button`}
+              alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+              iconAs={SyncIcon}
+              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              onClick={onClickSync}
+            />
           )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
@@ -246,15 +246,15 @@ const CardHeader = ({
             />
             <Dropdown.Menu>
               {isSequential && proctoringExamConfigurationLink && (
-              <Dropdown.Item
-                as={Hyperlink}
-                target="_blank"
-                destination={fullProctoringExamConfigurationLink()}
-                href={fullProctoringExamConfigurationLink()}
-                externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
-              >
-                {intl.formatMessage(messages.menuProctoringLinkText)}
-              </Dropdown.Item>
+                <Dropdown.Item
+                  as={Hyperlink}
+                  target="_blank"
+                  destination={fullProctoringExamConfigurationLink()}
+                  href={fullProctoringExamConfigurationLink()}
+                  externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
+                >
+                  {intl.formatMessage(messages.menuProctoringLinkText)}
+                </Dropdown.Item>
               )}
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-publish-button`}
@@ -271,27 +271,27 @@ const CardHeader = ({
                 {intl.formatMessage(messages.menuConfigure)}
               </Dropdown.Item>
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-              <Dropdown.Item
-                data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                disabled={isSaving}
-                onClick={openManageTagsDrawer}
-              >
-                {intl.formatMessage(messages.menuManageTags)}
-              </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                  disabled={isSaving}
+                  onClick={openManageTagsDrawer}
+                >
+                  {intl.formatMessage(messages.menuManageTags)}
+                </Dropdown.Item>
               )}
 
               {isVertical && enableCopyPasteUnits && (
-              <Dropdown.Item onClick={onClickCopy}>
-                {intl.formatMessage(messages.menuCopy)}
-              </Dropdown.Item>
+                <Dropdown.Item onClick={onClickCopy}>
+                  {intl.formatMessage(messages.menuCopy)}
+                </Dropdown.Item>
               )}
               {actions.duplicable && (
-              <Dropdown.Item
-                data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
-                onClick={onClickDuplicate}
-              >
-                {intl.formatMessage(messages.menuDuplicate)}
-              </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
+                  onClick={onClickDuplicate}
+                >
+                  {intl.formatMessage(messages.menuDuplicate)}
+                </Dropdown.Item>
               )}
               {actions.draggable && (
               <>

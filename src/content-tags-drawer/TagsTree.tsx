@@ -6,6 +6,7 @@ import {
 import { Tag, Close, Lock } from '@openedx/paragon/icons';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
+import { TagTree } from './ContentTagsCollapsible';
 
 const LibraryLockIcon = ({ key }: { key: string }) => (
   <OverlayTrigger
@@ -74,7 +75,7 @@ const TagComponent = ({
 };
 
 interface TagsTreeProps {
-  tags: Record<string, any>; // TODO: Define a type for Tags
+  tags: TagTree;
   parentKey?: string;
   rootDepth?: number;
   lineage?: string[];
