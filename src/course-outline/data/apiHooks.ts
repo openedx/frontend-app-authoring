@@ -1,3 +1,4 @@
+import { getCourseKey } from '@src/generic/key-utils';
 import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 import { createCourseXblock, getCourseDetails, getCourseItem } from './api';
 
@@ -6,10 +7,19 @@ export const courseOutlineQueryKeys = {
   /**
    * Base key for data specific to a course in outline
    */
-  contentLibrary: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
-  courseItemId: (itemId?: string) => [...courseOutlineQueryKeys.all, itemId],
-  courseDetails: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId, 'details'],
-  legacyLibReadyToMigrateBlocks: (courseId: string) => [...courseOutlineQueryKeys.all, courseId, 'legacyLibReadyToMigrateBlocks'],
+  course: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
+  courseItemId: (itemId?: string) => [
+    ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId): undefined),
+    itemId,
+  ],
+  courseDetails: (courseId?: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'details',
+  ],
+  legacyLibReadyToMigrateBlocks: (courseId: string) => [
+    ...courseOutlineQueryKeys.course(courseId),
+    'legacyLibReadyToMigrateBlocks',
+  ],
   legacyLibReadyToMigrateBlocksStatus: (courseId: string, taskId?: string) => [
     ...courseOutlineQueryKeys.legacyLibReadyToMigrateBlocks(courseId),
     'status',

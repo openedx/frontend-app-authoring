@@ -3,18 +3,31 @@ import { Button, Card, Icon, Stack } from "@openedx/paragon";
 import { Cached, LinkOff, Newsstand } from "@openedx/paragon/icons";
 import { useCourseItemData } from "@src/course-outline/data/apiHooks";
 import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/OutlineSidebarContext";
-import { UpstreamInfo } from "@src/data/types";
+import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
+import { XBlock } from "@src/data/types";
 import { getBlockType, normalizeContainerType } from "@src/generic/key-utils";
 import messages from './messages';
 
 interface SubProps {
-  upstreamInfo: UpstreamInfo;
+  blockData: XBlock;
   displayName: string;
 }
 
-const HasTopParentTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
+const HasTopParentTextAndButton = ({ blockData, displayName }: SubProps) => {
+  const { upstreamInfo } = blockData;
+  const { selectedSectionId } = useOutlineSidebarContext();
   const { openContainerInfoSidebar } = useOutlineSidebarContext();
-  if (!upstreamInfo.topLevelParentKey) {
+  const { openUnlinkModal } = useCourseAuthoringContext();
+  const { data: parentData, isPending } = useCourseItemData(upstreamInfo?.topLevelParentKey);
+
+  const handleUnlinkClick = () => {
+    if (!selectedSectionId || !parentData) {
+      return;
+    }
+    openUnlinkModal({ value: parentData, sectionId: selectedSectionId });
+  };
+
+  if (!upstreamInfo?.topLevelParentKey) {
     return null;
   }
 
@@ -27,7 +40,12 @@ const HasTopParentTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentBrokenLinkText} values={messageValues} />
-        <Button variant='outline-primary' iconBefore={LinkOff}>
+        <Button
+          variant='outline-primary'
+          iconBefore={LinkOff}
+          disabled={isPending}
+          onClick={handleUnlinkClick}
+        >
           <FormattedMessage {...messages.hasTopParentBrokenLinkBtn} values={messageValues} />
         </Button>
       </Stack>
@@ -58,23 +76,33 @@ const HasTopParentTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
   );
 }
 
-const TopLevelTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
+const TopLevelTextAndButton = ({ blockData, displayName }: SubProps) => {
+  const { upstreamInfo } = blockData;
+  const { selectedSectionId } = useOutlineSidebarContext();
+  const { openUnlinkModal } = useCourseAuthoringContext();
   const messageValues = {
     name: displayName,
   }
 
-  if (upstreamInfo.errorMessage) {
+  const handleUnlinkClick = () => {
+    if (!selectedSectionId) {
+      return;
+    }
+    openUnlinkModal({ value: blockData, sectionId: selectedSectionId });
+  };
+
+  if (upstreamInfo?.errorMessage) {
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentBrokenLinkText} values={messageValues} />
-        <Button variant='outline-primary' iconBefore={LinkOff}>
+        <Button variant='outline-primary' iconBefore={LinkOff} onClick={handleUnlinkClick}>
           <FormattedMessage {...messages.topParentBrokenLinkBtn} />
         </Button>
       </Stack>
     );
   }
 
-  if (upstreamInfo.readyToSync) {
+  if (upstreamInfo?.readyToSync) {
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentReaadyToSyncText} values={messageValues} />
@@ -85,7 +113,7 @@ const TopLevelTextAndButton = ({ upstreamInfo, displayName }: SubProps) => {
     );
   }
 
-  if (upstreamInfo.downstreamCustomized.length > 0) {
+  if ((upstreamInfo?.downstreamCustomized.length || 0) > 0) {
     return (
       <FormattedMessage {...messages.topParentModifiedText} values={messageValues} />
     );
@@ -99,24 +127,32 @@ interface Props {
 }
 
 export const LibraryReferenceCard = ({ itemId }: Props) => {
-  const { data: itemData, isLoading } = useCourseItemData(itemId);
+  const { data: itemData, isPending } = useCourseItemData(itemId);
   if (!itemData?.upstreamInfo?.upstreamRef) {
     return null;
   }
 
   return (
-    <Card isLoading={isLoading} className="mr-2">
-      <Card.Section>
-        <Stack gap={3}>
-          <Stack direction="horizontal" gap={2}>
-            <Icon src={Newsstand} />
-            <h4 className="mb-0"><FormattedMessage {...messages.libraryReferenceCardText} /></h4>
+    <div className="px-3">
+      <Card isLoading={isPending} className="my-3">
+        <Card.Section>
+          <Stack gap={3}>
+            <Stack direction="horizontal" gap={2}>
+              <Icon src={Newsstand} />
+              <h4 className="mb-0"><FormattedMessage {...messages.libraryReferenceCardText} /></h4>
+            </Stack>
+            <HasTopParentTextAndButton
+              blockData={itemData}
+              displayName={itemData.displayName}
+            />
+            <TopLevelTextAndButton
+              blockData={itemData}
+              displayName={itemData.displayName}
+            />
           </Stack>
-          <HasTopParentTextAndButton upstreamInfo={itemData.upstreamInfo} displayName={itemData.displayName} />
-          <TopLevelTextAndButton upstreamInfo={itemData.upstreamInfo} displayName={itemData.displayName} />
-        </Stack>
-      </Card.Section>
-    </Card>
+        </Card.Section>
+      </Card>
+    </div>
   )
 };
 

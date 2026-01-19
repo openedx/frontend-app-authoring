@@ -167,7 +167,7 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id);
+      openContainerInfoSidebar(unit.id, section.id);
     }
   }, [openContainerInfoSidebar]);
 

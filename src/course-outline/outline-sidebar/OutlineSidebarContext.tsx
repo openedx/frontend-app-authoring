@@ -33,6 +33,7 @@ interface OutlineSidebarContextData {
   open: () => void;
   toggle: () => void;
   selectedContainerId?: string;
+  selectedSectionId?: string;
   // The Id of the container used in the current sidebar page
   // The container is not necessarily selected to open a selected sidebar.
   // Example: Align sidebar
@@ -53,6 +54,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
   const [isOpen, open, , toggle] = useToggle(true);
 
+  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>();
   const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
   /**
@@ -70,12 +72,20 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     open();
   }, [open, setCurrentFlow]);
 
-  const openContainerInfoSidebar = useCallback((containerId: string) => {
+  const openContainerInfoSidebar = useCallback((containerId: string, sectionId?: string) => {
     if (isOutlineNewDesignEnabled()) {
       setSelectedContainerId(containerId);
+      if (sectionId) {
+        setSelectedSectionId(sectionId);
+      }
       setCurrentPageKey('info');
     }
-  }, [setSelectedContainerId]);
+  }, [setSelectedContainerId, setSelectedSectionId]);
+
+  const clearSelection = useCallback(() => {
+    setSelectedSectionId(undefined);
+    setSelectedContainerId(undefined);
+  }, [setSelectedSectionId, selectedContainerId]);
 
   /**
   * Starts add content flow.
@@ -91,23 +101,10 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     onEscape: () => {
       stopCurrentFlow();
       setSelectedContainerId(undefined);
+      setSelectedSectionId(undefined);
     },
     dependency: [stopCurrentFlow, selectedContainerId],
   });
-
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        stopCurrentFlow();
-        setSelectedContainerId(undefined);
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, []);
 
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
@@ -121,7 +118,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       toggle,
       selectedContainerId,
       currentContainerId,
+      selectedSectionId,
       openContainerInfoSidebar,
+      clearSelection,
     }),
     [
       currentPageKey,
@@ -134,7 +133,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       toggle,
       selectedContainerId,
       currentContainerId,
+      selectedSectionId,
       openContainerInfoSidebar,
+      clearSelection,
     ],
   );
 

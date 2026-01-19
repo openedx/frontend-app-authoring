@@ -29,10 +29,10 @@ const SubsectionInfoSidebar = ({ subsectionId }: Props) => {
 
   return (
     <>
+      <LibraryReferenceCard itemId={subsectionId} />
       <SidebarContent>
-        <LibraryReferenceCard sectionId={subsectionId} />
         <SidebarSection
-          title={intl.formatMessage(messages.sectionContentSummaryText)}
+          title={intl.formatMessage(messages.subsectionContentSummaryText)}
           icon={SchoolOutline}
         >
           {componentData && <ComponentCountSnippet componentData={componentData} />}
