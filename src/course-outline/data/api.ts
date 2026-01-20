@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { XBlock } from '@src/data/types';
-import { CourseOutline, CourseDetails } from './types';
+import { CourseOutline, CourseDetails, CourseItemUpdateResult } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -337,12 +337,12 @@ export async function configureCourseUnit(
  * Edit course section
  * @param {string} itemId
  * @param {string} displayName
- * @returns {Promise<Object>}
+ * @returns {Promise<CourseItemUpdateResult>}
  */
 export async function editItemDisplayName(
   itemId: string,
   displayName: string,
-): Promise<object> {
+): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       metadata: {

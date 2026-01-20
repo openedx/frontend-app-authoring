@@ -61,7 +61,6 @@ import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
-import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
@@ -268,7 +267,7 @@ const CourseOutline = () => {
   }
 
   return (
-    <OutlineSidebarProvider>
+    <>
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
@@ -564,7 +563,7 @@ const CourseOutline = () => {
           {toastMessage}
         </Toast>
       )}
-    </OutlineSidebarProvider>
+    </>
   );
 };
 

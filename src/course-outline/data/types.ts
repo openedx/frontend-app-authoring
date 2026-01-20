@@ -80,3 +80,16 @@ export interface CourseOutlineState {
   pasteFileNotices: object;
   createdOn: null | Date;
 }
+
+export interface CourseItemUpdateResult {
+  id: string;
+  data?: object | null;
+  metadata: {
+    downstreamCustomized?: string[];
+    topLevelDownstreamParentKey?: string;
+    upstream?: string;
+    upstreamDisplayName?: string;
+    upstreamVersion?: number;
+    displayName?: string;
+  }
+}
