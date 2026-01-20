@@ -4,7 +4,7 @@ import {
 } from '@openedx/paragon/icons';
 import type { SidebarPage } from '@src/generic/sidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { InfoSidebar } from './InfoSidebar';
 import messages from './messages';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
@@ -20,7 +20,7 @@ export const getOutlineSidebarPages = (): OutlineSidebarPages => {
   const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
   return {
     info: {
-      component: OutlineInfoSidebar,
+      component: InfoSidebar,
       icon: Info,
       title: messages.sidebarButtonInfo,
     },
