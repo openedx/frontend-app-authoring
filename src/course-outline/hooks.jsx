@@ -42,7 +42,6 @@ import {
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
-  publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
   configureCourseSubsectionQuery,
@@ -93,7 +92,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
-  const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
@@ -150,12 +148,6 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(updateCourseSectionHighlightsQuery(currentItem.id, dataToSend));
 
     closeHighlightsModal();
-  };
-
-  const handlePublishItemSubmit = () => {
-    dispatch(publishCourseItemQuery(currentItem.id, currentSection.id));
-
-    closePublishModal();
   };
 
   const handleConfigureModalClose = () => {
@@ -294,9 +286,6 @@ const useCourseOutline = ({ courseId }) => {
     showSuccessAlert,
     isDisabledReindexButton,
     isSectionsExpanded,
-    isPublishModalOpen,
-    openPublishModal,
-    closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
     handleConfigureModalClose,
@@ -304,7 +293,6 @@ const useCourseOutline = ({ courseId }) => {
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
-    handlePublishItemSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,

@@ -26,7 +26,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import messages from './messages';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface SectionCardProps {
   section: XBlock,
@@ -34,7 +34,6 @@ interface SectionCardProps {
   isCustomRelativeDatesActive: boolean,
   children: ReactNode,
   onOpenHighlightsModal: (section: XBlock) => void,
-  onOpenPublishModal: () => void,
   onOpenConfigureModal: () => void,
   onOpenDeleteModal: () => void,
   onDuplicateSubmit: () => void,
@@ -53,7 +52,6 @@ const SectionCard = ({
   index,
   canMoveItem,
   onOpenHighlightsModal,
-  onOpenPublishModal,
   onOpenConfigureModal,
   onOpenDeleteModal,
   onDuplicateSubmit,
@@ -67,7 +65,7 @@ const SectionCard = ({
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -105,6 +103,12 @@ const SectionCard = ({
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
+
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+  }, [initialData]);
 
   const {
     id,
@@ -261,7 +265,7 @@ const SectionCard = ({
                 status={sectionStatus}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={onOpenPublishModal}
+                onClickPublish={() => openPublishModal({ value: section, sectionId: section.id })}
                 onClickConfigure={onOpenConfigureModal}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}

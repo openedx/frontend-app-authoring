@@ -155,11 +155,11 @@ const CardHeader = ({
       setTitleValue(title);
       closeForm();
     },
-    dependency: [title, closeForm, titleValue],
+    dependency: [title],
   });
 
   const editMutation = useUpdateCourseBlockName(courseId);
-  const handleEditSubmit = async (titleValue: string) => {
+  const handleEditSubmit = useCallback(async () => {
     if (title !== titleValue) {
       // both itemId and sectionId are same
       await editMutation.mutateAsync({
@@ -170,7 +170,7 @@ const CardHeader = ({
       });
     }
     closeForm();
-  };
+  }, [title, titleValue, cardId, editMutation]);
 
   return (
     <>
@@ -194,7 +194,7 @@ const CardHeader = ({
               name="displayName"
               onChange={(e) => setTitleValue(e.target.value)}
               aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
-              onBlur={() => handleEditSubmit(titleValue)}
+              onBlur={handleEditSubmit}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleEditSubmit(titleValue);

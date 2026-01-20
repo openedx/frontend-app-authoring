@@ -1,33 +1,60 @@
 /* eslint-disable import/named */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
-  Button,
   ActionRow,
 } from '@openedx/paragon';
-import { useSelector } from 'react-redux';
 
-import { getCurrentItem } from '../data/selectors';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import messages from './messages';
+import { courseOutlineQueryKeys, usePublishCourseItem } from '@src/course-outline/data/apiHooks';
+import { XBlock } from '@src/data/types';
+import LoadingButton from '@src/generic/loading-button';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useQueryClient } from '@tanstack/react-query';
 
-const PublishModal = ({
-  isOpen,
-  onClose,
-  onPublishSubmit,
-}) => {
+const PublishModal = () => {
   const intl = useIntl();
-  const { displayName, childInfo, category } = useSelector(getCurrentItem);
+  const { isPublishModalOpen, currentPublishModalData, closePublishModal  } = useCourseAuthoringContext();
+  const { id, displayName, childInfo, category } = currentPublishModalData?.value || {};
   const categoryName = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
-  const children = childInfo?.children || [];
+  const children: XBlock[] = childInfo?.children || [];
+  const publishMutation = usePublishCourseItem(currentPublishModalData?.sectionId)
+  const queryClient = useQueryClient();
+
+  const childrenIds = useMemo(() => children.reduce((
+    result: string[],
+    current: XBlock
+  ): string[] => {
+      let grandChildren = current.childInfo?.children.filter((child) => child.hasChanges) || [];
+      let temp = [...result, ...grandChildren.map((child) => child.id)];
+      if (current.hasChanges) {
+        temp.push(current.id);
+      }
+      return temp;
+    }, []), [children])
+
+  const onPublishSubmit = async () => {
+    if (id) {
+      await publishMutation.mutateAsync(id, {
+        onSettled: () => {
+          closePublishModal();
+          // Update query client to refresh the data of all children blocks
+          childrenIds.forEach((blockId) => {
+            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
+          });
+        }
+      })
+    }
+  };
 
   return (
     <ModalDialog
+      title={intl.formatMessage(messages.title, { title: displayName })}
       className="publish-modal"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={isPublishModalOpen}
+      onClose={closePublishModal}
       hasCloseButton
       isFullscreenOnMobile
       isOverflowVisible={false}
@@ -72,22 +99,16 @@ const PublishModal = ({
           <ModalDialog.CloseButton variant="tertiary">
             {intl.formatMessage(messages.cancelButton)}
           </ModalDialog.CloseButton>
-          <Button
+          <LoadingButton
             data-testid="publish-confirm-button"
             onClick={onPublishSubmit}
-          >
-            {intl.formatMessage(messages.publishButton)}
-          </Button>
+            label={intl.formatMessage(messages.publishButton)}
+          />
+
         </ActionRow>
       </ModalDialog.Footer>
     </ModalDialog>
   );
-};
-
-PublishModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onPublishSubmit: PropTypes.func.isRequired,
 };
 
 export default PublishModal;
