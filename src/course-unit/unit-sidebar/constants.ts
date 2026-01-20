@@ -1,6 +1,5 @@
 import { Info } from '@openedx/paragon/icons';
 import { SidebarPage } from '@src/generic/sidebar';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { UnitInfoSidebar } from './unit-info/UnitInfoSidebar';
 
@@ -18,4 +17,4 @@ export const UNIT_SIDEBAR_PAGES: Record<UnitSidebarPageKeys, SidebarPage> = {
     icon: Info,
     title: messages.sidebarButtonInfo,
   },
-}
+};

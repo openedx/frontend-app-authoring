@@ -1,5 +1,5 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { useEffect, useMemo } from 'react';

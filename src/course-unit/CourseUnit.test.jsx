@@ -2325,4 +2325,172 @@ describe('<CourseUnit />', () => {
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
   });
+
+  it('renders new unit info/settings sidebar', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    expect(await screen.findByRole('tab', { name: /details/i })).toBeInTheDocument();
+    const settingsTab = screen.getByRole('tab', { name: /settings/i });
+    expect(settingsTab).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /unit content summary/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /taxonomy alignments/i })).toBeInTheDocument();
+
+    await user.click(settingsTab);
+
+    expect(screen.getByRole('heading', { name: /visibility/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /access restrictions/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /discussion/i })).toBeInTheDocument();
+  });
+
+  it('should change the visibility of the unit in the settings sidebar', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    // Move to settings
+    expect(await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })).toBeInTheDocument();
+    const settingsTab = screen.getByRole('tab', { name: /settings/i });
+    expect(settingsTab).toBeInTheDocument();
+    await user.click(settingsTab);
+
+    // Change Visibility to Staff Only
+    expect(screen.getByRole('heading', { name: /visibility/i })).toBeInTheDocument();
+    const staffOnlyButton = screen.getByRole('button', { name: /staff only/i });
+    expect(staffOnlyButton).toBeInTheDocument();
+    await user.click(staffOnlyButton);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.republish,
+        metadata: { visible_to_staff_only: true },
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          visibility_state: UNIT_VISIBILITY_STATES.staffOnly,
+          has_explicit_staff_lock: true,
+        },
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
+
+    // Move to Details
+    const detailsTab = screen.getByRole('tab', { name: /details/i });
+    await user.click(detailsTab);
+    expect(screen.getByRole('heading', { name: /visible to staff only/i })).toBeInTheDocument();
+
+    // Move to settings and change visibility to all
+    await user.click(settingsTab);
+    const studentVisibleButton = screen.getByRole('button', { name: /student visible/i });
+    await user.click(studentVisibleButton);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.republish,
+        metadata: {
+          visible_to_staff_only: null,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          visibility_state: 'needs_attention',
+          has_explicit_staff_lock: false,
+        },
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, false), store.dispatch);
+
+    // Move to Details
+    await user.click(detailsTab);
+    expect(
+      screen.getByRole('heading', { name: /draft \(unpublished changes\)/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('should disable discussions in the settings sidebar', async () => {
+    const user = userEvent.setup();
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    // Move to settings
+    expect(await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })).toBeInTheDocument();
+    const settingsTab = screen.getByRole('tab', { name: /settings/i });
+    expect(settingsTab).toBeInTheDocument();
+    await user.click(settingsTab);
+
+    // Disable discussions
+    const discussionButton = screen.getByRole('checkbox', { name: /enable discussion/i });
+    expect(discussionButton).toBeChecked();
+    await user.click(discussionButton);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.republish,
+        metadata: {
+          visible_to_staff_only: null,
+          discussion_enabled: false,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          discussion_enabled: false,
+        },
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(
+      blockId,
+      PUBLISH_TYPES.republish,
+      false,
+      null,
+      false,
+    ), store.dispatch);
+
+    expect(discussionButton).not.toBeChecked();
+  });
 });
