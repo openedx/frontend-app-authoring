@@ -2,7 +2,7 @@ import { containerComparisonQueryKeys } from '@src/container-comparison/data/api
 import type { XBlock } from '@src/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
 import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem } from './api';
+import { createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem, publishCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -36,12 +36,17 @@ export const courseOutlineQueryKeys = {
  */
 export const useCreateCourseBlock = (
   callback?: ((locator: string, parentLocator: string) => void),
-) => useMutation({
-  mutationFn: createCourseXblock,
-  onSettled: async (data: { locator: string }, _err, variables) => {
-    callback?.(data.locator, variables.parentLocator);
-  },
-});
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createCourseXblock,
+    onSettled: async (data: { locator: string; }, _err, variables) => {
+      // FIXME: invalidate section query
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.parentLocator) });
+      callback?.(data.locator, variables.parentLocator);
+    },
+  })
+};
 
 export const useCourseItemData = (itemId?: string, initialData?: XBlock, enabled: boolean = true) => (
   useQuery({
@@ -63,8 +68,20 @@ export const useUpdateCourseBlockName = (courseId: string) => {
   return useMutation({
     mutationFn: editItemDisplayName,
     onSettled: async (_data, _err, variables) => {
+      // FIXME: invalidate section query
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
+    },
+  });
+};
+
+export const usePublishCourseItem = (sectionId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: publishCourseItem,
+    onSettled: async (_data, _err, itemId) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(itemId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
     },
   });
 };

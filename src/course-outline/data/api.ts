@@ -201,13 +201,13 @@ export async function updateCourseSectionHighlights(
 }
 
 /**
- * Publish course section
- * @param {string} sectionId
+ * Publish course item
+ * @param {string} itemId
  * @returns {Promise<Object>}
  */
-export async function publishCourseSection(sectionId: string): Promise<object> {
+export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(itemId), {
       publish: 'make_public',
     });
 

@@ -27,13 +27,12 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface UnitCardProps {
   unit: XBlock;
   subsection: XBlock;
   section: XBlock;
-  onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
   savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
@@ -57,7 +56,6 @@ const UnitCard = ({
   isCustomRelativeDatesActive,
   index,
   getPossibleMoves,
-  onOpenPublishModal,
   onOpenConfigureModal,
   onOpenDeleteModal,
   onDuplicateSubmit,
@@ -73,7 +71,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, getUnitUrl, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(initialSubsectionData.id, initialSubsectionData);
@@ -186,6 +184,12 @@ const UnitCard = ({
     />
   );
 
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+  }, [initialData]);
+
   useEffect(() => {
     // if this items has been newly added, scroll to it.
     if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
@@ -240,7 +244,7 @@ const UnitCard = ({
             hasChanges={hasChanges}
             cardId={id}
             onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
+            onClickPublish={() => openPublishModal({ value: unit, sectionId: section.id })}
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}
             onClickUnlink={() => openUnlinkModal({ value: unit, sectionId: section.id })}

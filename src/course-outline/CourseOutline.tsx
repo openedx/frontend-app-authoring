@@ -95,14 +95,11 @@ const CourseOutline = () => {
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
     isHighlightsModalOpen,
-    isPublishModalOpen,
     isConfigureModalOpen,
     isDeleteModalOpen,
     closeHighlightsModal,
-    closePublishModal,
     handleConfigureModalClose,
     closeDeleteModal,
-    openPublishModal,
     openConfigureModal,
     openDeleteModal,
     headerNavigationsActions,
@@ -113,7 +110,6 @@ const CourseOutline = () => {
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
-    handlePublishItemSubmit,
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
@@ -382,9 +378,7 @@ const CourseOutline = () => {
                                     canMoveItem={canMoveSection(sections)}
                                     isSelfPaced={statusBarData.isSelfPaced}
                                     isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                    savingStatus={savingStatus}
                                     onOpenHighlightsModal={handleOpenHighlightsModal}
-                                    onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
@@ -412,8 +406,6 @@ const CourseOutline = () => {
                                           isSectionsExpanded={isSectionsExpanded}
                                           isSelfPaced={statusBarData.isSelfPaced}
                                           isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                          savingStatus={savingStatus}
-                                          onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
@@ -444,7 +436,6 @@ const CourseOutline = () => {
                                                   subsection.childInfo.children,
                                                 )}
                                                 savingStatus={savingStatus}
-                                                onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
@@ -504,11 +495,7 @@ const CourseOutline = () => {
           onClose={closeHighlightsModal}
           onSubmit={handleHighlightsFormSubmit}
         />
-        <PublishModal
-          isOpen={isPublishModalOpen}
-          onClose={closePublishModal}
-          onPublishSubmit={handlePublishItemSubmit}
-        />
+        <PublishModal />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={handleConfigureModalClose}

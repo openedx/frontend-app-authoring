@@ -28,7 +28,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import messages from './messages';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -37,7 +37,6 @@ interface SubsectionCardProps {
   isSectionsExpanded: boolean,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
-  onOpenPublishModal: () => void,
   onOpenDeleteModal: () => void,
   onDuplicateSubmit: () => void,
   index: number,
@@ -57,7 +56,6 @@ const SubsectionCard = ({
   children,
   index,
   getPossibleMoves,
-  onOpenPublishModal,
   onOpenDeleteModal,
   onDuplicateSubmit,
   onOrderChange,
@@ -75,7 +73,7 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId, openUnlinkModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -140,6 +138,12 @@ const SubsectionCard = ({
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
+
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+  }, [initialData]);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
@@ -267,7 +271,7 @@ const SubsectionCard = ({
                 cardId={id}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={onOpenPublishModal}
+                onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: subsection, sectionId: section.id })}
                 onClickMoveUp={handleSubsectionMoveUp}
