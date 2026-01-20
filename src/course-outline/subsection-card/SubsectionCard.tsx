@@ -11,7 +11,6 @@ import { isEmpty } from 'lodash';
 
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -29,6 +28,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import messages from './messages';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -38,8 +38,6 @@ interface SubsectionCardProps {
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
   onOpenPublishModal: () => void,
-  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
   onDuplicateSubmit: () => void,
   index: number,
@@ -51,8 +49,8 @@ interface SubsectionCardProps {
 }
 
 const SubsectionCard = ({
-  section,
-  subsection,
+  section: initialSectionData,
+  subsection: initialData,
   isSectionsExpanded,
   isSelfPaced,
   isCustomRelativeDatesActive,
@@ -60,8 +58,6 @@ const SubsectionCard = ({
   index,
   getPossibleMoves,
   onOpenPublishModal,
-  onEditSubmit,
-  savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   onOrderChange,
@@ -76,13 +72,15 @@ const SubsectionCard = ({
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === subsection.id;
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  // Set initialData state from course outline and subsequently depend on its own state
+  const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
+  const { data: subsection = initialData } = useCourseItemData(initialData.id, initialData);
+  const isScrolledToElement = locatorId === subsection.id;
 
   const {
     id,
@@ -160,15 +158,6 @@ const SubsectionCard = ({
     }
   }, [dispatch, section, queryClient, courseId]);
 
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      onEditSubmit(id, section.id, titleValue);
-      return;
-    }
-
-    closeForm();
-  };
-
   const handleSubsectionMoveUp = () => {
     onOrderChange(section, moveUpDetails);
   };
@@ -226,12 +215,6 @@ const SubsectionCard = ({
     setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
 
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
-
   const isDraggable = (
     actions.draggable
       && (actions.allowMoveUp || actions.allowMoveDown)
@@ -285,7 +268,6 @@ const SubsectionCard = ({
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={onOpenPublishModal}
-                onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: subsection, sectionId: section.id })}
                 onClickMoveUp={handleSubsectionMoveUp}
@@ -293,10 +275,6 @@ const SubsectionCard = ({
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                isFormOpen={isFormOpen}
-                closeForm={closeForm}
-                onEditSubmit={handleEditSubmit}
-                savingStatus={savingStatus}
                 onClickDuplicate={onDuplicateSubmit}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}

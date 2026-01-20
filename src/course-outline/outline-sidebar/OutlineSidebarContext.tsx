@@ -103,7 +103,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       setSelectedContainerId(undefined);
       setSelectedSectionId(undefined);
     },
-    dependency: [stopCurrentFlow, selectedContainerId],
+    dependency: [stopCurrentFlow],
   });
 
   const context = useMemo<OutlineSidebarContextData>(

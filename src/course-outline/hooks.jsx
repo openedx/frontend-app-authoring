@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { useQueryClient } from '@tanstack/react-query';
 
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
@@ -35,7 +34,6 @@ import {
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
   deleteCourseUnitQuery,
-  editCourseItemQuery,
   duplicateSectionQuery,
   duplicateSubsectionQuery,
   duplicateUnitQuery,
@@ -57,13 +55,10 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const { handleAddSection } = useCourseAuthoringContext();
   const { selectedContainerId, clearSelection } = useOutlineSidebarContext();
 
@@ -184,13 +179,6 @@ const useCourseOutline = ({ courseId }) => {
         return;
     }
     handleConfigureModalClose();
-  };
-
-  const handleEditSubmit = (itemId, sectionId, displayName) => {
-    dispatch(editCourseItemQuery(itemId, sectionId, displayName));
-    // Invalidate container diff queries to update sync diff preview
-    queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
-    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.course(courseId) });
   };
 
   const handleDeleteItemSubmit = () => {
@@ -317,7 +305,6 @@ const useCourseOutline = ({ courseId }) => {
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handlePublishItemSubmit,
-    handleEditSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,

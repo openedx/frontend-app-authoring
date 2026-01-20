@@ -114,7 +114,6 @@ const CourseOutline = () => {
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
     handlePublishItemSubmit,
-    handleEditSubmit,
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
@@ -388,7 +387,6 @@ const CourseOutline = () => {
                                     onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
-                                    onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
                                     onOrderChange={updateSectionOrderByIndex}
@@ -417,7 +415,6 @@ const CourseOutline = () => {
                                           savingStatus={savingStatus}
                                           onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
-                                          onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
                                           onOrderChange={updateSubsectionOrderByIndex}
@@ -450,7 +447,6 @@ const CourseOutline = () => {
                                                 onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
-                                                onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}

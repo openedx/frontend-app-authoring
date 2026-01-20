@@ -335,14 +335,11 @@ export async function configureCourseUnit(
 
 /**
  * Edit course section
- * @param {string} itemId
- * @param {string} displayName
- * @returns {Promise<CourseItemUpdateResult>}
  */
-export async function editItemDisplayName(
-  itemId: string,
-  displayName: string,
-): Promise<CourseItemUpdateResult> {
+export async function editItemDisplayName({ itemId, displayName }: {
+  itemId: string;
+  displayName: string;
+}): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       metadata: {

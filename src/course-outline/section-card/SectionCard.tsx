@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -27,6 +26,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import messages from './messages';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface SectionCardProps {
   section: XBlock,
@@ -36,8 +36,6 @@ interface SectionCardProps {
   onOpenHighlightsModal: (section: XBlock) => void,
   onOpenPublishModal: () => void,
   onOpenConfigureModal: () => void,
-  onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
   onDuplicateSubmit: () => void,
   isSectionsExpanded: boolean,
@@ -48,7 +46,7 @@ interface SectionCardProps {
 }
 
 const SectionCard = ({
-  section,
+  section: initialData,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
@@ -57,8 +55,6 @@ const SectionCard = ({
   onOpenHighlightsModal,
   onOpenPublishModal,
   onOpenConfigureModal,
-  onEditSectionSubmit,
-  savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   isSectionsExpanded,
@@ -71,9 +67,11 @@ const SectionCard = ({
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === section.id;
   const { courseId, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  // Set initialData state from course outline and subsequently depend on its own state
+  const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
+  const isScrolledToElement = locatorId === section?.id;
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -101,7 +99,6 @@ const SectionCard = ({
     return false;
   };
   const [isExpanded, setIsExpanded] = useState(containsSearchResult() || isSectionsExpanded);
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'section';
 
@@ -191,16 +188,6 @@ const SectionCard = ({
     dispatch(setCurrentSection(section));
   };
 
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      // both itemId and sectionId are same
-      onEditSectionSubmit(id, id, titleValue);
-      return;
-    }
-
-    closeForm();
-  };
-
   const handleOpenHighlightsModal = () => {
     onOpenHighlightsModal(section);
   };
@@ -212,12 +199,6 @@ const SectionCard = ({
   const handleSectionMoveDown = () => {
     onOrderChange(index, index + 1);
   };
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
 
   const titleComponent = (
     <TitleButton
@@ -282,17 +263,12 @@ const SectionCard = ({
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={onOpenPublishModal}
                 onClickConfigure={onOpenConfigureModal}
-                onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                isFormOpen={isFormOpen}
-                closeForm={closeForm}
-                onEditSubmit={handleEditSubmit}
-                savingStatus={savingStatus}
                 onClickDuplicate={onDuplicateSubmit}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
