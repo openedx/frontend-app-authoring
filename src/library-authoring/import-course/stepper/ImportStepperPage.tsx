@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Button, Chip, Container, Layout, Stepper,
+  ActionRow, Button, Chip, Container, Layout, OverlayTrigger, Stepper,
+  Tooltip,
 } from '@openedx/paragon';
 
 import { CoursesList, MigrationStatusProps } from '@src/studio-home/tabs-section/courses-tab';
@@ -12,7 +13,7 @@ import Loading from '@src/generic/Loading';
 
 import Header from '@src/header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
-import { useBulkModulestoreMigrate } from '@src/data/apiHooks';
+import { useBulkModulestoreMigrate, usePreviewMigration } from '@src/data/apiHooks';
 import { ToastContext } from '@src/generic/toast-context';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
@@ -55,13 +56,20 @@ export const ImportStepperPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<MigrationStep>('select-course');
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
-  const [analysisCompleted, setAnalysisCompleted] = useState<boolean>(false);
   const { data: courseData } = useCourseDetails(selectedCourseId);
   const { libraryId, libraryData, readOnly } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   // Using bulk migrate as it allows us to create collection automatically
   // TODO: Modify single migration API to allow create collection
   const migrate = useBulkModulestoreMigrate();
+
+  const {
+    data: previewMigrationData,
+    isPending: isPreviewMigrationPending,
+  } = usePreviewMigration(libraryId, selectedCourseId);
+
+  const analysisCompleted = !isPreviewMigrationPending;
+  const importIsBlocked = previewMigrationData?.state === 'block_limit_reached';
 
   const handleImportCourse = async () => {
     // istanbul ignore if: this can never happen, just for satisfying type checker.
@@ -136,10 +144,7 @@ export const ImportStepperPage = () => {
                     eventKey="review-details"
                     title={intl.formatMessage(messages.importCourseReviewDetailsStep)}
                   >
-                    <ReviewImportDetails
-                      markAnalysisComplete={setAnalysisCompleted}
-                      courseId={selectedCourseId}
-                    />
+                    <ReviewImportDetails courseId={selectedCourseId} />
                   </Stepper.Step>
                 </Stepper>
               </div>
@@ -161,12 +166,27 @@ export const ImportStepperPage = () => {
                     <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
-                    <LoadingButton
-                      onClick={handleImportCourse}
-                      label={intl.formatMessage(messages.importCourseButton)}
-                      variant="primary"
-                      disabled={!analysisCompleted}
-                    />
+                    {importIsBlocked ? (
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={(
+                          <Tooltip id="tooltip-import-course-button">
+                            <FormattedMessage {...messages.importNotPossibleTooltip} />
+                          </Tooltip>
+                        )}
+                      >
+                        <Button variant="primary" disabled>
+                          <FormattedMessage {...messages.importCourseButton} />
+                        </Button>
+                      </OverlayTrigger>
+                    ) : (
+                      <LoadingButton
+                        onClick={handleImportCourse}
+                        label={intl.formatMessage(messages.importCourseButton)}
+                        variant="primary"
+                        disabled={!analysisCompleted}
+                      />
+                    )}
                   </ActionRow>
                 )}
               </div>

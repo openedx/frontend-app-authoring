@@ -4,13 +4,16 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
+import userEvent from '@testing-library/user-event';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
-const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn() };
+const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -27,8 +30,9 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleNewUnitSubmit: jest.fn(),
-    handleAddUnitFromLibrary: handleOnAddUnitFromLibrary,
+    handleAddUnit: handleOnAddUnitFromLibrary,
+    handleAddSubsection: {},
+    handleAddSection: {},
   }),
 }));
 
@@ -46,7 +50,7 @@ jest.mock('@src/library-authoring/component-picker', () => ({
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
         usageKey: containerKey,
-        blockType: 'unti',
+        blockType: 'unit',
       });
     };
     return (
@@ -143,7 +147,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     routerProps: {
       initialEntries: [entry],
     },
-    extraWrapper: OutlineSidebarProvider,
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -340,6 +344,11 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should add unit from library', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    const user = userEvent.setup();
     renderComponent();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
@@ -349,15 +358,14 @@ describe('<SubsectionCard />', () => {
       name: /use unit from library/i,
     });
     expect(useUnitFromLibraryButton).toBeInTheDocument();
-    fireEvent.click(useUnitFromLibraryButton);
+    await user.click(useUnitFromLibraryButton);
 
     expect(await screen.findByText('Select unit'));
 
     // click dummy button to execute onComponentSelected prop.
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
-    fireEvent.click(dummyBtn);
+    await user.click(dummyBtn);
 
-    expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalled();
     expect(handleOnAddUnitFromLibrary.mutateAsync).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@subsection+block@0',
@@ -409,5 +417,72 @@ describe('<SubsectionCard />', () => {
     fireEvent.click(ignoreButton);
 
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should open legacy manage tags', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    const drawer = await screen.findByRole('alert');
+    expect(within(drawer).getByText(/manage tags/i));
+  });
+
+  it('should open align sidebar', async () => {
+    const mockSetCurrentPageKey = jest.fn();
+
+    const testSidebarPage = {
+      component: OutlineInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        currentFlow: null,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+      }));
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    await waitFor(() => {
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', subsection.id);
+    });
   });
 });

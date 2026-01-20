@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
   Row,
   TransitionReplace,
   Toast,
-  StandardModal,
   Button,
   ActionRow,
 } from '@openedx/paragon';
@@ -32,14 +31,11 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
 import CourseOutlineHeaderActionsSlot from '@src/plugin-slots/CourseOutlineHeaderActionsSlot';
-import { ContainerType } from '@src/generic/key-utils';
-import { LibraryAndComponentPicker, SelectedComponent } from '@src/library-authoring';
-import { ContentType } from '@src/library-authoring/routes';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
+import { ContainerType } from '@src/generic/key-utils';
 import {
   getCurrentItem,
   getProctoredExamsFlag,
@@ -75,14 +71,13 @@ const CourseOutline = () => {
   const location = useLocation();
   const {
     courseId,
-    handleAddSubsectionFromLibrary,
-    handleAddUnitFromLibrary,
-    handleAddSectionFromLibrary,
-    handleNewSectionSubmit,
+    courseUsageKey,
+    handleAddSubsection,
+    handleAddUnit,
+    handleAddSection,
   } = useCourseAuthoringContext();
 
   const {
-    courseUsageKey,
     courseName,
     savingStatus,
     statusBarData,
@@ -114,9 +109,6 @@ const CourseOutline = () => {
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
@@ -242,16 +234,6 @@ const CourseOutline = () => {
       );
     }
   };
-
-  const handleSelectLibrarySection = useCallback((selectedSection: SelectedComponent) => {
-    handleAddSectionFromLibrary.mutateAsync({
-      type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Chapter,
-      parentLocator: courseUsageKey,
-      libraryContentKey: selectedSection.usageKey,
-    });
-    closeAddLibrarySectionModal();
-  }, [closeAddLibrarySectionModal, handleAddSectionFromLibrary.mutateAsync, courseId, courseUsageKey]);
 
   useEffect(() => {
     setSections(sectionsList);
@@ -489,9 +471,9 @@ const CourseOutline = () => {
                             </DraggableList>
                             {courseActions.childAddable && (
                               <OutlineAddChildButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
-                                handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
+                                parentTitle={courseName}
                               />
                             )}
                           </>
@@ -499,9 +481,9 @@ const CourseOutline = () => {
                           <EmptyPlaceholder>
                             {courseActions.childAddable && (
                               <OutlineAddChildButtons
-                                handleNewButtonClick={handleNewSectionSubmit}
-                                handleUseFromLibraryClick={openAddLibrarySectionModal}
                                 childType={ContainerType.Section}
+                                parentLocator={courseUsageKey}
+                                parentTitle={courseName}
                                 btnVariant="primary"
                                 btnClasses="mt-1"
                               />
@@ -558,30 +540,15 @@ const CourseOutline = () => {
           close={closeUnlinkModal}
           onUnlinkSubmit={handleUnlinkItemSubmit}
         />
-        <StandardModal
-          title={intl.formatMessage(messages.sectionPickerModalTitle)}
-          isOpen={isAddLibrarySectionModalOpen}
-          onClose={closeAddLibrarySectionModal}
-          isOverflowVisible={false}
-          size="xl"
-        >
-          <LibraryAndComponentPicker
-            showOnlyPublished
-            extraFilter={['block_type = "section"']}
-            componentPickerMode="single"
-            onComponentSelected={handleSelectLibrarySection}
-            visibleTabs={[ContentType.sections]}
-          />
-        </StandardModal>
       </Container>
       <div className="alert-toast">
         <ProcessingNotification
           // Show processing toast if any mutation is running
           isShow={
             isShowProcessingNotification
-            || handleAddUnitFromLibrary.isPending
-            || handleAddSubsectionFromLibrary.isPending
-            || handleAddSectionFromLibrary.isPending
+            || handleAddUnit.isPending
+            || handleAddSubsection.isPending
+            || handleAddSection.isPending
           }
           // HACK: Use saving as default title till we have a need for better messages
           title={processingNotificationTitle || NOTIFICATION_MESSAGES.saving}

@@ -1,5 +1,5 @@
 import {
-  ReactNode, useEffect, useRef, useState,
+  ReactNode, useCallback, useEffect, useRef, useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -21,15 +21,16 @@ import {
 } from '@openedx/paragon/icons';
 
 import { useContentTagsCount } from '@src/generic/data/apiHooks';
-import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
+import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface CardHeaderProps {
   title: string;
@@ -112,7 +113,17 @@ const CardHeader = ({
   const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
   const cardHeaderRef = useRef(null);
-  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const [isLegacyManageTagsDrawerOpen, openLegacyTagsDrawer, closeLegacyTagsDrawer] = useToggle(false);
+  const { setCurrentPageKey } = useOutlineSidebarContext();
+
+  const openManageTagsDrawer = useCallback(() => {
+    const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
+    if (showNewSidebar) {
+      setCurrentPageKey('align', cardId);
+    } else {
+      openLegacyTagsDrawer();
+    }
+  }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
   const fullProctoringExamConfigurationLink = () => (
@@ -178,9 +189,14 @@ const CardHeader = ({
               onChange={(e) => setTitleValue(e.target.value)}
               aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
               onBlur={() => onEditSubmit(titleValue)}
-              onKeyDown={(e) => {
+              onKeyDown={/* istanbul ignore next */ (e) => {
                 if (e.key === 'Enter') {
                   onEditSubmit(titleValue);
+                } else if (e.key === ' ') {
+                  // Avoid passing propagation to the `SortableItem` in the card,
+                  // which executes a `preventDefault`. If propagation is not prevented,
+                  // spaces cannot be added to names.
+                  e.stopPropagation();
                 }
               }}
               disabled={isSaving}
@@ -278,42 +294,42 @@ const CardHeader = ({
                 </Dropdown.Item>
               )}
               {actions.draggable && (
-                <>
-                  <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-up-button`}
-                    onClick={onClickMoveUp}
-                    disabled={!actions.allowMoveUp}
-                  >
-                    {intl.formatMessage(messages.menuMoveUp)}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-down-button`}
-                    onClick={onClickMoveDown}
-                    disabled={!actions.allowMoveDown}
-                  >
-                    {intl.formatMessage(messages.menuMoveDown)}
-                  </Dropdown.Item>
-                </>
+              <>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-up-button`}
+                  onClick={onClickMoveUp}
+                  disabled={!actions.allowMoveUp}
+                >
+                  {intl.formatMessage(messages.menuMoveUp)}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-down-button`}
+                  onClick={onClickMoveDown}
+                  disabled={!actions.allowMoveDown}
+                >
+                  {intl.formatMessage(messages.menuMoveDown)}
+                </Dropdown.Item>
+              </>
               )}
               {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
               {(actions.unlinkable ?? null) !== null && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
-                  onClick={onClickUnlink}
-                  disabled={!actions.unlinkable}
-                  className="allow-hover-on-disabled"
-                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
-                >
-                  {intl.formatMessage(messages.menuUnlink)}
-                </Dropdown.Item>
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                onClick={onClickUnlink}
+                disabled={!actions.unlinkable}
+                className="allow-hover-on-disabled"
+                title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+              >
+                {intl.formatMessage(messages.menuUnlink)}
+              </Dropdown.Item>
               )}
               {actions.deletable && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-delete-button`}
-                  onClick={onClickDelete}
-                >
-                  {intl.formatMessage(messages.menuDelete)}
-                </Dropdown.Item>
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-delete-button`}
+                onClick={onClickDelete}
+              >
+                {intl.formatMessage(messages.menuDelete)}
+              </Dropdown.Item>
               )}
             </Dropdown.Menu>
           </Dropdown>
@@ -321,8 +337,8 @@ const CardHeader = ({
       </div>
       <ContentTagsDrawerSheet
         id={cardId}
-        onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-        showSheet={isManageTagsDrawerOpen}
+        onClose={/* istanbul ignore next */ () => closeLegacyTagsDrawer()}
+        showSheet={isLegacyManageTagsDrawerOpen}
       />
     </>
   );

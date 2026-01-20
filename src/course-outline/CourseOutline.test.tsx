@@ -354,8 +354,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId } = renderComponent();
-    let elements = await findAllByTestId('section-card');
+    const user = userEvent.setup();
+    renderComponent();
+    let elements = await screen.findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -378,9 +379,9 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
     const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
-    await act(async () => fireEvent.click(newSectionButton));
+    await user.click(newSectionButton);
 
-    elements = await findAllByTestId('section-card');
+    elements = await screen.findAllByTestId('section-card');
     expect(elements.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });

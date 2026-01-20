@@ -139,6 +139,11 @@ const messages = defineMessages({
     defaultMessage: 'enable a taxonomy',
     description: 'Message of the link used in empty drawer message.',
   },
+  libraryLockIconTooltip: {
+    id: 'course-authoring.content-tags-drawer.tag.library-lock.tooltip',
+    defaultMessage: 'Tags applied within a library cannot be removed',
+    description: 'Tooltip message for the library lock icon.',
+  },
 });
 
 export default messages;

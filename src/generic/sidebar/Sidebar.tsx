@@ -11,13 +11,14 @@ import {
   FormatIndentDecrease,
   FormatIndentIncrease,
 } from '@openedx/paragon/icons';
+import type { MessageDescriptor } from 'react-intl';
 
 import messages from './messages';
 
 export interface SidebarPage {
   component: React.ComponentType;
   icon: React.ComponentType;
-  title: string;
+  title: MessageDescriptor;
   hideFromActionMenu?: boolean;
 }
 
@@ -55,12 +56,12 @@ interface SidebarProps<T extends SidebarPages> {
  *   help: {
  *     component: OutlineHelpSidebar,
  *     icon: HelpOutline,
- *     title: intl.formatMessage(messages.sidebarButtonHelp),
+ *     title: messages.sidebarButtonHelp,
  *   },
  *   info: {
  *     component: OutlineInfoSidebar,
  *     icon: Info,
- *     title: intl.formatMessage(messages.sidebarButtonInfo),
+ *     title: messages.sidebarButtonInfo,
  *   },
  * } satisfies SidebarPages;
  *
@@ -99,7 +100,7 @@ export function Sidebar<T extends SidebarPages>({
               variant="tertiary"
               className="x-small text-primary font-weight-bold pl-0"
             >
-              {pages[currentPageKey].title}
+              {intl.formatMessage(pages[currentPageKey].title)}
               <Icon src={pages[currentPageKey].icon} size="xs" className="ml-2" />
             </Dropdown.Toggle>
             <Dropdown.Menu className="mt-1">
@@ -110,7 +111,7 @@ export function Sidebar<T extends SidebarPages>({
                 >
                   <Stack direction="horizontal" gap={2}>
                     <Icon src={page.icon} />
-                    {page.title}
+                    {intl.formatMessage(page.title)}
                   </Stack>
                 </Dropdown.Item>
               ))}
@@ -138,7 +139,7 @@ export function Sidebar<T extends SidebarPages>({
               // @ts-ignore
               value={key}
               src={page.icon}
-              alt={page.title}
+              alt={intl.formatMessage(page.title)}
               className="rounded-iconbutton"
             />
           ))}

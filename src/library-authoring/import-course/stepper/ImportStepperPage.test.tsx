@@ -12,18 +12,52 @@ import studioHomeMock from '@src/studio-home/__mocks__/studioHomeMock';
 import { getCourseDetailsApiUrl } from '@src/course-outline/data/api';
 import { LibraryProvider } from '@src/library-authoring/common/context/LibraryContext';
 import { mockContentLibrary, mockGetMigrationInfo } from '@src/library-authoring/data/api.mocks';
-import { useGetBlockTypes } from '@src/search-manager';
 import { bulkModulestoreMigrateUrl } from '@src/data/api';
+import { mockGetPreviewModulestoreMigration } from '@src/data/api.mocks';
 import { ImportStepperPage } from './ImportStepperPage';
 
 let axiosMock;
 mockGetMigrationInfo.applyMock();
 mockContentLibrary.applyMock();
+mockGetPreviewModulestoreMigration.applyMock();
 type StudioHomeState = DeprecatedReduxState['studioHome'];
 
 const libraryKey = mockContentLibrary.libraryId;
 const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
+
+const courses = [
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyGood,
+    displayName: 'Managing Risk in the Information Age',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '123',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLimit,
+    displayName: 'Course with a lot of components',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '3',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+  {
+    courseKey: mockGetPreviewModulestoreMigration.sourceKeyBlockLoading,
+    displayName: 'Course with a loading',
+    lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+    number: '4',
+    org: 'HarvardX',
+    rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+    run: '2023',
+    url: '/course/course-v1:HarvardX+123+2023',
+  },
+];
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -44,7 +78,7 @@ const renderComponent = (studioHomeState: Partial<StudioHomeState> = {}) => {
     studioHome: {
       ...initialState.studioHome,
       studioHomeData: {
-        courses: studioHomeMock.courses,
+        courses,
         numPages,
         coursesCount,
       },
@@ -86,9 +120,6 @@ describe('<ImportStepperModal />', () => {
     expect(await screen.findByText('Select Course')).toBeInTheDocument();
     expect(await screen.findByText('Review Import Details')).toBeInTheDocument();
 
-    // Renders the course list and hides previously imported courses
-    expect(screen.queryByText(/run 0/i)).toBeInTheDocument(); // not imported before
-
     // Hides previously imported courses.
     expect(screen.queryByText(/managing risk in the information age/i)).not.toBeInTheDocument();
     expect(screen.queryByText('Previously Imported')).not.toBeInTheDocument();
@@ -100,7 +131,6 @@ describe('<ImportStepperModal />', () => {
 
     // Renders previously imported courses and badge
     expect(await screen.findByText(/managing risk in the information age/i)).toBeInTheDocument();
-    expect(await screen.findByText(/run 0/i)).toBeInTheDocument();
     expect(await screen.findByText('Previously Imported')).toBeInTheDocument();
 
     // Renders cancel and next step buttons
@@ -121,8 +151,9 @@ describe('<ImportStepperModal />', () => {
   it('should go to review import details step', async () => {
     const user = userEvent.setup();
     renderComponent();
-    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
-      courseId: 'course-v1:HarvardX+123+2023',
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyBlockLoading;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
       title: 'Managing Risk in the Information Age',
       subtitle: '',
       org: 'HarvardX',
@@ -138,7 +169,7 @@ describe('<ImportStepperModal />', () => {
     expect(nextButton).toBeDisabled();
 
     // Select a course
-    const courseCard = screen.getAllByRole('radio')[0];
+    const courseCard = screen.getAllByRole('radio')[2];
     await user.click(courseCard);
     expect(courseCard).toBeChecked();
 
@@ -153,6 +184,38 @@ describe('<ImportStepperModal />', () => {
     expect(await screen.findByText('Analysis Summary')).toBeInTheDocument();
     // The import details is loading
     expect(await screen.findByText('Import Analysis in Progress')).toBeInTheDocument();
+  });
+
+  it('should block import when content limit is reached', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyBlockLimit;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
+      title: 'Managing Risk in the Information Age',
+      subtitle: '',
+      org: 'HarvardX',
+      description: 'This is a test course',
+    });
+
+    const nextButton = await screen.findByRole('button', { name: /next step/i });
+    expect(nextButton).toBeDisabled();
+
+    // Select a course
+    const courseCard = screen.getAllByRole('radio')[0];
+    await user.click(courseCard);
+    expect(courseCard).toBeChecked();
+
+    // Click next
+    expect(nextButton).toBeEnabled();
+    await user.click(nextButton);
+
+    expect(await screen.findByText(/Import Blocked/i)).toBeInTheDocument();
+    expect(await screen.findByText(
+      /This import would exceed the Content Library limit of 1000 items/i,
+    )).toBeInTheDocument();
+
+    expect(screen.getByRole('button', { name: /import course/i })).toBeDisabled();
   });
 
   it('the course should remain selected on back only for non-imported courses', async () => {
@@ -174,7 +237,6 @@ describe('<ImportStepperModal />', () => {
     const backButton = await screen.findByRole('button', { name: /back/i });
     await user.click(backButton);
 
-    expect(screen.getByText(/Run 0/i)).toBeInTheDocument();
     expect(courseCard).toBeChecked();
     expect(nextButton).toBeEnabled();
   });
@@ -224,16 +286,6 @@ describe('<ImportStepperModal />', () => {
   });
 
   it('should import selected course on button click', async () => {
-    (useGetBlockTypes as jest.Mock).mockReturnValue({
-      isPending: false,
-      data: {
-        chapter: 1,
-        sequential: 2,
-        vertical: 3,
-        html: 5,
-        problem: 3,
-      },
-    });
     const user = userEvent.setup();
     renderComponent();
 
@@ -243,8 +295,9 @@ describe('<ImportStepperModal />', () => {
     await user.click(await screen.findByRole('button', { name: 'Save' }));
 
     axiosMock.onPost(bulkModulestoreMigrateUrl()).reply(200);
-    axiosMock.onGet(getCourseDetailsApiUrl('course-v1:HarvardX+123+2023')).reply(200, {
-      courseId: 'course-v1:HarvardX+123+2023',
+    const courseId = mockGetPreviewModulestoreMigration.sourceKeyGood;
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, {
+      courseId,
       title: 'Managing Risk in the Information Age',
       subtitle: '',
       org: 'HarvardX',

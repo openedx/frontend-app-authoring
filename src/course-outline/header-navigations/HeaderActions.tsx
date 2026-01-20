@@ -9,9 +9,10 @@ import {
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import type { SidebarPage } from '@src/generic/sidebar';
 
-import { useOutlineSidebarContext, OutlineSidebarPageKeys } from '../outline-sidebar/OutlineSidebarContext';
+import { type OutlineSidebarPageKeys, useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 import messages from './messages';
+import { getOutlineSidebarPages } from '../outline-sidebar/sidebarPages';
 
 export interface HeaderActionsProps {
   actions: {
@@ -28,8 +29,9 @@ const HeaderActions = ({
 }: HeaderActionsProps) => {
   const intl = useIntl();
   const { lmsLink } = actions;
+  const sidebarPages = getOutlineSidebarPages();
 
-  const { setCurrentPageKey, sidebarPages } = useOutlineSidebarContext();
+  const { setCurrentPageKey } = useOutlineSidebarContext();
 
   return (
     <Stack direction="horizontal" gap={3}>
@@ -87,7 +89,7 @@ const HeaderActions = ({
               >
                 <Stack direction="horizontal" gap={2}>
                   <Icon src={page.icon} />
-                  {page.title}
+                  {intl.formatMessage(page.title)}
                 </Stack>
               </Dropdown.Item>
             ))}

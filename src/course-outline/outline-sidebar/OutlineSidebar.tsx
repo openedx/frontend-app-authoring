@@ -6,16 +6,17 @@ import { Sidebar } from '@src/generic/sidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import { isOutlineNewDesignEnabled } from '../utils';
+import { getOutlineSidebarPages } from './sidebarPages';
 
 const OutlineSideBar = () => {
   const isMedium = useMediaQuery({ maxWidth: breakpoints.medium.maxWidth });
+  const sidebarPages = getOutlineSidebarPages();
 
   const {
     currentPageKey,
     setCurrentPageKey,
     isOpen,
     toggle,
-    sidebarPages,
   } = useOutlineSidebarContext();
 
   // Returns the previous help sidebar component if the waffle flag is disabled

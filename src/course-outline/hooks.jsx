@@ -10,6 +10,7 @@ import { RequestStatus } from '@src/data/constants';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { ContainerType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   setCurrentItem,
@@ -62,7 +63,7 @@ import { containerComparisonQueryKeys } from '../container-comparison/data/apiHo
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { handleNewSectionSubmit } = useCourseAuthoringContext();
+  const { handleAddSection } = useCourseAuthoringContext();
 
   const {
     reindexLink,
@@ -99,11 +100,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
-  const [
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
-  ] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -116,7 +112,13 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const headerNavigationsActions = {
-    handleNewSection: handleNewSectionSubmit,
+    handleNewSection: () => {
+      handleAddSection.mutateAsync({
+        type: ContainerType.Chapter,
+        parentLocator: courseStructure?.id,
+        displayName: COURSE_BLOCK_NAMES.chapter.name,
+      });
+    },
     handleReIndex: () => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
@@ -316,9 +318,6 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
-    isAddLibrarySectionModalOpen,
-    openAddLibrarySectionModal,
-    closeAddLibrarySectionModal,
     handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
