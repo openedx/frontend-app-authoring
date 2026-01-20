@@ -36,7 +36,7 @@ const ScoringCard = ({
       ? intl.formatMessage(messages.unlimitedAttemptsSummary)
       : intl.formatMessage(messages.attemptsSummary, { attempts: attempts || defaultValue });
 
-    const methodMessage = gradingMethod ? GradingMethod[gradingMethod] : null;
+    const methodMessage = GradingMethod[gradingMethod || GradingMethodKeys.LAST_SCORE];
 
     if (methodMessage) {
       summary += ` ${String.fromCharCode(183)} `;
@@ -65,7 +65,7 @@ const ScoringCard = ({
       <Form.Group>
         <Form.Control
           as="select"
-          value={scoring.gradingMethod}
+          value={scoring.gradingMethod || GradingMethodKeys.LAST_SCORE}
           onChange={handleGradingMethodChange}
           floatingLabel={intl.formatMessage(messages.scoringGradingMethodInputLabel)}
         >
