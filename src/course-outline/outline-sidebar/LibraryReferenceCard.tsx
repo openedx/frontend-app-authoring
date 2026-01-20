@@ -166,9 +166,6 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
   const [isSyncModalOpen, syncModalData, openSyncModal, closeSyncModal] = useToggleWithValue<XBlock>();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  if (!itemData?.upstreamInfo?.upstreamRef) {
-    return null;
-  }
 
   const blockSyncData = useMemo(() => {
     if (!syncModalData?.upstreamInfo?.readyToSync) {
@@ -197,6 +194,9 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
     }
   }, [dispatch, selectedSectionId, queryClient, courseId]);
 
+  if (!itemData?.upstreamInfo?.upstreamRef) {
+    return null;
+  }
 
   return (
     <div className="px-3">

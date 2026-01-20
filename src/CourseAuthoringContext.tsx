@@ -15,7 +15,7 @@ import { XBlock } from '@src/data/types';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 
-type UnlinkModalState = {
+type ModalState = {
   value: XBlock;
   sectionId: string;
 }
@@ -33,10 +33,14 @@ export type CourseAuthoringContextData = {
   openUnitPage: (locator: string) => void;
   getUnitUrl: (locator: string) => string;
   isUnlinkModalOpen: boolean;
-  currentUnlinkModalData?: UnlinkModalState;
-  openUnlinkModal: (value: UnlinkModalState) => void;
+  currentUnlinkModalData?: ModalState;
+  openUnlinkModal: (value: ModalState) => void;
   closeUnlinkModal: () => void;
   handleUnlinkItemSubmit: () => Promise<void>;
+  isPublishModalOpen: boolean;
+  currentPublishModalData?: ModalState;
+  openPublishModal: (value: ModalState) => void;
+  closePublishModal: () => void;
 };
 
 /**
@@ -64,7 +68,8 @@ export const CourseAuthoringProvider = ({
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
   const { courseStructure } = useSelector(getOutlineIndexData);
   const { id: courseUsageKey } = courseStructure || {};
-  const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<UnlinkModalState>();
+  const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<ModalState>();
+  const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] = useToggleWithValue<ModalState>();
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -150,6 +155,10 @@ export const CourseAuthoringProvider = ({
     closeUnlinkModal,
     currentUnlinkModalData,
     handleUnlinkItemSubmit,
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
   }), [
     courseId,
     courseUsageKey,
@@ -166,6 +175,10 @@ export const CourseAuthoringProvider = ({
     closeUnlinkModal,
     currentUnlinkModalData,
     handleUnlinkItemSubmit,
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
   ]);
 
   return (
