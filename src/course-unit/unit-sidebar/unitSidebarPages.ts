@@ -19,7 +19,7 @@ export function useUnitSidebarPages(): Record<UnitSidebarPageKeys, SidebarPage> 
     info: {
       component: UnitInfoSidebar,
       icon: Info,
-      title: intl.formatMessage(messages.sidebarButtonInfo),
+      title: messages.sidebarButtonInfo,
     },
   };
 }
