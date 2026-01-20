@@ -38,10 +38,10 @@ export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void,
       }
     };
 
-    window.addEventListener('keydown', handleEscapeClick);
+    document.addEventListener('keydown', handleEscapeClick);
 
     return () => {
-      window.removeEventListener('keydown', handleEscapeClick);
+      document.removeEventListener('keydown', handleEscapeClick);
     };
   }, [dependency]);
 };

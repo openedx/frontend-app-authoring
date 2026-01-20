@@ -21,29 +21,26 @@ import {
 } from '@openedx/paragon/icons';
 
 import { useContentTagsCount } from '@src/generic/data/apiHooks';
+import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
-import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
+import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface CardHeaderProps {
   title: string;
   status: string;
-  cardId?: string,
+  cardId: string,
   hasChanges: boolean;
   onClickPublish: () => void;
   onClickConfigure: () => void;
   onClickMenuButton: () => void;
-  onClickEdit: () => void;
-  isFormOpen: boolean;
-  onEditSubmit: (titleValue: string) => void;
-  closeForm: () => void;
   onClickDelete: () => void;
   onClickUnlink: () => void;
   onClickDuplicate: () => void;
@@ -72,7 +69,6 @@ interface CardHeaderProps {
   extraActionsComponent?: ReactNode,
   onClickSync?: () => void;
   readyToSync?: boolean;
-  savingStatus?: RequestStatusType;
 }
 
 const CardHeader = ({
@@ -83,10 +79,6 @@ const CardHeader = ({
   onClickPublish,
   onClickConfigure,
   onClickMenuButton,
-  onClickEdit,
-  isFormOpen,
-  onEditSubmit,
-  closeForm,
   onClickDelete,
   onClickUnlink,
   onClickDuplicate,
@@ -107,7 +99,6 @@ const CardHeader = ({
   extraActionsComponent,
   onClickSync,
   readyToSync,
-  savingStatus,
 }: CardHeaderProps) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -124,6 +115,8 @@ const CardHeader = ({
       openLegacyTagsDrawer();
     }
   }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
+  const { courseId } = useCourseAuthoringContext();
+  const [isFormOpen, openForm, closeForm] = useToggle(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
   const fullProctoringExamConfigurationLink = () => (
@@ -134,7 +127,6 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
-  const isSaving = savingStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -163,8 +155,22 @@ const CardHeader = ({
       setTitleValue(title);
       closeForm();
     },
-    dependency: title,
+    dependency: [title, closeForm, titleValue],
   });
+
+  const editMutation = useUpdateCourseBlockName(courseId);
+  const handleEditSubmit = async (titleValue: string) => {
+    if (title !== titleValue) {
+      // both itemId and sectionId are same
+      await editMutation.mutateAsync({
+        itemId: cardId,
+        displayName: titleValue,
+      }, {
+        onSuccess: closeForm,
+      });
+    }
+    closeForm();
+  };
 
   return (
     <>
@@ -188,10 +194,10 @@ const CardHeader = ({
               name="displayName"
               onChange={(e) => setTitleValue(e.target.value)}
               aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
-              onBlur={() => onEditSubmit(titleValue)}
-              onKeyDown={/* istanbul ignore next */ (e) => {
+              onBlur={() => handleEditSubmit(titleValue)}
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  onEditSubmit(titleValue);
+                  handleEditSubmit(titleValue);
                 } else if (e.key === ' ') {
                   // Avoid passing propagation to the `SortableItem` in the card,
                   // which executes a `preventDefault`. If propagation is not prevented,
@@ -199,7 +205,7 @@ const CardHeader = ({
                   e.stopPropagation();
                 }
               }}
-              disabled={isSaving}
+              disabled={editMutation.isPending}
             />
           </Form.Group>
         ) : (
@@ -211,9 +217,9 @@ const CardHeader = ({
               alt={intl.formatMessage(messages.altButtonRename)}
               tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
-              onClick={onClickEdit}
+              onClick={openForm}
               // @ts-ignore
-              disabled={isSaving}
+              disabled={editMutation.isPending}
             />
           </Stack>
         )}
@@ -265,7 +271,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={isSaving}
+                disabled={editMutation.isPending}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -273,7 +279,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
-                  disabled={isSaving}
+                  disabled={editMutation.isPending}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}
