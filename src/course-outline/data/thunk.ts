@@ -376,26 +376,6 @@ export function configureCourseUnitQuery(
   };
 }
 
-export function editCourseItemQuery(itemId: string, sectionId: string, displayName: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await editItemDisplayName(itemId, displayName).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
 /**
  * Generic function to delete course item, see below wrapper funcs for specific implementations.
  * @param {string} itemId

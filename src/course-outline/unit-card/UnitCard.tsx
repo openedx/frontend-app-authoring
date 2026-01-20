@@ -14,7 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
+import { RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -27,6 +27,7 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -34,7 +35,6 @@ interface UnitCardProps {
   section: XBlock;
   onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
-  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
   savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
@@ -50,17 +50,15 @@ interface UnitCardProps {
 }
 
 const UnitCard = ({
-  unit,
-  subsection,
-  section,
+  unit: initialData,
+  subsection: initialSubsectionData,
+  section: initialSectionData,
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
   getPossibleMoves,
   onOpenPublishModal,
   onOpenConfigureModal,
-  onEditSubmit,
-  savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   onOrderChange,
@@ -71,14 +69,16 @@ const UnitCard = ({
   const [searchParams] = useSearchParams();
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === unit.id;
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
   const { courseId, getUnitUrl, openUnlinkModal } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
+  const { data: subsection = initialSubsectionData } = useCourseItemData(initialSubsectionData.id, initialSubsectionData);
+  const { data: unit = initialData } = useCourseItemData(initialData.id, initialData);
+  const isScrolledToElement = locatorId === unit.id;
 
   const {
     id,
@@ -135,15 +135,6 @@ const UnitCard = ({
     dispatch(setCurrentItem(unit));
     dispatch(setCurrentSection(section));
     dispatch(setCurrentSubsection(subsection));
-  };
-
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      onEditSubmit(id, section.id, titleValue);
-      return;
-    }
-
-    closeForm();
   };
 
   const handleUnitMoveUp = () => {
@@ -204,12 +195,6 @@ const UnitCard = ({
     }
   }, [isScrolledToElement]);
 
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
-
   if (!isHeaderVisible) {
     return null;
   }
@@ -257,17 +242,12 @@ const UnitCard = ({
             onClickMenuButton={handleClickMenuButton}
             onClickPublish={onOpenPublishModal}
             onClickConfigure={onOpenConfigureModal}
-            onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
             onClickUnlink={() => openUnlinkModal({ value: unit, sectionId: section.id })}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            savingStatus={savingStatus}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}

@@ -1,6 +1,7 @@
-import { CourseItemUpdateResult } from '@src/course-outline/data/types';
+import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
+import type { XBlock } from '@src/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
-import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -42,8 +43,9 @@ export const useCreateCourseBlock = (
   },
 });
 
-export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
+export const useCourseItemData = (itemId?: string, initialData?: XBlock, enabled: boolean = true) => (
   useQuery({
+    initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
     queryFn: enabled && itemId ? () => getCourseItem(itemId!) : skipToken,
   })
@@ -56,10 +58,14 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
   })
 );
 
-export const useUpdateCourseBlockName = () => useMutation<CourseItemUpdateResult, Error>({
-  mutationFn: editItemDisplayName,
-  onSettled: async () => {
-
-  }
-});
+export const useUpdateCourseBlockName = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: editItemDisplayName,
+    onSettled: async (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
+    },
+  });
+};
 
