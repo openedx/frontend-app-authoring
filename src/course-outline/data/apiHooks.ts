@@ -1,6 +1,7 @@
+import { CourseItemUpdateResult } from '@src/course-outline/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
 import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
-import { createCourseXblock, getCourseDetails, getCourseItem } from './api';
+import { createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem } from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -44,7 +45,7 @@ export const useCreateCourseBlock = (
 export const useCourseItemData = (itemId?: string, enabled: boolean = true) => (
   useQuery({
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
-    queryFn: enabled && itemId !== undefined ? () => getCourseItem(itemId!) : skipToken,
+    queryFn: enabled && itemId ? () => getCourseItem(itemId!) : skipToken,
   })
 );
 
@@ -54,3 +55,11 @@ export const useCourseDetails = (courseId?: string, enabled: boolean = true) => 
     queryFn: enabled && courseId ? () => getCourseDetails(courseId) : skipToken,
   })
 );
+
+export const useUpdateCourseBlockName = () => useMutation<CourseItemUpdateResult, Error>({
+  mutationFn: editItemDisplayName,
+  onSettled: async () => {
+
+  }
+});
+
