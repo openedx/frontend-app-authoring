@@ -208,7 +208,6 @@ export const UnitInfoSidebar = () => {
         <Tab
           eventKey="details"
           title={intl.formatMessage(messages.sidebarInfoDetailsTab)}
-          tabClassName="w-100 text-center"
         >
           <div className="mt-4">
             <UnitInfoDetails />
@@ -217,7 +216,6 @@ export const UnitInfoSidebar = () => {
         <Tab
           eventKey="settings"
           title={intl.formatMessage(messages.sidebarInfoSettingsTab)}
-          tabClassName="w-100 text-center"
         >
           <div className="mt-4">
             <UnitInfoSettings />
