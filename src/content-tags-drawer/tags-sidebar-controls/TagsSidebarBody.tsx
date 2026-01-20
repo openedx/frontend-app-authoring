@@ -12,14 +12,11 @@ import { useContentTaxonomyTagsData } from '../data/apiHooks';
 import type { ContentTaxonomyTagData, Tag } from '../data/types';
 import { LoadingSpinner } from '../../generic/Loading';
 import TagsTree from '../TagsTree';
+import { TagTree } from '../ContentTagsCollapsible';
 
 interface TagsSidebarBodyProps {
   readOnly: boolean
 }
-
-type TagTree = {
-  [key: string]: { children: TagTree, canChangeObjecttag: boolean, canDeleteObjecttag: boolean }
-};
 
 const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
   const intl = useIntl();
@@ -43,6 +40,8 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
             children: {},
             canChangeObjecttag: item.canChangeObjecttag,
             canDeleteObjecttag: item.canDeleteObjecttag,
+            explicit: false,
+            isCopied: item.isCopied,
           };
         }
 

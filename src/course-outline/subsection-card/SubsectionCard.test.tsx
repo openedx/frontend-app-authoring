@@ -4,10 +4,12 @@ import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
@@ -145,7 +147,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     routerProps: {
       initialEntries: [entry],
     },
-    extraWrapper: OutlineSidebarProvider,
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -415,5 +417,72 @@ describe('<SubsectionCard />', () => {
     fireEvent.click(ignoreButton);
 
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should open legacy manage tags', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    const drawer = await screen.findByRole('alert');
+    expect(within(drawer).getByText(/manage tags/i));
+  });
+
+  it('should open align sidebar', async () => {
+    const mockSetCurrentPageKey = jest.fn();
+
+    const testSidebarPage = {
+      component: OutlineInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        currentFlow: null,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+      }));
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    await waitFor(() => {
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', subsection.id);
+    });
   });
 });

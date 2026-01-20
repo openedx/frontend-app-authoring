@@ -5,7 +5,6 @@ import {
 import {
   Add as IconAdd, FindInPage, ViewSidebar,
 } from '@openedx/paragon/icons';
-import { OUTLINE_SIDEBAR_PAGES } from '@src/course-outline/outline-sidebar/constants';
 
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import type { SidebarPage } from '@src/generic/sidebar';
@@ -13,6 +12,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { type OutlineSidebarPageKeys, useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 import messages from './messages';
+import { getOutlineSidebarPages } from '../outline-sidebar/sidebarPages';
 
 export interface HeaderActionsProps {
   actions: {
@@ -29,6 +29,7 @@ const HeaderActions = ({
 }: HeaderActionsProps) => {
   const intl = useIntl();
   const { lmsLink } = actions;
+  const sidebarPages = getOutlineSidebarPages();
 
   const { setCurrentPageKey } = useOutlineSidebarContext();
 
@@ -80,7 +81,7 @@ const HeaderActions = ({
           <Icon src={ViewSidebar} />
         </Dropdown.Toggle>
         <Dropdown.Menu className="mt-1">
-          {Object.entries(OUTLINE_SIDEBAR_PAGES).filter(([, page]) => !page.hideFromActionMenu)
+          {Object.entries(sidebarPages).filter(([, page]) => !page.hideFromActionMenu)
             .map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
               <Dropdown.Item
                 key={key}
