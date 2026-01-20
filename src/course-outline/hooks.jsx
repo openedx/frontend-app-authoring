@@ -59,6 +59,7 @@ import {
 } from './data/thunk';
 import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -189,6 +190,7 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(editCourseItemQuery(itemId, sectionId, displayName));
     // Invalidate container diff queries to update sync diff preview
     queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
+    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.course(courseId) });
   };
 
   const handleDeleteItemSubmit = () => {

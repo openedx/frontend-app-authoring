@@ -102,7 +102,6 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     onOpenPublishModal={jest.fn()}
     onOpenHighlightsModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
