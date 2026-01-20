@@ -1,8 +1,8 @@
 import { Sidebar } from '@src/generic/sidebar';
 import LegacySidebar, { LegacySidebarProps } from '../legacy-sidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
-import { useUnitSidebarPages } from './unitSidebarPages';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { UNIT_SIDEBAR_PAGES } from './constans';
 
 export type UnitSidebarProps = {
   legacySidebarProps: LegacySidebarProps,
@@ -18,8 +18,6 @@ export const UnitSidebar = ({
     toggle,
   } = useUnitSidebarContext();
 
-  const sidebarPages = useUnitSidebarPages();
-
   if (!isUnitPageNewDesignEnabled()) {
     return (
       <LegacySidebar {...legacySidebarProps} />
@@ -28,7 +26,7 @@ export const UnitSidebar = ({
 
   return (
     <Sidebar
-      pages={sidebarPages}
+      pages={UNIT_SIDEBAR_PAGES}
       currentPageKey={currentPageKey}
       setCurrentPageKey={setCurrentPageKey}
       isOpen={isOpen}
