@@ -1,5 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
@@ -41,6 +41,8 @@ export type CourseAuthoringContextData = {
   currentPublishModalData?: ModalState;
   openPublishModal: (value: ModalState) => void;
   closePublishModal: () => void;
+  currentSelection?: SelectionState;
+  setCurrentSelection: (value?: SelectionState) => void;
 };
 
 /**
@@ -57,6 +59,12 @@ type CourseAuthoringProviderProps = {
   courseId: string;
 };
 
+type SelectionState = {
+  current: XBlock;
+  section?: XBlock;
+  subsection?: XBlock;
+}
+
 export const CourseAuthoringProvider = ({
   children,
   courseId,
@@ -70,6 +78,7 @@ export const CourseAuthoringProvider = ({
   const { id: courseUsageKey } = courseStructure || {};
   const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<ModalState>();
   const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] = useToggleWithValue<ModalState>();
+  const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -159,6 +168,8 @@ export const CourseAuthoringProvider = ({
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
+    currentSelection,
+    setCurrentSelection,
   }), [
     courseId,
     courseUsageKey,
@@ -179,6 +190,8 @@ export const CourseAuthoringProvider = ({
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
+    currentSelection,
+    setCurrentSelection,
   ]);
 
   return (

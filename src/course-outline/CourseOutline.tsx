@@ -37,7 +37,6 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import {
-  getCurrentItem,
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
@@ -77,6 +76,7 @@ const CourseOutline = () => {
     isUnlinkModalOpen,
     closeUnlinkModal,
     handleUnlinkItemSubmit,
+    currentSelection,
   } = useCourseAuthoringContext();
 
   const {
@@ -163,7 +163,7 @@ const CourseOutline = () => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const currentItemData = useSelector(getCurrentItem);
+  const currentItemData = currentSelection?.current;
 
   const itemCategory = currentItemData?.category;
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();

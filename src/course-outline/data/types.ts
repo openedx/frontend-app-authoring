@@ -71,9 +71,6 @@ export interface CourseOutlineState {
   statusBarData: CourseOutlineStatusBar;
   sectionsList: Array<XBlock>;
   isCustomRelativeDatesActive: boolean;
-  currentSection: XBlock | {};
-  currentSubsection: XBlock | {};
-  currentItem: XBlock | {};
   actions: XBlockActions;
   enableProctoredExams: boolean;
   enableTimedExams: boolean;

@@ -11,8 +11,6 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ContainerType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
-  setCurrentItem,
-  setCurrentSection,
   resetScrollField,
   updateSavingStatus,
 } from './data/slice';
@@ -23,9 +21,6 @@ import {
   getStatusBarData,
   getSectionsList,
   getCourseActions,
-  getCurrentItem,
-  getCurrentSection,
-  getCurrentSubsection,
   getCustomRelativeDatesActiveFlag,
   getErrors,
   getCreatedOn,
@@ -58,7 +53,7 @@ import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/Ou
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
-  const { handleAddSection } = useCourseAuthoringContext();
+  const { handleAddSection, setCurrentSelection, currentSelection } = useCourseAuthoringContext();
   const { selectedContainerId, clearSelection } = useOutlineSidebarContext();
 
   const {
@@ -80,9 +75,6 @@ const useCourseOutline = ({ courseId }) => {
   const savingStatus = useSelector(getSavingStatus);
   const courseActions = useSelector(getCourseActions);
   const sectionsList = useSelector(getSectionsList);
-  const currentItem = useSelector(getCurrentItem);
-  const currentSection = useSelector(getCurrentSection);
-  const currentSubsection = useSelector(getCurrentSubsection);
   const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
   const genericSavingStatus = useSelector(getGenericSavingStatus);
   const errors = useSelector(getErrors);
@@ -138,34 +130,36 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleOpenHighlightsModal = (section) => {
-    dispatch(setCurrentItem(section));
-    dispatch(setCurrentSection(section));
+    setCurrentSelection({
+      current: section,
+      section,
+    });
     openHighlightsModal();
   };
 
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentItem.id, dataToSend));
+    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.current.id, dataToSend));
 
     closeHighlightsModal();
   };
 
   const handleConfigureModalClose = () => {
     closeConfigureModal();
-    // reset the currentItem so the ConfigureModal's state is also reset
-    dispatch(setCurrentItem({}));
+    // reset the currentSelection?.current so the ConfigureModal's state is also reset
+    setCurrentSelection(undefined)
   };
 
   const handleConfigureItemSubmit = (...arg) => {
-    switch (currentItem.category) {
+    switch (currentSelection?.current.category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
+        dispatch(configureCourseSectionQuery(currentSelection?.section.id, ...arg));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
+        dispatch(configureCourseSubsectionQuery(currentSelection?.current.id, currentSelection?.section.id, ...arg));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
+        dispatch(configureCourseUnitQuery(currentSelection?.current.id, currentSelection?.section.id, ...arg));
         break;
       default:
         return;
@@ -174,39 +168,39 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleDeleteItemSubmit = () => {
-    switch (currentItem.category) {
+    switch (currentSelection?.current.category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(deleteCourseSectionQuery(currentItem.id));
+        dispatch(deleteCourseSectionQuery(currentSelection?.current.id));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
+        dispatch(deleteCourseSubsectionQuery(currentSelection?.current.id, currentSelection?.section.id));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
         dispatch(deleteCourseUnitQuery(
-          currentItem.id,
-          currentSubsection.id,
-          currentSection.id,
+          currentSelection?.current.id,
+          currentSelection?.subsection.id,
+          currentSelection?.section.id,
         ));
         break;
       default:
         return;
     }
-    if (selectedContainerId === currentItem.id) {
+    if (selectedContainerId === currentSelection?.current.id) {
       clearSelection();
     }
     closeDeleteModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateSectionQuery(currentSection.id, courseStructure.id));
+    dispatch(duplicateSectionQuery(currentSelection?.section.id, courseStructure.id));
   };
 
   const handleDuplicateSubsectionSubmit = () => {
-    dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
+    dispatch(duplicateSubsectionQuery(currentSelection?.subsection.id, currentSelection?.section.id));
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
+    dispatch(duplicateUnitQuery(currentSelection?.current.id, currentSelection?.subsection.id, currentSelection?.section.id));
   };
 
   const handleVideoSharingOptionChange = (value) => {

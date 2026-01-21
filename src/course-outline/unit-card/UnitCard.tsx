@@ -12,7 +12,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
@@ -71,7 +70,7 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId, getUnitUrl, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
+  const { courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
   const { data: subsection = initialSubsectionData } = useCourseItemData(initialSubsectionData.id, initialSubsectionData);
@@ -130,9 +129,11 @@ const UnitCard = ({
   const borderStyle = getItemStatusBorder(unitStatus);
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentItem(unit));
-    dispatch(setCurrentSection(section));
-    dispatch(setCurrentSubsection(subsection));
+    setCurrentSelection({
+      current: unit,
+      subsection,
+      section,
+    });
   };
 
   const handleUnitMoveUp = () => {

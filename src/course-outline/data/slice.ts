@@ -37,9 +37,6 @@ const initialState = {
   },
   sectionsList: [],
   isCustomRelativeDatesActive: false,
-  currentSection: {},
-  currentSubsection: {},
-  currentItem: {},
   actions: {
     deletable: true,
     unlinkable: false,
@@ -125,20 +122,11 @@ const slice = createSlice({
     updateSectionList: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => (section.id in payload ? payload[section.id] : section));
     },
-    setCurrentItem: (state: CourseOutlineState, { payload }) => {
-      state.currentItem = payload;
-    },
     reorderSectionList: (state: CourseOutlineState, { payload }) => {
       const sectionsList = [...state.sectionsList];
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
-    },
-    setCurrentSection: (state: CourseOutlineState, { payload }) => {
-      state.currentSection = payload;
-    },
-    setCurrentSubsection: (state: CourseOutlineState, { payload }) => {
-      state.currentSubsection = payload;
     },
     addSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = [
@@ -233,9 +221,6 @@ export const {
   updateCourseLaunchQueryStatus,
   updateSavingStatus,
   updateSectionList,
-  setCurrentItem,
-  setCurrentSection,
-  setCurrentSubsection,
   deleteSection,
   deleteSubsection,
   deleteUnit,

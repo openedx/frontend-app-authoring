@@ -61,7 +61,7 @@ const ConfigureModal = ({
     showReviewRules,
     onlineProctoringRules,
     discussionEnabled,
-  } = currentItemData;
+  } = currentItemData || {};
 
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
