@@ -34,7 +34,7 @@ const LegacySidebar = ({
   const { courseId } = useCourseAuthoringContext();
 
   return (
-    <Stack gap={3} className="px-4">
+    <Stack gap={3} className="px-4 mw-sm">
       {isUnitVerticalType && (
         <PluginSlot
           id="org.openedx.frontend.authoring.course_unit_sidebar.v1"

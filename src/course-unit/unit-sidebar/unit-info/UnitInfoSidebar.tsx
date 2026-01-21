@@ -16,9 +16,9 @@ import { Form, Formik } from 'formik';
 import { getCourseUnitData, getCourseVerticalChildren } from '@src/course-unit/data/selectors';
 import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
 import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
-import messages from '../messages';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
+import messages from './messages';
 
 const UnitInfoDetails = () => {
   const intl = useIntl();
@@ -104,7 +104,8 @@ const UnitInfoSettings = () => {
       return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
         ?.groups
         .filter(({ selected }) => selected)
-        .map(({ groupId }) => `${groupId}`)
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        .map(({ id }) => `${id}`)
         || [];
     }
     return [];
@@ -156,7 +157,7 @@ const UnitInfoSettings = () => {
               />
               {dirty && (
                 <Button className="mt-3" type="submit" variant="primary">
-                  Guardar cambios
+                  <FormattedMessage {...messages.visibilitySaveGroupsButton} />
                 </Button>
               )}
             </Form>
