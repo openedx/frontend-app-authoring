@@ -161,7 +161,6 @@ const CardHeader = ({
   const editMutation = useUpdateCourseBlockName(courseId);
   const handleEditSubmit = useCallback(async () => {
     if (title !== titleValue) {
-      // both itemId and sectionId are same
       await editMutation.mutateAsync({
         itemId: cardId,
         displayName: titleValue,

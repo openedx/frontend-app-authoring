@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -73,7 +72,7 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
@@ -150,9 +149,11 @@ const SubsectionCard = ({
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentSection(section));
-    dispatch(setCurrentSubsection(subsection));
-    dispatch(setCurrentItem(subsection));
+    setCurrentSelection({
+      current: subsection,
+      subsection,
+      section,
+    });
   };
 
   const handleOnPostChangeSync = useCallback(() => {
