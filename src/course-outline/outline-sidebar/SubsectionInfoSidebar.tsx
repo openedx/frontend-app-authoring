@@ -14,6 +14,8 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { LibraryReferenceCard } from './LibraryReferenceCard';
 import { PublishButon } from './PublishButon';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface Props {
   subsectionId: string;
@@ -62,7 +64,18 @@ const SubsectionInfoSidebar = ({ subsectionId }: Props) => {
 export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
-  const { data: sectionData, isLoading } = useCourseItemData(subsectionId);
+  const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
+  const { selectedSectionId } = useOutlineSidebarContext();
+  const { openPublishModal  } = useCourseAuthoringContext();
+
+  const handlePublish = () => {
+    if (selectedSectionId && subsectionData?.hasChanges) {
+      openPublishModal({
+        value: subsectionData,
+        sectionId: selectedSectionId,
+      })
+    }
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -71,10 +84,10 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
   return (
     <>
       <SidebarTitle
-        title={sectionData?.displayName || ''}
+        title={subsectionData?.displayName || ''}
         icon={SchoolOutline}
       />
-      <PublishButon onClick={() => {}} />
+      {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs
         variant="tabs"
         className="my-2 d-flex justify-content-around"

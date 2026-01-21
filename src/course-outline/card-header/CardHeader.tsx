@@ -197,7 +197,7 @@ const CardHeader = ({
               onBlur={handleEditSubmit}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  handleEditSubmit(titleValue);
+                  handleEditSubmit();
                 } else if (e.key === ' ') {
                   // Avoid passing propagation to the `SortableItem` in the card,
                   // which executes a `preventDefault`. If propagation is not prevented,
