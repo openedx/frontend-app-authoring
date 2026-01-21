@@ -9,7 +9,6 @@ import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -65,7 +64,7 @@ const SectionCard = ({
   const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const { courseId, openUnlinkModal, openPublishModal } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
@@ -188,8 +187,10 @@ const SectionCard = ({
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentItem(section));
-    dispatch(setCurrentSection(section));
+    setCurrentSelection({
+      current: section,
+      section,
+    });
   };
 
   const handleOpenHighlightsModal = () => {
