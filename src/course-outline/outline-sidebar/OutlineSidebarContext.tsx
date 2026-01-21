@@ -38,7 +38,7 @@ interface OutlineSidebarContextData {
   // The container is not necessarily selected to open a selected sidebar.
   // Example: Align sidebar
   currentContainerId?: string;
-  openContainerInfoSidebar: (containerId: string) => void;
+  openContainerInfoSidebar: (containerId: string, sectionId?: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
