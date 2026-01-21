@@ -156,7 +156,7 @@ const CompareContainersWidgetInner = ({
     }
     return (
       <Stack direction="horizontal" gap={1}>
-        <Button variant="link" className="px-0" onClick={onBackBtnClick}>
+        <Button variant="link" className="px-0 text-gray-900" onClick={onBackBtnClick}>
           {/* We could also use iconBefore={ArrowBack} on the <Button> above but it's a bit too big that way. */}
           <Icon size="xs" src={ArrowBack} className="mr-1" />
           {intl.formatMessage(messages.breadcrumbBackLabel)}
