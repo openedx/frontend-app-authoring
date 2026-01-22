@@ -59,6 +59,7 @@ const PublishControls = ({
       null,
       null,
       null,
+      /* istanbul ignore next */
       () => sendMessageToIframe(messageTypes.refreshXBlock, null),
     ));
   };

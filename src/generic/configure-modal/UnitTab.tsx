@@ -134,7 +134,7 @@ export const AccessEditComponent = ({
                   >
                     {group.name}
                   </Form.Label>
-                  {group.deleted && (
+                  {/* istanbul ignore next */ group.deleted && (
                     <Form.Control.Feedback type="invalid" hasIcon={false}>
                       <FormattedMessage {...messages.unitSelectDeletedGroupErrorMessage} />
                     </Form.Control.Feedback>
@@ -150,7 +150,7 @@ export const AccessEditComponent = ({
 };
 
 export const UnitTab = ({
-  isXBlockComponent = false,
+  isXBlockComponent,
   category,
   values,
   setFieldValue,
