@@ -1,11 +1,14 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-const DatesSettings = ({ onClose }) => {
+type DatesSettingsProps = {
+  onClose: () => void;
+};
+
+const DatesSettings: React.FC<DatesSettingsProps> = ({ onClose }) => {
   const intl = useIntl();
 
   return (
@@ -19,12 +22,13 @@ const DatesSettings = ({ onClose }) => {
       validationSchema={{}}
       initialValues={{}}
       onSettingsSave={async () => true}
+      bodyChildren={(
+        <p className="mb-0">
+          {intl.formatMessage(messages.description)}
+        </p>
+      )}
     />
   );
-};
-
-DatesSettings.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default DatesSettings;
