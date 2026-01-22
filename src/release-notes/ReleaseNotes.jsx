@@ -258,6 +258,7 @@ const ReleaseNotes = () => {
         isOpen={isFormOpen}
         onClose={confirmCloseIfDirty}
         size="xl"
+        className="release-notes-modal"
       >
         <ModalDialog.Header>
           <ModalDialog.Title>
@@ -292,7 +293,12 @@ const ReleaseNotes = () => {
         errorDeleting={errors.deletingNote}
       />
       {isUnsavedModalOpen && (
-        <ModalDialog isOpen size="md" onClose={() => setIsUnsavedModalOpen(false)}>
+        <ModalDialog
+          isOpen
+          size="md"
+          onClose={() => setIsUnsavedModalOpen(false)}
+          className="release-notes-modal"
+        >
           <ModalDialog.Header>
             <ModalDialog.Title>
               {intl.formatMessage(unsavedMessages.unsavedModalTitle)}
