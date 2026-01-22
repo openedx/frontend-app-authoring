@@ -64,7 +64,7 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
@@ -130,9 +130,9 @@ const UnitCard = ({
 
   const handleClickMenuButton = () => {
     setCurrentSelection({
-      current: unit,
-      subsection,
-      section,
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
     });
   };
 
@@ -233,7 +233,7 @@ const UnitCard = ({
             'unit-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': unit.id === selectedContainerId,
+              'outline-card-selected': unit.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="unit-card"
