@@ -204,6 +204,7 @@ export const UnitInfoSidebar = () => {
       />
       <Tabs
         id="unit-info-sidebar-tabs"
+        className="my-2 d-flex justify-content-around"
         activeKey={currentTabKey}
         onSelect={setCurrentTabKey}
       >
