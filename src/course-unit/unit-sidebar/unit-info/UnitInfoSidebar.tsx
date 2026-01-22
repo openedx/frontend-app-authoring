@@ -179,17 +179,11 @@ const UnitInfoSettings = () => {
 
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
-  const { blockId } = useParams();
   const currentItemData = useSelector(getCourseUnitData);
   const {
     currentTabKey,
     setCurrentTabKey,
   } = useUnitSidebarContext();
-
-  if (blockId === undefined) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Error: route is missing blockId.');
-  }
 
   useEffect(() => {
     // Set default Tab key
