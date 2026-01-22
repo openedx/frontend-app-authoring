@@ -153,3 +153,9 @@ export interface UserTaskStatusWithUuid {
   modified: string;
   uuid: string;
 }
+
+export type SelectionState = {
+  currentId: string;
+  sectionId?: string;
+  subsectionId?: string;
+}
