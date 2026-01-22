@@ -21,6 +21,12 @@ type HeaderNavigationsProps = {
   category: string;
 };
 
+/**
+ * Generic header navigations to be used in this pages:
+ * - Unit page
+ * - Legacy library content page
+ * - Split test page
+ */
 const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigationsProps) => {
   const intl = useIntl();
   const {
@@ -33,6 +39,9 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
 
   return (
     <nav className="header-navigations ml-auto flex-shrink-0">
+      {/**
+       * Action buttons used in the unit page
+       */}
       {category === COURSE_BLOCK_NAMES.vertical.id && (
         <Stack direction="horizontal" gap={3}>
           {showNewDesignButtons && (
@@ -69,6 +78,9 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
           </ButtonGroup>
         </Stack>
       )}
+      {/**
+       * Action buttons used in legacy libraries content page and split test page
+       */}
       {[COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id].includes(category) && (
         <Button
           iconBefore={EditIcon}

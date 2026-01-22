@@ -14,7 +14,6 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
-  CheckCircle,
   Lock,
   AccessTimeFilled,
   Groups,
@@ -72,7 +71,7 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
     visibilityChipData = {
       variant: 'success',
       text: messages.statusBarLiveBadge,
-      icon: CheckCircle,
+      icon: CheckCircleIcon,
     };
   } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly) {
     visibilityChipData = {
@@ -309,7 +308,7 @@ const CourseUnit = () => {
             )}
           />
           <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-            {isUnitPageNewDesignEnabled() && (
+            {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
               <StatusBar courseUnit={courseUnit} />
             )}
           </div>

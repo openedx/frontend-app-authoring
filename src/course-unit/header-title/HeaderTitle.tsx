@@ -30,6 +30,13 @@ type HeaderTitleProps = {
   ) => void;
 };
 
+/**
+ * Component that renders the title and extra action buttons:
+ * - Edit button: Hidden, It appears when you hover over it.
+ *   The title becomes a text form.
+ * - Settings button: Shown only in the legacy unit page.
+ *   Opens a settings modal.
+ */
 const HeaderTitle = ({
   unitTitle,
   isTitleEditFormOpen,
@@ -90,21 +97,23 @@ const HeaderTitle = ({
         onClick={handleTitleEdit}
       />
       {!isUnitPageNewDesignEnabled() && (
-      <IconButton
-        alt={intl.formatMessage(messages.altButtonSettings)}
-        className="flex-shrink-0"
-        iconAs={SettingsIcon}
-        onClick={openConfigureModal}
-      />
+        <>
+          <IconButton
+            alt={intl.formatMessage(messages.altButtonSettings)}
+            className="flex-shrink-0"
+            iconAs={SettingsIcon}
+            onClick={openConfigureModal}
+          />
+          <ConfigureModal
+            isOpen={isConfigureModalOpen}
+            onClose={closeConfigureModal}
+            onConfigureSubmit={onConfigureSubmit}
+            currentItemData={currentItemData}
+            isSelfPaced={false}
+            isXBlockComponent={isXBlockComponent}
+          />
+        </>
       )}
-      <ConfigureModal
-        isOpen={isConfigureModalOpen}
-        onClose={closeConfigureModal}
-        onConfigureSubmit={onConfigureSubmit}
-        currentItemData={currentItemData}
-        isSelfPaced={false}
-        isXBlockComponent={isXBlockComponent}
-      />
     </div>
   );
 };
