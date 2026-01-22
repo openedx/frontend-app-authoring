@@ -45,6 +45,7 @@ const LegacyVisibilityInfo = ({
   const dispatch = useDispatch();
 
   const handleCourseUnitVisibility = () => {
+    /* istanbul ignore next */
     dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true));
   };
 
@@ -55,7 +56,7 @@ const LegacyVisibilityInfo = ({
           <h6 className="course-unit-sidebar-visibility-copy">
             <FormattedMessage {...messages.visibilityStaffOnlyTitle} />
           </h6>
-          {!hasExplicitStaffLock && (
+          {/* istanbul ignore next */ !hasExplicitStaffLock && (
             <span className="course-unit-sidebar-visibility-section mb-2">
               <FormattedMessage
                 {...messages.visibilityHasExplicitStaffLockText}

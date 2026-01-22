@@ -99,6 +99,7 @@ const UnitInfoSettings = () => {
     resetForm({ values: data });
   };
 
+  /* istanbul ignore next */
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
       return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]

@@ -2399,14 +2399,14 @@ describe('<CourseUnit />', () => {
       });
 
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
-
     // Move to Details
     const detailsTab = screen.getByRole('tab', { name: /details/i });
     await user.click(detailsTab);
     expect(screen.getByRole('heading', { name: /visible to staff only/i })).toBeInTheDocument();
 
     // Move to settings and change visibility to all
-    await user.click(settingsTab);
+    const editVisibilityButton = screen.getByRole('button', { name: /edit visibility/i });
+    await user.click(editVisibilityButton);
     const studentVisibleButton = screen.getByRole('button', { name: /student visible/i });
     await user.click(studentVisibleButton);
 
@@ -2515,8 +2515,30 @@ describe('<CourseUnit />', () => {
           user_partition_info: {
             selected_partition_index: 0,
             selected_groups_label: 'Group A',
-            selectablePartitions: [{
-              groups: [],
+            selectable_partitions: [{
+              id: 10,
+              name: 'Content Groups',
+              scheme: 'cohort',
+              groups: [
+                {
+                  deleted: false,
+                  id: 1,
+                  name: 'Group A',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 2,
+                  name: 'Group B',
+                  selected: false,
+                },
+                {
+                  deleted: false,
+                  id: 3,
+                  name: 'Group C',
+                  selected: false,
+                },
+              ],
             }],
           },
         },
@@ -2527,7 +2549,7 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(/this unit is restricted to group a and staff/i)).toBeInTheDocument();
   });
 
-  it('should mulriple groups in the visibility field in the unit sidebar', async () => {
+  it('should multiple groups in the visibility field in the unit sidebar', async () => {
     setConfig({
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
@@ -2548,8 +2570,30 @@ describe('<CourseUnit />', () => {
           user_partition_info: {
             selected_partition_index: 0,
             selected_groups_label: 'Group A, Group B, Group C',
-            selectablePartitions: [{
-              groups: [],
+            selectable_partitions: [{
+              id: 10,
+              name: 'Content Groups',
+              scheme: 'cohort',
+              groups: [
+                {
+                  deleted: false,
+                  id: 1,
+                  name: 'Group A',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 2,
+                  name: 'Group B',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 3,
+                  name: 'Group C',
+                  selected: true,
+                },
+              ],
             }],
           },
         },
@@ -2561,5 +2605,35 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByText(
       /access to some content in this unit is restricted to specific groups of learners\./i,
     ));
+  });
+
+  it('should render never published state in the unit sidebar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          published: false,
+          released_to_students: false,
+          currently_visible_to_students: false,
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+
+    // Move to settings
+    expect(await screen.findByRole('heading', { name: /draft \(never published\)/i })).toBeInTheDocument();
   });
 });
