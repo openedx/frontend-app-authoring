@@ -21,11 +21,6 @@ const messages = defineMessages({
     defaultMessage: 'Learn more about dates',
     description: 'Link text that leads to documentation about the Dates experience.',
   },
-  description: {
-    id: 'course-authoring.pages-resources.dates.description',
-    defaultMessage: 'No additional configuration is required for the Dates experience.',
-    description: 'Body copy shown in the Dates settings modal explaining that nothing else is required.',
-  },
 });
 
 export default messages;

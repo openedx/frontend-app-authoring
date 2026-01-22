@@ -22,11 +22,6 @@ const DatesSettings: React.FC<DatesSettingsProps> = ({ onClose }) => {
       validationSchema={{}}
       initialValues={{}}
       onSettingsSave={async () => true}
-      bodyChildren={(
-        <p className="mb-0">
-          {intl.formatMessage(messages.description)}
-        </p>
-      )}
     />
   );
 };
