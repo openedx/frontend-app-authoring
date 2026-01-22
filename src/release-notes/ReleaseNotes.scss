@@ -208,9 +208,19 @@
     color: inherit;
 }
 
-.pgn__modal-header .pgn__modal-title {
-	color: #00262B;
+// NOTE:
+// Modals are portalled to <body> (see Paragon ModalLayer/Portal), so selectors
+// like `.release-notes-page ...` will NOT scope modal styles to this page.
+//
+// A previous global override here was impacting unrelated Paragon modals
+// (notably dark-variant FullscreenModal titles), causing insufficient contrast.
+//
+// Scope any Release Notes modal title adjustments to Release Notes modals only.
+.release-notes-modal {
+  .pgn__modal-header .pgn__modal-title {
+    color: #00262B;
     font-size: 24px;
+  }
 }
 
 .pgn__form-text-default {
@@ -226,7 +236,7 @@
     font-size: 40px;
 }
 
-.pgn__modal.pgn__modal-xl.pgn__modal-default {
+.release-notes-modal.pgn__modal.pgn__modal-xl.pgn__modal-default {
     max-height: unset;
 }
 

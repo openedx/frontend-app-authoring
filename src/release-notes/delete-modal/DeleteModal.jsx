@@ -22,6 +22,7 @@ const DeleteModal = ({
       title={intl.formatMessage(messages.deleteModalTitle)}
       isOpen={isOpen}
       onClose={close}
+      className="release-notes-modal"
       footerNode={(
         <ActionRow>
           <Button variant="tertiary" onClick={close}>
