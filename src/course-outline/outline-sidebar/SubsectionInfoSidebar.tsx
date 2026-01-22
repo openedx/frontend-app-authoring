@@ -65,14 +65,14 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
-  const { selectedSectionId } = useOutlineSidebarContext();
+  const { selectedContainerState } = useOutlineSidebarContext();
   const { openPublishModal  } = useCourseAuthoringContext();
 
   const handlePublish = () => {
-    if (selectedSectionId && subsectionData?.hasChanges) {
+    if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
       openPublishModal({
         value: subsectionData,
-        sectionId: selectedSectionId,
+        sectionId: selectedContainerState?.sectionId,
       })
     }
   }

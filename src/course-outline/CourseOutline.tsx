@@ -163,7 +163,7 @@ const CourseOutline = () => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const currentItemData = currentSelection?.current;
+  const currentItemData = currentSelection?.currentId;
 
   const itemCategory = currentItemData?.category;
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();

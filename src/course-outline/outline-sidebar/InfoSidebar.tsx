@@ -5,21 +5,21 @@ import { SectionSidebar } from "./SectionInfoSidebar";
 import { SubsectionSidebar } from "@src/course-outline/outline-sidebar/SubsectionInfoSidebar";
 
 export const InfoSidebar = () => {
-  const { selectedContainerId } = useOutlineSidebarContext();
-  if (!selectedContainerId) {
+  const { selectedContainerState } = useOutlineSidebarContext();
+  if (!selectedContainerState) {
     return (
       <CourseInfoSidebar />
     )
   }
-  const itemType = getBlockType(selectedContainerId);
+  const itemType = getBlockType(selectedContainerState.currentId);
 
   switch (itemType) {
     case ContainerType.Chapter:
     case ContainerType.Section:
-      return <SectionSidebar sectionId={selectedContainerId} />
+      return <SectionSidebar sectionId={selectedContainerState.currentId} />
     case ContainerType.Sequential:
     case ContainerType.Subsection:
-      return <SubsectionSidebar subsectionId={selectedContainerId} />
+      return <SubsectionSidebar subsectionId={selectedContainerState.currentId} />
     case ContainerType.Vertical:
     case ContainerType.Unit:
       return <div>Unit sidebar</div>;

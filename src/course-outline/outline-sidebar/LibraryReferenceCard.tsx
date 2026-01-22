@@ -23,16 +23,16 @@ interface SubProps {
 
 const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
   const { upstreamInfo } = blockData;
-  const { selectedSectionId } = useOutlineSidebarContext();
+  const { selectedContainerState } = useOutlineSidebarContext();
   const { openContainerInfoSidebar } = useOutlineSidebarContext();
   const { openUnlinkModal } = useCourseAuthoringContext();
   const { data: parentData, isPending } = useCourseItemData(upstreamInfo?.topLevelParentKey);
 
   const handleUnlinkClick = () => {
-    if (!selectedSectionId || !parentData) {
+    if (!selectedContainerState?.sectionId || !parentData) {
       return;
     }
-    openUnlinkModal({ value: parentData, sectionId: selectedSectionId });
+    openUnlinkModal({ value: parentData, sectionId: selectedContainerState.sectionId });
   };
 
   const handleSyncClick = () => {
@@ -99,17 +99,17 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
 
 const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
   const { upstreamInfo } = blockData;
-  const { selectedSectionId } = useOutlineSidebarContext();
+  const { selectedContainerState } = useOutlineSidebarContext();
   const { openUnlinkModal } = useCourseAuthoringContext();
   const messageValues = {
     name: displayName,
   }
 
   const handleUnlinkClick = () => {
-    if (!selectedSectionId) {
+    if (!selectedContainerState?.sectionId) {
       return;
     }
-    openUnlinkModal({ value: blockData, sectionId: selectedSectionId });
+    openUnlinkModal({ value: blockData, sectionId: selectedContainerState.sectionId });
   };
 
   const handleSyncClick = () => {
@@ -161,7 +161,7 @@ interface Props {
 
 export const LibraryReferenceCard = ({ itemId }: Props) => {
   const { data: itemData, isPending } = useCourseItemData(itemId);
-  const { selectedSectionId } = useOutlineSidebarContext();
+  const { selectedContainerState } = useOutlineSidebarContext();
   const { courseId } = useCourseAuthoringContext();
   const [isSyncModalOpen, syncModalData, openSyncModal, closeSyncModal] = useToggleWithValue<XBlock>();
   const dispatch = useDispatch();
@@ -183,8 +183,8 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
   }, [syncModalData]);
 
   const handleOnPostChangeSync = useCallback(() => {
-    if (selectedSectionId) {
-      dispatch(fetchCourseSectionQuery([selectedSectionId]));
+    if (selectedContainerState?.sectionId) {
+      dispatch(fetchCourseSectionQuery([selectedContainerState.sectionId]));
     }
     if (courseId) {
       invalidateLinksQuery(queryClient, courseId);
@@ -192,7 +192,7 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
         queryKey: courseOutlineQueryKeys.course(courseId),
       });
     }
-  }, [dispatch, selectedSectionId, queryClient, courseId]);
+  }, [dispatch, selectedContainerState, queryClient, courseId]);
 
   if (!itemData?.upstreamInfo?.upstreamRef) {
     return null;

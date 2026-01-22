@@ -66,7 +66,7 @@ const SubsectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
@@ -150,9 +150,9 @@ const SubsectionCard = ({
 
   const handleClickMenuButton = () => {
     setCurrentSelection({
-      current: subsection,
-      subsection,
-      section,
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
     });
   };
 
@@ -258,7 +258,7 @@ const SubsectionCard = ({
             'subsection-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': subsection.id === selectedContainerId,
+              'outline-card-selected': subsection.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="subsection-card"

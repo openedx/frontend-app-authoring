@@ -23,7 +23,7 @@ const HighlightsModal = ({
 }) => {
   const intl = useIntl();
   const { currentSelection } = useCourseAuthoringContext();
-  const { highlights = [], displayName } = currentSelection?.current || {};
+  const { highlights = [], displayName } = currentSelection?.currentId || {};
   const initialFormValues = getHighlightsFormValues(highlights);
 
   const {

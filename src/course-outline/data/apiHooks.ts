@@ -41,7 +41,6 @@ export const useCreateCourseBlock = (
   return useMutation({
     mutationFn: createCourseXblock,
     onSettled: async (data: { locator: string; }, _err, variables) => {
-      // FIXME: invalidate section query
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.parentLocator) });
       callback?.(data.locator, variables.parentLocator);
     },
@@ -68,7 +67,6 @@ export const useUpdateCourseBlockName = (courseId: string) => {
   return useMutation({
     mutationFn: editItemDisplayName,
     onSettled: async (_data, _err, variables) => {
-      // FIXME: invalidate section query
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
     },

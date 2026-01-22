@@ -61,7 +61,7 @@ const SectionCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
@@ -188,8 +188,8 @@ const SectionCard = ({
 
   const handleClickMenuButton = () => {
     setCurrentSelection({
-      current: section,
-      section,
+      currentId: section.id,
+      sectionId: section.id,
     });
   };
 
@@ -252,7 +252,7 @@ const SectionCard = ({
             'section-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': section.id === selectedContainerId,
+              'outline-card-selected': section.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="section-card"

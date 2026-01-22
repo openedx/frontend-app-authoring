@@ -30,8 +30,9 @@ import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
-import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface CardHeaderProps {
   title: string;
@@ -106,6 +107,7 @@ const CardHeader = ({
   const cardHeaderRef = useRef(null);
   const [isLegacyManageTagsDrawerOpen, openLegacyTagsDrawer, closeLegacyTagsDrawer] = useToggle(false);
   const { setCurrentPageKey } = useOutlineSidebarContext();
+  const queryClient = useQueryClient();
 
   const openManageTagsDrawer = useCallback(() => {
     const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
@@ -115,7 +117,7 @@ const CardHeader = ({
       openLegacyTagsDrawer();
     }
   }, [setCurrentPageKey, openLegacyTagsDrawer, cardId]);
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, currentSelection } = useCourseAuthoringContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
 
   // Use studio url as base if proctoringExamConfigurationLink is a relative link
@@ -127,6 +129,11 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
+
+  const onEditClick = () => {
+    onClickMenuButton();
+    openForm();
+  }
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -165,7 +172,15 @@ const CardHeader = ({
         itemId: cardId,
         displayName: titleValue,
       }, {
-        onSuccess: closeForm,
+        onSuccess: () => {
+          closeForm();
+          queryClient.invalidateQueries({
+            queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
+          });
+          queryClient.invalidateQueries({
+            queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.subsectionId),
+          });
+        },
       });
     }
     closeForm();
@@ -216,7 +231,7 @@ const CardHeader = ({
               alt={intl.formatMessage(messages.altButtonRename)}
               tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
-              onClick={openForm}
+              onClick={onEditClick}
               // @ts-ignore
               disabled={editMutation.isPending}
             />

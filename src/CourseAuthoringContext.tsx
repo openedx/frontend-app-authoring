@@ -1,7 +1,7 @@
 import { getConfig } from '@edx/frontend-platform';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSection, addSubsection, updateSavingStatus } from '@src/course-outline/data/slice';
@@ -11,9 +11,10 @@ import { RequestStatus, RequestStatusType } from './data/constants';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { CourseDetailsData } from './data/api';
 import { useToggleWithValue } from '@src/hooks';
-import { XBlock } from '@src/data/types';
+import { SelectionState, XBlock } from '@src/data/types';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
+import { useQueryClient } from '@tanstack/react-query';
 
 type ModalState = {
   value: XBlock;
@@ -59,12 +60,6 @@ type CourseAuthoringProviderProps = {
   courseId: string;
 };
 
-type SelectionState = {
-  current: XBlock;
-  section?: XBlock;
-  subsection?: XBlock;
-}
-
 export const CourseAuthoringProvider = ({
   children,
   courseId,
@@ -79,6 +74,7 @@ export const CourseAuthoringProvider = ({
   const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<ModalState>();
   const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] = useToggleWithValue<ModalState>();
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
+  const queryClient = useQueryClient();
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -109,6 +105,9 @@ export const CourseAuthoringProvider = ({
    * Open the unit page for a given locator.
    */
   const openUnitPage = (locator: string) => {
+    queryClient.invalidateQueries({
+      queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
+    });
     const url = getUnitUrl(locator);
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
       // instanbul ignore next
