@@ -76,10 +76,10 @@ const PublishControls = ({
           visibilityState={visibilityState}
         />
       </div>
-      <Stack gap={3}>
-        <Stack gap={1}>
+      <Stack gap={4}>
+        <Stack gap={2}>
           {editedOn && (
-            <>
+            <div>
               <span className="heading-label">
                 <FormattedMessage {...messages.publishInfoDraftSaved} />
               </span>
@@ -99,10 +99,10 @@ const PublishControls = ({
                   {editedOn}
                 </span>
               </Stack>
-            </>
+            </div>
           )}
           {publishedOn && (
-            <>
+            <div>
               <span className="heading-label">
                 <FormattedMessage {...messages.publishLastPublished} />
               </span>
@@ -122,10 +122,10 @@ const PublishControls = ({
                   {publishedOn}
                 </span>
               </Stack>
-            </>
+            </div>
           )}
         </Stack>
-        <Stack className="mb-2">
+        <Stack>
           <span className="heading-label">
             {releaseLabel}
           </span>
@@ -133,12 +133,14 @@ const PublishControls = ({
             <ReleaseInfoComponent />
           </div>
         </Stack>
+        <div>
+          <UnitVisibilityInfo
+            openVisibleModal={openVisibleModal}
+            visibleToStaffOnly={visibleToStaffOnly}
+            userPartitionInfo={unitData.userPartitionInfo}
+          />
+        </div>
       </Stack>
-      <UnitVisibilityInfo
-        openVisibleModal={openVisibleModal}
-        visibleToStaffOnly={visibleToStaffOnly}
-        userPartitionInfo={unitData.userPartitionInfo}
-      />
       <SidebarFooter
         locationId={locationId}
         openDiscardModal={openDiscardModal}

@@ -21,13 +21,6 @@
     padding: 0 var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base);
 
     .course-unit-sidebar-visibility {
-      .course-unit-sidebar-visibility-title {
-        font-weight: var(--pgn-typography-font-weight-normal);
-        color: var(--pgn-color-gray-700);
-
-        @extend %base-font-params;
-      }
-
       .course-unit-sidebar-visibility-section {
         @extend %base-font-params;
       }

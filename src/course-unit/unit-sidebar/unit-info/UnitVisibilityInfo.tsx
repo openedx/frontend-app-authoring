@@ -145,9 +145,9 @@ const UnitVisibilityInfo = ({
   userPartitionInfo,
 }: UnitVisibilityInfoProps) => (
   <>
-    <small className="course-unit-sidebar-visibility-title">
+    <span className="heading-label">
       <FormattedMessage {...messages.visibilityVisibleToTitle} />
-    </small>
+    </span>
     {isUnitPageNewDesignEnabled() ? (
       <UnitvisibilityInfoContent
         visibleToStaffOnly={visibleToStaffOnly}
