@@ -43,7 +43,7 @@ export type CourseAuthoringContextData = {
   openPublishModal: (value: ModalState) => void;
   closePublishModal: () => void;
   currentSelection?: SelectionState;
-  setCurrentSelection: (value?: SelectionState) => void;
+  setCurrentSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
 };
 
 /**
@@ -73,6 +73,13 @@ export const CourseAuthoringProvider = ({
   const { id: courseUsageKey } = courseStructure || {};
   const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<ModalState>();
   const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] = useToggleWithValue<ModalState>();
+  /**
+  * This will hold the state of current item that is being operated on,
+  * For example:
+  *  - the details of container that is being edited.
+  *  - the details of container of which see more dropdown is open.
+  * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
+  */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
   const queryClient = useQueryClient();
 

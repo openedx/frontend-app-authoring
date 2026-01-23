@@ -225,7 +225,7 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id, section.id);
+      openContainerInfoSidebar(section.id, undefined, section.id);
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);

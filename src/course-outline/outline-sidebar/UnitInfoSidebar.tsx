@@ -112,7 +112,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
         onSelect={setTab}
         mountOnEnter
       >
-        <Tab.Pane
+        <Tab
           eventKey="preview"
           title={intl.formatMessage(messages.previewTabText)}
           // To make sure that data is fresh
@@ -129,7 +129,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
               readonly
             />
           </IframeProvider>
-        </Tab.Pane>
+        </Tab>
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
           <UnitInfoSidebar unitId={unitId} />
         </Tab>
