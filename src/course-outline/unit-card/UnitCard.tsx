@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -12,12 +13,14 @@ import { isEmpty } from 'lodash';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
+import { setCourseItemOrderList } from '@src/course-outline/data/api';
 import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
@@ -30,8 +33,12 @@ import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
-import { getItemIcon, getComponentStyleColor } from '@src/generic/block-type-utils';
+import { getItemIcon } from '@src/generic/block-type-utils';
 import AlertError from '@src/generic/alert-error';
+import ModalIframe from '@src/generic/modal-iframe';
+import EditorPage from '@src/editors/EditorPage';
+import DraggableList, { SortableItem as GenericSortableItem } from '@src/generic/DraggableList';
+import { ToastContext } from '@src/generic/toast-context';
 import { useUnitHandler } from './data/hooks';
 import messages from './messages';
 
@@ -87,11 +94,19 @@ const UnitCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showLegacyEditModal, setShowLegacyEditModal] = useState(false);
+  const [showMFEEditorModal, setShowMFEEditorModal] = useState(false);
+  const [editXBlockId, setEditXBlockId] = useState<string | null>(null);
+  const [editBlockType, setEditBlockType] = useState<string>('');
+  const [orderedComponents, setOrderedComponents] = useState<any[]>([]);
+  const [dragComponentId, setDragComponentId] = useState<string | null>(null);
+  const previousComponentsOrder = useRef<any[]>([]);
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
   const { courseId } = useParams();
   const queryClient = useQueryClient();
+  const { showToast } = useContext(ToastContext);
 
   const {
     id,
@@ -113,6 +128,7 @@ const UnitCard = ({
     isLoading: isLoadingComponents,
     isError: isComponentsError,
     error: componentsError,
+    refetch: refetchUnitData,
   } = useUnitHandler(id, isExpanded && waffleFlags.enableUnitExpandedView);
 
   const blockSyncData = useMemo(() => {
@@ -188,11 +204,77 @@ const UnitCard = ({
     window.location.href = blockId ? `${baseUrl}#${blockId}` : baseUrl;
   };
 
+  const getLegacyEditModalUrl = (blockId: string): string => (
+    `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit`
+  );
+
+  const supportsMFEEditor = (blockType: string): boolean => {
+    const supportedTypes = ['html', 'video', 'problem', 'video_upload', 'games'];
+    return supportedTypes.includes(blockType);
+  };
+
+  const handleShowLegacyEditModal = (blockId: string) => {
+    setEditXBlockId(blockId);
+    setShowLegacyEditModal(true);
+  };
+
+  const handleCloseLegacyEditModal = () => {
+    setEditXBlockId(null);
+    setShowLegacyEditModal(false);
+  };
+
+  const handleShowMFEEditor = (blockType: string, blockId: string) => {
+    setEditBlockType(blockType);
+    setEditXBlockId(blockId);
+    setShowMFEEditorModal(true);
+  };
+
+  const handleCloseMFEEditor = () => {
+    setEditBlockType('');
+    setEditXBlockId(null);
+    setShowMFEEditorModal(false);
+  };
+
+  const handleSaveEditedXBlockData = useCallback(() => (result: any) => {
+    handleCloseLegacyEditModal();
+    handleCloseMFEEditor();
+    dispatch(fetchCourseSectionQuery([section.id]));
+    if (courseId) {
+      invalidateLinksQuery(queryClient, courseId);
+    }
+
+    if (result?.error) {
+      showToast(intl.formatMessage(messages.componentSaveError));
+    } else {
+      refetchUnitData();
+    }
+  }, [dispatch, section.id, courseId, queryClient, showToast, intl, refetchUnitData]);
+
   const handleComponentEdit = (e: React.MouseEvent, blockType: string, blockId: string) => {
     e.stopPropagation();
-    const editorUrl = `/course/${courseId}/editor/${blockType}/${blockId}`;
-    window.location.href = editorUrl;
+
+    if (supportsMFEEditor(blockType)) {
+      handleShowMFEEditor(blockType, blockId);
+    } else {
+      handleShowLegacyEditModal(blockId);
+    }
   };
+
+  const handleComponentReorder = useCallback(() => async (newOrder: any[]) => {
+    if (!newOrder) {
+      return;
+    }
+    const componentIds = newOrder.map((c: any) => c.blockId);
+    try {
+      await setCourseItemOrderList(id, componentIds);
+      dispatch(fetchCourseSectionQuery([section.id]));
+      // Update ref after successful save
+      previousComponentsOrder.current = newOrder;
+    } catch (error) {
+      setOrderedComponents(previousComponentsOrder.current);
+      showToast(intl.formatMessage(messages.componentReorderError));
+    }
+  }, [id, section.id, dispatch, showToast, intl]);
 
   const handleOnPostChangeSync = useCallback(() => {
     dispatch(fetchCourseSectionQuery([section.id]));
@@ -241,6 +323,39 @@ const UnitCard = ({
     }
   }, [savingStatus]);
 
+  useEffect(() => {
+    if (unitData?.components) {
+      const componentsWithId = unitData.components.map((component) => ({
+        ...component,
+        id: component.blockId,
+      }));
+      setOrderedComponents(componentsWithId);
+      previousComponentsOrder.current = componentsWithId;
+    }
+  }, [unitData]);
+
+  useEffect(() => {
+    const handleIframeMessage = (event: MessageEvent) => {
+      const { data, origin } = event;
+      if (origin !== getConfig().STUDIO_BASE_URL) {
+        return;
+      }
+
+      if (data.type === 'closeXBlockEditorModal') {
+        handleCloseLegacyEditModal();
+      } else if (data.type === 'saveEditedXBlockData') {
+        handleSaveEditedXBlockData()({});
+      } else if (data.type === 'studioAjaxError' || data.type === 'error' || data.error) {
+        handleSaveEditedXBlockData()({ error: true });
+      }
+    };
+
+    window.addEventListener('message', handleIframeMessage);
+    return () => {
+      window.removeEventListener('message', handleIframeMessage);
+    };
+  }, [handleSaveEditedXBlockData]);
+
   if (!isHeaderVisible) {
     return null;
   }
@@ -253,6 +368,25 @@ const UnitCard = ({
 
   return (
     <>
+      {showLegacyEditModal && editXBlockId && (
+        <ModalIframe
+          title={intl.formatMessage(messages.legacyEditModalTitle)}
+          src={getLegacyEditModalUrl(editXBlockId)}
+        />
+      )}
+      {showMFEEditorModal && editXBlockId && editBlockType && courseId && (
+        <div className="editor-page">
+          <EditorPage
+            courseId={courseId}
+            blockType={editBlockType}
+            blockId={editXBlockId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onClose={null}
+            returnFunction={handleSaveEditedXBlockData}
+          />
+        </div>
+      )}
       <SortableItem
         id={id}
         key={id}
@@ -328,43 +462,61 @@ const UnitCard = ({
                 if (isLoadingComponents) {
                   return <div className="text-center p-3">{intl.formatMessage(messages.loadingComponents)}</div>;
                 }
-                if (unitData?.components && unitData.components.length > 0) {
+                if (orderedComponents && orderedComponents.length > 0) {
                   return (
-                    <div className="components-list">
-                      {unitData.components.map((component) => {
+                    <DraggableList
+                      itemList={orderedComponents}
+                      setState={setOrderedComponents}
+                      updateOrder={handleComponentReorder}
+                      activeId={dragComponentId}
+                      setActiveId={setDragComponentId}
+                    >
+                      {orderedComponents.map((component) => {
                         const ComponentIcon = getItemIcon(component.blockType);
-                        const colorClass = getComponentStyleColor(component.blockType);
 
                         return (
-                          <div
+                          <GenericSortableItem
+                            id={component.blockId}
                             key={component.blockId}
-                            className={`component-item d-flex align-items-center justify-content-between p-2 mb-2 border rounded ${colorClass}`}
-                            role="button"
-                            tabIndex={0}
+                            buttonVariant="secondary"
+                            componentStyle={{
+                              background: 'white',
+                              borderRadius: '6px',
+                              marginBottom: '12px',
+                              boxShadow: '0px 1px 5px rgba(173, 173, 173, 0.4)',
+                            }}
+                            actionStyle={{
+                              borderRadius: '6px 6px 0px 0px',
+                              padding: '12px 16px',
+                            }}
+                            isClickable
                             onClick={() => handleComponentClick(component.blockId)}
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
                                 handleComponentClick(component.blockId);
                               }
                             }}
-                          >
-                            <div className="d-flex align-items-center component-info">
-                              <Icon src={ComponentIcon} className="mr-2 text-dark" />
-                              <span className="component-name">{component.displayName}</span>
-                            </div>
-                            <IconButtonWithTooltip
-                              className="component-card-button-icon btn-icon btn-icon-primary btn-icon-md"
-                              data-testid="component-edit-button"
-                              alt={intl.formatMessage(messages.editComponent)}
-                              tooltipContent={<div>{intl.formatMessage(messages.editComponent)}</div>}
-                              iconAs={EditIcon}
-                              onClick={(e) => handleComponentEdit(e, component.blockType, component.blockId)}
-                            />
-                          </div>
+                            actions={(
+                              <>
+                                <Icon src={ComponentIcon} className="mr-2 text-dark" />
+                                <span className="flex-grow-1">{component.displayName}</span>
+                                <IconButtonWithTooltip
+                                  className="component-card-button-icon btn-icon btn-icon-primary btn-icon-md"
+                                  data-testid="component-edit-button"
+                                  alt={intl.formatMessage(messages.editComponent)}
+                                  tooltipContent={<div>{intl.formatMessage(messages.editComponent)}</div>}
+                                  iconAs={EditIcon}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleComponentEdit(e, component.blockType, component.blockId);
+                                  }}
+                                />
+                              </>
+                            )}
+                          />
                         );
                       })}
-                    </div>
+                    </DraggableList>
                   );
                 }
                 return (

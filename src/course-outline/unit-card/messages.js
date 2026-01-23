@@ -21,6 +21,21 @@ const messages = defineMessages({
     defaultMessage: 'Edit component',
     description: 'Label for the button to edit a component',
   },
+  legacyEditModalTitle: {
+    id: 'course-authoring.course-outline.unit.legacy-edit-modal-title',
+    defaultMessage: 'Edit component',
+    description: 'Title for the legacy component edit modal',
+  },
+  componentReorderError: {
+    id: 'course-authoring.course-outline.unit.component-reorder-error',
+    defaultMessage: 'Failed to save component order',
+    description: 'Error message shown when component reordering fails',
+  },
+  componentSaveError: {
+    id: 'course-authoring.course-outline.unit.component-save-error',
+    defaultMessage: 'Failed to save component',
+    description: 'Error message shown when component save fails',
+  },
 });
 
 export default messages;

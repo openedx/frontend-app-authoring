@@ -16,6 +16,25 @@
     background-color: var(--pgn-color-light-100);
     border-top: 1px solid var(--pgn-color-light-400);
 
+    .pgn__card {
+      align-items: stretch;
+
+      header,
+      .pgn__action-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+
+        >span.flex-grow-1 {
+          min-width: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 80%;
+        }
+      }
+    }
+
     .components-list {
       .component-item {
         background-color: var(--pgn-color-white);
