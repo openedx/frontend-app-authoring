@@ -1,5 +1,10 @@
 import MockAdapter from 'axios-mock-adapter';
-import { render, waitFor, within } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
@@ -76,7 +81,7 @@ describe('<MoveModal />', () => {
   it('renders component properly', async () => {
     const user = userEvent.setup();
     const { getByText, getByRole, getByTestId } = renderComponent();
-    const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
+    const breadcrumbs: HTMLElement = screen.getByLabelText('Course Outline breadcrumb');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     expect(getByText(messages.moveModalTitle.defaultMessage.replace(' {displayName}', ''))).toBeInTheDocument();
@@ -96,7 +101,7 @@ describe('<MoveModal />', () => {
   it('correctly navigates through the structure list', async () => {
     const user = userEvent.setup();
     const { getByText, getByRole, getByTestId } = renderComponent();
-    const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
+    const breadcrumbs: HTMLElement = screen.getByLabelText('Course Outline breadcrumb');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     expect(
@@ -145,7 +150,7 @@ describe('<MoveModal />', () => {
   it('correctly navigates using breadcrumbs', async () => {
     const user = userEvent.setup();
     const { getByRole, findByRole, getByTestId } = renderComponent();
-    const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
+    const breadcrumbs: HTMLElement = screen.getByLabelText('Course Outline breadcrumb');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     await user.click(await findByRole('button', { name: new RegExp(sections[1].displayName, 'i') }));

@@ -44,7 +44,6 @@ const MoveModal: FC<IUseMoveModalParams> = ({
   const renderBreadcrumbs = useCallback(() => (
     <Breadcrumb
       ariaLabel={intl.formatMessage(messages.moveModalBreadcrumbsLabel)}
-      data-testid="move-xblock-modal-breadcrumbs"
       isMobile={isExtraSmall}
       links={breadcrumbs.slice(0, -1).map((breadcrumb, index) => (
         { label: breadcrumb, 'data-parent-index': index }
