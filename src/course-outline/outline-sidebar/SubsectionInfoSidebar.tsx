@@ -9,13 +9,13 @@ import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 
-import messages from './messages';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
-import { LibraryReferenceCard } from './LibraryReferenceCard';
-import { PublishButon } from './PublishButon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { LibraryReferenceCard } from './LibraryReferenceCard';
+import { PublishButon } from './PublishButon';
+import messages from './messages';
 
 interface Props {
   subsectionId: string;
@@ -66,16 +66,16 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const { selectedContainerState } = useOutlineSidebarContext();
-  const { openPublishModal  } = useCourseAuthoringContext();
+  const { openPublishModal } = useCourseAuthoringContext();
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
       openPublishModal({
         value: subsectionData,
         sectionId: selectedContainerState?.sectionId,
-      })
+      });
     }
-  }
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -105,4 +105,4 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
       </Tabs>
     </>
   );
-}
+};

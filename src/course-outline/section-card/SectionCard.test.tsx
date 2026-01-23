@@ -6,7 +6,7 @@ import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import SectionCard from './SectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
+import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -99,11 +99,9 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     index={1}
     canMoveItem={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenHighlightsModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
     isSectionsExpanded
     isSelfPaced={false}
@@ -332,7 +330,7 @@ describe('<SectionCard />', () => {
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
-      component: OutlineInfoSidebar,
+      component: CourseInfoSidebar,
       icon: Info,
       title: '',
     };
@@ -354,6 +352,7 @@ describe('<SectionCard />', () => {
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
       }));
     setConfig({
       ...getConfig(),

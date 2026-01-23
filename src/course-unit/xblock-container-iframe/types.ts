@@ -58,7 +58,7 @@ export type AccessManagedXBlockDataTypes = {
   ancestorHasStaffLock?: boolean;
   isPrereq?: boolean;
   prereqs?: XBlockPrereqs[];
-  prereq?: number;
+  prereq?: string;
   prereqMinScore?: number;
   prereqMinCompletion?: number;
   releasedToStudents?: boolean;

@@ -9,9 +9,9 @@ import {
 import { useToggle } from '@openedx/paragon';
 
 import { useEscapeClick, useStateWithUrlSearchParam } from '@src/hooks';
-import { isOutlineNewDesignEnabled } from '../utils';
 import { SelectionState } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
@@ -36,6 +36,7 @@ interface OutlineSidebarContextData {
   toggle: () => void;
   selectedContainerState?: SelectionState;
   openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  clearSelection: () => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
@@ -91,7 +92,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const openContainerInfoSidebar = useCallback((
     containerId: string,
     subsectionId?: string,
-    sectionId?: string
+    sectionId?: string,
   ) => {
     if (isOutlineNewDesignEnabled()) {
       setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });

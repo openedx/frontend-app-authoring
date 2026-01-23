@@ -10,9 +10,11 @@ export const OutlineAlignSidebar = () => {
   const { courseId, currentSelection } = useCourseAuthoringContext();
   const { selectedContainerState } = useOutlineSidebarContext();
 
-  const sidebarContentId = useMemo(() => {
-    return currentSelection?.currentId || selectedContainerState?.currentId || courseId
-  }, [currentSelection, selectedContainerState, courseId]);
+  const sidebarContentId = useMemo(() => currentSelection?.currentId || selectedContainerState?.currentId || courseId, [
+    currentSelection,
+    selectedContainerState,
+    courseId,
+  ]);
 
   const { data: contentData } = useContentData(sidebarContentId);
 

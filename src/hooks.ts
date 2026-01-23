@@ -215,7 +215,6 @@ export function useStickyState<T>(
   return [value, setValue];
 }
 
-
 export function useToggleWithValue<T>(defaultValue?: T): [
   isDefined: boolean, value: T | undefined, define: ((val: T) => void), undefine: () => void,
 ] {

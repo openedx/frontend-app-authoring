@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
@@ -9,6 +9,8 @@ import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   resetScrollField,
@@ -49,11 +51,16 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
-  const { handleAddSection, setCurrentSelection, currentSelection } = useCourseAuthoringContext();
+  const {
+    handleAddSection,
+    setCurrentSelection,
+    currentSelection,
+    currentUnlinkModalData,
+    closeUnlinkModal,
+  } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const {
@@ -146,11 +153,27 @@ const useCourseOutline = ({ courseId }) => {
   const handleConfigureModalClose = () => {
     closeConfigureModal();
     // reset the currentSelection?.current so the ConfigureModal's state is also reset
-    setCurrentSelection(undefined)
+    setCurrentSelection(undefined);
   };
 
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
+  /** Handle the submit of the item unlinking XBlock from library counterpart. */
+  const handleUnlinkItemSubmit = useCallback(async () => {
+    // istanbul ignore if: this should never happen
+    if (!currentUnlinkModalData) {
+      return;
+    }
+
+    await unlinkDownstream(currentUnlinkModalData.value.id, {
+      onSuccess: () => {
+        closeUnlinkModal();
+      },
+    });
+  }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
+
   const handleConfigureItemSubmit = (...arg) => {
-    const category = getBlockType(currentSelection.currentId)
+    const category = getBlockType(currentSelection.currentId);
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
         dispatch(configureCourseSectionQuery(currentSelection?.sectionId, ...arg));
@@ -168,7 +191,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleDeleteItemSubmit = () => {
-    const category = getBlockType(currentSelection.currentId)
+    const category = getBlockType(currentSelection.currentId);
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
         dispatch(deleteCourseSectionQuery(currentSelection?.currentId));
@@ -201,7 +224,11 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(currentSelection?.currentId, currentSelection?.subsectionId, currentSelection?.sectionId));
+    dispatch(duplicateUnitQuery(
+      currentSelection?.currentId,
+      currentSelection?.subsectionId,
+      currentSelection?.sectionId,
+    ));
   };
 
   const handleVideoSharingOptionChange = (value) => {
@@ -321,6 +348,7 @@ const useCourseOutline = ({ courseId }) => {
     handleUnitDragAndDrop,
     errors,
     resetScrollState,
+    handleUnlinkItemSubmit,
   };
 };
 

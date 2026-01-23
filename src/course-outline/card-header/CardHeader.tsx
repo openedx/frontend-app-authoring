@@ -25,14 +25,14 @@ import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
+import { courseOutlineQueryKeys, useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useQueryClient } from '@tanstack/react-query';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
-import { courseOutlineQueryKeys, useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface CardHeaderProps {
   title: string;
@@ -134,7 +134,7 @@ const CardHeader = ({
   const onEditClick = () => {
     onClickMenuButton();
     openForm();
-  }
+  };
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
