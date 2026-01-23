@@ -9,12 +9,12 @@ import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 
-import messages from './messages';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import messages from './messages';
 import { LibraryReferenceCard } from './LibraryReferenceCard';
 import { PublishButon } from './PublishButon';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface Props {
   sectionId: string;
@@ -64,16 +64,16 @@ export const SectionSidebar = ({ sectionId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
-  const { openPublishModal  } = useCourseAuthoringContext();
+  const { openPublishModal } = useCourseAuthoringContext();
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {
       openPublishModal({
         value: sectionData,
         sectionId: sectionData.id,
-      })
+      });
     }
-  }
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -103,4 +103,4 @@ export const SectionSidebar = ({ sectionId }: Props) => {
       </Tabs>
     </>
   );
-}
+};

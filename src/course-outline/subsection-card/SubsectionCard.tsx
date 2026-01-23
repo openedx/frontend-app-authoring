@@ -26,8 +26,8 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import messages from './messages';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import messages from './messages';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -72,7 +72,9 @@ const SubsectionCard = ({
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
+  const {
+    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);

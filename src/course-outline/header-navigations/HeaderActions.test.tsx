@@ -3,9 +3,9 @@ import {
   fireEvent, initializeMocks, render, screen,
 } from '@src/testUtils';
 
+import { OutlineSidebarProvider } from '@src/course-outline';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
-import { OutlineSidebarProvider } from '@src/course-outline';
 
 const headerNavigationsActions = {
   lmsLink: '',

@@ -9,13 +9,13 @@ import {
 } from '@openedx/paragon';
 import { Formik } from 'formik';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useHelpUrls } from '../../help-urls/hooks';
 import FormikControl from '../../generic/FormikControl';
 import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 const HighlightsModal = ({
   isOpen,

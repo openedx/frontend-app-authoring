@@ -24,8 +24,8 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import messages from './messages';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import messages from './messages';
 
 interface SectionCardProps {
   section: XBlock,
@@ -64,7 +64,9 @@ const SectionCard = ({
   const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const { courseId, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
+  const {
+    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   // Set initialData state from course outline and subsequently depend on its own state
   const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
