@@ -40,7 +40,7 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import { useCourseUnit, useScrollToLastPosition } from './hooks';
+import { useCourseUnit, useHandleCreateNewCourseXBlock, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
@@ -200,7 +200,6 @@ const CourseUnit = () => {
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
-    handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
@@ -213,6 +212,8 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
+
+  const handleCreateNewCourseXBlock = useHandleCreateNewCourseXBlock({ blockId });
 
   const readOnly = !!courseUnit.readOnly;
 

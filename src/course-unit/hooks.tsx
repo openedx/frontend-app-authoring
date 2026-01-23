@@ -7,6 +7,7 @@ import { useToggle } from '@openedx/paragon';
 import { camelCaseObject } from '@edx/frontend-platform/utils';
 
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { DeprecatedReduxState } from '@src/store';
 import { RequestStatus } from '@src/data/constants';
 import { useClipboard } from '@src/generic/clipboard';
 import { useEventListener } from '@src/generic/hooks';
@@ -45,7 +46,10 @@ import {
   updateQueryPendingStatus,
 } from './data/slice';
 
-export const useCourseUnit = ({ courseId, blockId }) => {
+export const useCourseUnit = ({
+  courseId,
+  blockId,
+}: { courseId: string, blockId: string }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
@@ -61,7 +65,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const staticFileNotices = useSelector(getStaticFileNotices);
   const navigate = useNavigate();
-  const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
+  const isTitleEditFormOpen = useSelector((state: DeprecatedReduxState) => state.courseUnit.isTitleEditFormOpen);
   const canEdit = useSelector(getCanEdit);
   const courseOutlineInfo = useSelector(getCourseOutlineInfo);
   const movedXBlockParams = useSelector(getMovedXBlockParams);
@@ -131,10 +135,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       }
     }
   };
-
-  const handleCreateNewCourseXBlock = (body, callback) => (
-    dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
-  );
 
   const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
 
@@ -266,7 +266,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
-    handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
@@ -282,6 +281,15 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 };
 
+export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string }) => {
+  const dispatch = useDispatch();
+  const { sendMessageToIframe } = useIframe();
+
+  return (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
+    dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
+  );
+};
+
 /**
  * Custom hook that restores the scroll position from `localStorage` after a page reload.
  * It listens for a `plugin.resize` message event and scrolls the window to the saved position
@@ -291,7 +299,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
  * The key used to store the last scroll position in `localStorage`.
  */
 export const useScrollToLastPosition = (storageKey = 'createXBlockLastYPosition') => {
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [hasLastPosition, setHasLastPosition] = useState(() => !!localStorage.getItem(storageKey));
 
   const scrollToLastPosition = useCallback(() => {
@@ -314,7 +322,6 @@ export const useScrollToLastPosition = (storageKey = 'createXBlockLastYPosition'
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
       timeoutRef.current = setTimeout(scrollToLastPosition, 1000);
     }
   }, [scrollToLastPosition]);

@@ -97,5 +97,10 @@ export const ICON_BORDER_STYLE_COLOR_MAP = {
   subsection: 'icon-with-border-sequential',
   chapter: 'icon-with-border-chapter',
   section: 'icon-with-border-chapter',
+  html: 'icon-with-border-text',
+  video: 'icon-with-border-video',
+  problem: 'icon-with-border-default',
+  'drag-and-drop-v2': 'icon-with-border-default',
+  openassessment: 'icon-with-border-default',
   other: 'icon-with-border-other',
 };

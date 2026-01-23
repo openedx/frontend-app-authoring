@@ -1,0 +1,294 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import {
+  Stack, StandardModal, Tab, Tabs, useToggle,
+} from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { getItemIcon } from '@src/generic/block-type-utils';
+import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
+import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
+import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
+import { ContentType } from '@src/library-authoring/routes';
+import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import EditorPage from '@src/editors/EditorPage';
+import VideoSelectorPage from '@src/editors/VideoSelectorPage';
+import { useIframe } from '@src/generic/hooks/context/hooks';
+import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
+import { useUnitSidebarContext } from './UnitSidebarContext';
+import messages from './messages';
+import { useHandleCreateNewCourseXBlock } from '../hooks';
+import { messageTypes } from '../constants';
+import { fetchCourseSectionVerticalData } from '../data/thunk';
+
+/**
+ * Tab of the add sidebar to add new content to the unit
+ */
+const AddNewContent = () => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const { sendMessageToIframe } = useIframe();
+  const { blockId } = useParams();
+  const { courseId } = useCourseAuthoringContext();
+  const courseUnit = useSelector(getCourseUnitData);
+  const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
+  const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
+  const [blockType, setBlockType] = useState<string | null>(null);
+  const [newBlockId, setNewBlockId] = useState<string | null>(null);
+  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
+  const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
+
+  const templatesByType = componentTemplates.reduce((acc, item) => {
+    let result = item;
+    // (1) All types have at least one template of the same type.
+    //     In that case, it's left empty to avoid rendering that single template.
+    // (2) The templates for the problem are not the ones required for this component.
+    if (item.templates.length === 1 || item.type === 'problem') {
+      result = {
+        ...item,
+        templates: [],
+      };
+    }
+    return {
+      ...acc,
+      [item.type]: result,
+    };
+  }, {});
+
+  if (courseId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing courseId.');
+  }
+
+  if (blockId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing blockId.');
+  }
+
+  const handleCreateXBlock = useHandleCreateNewCourseXBlock({ blockId });
+
+  const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
+    closeXBlockEditorModal();
+    // closeVideoSelectorModal();
+    sendMessageToIframe(messageTypes.refreshXBlock, null);
+    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+  }, [closeXBlockEditorModal, sendMessageToIframe]);
+
+  const onXBlockCancel = useCallback(/* istanbul ignore next */ () => {
+    closeXBlockEditorModal();
+    // closeVideoSelectorModal();
+    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+  }, [closeXBlockEditorModal, sendMessageToIframe, blockId, sequenceId]);
+
+  const handleSelection = useCallback((type: string, boilerplateName?: string) => {
+    switch (type) {
+      case COMPONENT_TYPES.dragAndDrop:
+        handleCreateXBlock({ type, parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.problem:
+        handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
+          setBlockType(type);
+          setNewBlockId(locator);
+          showXBlockEditorModal();
+        });
+        break;
+      case COMPONENT_TYPES.video:
+        handleCreateXBlock(
+          { type, parentLocator: blockId },
+          /* istanbul ignore next */ ({ locator }) => {
+            setBlockType(type);
+            setNewBlockId(locator);
+            if (useVideoGalleryFlow) {
+              showVideoSelectorModal();
+            } else {
+              showXBlockEditorModal();
+            }
+          },
+        );
+        break;
+      case COMPONENT_TYPES.openassessment:
+        handleCreateXBlock({ boilerplate: boilerplateName, category: type, parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.html:
+        handleCreateXBlock({
+          type,
+          boilerplate: boilerplateName,
+          parentLocator: blockId,
+        }, /* istanbul ignore next */ ({ locator }) => {
+          setBlockType(type);
+          setNewBlockId(locator);
+          showXBlockEditorModal();
+        });
+        break;
+      default:
+    }
+  }, [blockId]);
+
+  const blockTypes = [
+    {
+      blockType: 'html',
+      name: intl.formatMessage(messages.sidebarAddTextButton),
+    },
+    {
+      blockType: 'video',
+      name: intl.formatMessage(messages.sidebarAddVideoButton),
+    },
+    {
+      blockType: 'problem',
+      name: intl.formatMessage(messages.sidebarAddProblemButton),
+    },
+    {
+      blockType: 'drag-and-drop-v2',
+      name: intl.formatMessage(messages.sidebarAddDragDropButton),
+    },
+    {
+      blockType: 'openassessment',
+      name: intl.formatMessage(messages.sidebarAddOpenResponseButton),
+    },
+  ];
+
+  return (
+    <>
+      <Stack gap={2}>
+        {blockTypes.map((blockTypeObj) => (
+          <BlockCardButton
+            {...blockTypeObj}
+            templates={templatesByType[blockTypeObj.blockType].templates}
+            onClick={() => handleSelection(blockTypeObj.blockType)}
+            onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}
+          />
+        ))}
+      </Stack>
+      <StandardModal
+        title={intl.formatMessage(messages.videoPickerModalTitle)}
+        isOpen={isVideoSelectorModalOpen}
+        onClose={closeVideoSelectorModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <div className="selector-page">
+          <VideoSelectorPage
+            blockId={newBlockId}
+            courseId={courseId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onCancel={closeVideoSelectorModal}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+          />
+        </div>
+      </StandardModal>
+      {isXBlockEditorModalOpen && courseId && blockType && newBlockId && (
+        <div className="editor-page">
+          <EditorPage
+            courseId={courseId}
+            blockType={blockType}
+            blockId={newBlockId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onClose={onXBlockCancel}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+/**
+ * Tab of the add sidebar to add a content library in the unit
+ *
+ * Uses `ComponentPicker`
+ */
+const AddLibraryContent = () => {
+  const { blockId } = useParams();
+
+  if (blockId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing blockId.');
+  }
+
+  const handleCreateXBlock = useHandleCreateNewCourseXBlock({ blockId });
+
+  const handleSelection = useCallback((selection: SelectedComponent) => {
+    handleCreateXBlock({
+      type: COMPONENT_TYPES.libraryV2,
+      category: selection.blockType,
+      parentLocator: blockId,
+      libraryContentKey: selection.usageKey,
+    });
+  }, [blockId]);
+
+  return (
+    <MultiLibraryProvider>
+      <ComponentPicker
+        showOnlyPublished
+        extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+        visibleTabs={[ContentType.home]}
+        FiltersComponent={SidebarFilters}
+        onComponentSelected={handleSelection}
+      />
+    </MultiLibraryProvider>
+  );
+};
+
+/**
+ * Main component of the Add Sidebar for the unit page
+ */
+export const AddSidebar = () => {
+  const intl = useIntl();
+  const unitData = useSelector(getCourseUnitData);
+
+  const {
+    currentTabKey,
+    setCurrentTabKey,
+  } = useUnitSidebarContext();
+
+  useEffect(() => {
+    if (currentTabKey === undefined) {
+      // Set default Tab key
+      setCurrentTabKey('add-new');
+    }
+  }, []);
+
+  return (
+    <div>
+      <SidebarTitle
+        title={unitData.displayName}
+        icon={getItemIcon('unit')}
+      />
+      <SidebarContent>
+        <SidebarSection>
+          <Tabs
+            id="unit-add-sidebar"
+            className="my-2 d-flex justify-content-around"
+            activeKey={currentTabKey}
+            onSelect={setCurrentTabKey}
+          >
+            <Tab
+              eventKey="add-new"
+              title={intl.formatMessage(messages.sidebarAddNewTab)}
+            >
+              <div className="mt-4">
+                <AddNewContent />
+              </div>
+            </Tab>
+            <Tab
+              eventKey="add-existing"
+              title={intl.formatMessage(messages.sidebarAddExistingTab)}
+            >
+              <div className="mt-4" style={{ width: '600px' }}>
+                <AddLibraryContent />
+              </div>
+            </Tab>
+          </Tabs>
+        </SidebarSection>
+      </SidebarContent>
+    </div>
+  );
+};

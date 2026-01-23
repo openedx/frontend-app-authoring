@@ -1,9 +1,10 @@
-import { Info } from '@openedx/paragon/icons';
+import { Info, Plus } from '@openedx/paragon/icons';
 import { SidebarPage } from '@src/generic/sidebar';
 import messages from './messages';
 import { UnitInfoSidebar } from './unit-info/UnitInfoSidebar';
+import { AddSidebar } from './AddSidebar';
 
-export type UnitSidebarPageKeys = 'info';
+export type UnitSidebarPageKeys = 'info' | 'add';
 
 /**
  * Sidebar pages for the unit sidebar
@@ -16,5 +17,10 @@ export const UNIT_SIDEBAR_PAGES: Record<UnitSidebarPageKeys, SidebarPage> = {
     component: UnitInfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
+  },
+  add: {
+    component: AddSidebar,
+    icon: Plus,
+    title: messages.sidebarButtonAdd,
   },
 };

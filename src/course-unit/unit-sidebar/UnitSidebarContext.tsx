@@ -11,7 +11,7 @@ interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
   setCurrentPageKey: (pageKey: UnitSidebarPageKeys) => void;
   currentTabKey?: string;
-  setCurrentTabKey: (tabKey: string) => void;
+  setCurrentTabKey: (tabKey: string | undefined) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;

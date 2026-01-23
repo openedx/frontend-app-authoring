@@ -258,6 +258,33 @@
   }
 }
 
+.icon-with-border-text {
+  background-color: white;
+  border: 1px solid #9747FF;
+
+  .pgn__icon {
+    color: #9747FF;
+  }
+}
+
+.icon-with-border-video {
+  background-color: white;
+  border: 1px solid #358F0A;
+
+  .pgn__icon {
+    color: #358F0A;
+  }
+}
+
+.icon-with-border-other {
+  background-color: white;
+  border: 1px solid var(--pgn-color-gray-700);
+
+  .pgn__icon {
+    color: var(--pgn-color-gray-700);
+  }
+}
+
 .icon-with-border-default {
   background-color: white;
   border: 1px solid #005C9E;
