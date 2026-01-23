@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Tab, Tabs, useToggle } from '@openedx/paragon';
-import { SchoolOutline, Tag } from '@openedx/paragon/icons';
+import { Button, Stack, Tab, Tabs, useToggle } from '@openedx/paragon';
+import { Expand, OpenInFull, SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
@@ -18,6 +18,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { Link } from 'react-router-dom';
 
 interface Props {
   unitId: string;
@@ -68,7 +69,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
   const [tab, setTab] = useState<'preview'| 'info' | 'settings'>('info');
   const { data: unitData, isLoading } = useCourseItemData(unitId);
   const { selectedContainerState } = useOutlineSidebarContext();
-  const { openPublishModal, courseId } = useCourseAuthoringContext();
+  const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && unitData?.hasChanges) {
@@ -89,7 +90,20 @@ export const UnitSidebar = ({ unitId }: Props) => {
         title={unitData?.displayName || ''}
         icon={SchoolOutline}
       />
-      {unitData?.hasChanges && <PublishButon onClick={handlePublish} />}
+      <Stack direction='horizontal' gap={1} className="mx-2">
+        <Button
+          variant="outline-primary"
+          as={Link}
+          to={getUnitUrl(unitId)}
+          iconBefore={OpenInFull}
+          block={!unitData?.hasChanges}
+        >
+          {intl.formatMessage(messages.openUnitPage)}
+        </Button>
+        {unitData?.hasChanges && (
+          <PublishButon onClick={handlePublish} />
+        )}
+      </Stack>
       <Tabs
         variant="tabs"
         className="my-2 d-flex justify-content-around"
