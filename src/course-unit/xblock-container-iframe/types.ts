@@ -37,6 +37,7 @@ export interface XBlockContainerIframeProps {
   };
   courseVerticalChildren: Array<XBlockTypes>;
   handleConfigureSubmit: (XBlockId: string, ...args: any[]) => void;
+  readonly?: boolean;
 }
 
 export type AccessManagedXBlockDataTypes = {
