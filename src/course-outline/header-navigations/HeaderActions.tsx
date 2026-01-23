@@ -11,7 +11,6 @@ import { OutlinePageErrors, XBlockActions } from '@src/data/types';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 import messages from './messages';
-import { getOutlineSidebarPages } from '../outline-sidebar/sidebarPages';
 
 export interface HeaderActionsProps {
   actions: {
@@ -28,7 +27,6 @@ const HeaderActions = ({
 }: HeaderActionsProps) => {
   const intl = useIntl();
   const { lmsLink } = actions;
-  const sidebarPages = getOutlineSidebarPages();
 
   const { setCurrentPageKey } = useOutlineSidebarContext();
 
