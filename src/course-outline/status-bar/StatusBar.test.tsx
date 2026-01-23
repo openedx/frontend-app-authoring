@@ -20,7 +20,15 @@ const statusBarData: CourseOutlineStatusBar = {
   highlightsEnabledForMessaging: true,
   videoSharingEnabled: true,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
+  hasChanges: false,
 };
+
+jest.mock('@src/course-libraries/data/apiHooks', () => ({
+  useEntityLinksSummaryByDownstreamContext: () => ({
+    data: [{ readyToSyncCount: 2 }],
+    isLoading: false,
+  }),
+}));
 
 const renderComponent = (props?: Partial<StatusBarProps>) => render(
   <StatusBar
@@ -72,5 +80,37 @@ describe('<StatusBar />', () => {
     renderComponent({ isLoading: true });
 
     expect(await screen.findByTestId('redux-provider')).toBeEmptyDOMElement();
+  });
+
+  it('renders unpublished badge', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        hasChanges: true,
+      },
+    });
+    expect(await screen.findByText('Unpublished Changes')).toBeInTheDocument();
+  });
+
+  it('renders library updates', async () => {
+    renderComponent();
+    expect(await screen.findByText('2 Library Updates')).toBeInTheDocument();
+  });
+
+  it('hides checklist if completed', async () => {
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        checklist: {
+          totalCourseLaunchChecks: 5,
+          completedCourseLaunchChecks: 5,
+          totalCourseBestPracticesChecks: 4,
+          completedCourseBestPracticesChecks: 4,
+        },
+      },
+    });
+    // wait for render
+    expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
+    expect(screen.queryByText(`9/9 ${messages.checklistCompleted.defaultMessage}`)).toBeNull();
   });
 });

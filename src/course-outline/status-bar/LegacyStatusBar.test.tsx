@@ -50,6 +50,7 @@ const statusBarData: CourseOutlineStatusBar = {
   highlightsEnabledForMessaging: true,
   videoSharingEnabled: true,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
+  hasChanges: true,
 };
 
 const queryClient = new QueryClient();
