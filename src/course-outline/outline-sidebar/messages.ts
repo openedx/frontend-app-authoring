@@ -135,6 +135,11 @@ const messages = defineMessages({
     defaultMessage: 'Subsection Content Summary',
     description: 'Title of the summary section in the subsection info sidebar',
   },
+  unitContentSummaryText: {
+    id: 'course-authoring.course-outline.sidebar.unit.content-summary-text',
+    defaultMessage: 'Unit Content Summary',
+    description: 'Title of the summary section in the unit info sidebar',
+  },
   publishContainerButton: {
     id: 'course-authoring.course-outline.sidebar.generic.publish.button',
     defaultMessage: 'Publish Changes',
@@ -145,15 +150,20 @@ const messages = defineMessages({
     defaultMessage: '(Draft)',
     description: 'Draft text in publish button',
   },
+  previewTabText: {
+    id: 'course-authoring.course-outline.sidebar.generic.preview.tab.text',
+    defaultMessage: 'Preview',
+    description: 'Preview tab title in container sidebar',
+  },
   infoTabText: {
     id: 'course-authoring.course-outline.sidebar.generic.info.tab.text',
     defaultMessage: 'Details',
-    description: 'Information tab title in section sidebar',
+    description: 'Information tab title in container sidebar',
   },
   settingsTabText: {
     id: 'course-authoring.course-outline.sidebar.generic.info.settings.text',
     defaultMessage: 'Settings',
-    description: 'Settings tab title in section sidebar',
+    description: 'Settings tab title in container sidebar',
   },
   libraryReferenceCardText: {
     id: 'course-authoring.course-outline.sidebar.library.reference.card.text',
