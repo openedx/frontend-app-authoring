@@ -140,6 +140,11 @@ const messages = defineMessages({
     defaultMessage: 'Unit Content Summary',
     description: 'Title of the summary section in the unit info sidebar',
   },
+  openUnitPage: {
+    id: 'course-authoring.course-outline.sidebar.unit.open-btn-text',
+    defaultMessage: 'Open',
+    description: 'Button to open unit page from sidebar',
+  },
   publishContainerButton: {
     id: 'course-authoring.course-outline.sidebar.generic.publish.button',
     defaultMessage: 'Publish Changes',
