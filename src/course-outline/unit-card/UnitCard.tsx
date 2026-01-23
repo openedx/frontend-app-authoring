@@ -128,7 +128,7 @@ const UnitCard = ({
   });
   const borderStyle = getItemStatusBorder(unitStatus);
 
-  const handleClickMenuButton = () => {
+  const selectAndTrigger = () => {
     setCurrentSelection({
       currentId: unit.id,
       subsectionId: subsection.id,
@@ -158,7 +158,7 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id, section.id);
+      openContainerInfoSidebar(unit.id, subsection.id, section.id);
     }
   }, [openContainerInfoSidebar]);
 
@@ -244,7 +244,7 @@ const UnitCard = ({
             status={unitStatus}
             hasChanges={hasChanges}
             cardId={id}
-            onClickMenuButton={handleClickMenuButton}
+            onClickMenuButton={selectAndTrigger}
             onClickPublish={() => openPublishModal({ value: unit, sectionId: section.id })}
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}

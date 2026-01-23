@@ -2,23 +2,19 @@ import { SchoolOutline } from '@openedx/paragon/icons';
 import { ContentTagsDrawer } from '@src/content-tags-drawer';
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseDetails } from '@src/data/apiHooks';
 import { SidebarTitle } from '@src/generic/sidebar';
+import { useMemo } from 'react';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 export const OutlineAlignSidebar = () => {
-  const { courseId } = useCourseAuthoringContext();
-  const { currentContainerId } = useOutlineSidebarContext();
+  const { courseId, currentSelection } = useCourseAuthoringContext();
+  const { selectedContainerState } = useOutlineSidebarContext();
 
-  const sidebarContentId = currentContainerId || courseId;
+  const sidebarContentId = useMemo(() => {
+    return currentSelection?.currentId || selectedContainerState?.currentId || courseId
+  }, [currentSelection, selectedContainerState, courseId]);
 
-  const {
-    data: courseData,
-  } = useCourseDetails(courseId);
-
-  const {
-    data: contentData,
-  } = useContentData(currentContainerId);
+  const { data: contentData } = useContentData(sidebarContentId);
 
   return (
     <div>
@@ -26,7 +22,7 @@ export const OutlineAlignSidebar = () => {
         title={
           contentData && 'displayName' in contentData
             ? contentData.displayName
-            : courseData?.name || ''
+            : contentData?.courseDisplayNameWithDefault || ''
         }
         icon={SchoolOutline}
       />

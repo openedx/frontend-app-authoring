@@ -8,7 +8,7 @@ import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/Ou
 import { PreviewLibraryXBlockChanges } from "@src/course-unit/preview-changes";
 import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
 import { XBlock } from "@src/data/types";
-import { getBlockType, normalizeContainerType } from "@src/generic/key-utils";
+import { ContainerType, getBlockType, normalizeContainerType } from "@src/generic/key-utils";
 import { useToggleWithValue } from "@src/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
@@ -41,6 +41,27 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
     }
     openSyncModal(parentData);
   };
+
+  const handleGoToParent = () => {
+    // istanbul ignore: to satisfy checker
+    if (!upstreamInfo?.topLevelParentKey) {
+      return null;
+    }
+    const category = getBlockType(upstreamInfo.topLevelParentKey) as ContainerType;
+    if ([ContainerType.Chapter, ContainerType.Section].includes(category)) {
+      return openContainerInfoSidebar(
+        upstreamInfo.topLevelParentKey,
+        undefined,
+        upstreamInfo.topLevelParentKey,
+      )
+    }
+    // Only possible option is sequential or subsection
+    return openContainerInfoSidebar(
+      upstreamInfo.topLevelParentKey,
+      upstreamInfo.topLevelParentKey,
+      selectedContainerState?.sectionId
+    )
+  }
 
   if (!upstreamInfo?.topLevelParentKey) {
     return null;
@@ -87,9 +108,7 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
       <FormattedMessage {...messages.hasTopParentText} values={messageValues} />
       <Button
         variant='outline-primary'
-        onClick={() => {
-          return openContainerInfoSidebar(upstreamInfo.topLevelParentKey!)
-        }}
+        onClick={handleGoToParent}
       >
         <FormattedMessage {...messages.hasTopParentBtn} values={messageValues} />
       </Button>
