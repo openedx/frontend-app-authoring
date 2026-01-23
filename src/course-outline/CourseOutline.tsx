@@ -63,6 +63,7 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -163,7 +164,7 @@ const CourseOutline = () => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const currentItemData = currentSelection?.currentId;
+  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
   const itemCategory = currentItemData?.category;
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();

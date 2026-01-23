@@ -15,6 +15,7 @@ import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 const HighlightsModal = ({
   isOpen,
@@ -23,7 +24,8 @@ const HighlightsModal = ({
 }) => {
   const intl = useIntl();
   const { currentSelection } = useCourseAuthoringContext();
-  const { highlights = [], displayName } = currentSelection?.currentId || {};
+  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
+  const { highlights = [], displayName } = currentItemData || {};
   const initialFormValues = getHighlightsFormValues(highlights);
 
   const {
