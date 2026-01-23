@@ -8,7 +8,7 @@ import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/sel
 import { RequestStatus } from '@src/data/constants';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { ContainerType } from '@src/generic/key-utils';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   resetScrollField,
@@ -139,7 +139,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.currentId.id, dataToSend));
+    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.currentId, dataToSend));
 
     closeHighlightsModal();
   };
@@ -151,15 +151,16 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleConfigureItemSubmit = (...arg) => {
-    switch (currentSelection?.currentId.category) {
+    const category = getBlockType(currentSelection.currentId)
+    switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(configureCourseSectionQuery(currentSelection?.sectionId.id, ...arg));
+        dispatch(configureCourseSectionQuery(currentSelection?.sectionId, ...arg));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(configureCourseSubsectionQuery(currentSelection?.currentId.id, currentSelection?.sectionId.id, ...arg));
+        dispatch(configureCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(configureCourseUnitQuery(currentSelection?.currentId.id, currentSelection?.sectionId.id, ...arg));
+        dispatch(configureCourseUnitQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
         break;
       default:
         return;
@@ -168,39 +169,40 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleDeleteItemSubmit = () => {
-    switch (currentSelection?.currentId.category) {
+    const category = getBlockType(currentSelection.currentId)
+    switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(deleteCourseSectionQuery(currentSelection?.currentId.id));
+        dispatch(deleteCourseSectionQuery(currentSelection?.currentId));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(deleteCourseSubsectionQuery(currentSelection?.currentId.id, currentSelection?.sectionId.id));
+        dispatch(deleteCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
         dispatch(deleteCourseUnitQuery(
-          currentSelection?.currentId.id,
-          currentSelection?.subsectionId.id,
-          currentSelection?.sectionId.id,
+          currentSelection?.currentId,
+          currentSelection?.subsectionId,
+          currentSelection?.sectionId,
         ));
         break;
       default:
         return;
     }
-    if (selectedContainerState.currentId === currentSelection?.currentId.id) {
+    if (selectedContainerState.currentId === currentSelection?.currentId) {
       clearSelection();
     }
     closeDeleteModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateSectionQuery(currentSelection?.sectionId.id, courseStructure.id));
+    dispatch(duplicateSectionQuery(currentSelection?.sectionId, courseStructure.id));
   };
 
   const handleDuplicateSubsectionSubmit = () => {
-    dispatch(duplicateSubsectionQuery(currentSelection?.subsectionId.id, currentSelection?.sectionId.id));
+    dispatch(duplicateSubsectionQuery(currentSelection?.subsectionId, currentSelection?.sectionId));
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(currentSelection?.currentId.id, currentSelection?.subsectionId.id, currentSelection?.sectionId.id));
+    dispatch(duplicateUnitQuery(currentSelection?.currentId, currentSelection?.subsectionId, currentSelection?.sectionId));
   };
 
   const handleVideoSharingOptionChange = (value) => {
