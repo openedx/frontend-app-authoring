@@ -158,4 +158,4 @@ export type SelectionState = {
   currentId: string;
   sectionId?: string;
   subsectionId?: string;
-}
+};

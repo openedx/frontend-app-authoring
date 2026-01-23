@@ -1,18 +1,20 @@
-import { FormattedMessage } from "@edx/frontend-platform/i18n";
-import { Button, Card, Icon, Stack } from "@openedx/paragon";
-import { Cached, LinkOff, Newsstand } from "@openedx/paragon/icons";
-import { invalidateLinksQuery } from "@src/course-libraries/data/apiHooks";
-import { courseOutlineQueryKeys, useCourseItemData } from "@src/course-outline/data/apiHooks";
-import { fetchCourseSectionQuery } from "@src/course-outline/data/thunk";
-import { useOutlineSidebarContext } from "@src/course-outline/outline-sidebar/OutlineSidebarContext";
-import { PreviewLibraryXBlockChanges } from "@src/course-unit/preview-changes";
-import { useCourseAuthoringContext } from "@src/CourseAuthoringContext";
-import { XBlock } from "@src/data/types";
-import { ContainerType, getBlockType, normalizeContainerType } from "@src/generic/key-utils";
-import { useToggleWithValue } from "@src/hooks";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import {
+  Button, Card, Icon, Stack,
+} from '@openedx/paragon';
+import { Cached, LinkOff, Newsstand } from '@openedx/paragon/icons';
+import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { XBlock } from '@src/data/types';
+import { ContainerType, getBlockType, normalizeContainerType } from '@src/generic/key-utils';
+import { useToggleWithValue } from '@src/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import messages from './messages';
 
 interface SubProps {
@@ -53,15 +55,15 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
         upstreamInfo.topLevelParentKey,
         undefined,
         upstreamInfo.topLevelParentKey,
-      )
+      );
     }
     // Only possible option is sequential or subsection
     return openContainerInfoSidebar(
       upstreamInfo.topLevelParentKey,
       upstreamInfo.topLevelParentKey,
-      selectedContainerState?.sectionId
-    )
-  }
+      selectedContainerState?.sectionId,
+    );
+  };
 
   if (!upstreamInfo?.topLevelParentKey) {
     return null;
@@ -70,14 +72,14 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
   const messageValues = {
     parentType: normalizeContainerType(getBlockType(upstreamInfo.topLevelParentKey)),
     name: displayName,
-  }
+  };
 
   if (upstreamInfo.errorMessage) {
     return (
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentBrokenLinkText} values={messageValues} />
         <Button
-          variant='outline-primary'
+          variant="outline-primary"
           iconBefore={LinkOff}
           disabled={isPending}
           onClick={handleUnlinkClick}
@@ -93,7 +95,7 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.hasTopParentReadyToSyncText} values={messageValues} />
         <Button
-          variant='outline-primary'
+          variant="outline-primary"
           iconBefore={Cached}
           onClick={handleSyncClick}
         >
@@ -107,14 +109,14 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
     <Stack direction="vertical" gap={2}>
       <FormattedMessage {...messages.hasTopParentText} values={messageValues} />
       <Button
-        variant='outline-primary'
+        variant="outline-primary"
         onClick={handleGoToParent}
       >
         <FormattedMessage {...messages.hasTopParentBtn} values={messageValues} />
       </Button>
     </Stack>
   );
-}
+};
 
 const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
   const { upstreamInfo } = blockData;
@@ -122,7 +124,7 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
   const { openUnlinkModal } = useCourseAuthoringContext();
   const messageValues = {
     name: displayName,
-  }
+  };
 
   const handleUnlinkClick = () => {
     if (!selectedContainerState?.sectionId) {
@@ -140,7 +142,7 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentBrokenLinkText} values={messageValues} />
         <Button
-          variant='outline-primary'
+          variant="outline-primary"
           iconBefore={LinkOff}
           onClick={handleUnlinkClick}
         >
@@ -155,7 +157,7 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
       <Stack direction="vertical" gap={2}>
         <FormattedMessage {...messages.topParentReaadyToSyncText} values={messageValues} />
         <Button
-          variant='outline-primary'
+          variant="outline-primary"
           iconBefore={Cached}
           onClick={handleSyncClick}
         >
@@ -172,7 +174,7 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
   }
 
   return null;
-}
+};
 
 interface Props {
   itemId?: string;
@@ -248,6 +250,5 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
         />
       )}
     </div>
-  )
+  );
 };
-

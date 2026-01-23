@@ -8,7 +8,7 @@ import { Info } from '@openedx/paragon/icons';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
+import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -92,11 +92,8 @@ const renderComponent = (props?: object) => render(
     index={1}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    onEditSubmit={jest.fn()}
     onDuplicateSubmit={jest.fn()}
     isSelfPaced={false}
     isCustomRelativeDatesActive={false}
@@ -301,7 +298,7 @@ describe('<UnitCard />', () => {
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
-      component: OutlineInfoSidebar,
+      component: CourseInfoSidebar,
       icon: Info,
       title: '',
     };
@@ -323,6 +320,7 @@ describe('<UnitCard />', () => {
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
       }));
     setConfig({
       ...getConfig(),

@@ -1,8 +1,12 @@
 import { containerComparisonQueryKeys } from '@src/container-comparison/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 import { getCourseKey } from '@src/generic/key-utils';
-import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem, publishCourseItem } from './api';
+import {
+  skipToken, useMutation, useQuery, useQueryClient,
+} from '@tanstack/react-query';
+import {
+  createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem, publishCourseItem,
+} from './api';
 
 export const courseOutlineQueryKeys = {
   all: ['courseOutline'],
@@ -11,7 +15,7 @@ export const courseOutlineQueryKeys = {
    */
   course: (courseId?: string) => [...courseOutlineQueryKeys.all, courseId],
   courseItemId: (itemId?: string) => [
-    ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId): undefined),
+    ...courseOutlineQueryKeys.course(itemId ? getCourseKey(itemId) : undefined),
     itemId,
   ],
   courseDetails: (courseId?: string) => [
@@ -44,7 +48,7 @@ export const useCreateCourseBlock = (
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.parentLocator) });
       callback?.(data.locator, variables.parentLocator);
     },
-  })
+  });
 };
 
 export const useCourseItemData = (itemId?: string, initialData?: XBlock, enabled: boolean = true) => (
@@ -83,4 +87,3 @@ export const usePublishCourseItem = (sectionId?: string) => {
     },
   });
 };
-

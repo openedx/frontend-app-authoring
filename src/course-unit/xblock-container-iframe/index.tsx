@@ -216,7 +216,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleRefreshIframe,
   });
 
-  useIframeMessages(readonly ? {}: messageHandlers);
+  useIframeMessages(readonly ? {} : messageHandlers);
 
   return (
     <>

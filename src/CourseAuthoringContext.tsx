@@ -1,5 +1,7 @@
 import { getConfig } from '@edx/frontend-platform';
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import {
+  createContext, useContext, useMemo, useState,
+} from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { courseOutlineQueryKeys, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
@@ -7,19 +9,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addSection, addSubsection, updateSavingStatus } from '@src/course-outline/data/slice';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
-import { RequestStatus, RequestStatusType } from './data/constants';
-import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
-import { CourseDetailsData } from './data/api';
 import { useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
-import { useUnlinkDownstream } from '@src/generic/unlink-modal';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
 import { useQueryClient } from '@tanstack/react-query';
+import { CourseDetailsData } from './data/api';
+import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
+import { RequestStatus, RequestStatusType } from './data/constants';
 
 type ModalState = {
   value: XBlock;
   sectionId: string;
-}
+};
 
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
@@ -37,7 +37,6 @@ export type CourseAuthoringContextData = {
   currentUnlinkModalData?: ModalState;
   openUnlinkModal: (value: ModalState) => void;
   closeUnlinkModal: () => void;
-  handleUnlinkItemSubmit: () => Promise<void>;
   isPublishModalOpen: boolean;
   currentPublishModalData?: ModalState;
   openPublishModal: (value: ModalState) => void;
@@ -71,8 +70,18 @@ export const CourseAuthoringProvider = ({
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
   const { courseStructure } = useSelector(getOutlineIndexData);
   const { id: courseUsageKey } = courseStructure || {};
-  const [isUnlinkModalOpen, currentUnlinkModalData, openUnlinkModal, closeUnlinkModal] = useToggleWithValue<ModalState>();
-  const [isPublishModalOpen, currentPublishModalData, openPublishModal, closePublishModal] = useToggleWithValue<ModalState>();
+  const [
+    isUnlinkModalOpen,
+    currentUnlinkModalData,
+    openUnlinkModal,
+    closeUnlinkModal,
+  ] = useToggleWithValue<ModalState>();
+  const [
+    isPublishModalOpen,
+    currentPublishModalData,
+    openPublishModal,
+    closePublishModal,
+  ] = useToggleWithValue<ModalState>();
   /**
   * This will hold the state of current item that is being operated on,
   * For example:
@@ -90,23 +99,6 @@ export const CourseAuthoringProvider = ({
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
   };
-
-  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
-
-  /** Handle the submit of the item unlinking XBlock from library counterpart. */
-  const handleUnlinkItemSubmit = useCallback(async () => {
-    // istanbul ignore if: this should never happen
-    if (!currentUnlinkModalData) {
-      return;
-    }
-
-    await unlinkDownstream(currentUnlinkModalData.value.id, {
-      onSuccess: () => {
-        dispatch(fetchCourseSectionQuery([currentUnlinkModalData.sectionId]))
-        closeUnlinkModal();
-      },
-    });
-  }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal, fetchCourseSectionQuery]);
 
   /**
    * Open the unit page for a given locator.
@@ -169,7 +161,6 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
-    handleUnlinkItemSubmit,
     isPublishModalOpen,
     currentPublishModalData,
     openPublishModal,
@@ -191,7 +182,6 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
-    handleUnlinkItemSubmit,
     isPublishModalOpen,
     currentPublishModalData,
     openPublishModal,

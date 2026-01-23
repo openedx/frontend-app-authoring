@@ -36,6 +36,7 @@ import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
@@ -63,7 +64,6 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 const CourseOutline = () => {
   const intl = useIntl();
@@ -76,7 +76,6 @@ const CourseOutline = () => {
     handleAddSection,
     isUnlinkModalOpen,
     closeUnlinkModal,
-    handleUnlinkItemSubmit,
     currentSelection,
   } = useCourseAuthoringContext();
 
@@ -130,6 +129,7 @@ const CourseOutline = () => {
     handleUnitDragAndDrop,
     errors,
     resetScrollState,
+    handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
   // Show the new actions bar if it is enabled in the configuration.
@@ -436,7 +436,6 @@ const CourseOutline = () => {
                                                   subsection,
                                                   subsection.childInfo.children,
                                                 )}
-                                                savingStatus={savingStatus}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}

@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Stack, Tab, Tabs, useToggle } from '@openedx/paragon';
-import { Expand, OpenInFull, SchoolOutline, Tag } from '@openedx/paragon/icons';
+import {
+  Button, Stack, Tab, Tabs, useToggle,
+} from '@openedx/paragon';
+import {
+  OpenInFull, SchoolOutline, Tag,
+} from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
@@ -9,16 +13,16 @@ import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 
-import messages from './messages';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
-import { LibraryReferenceCard } from './LibraryReferenceCard';
-import { PublishButon } from './PublishButon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link } from 'react-router-dom';
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import { PublishButon } from './PublishButon';
+import { LibraryReferenceCard } from './LibraryReferenceCard';
+import messages from './messages';
 
 interface Props {
   unitId: string;
@@ -66,7 +70,7 @@ const UnitInfoSidebar = ({ unitId }: Props) => {
 
 export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();
-  const [tab, setTab] = useState<'preview'| 'info' | 'settings'>('info');
+  const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { data: unitData, isLoading } = useCourseItemData(unitId);
   const { selectedContainerState } = useOutlineSidebarContext();
   const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
@@ -76,9 +80,9 @@ export const UnitSidebar = ({ unitId }: Props) => {
       openPublishModal({
         value: unitData,
         sectionId: selectedContainerState?.sectionId,
-      })
+      });
     }
-  }
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -90,7 +94,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
         title={unitData?.displayName || ''}
         icon={SchoolOutline}
       />
-      <Stack direction='horizontal' gap={1} className="mx-2">
+      <Stack direction="horizontal" gap={1} className="mx-2">
         <Button
           variant="outline-primary"
           as={Link}
@@ -139,4 +143,4 @@ export const UnitSidebar = ({ unitId }: Props) => {
       </Tabs>
     </>
   );
-}
+};

@@ -6,34 +6,36 @@ import {
   ActionRow,
 } from '@openedx/paragon';
 
-import { COURSE_BLOCK_NAMES } from '../constants';
-import messages from './messages';
 import { courseOutlineQueryKeys, usePublishCourseItem } from '@src/course-outline/data/apiHooks';
 import { XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useQueryClient } from '@tanstack/react-query';
+import messages from './messages';
+import { COURSE_BLOCK_NAMES } from '../constants';
 
 const PublishModal = () => {
   const intl = useIntl();
-  const { isPublishModalOpen, currentPublishModalData, closePublishModal  } = useCourseAuthoringContext();
-  const { id, displayName, childInfo, category } = currentPublishModalData?.value || {};
+  const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseAuthoringContext();
+  const {
+    id, displayName, childInfo, category,
+  } = currentPublishModalData?.value || {};
   const categoryName = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
   const children: XBlock[] = childInfo?.children || [];
-  const publishMutation = usePublishCourseItem(currentPublishModalData?.sectionId)
+  const publishMutation = usePublishCourseItem(currentPublishModalData?.sectionId);
   const queryClient = useQueryClient();
 
   const childrenIds = useMemo(() => children.reduce((
     result: string[],
-    current: XBlock
+    current: XBlock,
   ): string[] => {
-      let grandChildren = current.childInfo?.children.filter((child) => child.hasChanges) || [];
-      let temp = [...result, ...grandChildren.map((child) => child.id)];
-      if (current.hasChanges) {
-        temp.push(current.id);
-      }
-      return temp;
-    }, []), [children])
+    const grandChildren = current.childInfo?.children.filter((child) => child.hasChanges) || [];
+    const temp = [...result, ...grandChildren.map((child) => child.id)];
+    if (current.hasChanges) {
+      temp.push(current.id);
+    }
+    return temp;
+  }, []), [children]);
 
   const onPublishSubmit = async () => {
     if (id) {
@@ -44,8 +46,8 @@ const PublishModal = () => {
           childrenIds.forEach((blockId) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
           });
-        }
-      })
+        },
+      });
     }
   };
 

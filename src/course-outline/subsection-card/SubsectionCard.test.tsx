@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
+import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 let store;
 const containerKey = 'lct:org:lib:unit:1';
@@ -127,10 +127,8 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     isSelfPaced={false}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
     isCustomRelativeDatesActive={false}
-    onEditSubmit={onEditSubectionSubmit}
     onDuplicateSubmit={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     onPasteClick={jest.fn()}
@@ -442,7 +440,7 @@ describe('<SubsectionCard />', () => {
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
-      component: OutlineInfoSidebar,
+      component: CourseInfoSidebar,
       icon: Info,
       title: '',
     };
@@ -464,6 +462,7 @@ describe('<SubsectionCard />', () => {
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
       }));
     setConfig({
       ...getConfig(),

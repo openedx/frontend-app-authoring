@@ -13,7 +13,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -25,15 +24,14 @@ import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
   unit: XBlock;
   subsection: XBlock;
   section: XBlock;
   onOpenConfigureModal: () => void;
-  savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
@@ -70,10 +68,15 @@ const UnitCard = ({
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection } = useCourseAuthoringContext();
+  const {
+    courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
   const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
-  const { data: subsection = initialSubsectionData } = useCourseItemData(initialSubsectionData.id, initialSubsectionData);
+  const { data: subsection = initialSubsectionData } = useCourseItemData(
+    initialSubsectionData.id,
+    initialSubsectionData,
+  );
   const { data: unit = initialData } = useCourseItemData(initialData.id, initialData);
   const isScrolledToElement = locatorId === unit.id;
 
