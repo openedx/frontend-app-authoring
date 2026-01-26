@@ -43,11 +43,6 @@ const game = createSlice({
       ...state,
       type: payload,
       isDirty: true,
-      settings: {
-        ...state.settings,
-        shuffle: true,
-        timer: true,
-      },
     }),
     // Unified card field update
     updateCardField: (state, { payload }) => {

@@ -13,6 +13,8 @@ import {
 import { Close } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import ErrorAlert from '../../sharedComponents/ErrorAlerts/ErrorAlert';
+
 import { EditorComponent } from '../../EditorComponent';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
@@ -65,16 +67,23 @@ const EditorContainer: React.FC<Props> = ({
   const dispatch = useDispatch();
   // Required to mark data as not dirty on save
   const [saved, setSaved] = React.useState(false);
+  const errorAlertRef = React.useRef<HTMLDivElement>(null);
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const { createFailed, createFailedError } = hooks.createFailed();
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
-  const uploadFailed = hooks.uploadFailed();
+  const { uploadFailed, uploadFailedError } = hooks.uploadFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
   const clearUploadFailed = hooks.clearUploadError({ dispatch });
+
+  React.useEffect(() => {
+    if (uploadFailed && errorAlertRef.current) {
+      errorAlertRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [uploadFailed]);
 
   const handleSave = hooks.handleSaveClicked({
     dispatch,
@@ -120,11 +129,6 @@ const EditorContainer: React.FC<Props> = ({
           {intl.formatMessage(messages.contentSaveFailed)}
         </Toast>
       )}
-      {uploadFailed && (
-        <Toast show onClose={clearUploadFailed}>
-          {intl.formatMessage(messages.contentSaveFailed)}
-        </Toast>
-      )}
       <CancelConfirmModal
         isOpen={isCancelConfirmOpen}
         closeCancelConfirmModal={closeCancelConfirmModal}
@@ -149,9 +153,22 @@ const EditorContainer: React.FC<Props> = ({
           />
         </div>
       </ModalDialog.Header>
-      <EditorModalBody>
+      <ModalDialog.Body className="pb-0">
+        <div ref={errorAlertRef}>
+          <ErrorAlert
+            isError={uploadFailed}
+            dismissError={clearUploadFailed}
+          >
+            {parseErrorMsg(
+              intl,
+              uploadFailedError,
+              messages.errorUploadMessageWithDetail,
+              messages.errorUploadMessage,
+            )}
+          </ErrorAlert>
+        </div>
         {isInitialized && children}
-      </EditorModalBody>
+      </ModalDialog.Body>
       <FooterWrapper>
         <ModalDialog.Footer className="shadow-sm">
           <ActionRow>

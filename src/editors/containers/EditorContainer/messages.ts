@@ -57,6 +57,19 @@ const messages = defineMessages({
     defaultMessage: 'Save',
     description: 'Label for Save button',
   },
+  errorUploadMessage: {
+    id: 'course-authoring.library-authoring.upload-asset.error.text',
+    defaultMessage: 'There was an error uploading the file.',
+    description: 'Error: Content save failed. Please check recent changes and try again later.',
+  },
+  errorUploadMessageWithDetail: {
+    id: 'course-authoring.library-authoring.upload-asset.error.text-detail',
+    defaultMessage: 'There was an error uploading the file: {detail}',
+    description: (
+      'Error: Content save failed. Please check recent changes and try again later.'
+      + ' The {detail} text provides more information about the error.'
+    ),
+  },
 });
 
 export default messages;

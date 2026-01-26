@@ -94,9 +94,16 @@ export const saveFailed = () => useSelector((rootState) => (
 ));
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
-export const uploadFailed = () => useSelector((rootState) => (
-  selectors.requests.isFailed(rootState, { requestKey: RequestKeys.uploadAsset })
-));
+export const uploadFailed = () => ({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  uploadFailed: useSelector((rootState) => (
+    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.uploadAsset })
+  )),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  uploadFailedError: useSelector((rootState) => (
+    selectors.requests.error(rootState, { requestKey: RequestKeys.uploadAsset })
+  )),
+});
 
 export const createFailed = () => ({
   // eslint-disable-next-line react-hooks/rules-of-hooks

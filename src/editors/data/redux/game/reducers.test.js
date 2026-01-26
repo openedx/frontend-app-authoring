@@ -93,30 +93,6 @@ describe('game reducer', () => {
     });
   });
 
-  describe('updateType action', () => {
-    it('should update type and reset settings to defaults', () => {
-      const testState = {
-        ...initialState,
-        type: 'matching',
-        settings: { shuffle: false, timer: false, customSetting: 'test' },
-        isDirty: false,
-      };
-      const action = actions.updateType('flashcards');
-      const result = reducer(testState, action);
-
-      expect(result).toEqual({
-        ...testState,
-        type: 'flashcards',
-        settings: {
-          ...testState.settings,
-          shuffle: true,
-          timer: true,
-        },
-        isDirty: true,
-      });
-    });
-  });
-
   describe('updateCardField action', () => {
     const testState = {
       ...initialState,

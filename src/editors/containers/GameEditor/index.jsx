@@ -290,7 +290,10 @@ export const GameEditor = ({
   const handleImageRemove = useCallback((index, imageType, imageUrl) => {
     const id = `${imageType}_image_upload|${index}`;
     document.getElementById(id).value = '';
-    const filePath = imageUrl.replace(/^\/media\//, '');
+    let filePath = imageUrl;
+    if (filePath.includes('/media/')) {
+      filePath = filePath.substring(filePath.indexOf('/media/') + '/media/'.length);
+    }
     deleteGameImage({ index, imageType, filePath });
   }, [deleteGameImage]);
 
@@ -302,14 +305,16 @@ export const GameEditor = ({
     const temp = cardsData.slice();
     [temp[index], temp[index - 1]] = [temp[index - 1], temp[index]];
     setCardsData(temp);
-  }, [cardsData]);
+    setList(temp);
+  }, [cardsData, setList]);
 
   const moveCardDown = useCallback((index) => {
     if (index === cardsData.length - 1) { return; }
     const temp = cardsData.slice();
     [temp[index + 1], temp[index]] = [temp[index], temp[index + 1]];
     setCardsData(temp);
-  }, [cardsData]);
+    setList(temp);
+  }, [cardsData, setList]);
 
   const loading = (
     <div className="text-center p-6">
