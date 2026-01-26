@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',
   display_name: 'Demonstration Course',
   category: 'course',

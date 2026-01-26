@@ -32,7 +32,7 @@ export function fetchCertificates(courseId) {
 
       dispatch(fetchCertificatesSuccess(certificates));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.DENIED }));
       } else {
@@ -84,8 +84,8 @@ export function deleteCourseCertificate(courseId, certificateId) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
 
     try {
-      const certificatesValues = await deleteCertificate(courseId, certificateId);
-      dispatch(deleteCertificateSuccess(certificatesValues));
+      await deleteCertificate(courseId, certificateId);
+      dispatch(deleteCertificateSuccess());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   language_code: 'en',
   action: 'view',
   xblock: {

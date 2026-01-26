@@ -5,17 +5,15 @@ import { prepareCertificatePayload } from '../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getCertificatesApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/certificates/${courseId}`;
-export const getCertificateApiUrl = (courseId) => `${getApiBaseUrl()}/certificates/${courseId}`;
-export const getUpdateCertificateApiUrl = (courseId, certificateId) => `${getCertificateApiUrl(courseId)}/${certificateId}`;
-export const getUpdateCertificateActiveStatusApiUrl = (path) => `${getApiBaseUrl()}${path}`;
+export const getCertificatesApiUrl = (courseId: string) => `${getApiBaseUrl()}/api/contentstore/v1/certificates/${courseId}`;
+export const getCertificateApiUrl = (courseId: string) => `${getApiBaseUrl()}/certificates/${courseId}`;
+export const getUpdateCertificateApiUrl = (courseId: string, certificateId: string) => `${getCertificateApiUrl(courseId)}/${certificateId}`;
+export const getUpdateCertificateActiveStatusApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
 
 /**
  * Gets certificates for a course.
- * @param {string} courseId
- * @returns {Promise<Object>}
  */
-export async function getCertificates(courseId) {
+export async function getCertificates(courseId: string): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCertificatesApiUrl(courseId));
 
@@ -24,12 +22,11 @@ export async function getCertificates(courseId) {
 
 /**
  * Create course certificate.
- * @param {string} courseId
- * @param {object} certificatesData
- * @returns {Promise<Object>}
  */
-
-export async function createCertificate(courseId, certificatesData) {
+export async function createCertificate(
+  courseId: string,
+  certificatesData: Record<string, any>,
+): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .post(
       getCertificateApiUrl(courseId),
@@ -41,11 +38,11 @@ export async function createCertificate(courseId, certificatesData) {
 
 /**
  * Update course certificate.
- * @param {string} courseId
- * @param {object} certificateData
- * @returns {Promise<Object>}
  */
-export async function updateCertificate(courseId, certificateData) {
+export async function updateCertificate(
+  courseId: string,
+  certificateData: Record<string, any>,
+): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .post(
       getUpdateCertificateApiUrl(courseId, certificateData.id),
@@ -57,11 +54,8 @@ export async function updateCertificate(courseId, certificateData) {
 
 /**
  * Delete course certificate.
- * @param {string} courseId
- * @param {object} certificateId
- * @returns {Promise<Object>}
  */
-export async function deleteCertificate(courseId, certificateId) {
+export async function deleteCertificate(courseId: string, certificateId: string): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .delete(
       getUpdateCertificateApiUrl(courseId, certificateId),
@@ -71,11 +65,8 @@ export async function deleteCertificate(courseId, certificateId) {
 
 /**
  * Activate/deactivate course certificate.
- * @param {string} courseId
- * @param {object} activationStatus
- * @returns {Promise<Object>}
  */
-export async function updateActiveStatus(path, activationStatus) {
+export async function updateActiveStatus(path: string, activationStatus: unknown): Promise<Record<string, any>> {
   const body = {
     is_active: activationStatus,
   };

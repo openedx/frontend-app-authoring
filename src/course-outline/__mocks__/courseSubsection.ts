@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   id: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@b713bc2830f34f6f87554028c3068729',
   display_name: 'Subsection',
   category: 'sequential',
