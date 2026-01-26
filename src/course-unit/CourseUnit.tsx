@@ -3,7 +3,10 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import type { MessageDescriptor } from 'react-intl';
 import {
-  Alert, Container, Layout, Button, TransitionReplace,
+  Alert,
+  Container,
+  Button,
+  TransitionReplace,
   Stack,
   Badge,
   Icon,
@@ -37,13 +40,14 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
+import { useCourseUnit, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
+import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
 import { UNIT_VISIBILITY_STATES } from './constants';
 import { isUnitPageNewDesignEnabled } from './utils';
 
@@ -159,9 +163,20 @@ const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
 };
 
 const CourseUnit = () => {
-  const { blockId } = useParams();
   const intl = useIntl();
+  const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+
+  if (courseId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing courseId.');
+  }
+
+  if (blockId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing blockId.');
+  }
+
   const {
     courseUnit,
     isLoading,
@@ -173,7 +188,7 @@ const CourseUnit = () => {
     savingStatus,
     isTitleEditFormOpen,
     isUnitVerticalType,
-    isUnitLibraryType,
+    isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
     staticFileNotices,
@@ -198,8 +213,6 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
-
-  const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   const readOnly = !!courseUnit.readOnly;
 
@@ -227,8 +240,8 @@ const CourseUnit = () => {
   }
 
   return (
-    <>
-      <Container size="xl" className="course-unit px-4">
+    <UnitSidebarProvider>
+      <Container fluid className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>
             {movedXBlockParams.isSuccess ? (
@@ -321,8 +334,8 @@ const CourseUnit = () => {
               showPasteUnit={showPasteUnit}
             />
           )}
-          <Layout {...layoutGrid}>
-            <Layout.Element>
+          <div className="d-flex align-items-baseline">
+            <div className="flex-fill">
               {currentlyVisibleToStudents && (
                 <AlertMessage
                   className="course-unit__alert"
@@ -373,21 +386,19 @@ const CourseUnit = () => {
                 courseId={courseId}
               />
               <IframePreviewLibraryXBlockChanges />
-            </Layout.Element>
-            <Layout.Element>
-              {blockId && (
-                <CourseAuthoringUnitSidebarSlot
-                  courseId={courseId}
-                  blockId={blockId}
-                  unitTitle={unitTitle}
-                  xBlocks={courseVerticalChildren.children}
-                  readOnly={readOnly}
-                  isUnitVerticalType={isUnitVerticalType}
-                  isSplitTestType={isSplitTestType}
-                />
-              )}
-            </Layout.Element>
-          </Layout>
+            </div>
+            {!isUnitLegacyLibraryType && (
+              <CourseAuthoringUnitSidebarSlot
+                courseId={courseId}
+                blockId={blockId}
+                unitTitle={unitTitle}
+                xBlocks={courseVerticalChildren.children}
+                readOnly={readOnly}
+                isUnitVerticalType={isUnitVerticalType}
+                isSplitTestType={isSplitTestType}
+              />
+            )}
+          </div>
         </section>
       </Container>
       <div className="alert-toast">
@@ -400,7 +411,7 @@ const CourseUnit = () => {
           errorMessage={errorMessage}
         />
       </div>
-    </>
+    </UnitSidebarProvider>
   );
 };
 
