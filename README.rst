@@ -382,6 +382,7 @@ file in this repo.
 .. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-course-authoring
 
 
+
 Reporting Security Issues
 *************************
 
@@ -392,6 +393,7 @@ Please do not report security issues in public, and email security@openedx.org i
     :alt: License
 
 .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
+
 
 .. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-course-authoring/coverage.svg?branch=master
     :target: https://codecov.io/github/openedx/frontend-app-course-authoring?branch=master
