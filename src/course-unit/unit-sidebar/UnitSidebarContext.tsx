@@ -23,7 +23,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
-  
+
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (pageKey: UnitSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
     open();
