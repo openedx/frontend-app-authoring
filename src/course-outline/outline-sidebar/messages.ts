@@ -80,6 +80,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Button label for the info sidebar',
   },
+  sidebarButtonAlign: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-button-align',
+    defaultMessage: 'Align',
+    description: 'Alt text for the align button in the outline sidebar',
+  },
   sidebarSectionSummary: {
     id: 'course-authoring.course-outline.sidebar.sidebar-section-summary',
     defaultMessage: 'Course Content Summary',
@@ -104,6 +109,21 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.sidebar.sidebar-section-add.add-existing-tab',
     defaultMessage: 'Add Existing',
     description: 'Tab title for adding existing library components in outline using sidebar',
+  },
+  sidebarTabsAddExisitingSectionToParent: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-add.add-existing-tab',
+    defaultMessage: 'Adding section to course',
+    description: 'Tab title for adding existing library section to a specific parent in outline using sidebar',
+  },
+  sidebarTabsAddExisitingSubsectionToParent: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-add.add-existing-tab',
+    defaultMessage: 'Adding subsection to {name}',
+    description: 'Tab title for adding existing library subsection to a specific parent in outline using sidebar',
+  },
+  sidebarTabsAddExisitingUnitToParent: {
+    id: 'course-authoring.course-outline.sidebar.sidebar-section-add.add-existing-tab',
+    defaultMessage: 'Adding unit to {name}',
+    description: 'Tab title for adding existing library unit to a specific parent in outline using sidebar',
   },
 });
 

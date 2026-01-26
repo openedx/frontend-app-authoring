@@ -70,6 +70,7 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
           target="_blank"
           as={Hyperlink}
           variant="tertiary"
+          key="learn-more"
           showLaunchIcon={false}
           destination={learnMoreUrl}
         >
@@ -77,6 +78,7 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
         </Button>,
         <LoadingButton
           onClick={migrateFn}
+          key="migrate-button"
           label={intl.formatMessage(messages.legacyLibReadyToMigrateAlertActionBtn)}
         />,
       ]}

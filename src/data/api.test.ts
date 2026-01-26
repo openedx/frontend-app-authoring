@@ -31,4 +31,14 @@ describe('legacy libraries migration API', () => {
       expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
+
+  describe('getPreviewModulestoreMigration', () => {
+    it('should call get preview modulestore migration', async () => {
+      const url = api.getPreviewModulestoreMigrationUrl();
+      axiosMock.onGet(url).reply(200);
+      await api.getPreviewModulestoreMigration('1', '2');
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
 });

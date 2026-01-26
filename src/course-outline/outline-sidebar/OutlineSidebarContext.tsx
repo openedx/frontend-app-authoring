@@ -2,80 +2,129 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
-import { HelpOutline, Info, Plus } from '@openedx/paragon/icons';
 
-import type { SidebarPage } from '@src/generic/sidebar';
-import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { useStateWithUrlSearchParam } from '@src/hooks';
+import { isOutlineNewDesignEnabled } from '../utils';
 
-import messages from './messages';
-import { AddSidebar } from './AddSidebar';
-
-export type OutlineSidebarPageKeys = 'help' | 'info' | 'add';
-export type OutlineSidebarPages = Record<OutlineSidebarPageKeys, SidebarPage>;
+export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
+export type OutlineFlowType = 'use-section' | 'use-subsection' | 'use-unit' | null;
+export type OutlineFlow = {
+  flowType: 'use-section';
+  parentLocator?: string;
+  parentTitle?: string;
+} | {
+  flowType: OutlineFlowType;
+  parentLocator: string;
+  parentTitle: string;
+};
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys) => void;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, containerId?: string) => void;
+  currentFlow: OutlineFlow | null;
+  startCurrentFlow: (flow: OutlineFlow) => void;
+  stopCurrentFlow: () => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
-  sidebarPages: OutlineSidebarPages;
+  selectedContainerId?: string;
+  // The Id of the container used in the current sidebar page
+  // The container is not necessarily selected to open a selected sidebar.
+  // Example: Align sidebar
+  currentContainerId?: string;
+  openContainerInfoSidebar: (containerId: string) => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
-  const intl = useIntl();
-
-  const [currentPageKey, setCurrentPageKeyState] = useState<OutlineSidebarPageKeys>('info');
+  const [currentContainerId, setCurrentContainerId] = useState<string>();
+  const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
+    'info',
+    'sidebar',
+    (value: string) => value as OutlineSidebarPageKeys,
+    (value: OutlineSidebarPageKeys) => value,
+  );
+  const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
   const [isOpen, open, , toggle] = useToggle(true);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
-    setCurrentPageKeyState(pageKey);
-    open();
-  }, [open]);
+  const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
 
-  const sidebarPages = {
-    info: {
-      component: OutlineInfoSidebar,
-      icon: Info,
-      title: intl.formatMessage(messages.sidebarButtonInfo),
-    },
-    help: {
-      component: OutlineHelpSidebar,
-      icon: HelpOutline,
-      title: intl.formatMessage(messages.sidebarButtonHelp),
-    },
-    add: {
-      component: AddSidebar,
-      icon: Plus,
-      title: intl.formatMessage(messages.sidebarButtonAdd),
-      hideFromActionMenu: true,
-    },
-  } satisfies OutlineSidebarPages;
+  const openContainerInfoSidebar = useCallback((containerId: string) => {
+    if (isOutlineNewDesignEnabled()) {
+      setSelectedContainerId(containerId);
+    }
+  }, [setSelectedContainerId]);
+
+  /**
+  * Stops current add content flow.
+  * This will cause the sidebar to switch back to its normal state and clear out any placeholder containers.
+  */
+  const stopCurrentFlow = useCallback(() => {
+    setCurrentFlow(null);
+  }, [setCurrentFlow]);
+
+  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, containerId?: string) => {
+    setCurrentPageKeyState(pageKey);
+    setCurrentFlow(null);
+    setCurrentContainerId(containerId);
+    open();
+  }, [open, setCurrentFlow]);
+
+  /**
+  * Starts add content flow.
+  * The sidebar enters an add content flow which allows user to add content in a specific container.
+  * A placeholder container is added in the location when the flow is started.
+  */
+  const startCurrentFlow = useCallback((flow: OutlineFlow) => {
+    setCurrentPageKey('add');
+    setCurrentFlow(flow);
+  }, [setCurrentFlow, setCurrentPageKey]);
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        stopCurrentFlow();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
       currentPageKey,
       setCurrentPageKey,
-      sidebarPages,
+      currentFlow,
+      startCurrentFlow,
+      stopCurrentFlow,
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      currentContainerId,
+      openContainerInfoSidebar,
     }),
     [
       currentPageKey,
       setCurrentPageKey,
-      sidebarPages,
+      currentFlow,
+      startCurrentFlow,
+      stopCurrentFlow,
       isOpen,
       open,
       toggle,
+      selectedContainerId,
+      currentContainerId,
+      openContainerInfoSidebar,
     ],
   );
 

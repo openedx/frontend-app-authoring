@@ -1,10 +1,14 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor, within,
 } from '@src/testUtils';
 
 import { XBlock } from '@src/data/types';
+import { Info } from '@openedx/paragon/icons';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
+import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
+import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -105,6 +109,7 @@ const renderComponent = (props?: object) => render(
   {
     path: '/course/:courseId',
     params: { courseId: '5' },
+    extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
 
@@ -121,6 +126,33 @@ describe('<UnitCard />', () => {
       'href',
       '/some/block-v1:UNIX+UX1+2025_T3+type@unit+block@0',
     );
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+  });
+
+  it('render UnitCard component in selected state', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+
+    const { container } = renderComponent();
+
+    expect(screen.getByTestId('unit-card-header')).toBeInTheDocument();
+
+    // The card is not selected
+    const card = screen.getByTestId('unit-card');
+    expect(card).not.toHaveClass('outline-card-selected');
+
+    // Get the <Row> that contains the card and click it to select the card
+    const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
+    expect(el).not.toBeNull();
+    fireEvent.click(el!);
+
+    // The card is selected
+    expect(card).toHaveClass('outline-card-selected');
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -243,5 +275,72 @@ describe('<UnitCard />', () => {
     fireEvent.click(ignoreButton);
 
     await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should open legacy manage tags', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'false',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('unit-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    const drawer = await screen.findByRole('alert');
+    expect(within(drawer).getByText(/manage tags/i));
+  });
+
+  it('should open align sidebar', async () => {
+    const mockSetCurrentPageKey = jest.fn();
+
+    const testSidebarPage = {
+      component: OutlineInfoSidebar,
+      icon: Info,
+      title: '',
+    };
+
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockImplementation(() => ({
+        setCurrentPageKey: mockSetCurrentPageKey,
+        currentPageKey: 'info',
+        sidebarPages: {
+          info: testSidebarPage,
+          help: testSidebarPage,
+          add: testSidebarPage,
+        },
+        isOpen: true,
+        open: jest.fn(),
+        toggle: jest.fn(),
+        currentFlow: null,
+        startCurrentFlow: jest.fn(),
+        stopCurrentFlow: jest.fn(),
+        openContainerInfoSidebar: jest.fn(),
+      }));
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
+    });
+    renderComponent();
+    const element = await screen.findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await fireEvent.click(menu);
+
+    const manageTagsBtn = await within(element).findByTestId('unit-card-header__menu-manage-tags-button');
+    expect(manageTagsBtn).toBeInTheDocument();
+
+    await fireEvent.click(manageTagsBtn);
+
+    await waitFor(() => {
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', unit.id);
+    });
   });
 });

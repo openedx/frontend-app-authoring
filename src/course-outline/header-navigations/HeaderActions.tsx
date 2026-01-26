@@ -1,15 +1,14 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Dropdown, Icon, OverlayTrigger, Stack, Tooltip,
+  Button, OverlayTrigger, Stack, Tooltip,
 } from '@openedx/paragon';
 import {
-  Add as IconAdd, FindInPage, ViewSidebar,
+  Add as IconAdd, FindInPage, InfoOutline,
 } from '@openedx/paragon/icons';
 
 import { OutlinePageErrors, XBlockActions } from '@src/data/types';
-import type { SidebarPage } from '@src/generic/sidebar';
 
-import { useOutlineSidebarContext, OutlineSidebarPageKeys } from '../outline-sidebar/OutlineSidebarContext';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 import messages from './messages';
 
@@ -29,10 +28,26 @@ const HeaderActions = ({
   const intl = useIntl();
   const { lmsLink } = actions;
 
-  const { setCurrentPageKey, sidebarPages } = useOutlineSidebarContext();
+  const { setCurrentPageKey } = useOutlineSidebarContext();
 
   return (
     <Stack direction="horizontal" gap={3}>
+      <OverlayTrigger
+        placement="bottom"
+        overlay={(
+          <Tooltip id={intl.formatMessage(messages.courseInfoButtonTooltip)}>
+            {intl.formatMessage(messages.courseInfoButtonTooltip)}
+          </Tooltip>
+        )}
+      >
+        <Button
+          iconBefore={InfoOutline}
+          onClick={() => setCurrentPageKey('info')}
+          variant="outline-primary"
+        >
+          {intl.formatMessage(messages.courseInfoButton)}
+        </Button>
+      </OverlayTrigger>
       {courseActions.childAddable && (
         <OverlayTrigger
           placement="bottom"
@@ -69,31 +84,6 @@ const HeaderActions = ({
           {intl.formatMessage(messages.viewLiveButton)}
         </Button>
       </OverlayTrigger>
-      <Dropdown>
-        <Dropdown.Toggle
-          id="dropdown-toggle-with-iconbutton"
-          as={Button}
-          variant="outline-primary"
-          aria-label={intl.formatMessage(messages.moreActionsButtonAriaLabel)}
-        >
-          <Icon src={ViewSidebar} />
-        </Dropdown.Toggle>
-        <Dropdown.Menu className="mt-1">
-          {Object.entries(sidebarPages).filter(([, page]) => !page.hideFromActionMenu)
-            .map(([key, page]: [OutlineSidebarPageKeys, SidebarPage]) => (
-              <Dropdown.Item
-                key={key}
-                onClick={() => setCurrentPageKey(key)}
-              >
-                <Stack direction="horizontal" gap={2}>
-                  <Icon src={page.icon} />
-                  {page.title}
-                </Stack>
-              </Dropdown.Item>
-            ))}
-        </Dropdown.Menu>
-      </Dropdown>
-
     </Stack>
   );
 };

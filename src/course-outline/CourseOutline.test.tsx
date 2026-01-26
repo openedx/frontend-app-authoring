@@ -354,8 +354,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId } = renderComponent();
-    let elements = await findAllByTestId('section-card');
+    const user = userEvent.setup();
+    renderComponent();
+    let elements = await screen.findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -378,9 +379,9 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
     const newSectionButton = (await screen.findAllByRole('button', { name: 'New section' }))[0];
-    await act(async () => fireEvent.click(newSectionButton));
+    await user.click(newSectionButton);
 
-    elements = await findAllByTestId('section-card');
+    elements = await screen.findAllByTestId('section-card');
     expect(elements.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
   });
@@ -2497,7 +2498,7 @@ describe('<CourseOutline />', () => {
     expect(btn).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'View live' })).toBeInTheDocument();
     expect((await screen.findAllByRole('button', { name: 'Add' })).length).toEqual(2);
-    expect(await screen.findByRole('button', { name: 'More actions' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Course info' })).toBeInTheDocument();
     const user = userEvent.setup();
     await user.click(btn);
     expect(await screen.findByRole('button', { name: 'Expand all' })).toBeInTheDocument();

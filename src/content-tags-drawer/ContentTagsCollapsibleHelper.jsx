@@ -191,6 +191,7 @@ const useContentTagsCollapsibleHelper = (
             children: {},
             canChangeObjecttag: item.canChangeObjecttag,
             canDeleteObjecttag: item.canDeleteObjecttag,
+            isCopied: item.isCopied,
           };
 
           // Populating the SelectableBox with "selected" (explicit) tags
