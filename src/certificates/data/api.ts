@@ -7,7 +7,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getCertificatesApiUrl = (courseId: string) => `${getApiBaseUrl()}/api/contentstore/v1/certificates/${courseId}`;
 export const getCertificateApiUrl = (courseId: string) => `${getApiBaseUrl()}/certificates/${courseId}`;
-export const getUpdateCertificateApiUrl = (courseId: string, certificateId: string) => `${getCertificateApiUrl(courseId)}/${certificateId}`;
+export const getUpdateCertificateApiUrl = (courseId: string, certificateId: number) => `${getCertificateApiUrl(courseId)}/${certificateId}`;
 export const getUpdateCertificateActiveStatusApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
 
 /**
@@ -55,7 +55,7 @@ export async function updateCertificate(
 /**
  * Delete course certificate.
  */
-export async function deleteCertificate(courseId: string, certificateId: string): Promise<Record<string, any>> {
+export async function deleteCertificate(courseId: string, certificateId: number): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
     .delete(
       getUpdateCertificateApiUrl(courseId, certificateId),
