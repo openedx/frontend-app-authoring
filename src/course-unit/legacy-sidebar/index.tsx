@@ -23,6 +23,12 @@ export interface LegacySidebarProps {
   isSplitTestType: boolean;
 }
 
+/**
+ * Sidebar that renders the unit details.
+ *
+ * This is an old sidebar replaced by src/course-unit/unit-sidebar/unit-info/UnitInfoSidebar.tsx
+ * When the new sidebar is active by default, this sidebar will be removed.
+ */
 const LegacySidebar = ({
   unitTitle,
   isUnitVerticalType,

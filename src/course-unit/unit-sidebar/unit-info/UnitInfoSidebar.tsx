@@ -20,6 +20,11 @@ import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
 
+/**
+ * Component to show unit details: Publish status, Component counts and Content Tags.
+ *
+ * It's using in the details tab of the unit info sidebar.
+ */
 const UnitInfoDetails = () => {
   const intl = useIntl();
   const { blockId } = useParams();
@@ -60,6 +65,11 @@ const UnitInfoDetails = () => {
   );
 };
 
+/**
+ * Component with forms to edit unit settings.
+ *
+ * It's using in the settings tab of the unit info sidebar.
+ */
 const UnitInfoSettings = () => {
   const dispatch = useDispatch();
   const intl = useIntl();
@@ -177,6 +187,9 @@ const UnitInfoSettings = () => {
   );
 };
 
+/**
+ * Main component that renders the tabs of the info sidebar.
+ */
 export const UnitInfoSidebar = () => {
   const intl = useIntl();
   const currentItemData = useSelector(getCourseUnitData);

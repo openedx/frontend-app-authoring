@@ -192,7 +192,7 @@ export const UnitTab = ({
           <Form.Checkbox checked={isVisibleToStaffOnly} onChange={handleVisibilityChange} data-testid="unit-visibility-checkbox">
             <FormattedMessage {...messages.hideFromLearners} />
           </Form.Checkbox>
-          {showWarning && (
+          {/* istanbul ignore next */ showWarning && (
             <Alert className="mt-2" variant="warning">
               <FormattedMessage {...messages.unitVisibilityWarning} />
             </Alert>

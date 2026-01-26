@@ -50,7 +50,7 @@ export async function handleCourseUnitVisibilityAndData(
   type: string, // The action type (e.g., PUBLISH_TYPES.discardChanges).
   isVisible: boolean, // The visibility status for students.
   isDiscussionEnabled: boolean,
-  groupAccess: Object | null,
+  groupAccess: Record<string, any> | null,
 ): Promise<object> {
   const body = {
     publish: groupAccess ? null : type,
