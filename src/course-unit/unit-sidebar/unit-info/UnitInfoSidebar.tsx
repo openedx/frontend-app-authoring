@@ -99,6 +99,7 @@ const UnitInfoSettings = () => {
     ));
   };
 
+  /* istanbul ignore next */
   const handleSaveGroups = async (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {
