@@ -2327,11 +2327,11 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders new unit info/settings sidebar', async () => {
-    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
+    const user = userEvent.setup();
     render(<RootWrapper />);
 
     axiosMock
@@ -2354,12 +2354,27 @@ describe('<CourseUnit />', () => {
     expect(screen.getByRole('heading', { name: /discussion/i })).toBeInTheDocument();
   });
 
-  it('should change the visibility of the unit in the settings sidebar', async () => {
-    const user = userEvent.setup();
+  it('displays the live state in the status bar', async () => {
     setConfig({
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
     });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          currently_visible_to_students: true,
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Live')).toBeInTheDocument();
+  });
+
+  it('should change the visibility of the unit in the settings sidebar', async () => {
+    const user = userEvent.setup();
     render(<RootWrapper />);
 
     axiosMock
@@ -2387,6 +2402,7 @@ describe('<CourseUnit />', () => {
         metadata: { visible_to_staff_only: true },
       })
       .reply(200, { dummy: 'value' });
+
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -2436,6 +2452,29 @@ describe('<CourseUnit />', () => {
     expect(
       screen.getByRole('heading', { name: /draft \(unpublished changes\)/i }),
     ).toBeInTheDocument();
+  });
+
+  it('displays the staff only state in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          currently_visible_to_students: false,
+          visibility_state: 'staff_only',
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    // (1) Chip in the header.
+    // (2) Status title in the unit sidebar.
+    expect((await screen.findAllByText('Staff Only')).length).toBe(2);
   });
 
   it('should disable discussions in the settings sidebar', async () => {
@@ -2635,5 +2674,158 @@ describe('<CourseUnit />', () => {
 
     // Move to settings
     expect(await screen.findByRole('heading', { name: /draft \(never published\)/i })).toBeInTheDocument();
+  });
+
+  it('displays the scheduled state in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          currently_visible_to_students: false,
+          published: true,
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Scheduled')).toBeInTheDocument();
+  });
+
+  it('displays the draft changes state in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          published: true,
+          has_changes: true,
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Unpublished changes')).toBeInTheDocument();
+  });
+
+  it('displays discussions enabled label in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          discussion_enabled: true,
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Discussions Enabled')).toBeInTheDocument();
+  });
+
+  it('displays group access with one group in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          user_partition_info: {
+            selected_partition_index: 0,
+            selected_groups_label: 'Visibility group 1',
+            selectable_partitions: [{
+              id: 10,
+              name: 'Content Groups',
+              scheme: 'cohort',
+              groups: [
+                {
+                  deleted: false,
+                  id: 1,
+                  name: 'Visibility group 1',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 2,
+                  name: 'Visibility group 2',
+                  selected: false,
+                },
+                {
+                  deleted: false,
+                  id: 3,
+                  name: 'Visibility group 3',
+                  selected: false,
+                },
+              ],
+            }],
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Access: Visibility group 1')).toBeInTheDocument();
+  });
+
+  it('displays group access with multiple groups in the status bar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          user_partition_info: {
+            selected_partition_index: 0,
+            selected_groups_label: 'Visibility group 1, Visibility group 2, Visibility group 3',
+            selectable_partitions: [{
+              id: 10,
+              name: 'Content Groups',
+              scheme: 'cohort',
+              groups: [
+                {
+                  deleted: false,
+                  id: 1,
+                  name: 'Visibility group 1',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 2,
+                  name: 'Visibility group 2',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 3,
+                  name: 'Visibility group 3',
+                  selected: true,
+                },
+              ],
+            }],
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Access: 3 Groups')).toBeInTheDocument();
   });
 });

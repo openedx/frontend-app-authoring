@@ -76,6 +76,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
     defaultMessage: 'All Videos',
   },
+  unpublishedBadgeText: {
+    id: 'course-authoring.course-outline.status-bar.unpublished.badge.text',
+    defaultMessage: 'Unpublished Changes',
+    description: 'Text in badge displayed in course outline if course has unpublished changes.',
+  },
   activeBadgeText: {
     id: 'course-authoring.course-outline.status-bar.active.badge.text',
     defaultMessage: 'Active',
@@ -90,6 +95,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.upcoming.badge.text',
     defaultMessage: 'Upcoming',
     description: 'Upcoming Badge shown in course outline when the course has not started yet.',
+  },
+  libraryUpdatesText: {
+    id: 'course-authoring.course-outline.status-bar.library.updates.text',
+    defaultMessage: '{count, plural, one {{count} Library Update} other {{count} Library Updates}}',
+    description: 'Status text displaying count of library updates',
   },
 });
 

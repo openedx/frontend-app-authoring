@@ -49,7 +49,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
-  const [addComponentTemplateData, setAddComponentTemplateData] = useState({});
+  const [addComponentTemplateData, setAddComponentTemplateData] = useState(undefined);
   const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);

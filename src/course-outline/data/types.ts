@@ -7,6 +7,7 @@ export interface CourseStructure {
   start: string,
   end: string,
   actions: XBlockActions,
+  hasChanges: boolean,
 }
 
 // TODO: Create interface for all `Object` fields in courseOutline
@@ -35,19 +36,22 @@ export interface CourseDetails {
   description?: string;
 }
 
+export interface ChecklistType {
+  totalCourseLaunchChecks: number;
+  completedCourseLaunchChecks: number;
+  totalCourseBestPracticesChecks: number;
+  completedCourseBestPracticesChecks: number;
+}
+
 export interface CourseOutlineStatusBar {
   courseReleaseDate: string;
   endDate: string;
   highlightsEnabledForMessaging: boolean;
   isSelfPaced: boolean;
-  checklist: {
-    totalCourseLaunchChecks: number;
-    completedCourseLaunchChecks: number;
-    totalCourseBestPracticesChecks: number;
-    completedCourseBestPracticesChecks: number;
-  };
+  checklist: ChecklistType;
   videoSharingEnabled: boolean;
   videoSharingOptions: string;
+  hasChanges: boolean;
 }
 
 export interface CourseOutlineState {

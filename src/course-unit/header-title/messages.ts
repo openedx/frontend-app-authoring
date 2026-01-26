@@ -21,11 +21,6 @@ const messages = defineMessages({
     defaultMessage: 'Access to this unit is restricted to: {selectedGroupsLabel}',
     description: 'Group visibility accessibility text for Unit',
   },
-  commonVisibilityMessage: {
-    id: 'course-authoring.course-unit.heading.visibility.common.message',
-    defaultMessage: 'Access to some content in this unit is restricted to specific groups of learners.',
-    description: 'The label text of some content restriction in this unit',
-  },
 });
 
 export default messages;

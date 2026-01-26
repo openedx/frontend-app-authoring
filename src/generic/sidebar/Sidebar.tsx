@@ -19,7 +19,6 @@ export interface SidebarPage {
   component: React.ComponentType;
   icon: React.ComponentType;
   title: MessageDescriptor;
-  hideFromActionMenu?: boolean;
 }
 
 type SidebarPages = Record<string, SidebarPage>;
