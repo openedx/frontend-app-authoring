@@ -69,8 +69,18 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
+const clearSelection = jest.fn();
+let selectedContainerId: string;
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    clearSelection,
+    selectedContainerState: { currentId: selectedContainerId }
+  }),
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -750,6 +760,7 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+    selectedContainerId = section.id;
 
     const checkDeleteBtn = async (item, element, elementName) => {
       await waitFor(() => {
@@ -777,6 +788,7 @@ describe('<CourseOutline />', () => {
     await checkDeleteBtn(subsection, subsectionElement, 'subsection');
     // check section
     await checkDeleteBtn(section, sectionElement, 'section');
+    expect(clearSelection).toHaveBeenCalledTimes(1);
   });
 
   it('check whether section, subsection and unit is duplicated successfully', async () => {

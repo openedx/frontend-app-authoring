@@ -208,7 +208,8 @@ const useCourseOutline = ({ courseId }) => {
         ));
         break;
       default:
-        return;
+        // istanbul ignore next
+        throw new Error(`Unrecognized category ${category}`);;
     }
     if (selectedContainerState.currentId === currentSelection?.currentId) {
       clearSelection();
