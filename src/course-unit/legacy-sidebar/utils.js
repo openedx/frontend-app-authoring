@@ -1,7 +1,8 @@
 import {
+  AccessTimeFilled,
   CheckCircle as CheckCircleIcon,
-  CheckCircleOutline as CheckCircleOutlineIcon,
-  InfoOutline as InfoOutlineIcon,
+  Description,
+  Lock,
 } from '@openedx/paragon/icons';
 
 import { ICON_COLOR_VARIANTS, UNIT_VISIBILITY_STATES } from '../constants';
@@ -53,22 +54,6 @@ export const getReleaseInfo = (intl, releaseDate, releaseDateFrom) => {
 };
 
 /**
- * Get the visibility title.
- * @param {Object} intl - The internationalization object.
- * @param {boolean} releasedToStudents - Indicates if the content is released to students.
- * @param {boolean} published - Indicates if the content is published.
- * @param {boolean} hasChanges - Indicates if there are unpublished changes.
- * @returns {string} The visibility title determined by the provided parameters.
- */
-export const getVisibilityTitle = (intl, releasedToStudents, published, hasChanges) => {
-  if (releasedToStudents && published && !hasChanges) {
-    return intl.formatMessage(messages.visibilityIsVisibleToTitle);
-  }
-
-  return intl.formatMessage(messages.visibilityWillBeVisibleToTitle);
-};
-
-/**
  * Get the icon variant based on the provided visibility state and publication status.
  * @param {string} visibilityState - The visibility state of the content.
  * @param {boolean} published - Indicates if the content is published.
@@ -79,11 +64,11 @@ export const getVisibilityTitle = (intl, releasedToStudents, published, hasChang
  */
 export const getIconVariant = (visibilityState, published, hasChanges) => {
   const iconVariants = {
-    [UNIT_VISIBILITY_STATES.staffOnly]: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
+    [UNIT_VISIBILITY_STATES.staffOnly]: { iconSrc: Lock, colorVariant: ICON_COLOR_VARIANTS.PRIMARY },
     [UNIT_VISIBILITY_STATES.live]: { iconSrc: CheckCircleIcon, colorVariant: ICON_COLOR_VARIANTS.GREEN },
-    publishedNoChanges: { iconSrc: CheckCircleOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
-    publishedWithChanges: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
-    default: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
+    publishedNoChanges: { iconSrc: AccessTimeFilled, colorVariant: ICON_COLOR_VARIANTS.INFO },
+    publishedWithChanges: { iconSrc: Description, colorVariant: ICON_COLOR_VARIANTS.ORANGE },
+    default: { iconSrc: Description, colorVariant: ICON_COLOR_VARIANTS.ORANGE },
   };
   if (visibilityState in iconVariants) {
     return iconVariants[visibilityState];

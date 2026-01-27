@@ -21,6 +21,15 @@ const useCourseUnitData = ({
       : messages.sidebarTitleDraftNeverPublished,
   };
 
+  const cardClasses = {
+    [UNIT_VISIBILITY_STATES.staffOnly]: 'only-staff',
+    [UNIT_VISIBILITY_STATES.live]: 'live',
+    // eslint-disable-next-line no-nested-ternary
+    default: published
+      ? (hasChanges ? 'draft' : 'published')
+      : 'draft',
+  };
+
   const releaseLabels = {
     [UNIT_VISIBILITY_STATES.staffOnly]: releaseStatus.release,
     [UNIT_VISIBILITY_STATES.live]: releaseStatus.released,
@@ -30,6 +39,7 @@ const useCourseUnitData = ({
 
   const title = intl.formatMessage(titleMessages[visibilityState] || titleMessages.default);
   const releaseLabel = releaseLabels[visibilityState] || releaseLabels.default;
+  const publishCardClass = cardClasses[visibilityState] || cardClasses.default;
 
   return {
     title,
@@ -37,6 +47,7 @@ const useCourseUnitData = ({
     releaseLabel,
     visibilityState,
     visibleToStaffOnly,
+    publishCardClass,
   };
 };
 

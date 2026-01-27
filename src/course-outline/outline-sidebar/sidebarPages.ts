@@ -40,7 +40,6 @@ export const getOutlineSidebarPages = (): OutlineSidebarPages => {
       component: AddSidebar,
       icon: Plus,
       title: messages.sidebarButtonAdd,
-      hideFromActionMenu: true,
     },
   } satisfies OutlineSidebarPages;
 };

@@ -2,19 +2,21 @@ import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { Divider } from '../../../../generic/divider';
-import { getCanEdit, getCourseUnitData } from '../../../data/selectors';
-import { useClipboard } from '../../../../generic/clipboard';
+import { Divider } from '@src/generic/divider';
+import { getCanEdit, getCourseUnitData } from '@src/course-unit/data/selectors';
+import { useClipboard } from '@src/generic/clipboard';
 import messages from '../../messages';
 
 interface ActionButtonsProps {
   openDiscardModal: () => void,
   handlePublishing: () => void,
+  hideCopyButton?: boolean,
 }
 
 const ActionButtons = ({
   openDiscardModal,
   handlePublishing,
+  hideCopyButton = false,
 }: ActionButtonsProps) => {
   const intl = useIntl();
   const {
@@ -32,7 +34,7 @@ const ActionButtons = ({
         <Button
           size="sm"
           className="mt-3.5"
-          variant="outline-primary"
+          variant="primary"
           onClick={handlePublishing}
         >
           {intl.formatMessage(messages.actionButtonPublishTitle)}
@@ -48,7 +50,7 @@ const ActionButtons = ({
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>
       )}
-      {enableCopyPasteUnits && canEdit && (
+      {enableCopyPasteUnits && canEdit && !hideCopyButton && (
         <>
           <Divider className="course-unit-sidebar-footer__divider" />
           <Button

@@ -117,8 +117,8 @@ export function editCourseUnitVisibilityAndData(
         itemId,
         type,
         isVisible,
-        groupAccess,
         isDiscussionEnabled,
+        groupAccess,
       ).then(async (result) => {
         if (result) {
           if (callback) {

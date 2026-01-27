@@ -1,12 +1,15 @@
 import moment, { Moment } from 'moment/moment';
-import { FormattedDate, FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
 import { Badge, Icon, Stack } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
-import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
-import { ChecklistRtl } from '@openedx/paragon/icons';
+import type { ChecklistType, CourseOutlineStatusBar } from '@src/course-outline/data/types';
+import {
+  Cached, ChecklistRtl, Description, Event,
+} from '@openedx/paragon/icons';
 import { useWaffleFlags } from '@src/data/apiHooks';
+import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
 
@@ -23,13 +26,13 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
       );
     case now.isBefore(startDate):
       return (
-        <Badge className="px-3 py-2 bg-white text-success-400 border border-success-500" variant="success">
+        <Badge className="px-3 py-2" variant="info">
           <FormattedMessage {...messages.upcomingBadgeText} />
         </Badge>
       );
     case endDate.isValid() && endDate.isBefore(now):
       return (
-        <Badge className="px-3 py-2" variant="light">
+        <Badge className="px-3 py-2 bg-gray-500" variant="secondary">
           <FormattedMessage {...messages.archivedBadgeText} />
         </Badge>
       );
@@ -37,6 +40,43 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
       // istanbul ignore next: this should not happen
       return null;
   }
+};
+
+const UnpublishedBadgeStatus = () => (
+  <Badge
+    className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal"
+    variant="light"
+  >
+    <Stack direction="horizontal" gap={2}>
+      <Icon size="xs" src={Description} />
+      <FormattedMessage {...messages.unpublishedBadgeText} />
+    </Stack>
+  </Badge>
+);
+
+const LibraryUpdates = ({ courseId }: { courseId: string }) => {
+  const { data } = useEntityLinksSummaryByDownstreamContext(courseId);
+  const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
+  const url = `/course/${courseId}/libraries?tab=review`;
+
+  if (!outOfSyncCount || outOfSyncCount === 0) {
+    return null;
+  }
+
+  return (
+    <Link
+      className="small text-gray-700"
+      to={url}
+    >
+      <Stack direction="horizontal" gap={2}>
+        <Icon size="sm" src={Cached} />
+        <FormattedMessage
+          {...messages.libraryUpdatesText}
+          values={{ count: outOfSyncCount }}
+        />
+      </Stack>
+    </Link>
+  );
 };
 
 const CourseDates = ({
@@ -54,7 +94,10 @@ const CourseDates = ({
         className="small"
         to={datesLink}
       >
-        {startDateRaw}
+        <Stack direction="horizontal" gap={2}>
+          <Icon size="sm" className="mb-1" src={Event} />
+          {startDateRaw}
+        </Stack>
       </Link>
     );
   }
@@ -64,23 +107,56 @@ const CourseDates = ({
       className="small text-gray-700"
       to={datesLink}
     >
-      <FormattedDate
-        value={startDate.toString()}
-        year="numeric"
-        month="short"
-        day="2-digit"
-      />
-      {endDate.isValid() && (
-        <>
-          {' - '}
-          <FormattedDate
-            value={endDate.toString()}
-            year="numeric"
-            month="short"
-            day="2-digit"
-          />
-        </>
-      )}
+      <Stack direction="horizontal" gap={2}>
+        <Icon size="sm" className="mb-1" src={Event} />
+        <FormattedDate
+          value={startDate.toString()}
+          year="numeric"
+          month="short"
+          day="2-digit"
+        />
+        {endDate.isValid() && (
+          <>
+            {' - '}
+            <FormattedDate
+              value={endDate.toString()}
+              year="numeric"
+              month="short"
+              day="2-digit"
+            />
+          </>
+        )}
+      </Stack>
+    </Link>
+  );
+};
+
+const Checklists = ({ courseId, checklist }: {
+  courseId: string;
+  checklist: ChecklistType;
+}) => {
+  const {
+    completedCourseLaunchChecks,
+    completedCourseBestPracticesChecks,
+    totalCourseLaunchChecks,
+    totalCourseBestPracticesChecks,
+  } = checklist;
+
+  const completed = completedCourseLaunchChecks + completedCourseBestPracticesChecks;
+  const total = totalCourseLaunchChecks + totalCourseBestPracticesChecks;
+
+  if (completed === total) {
+    return null;
+  }
+
+  const checkListTitle = `${completed}/${total}`;
+  return (
+    <Link
+      className="small text-primary-500 d-flex"
+      to={`/course/${courseId}/checklists`}
+    >
+      <Icon src={ChecklistRtl} size="md" className="mr-2" />
+      {checkListTitle} <FormattedMessage {...messages.checklistCompleted} />
     </Link>
   );
 };
@@ -96,25 +172,17 @@ export const StatusBar = ({
   isLoading,
   courseId,
 }: StatusBarProps) => {
-  const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);
 
   const {
     endDate,
     courseReleaseDate,
     checklist,
+    hasChanges,
   } = statusBarData;
-
-  const {
-    completedCourseLaunchChecks,
-    completedCourseBestPracticesChecks,
-    totalCourseLaunchChecks,
-    totalCourseBestPracticesChecks,
-  } = checklist;
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
   const endDateObj = moment.utc(endDate);
-  const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, getConfig().STUDIO_BASE_URL).href;
 
   if (isLoading) {
@@ -124,20 +192,16 @@ export const StatusBar = ({
   return (
     <Stack direction="horizontal" gap={4}>
       <CourseBadge startDate={courseReleaseDateObj} endDate={endDateObj} />
+      {hasChanges && <UnpublishedBadgeStatus />}
       <CourseDates
         startDate={courseReleaseDateObj}
         endDate={endDateObj}
         startDateRaw={courseReleaseDate}
         datesLink={waffleFlags.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
       />
+      <Checklists courseId={courseId} checklist={checklist} />
+      <LibraryUpdates courseId={courseId} />
       <NotificationStatusIcon />
-      <Link
-        className="small text-primary-500 d-flex"
-        to={`/course/${courseId}/checklists`}
-      >
-        <Icon src={ChecklistRtl} size="md" className="mr-2" />
-        {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
-      </Link>
     </Stack>
   );
 };

@@ -1,15 +1,29 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import type { MessageDescriptor } from 'react-intl';
 import {
-  Alert, Container, Layout, Button, TransitionReplace,
+  Alert,
+  Container,
+  Button,
+  TransitionReplace,
+  Stack,
+  Badge,
+  Icon,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
+  Lock,
+  AccessTimeFilled,
+  Groups,
+  QuestionAnswer,
 } from '@openedx/paragon/icons';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import DraftIcon from '@src/generic/DraftIcon';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -26,18 +40,143 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
+import { useCourseUnit, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
+import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
+import { UNIT_VISIBILITY_STATES } from './constants';
+import { isUnitPageNewDesignEnabled } from './utils';
+
+const StatusBar = ({ courseUnit }: { courseUnit: any }) => {
+  const { selectedPartitionIndex, selectedGroupsLabel } = courseUnit.userPartitionInfo ?? {};
+  const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
+  let groupsCount = 0;
+  if (hasGroups) {
+    groupsCount = selectedGroupsLabel.split(',').length;
+  }
+
+  let visibilityChipData = {
+    variant: 'warning',
+    className: 'draft-badge',
+    text: messages.statusBarDraftNeverPublished,
+    icon: DraftIcon,
+  } as {
+    variant: string,
+    className?: string,
+    text: MessageDescriptor,
+    icon: React.ComponentType,
+  };
+
+  if (courseUnit.currentlyVisibleToStudents) {
+    visibilityChipData = {
+      variant: 'success',
+      text: messages.statusBarLiveBadge,
+      icon: CheckCircleIcon,
+    };
+  } else if (courseUnit.visibilityState === UNIT_VISIBILITY_STATES.staffOnly) {
+    visibilityChipData = {
+      variant: 'secondary',
+      text: messages.statusBarStaffOnly,
+      icon: Lock,
+    };
+  } else if (courseUnit.published) {
+    visibilityChipData = {
+      variant: 'info',
+      text: messages.statusBarScheduledBadge,
+      icon: AccessTimeFilled,
+    };
+  }
+
+  return (
+    <Stack direction="horizontal" gap={3}>
+      <Badge
+        variant={visibilityChipData.variant}
+        className={`px-3 py-2 ${visibilityChipData.className || ''}`}
+      >
+        <Stack direction="horizontal" gap={2}>
+          <Icon size="xs" src={visibilityChipData.icon} />
+          <span className="badge-label">
+            <FormattedMessage {...visibilityChipData.text} />
+          </span>
+        </Stack>
+      </Badge>
+      {courseUnit.published && courseUnit.hasChanges && (
+        <Badge
+          variant="warning"
+          className="px-3 py-2 draft-badge"
+        >
+          <Stack direction="horizontal" gap={1}>
+            <Icon size="xs" src={DraftIcon} />
+            <span className="badge-label">
+              <FormattedMessage {...messages.statusBarDraftChangesBadge} />
+            </span>
+          </Stack>
+        </Badge>
+      )}
+      {groupsCount === 1 && (
+        <Stack direction="horizontal" gap={1}>
+          <Icon src={Groups} />
+          <span>
+            <FormattedMessage
+              {...messages.statusBarGroupAccessOneGroup}
+              values={{
+                groupName: selectedGroupsLabel,
+              }}
+            />
+          </span>
+        </Stack>
+      )}
+      {groupsCount > 1 && (
+        <OverlayTrigger
+          placement="top"
+          overlay={(
+            <Tooltip id="unit-group-access-tooltip">
+              {selectedGroupsLabel}
+            </Tooltip>
+          )}
+        >
+          <Stack direction="horizontal" gap={1}>
+            <Icon src={Groups} />
+            <span>
+              <FormattedMessage
+                {...messages.statusBarGroupAccessMultipleGroup}
+                values={{
+                  groupsCount,
+                }}
+              />
+            </span>
+          </Stack>
+        </OverlayTrigger>
+      )}
+      {courseUnit.discussionEnabled && (
+        <Stack direction="horizontal" gap={1}>
+          <Icon src={QuestionAnswer} />
+          <FormattedMessage {...messages.statusBarDiscussionsEnabled} />
+        </Stack>
+      )}
+    </Stack>
+  );
+};
 
 const CourseUnit = () => {
-  const { blockId } = useParams();
   const intl = useIntl();
+  const { blockId } = useParams();
   const { courseId } = useCourseAuthoringContext();
+
+  if (courseId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing courseId.');
+  }
+
+  if (blockId === undefined) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing blockId.');
+  }
+
   const {
     courseUnit,
     isLoading,
@@ -49,7 +188,7 @@ const CourseUnit = () => {
     savingStatus,
     isTitleEditFormOpen,
     isUnitVerticalType,
-    isUnitLibraryType,
+    isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
     staticFileNotices,
@@ -74,7 +213,6 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
-  const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   const readOnly = !!courseUnit.readOnly;
 
@@ -102,8 +240,8 @@ const CourseUnit = () => {
   }
 
   return (
-    <>
-      <Container size="xl" className="course-unit px-4">
+    <UnitSidebarProvider>
+      <Container fluid className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>
             {movedXBlockParams.isSuccess ? (
@@ -121,7 +259,7 @@ const CourseUnit = () => {
                   : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
                 aria-hidden={movedXBlockParams.isSuccess}
                 dismissible
-                actions={movedXBlockParams.isUndo ? null : [
+                actions={movedXBlockParams.isUndo ? undefined : [
                   <Button
                     onClick={handleRollbackMovedXBlock}
                     key="xblock-moved-alert-undo-move-button"
@@ -146,7 +284,6 @@ const CourseUnit = () => {
                 {
                   link: (
                     <Alert.Link
-                      className="ml-1"
                       href={courseUnit.upstreamInfo.upstreamLink}
                     >
                       {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
@@ -183,6 +320,11 @@ const CourseUnit = () => {
               />
             )}
           />
+          <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
+            {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
+              <StatusBar courseUnit={courseUnit} />
+            )}
+          </div>
           {isUnitVerticalType && (
             <Sequence
               courseId={courseId}
@@ -192,8 +334,8 @@ const CourseUnit = () => {
               showPasteUnit={showPasteUnit}
             />
           )}
-          <Layout {...layoutGrid}>
-            <Layout.Element>
+          <div className="d-flex align-items-baseline">
+            <div className="flex-fill">
               {currentlyVisibleToStudents && (
                 <AlertMessage
                   className="course-unit__alert"
@@ -208,15 +350,17 @@ const CourseUnit = () => {
                   courseId={courseId}
                 />
               )}
-              <XBlockContainerIframe
-                courseId={courseId}
-                blockId={blockId}
-                isUnitVerticalType={isUnitVerticalType}
-                unitXBlockActions={unitXBlockActions}
-                courseVerticalChildren={courseVerticalChildren.children}
-                handleConfigureSubmit={handleConfigureSubmit}
-              />
-              {!readOnly && (
+              {blockId && (
+                <XBlockContainerIframe
+                  courseId={courseId}
+                  blockId={blockId}
+                  isUnitVerticalType={isUnitVerticalType}
+                  unitXBlockActions={unitXBlockActions}
+                  courseVerticalChildren={courseVerticalChildren.children}
+                  handleConfigureSubmit={handleConfigureSubmit}
+                />
+              )}
+              {!readOnly && blockId && (
                 <AddComponent
                   parentLocator={blockId}
                   isSplitTestType={isSplitTestType}
@@ -226,7 +370,7 @@ const CourseUnit = () => {
                   addComponentTemplateData={addComponentTemplateData}
                 />
               )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && (
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={
@@ -242,8 +386,8 @@ const CourseUnit = () => {
                 courseId={courseId}
               />
               <IframePreviewLibraryXBlockChanges />
-            </Layout.Element>
-            <Layout.Element>
+            </div>
+            {!isUnitLegacyLibraryType && (
               <CourseAuthoringUnitSidebarSlot
                 courseId={courseId}
                 blockId={blockId}
@@ -253,8 +397,8 @@ const CourseUnit = () => {
                 isUnitVerticalType={isUnitVerticalType}
                 isSplitTestType={isSplitTestType}
               />
-            </Layout.Element>
-          </Layout>
+            )}
+          </div>
         </section>
       </Container>
       <div className="alert-toast">
@@ -267,7 +411,7 @@ const CourseUnit = () => {
           errorMessage={errorMessage}
         />
       </div>
-    </>
+    </UnitSidebarProvider>
   );
 };
 

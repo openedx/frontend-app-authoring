@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useRef, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -49,7 +49,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
-  const [addComponentTemplateData, setAddComponentTemplateData] = useState({});
+  const [addComponentTemplateData, setAddComponentTemplateData] = useState(undefined);
   const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);
@@ -71,7 +71,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const { displayName: unitTitle, category: unitCategory } = xblockInfo;
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
-  const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
+  const isUnitLegacyLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
   const isProblemBankType = [
     COURSE_BLOCK_NAMES.legacyLibraryContent.id,
@@ -256,7 +256,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     isLoading,
     isTitleEditFormOpen,
     isUnitVerticalType,
-    isUnitLibraryType,
+    isUnitLegacyLibraryType,
     isSplitTestType,
     isProblemBankType,
     sharedClipboardData,
@@ -281,38 +281,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     setAddComponentTemplateData,
   };
 };
-
-/**
- * Custom hook to determine the layout grid configuration based on unit category and type.
- *
- * @param {string} unitCategory - The category of the unit. This may influence future layout logic.
- * @param {boolean} isUnitLibraryType - A flag indicating whether the unit is of library content type.
- * @returns {Object} - An object representing the layout configuration for different screen sizes.
- *                     The configuration includes keys like 'lg', 'md', 'sm', 'xs', and 'xl',
- *                     each specifying an array of layout spans.
- */
-export const useLayoutGrid = (unitCategory, isUnitLibraryType) => (
-  useMemo(() => {
-    const layouts = {
-      fullWidth: {
-        lg: [{ span: 12 }, { span: 0 }],
-        md: [{ span: 12 }, { span: 0 }],
-        sm: [{ span: 12 }, { span: 0 }],
-        xs: [{ span: 12 }, { span: 0 }],
-        xl: [{ span: 12 }, { span: 0 }],
-      },
-      default: {
-        lg: [{ span: 8 }, { span: 4 }],
-        md: [{ span: 8 }, { span: 4 }],
-        sm: [{ span: 8 }, { span: 3 }],
-        xs: [{ span: 9 }, { span: 3 }],
-        xl: [{ span: 9 }, { span: 3 }],
-      },
-    };
-
-    return isUnitLibraryType ? layouts.fullWidth : layouts.default;
-  }, [unitCategory])
-);
 
 /**
  * Custom hook that restores the scroll position from `localStorage` after a page reload.

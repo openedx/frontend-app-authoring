@@ -1,7 +1,8 @@
 @import "./breadcrumbs/Breadcrumbs";
 @import "./course-sequence/CourseSequence";
 @import "./add-component/AddComponent";
-@import "./sidebar/Sidebar";
+@import "./legacy-sidebar/LegacySidebar";
+@import "./unit-sidebar/unit-info/PublishControls";
 @import "./header-title/HeaderTitle";
 @import "./move-modal";
 @import "./preview-changes";
@@ -9,8 +10,24 @@
 
 .course-unit {
   min-width: 900px;
+
+  .sub-header {
+    // To clean the blank space in the bottom of the sub header
+    margin-bottom: -35px;
+  }
 }
 
 .course-unit__alert {
   margin-bottom: 1.75rem;
+}
+
+.unit-header-status-bar {
+  .draft-badge {
+   background-color: #B4610E; 
+   color: white;
+  }
+  
+  .badge-label {
+    margin-top: 2px;
+  }
 }

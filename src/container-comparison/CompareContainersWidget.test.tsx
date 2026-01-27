@@ -68,8 +68,8 @@ describe('CompareContainersWidget', () => {
     let block = await screen.findByText('subsection block 00');
     await user.click(block);
     // Breadcrumbs - shows old and new name
-    expect(await screen.findByRole('button', { name: 'subsection block 00' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'subsection block 00' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'subsection block 0' })).toBeInTheDocument();
 
     // Back breadcrumb
     const backbtns = await screen.findAllByRole('button', { name: 'Back' });
@@ -83,8 +83,8 @@ describe('CompareContainersWidget', () => {
 
     // After side click also works
     await user.click(block);
-    expect(await screen.findByRole('button', { name: 'subsection block 00' })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: 'subsection block 0' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'subsection block 00' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'subsection block 0' })).toBeInTheDocument();
   });
 
   test('should show removed container diff state', async () => {

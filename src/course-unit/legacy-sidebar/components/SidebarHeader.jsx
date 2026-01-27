@@ -13,7 +13,7 @@ const SidebarHeader = ({ title, visibilityState, displayUnitLocation }) => {
   const { iconSrc, colorVariant } = getIconVariant(visibilityState, published, hasChanges);
 
   return (
-    <Stack className="course-unit-sidebar-header" direction="horizontal">
+    <Stack className="course-unit-sidebar-header" direction="horizontal" gap={2}>
       {!displayUnitLocation && (
         <Icon
           className="course-unit-sidebar-header-icon"

@@ -47,7 +47,6 @@ describe('<HeaderActions />', () => {
 
     expect(await screen.findByRole('button', { name: messages.addButton.defaultMessage })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
-    expect(await screen.findByRole('button', { name: messages.moreActionsButtonAriaLabel.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls the correct handlers when clicking buttons', async () => {
@@ -67,17 +66,13 @@ describe('<HeaderActions />', () => {
     expect(await screen.findByRole('button', { name: messages.addButton.defaultMessage })).toBeDisabled();
   });
 
-  it('should change pages using the dropdown button', async () => {
+  it('should show course info on click', async () => {
     renderComponent();
 
     // Click on the dropdown button
-    await userEvent.click(screen.getByRole('button', { name: 'More actions' }));
-
-    // Select the Help option
-    const helpButton = screen.getByRole('button', { name: 'Help' });
-    await userEvent.click(helpButton);
+    await userEvent.click(screen.getByRole('button', { name: 'Course info' }));
 
     // Check if the current page change is called
-    expect(setCurrentPageKeyMock).toHaveBeenCalledWith('help');
+    expect(setCurrentPageKeyMock).toHaveBeenCalledWith('info');
   });
 });

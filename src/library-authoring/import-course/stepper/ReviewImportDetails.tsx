@@ -1,29 +1,31 @@
-import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Alert, Stack } from '@openedx/paragon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
-import { useEffect, useMemo } from 'react';
-import { CheckCircle, Warning } from '@openedx/paragon/icons';
+import { useMemo } from 'react';
+import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { useLibraryContext } from '@src/library-authoring/common/context/LibraryContext';
 import { useMigrationInfo } from '@src/library-authoring/data/apiHooks';
-import { useGetBlockTypes, useGetContentHits } from '@src/search-manager';
+import { usePreviewMigration } from '@src/data/apiHooks';
 import { SummaryCard } from './SummaryCard';
 import messages from '../messages';
-
-interface Props {
-  courseId?: string;
-  markAnalysisComplete: (analysisCompleted: boolean) => void;
-}
 
 interface BannerProps {
   courseId?: string;
   isBlockDataPending?: boolean;
+  limitIsExceeded?: boolean;
+  limitNumber?: number;
   unsupportedBlockPercentage: number;
 }
 
-const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: BannerProps) => {
+const Banner = ({
+  courseId,
+  isBlockDataPending,
+  limitIsExceeded,
+  limitNumber,
+  unsupportedBlockPercentage,
+}: BannerProps) => {
   const { data, isPending } = useCourseDetails(courseId);
   const { libraryId } = useLibraryContext();
   const { data: migrationInfoData, isPending: migrationInfoIsPending } = useMigrationInfo(
@@ -61,6 +63,22 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
           />
         </p>
       </Alert>
+    );
+  }
+
+  if (limitIsExceeded) {
+    return (
+      <>
+        <Alert variant="danger" icon={Info}>
+          <Alert.Heading>
+            <FormattedMessage {...messages.importBlockedTitle} />
+          </Alert.Heading>
+        </Alert>
+        <FormattedMessage
+          {...messages.importBlockedBody}
+          values={{ limitNumber }}
+        />
+      </>
     );
   }
 
@@ -115,130 +133,51 @@ const Banner = ({ courseId, isBlockDataPending, unsupportedBlockPercentage }: Ba
   );
 };
 
-export const ReviewImportDetails = ({ courseId, markAnalysisComplete }: Props) => {
-  const { data: blockTypes, isPending: isBlockDataPending } = useGetBlockTypes([
-    `context_key = "${courseId}"`,
-  ]);
+export const ReviewImportDetails = ({ courseId }: { courseId: string }) => {
+  const { libraryId } = useLibraryContext();
 
-  useEffect(() => {
-    // Mark complete to inform parent component of analysis completion.
-    markAnalysisComplete(!isBlockDataPending);
-  }, [isBlockDataPending]);
+  const {
+    data: previewMigrationData,
+    isPending: isPreviewMigrationPending,
+  } = usePreviewMigration(libraryId, courseId);
 
-  /** Filter unsupported blocks by checking if the block type is in the library's list of unsupported blocks. */
-  const unsupportedBlockTypes = useMemo(() => {
-    if (!blockTypes) {
-      return undefined;
-    }
-    return Object.entries(blockTypes).filter(([blockType]) => (
-      getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType)
-    ));
-  }, [blockTypes]);
-
-  /** Calculate the total number of unsupported blocks by summing up the count for each block type. */
-  const totalUnsupportedBlocks = useMemo(() => {
-    if (!unsupportedBlockTypes) {
-      return 0;
-    }
-    const unsupportedBlocks = unsupportedBlockTypes.reduce((total, [, count]) => total + count, 0);
-    return unsupportedBlocks;
-  }, [unsupportedBlockTypes]);
-
-  // Fetch unsupported blocks usage_key information from meilisearch index.
-  const { data: unsupportedBlocksData } = useGetContentHits(
-    [
-      `context_key = "${courseId}"`,
-      `block_type IN [${unsupportedBlockTypes?.flatMap(([value]) => `"${value}"`).join(',')}]`,
-    ],
-    totalUnsupportedBlocks > 0,
-    ['usage_key'],
-    totalUnsupportedBlocks,
-    'always',
-  );
-
-  // Fetch children blocks for each block in the unsupportedBlocks array.
-  const { data: unsupportedBlocksChildren } = useGetBlockTypes([
-    `context_key = "${courseId}"`,
-    `breadcrumbs.usage_key IN [${unsupportedBlocksData?.hits.map((value) => `"${value.usage_key}"`).join(',')}]`,
-  ], (unsupportedBlocksData?.estimatedTotalHits || 0) > 0);
-
-  /** Calculate the total number of unsupported children blocks by summing up the count for each block. */
-  const totalUnsupportedBlockChildren = useMemo(() => {
-    if (!unsupportedBlocksChildren) {
-      return 0;
-    }
-    const unsupportedBlocks = Object.values(unsupportedBlocksChildren).reduce((total, count) => total + count, 0);
-    return unsupportedBlocks;
-  }, [unsupportedBlocksChildren]);
-
-  /** Finally calculate the final number of unsupported blocks by adding parent unsupported and children
-  unsupported blocks. */
-  const finalUnssupportedBlocks = useMemo(
-    () => totalUnsupportedBlocks + totalUnsupportedBlockChildren,
-    [totalUnsupportedBlocks, totalUnsupportedBlockChildren],
-  );
-
-  /** Calculate total supported blocks by subtracting final unsupported blocks from the total number of blocks */
-  const totalBlocks = useMemo(() => {
-    if (!blockTypes) {
-      return undefined;
-    }
-    return Object.values(blockTypes).reduce((total, block) => total + block, 0) - finalUnssupportedBlocks;
-  }, [blockTypes, finalUnssupportedBlocks]);
-
-  /** Calculate total components by excluding those that are chapters, sequential, or vertical. */
-  const totalComponents = useMemo(() => {
-    if (!blockTypes) {
-      return undefined;
-    }
-    return Object.entries(blockTypes).reduce(
-      (total, [blockType, count]) => {
-        const isComponent = !['chapter', 'sequential', 'vertical'].includes(blockType);
-        if (isComponent) {
-          return total + count;
-        }
-        return total;
-      },
-      0,
-    ) - finalUnssupportedBlocks;
-  }, [blockTypes, finalUnssupportedBlocks]);
-
-  /** Calculate the unsupported block percentage based on the final total blocks and unsupported blocks. */
-  const unsupportedBlockPercentage = useMemo(() => {
-    if (!blockTypes || !totalBlocks) {
-      return 0;
-    }
-    return (totalUnsupportedBlocks / (totalBlocks + totalUnsupportedBlocks)) * 100;
-  }, [blockTypes, totalUnsupportedBlocks]);
+  const limitIsExceeded = previewMigrationData?.state === 'block_limit_reached';
+  const unssuportedBlocks = previewMigrationData?.unsupportedBlocks || 0;
+  const totalBlocks = (previewMigrationData?.totalBlocks || 0) - unssuportedBlocks;
+  const totalComponents = (previewMigrationData?.totalComponents || 0) - unssuportedBlocks;
 
   return (
     <Stack gap={4}>
       <Banner
         courseId={courseId}
-        isBlockDataPending={isBlockDataPending}
-        unsupportedBlockPercentage={unsupportedBlockPercentage}
+        isBlockDataPending={isPreviewMigrationPending}
+        limitIsExceeded={limitIsExceeded}
+        limitNumber={previewMigrationData?.blocksLimit}
+        unsupportedBlockPercentage={previewMigrationData?.unsupportedPercentage || 0}
       />
-      <Stack gap={2}>
-        <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
-        <SummaryCard
-          totalBlocks={totalBlocks}
-          totalComponents={totalComponents}
-          sections={blockTypes?.chapter}
-          subsections={blockTypes?.sequential}
-          units={blockTypes?.vertical}
-          unsupportedBlocks={totalUnsupportedBlocks}
-          isPending={isBlockDataPending}
-        />
-      </Stack>
-      {!isBlockDataPending && totalUnsupportedBlocks > 0
-        && (
-        <Stack gap={2}>
-          <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
-          <Stack className="align-items-center" gap={3}>
-            <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
-          </Stack>
-        </Stack>
-        )}
+      {!limitIsExceeded && (
+        <>
+          <h4><FormattedMessage {...messages.importCourseAnalysisSummary} /></h4>
+          <SummaryCard
+            totalBlocks={totalBlocks}
+            totalComponents={totalComponents}
+            sections={previewMigrationData?.sections}
+            subsections={previewMigrationData?.subsections}
+            units={previewMigrationData?.units}
+            unsupportedBlocks={unssuportedBlocks}
+            isPending={isPreviewMigrationPending}
+          />
+          {!isPreviewMigrationPending && unssuportedBlocks > 0
+            && (
+            <>
+              <h4><FormattedMessage {...messages.importCourseAnalysisDetails} /></h4>
+              <Stack className="align-items-center" gap={3}>
+                <FormattedMessage {...messages.importCourseAnalysisDetailsUnsupportedBlocksBody} />
+              </Stack>
+            </>
+            )}
+        </>
+      )}
     </Stack>
   );
 };
