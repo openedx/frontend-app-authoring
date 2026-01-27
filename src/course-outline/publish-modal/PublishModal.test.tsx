@@ -1,9 +1,8 @@
 import { initializeMocks, screen, render } from '@src/testUtils';
 
+import userEvent from '@testing-library/user-event';
 import PublishModal from './PublishModal';
 import messages from './messages';
-import userEvent from '@testing-library/user-event';
-
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -67,7 +66,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     courseUsageKey: 'course-usage-key',
     isPublishModalOpen: true,
-    currentPublishModalData: {value: currentItemMock},
+    currentPublishModalData: { value: currentItemMock },
     closePublishModal: onCloseMock,
   }),
 }));
@@ -80,7 +79,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 }));
 
 const renderComponent = () => render(
-  <PublishModal />
+  <PublishModal />,
 );
 
 describe('<PublishModal />', () => {

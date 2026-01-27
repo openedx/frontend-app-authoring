@@ -18,6 +18,7 @@ import {
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { userEvent } from '@testing-library/user-event';
+import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -61,7 +62,6 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
-import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 let axiosMock: import('axios-mock-adapter/types');
 let store;
