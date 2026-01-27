@@ -332,7 +332,7 @@ const CourseOutline = () => {
               />
             )}
           <hr className="mt-4 mb-0 w-100 text-light-400" />
-          <div className="d-flex align-items-baseline flex-wrap">
+          <div className="d-flex align-items-baseline">
             <div className="flex-fill">
               <article>
                 <div>

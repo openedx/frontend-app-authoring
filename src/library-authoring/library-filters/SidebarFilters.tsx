@@ -19,19 +19,21 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
 
   return (
     <Stack gap={3} className="my-3">
-      <Stack direction="horizontal" gap={1}>
+      <Stack className='flex-wrap' direction="horizontal" gap={1}>
         <LibraryDropdownFilter />
-        <SearchKeywordsField />
-        <IconButton
-          onClick={toggle}
-          alt={intl.formatMessage(messages.additionalFilterBtnAltText)}
-          size="md"
-          src={FilterList}
-          className="rounded-sm border ml-2"
-        />
+        <Stack direction="horizontal" gap={1}>
+          <SearchKeywordsField />
+          <IconButton
+            onClick={toggle}
+            alt={intl.formatMessage(messages.additionalFilterBtnAltText)}
+            size="md"
+            src={FilterList}
+            className="rounded-sm border ml-2"
+          />
+        </Stack>
       </Stack>
       {isOn && (
-      <Stack direction="horizontal">
+      <Stack className='flex-wrap' direction="horizontal" gap={2}>
         {!(onlyOneType) && <FilterByBlockType />}
         <FilterByTags />
         <CollectionDropdownFilter />

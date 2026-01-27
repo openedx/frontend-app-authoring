@@ -1,0 +1,21 @@
+/* The box that will be resized */
+.resizable {
+  position: relative;
+  display: flex;
+}
+
+/* Custom left‑hand handle */
+.resizable-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  cursor: ew-resize;
+  background: var(--pgn-color-dark-200);
+}
+
+.resizable-handle:hover {
+  background: var(--pgn-color-dark-400);
+}
+
