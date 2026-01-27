@@ -23,7 +23,7 @@ const ReleaseInfoComponent = () => {
     );
   }
 
-  return releaseInfo.message;
+  return <>{releaseInfo.message}</>;
 };
 
 export default ReleaseInfoComponent;

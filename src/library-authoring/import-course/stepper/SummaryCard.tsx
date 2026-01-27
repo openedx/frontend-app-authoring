@@ -28,12 +28,13 @@ interface DisplayNumberComponentProps {
   count?: string;
   isPending?: boolean;
   icon?: React.ComponentType;
-  title?: MessageDescriptor;
+  typeId: 'total' | 'section' | 'subsection' | 'unit' | 'unsupported';
+  title: MessageDescriptor;
   info?: React.ReactNode;
 }
 
 const DisplayNumberComponent = ({
-  count, isPending, icon, title, info,
+  count, isPending, icon, typeId, title, info,
 }: DisplayNumberComponentProps) => (
   <>
     <div className="d-flex align-items-start">
@@ -43,7 +44,7 @@ const DisplayNumberComponent = ({
           <OverlayTrigger
             placement="top"
             overlay={(
-              <Tooltip variant="light" id={`${title}-info`}>
+              <Tooltip variant="light" id={`${typeId}-info`}>
                 {info}
               </Tooltip>
             )}
@@ -100,6 +101,7 @@ export const SummaryCard = ({
             <DisplayNumberComponent
               count={totalBlocksStr}
               isPending={isPending}
+              typeId="total"
               title={messages.importCourseTotalBlocks}
             />
           </Stack>
@@ -107,6 +109,7 @@ export const SummaryCard = ({
             <DisplayNumberComponent
               count={sections?.toString()}
               isPending={isPending}
+              typeId="section"
               icon={getItemIcon('section')}
               title={messages.importCourseSections}
             />
@@ -115,6 +118,7 @@ export const SummaryCard = ({
             <DisplayNumberComponent
               count={subsections?.toString()}
               isPending={isPending}
+              typeId="subsection"
               icon={getItemIcon('subsection')}
               title={messages.importCourseSubsections}
             />
@@ -123,6 +127,7 @@ export const SummaryCard = ({
             <DisplayNumberComponent
               count={units?.toString()}
               isPending={isPending}
+              typeId="unit"
               icon={getItemIcon('unit')}
               title={messages.importCourseUnits}
             />
@@ -132,6 +137,7 @@ export const SummaryCard = ({
               count={totalComponentsStr}
               isPending={isPending}
               icon={Widgets}
+              typeId="unsupported"
               title={messages.importCourseComponents}
               info={unsupportedBlocks ? (
                 <FormattedMessage

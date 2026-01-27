@@ -64,6 +64,7 @@ const OpenedXConfigForm = ({
           .required(intl.formatMessage(messages.restrictedEndDateRequired))
           .when('startDate', {
             is: (startDate) => startDate,
+            // oxlint-disable-next-line unicorn/no-thenable
             then: Yup.string().compare(intl.formatMessage(messages.restrictedEndDateInPast), 'date'),
           }),
         startTime: Yup.string().checkFormat(
@@ -74,6 +75,7 @@ const OpenedXConfigForm = ({
           .checkFormat(intl.formatMessage(messages.restrictedEndTimeInValidFormat), 'time')
           .when('startTime', {
             is: (startTime) => startTime,
+            // oxlint-disable-next-line unicorn/no-thenable
             then: Yup.string().compare(intl.formatMessage(messages.restrictedEndTimeInPast), 'time'),
           }),
       }),

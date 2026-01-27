@@ -41,7 +41,7 @@ export async function getCourseRerun(courseId: string): Promise<unknown> {
 /**
  * Create or rerun course with data.
  */
-export async function createOrRerunCourse(courseData: Object): Promise<unknown> {
+export async function createOrRerunCourse(courseData: Record<string, any>): Promise<unknown> {
   const { data } = await getAuthenticatedHttpClient().post(
     getCreateOrRerunCourseUrl(),
     convertObjectToSnakeCase(courseData, true),
