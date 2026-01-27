@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   id: 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab',
   displayName: 'Unit 1.1.2',
   category: 'vertical',

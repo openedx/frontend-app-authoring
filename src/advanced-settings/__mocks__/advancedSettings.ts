@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   advancedModules: {
     deprecated: false,
     displayName: 'Advanced Module List',

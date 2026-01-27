@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   courseReleaseDate: 'Set Date',
   courseStructure: {},
   deprecatedBlocksInfo: {

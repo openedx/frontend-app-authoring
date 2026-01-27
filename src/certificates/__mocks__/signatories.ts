@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     id: '1', name: 'John Doe', title: 'CEO', organization: 'Company', signatureImagePath: '/path/to/signature1.png',
   },

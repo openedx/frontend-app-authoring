@@ -1,12 +1,12 @@
-module.exports = {
-  id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2144',
-  display_name: 'Getting Started new',
-  category: 'vertical',
+export default {
+  id: 'block-v1:edX+DemoX+Demo_Course+type@chapter+block@d0e78d363a424da6be5c22704c34f7a7',
+  display_name: 'Section',
+  category: 'chapter',
   has_children: true,
-  edited_on: 'Dec 28, 2023 at 10:00 UTC',
+  edited_on: 'Nov 22, 2023 at 07:45 UTC',
   published: true,
-  published_on: 'Dec 28, 2023 at 10:00 UTC',
-  studio_url: '/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
+  published_on: 'Nov 22, 2023 at 07:45 UTC',
+  studio_url: '/course/course-v1:edX+DemoX+Demo_Course?show=block-v1%3AedX%2BDemoX%2BDemo_Course%2Btype%40chapter%2Bblock%40d0e78d363a424da6be5c22704c34f7a7',
   released_to_students: true,
   release_date: 'Feb 05, 2013 at 05:00 UTC',
   visibility_state: 'live',
@@ -52,8 +52,19 @@ module.exports = {
     },
   ],
   show_correctness: 'always',
-  discussion_enabled: true,
+  highlights: [],
+  highlights_enabled: true,
+  highlights_preview_only: false,
+  highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+  child_info: {
+    category: 'sequential',
+    display_name: 'Subsection',
+    children: [],
+  },
   ancestor_has_staff_lock: false,
+  staff_only_message: false,
+  enable_copy_paste_units: false,
+  has_partition_group_components: false,
   user_partition_info: {
     selectable_partitions: [
       {
@@ -79,6 +90,4 @@ module.exports = {
     selected_partition_index: -1,
     selected_groups_label: '',
   },
-  enable_copy_paste_units: false,
-  xblock_type: 'other',
 };

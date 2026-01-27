@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   courseReleaseDate: 'Set Date',
   courseStructure: {
     id: 'block-v1:edX+DemoX+Demo_Course+type@course+block@course',

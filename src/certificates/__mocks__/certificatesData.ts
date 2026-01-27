@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   certificateActivationHandlerUrl: '/certificates/activation/course-v1:org+101+101/',
   certificateWebViewUrl: '//certificates/course/course-v1:org+101+101?preview=honor',
   certificates: [
