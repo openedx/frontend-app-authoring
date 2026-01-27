@@ -149,8 +149,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    store = mocks.reduxStore;
+    initializeMocks();
   });
 
   it('render SubsectionCard component correctly', () => {
