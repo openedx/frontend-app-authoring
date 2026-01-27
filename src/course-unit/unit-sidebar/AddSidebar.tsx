@@ -2,10 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
+  Button,
+  Icon,
   Stack, StandardModal, Tab, Tabs, useToggle,
 } from '@openedx/paragon';
+import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -43,6 +46,7 @@ const AddNewContent = () => {
   const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
+  const [isAdvancedPageOpen, showAdvancedPage, closeAdvancedPage] = useToggle();
 
   const templatesByType = componentTemplates.reduce((acc, item) => {
     let result = item;
@@ -75,18 +79,18 @@ const AddNewContent = () => {
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
-    // closeVideoSelectorModal();
+    closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
   }, [closeXBlockEditorModal, sendMessageToIframe]);
 
   const onXBlockCancel = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
-    // closeVideoSelectorModal();
+    closeVideoSelectorModal();
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
   }, [closeXBlockEditorModal, sendMessageToIframe, blockId, sequenceId]);
 
-  const handleSelection = useCallback((type: string, boilerplateName?: string) => {
+  const handleSelection = useCallback((type: string, moduleName?: string) => {
     switch (type) {
       case COMPONENT_TYPES.dragAndDrop:
         handleCreateXBlock({ type, parentLocator: blockId });
@@ -113,18 +117,21 @@ const AddNewContent = () => {
         );
         break;
       case COMPONENT_TYPES.openassessment:
-        handleCreateXBlock({ boilerplate: boilerplateName, category: type, parentLocator: blockId });
+        handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.html:
         handleCreateXBlock({
           type,
-          boilerplate: boilerplateName,
+          boilerplate: moduleName,
           parentLocator: blockId,
         }, /* istanbul ignore next */ ({ locator }) => {
           setBlockType(type);
           setNewBlockId(locator);
           showXBlockEditorModal();
         });
+        break;
+      case COMPONENT_TYPES.advanced:
+        handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
         break;
       default:
     }
@@ -153,6 +160,34 @@ const AddNewContent = () => {
     },
   ];
 
+  if (isAdvancedPageOpen) {
+    return (
+      <Stack>
+        <Stack className="mb-2 text-primary-500" direction="horizontal" gap={1}>
+          <Button
+            className="text-primary-500"
+            variant="tertiary"
+            iconBefore={ChevronLeft}
+            onClick={closeAdvancedPage}
+          >
+            <FormattedMessage {...messages.sidebarAddBackButton} />
+          </Button>
+          <Icon src={ChevronRight} />
+          <FormattedMessage {...messages.sidebarAddAdvancedBlocksTitle} />
+        </Stack>
+        <Stack gap={2}>
+          {templatesByType.advanced?.templates.map((advancedTypeObj) => (
+            <BlockCardButton
+              blockType={advancedTypeObj.category}
+              name={advancedTypeObj.displayName}
+              onClick={() => handleSelection('advanced', advancedTypeObj.category)}
+            />
+          ))}
+        </Stack>
+      </Stack>
+    );
+  }
+
   return (
     <>
       <Stack gap={2}>
@@ -164,6 +199,14 @@ const AddNewContent = () => {
             onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}
           />
         ))}
+        {templatesByType.advanced?.templates?.length > 0 && (
+          <BlockCardButton
+            blockType="advanced"
+            name={intl.formatMessage(messages.sidebarAddAdvancedButton)}
+            onClick={showAdvancedPage}
+            actionIcon={<Icon src={ChevronRight} />}
+          />
+        )}
       </Stack>
       <StandardModal
         title={intl.formatMessage(messages.videoPickerModalTitle)}

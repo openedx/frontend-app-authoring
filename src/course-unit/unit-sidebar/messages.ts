@@ -56,6 +56,16 @@ const messages = defineMessages({
     defaultMessage: 'Select video',
     description: 'Video picker modal title.',
   },
+  sidebarAddBackButton: {
+    id: 'course-authoring.course-unit.sidebar.add.back.button',
+    defaultMessage: 'Back',
+    description: 'Label for the button to go back from the add advanced block page',
+  },
+  sidebarAddAdvancedBlocksTitle: {
+    id: 'course-authoring.course-unit.sidebar.add.back.button',
+    defaultMessage: 'Advanced Blocks',
+    description: 'Title for the add advanced blocks page in the unit sidebar',
+  },
 });
 
 export default messages;

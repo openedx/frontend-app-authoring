@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Button, Chip, Collapsible, Icon, Stack,
 } from '@openedx/paragon';
@@ -13,6 +14,7 @@ export interface BlockCardButtonProps {
     boilerplateName: string;
   }[];
   onClickTemplate?: (boilerplateName: string) => void;
+  actionIcon?: React.ReactElement;
 }
 
 /**
@@ -25,13 +27,16 @@ export const BlockCardButton = ({
   templates,
   disabled = false,
   onClickTemplate,
+  actionIcon,
 }: BlockCardButtonProps) => {
   const titleComponent = (
     <Stack direction="horizontal" gap={3}>
       <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
         <Icon size="lg" src={getItemIcon(blockType)} />
       </span>
-      {name}
+      <span className="text-primary-700">
+        {name}
+      </span>
     </Stack>
   );
 
@@ -56,11 +61,14 @@ export const BlockCardButton = ({
   return (
     <Button
       variant="tertiary"
-      className="mx-2 shadow border justify-content-start px-4 font-weight-bold"
+      className="mx-2 shadow border justify-content-between pl-4 font-weight-bold"
       onClick={onClick}
       disabled={disabled}
     >
       {titleComponent}
+      <div className="mr-1">
+        {actionIcon}
+      </div>
     </Button>
   );
 };
