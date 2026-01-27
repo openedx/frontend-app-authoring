@@ -4,9 +4,9 @@ import {
 } from '@src/testUtils';
 
 import { OutlineSidebarProvider } from '@src/course-outline';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 const headerNavigationsActions = {
   lmsLink: '',
@@ -37,12 +37,12 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) => render(
   />,
   {
     extraWrapper: ({ children }) => (
-      <CourseAuthoringProvider courseId='1'>
+      <CourseAuthoringProvider courseId="1">
         <OutlineSidebarProvider>
           {children}
         </OutlineSidebarProvider>
       </CourseAuthoringProvider>
-    )
+    ),
   },
 );
 

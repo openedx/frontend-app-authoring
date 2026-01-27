@@ -4,13 +4,13 @@ import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
   act, fireEvent, initializeMocks, render, screen, waitFor,
 } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
+import { userEvent } from '@testing-library/user-event';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
 import messages from './messages';
 import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
-import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
-import { userEvent } from '@testing-library/user-event';
 
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
@@ -30,7 +30,7 @@ jest.mock('../../generic/data/api', () => ({
   getTagsCount: () => mockGetTagsCount(),
 }));
 
-let useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), isPending: false };
+const useUpdateCourseBlockNameMock = { mutateAsync: jest.fn(), isPending: false };
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
   useUpdateCourseBlockName: () => useUpdateCourseBlockNameMock,
@@ -91,7 +91,7 @@ const renderComponent = (props?: object, entry = '/') => {
             {children}
           </OutlineSidebarProvider>
         </CourseAuthoringProvider>
-      )
+      ),
     },
   );
 };
