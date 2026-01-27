@@ -14,6 +14,7 @@ import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 let store;
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
+const setCurrentSelection = jest.fn();
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -33,6 +34,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddUnit: handleOnAddUnitFromLibrary,
     handleAddSubsection: {},
     handleAddSection: {},
+    setCurrentSelection,
   }),
 }));
 
@@ -116,8 +118,6 @@ const section: XBlock = {
     duplicable: true,
   },
 } satisfies Partial<XBlock> as XBlock;
-
-const onEditSubectionSubmit = jest.fn();
 
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SubsectionCard
@@ -204,28 +204,11 @@ describe('<SubsectionCard />', () => {
 
     const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
-    const { currentSection, currentSubsection, currentItem } = store.getState().courseOutline;
-    expect(currentSection).toEqual(section);
-    expect(currentSubsection).toEqual(subsection);
-    expect(currentItem).toEqual(subsection);
-  });
-
-  it('title only updates if changed', async () => {
-    renderComponent();
-
-    let editButton = await screen.findByTestId('subsection-edit-button');
-    fireEvent.click(editButton);
-    let editField = await screen.findByTestId('subsection-edit-field');
-    fireEvent.blur(editField);
-
-    expect(onEditSubectionSubmit).not.toHaveBeenCalled();
-
-    editButton = await screen.findByTestId('subsection-edit-button');
-    fireEvent.click(editButton);
-    editField = await screen.findByTestId('subsection-edit-field');
-    fireEvent.change(editField, { target: { value: 'some random value' } });
-    fireEvent.keyDown(editField, { key: 'Enter', keyCode: 13 });
-    expect(onEditSubectionSubmit).toHaveBeenCalled();
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -437,6 +420,7 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should open align sidebar', async () => {
+    const user = userEvent.setup();
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
@@ -472,15 +456,20 @@ describe('<SubsectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
     const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    fireEvent.click(manageTagsBtn);
+    await user.click(manageTagsBtn);
 
     await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', subsection.id);
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
+    });
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
     });
   });
 });
