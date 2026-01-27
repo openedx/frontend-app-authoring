@@ -361,6 +361,15 @@ const CourseUnit = () => {
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
+                <PasteComponent
+                  clipboardData={sharedClipboardData}
+                  onClick={
+                    () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                  }
+                  text={intl.formatMessage(messages.pasteButtonText)}
+                />
+              )}
               {!readOnly && blockId && (
                 <AddComponent
                   parentLocator={blockId}
@@ -369,15 +378,6 @@ const CourseUnit = () => {
                   isProblemBankType={isProblemBankType}
                   handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
                   addComponentTemplateData={addComponentTemplateData}
-                />
-              )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
-                <PasteComponent
-                  clipboardData={sharedClipboardData}
-                  onClick={
-                    () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
-                  }
-                  text={intl.formatMessage(messages.pasteButtonText)}
                 />
               )}
               <MoveModal
