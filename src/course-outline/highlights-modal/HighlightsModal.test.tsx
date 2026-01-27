@@ -23,7 +23,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: () => ({
-    data: currentItemMock
+    data: currentItemMock,
   }),
 }));
 

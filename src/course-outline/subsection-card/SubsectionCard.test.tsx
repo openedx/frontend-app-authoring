@@ -11,7 +11,6 @@ import SubsectionCard from './SubsectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
-let store;
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
 const setCurrentSelection = jest.fn();
