@@ -50,8 +50,8 @@ describe('<ComponentUsageTab />', () => {
     render(mockLibraryBlockMetadata.usageKeyPublished);
 
     expect(await screen.findByText('text block 0')).toBeInTheDocument();
-    expect(await screen.getByText('4 Units')).toBeInTheDocument();
-    expect(await screen.getByText('3 Subsections')).toBeInTheDocument();
-    expect(await screen.getByText('2 Sections')).toBeInTheDocument();
+    expect(screen.getByText('4 Units')).toBeInTheDocument();
+    expect(screen.getByText('3 Subsections')).toBeInTheDocument();
+    expect(screen.getByText('2 Sections')).toBeInTheDocument();
   });
 });

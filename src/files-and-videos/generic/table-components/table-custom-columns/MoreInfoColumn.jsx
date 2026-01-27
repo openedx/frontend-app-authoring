@@ -58,6 +58,7 @@ const MoreInfoColumn = ({
               as={Button}
               variant="tertiary"
               onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 navigator.clipboard.writeText(id);
                 close();
               }}
@@ -70,6 +71,7 @@ const MoreInfoColumn = ({
                 as={Button}
                 variant="tertiary"
                 onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   navigator.clipboard.writeText(portableUrl);
                   close();
                 }}
@@ -80,6 +82,7 @@ const MoreInfoColumn = ({
                 as={Button}
                 variant="tertiary"
                 onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
                   navigator.clipboard.writeText(externalUrl);
                   close();
                 }}

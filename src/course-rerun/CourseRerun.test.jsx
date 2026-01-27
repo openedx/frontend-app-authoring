@@ -30,12 +30,12 @@ describe('<CourseRerun />', () => {
     expect(getAllByRole('button', { name: messages.cancelButton.defaultMessage }).length).toBe(2);
   });
 
-  it('should navigate to /home on cancel button click', () => {
+  it('should navigate to /home on cancel button click', async () => {
     const { getAllByRole } = render(<CourseRerun />);
     const cancelButton = getAllByRole('button', { name: messages.cancelButton.defaultMessage })[0];
 
     fireEvent.click(cancelButton);
-    waitFor(() => {
+    await waitFor(() => {
       expect(window.location.pathname).toBe('/home');
     });
   });

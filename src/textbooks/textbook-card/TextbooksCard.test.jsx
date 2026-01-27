@@ -175,7 +175,7 @@ describe('<TextbookCard />', () => {
         .onDelete(getEditTextbooksApiUrl(courseId, textbookId))
         .reply(200);
 
-      executeThunk(deleteTextbookQuery(courseId, textbookId), store.dispatch);
+      await executeThunk(deleteTextbookQuery(courseId, textbookId), store.dispatch);
     });
   });
 });

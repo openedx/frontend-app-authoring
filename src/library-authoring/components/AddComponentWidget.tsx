@@ -69,8 +69,10 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
         blockType,
       };
       if (!isChecked) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         addComponentToSelectedComponents(selectedComponent);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         removeComponentFromSelectedComponents(selectedComponent);
       }
     };

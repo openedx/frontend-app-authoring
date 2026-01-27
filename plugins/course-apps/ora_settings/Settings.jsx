@@ -50,6 +50,7 @@ const ORASettings = ({ onClose }) => {
     success = success && await handleSettingsSave(formValues);
     setSaveError(!success);
     if ((initialFormValues.enableFlexiblePeerGrade !== formValues.enableFlexiblePeerGrade) && success) {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(updateModel({
         modelType: 'courseApps',
         model: {

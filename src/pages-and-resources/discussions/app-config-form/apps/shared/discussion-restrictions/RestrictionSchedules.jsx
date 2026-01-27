@@ -29,6 +29,7 @@ const RestrictionSchedules = () => {
       ...updatedRestrictedDates[index],
       status: checkStatus(denormalizeRestrictedDate(updatedRestrictedDates[index])),
     };
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setFieldValue('restrictedDates', updatedRestrictedDates);
   }, [restrictedDates]);
 
@@ -43,7 +44,7 @@ const RestrictionSchedules = () => {
 
   const onAddNewItem = useCallback(async (push) => {
     await push(newRestrictedDateItem);
-    validateForm();
+    await validateForm();
   }, []);
 
   return (

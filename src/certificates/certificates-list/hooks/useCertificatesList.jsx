@@ -25,7 +25,7 @@ const useCertificatesList = (courseId) => {
   }));
 
   const handleSubmit = async (values) => {
-    // oxlint-disable-next-line @typescript-eslint/await-thenable - this IS a promise; it just has wrong type info.
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     await dispatch(updateCourseCertificate(courseId, values));
     setEditModes({});
     dispatch(setMode(MODE_STATES.view));

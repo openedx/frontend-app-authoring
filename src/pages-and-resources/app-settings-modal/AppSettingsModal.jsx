@@ -72,7 +72,7 @@ const AppSettingsModal = ({
   const handleFormSubmit = async (values) => {
     let success = true;
     if (appInfo.enabled !== values.enabled) {
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this IS a promise; it just has wrong type info.
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(updateAppStatus(courseId, appInfo.id, values.enabled));
     }
     // Call the submit handler for the settings component to save its settings

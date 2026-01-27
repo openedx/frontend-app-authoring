@@ -88,6 +88,7 @@ const UnitInfoSettings = () => {
     groupAccess: Object | null,
     isDiscussionEnabled: boolean,
   ) => {
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     await dispatch(editCourseUnitVisibilityAndData(
       id,
       PUBLISH_TYPES.republish,

@@ -85,6 +85,7 @@ const UpdateForm = ({
                       if (!isValidDate(value)) {
                         return;
                       }
+                      // eslint-disable-next-line @typescript-eslint/no-floating-promises
                       setFieldValue('date', convertToStringFromDate(value));
                     }}
                   />
@@ -103,8 +104,8 @@ const UpdateForm = ({
                 data-testid="course-updates-wisiwyg-editor"
                 name={contentFieldName}
                 minHeight={300}
-                onChange={(value) => {
-                  setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
+                onChange={async (value) => {
+                  await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
                 }}
               />
             </Form.Group>

@@ -55,6 +55,7 @@ export function cancelAllUploads(courseId, uploadData) {
       });
       Object.entries(uploadData).forEach(([key, value]) => {
         if (value.status === RequestStatus.IN_PROGRESS) {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           updateVideoUploadStatus(
             courseId,
             key,
@@ -178,6 +179,7 @@ export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }
   return (dispatch) => {
     Object.keys(uploadingIdsRef.current.uploadData).forEach((edxVideoId) => {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         updateVideoUploadStatus(
           courseId,
           edxVideoId || '',
@@ -246,7 +248,7 @@ const uploadToBucket = async ({
         ...currentVideoData,
         status: RequestStatus.SUCCESSFUL,
       };
-      updateVideoUploadStatus(
+      await updateVideoUploadStatus(
         courseId,
         edxVideoId,
         'Upload completed',
@@ -270,7 +272,7 @@ const uploadToBucket = async ({
         status: RequestStatus.FAILED,
       };
     }
-    updateVideoUploadStatus(
+    await updateVideoUploadStatus(
       courseId,
       edxVideoId || '',
       'Upload failed',
