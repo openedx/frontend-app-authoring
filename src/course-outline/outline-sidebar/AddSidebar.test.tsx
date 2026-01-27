@@ -31,6 +31,7 @@ mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
+const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -39,6 +40,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    setCurrentSelection,
   }),
 }));
 
