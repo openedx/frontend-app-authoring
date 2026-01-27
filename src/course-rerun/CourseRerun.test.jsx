@@ -17,6 +17,13 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 describe('<CourseRerun />', () => {
   beforeEach(() => {
     const { axiosMock } = initializeMocks();
@@ -36,7 +43,7 @@ describe('<CourseRerun />', () => {
 
     fireEvent.click(cancelButton);
     await waitFor(() => {
-      expect(window.location.pathname).toBe('/home');
+      expect(mockNavigate).toHaveBeenCalledWith('/home');
     });
   });
 
