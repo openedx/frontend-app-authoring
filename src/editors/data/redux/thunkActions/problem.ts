@@ -96,28 +96,49 @@ export const loadProblem = ({
   }
 };
 
-export const fetchAdvancedSettings = ({ rawOLX, rawSettings, isMarkdownEditorEnabled }) => (dispatch) => {
+export const fetchAdvancedSettings = ({
+  rawOLX,
+  rawSettings,
+  isMarkdownEditorEnabled,
+}) => (dispatch) => new Promise((resolve) => {
   const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
+
   dispatch(requests.fetchAdvancedSettings({
     onSuccess: (response) => {
       const defaultSettings = {};
+
       Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
         if (advancedProblemSettingKeys.includes(key)) {
           defaultSettings[key] = value.value;
         }
       });
-      dispatch(actions.problem.updateField({ defaultSettings: camelizeKeys(defaultSettings) }));
+
+      dispatch(actions.problem.updateField({
+        defaultSettings: camelizeKeys(defaultSettings),
+      }));
+
       loadProblem({
-        rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
+        rawOLX,
+        rawSettings,
+        defaultSettings,
+        isMarkdownEditorEnabled,
       })(dispatch);
+
+      resolve(true);
     },
+
     onFailure: () => {
       loadProblem({
-        rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
+        rawOLX,
+        rawSettings,
+        defaultSettings: {},
+        isMarkdownEditorEnabled,
       })(dispatch);
+
+      resolve(false);
     },
   }));
-};
+});
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = get(blockValue, 'data.data', '');
@@ -129,13 +150,12 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
     dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
-    dispatch(loadProblem({
+    return dispatch(loadProblem({
       rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
     }));
-  } else {
-    // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
-    dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
   }
+  // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
+  return dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
 };
 
 export default {

@@ -4,15 +4,17 @@ import {
 } from '@openedx/paragon';
 import { getIconBorderStyleColor, getItemIcon } from '../block-type-utils';
 
+export type BlockTemplate = {
+  displayName: string;
+  boilerplateName: string;
+};
+
 export interface BlockCardButtonProps {
   name: string;
   blockType: string;
   onClick: () => void;
   disabled?: boolean;
-  templates?: {
-    displayName: string;
-    boilerplateName: string;
-  }[];
+  templates?: BlockTemplate[];
   onClickTemplate?: (boilerplateName: string) => void;
   actionIcon?: React.ReactElement;
 }

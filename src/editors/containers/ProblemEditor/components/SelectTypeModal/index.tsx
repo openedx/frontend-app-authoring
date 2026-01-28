@@ -4,6 +4,7 @@ import { Row, Stack } from '@openedx/paragon';
 
 import {
   AdvancedProblemType,
+  AdvanceProblemKeys,
   isAdvancedProblemType,
   ProblemType,
   ProblemTypeKeys,
@@ -16,12 +17,16 @@ import * as hooks from './hooks';
 
 interface Props {
   onClose: (() => void) | null;
+  openAdvanced?: boolean;
 }
 
 const SelectTypeModal: React.FC<Props> = ({
   onClose,
+  openAdvanced = false,
 }) => {
-  const [selected, setSelected] = React.useState<ProblemType | AdvancedProblemType>(ProblemTypeKeys.SINGLESELECT);
+  const [selected, setSelected] = React.useState<ProblemType | AdvancedProblemType>(
+    openAdvanced ? AdvanceProblemKeys.BLANK : ProblemTypeKeys.SINGLESELECT,
+  );
   hooks.useArrowNav(selected, setSelected);
 
   return (

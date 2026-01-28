@@ -9,6 +9,7 @@ import {
 import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -16,12 +17,15 @@ import { ComponentPicker, SelectedComponent } from '@src/library-authoring';
 import { ContentType } from '@src/library-authoring/routes';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
+import { BlockCardButton, BlockTemplate } from '@src/generic/sidebar/BlockCardButton';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import EditorPage from '@src/editors/EditorPage';
 import VideoSelectorPage from '@src/editors/VideoSelectorPage';
 import { useIframe } from '@src/generic/hooks/context/hooks';
+import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
+import problemMessages from '@src/editors/containers/ProblemEditor/components/SelectTypeModal/content/messages';
+
 import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 import messages from './messages';
@@ -43,22 +47,39 @@ const AddNewContent = () => {
   const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
   const [blockType, setBlockType] = useState<string | null>(null);
   const [newBlockId, setNewBlockId] = useState<string | null>(null);
+  const [editorExtraProps, setEditorExtraProps] = useState<Record<string, any> | null>(null);
   const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isAdvancedPageOpen, showAdvancedPage, closeAdvancedPage] = useToggle();
 
+  // Build problem templates
+  const problemTemplates: BlockTemplate[] = [];
+  Object.values(ProblemTypeKeys).map((key) => (
+    problemTemplates.push({
+      displayName: intl.formatMessage(problemMessages[`problemType.${key}.title`]),
+      boilerplateName: key,
+    })
+  ));
+
+  // Pre-process block templates
   const templatesByType = componentTemplates.reduce((acc, item) => {
     let result = item;
     // (1) All types have at least one template of the same type.
     //     In that case, it's left empty to avoid rendering that single template.
-    // (2) The templates for the problem are not the ones required for this component.
-    if (item.templates.length === 1 || item.type === 'problem') {
+    // (2) Set the problem templates required for this component.
+    if (item.templates.length === 1) {
       result = {
         ...item,
         templates: [],
       };
+    } else if (item.type === 'problem') {
+      result = {
+        ...item,
+        templates: problemTemplates,
+      };
     }
+
     return {
       ...acc,
       [item.type]: result,
@@ -97,6 +118,7 @@ const AddNewContent = () => {
         break;
       case COMPONENT_TYPES.problem:
         handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
+          setEditorExtraProps({ problemType: moduleName });
           setBlockType(type);
           setNewBlockId(locator);
           showXBlockEditorModal();
@@ -160,6 +182,7 @@ const AddNewContent = () => {
     },
   ];
 
+  // Render add advanced blocks page
   if (isAdvancedPageOpen) {
     return (
       <Stack>
@@ -188,6 +211,7 @@ const AddNewContent = () => {
     );
   }
 
+  // Render add default blocks page
   return (
     <>
       <Stack gap={2}>
@@ -236,6 +260,7 @@ const AddNewContent = () => {
             lmsEndpointUrl={getConfig().LMS_BASE_URL}
             onClose={onXBlockCancel}
             returnFunction={/* istanbul ignore next */ () => onXBlockSave}
+            extraProps={editorExtraProps}
           />
         </div>
       )}
