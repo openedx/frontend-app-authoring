@@ -25,6 +25,7 @@ import { MultiLibraryProvider } from '@src/library-authoring/common/context/Mult
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 type ContainerTypes = 'unit' | 'subsection' | 'section';
 
@@ -48,18 +49,30 @@ const getLastEditableParent = (blockList: Array<XBlock>) => {
 
 /** Add Content Button */
 const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
-  const sectionsList = useSelector(getSectionsList);
-  const lastSection = getLastEditableParent(sectionsList);
-  const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
-  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
-  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
-  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
   const {
     courseUsageKey,
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
   } = useCourseAuthoringContext();
+  const { currentFlow, stopCurrentFlow, selectedContainerState } = useOutlineSidebarContext();
+  const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
+  const sectionsList = useSelector(getSectionsList);
+  const lastSection = currentItemData?.category === 'chapter' ? currentItemData : currentItemData ? undefined: getLastEditableParent(sectionsList);
+  const lastSubsection = useMemo(() => {
+    if (currentItemData?.category === 'sequential') {
+      return currentItemData;
+    }
+    if (currentItemData?.category === 'chapter') {
+      return getLastEditableParent(currentItemData?.childInfo.children || []);
+    }
+    if (currentItemData) {
+      return undefined;
+    }
+    return getLastEditableParent(lastSection?.childInfo.children || []);
+  }, []);
+  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
+  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
 
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
@@ -105,12 +118,16 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastSubsection,
   ]);
 
+  const disabled = useMemo(() => {
+    return (!lastSection && blockType === 'subsection') || (!lastSubsection && blockType === 'unit')
+  }, []);
+
   return (
     <Button
       variant="tertiary shadow"
       className="mx-2 justify-content-start px-4 font-weight-bold"
       onClick={onCreateContent}
-      disabled={(!lastSection && blockType === 'subsection') || (!lastSubsection && blockType === 'unit')}
+      disabled={disabled}
     >
       <Stack direction="horizontal" gap={3}>
         <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
@@ -301,7 +318,8 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const { currentFlow } = useOutlineSidebarContext();
+  const { currentFlow, selectedContainerState } = useOutlineSidebarContext();
+  const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
   const titleAndIcon = useMemo(() => {
     switch (currentFlow?.flowType) {
       case 'use-subsection':
@@ -309,6 +327,9 @@ export const AddSidebar = () => {
       case 'use-unit':
         return { title: currentFlow.parentTitle, icon: getItemIcon('subsection') };
       default:
+        if (currentItemData) {
+          return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
+        }
         return { title: courseDetails?.name || '', icon: SchoolOutline };
     }
   }, [currentFlow, intl, getItemIcon]);
