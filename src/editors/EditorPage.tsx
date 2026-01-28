@@ -28,6 +28,7 @@ const EditorPage: React.FC<Props> = ({
   studioEndpointUrl = null,
   onClose = null,
   returnFunction = null,
+  extraProps = null,
 }) => (
   <Provider store={store}>
     <ErrorBoundary
@@ -46,6 +47,7 @@ const EditorPage: React.FC<Props> = ({
             lmsEndpointUrl,
             studioEndpointUrl,
             returnFunction,
+            extraProps,
           }}
         />
       </EditorContextProvider>
