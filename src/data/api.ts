@@ -208,3 +208,25 @@ export async function getPreviewModulestoreMigration(
   const { data } = await client.get(getPreviewModulestoreMigrationUrl(), { params });
   return camelCaseObject(data);
 }
+
+export const getUserAgreementRecordApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement_record/${agreementType}`;
+
+export async function getUserAgreementRecord(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getUserAgreementRecordApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export async function updateUserAgreementRecord(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(getUserAgreementRecordApi(agreementType));
+  return camelCaseObject(data);
+}
+
+export const getUserAgreementApi = (agreementType: string) => `${getConfig().LMS_BASE_URL}/api/agreements/v1/agreement/${agreementType}/`;
+
+export async function getUserAgreement(agreementType: string) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getUserAgreementApi(agreementType));
+  return camelCaseObject(data);
+}
