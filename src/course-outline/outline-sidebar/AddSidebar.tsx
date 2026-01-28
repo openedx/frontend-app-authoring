@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { SchoolOutline } from '@openedx/paragon/icons';
+import { InfoOutline, SchoolOutline } from '@openedx/paragon/icons';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 
@@ -15,15 +15,30 @@ import {
 } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
-import { ContainerType } from '@src/generic/key-utils';
+import { ContainerType, normalizeContainerType } from '@src/generic/key-utils';
 import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import AlertMessage from '@src/generic/alert-message';
 
+
+const CannotAddContentAlert = () => {
+  const intl = useIntl();
+  const { currentItemData } = useOutlineSidebarContext();
+  return (
+    <AlertMessage
+      variant='info'
+      description={intl.formatMessage(messages.cannotAddAlertMsg, {
+        name: currentItemData?.displayName,
+        category: normalizeContainerType(currentItemData?.category || ''),
+      })}
+      icon={InfoOutline}
+    />
+  );
+}
 
 type AddContentButtonProps = {
   name: string,
@@ -41,11 +56,10 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   const {
     currentFlow,
     stopCurrentFlow,
-    selectedContainerState,
     lastEditableSection,
     lastEditableSubsection,
+    currentItemData,
   } = useOutlineSidebarContext();
-  const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
   const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
   const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
 
@@ -128,7 +142,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
-  const { currentFlow } = useOutlineSidebarContext();
+  const { currentFlow, currentItemData } = useOutlineSidebarContext();
   const btns = useCallback(() => {
     if (currentFlow?.flowType) {
       return (
@@ -156,6 +170,10 @@ const AddNewContent = () => {
     );
   }, [currentFlow, intl]);
 
+  if (!currentItemData?.actions.childAddable) {
+    return <CannotAddContentAlert />
+  }
+
   return (
     <Stack gap={2}>
       {btns()}
@@ -177,6 +195,7 @@ const ShowLibraryContent = () => {
     lastEditableSection,
     lastEditableSubsection,
     selectedContainerState,
+    currentItemData,
   } = useOutlineSidebarContext();
 
   const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
@@ -239,6 +258,10 @@ const ShowLibraryContent = () => {
     return blocks;
   }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
+  if (!currentItemData?.actions.childAddable) {
+    return <CannotAddContentAlert />
+  }
+
   return (
     <MultiLibraryProvider>
       <ComponentPicker
@@ -286,8 +309,7 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const { currentFlow, selectedContainerState } = useOutlineSidebarContext();
-  const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
+  const { currentFlow, currentItemData } = useOutlineSidebarContext();
   const titleAndIcon = useMemo(() => {
     if (currentFlow?.flowType) {
       return { title: currentFlow.parentTitle, icon: getItemIcon(currentFlow.flowType) };
