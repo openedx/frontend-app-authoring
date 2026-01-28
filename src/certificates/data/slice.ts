@@ -7,7 +7,7 @@ import { MODE_STATES } from './constants';
 const slice = createSlice({
   name: 'certificates',
   initialState: {
-    certificatesData: {},
+    certificatesData: {} as Record<string, any>,
     componentMode: MODE_STATES.noModes,
     loadingStatus: RequestStatus.PENDING,
     savingStatus: '',

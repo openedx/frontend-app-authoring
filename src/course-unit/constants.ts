@@ -11,7 +11,7 @@ export const UNIT_VISIBILITY_STATES = {
   staffOnly: 'staff_only',
   live: 'live',
   ready: 'ready',
-};
+} as const;
 
 export const ICON_COLOR_VARIANTS = {
   BLACK: '#000',
@@ -25,7 +25,7 @@ export const PUBLISH_TYPES = {
   republish: 'republish',
   discardChanges: 'discard_changes',
   makePublic: 'make_public',
-};
+} as const;
 
 export const getXBlockSupportMessages = (intl) => ({
   fs: { // Fully supported

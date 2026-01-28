@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   next: null,
   previous: null,
   count: 4,

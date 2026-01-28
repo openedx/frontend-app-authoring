@@ -4,6 +4,9 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
 
+import { RequestStatusType } from '@src/data/constants';
+import { MODE_STATES } from './certificates/data/constants';
+
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
@@ -54,7 +57,14 @@ export interface DeprecatedReduxState {
   courseOutline: Record<string, any>;
   courseUnit: Record<string, any>;
   courseChecklist: Record<string, any>;
-  certificates: Record<string, any>;
+  certificates: {
+    loadingStatus: RequestStatusType;
+    savingStatus: any;
+    savingImageStatus: string;
+    errorMessage: string;
+    componentMode: (typeof MODE_STATES)[keyof typeof MODE_STATES];
+    certificatesData: any;
+  };
   groupConfigurations: InferState<typeof groupConfigurationsReducer>;
   textbooks: Record<string, any>;
 }

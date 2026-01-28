@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   isSelfPaced: false,
   dates: {
     hasStartDate: true,

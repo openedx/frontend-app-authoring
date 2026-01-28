@@ -203,6 +203,7 @@ SettingsWidget.propTypes = {
     showanswer: PropTypes.string,
     showResetButton: PropTypes.bool,
     rerandomize: PropTypes.string,
+    gradingMethod: PropTypes.string,
   }).isRequired,
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,

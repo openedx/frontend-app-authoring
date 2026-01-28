@@ -1573,7 +1573,7 @@ describe('<CourseOutline />', () => {
 
     // after configuraiton response
     unit.visibilityState = 'staff_only';
-    unit.discussion_enabled = false;
+    unit.discussionEnabled = false;
     unit.userPartitionInfo = {
       selectablePartitions: [
         {

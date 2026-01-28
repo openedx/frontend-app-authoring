@@ -71,7 +71,7 @@ describe('<HeaderTitle />', () => {
         xblock_info: {
           ...courseSectionVerticalMock.xblock_info,
           upstreamInfo: {
-            ...courseSectionVerticalMock.xblock_info.upstreamInfo,
+            // ...courseSectionVerticalMock.xblock_info.upstream_info, // seems to be missing in the mock
             upstreamRef: 'lct:org:lib:unit:unit-1',
           },
         },

@@ -8,6 +8,7 @@ import { selectors } from '../../../../../../data/redux';
 import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { scoringCardHooks } from '../hooks';
+import { GradingMethod, GradingMethodKeys } from '../../../../../../data/constants/problem';
 
 const ScoringCard = ({
   scoring,
@@ -23,28 +24,67 @@ const ScoringCard = ({
     handleUnlimitedChange,
     handleMaxAttemptChange,
     handleWeightChange,
+    handleGradingMethodChange,
     handleOnChange,
     attemptDisplayValue,
   } = scoringCardHooks(scoring, updateSettings, defaultValue);
 
-  const getScoringSummary = (weight, attempts, unlimited) => {
+  const getScoringSummary = (weight, attempts, unlimited, gradingMethod) => {
     let summary = intl.formatMessage(messages.weightSummary, { weight });
     summary += ` ${String.fromCharCode(183)} `;
     summary += unlimited
       ? intl.formatMessage(messages.unlimitedAttemptsSummary)
       : intl.formatMessage(messages.attemptsSummary, { attempts: attempts || defaultValue });
+
+    const methodMessage = GradingMethod[gradingMethod || GradingMethodKeys.LAST_SCORE];
+
+    if (methodMessage) {
+      summary += ` ${String.fromCharCode(183)} `;
+      summary += intl.formatMessage(messages.gradingMethodSummary, {
+        gradingMethod: intl.formatMessage(methodMessage),
+      });
+    }
+
     return summary;
   };
 
   return (
     <SettingsOption
       title={intl.formatMessage(messages.scoringSettingsTitle)}
-      summary={getScoringSummary(scoring.weight, scoring.attempts.number, scoring.attempts.unlimited)}
+      summary={getScoringSummary(
+        scoring.weight,
+        scoring.attempts.number,
+        scoring.attempts.unlimited,
+        scoring.gradingMethod,
+      )}
       className="scoringCard"
     >
       <div className="mb-4">
-        <FormattedMessage {...messages.scoringSettingsLabel} />
+        <FormattedMessage {...messages.scoringSettingsLabelWithGradingMethod} />
       </div>
+      <Form.Group>
+        <Form.Control
+          as="select"
+          value={scoring.gradingMethod || GradingMethodKeys.LAST_SCORE}
+          onChange={handleGradingMethodChange}
+          floatingLabel={intl.formatMessage(messages.scoringGradingMethodInputLabel)}
+        >
+          {Object.values(GradingMethodKeys).map((gradingMethod) => {
+            const optionDisplayName = GradingMethod[gradingMethod];
+            return (
+              <option
+                key={gradingMethod}
+                value={gradingMethod}
+              >
+                {intl.formatMessage(optionDisplayName)}
+              </option>
+            );
+          })}
+        </Form.Control>
+        <Form.Control.Feedback>
+          <FormattedMessage {...messages.gradingMethodHint} />
+        </Form.Control.Feedback>
+      </Form.Group>
       <Form.Group>
         <Form.Control
           type="number"

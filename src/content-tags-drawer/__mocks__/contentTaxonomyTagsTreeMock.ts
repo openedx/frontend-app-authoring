@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'hierarchical taxonomy tag 1': {
     explicit: false,
     canDeleteObjecttag: true,
