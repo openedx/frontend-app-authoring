@@ -23,7 +23,7 @@ interface UnitVisibilityInfoProps {
   },
 }
 
-interface UnitvisibilityInfoContentProps {
+interface UnitVisibilityInfoContentProps {
   visibleToStaffOnly: boolean,
   userPartitionInfo?: {
     selectablePartitions: Record<string, any>[],
@@ -82,10 +82,10 @@ const LegacyVisibilityInfo = ({
   );
 };
 
-const UnitvisibilityInfoContent = ({
+const UnitVisibilityInfoContent = ({
   visibleToStaffOnly,
   userPartitionInfo,
-}: UnitvisibilityInfoContentProps) => {
+}: UnitVisibilityInfoContentProps) => {
   const intl = useIntl();
   const { setCurrentTabKey } = useUnitSidebarContext();
 
@@ -149,7 +149,7 @@ const UnitVisibilityInfo = ({
       <FormattedMessage {...messages.visibilityVisibleToTitle} />
     </span>
     {isUnitPageNewDesignEnabled() ? (
-      <UnitvisibilityInfoContent
+      <UnitVisibilityInfoContent
         visibleToStaffOnly={visibleToStaffOnly}
         userPartitionInfo={userPartitionInfo}
       />

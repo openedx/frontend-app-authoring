@@ -83,30 +83,32 @@ const UnitInfoSettings = () => {
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
 
-  const handleUpdate = async (
+  const handleUpdate = (
     isVisible: boolean,
     groupAccess: Object | null,
     isDiscussionEnabled: boolean,
   ) => {
-    await dispatch(editCourseUnitVisibilityAndData(
+    dispatch(editCourseUnitVisibilityAndData(
       id,
       PUBLISH_TYPES.republish,
       isVisible,
       groupAccess,
       isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
+      () => {
+        sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id });
+        sendMessageToIframe(messageTypes.refreshXBlock, null);
+      },
       id,
     ));
   };
 
-  /* istanbul ignore next */
-  const handleSaveGroups = async (data, { resetForm }) => {
+  const handleSaveGroups = (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {
       const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
       groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
     }
-    await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
+    handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
     resetForm({ values: data });
   };
 
