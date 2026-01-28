@@ -230,6 +230,11 @@ const messages = defineMessages({
     defaultMessage: 'Review Updates',
     description: 'Text displayed in sidebar library reference card button when it is has updates available.',
   },
+  cannotAddAlertMsg: {
+    id: 'course-authoring.course-outline.sidebar.library.reference.add-sidebar.alert.text',
+    defaultMessage: '{name} is a library {category}. Content cannot be added to Library referenced {category}s.',
+    description: 'Alert displayed in sidebar when author tries to add content in library referenced blocks',
+  },
 });
 
 export default messages;

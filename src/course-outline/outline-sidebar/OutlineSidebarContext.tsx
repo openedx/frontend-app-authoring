@@ -41,6 +41,8 @@ interface OutlineSidebarContextData {
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it. */
   lastEditableSubsection?: XBlock;
+  /** XBlock data of selectedContainerState.currentId */
+  currentItemData?: XBlock;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
@@ -182,6 +184,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       clearSelection,
       lastEditableSection,
       lastEditableSubsection,
+      currentItemData,
     }),
     [
       currentPageKey,
@@ -197,6 +200,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       clearSelection,
       lastEditableSection,
       lastEditableSubsection,
+      currentItemData,
     ],
   );
 
