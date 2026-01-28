@@ -60,7 +60,6 @@
     "@openedx-plugins/course-app-wiki": "file:plugins/course-apps/wiki",
     "@openedx-plugins/course-app-xpert_unit_summary": "file:plugins/course-apps/xpert_unit_summary",
     "@openedx/frontend-build": "^14.6.2",
-    "@openedx/frontend-plugin-aspects": "file:frontend-plugin-aspects",
     "@openedx/frontend-plugin-framework": "^1.8.0",
     "@openedx/paragon": "^23.5.0",
     "@redux-devtools/extension": "^3.3.0",
