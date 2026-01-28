@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { useQueryClient } from '@tanstack/react-query';
 
 import moment from 'moment';
 import { getSavingStatus as getGenericSavingStatus } from '@src/generic/data/selectors';
 import { RequestStatus } from '@src/data/constants';
-import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { ContainerType } from '@src/generic/key-utils';
+import { ContainerType, getBlockType } from '@src/generic/key-utils';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
-  setCurrentItem,
-  setCurrentSection,
   resetScrollField,
   updateSavingStatus,
 } from './data/slice';
@@ -25,9 +23,6 @@ import {
   getStatusBarData,
   getSectionsList,
   getCourseActions,
-  getCurrentItem,
-  getCurrentSection,
-  getCurrentSubsection,
   getCustomRelativeDatesActiveFlag,
   getErrors,
   getCreatedOn,
@@ -36,7 +31,6 @@ import {
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
   deleteCourseUnitQuery,
-  editCourseItemQuery,
   duplicateSectionQuery,
   duplicateSubsectionQuery,
   duplicateUnitQuery,
@@ -45,7 +39,6 @@ import {
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
-  publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
   configureCourseSubsectionQuery,
@@ -58,12 +51,17 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { containerComparisonQueryKeys } from '../container-comparison/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const { handleAddSection } = useCourseAuthoringContext();
+  const {
+    handleAddSection,
+    setCurrentSelection,
+    currentSelection,
+    currentUnlinkModalData,
+    closeUnlinkModal,
+  } = useCourseAuthoringContext();
+  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
   const {
     reindexLink,
@@ -84,9 +82,6 @@ const useCourseOutline = ({ courseId }) => {
   const savingStatus = useSelector(getSavingStatus);
   const courseActions = useSelector(getCourseActions);
   const sectionsList = useSelector(getSectionsList);
-  const currentItem = useSelector(getCurrentItem);
-  const currentSection = useSelector(getCurrentSection);
-  const currentSubsection = useSelector(getCurrentSubsection);
   const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
   const genericSavingStatus = useSelector(getGenericSavingStatus);
   const errors = useSelector(getErrors);
@@ -96,10 +91,8 @@ const useCourseOutline = ({ courseId }) => {
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
-  const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -143,40 +136,53 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleOpenHighlightsModal = (section) => {
-    dispatch(setCurrentItem(section));
-    dispatch(setCurrentSection(section));
+    setCurrentSelection({
+      currentId: section.id,
+      sectionId: section.id,
+    });
     openHighlightsModal();
   };
 
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentItem.id, dataToSend));
+    dispatch(updateCourseSectionHighlightsQuery(currentSelection?.currentId, dataToSend));
 
     closeHighlightsModal();
   };
 
-  const handlePublishItemSubmit = () => {
-    dispatch(publishCourseItemQuery(currentItem.id, currentSection.id));
-
-    closePublishModal();
-  };
-
   const handleConfigureModalClose = () => {
     closeConfigureModal();
-    // reset the currentItem so the ConfigureModal's state is also reset
-    dispatch(setCurrentItem({}));
+    // reset the currentSelection?.current so the ConfigureModal's state is also reset
+    setCurrentSelection(undefined);
   };
 
+  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
+
+  /** Handle the submit of the item unlinking XBlock from library counterpart. */
+  const handleUnlinkItemSubmit = useCallback(async () => {
+    // istanbul ignore if: this should never happen
+    if (!currentUnlinkModalData) {
+      return;
+    }
+
+    await unlinkDownstream(currentUnlinkModalData.value.id, {
+      onSuccess: () => {
+        closeUnlinkModal();
+      },
+    });
+  }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);
+
   const handleConfigureItemSubmit = (...arg) => {
-    switch (currentItem.category) {
+    const category = getBlockType(currentSelection.currentId);
+    switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
+        dispatch(configureCourseSectionQuery(currentSelection?.sectionId, ...arg));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
+        dispatch(configureCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
+        dispatch(configureCourseUnitQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
         break;
       default:
         return;
@@ -184,56 +190,45 @@ const useCourseOutline = ({ courseId }) => {
     handleConfigureModalClose();
   };
 
-  const handleEditSubmit = (itemId, sectionId, displayName) => {
-    dispatch(editCourseItemQuery(itemId, sectionId, displayName));
-    // Invalidate container diff queries to update sync diff preview
-    queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
-  };
-
   const handleDeleteItemSubmit = () => {
-    switch (currentItem.category) {
+    const category = getBlockType(currentSelection.currentId);
+    switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(deleteCourseSectionQuery(currentItem.id));
+        dispatch(deleteCourseSectionQuery(currentSelection?.currentId));
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
+        dispatch(deleteCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId));
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
         dispatch(deleteCourseUnitQuery(
-          currentItem.id,
-          currentSubsection.id,
-          currentSection.id,
+          currentSelection?.currentId,
+          currentSelection?.subsectionId,
+          currentSelection?.sectionId,
         ));
         break;
       default:
         return;
     }
+    if (selectedContainerState.currentId === currentSelection?.currentId) {
+      clearSelection();
+    }
     closeDeleteModal();
   };
 
-  const { mutateAsync: unlinkDownstream } = useUnlinkDownstream();
-
-  const handleUnlinkItemSubmit = async () => {
-    // istanbul ignore if: this should never happen
-    if (!currentItem.id) {
-      return;
-    }
-
-    await unlinkDownstream(currentItem.id);
-    dispatch(fetchCourseOutlineIndexQuery(courseId));
-    closeUnlinkModal();
-  };
-
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateSectionQuery(currentSection.id, courseStructure.id));
+    dispatch(duplicateSectionQuery(currentSelection?.sectionId, courseStructure.id));
   };
 
   const handleDuplicateSubsectionSubmit = () => {
-    dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
+    dispatch(duplicateSubsectionQuery(currentSelection?.subsectionId, currentSelection?.sectionId));
   };
 
   const handleDuplicateUnitSubmit = () => {
-    dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
+    dispatch(duplicateUnitQuery(
+      currentSelection?.currentId,
+      currentSelection?.subsectionId,
+      currentSelection?.sectionId,
+    ));
   };
 
   const handleVideoSharingOptionChange = (value) => {
@@ -313,9 +308,6 @@ const useCourseOutline = ({ courseId }) => {
     showSuccessAlert,
     isDisabledReindexButton,
     isSectionsExpanded,
-    isPublishModalOpen,
-    openPublishModal,
-    closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
     handleConfigureModalClose,
@@ -323,8 +315,6 @@ const useCourseOutline = ({ courseId }) => {
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
-    handlePublishItemSubmit,
-    handleEditSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,
@@ -338,11 +328,7 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeDeleteModal,
     openDeleteModal,
-    isUnlinkModalOpen,
-    closeUnlinkModal,
-    openUnlinkModal,
     handleDeleteItemSubmit,
-    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
@@ -362,6 +348,7 @@ const useCourseOutline = ({ courseId }) => {
     handleUnitDragAndDrop,
     errors,
     resetScrollState,
+    handleUnlinkItemSubmit,
   };
 };
 

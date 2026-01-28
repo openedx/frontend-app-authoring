@@ -12,7 +12,7 @@ import { useCourseDetails } from '../data/apiHooks';
 
 import messages from './messages';
 
-export const OutlineInfoSidebar = () => {
+export const CourseInfoSidebar = () => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const { data: courseDetails } = useCourseDetails(courseId);

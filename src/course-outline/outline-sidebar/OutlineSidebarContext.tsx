@@ -8,7 +8,9 @@ import {
 } from 'react';
 import { useToggle } from '@openedx/paragon';
 
-import { useStateWithUrlSearchParam } from '@src/hooks';
+import { useEscapeClick, useStateWithUrlSearchParam } from '@src/hooks';
+import { SelectionState } from '@src/data/types';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
@@ -25,25 +27,21 @@ export type OutlineFlow = {
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
-  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys, containerId?: string) => void;
+  setCurrentPageKey: (pageKey: OutlineSidebarPageKeys) => void;
   currentFlow: OutlineFlow | null;
   startCurrentFlow: (flow: OutlineFlow) => void;
   stopCurrentFlow: () => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
-  selectedContainerId?: string;
-  // The Id of the container used in the current sidebar page
-  // The container is not necessarily selected to open a selected sidebar.
-  // Example: Align sidebar
-  currentContainerId?: string;
-  openContainerInfoSidebar: (containerId: string) => void;
+  selectedContainerState?: SelectionState;
+  openContainerInfoSidebar: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+  clearSelection: () => void;
 }
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [currentContainerId, setCurrentContainerId] = useState<string>();
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<OutlineSidebarPageKeys>(
     'info',
     'sidebar',
@@ -53,13 +51,29 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
   const [isOpen, open, , toggle] = useToggle(true);
 
-  const [selectedContainerId, setSelectedContainerId] = useState<string | undefined>();
+  /**
+  * Use this to store the selected container's information and should always contain full ancestor info.
+  * If selected container is a section, set containerId and sectionId to same value and subsectionId should
+  * be undefined.
+  * If selected container is a subsection, set containerId and subsectionId to same value and sectionId
+  * should be set to its parent section id.
+  * If selected container is an unit, set containerId as unitId, subsectionId as its parent subsection's id
+  * and sectionId should be set to its top parent section's id.
+  */
+  const [selectedContainerState, setSelectedContainerState] = useState<SelectionState | undefined>();
+  const { setCurrentSelection } = useCourseAuthoringContext();
 
-  const openContainerInfoSidebar = useCallback((containerId: string) => {
-    if (isOutlineNewDesignEnabled()) {
-      setSelectedContainerId(containerId);
+  /**
+  * Set currentSelection to same as selectedContainerState whenever
+  * selectedContainerState or currentPageKey changes.
+  * This allows us to reset the currentSelection.
+  */
+  useEffect(() => {
+    // To allow tag buttons on other cards to jump to align page and not loose its selection
+    if (currentPageKey !== 'align') {
+      setCurrentSelection(selectedContainerState);
     }
-  }, [setSelectedContainerId]);
+  }, [currentPageKey, selectedContainerState]);
 
   /**
   * Stops current add content flow.
@@ -69,12 +83,26 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(null);
   }, [setCurrentFlow]);
 
-  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys, containerId?: string) => {
+  const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
     setCurrentFlow(null);
-    setCurrentContainerId(containerId);
     open();
   }, [open, setCurrentFlow]);
+
+  const openContainerInfoSidebar = useCallback((
+    containerId: string,
+    subsectionId?: string,
+    sectionId?: string,
+  ) => {
+    if (isOutlineNewDesignEnabled()) {
+      setSelectedContainerState({ currentId: containerId, subsectionId, sectionId });
+      setCurrentPageKey('info');
+    }
+  }, [setSelectedContainerState, setCurrentPageKey]);
+
+  const clearSelection = useCallback(() => {
+    setSelectedContainerState(undefined);
+  }, [selectedContainerState]);
 
   /**
   * Starts add content flow.
@@ -86,18 +114,13 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     setCurrentFlow(flow);
   }, [setCurrentFlow, setCurrentPageKey]);
 
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        stopCurrentFlow();
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, []);
+  useEscapeClick({
+    onEscape: () => {
+      stopCurrentFlow();
+      setSelectedContainerState(undefined);
+    },
+    dependency: [stopCurrentFlow],
+  });
 
   const context = useMemo<OutlineSidebarContextData>(
     () => ({
@@ -109,9 +132,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
-      selectedContainerId,
-      currentContainerId,
+      selectedContainerState,
       openContainerInfoSidebar,
+      clearSelection,
     }),
     [
       currentPageKey,
@@ -122,9 +145,9 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       isOpen,
       open,
       toggle,
-      selectedContainerId,
-      currentContainerId,
+      selectedContainerState,
       openContainerInfoSidebar,
+      clearSelection,
     ],
   );
 

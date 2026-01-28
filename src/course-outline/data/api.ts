@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { XBlock } from '@src/data/types';
-import { CourseOutline, CourseDetails } from './types';
+import { CourseOutline, CourseDetails, CourseItemUpdateResult } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -201,13 +201,13 @@ export async function updateCourseSectionHighlights(
 }
 
 /**
- * Publish course section
- * @param {string} sectionId
+ * Publish course item
+ * @param {string} itemId
  * @returns {Promise<Object>}
  */
-export async function publishCourseSection(sectionId: string): Promise<object> {
+export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(itemId), {
       publish: 'make_public',
     });
 
@@ -335,14 +335,11 @@ export async function configureCourseUnit(
 
 /**
  * Edit course section
- * @param {string} itemId
- * @param {string} displayName
- * @returns {Promise<Object>}
  */
-export async function editItemDisplayName(
-  itemId: string,
-  displayName: string,
-): Promise<object> {
+export async function editItemDisplayName({ itemId, displayName }: {
+  itemId: string;
+  displayName: string;
+}): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       metadata: {

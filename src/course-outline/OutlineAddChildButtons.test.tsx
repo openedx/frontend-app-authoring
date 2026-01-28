@@ -16,6 +16,7 @@ const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
 const handleAddUnit = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
+const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -24,6 +25,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    setCurrentSelection,
   }),
 }));
 

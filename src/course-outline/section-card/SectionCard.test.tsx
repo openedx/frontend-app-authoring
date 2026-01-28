@@ -4,12 +4,14 @@ import {
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
+import userEvent from '@testing-library/user-event';
 import SectionCard from './SectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
+import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
+const setCurrentSelection = jest.fn();
 
 jest.mock('@src/course-unit/data/apiHooks', () => ({
   useAcceptLibraryBlockChanges: () => ({
@@ -25,6 +27,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId: 5,
     handleAddSubsectionFromLibrary: jest.fn(),
     handleNewSubsectionSubmit: jest.fn(),
+    setCurrentSelection,
   }),
 }));
 
@@ -91,20 +94,15 @@ const section = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const onEditSectionSubmit = jest.fn();
-
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SectionCard
     section={section}
     index={1}
     canMoveItem={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenHighlightsModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
     onOpenConfigureModal={jest.fn()}
-    onEditSectionSubmit={onEditSectionSubmit}
     onDuplicateSubmit={jest.fn()}
     isSectionsExpanded
     isSelfPaced={false}
@@ -173,24 +171,6 @@ describe('<SectionCard />', () => {
     fireEvent.click(expandButton);
     expect(screen.queryByTestId('section-card__subsections')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'New subsection' })).toBeInTheDocument();
-  });
-
-  it('title only updates if changed', async () => {
-    renderComponent();
-
-    let editButton = await screen.findByTestId('section-edit-button');
-    fireEvent.click(editButton);
-    let editField = await screen.findByTestId('section-edit-field');
-    fireEvent.blur(editField);
-
-    expect(onEditSectionSubmit).not.toHaveBeenCalled();
-
-    editButton = await screen.findByTestId('section-edit-button');
-    fireEvent.click(editButton);
-    editField = await screen.findByTestId('section-edit-field');
-    fireEvent.change(editField, { target: { value: 'some random value' } });
-    fireEvent.blur(editField);
-    expect(onEditSectionSubmit).toHaveBeenCalled();
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -310,6 +290,7 @@ describe('<SectionCard />', () => {
   });
 
   it('should open legacy manage tags', async () => {
+    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
@@ -318,22 +299,23 @@ describe('<SectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('section-card');
     const menu = await within(element).findByTestId('section-card-header__menu-button');
-    await fireEvent.click(menu);
+    await user.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('section-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    await fireEvent.click(manageTagsBtn);
+    await user.click(manageTagsBtn);
 
     const drawer = await screen.findByRole('alert');
     expect(within(drawer).getByText(/manage tags/i));
   });
 
   it('should open align sidebar', async () => {
+    const user = userEvent.setup();
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
-      component: OutlineInfoSidebar,
+      component: CourseInfoSidebar,
       icon: Info,
       title: '',
     };
@@ -355,6 +337,7 @@ describe('<SectionCard />', () => {
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
       }));
     setConfig({
       ...getConfig(),
@@ -364,15 +347,19 @@ describe('<SectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('section-card');
     const menu = await within(element).findByTestId('section-card-header__menu-button');
-    await fireEvent.click(menu);
+    await user.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('section-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    await fireEvent.click(manageTagsBtn);
+    await user.click(manageTagsBtn);
 
     await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', section.id);
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
+    });
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: section.id,
+      sectionId: section.id,
     });
   });
 });

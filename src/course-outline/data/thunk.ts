@@ -13,13 +13,11 @@ import { getErrorDetails } from '../utils/getErrorDetails';
 import {
   deleteCourseItem,
   duplicateCourseItem,
-  editItemDisplayName,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
   getCourseItem,
-  publishCourseSection,
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
@@ -266,26 +264,6 @@ export function updateCourseSectionHighlightsQuery(sectionId: string, highlights
   };
 }
 
-export function publishCourseItemQuery(itemId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await publishCourseSection(itemId).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
 export function configureCourseItemQuery(sectionId: string, configureFn: () => Promise<any>) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -373,26 +351,6 @@ export function configureCourseUnitQuery(
       sectionId,
       async () => configureCourseUnit(itemId, isVisibleToStaffOnly, groupAccess, discussionEnabled),
     ));
-  };
-}
-
-export function editCourseItemQuery(itemId: string, sectionId: string, displayName: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await editItemDisplayName(itemId, displayName).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
   };
 }
 

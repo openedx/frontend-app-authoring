@@ -61,7 +61,7 @@ const ConfigureModal = ({
     showReviewRules,
     onlineProctoringRules,
     discussionEnabled,
-  } = currentItemData;
+  } = currentItemData || {};
 
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
@@ -361,7 +361,7 @@ ConfigureModal.propTypes = {
       blockDisplayName: PropTypes.string,
       blockUsageKey: PropTypes.string,
     }),
-    prereq: PropTypes.number,
+    prereq: PropTypes.string,
     prereqMinScore: PropTypes.number,
     prereqMinCompletion: PropTypes.number,
     releasedToStudents: PropTypes.bool,
@@ -374,7 +374,7 @@ ConfigureModal.propTypes = {
     showReviewRules: PropTypes.bool,
     onlineProctoringRules: PropTypes.string,
     discussionEnabled: PropTypes.bool,
-  }).isRequired,
+  }),
   isXBlockComponent: PropTypes.bool,
   isSelfPaced: PropTypes.bool.isRequired,
 };
