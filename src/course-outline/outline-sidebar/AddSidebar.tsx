@@ -10,15 +10,12 @@ import {
   Button, Icon, Stack, Tab, Tabs,
 } from '@openedx/paragon';
 import { getIconBorderStyleColor, getItemIcon } from '@src/generic/block-type-utils';
-import { useSelector } from 'react-redux';
-import { getSectionsList } from '@src/course-outline/data/selectors';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import { ComponentSelectedEvent } from '@src/library-authoring/common/context/ComponentPickerContext';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { ContainerType } from '@src/generic/key-utils';
-import type { XBlock } from '@src/data/types';
 import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
@@ -27,24 +24,10 @@ import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 
-type ContainerTypes = 'unit' | 'subsection' | 'section';
 
 type AddContentButtonProps = {
   name: string,
-  blockType: ContainerTypes,
-};
-
-const getLastEditableParent = (blockList: Array<XBlock>) => {
-  let index = 1;
-  let lastBlock: XBlock;
-  while (index <= blockList.length) {
-    lastBlock = blockList[blockList.length - index];
-    if (lastBlock.actions.childAddable) {
-      return lastBlock;
-    }
-    index++;
-  }
-  return undefined;
+  blockType: ContainerType,
 };
 
 /** Add Content Button */
@@ -55,24 +38,16 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     handleAddSubsection,
     handleAddUnit,
   } = useCourseAuthoringContext();
-  const { currentFlow, stopCurrentFlow, selectedContainerState } = useOutlineSidebarContext();
+  const {
+    currentFlow,
+    stopCurrentFlow,
+    selectedContainerState,
+    lastEditableSection,
+    lastEditableSubsection,
+  } = useOutlineSidebarContext();
   const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
-  const sectionsList = useSelector(getSectionsList);
-  const lastSection = currentItemData?.category === 'chapter' ? currentItemData : currentItemData ? undefined: getLastEditableParent(sectionsList);
-  const lastSubsection = useMemo(() => {
-    if (currentItemData?.category === 'sequential') {
-      return currentItemData;
-    }
-    if (currentItemData?.category === 'chapter') {
-      return getLastEditableParent(currentItemData?.childInfo.children || []);
-    }
-    if (currentItemData) {
-      return undefined;
-    }
-    return getLastEditableParent(lastSection?.childInfo.children || []);
-  }, []);
-  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
-  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
+  const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
+  const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
 
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
@@ -114,20 +89,31 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     handleAddSubsection,
     handleAddUnit,
     currentFlow,
-    lastSection,
-    lastSubsection,
+    lastEditableSection,
+    lastEditableSubsection,
   ]);
 
-  const disabled = useMemo(() => {
-    return (!lastSection && blockType === 'subsection') || (!lastSubsection && blockType === 'unit')
-  }, []);
+  const enabled = useMemo(() => {
+    return (
+      (currentFlow)
+      || (blockType === 'subsection' &&  lastEditableSection)
+      || (blockType === 'unit' && lastEditableSubsection)
+      || (blockType === 'section' && !currentItemData)
+    )
+  }, [
+    currentFlow,
+    blockType,
+    currentItemData,
+    lastEditableSection,
+    lastEditableSubsection,
+  ]);
 
   return (
     <Button
       variant="tertiary shadow"
       className="mx-2 justify-content-start px-4 font-weight-bold"
       onClick={onCreateContent}
-      disabled={disabled}
+      disabled={!enabled}
     >
       <Stack direction="horizontal" gap={3}>
         <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
@@ -144,46 +130,30 @@ const AddNewContent = () => {
   const intl = useIntl();
   const { currentFlow } = useOutlineSidebarContext();
   const btns = useCallback(() => {
-    switch (currentFlow?.flowType) {
-      case 'use-section':
-        return (
-          <AddContentButton
-            name={intl.formatMessage(contentMessages.sectionButton)}
-            blockType="section"
-          />
-        );
-      case 'use-subsection':
-        return (
-          <AddContentButton
-            name={intl.formatMessage(contentMessages.subsectionButton)}
-            blockType="subsection"
-          />
-        );
-      case 'use-unit':
-        return (
-          <AddContentButton
-            name={intl.formatMessage(contentMessages.unitButton)}
-            blockType="unit"
-          />
-        );
-      default:
-        return (
-          <>
-            <AddContentButton
-              name={intl.formatMessage(contentMessages.sectionButton)}
-              blockType="section"
-            />
-            <AddContentButton
-              name={intl.formatMessage(contentMessages.subsectionButton)}
-              blockType="subsection"
-            />
-            <AddContentButton
-              name={intl.formatMessage(contentMessages.unitButton)}
-              blockType="unit"
-            />
-          </>
-        );
+    if (currentFlow?.flowType) {
+      return (
+        <AddContentButton
+          name={intl.formatMessage(contentMessages[`${currentFlow.flowType}Button`])}
+          blockType={currentFlow.flowType}
+        />
+      );
     }
+    return (
+      <>
+        <AddContentButton
+          name={intl.formatMessage(contentMessages.sectionButton)}
+          blockType={ContainerType.Section}
+        />
+        <AddContentButton
+          name={intl.formatMessage(contentMessages.subsectionButton)}
+          blockType={ContainerType.Subsection}
+        />
+        <AddContentButton
+          name={intl.formatMessage(contentMessages.unitButton)}
+          blockType={ContainerType.Unit}
+        />
+      </>
+    );
   }, [currentFlow, intl]);
 
   return (
@@ -201,13 +171,16 @@ const ShowLibraryContent = () => {
     handleAddSubsection,
     handleAddUnit,
   } = useCourseAuthoringContext();
-  const sectionsList: Array<XBlock> = useSelector(getSectionsList);
-  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
+  const {
+    currentFlow,
+    stopCurrentFlow,
+    lastEditableSection,
+    lastEditableSubsection,
+    selectedContainerState,
+  } = useOutlineSidebarContext();
 
-  const lastSection = getLastEditableParent(sectionsList);
-  const lastSubsection = getLastEditableParent(lastSection?.childInfo.children || []);
-  const sectionParentId = currentFlow?.parentLocator || lastSection?.id;
-  const subsectionParentId = currentFlow?.parentLocator || lastSubsection?.id;
+  const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
+  const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
@@ -249,27 +222,22 @@ const ShowLibraryContent = () => {
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
-    lastSection,
-    lastSubsection,
+    lastEditableSection,
+    lastEditableSubsection,
     currentFlow,
     stopCurrentFlow,
   ]);
 
   const allowedBlocks = useMemo(() => {
-    const blocks: ContainerTypes[] = ['section'];
-    switch (currentFlow?.flowType) {
-      case 'use-section':
-        return ['section'];
-      case 'use-subsection':
-        return ['subsection'];
-      case 'use-unit':
-        return ['unit'];
-      default:
-        if (lastSection) { blocks.push('subsection'); }
-        if (lastSubsection) { blocks.push('unit'); }
-        return blocks;
+    const blocks: ContainerType[] = [];
+    if (currentFlow?.flowType) {
+        return [currentFlow.flowType];
     }
-  }, [lastSection, lastSubsection, sectionsList, currentFlow]);
+    if (!selectedContainerState) { blocks.push(ContainerType.Section); }
+    if (lastEditableSection) { blocks.push(ContainerType.Subsection); }
+    if (lastEditableSubsection) { blocks.push(ContainerType.Unit); }
+    return blocks;
+  }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
   return (
     <MultiLibraryProvider>
@@ -321,17 +289,13 @@ export const AddSidebar = () => {
   const { currentFlow, selectedContainerState } = useOutlineSidebarContext();
   const { data: currentItemData } = useCourseItemData(selectedContainerState?.currentId);
   const titleAndIcon = useMemo(() => {
-    switch (currentFlow?.flowType) {
-      case 'use-subsection':
-        return { title: currentFlow.parentTitle, icon: getItemIcon('section') };
-      case 'use-unit':
-        return { title: currentFlow.parentTitle, icon: getItemIcon('subsection') };
-      default:
-        if (currentItemData) {
-          return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
-        }
-        return { title: courseDetails?.name || '', icon: SchoolOutline };
+    if (currentFlow?.flowType) {
+      return { title: currentFlow.parentTitle, icon: getItemIcon(currentFlow.flowType) };
     }
+    if (currentItemData) {
+      return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
+    }
+    return { title: courseDetails?.name || '', icon: SchoolOutline };
   }, [currentFlow, intl, getItemIcon]);
 
   return (

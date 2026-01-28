@@ -14,11 +14,11 @@ import {
 } from '@src/library-authoring/data/api.mocks';
 import {
   type OutlineFlow,
-  type OutlineFlowType,
   OutlineSidebarProvider,
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
 import { AddSidebar } from './AddSidebar';
+import type { ContainerType } from '@src/generic/key-utils';
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
@@ -210,7 +210,7 @@ describe('AddSidebar component', () => {
       const firstSection = sectionList[0];
       const firstSubsection = firstSection.childInfo.children[0];
       currentFlow = {
-        flowType: `use-${category}` as OutlineFlowType,
+        flowType: category as ContainerType,
         parentLocator: category === 'subsection' ? firstSection.id : firstSubsection.id,
         parentTitle: category === 'subsection' ? firstSection.displayName : firstSubsection.displayName!,
       };
