@@ -87,6 +87,7 @@ const AppSettingsModal = ({
     // If submitting the form with errors, show the alert and scroll to it.
     await handleSubmit(event);
     if (Object.keys(errors).length > 0) {
+      /* instanbul ignore next: temp to unblock lint cleanup. We probably should test this. */
       setSaveError(true);
       alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
     }

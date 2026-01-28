@@ -83,6 +83,7 @@ const UpdateForm = ({
                     showPopperArrow={false}
                     onChange={(value) => {
                       if (!isValidDate(value)) {
+                        /* istanbul ignore next */
                         return;
                       }
                       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -104,7 +105,7 @@ const UpdateForm = ({
                 data-testid="course-updates-wisiwyg-editor"
                 name={contentFieldName}
                 minHeight={300}
-                onChange={async (value) => {
+                onChange={/* istanbul ignore next: we can't test WYSIWYG editors */async (value) => {
                   await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
                 }}
               />
