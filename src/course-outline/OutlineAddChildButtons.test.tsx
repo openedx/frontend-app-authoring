@@ -4,7 +4,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import {
   initializeMocks, render, screen, waitFor,
 } from '@src/testUtils';
-import { OutlineFlow, OutlineFlowType, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('react-redux', () => ({
@@ -126,7 +126,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       expect(useBtn).toBeInTheDocument();
       await userEvent.click(useBtn);
       await waitFor(() => expect(startCurrentFlow).toHaveBeenCalledWith({
-        flowType: `use-${containerType}`,
+        flowType: containerType,
         parentLocator,
         parentTitle,
       }));
@@ -136,7 +136,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
       const parentLocator = `parent-of-${containerType}`;
       const parentTitle = `parent-title-of-${containerType}`;
       currentFlow = {
-        flowType: `use-${containerType}` as OutlineFlowType,
+        flowType: containerType,
         parentLocator,
         parentTitle,
       };

@@ -6,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
-import { type OutlineFlowType, useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
@@ -39,11 +39,11 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
 
   const getTitle = () => {
     switch (currentFlow?.flowType) {
-      case 'use-section':
+      case ContainerType.Section:
         return intl.formatMessage(messages.placeholderSectionText);
-      case 'use-subsection':
+      case ContainerType.Subsection:
         return intl.formatMessage(messages.placeholderSubsectionText);
-      case 'use-unit':
+      case ContainerType.Unit:
         return intl.formatMessage(messages.placeholderUnitText);
       default:
         // istanbul ignore next: this should never happen
@@ -121,7 +121,7 @@ const NewOutlineAddChildButtons = ({
     importButton: messages.useUnitFromLibraryButton,
   };
   let onNewCreateContent: () => Promise<void>;
-  let flowType: OutlineFlowType;
+  let flowType: ContainerType;
 
   // Based on the childType, determine the correct action and messages to display.
   switch (childType) {
@@ -135,7 +135,7 @@ const NewOutlineAddChildButtons = ({
         parentLocator: courseUsageKey,
         displayName: COURSE_BLOCK_NAMES.chapter.name,
       });
-      flowType = 'use-section';
+      flowType = ContainerType.Section;
       break;
     case ContainerType.Subsection:
       messageMap = {
@@ -147,7 +147,7 @@ const NewOutlineAddChildButtons = ({
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.sequential.name,
       });
-      flowType = 'use-subsection';
+      flowType = ContainerType.Subsection;
       break;
     case ContainerType.Unit:
       messageMap = {
@@ -159,7 +159,7 @@ const NewOutlineAddChildButtons = ({
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.vertical.name,
       });
-      flowType = 'use-unit';
+      flowType = ContainerType.Unit;
       break;
     default:
       // istanbul ignore next: unreachable

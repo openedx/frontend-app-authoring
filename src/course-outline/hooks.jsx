@@ -211,10 +211,10 @@ const useCourseOutline = ({ courseId }) => {
         // istanbul ignore next
         throw new Error(`Unrecognized category ${category}`);;
     }
+    closeDeleteModal();
     if (selectedContainerState.currentId === currentSelection?.currentId) {
       clearSelection();
     }
-    closeDeleteModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
