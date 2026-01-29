@@ -257,7 +257,7 @@ export class OLXParser {
         if (isComplexAnswer && preservedAnswer) {
           title = this.richTextBuilder.build(preservedAnswer);
         }
-        const correct = eval(element['@_correct'].toLowerCase());
+        const correct = element['@_correct'].toLowerCase() === 'true';
         const id = indexToLetterMap[index];
         const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
         answers.push(
@@ -279,7 +279,7 @@ export class OLXParser {
       }
       const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
       answers.push({
-        correct: eval(choice['@_correct'].toLowerCase()),
+        correct: choice['@_correct'].toLowerCase() === 'true',
         id: indexToLetterMap[answers.length],
         title,
         ...feedback,
