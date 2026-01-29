@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-useless-spread
 /* eslint-disable react/prop-types */
 import userEvent from '@testing-library/user-event';
 
@@ -119,7 +120,7 @@ describe('<AddComponent />', () => {
       .reply(200, {
         ...courseSectionVerticalMock,
         component_templates: [
-          courseSectionVerticalMock.component_templates.map((component) => {
+          ...courseSectionVerticalMock.component_templates.map((component) => {
             if (component.type === COMPONENT_TYPES.discussion) {
               return {
                 ...component,
@@ -517,13 +518,13 @@ describe('<AddComponent />', () => {
         .reply(200, {
           ...courseSectionVerticalMock,
           component_templates: [
-            courseSectionVerticalMock.component_templates.map((component) => {
+            ...courseSectionVerticalMock.component_templates.map((component) => {
               if (component.type === COMPONENT_TYPES.advanced) {
                 return {
                   ...component,
                   support_legend: { show_legend: false },
                   templates: [
-                    component.templates.map((template, i) => ({
+                    ...component.templates.map((template, i) => ({
                       ...template,
                       support_level: supportLevels[i] || true,
                     })),
@@ -560,13 +561,13 @@ describe('<AddComponent />', () => {
         .reply(200, {
           ...courseSectionVerticalMock,
           component_templates: [
-            courseSectionVerticalMock.component_templates.map((component) => {
+            ...courseSectionVerticalMock.component_templates.map((component) => {
               if (component.type === COMPONENT_TYPES.advanced) {
                 return {
                   ...component,
                   support_legend: { show_legend: true },
                   templates: [
-                    component.templates.map((template, i) => ({
+                    ...component.templates.map((template, i) => ({
                       ...template,
                       support_level: supportLevels[i] || true,
                     })),
