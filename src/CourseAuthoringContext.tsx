@@ -18,7 +18,8 @@ import { RequestStatus, RequestStatusType } from './data/constants';
 
 type ModalState = {
   value: XBlock;
-  sectionId: string;
+  subsectionId?: string;
+  sectionId?: string;
 };
 
 export type CourseAuthoringContextData = {

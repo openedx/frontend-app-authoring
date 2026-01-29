@@ -26,6 +26,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
+import moment from 'moment';
 
 interface SectionCardProps {
   section: XBlock,
@@ -108,8 +109,10 @@ const SectionCard = ({
   /**
   Temporary measure to keep the react-query state updated with redux state  */
   useEffect(() => {
-    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
-  }, [initialData]);
+    if (moment(initialData.editedOnRaw).isAfter(moment(section.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, section]);
 
   const {
     id,

@@ -51,6 +51,8 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
+import { useQueryClient } from '@tanstack/react-query';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -93,6 +95,7 @@ const useCourseOutline = ({ courseId }) => {
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const queryClient = useQueryClient();
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
@@ -169,6 +172,20 @@ const useCourseOutline = ({ courseId }) => {
     await unlinkDownstream(currentUnlinkModalData.value.id, {
       onSuccess: () => {
         closeUnlinkModal();
+        // refresh child block data
+        currentUnlinkModalData.value.childInfo.children.forEach((block) => {
+          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(block.id) });
+          block.childInfo?.children.forEach(({ id: blockId }) => {
+            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
+          });
+        });
+        // refresh parent blocks data
+        queryClient.invalidateQueries({
+          queryKey: courseOutlineQueryKeys.courseItemId(currentUnlinkModalData?.sectionId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: courseOutlineQueryKeys.courseItemId(currentUnlinkModalData?.subsectionId),
+        });
       },
     });
   }, [currentUnlinkModalData, unlinkDownstream, closeUnlinkModal]);

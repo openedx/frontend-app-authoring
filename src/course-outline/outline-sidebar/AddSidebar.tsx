@@ -65,7 +65,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   } = useOutlineSidebarContext();
   const queryClient = useQueryClient();
   let sectionParentId = lastEditableSection?.id;
-  let subsectionParentId = lastEditableSubsection?.data.id;
+  let subsectionParentId = lastEditableSubsection?.data?.id;
 
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
@@ -228,7 +228,7 @@ const ShowLibraryContent = () => {
   const queryClient = useQueryClient();
 
   let sectionParentId = lastEditableSection?.id;
-  let subsectionParentId = lastEditableSubsection?.data.id;
+  let subsectionParentId = lastEditableSubsection?.data?.id;
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
@@ -366,7 +366,15 @@ export const AddSidebar = () => {
       return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
     }
     return { title: courseDetails?.name || '', icon: SchoolOutline };
-  }, [isCurrentFlowOn, flowData, currentFlow, intl, getItemIcon]);
+  }, [
+    isCurrentFlowOn,
+    flowData,
+    currentFlow,
+    intl,
+    getItemIcon,
+    currentItemData,
+    courseDetails,
+  ]);
 
   const handleBack = () => {
     clearSelection();

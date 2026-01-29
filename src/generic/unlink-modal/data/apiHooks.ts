@@ -15,7 +15,7 @@ export const useUnlinkDownstream = () => {
         queryKey: courseLibrariesQueryKeys.courseLibraries(courseKey),
       });
       queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.course(courseKey),
+        queryKey: courseOutlineQueryKeys.courseItemId(contentId),
       });
     },
   });

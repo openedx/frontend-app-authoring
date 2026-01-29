@@ -26,6 +26,7 @@ import type { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
+import moment from 'moment';
 
 interface UnitCardProps {
   unit: XBlock;
@@ -191,8 +192,10 @@ const UnitCard = ({
   /**
   Temporary measure to keep the react-query state updated with redux state  */
   useEffect(() => {
-    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
-  }, [initialData]);
+    if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, unit]);
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
@@ -248,10 +251,18 @@ const UnitCard = ({
             hasChanges={hasChanges}
             cardId={id}
             onClickMenuButton={selectAndTrigger}
-            onClickPublish={() => openPublishModal({ value: unit, sectionId: section.id })}
+            onClickPublish={() => openPublishModal({
+              value: unit,
+              sectionId: section.id,
+              subsectionId: subsection.id,
+            })}
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={() => openUnlinkModal({ value: unit, sectionId: section.id })}
+            onClickUnlink={() => openUnlinkModal({
+              value: unit,
+              sectionId: section.id,
+              subsectionId: subsection.id,
+            })}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}

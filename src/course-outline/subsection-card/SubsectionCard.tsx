@@ -28,6 +28,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
+import { sub } from 'date-fns';
+import moment from 'moment';
 
 interface SubsectionCardProps {
   section: XBlock,
@@ -143,8 +145,10 @@ const SubsectionCard = ({
   /**
   Temporary measure to keep the react-query state updated with redux state  */
   useEffect(() => {
-    queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
-  }, [initialData]);
+    if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, subsection]);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
