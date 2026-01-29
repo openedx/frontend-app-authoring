@@ -73,6 +73,7 @@ const CourseOutline = () => {
     courseUsageKey,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
     handleAddSection,
     isUnlinkModalOpen,
     closeUnlinkModal,
@@ -525,6 +526,7 @@ const CourseOutline = () => {
           isShow={
             isShowProcessingNotification
             || handleAddUnit.isPending
+            || handleAddAndOpenUnit.isPending
             || handleAddSubsection.isPending
             || handleAddSection.isPending
           }

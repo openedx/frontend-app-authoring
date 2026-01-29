@@ -6,7 +6,7 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { courseOutlineQueryKeys, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { addSection, addSubsection, updateSavingStatus } from '@src/course-outline/data/slice';
+import { addSection, addSubsection, addUnit, updateSavingStatus } from '@src/course-outline/data/slice';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';
@@ -30,6 +30,7 @@ export type CourseAuthoringContextData = {
   canChangeProviders: boolean;
   handleAddSection: ReturnType<typeof useCreateCourseBlock>;
   handleAddSubsection: ReturnType<typeof useCreateCourseBlock>;
+  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
   handleAddUnit: ReturnType<typeof useCreateCourseBlock>;
   openUnitPage: (locator: string) => void;
   getUnitUrl: (locator: string) => string;
@@ -103,7 +104,7 @@ export const CourseAuthoringProvider = ({
   /**
    * Open the unit page for a given locator.
    */
-  const openUnitPage = (locator: string) => {
+  const openUnitPage = async (locator: string) => {
     queryClient.invalidateQueries({
       queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
     });
@@ -139,12 +140,24 @@ export const CourseAuthoringProvider = ({
     }
   };
 
+  const addUnitToCourse = async (locator: string, parentLocator: string) => {
+    try {
+      const data = await getCourseItem(locator);
+      data.shouldScroll = true;
+      // Page should scroll to newly added subsection.
+      dispatch(addUnit({ parentLocator, data }));
+    } catch {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+
   const handleAddSection = useCreateCourseBlock(addSectionToCourse);
   const handleAddSubsection = useCreateCourseBlock(addSubsectionToCourse);
   /**
   * import a unit block from library and redirect user to this unit page.
   */
-  const handleAddUnit = useCreateCourseBlock(openUnitPage);
+  const handleAddAndOpenUnit = useCreateCourseBlock(openUnitPage);
+  const handleAddUnit = useCreateCourseBlock(addUnitToCourse);
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
@@ -155,6 +168,7 @@ export const CourseAuthoringProvider = ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
     getUnitUrl,
     openUnitPage,
     isUnlinkModalOpen,
@@ -176,6 +190,7 @@ export const CourseAuthoringProvider = ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
     getUnitUrl,
     openUnitPage,
     isUnlinkModalOpen,

@@ -171,6 +171,21 @@ const slice = createSlice({
         return section;
       });
     },
+    addUnit: (state: CourseOutlineState, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        section.childInfo.children = section.childInfo.children.map((subsection) => {
+          if (subsection.id !== payload.parentLocator) {
+            return subsection;
+          }
+          subsection.childInfo.children = [
+            ...subsection.childInfo.children.filter(({ id }) => id !== payload.data.id),
+            payload.data,
+          ];
+          return subsection;
+        });
+        return section;
+      });
+    },
     deleteUnit: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         if (section.id !== payload.sectionId) {
@@ -224,6 +239,7 @@ export const {
   deleteSection,
   deleteSubsection,
   deleteUnit,
+  addUnit,
   duplicateSection,
   reorderSectionList,
   setPasteFileNotices,

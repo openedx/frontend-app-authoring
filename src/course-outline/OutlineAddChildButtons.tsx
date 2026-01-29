@@ -31,6 +31,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
 
   if (!currentFlow || currentFlow.parentLocator !== parentLocator) {
@@ -59,6 +60,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
         <Stack direction="horizontal" gap={3}>
           {(handleAddSection.isPending
             || handleAddSubsection.isPending
+            || handleAddAndOpenUnit.isPending
             || handleAddUnit.isPending) && (
             <LoadingSpinner />
           )}
@@ -113,7 +115,7 @@ const NewOutlineAddChildButtons = ({
     courseUsageKey,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const { startCurrentFlow } = useOutlineSidebarContext();
   let messageMap = {
@@ -154,7 +156,7 @@ const NewOutlineAddChildButtons = ({
         newButton: messages.newUnitButton,
         importButton: messages.useUnitFromLibraryButton,
       };
-      onNewCreateContent = () => handleAddUnit.mutateAsync({
+      onNewCreateContent = () => handleAddAndOpenUnit.mutateAsync({
         type: ContainerType.Vertical,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.vertical.name,
@@ -237,7 +239,7 @@ const LegacyOutlineAddChildButtons = ({
     courseUsageKey,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const [
     isAddLibrarySectionModalOpen,
@@ -301,12 +303,12 @@ const LegacyOutlineAddChildButtons = ({
         importButton: messages.useUnitFromLibraryButton,
         modalTitle: messages.unitPickerModalTitle,
       };
-      onNewCreateContent = () => handleAddUnit.mutateAsync({
+      onNewCreateContent = () => handleAddAndOpenUnit.mutateAsync({
         type: ContainerType.Vertical,
         parentLocator,
         displayName: COURSE_BLOCK_NAMES.vertical.name,
       });
-      onUseLibraryContent = (selected: SelectedComponent) => handleAddUnit.mutateAsync({
+      onUseLibraryContent = (selected: SelectedComponent) => handleAddAndOpenUnit.mutateAsync({
         type: COMPONENT_TYPES.libraryV2,
         category: ContainerType.Vertical,
         parentLocator,

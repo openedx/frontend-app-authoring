@@ -47,7 +47,7 @@ interface OutlineSidebarContextData {
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
-const getLastEditableSection = (blockList: Array<XBlock>) => {
+const getLastEditableItem = (blockList: Array<XBlock>) => {
   let lastIndex = findLastIndex(blockList, (item) => item.actions.childAddable);
   return blockList[lastIndex];
 };
@@ -147,7 +147,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
       return currentItemData;
     }
-    return currentItemData ? undefined: getLastEditableSection(sectionsList)
+    return currentItemData ? undefined: getLastEditableItem(sectionsList)
   }, [currentItemData, sectionsList]);
 
   /** Stores last subsection that allows adding units inside it. */
@@ -156,7 +156,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       return currentItemData;
     }
     if (currentItemData?.category === 'chapter') {
-      return getLastEditableSection(currentItemData?.childInfo.children || []);
+      return getLastEditableItem(currentItemData?.childInfo.children || []);
     }
     return currentItemData ? undefined: getLastEditableSubsection(sectionsList);
   }, [currentItemData, sectionsList]);
