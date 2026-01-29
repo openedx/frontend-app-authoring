@@ -46,10 +46,8 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
   },
 };
 
-export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages>(OUTLINE_SIDEBAR_PAGES);
-
 /**
- * Provider for OutlineSidebarPagesContext.
+ * Context for the Outline Sidebar Pages.
  *
  * This could be used in plugins to add new pages to the sidebar.
  *
@@ -79,11 +77,6 @@ export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages>(OUT
  *  );
  *}
  */
-// istanbul ignore next: this is not used directly, but is used by plugins
-export const OutlineSidebarPagesProvider = ({ children }: { children?: React.ReactNode }) => (
-  <OutlineSidebarPagesContext.Provider value={OUTLINE_SIDEBAR_PAGES}>
-    {children}
-  </OutlineSidebarPagesContext.Provider>
-);
+export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages>(OUTLINE_SIDEBAR_PAGES);
 
 export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => useContext(OutlineSidebarPagesContext);
