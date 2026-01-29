@@ -76,10 +76,11 @@ export const UnitSidebar = ({ unitId }: Props) => {
   const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
 
   const handlePublish = () => {
-    if (selectedContainerState?.sectionId && unitData?.hasChanges) {
+    if (unitData?.hasChanges) {
       openPublishModal({
         value: unitData,
         sectionId: selectedContainerState?.sectionId,
+        subsectionId: selectedContainerState?.subsectionId
       });
     }
   };

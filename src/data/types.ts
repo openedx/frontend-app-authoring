@@ -78,6 +78,7 @@ export interface XBlock {
   category: string;
   hasChildren: boolean;
   editedOn: string;
+  editedOnRaw: string;
   published: boolean;
   publishedOn: string;
   studioUrl: string;

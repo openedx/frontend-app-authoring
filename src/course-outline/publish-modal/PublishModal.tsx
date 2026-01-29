@@ -22,7 +22,7 @@ const PublishModal = () => {
   } = currentPublishModalData?.value || {};
   const categoryName = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
   const children: XBlock[] = childInfo?.children || [];
-  const publishMutation = usePublishCourseItem(currentPublishModalData?.sectionId);
+  const publishMutation = usePublishCourseItem();
   const queryClient = useQueryClient();
 
   const childrenIds = useMemo(() => children.reduce((
@@ -46,6 +46,8 @@ const PublishModal = () => {
           childrenIds.forEach((blockId) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
           });
+          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.sectionId) });
+          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.subsectionId) });
         },
       });
     }

@@ -77,13 +77,12 @@ export const useUpdateCourseBlockName = (courseId: string) => {
   });
 };
 
-export const usePublishCourseItem = (sectionId?: string) => {
+export const usePublishCourseItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: publishCourseItem,
     onSettled: async (_data, _err, itemId) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(itemId) });
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
     },
   });
 };
