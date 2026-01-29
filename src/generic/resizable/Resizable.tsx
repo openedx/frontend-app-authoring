@@ -1,5 +1,7 @@
-import { useWindowSize } from "@openedx/paragon";
-import React, { useRef, useState, useCallback, useMemo } from "react";
+import { useWindowSize } from '@openedx/paragon';
+import React, {
+  useRef, useState, useCallback, useMemo,
+} from 'react';
 
 const MIN_WIDTH = 440; // px
 
@@ -31,16 +33,6 @@ export const ResizableBox = ({
     return Math.abs(windowWidth * 0.65);
   }, [windowWidth]);
 
-  const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault(); // prevent text selection
-    startXRef.current = e.clientX;
-    startWidthRef.current = width;
-
-    // Attach listeners to the whole document so dragging works even outside the box
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  }, [width]);
-
   const onMouseMove = useCallback((e: MouseEvent) => {
     const dx = e.clientX - startXRef.current; // positive = mouse moved right
     const newWidth = Math.min(
@@ -51,21 +43,31 @@ export const ResizableBox = ({
   }, [maxWidth, minWidth, defaultMaxWidth]);
 
   const onMouseUp = useCallback(() => {
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
   }, [onMouseMove]);
 
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault(); // prevent text selection
+    startXRef.current = e.clientX;
+    startWidthRef.current = width;
+
+    // Attach listeners to the whole document so dragging works even outside the box
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }, [width]);
+
   return (
-      <div
-        className="resizable"
-        ref={boxRef}
-        style={{ width: `${width}px` }}
-      >
-        <div className="resizable-handle" onMouseDown={onMouseDown} />
-        <div className="w-100">
-          {children}
-        </div>
+    <div
+      className="resizable"
+      ref={boxRef}
+      style={{ width: `${width}px` }}
+    >
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions */}
+      <div className="resizable-handle" onMouseDown={onMouseDown} />
+      <div className="w-100">
+        {children}
       </div>
+    </div>
   );
 };
-

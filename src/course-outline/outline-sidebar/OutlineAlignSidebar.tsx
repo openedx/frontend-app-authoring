@@ -14,9 +14,7 @@ export const OutlineAlignSidebar = () => {
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
-  const sidebarContentId = useMemo(() => {
-    return currentSelection?.currentId || selectedContainerState?.currentId || courseId
-  }, [
+  const sidebarContentId = useMemo(() => currentSelection?.currentId || selectedContainerState?.currentId || courseId, [
     currentSelection,
     selectedContainerState,
     courseId,
@@ -27,7 +25,7 @@ export const OutlineAlignSidebar = () => {
   const handleBack = () => {
     clearSelection();
     setCurrentSelection(undefined);
-  }
+  };
 
   return (
     <div>
@@ -38,7 +36,7 @@ export const OutlineAlignSidebar = () => {
             : contentData?.courseDisplayNameWithDefault || ''
         }
         icon={SchoolOutline}
-        onBackBtnClick={(sidebarContentId !== courseId) ? handleBack: undefined}
+        onBackBtnClick={(sidebarContentId !== courseId) ? handleBack : undefined}
       />
       <ContentTagsDrawer
         id={sidebarContentId}

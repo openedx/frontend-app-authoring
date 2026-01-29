@@ -46,8 +46,12 @@ const PublishModal = () => {
           childrenIds.forEach((blockId) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
           });
-          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.sectionId) });
-          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.subsectionId) });
+          queryClient.invalidateQueries({
+            queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.sectionId),
+          });
+          queryClient.invalidateQueries({
+            queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.subsectionId),
+          });
         },
       });
     }

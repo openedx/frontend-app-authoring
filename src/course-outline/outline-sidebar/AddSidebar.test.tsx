@@ -17,8 +17,8 @@ import {
   OutlineSidebarProvider,
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
-import { AddSidebar } from './AddSidebar';
 import type { ContainerType } from '@src/generic/key-utils';
+import { AddSidebar } from './AddSidebar';
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };

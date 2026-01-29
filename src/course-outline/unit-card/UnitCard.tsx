@@ -25,8 +25,8 @@ import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import type { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 import moment from 'moment';
+import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
   unit: XBlock;

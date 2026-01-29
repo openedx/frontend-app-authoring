@@ -19,7 +19,7 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
 
   return (
     <Stack gap={3} className="my-3">
-      <Stack className='flex-wrap' direction="horizontal" gap={2}>
+      <Stack className="flex-wrap" direction="horizontal" gap={2}>
         <LibraryDropdownFilter />
         <Stack direction="horizontal" gap={1}>
           <SearchKeywordsField />
@@ -33,7 +33,7 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
         </Stack>
       </Stack>
       {isOn && (
-      <Stack className='flex-wrap' direction="horizontal" gap={2}>
+      <Stack className="flex-wrap" direction="horizontal" gap={2}>
         {!(onlyOneType) && <FilterByBlockType />}
         <FilterByTags />
         <CollectionDropdownFilter />

@@ -11,6 +11,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
+import { useQueryClient } from '@tanstack/react-query';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
   resetScrollField,
@@ -51,8 +53,6 @@ import {
   dismissNotificationQuery,
   syncDiscussionsTopics,
 } from './data/thunk';
-import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -226,7 +226,7 @@ const useCourseOutline = ({ courseId }) => {
         break;
       default:
         // istanbul ignore next
-        throw new Error(`Unrecognized category ${category}`);;
+        throw new Error(`Unrecognized category ${category}`);
     }
     closeDeleteModal();
     if (selectedContainerState.currentId === currentSelection?.currentId) {

@@ -10,9 +10,9 @@ import {
 } from '@openedx/paragon/icons';
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
+import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
-import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
   const now = moment().utc();
@@ -58,7 +58,7 @@ const UnpublishedBadgeStatus = ({ courseId }: { courseId: string }) => {
         <FormattedMessage {...messages.unpublishedBadgeText} />
       </Stack>
     </Badge>
-  )
+  );
 };
 
 const LibraryUpdates = ({ courseId }: { courseId: string }) => {

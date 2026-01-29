@@ -20,19 +20,18 @@ import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
-import messages from './messages';
-import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import AlertMessage from '@src/generic/alert-message';
 import { useQueryClient } from '@tanstack/react-query';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
-
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import messages from './messages';
 
 const CannotAddContentAlert = () => {
   const intl = useIntl();
   const { currentItemData } = useOutlineSidebarContext();
   return (
     <AlertMessage
-      variant='info'
+      variant="info"
       description={intl.formatMessage(messages.cannotAddAlertMsg, {
         name: currentItemData?.displayName,
         category: normalizeContainerType(currentItemData?.category || ''),
@@ -40,7 +39,7 @@ const CannotAddContentAlert = () => {
       icon={InfoOutline}
     />
   );
-}
+};
 
 type AddContentButtonProps = {
   name: string,
@@ -79,7 +78,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
             data.locator,
             undefined,
             data.locator,
-          )
+          ),
         });
         break;
       case 'subsection':
@@ -94,7 +93,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
               data.locator,
               data.locator,
               sectionParentId,
-            )
+            ),
           });
         }
         break;
@@ -113,7 +112,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
               queryClient.invalidateQueries({
                 queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
               });
-            }
+            },
           });
         }
         break;
@@ -134,14 +133,12 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastEditableSubsection,
   ]);
 
-  const enabled = useMemo(() => {
-    return (
-      (currentFlow)
-      || (blockType === 'subsection' &&  lastEditableSection)
+  const enabled = useMemo(() => (
+    (currentFlow)
+      || (blockType === 'subsection' && lastEditableSection)
       || (blockType === 'unit' && lastEditableSubsection)
       || (blockType === 'section' && !currentItemData)
-    )
-  }, [
+  ), [
     currentFlow,
     blockType,
     currentItemData,
@@ -198,7 +195,7 @@ const AddNewContent = () => {
   }, [currentFlow, intl]);
 
   if (!isCurrentFlowOn && currentItemData && !currentItemData.actions.childAddable) {
-    return <CannotAddContentAlert />
+    return <CannotAddContentAlert />;
   }
 
   return (
@@ -267,7 +264,7 @@ const ShowLibraryContent = () => {
               queryClient.invalidateQueries({
                 queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
               });
-            }
+            },
           });
         }
         break;
@@ -290,7 +287,7 @@ const ShowLibraryContent = () => {
   const allowedBlocks = useMemo(() => {
     const blocks: ContainerType[] = [];
     if (currentFlow?.flowType) {
-        return [currentFlow.flowType];
+      return [currentFlow.flowType];
     }
     if (!selectedContainerState) { blocks.push(ContainerType.Section); }
     if (lastEditableSection) { blocks.push(ContainerType.Subsection); }
@@ -299,7 +296,7 @@ const ShowLibraryContent = () => {
   }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
   if (!isCurrentFlowOn && currentItemData && !currentItemData.actions.childAddable) {
-    return <CannotAddContentAlert />
+    return <CannotAddContentAlert />;
   }
 
   return (
@@ -379,7 +376,7 @@ export const AddSidebar = () => {
   const handleBack = () => {
     clearSelection();
     stopCurrentFlow();
-  }
+  };
 
   return (
     <div>

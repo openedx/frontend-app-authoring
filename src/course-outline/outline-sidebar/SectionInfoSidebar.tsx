@@ -12,10 +12,10 @@ import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sideb
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import messages from './messages';
 import { LibraryReferenceCard } from './LibraryReferenceCard';
 import { PublishButon } from './PublishButon';
-import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface Props {
   sectionId: string;

@@ -11,12 +11,12 @@ import { useToggle } from '@openedx/paragon';
 import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { isOutlineNewDesignEnabled } from '../utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
 import { findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
+import { isOutlineNewDesignEnabled } from '../utils';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -49,22 +49,25 @@ interface OutlineSidebarContextData {
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 const getLastEditableItem = (blockList: Array<XBlock>) => {
-  let lastIndex = findLastIndex(blockList, (item) => item.actions.childAddable);
+  const lastIndex = findLastIndex(blockList, (item) => item.actions.childAddable);
   return blockList[lastIndex];
 };
 
 const getLastEditableSubsection = (
   blockList: Array<XBlock>,
-  startIndex?: number
+  startIndex?: number,
 ): { data: XBlock, sectionId: string } | undefined => {
-  let lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
+  const lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
   if (lastSectionIndex !== -1) {
-    let lastSubsectionIndex = findLastIndex(blockList[lastSectionIndex].childInfo.children, (item) => item.actions.childAddable);
+    const lastSubsectionIndex = findLastIndex(
+      blockList[lastSectionIndex].childInfo.children,
+      (item) => item.actions.childAddable,
+    );
     if (lastSubsectionIndex !== -1) {
       return {
         data: blockList[lastSectionIndex].childInfo.children[lastSubsectionIndex],
         sectionId: blockList[lastSectionIndex].id,
-      }
+      };
     }
     if (lastSectionIndex > 0) {
       return getLastEditableSubsection(blockList, lastSectionIndex - 1);
@@ -151,7 +154,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
       return currentItemData;
     }
-    return currentItemData ? undefined: getLastEditableItem(sectionsList)
+    return currentItemData ? undefined : getLastEditableItem(sectionsList);
   }, [currentItemData, sectionsList]);
 
   /** Stores last subsection that allows adding units inside it. */
@@ -165,7 +168,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
         sectionId: selectedContainerState?.currentId,
       };
     }
-    return currentItemData ? undefined: getLastEditableSubsection(sectionsList);
+    return currentItemData ? undefined : getLastEditableSubsection(sectionsList);
   }, [currentItemData, sectionsList]);
 
   useEscapeClick({
