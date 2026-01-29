@@ -440,7 +440,7 @@ describe('<SubsectionCard />', () => {
         isOpen: true,
         open: jest.fn(),
         toggle: jest.fn(),
-        currentFlow: null,
+        currentFlow: undefined,
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),

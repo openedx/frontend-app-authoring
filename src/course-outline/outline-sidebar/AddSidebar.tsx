@@ -23,6 +23,8 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import messages from './messages';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import AlertMessage from '@src/generic/alert-message';
+import { useQueryClient } from '@tanstack/react-query';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 
 
 const CannotAddContentAlert = () => {
@@ -61,8 +63,9 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     currentItemData,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
-  const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
-  const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
+  const queryClient = useQueryClient();
+  let sectionParentId = lastEditableSection?.id;
+  let subsectionParentId = lastEditableSubsection?.data.id;
 
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
@@ -80,6 +83,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         });
         break;
       case 'subsection':
+        sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
           await handleAddSubsection.mutateAsync({
             type: ContainerType.Sequential,
@@ -95,11 +99,21 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         }
         break;
       case 'unit':
+        sectionParentId = (
+          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
+        );
+        subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
           await handleAddAndOpenUnit.mutateAsync({
             type: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             displayName: COURSE_BLOCK_NAMES.vertical.name,
+          }, {
+            onSettled: () => {
+              queryClient.invalidateQueries({
+                queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
+              });
+            }
           });
         }
         break;
@@ -155,7 +169,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
 /** Add New Content Tab Section */
 const AddNewContent = () => {
   const intl = useIntl();
-  const { currentFlow, currentItemData } = useOutlineSidebarContext();
+  const { isCurrentFlowOn, currentFlow, currentItemData } = useOutlineSidebarContext();
   const btns = useCallback(() => {
     if (currentFlow?.flowType) {
       return (
@@ -183,7 +197,7 @@ const AddNewContent = () => {
     );
   }, [currentFlow, intl]);
 
-  if (currentItemData && !currentItemData.actions.childAddable) {
+  if (!isCurrentFlowOn && currentItemData && !currentItemData.actions.childAddable) {
     return <CannotAddContentAlert />
   }
 
@@ -203,6 +217,7 @@ const ShowLibraryContent = () => {
     handleAddUnit,
   } = useCourseAuthoringContext();
   const {
+    isCurrentFlowOn,
     currentFlow,
     stopCurrentFlow,
     lastEditableSection,
@@ -210,9 +225,10 @@ const ShowLibraryContent = () => {
     selectedContainerState,
     currentItemData,
   } = useOutlineSidebarContext();
+  const queryClient = useQueryClient();
 
-  const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
-  const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
+  let sectionParentId = lastEditableSection?.id;
+  let subsectionParentId = lastEditableSubsection?.data.id;
 
   const onComponentSelected: ComponentSelectedEvent = useCallback(async ({ usageKey, blockType }) => {
     switch (blockType) {
@@ -225,6 +241,7 @@ const ShowLibraryContent = () => {
         });
         break;
       case 'subsection':
+        sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
           await handleAddSubsection.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
@@ -235,12 +252,22 @@ const ShowLibraryContent = () => {
         }
         break;
       case 'unit':
+        sectionParentId = (
+          currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
+        );
+        subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
         if (subsectionParentId) {
           await handleAddUnit.mutateAsync({
             type: COMPONENT_TYPES.libraryV2,
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
+          }, {
+            onSettled: () => {
+              queryClient.invalidateQueries({
+                queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
+              });
+            }
           });
         }
         break;
@@ -271,7 +298,7 @@ const ShowLibraryContent = () => {
     return blocks;
   }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
-  if (currentItemData && !currentItemData.actions.childAddable) {
+  if (!isCurrentFlowOn && currentItemData && !currentItemData.actions.childAddable) {
     return <CannotAddContentAlert />
   }
 
@@ -291,13 +318,13 @@ const ShowLibraryContent = () => {
 /** Tabs Component */
 const AddTabs = () => {
   const intl = useIntl();
-  const { currentFlow } = useOutlineSidebarContext();
+  const { isCurrentFlowOn } = useOutlineSidebarContext();
   const [key, setKey] = useState('addNew');
   useEffect(() => {
-    if (currentFlow) {
+    if (isCurrentFlowOn) {
       setKey('addExisting');
     }
-  }, [currentFlow, setKey]);
+  }, [isCurrentFlowOn, setKey]);
 
   return (
     <Tabs
@@ -322,22 +349,36 @@ const AddTabs = () => {
 export const AddSidebar = () => {
   const intl = useIntl();
   const { courseDetails } = useCourseAuthoringContext();
-  const { currentFlow, currentItemData } = useOutlineSidebarContext();
+  const {
+    isCurrentFlowOn,
+    currentFlow,
+    currentItemData,
+    clearSelection,
+    stopCurrentFlow,
+    selectedContainerState,
+  } = useOutlineSidebarContext();
+  const { data: flowData } = useCourseItemData(currentFlow?.parentLocator);
   const titleAndIcon = useMemo(() => {
-    if (currentFlow?.flowType) {
-      return { title: currentFlow.parentTitle, icon: getItemIcon(currentFlow.flowType) };
+    if (isCurrentFlowOn && currentFlow) {
+      return { title: flowData?.displayName || '', icon: getItemIcon(flowData?.category || '') };
     }
     if (currentItemData) {
       return { title: currentItemData.displayName, icon: getItemIcon(currentItemData.category) };
     }
     return { title: courseDetails?.name || '', icon: SchoolOutline };
-  }, [currentFlow, intl, getItemIcon]);
+  }, [isCurrentFlowOn, flowData, currentFlow, intl, getItemIcon]);
+
+  const handleBack = () => {
+    clearSelection();
+    stopCurrentFlow();
+  }
 
   return (
     <div>
       <SidebarTitle
         title={titleAndIcon.title}
         icon={titleAndIcon.icon}
+        onBackBtnClick={(selectedContainerState || isCurrentFlowOn) ? handleBack : undefined}
       />
       <SidebarContent>
         <SidebarSection>

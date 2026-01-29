@@ -8,7 +8,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { ComponentCountSnippet } from '@src/generic/block-type-utils';
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
@@ -72,7 +72,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
   const { data: unitData, isLoading } = useCourseItemData(unitId);
-  const { selectedContainerState } = useOutlineSidebarContext();
+  const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
   const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
 
   const handlePublish = () => {
@@ -92,7 +92,8 @@ export const UnitSidebar = ({ unitId }: Props) => {
     <>
       <SidebarTitle
         title={unitData?.displayName || ''}
-        icon={SchoolOutline}
+        icon={getItemIcon(unitData?.category || '')}
+        onBackBtnClick={clearSelection}
       />
       <Stack direction="horizontal" gap={1} className="mx-2">
         <Button

@@ -337,7 +337,6 @@ const SectionCard = ({
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                     parentLocator={section.id}
-                    parentTitle={section.displayName}
                   />
                 )}
               </div>

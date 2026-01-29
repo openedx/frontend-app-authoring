@@ -4,7 +4,7 @@ import { Tab, Tabs, useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { ComponentCountSnippet } from '@src/generic/block-type-utils';
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
@@ -67,6 +67,7 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
   const { selectedContainerState } = useOutlineSidebarContext();
   const { openPublishModal } = useCourseAuthoringContext();
+  const { clearSelection } = useOutlineSidebarContext();
 
   const handlePublish = () => {
     if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
@@ -85,7 +86,8 @@ export const SubsectionSidebar = ({ subsectionId }: Props) => {
     <>
       <SidebarTitle
         title={subsectionData?.displayName || ''}
-        icon={SchoolOutline}
+        icon={getItemIcon(subsectionData?.category || '')}
+        onBackBtnClick={clearSelection}
       />
       {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs

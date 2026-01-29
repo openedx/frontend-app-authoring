@@ -324,7 +324,7 @@ const SubsectionCard = ({
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
                     parentLocator={subsection.id}
-                    parentTitle={subsection.displayName}
+                    grandParentLocator={section.id}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent

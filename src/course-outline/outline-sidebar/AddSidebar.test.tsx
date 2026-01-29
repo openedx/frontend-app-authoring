@@ -214,7 +214,7 @@ describe('AddSidebar component', () => {
       currentFlow = {
         flowType: category as ContainerType,
         parentLocator: category === 'subsection' ? firstSection.id : firstSubsection.id,
-        parentTitle: category === 'subsection' ? firstSection.displayName : firstSubsection.displayName!,
+        grandParentLocator: category === 'unit' ? firstSection.id : undefined,
       };
       renderComponent();
       // Check existing tab content is rendered by default

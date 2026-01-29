@@ -456,7 +456,6 @@ const CourseOutline = () => {
                               <OutlineAddChildButtons
                                 childType={ContainerType.Section}
                                 parentLocator={courseUsageKey}
-                                parentTitle={courseName}
                               />
                             )}
                           </>
@@ -466,7 +465,6 @@ const CourseOutline = () => {
                               <OutlineAddChildButtons
                                 childType={ContainerType.Section}
                                 parentLocator={courseUsageKey}
-                                parentTitle={courseName}
                                 btnVariant="primary"
                                 btnClasses="mt-1"
                               />

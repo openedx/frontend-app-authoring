@@ -4,7 +4,7 @@ import { Tab, Tabs, useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { ComponentCountSnippet } from '@src/generic/block-type-utils';
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
 import { useGetBlockTypes } from '@src/search-manager';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
@@ -15,6 +15,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import { LibraryReferenceCard } from './LibraryReferenceCard';
 import { PublishButon } from './PublishButon';
+import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 
 interface Props {
   sectionId: string;
@@ -65,6 +66,7 @@ export const SectionSidebar = ({ sectionId }: Props) => {
   const [tab, setTab] = useState<'info' | 'settings'>('info');
   const { data: sectionData, isLoading } = useCourseItemData(sectionId);
   const { openPublishModal } = useCourseAuthoringContext();
+  const { clearSelection } = useOutlineSidebarContext();
 
   const handlePublish = () => {
     if (sectionData?.hasChanges) {
@@ -83,7 +85,8 @@ export const SectionSidebar = ({ sectionId }: Props) => {
     <>
       <SidebarTitle
         title={sectionData?.displayName || ''}
-        icon={SchoolOutline}
+        icon={getItemIcon(sectionData?.category || '')}
+        onBackBtnClick={clearSelection}
       />
       {sectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs
