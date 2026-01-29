@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 
-export type UserpartitionInfo = {
+export type UserPartitionInfo = {
   selectablePartitions: {
     groups: {
       deleted: boolean,
@@ -35,7 +35,7 @@ export interface UnitTabProps {
   },
   setFieldValue: (key: string, value: any) => void,
   showWarning: boolean,
-  userPartitionInfo: UserpartitionInfo,
+  userPartitionInfo: UserPartitionInfo,
 }
 
 export const DiscussionEditComponent = ({
@@ -56,7 +56,7 @@ export const DiscussionEditComponent = ({
 export interface AccessEditComponentProps {
   selectedPartitionIndex: number,
   setFieldValue: (key: string, value: any) => void,
-  userPartitionInfo: UserpartitionInfo,
+  userPartitionInfo: UserPartitionInfo,
   selectedGroups: string[],
 }
 
