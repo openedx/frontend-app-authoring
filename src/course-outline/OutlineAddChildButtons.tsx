@@ -86,11 +86,11 @@ interface BaseProps {
   btnClasses?: string;
   btnSize?: 'sm' | 'md' | 'lg' | 'inline';
   parentLocator: string;
-  grandParentLocator?: string;
 }
 
 interface NewChildButtonsProps extends BaseProps {
   handleUseFromLibraryClick?: () => void;
+  grandParentLocator?: string;
 }
 
 const NewOutlineAddChildButtons = ({

@@ -78,7 +78,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     clearSelection,
-    selectedContainerState: { currentId: selectedContainerId }
+    selectedContainerState: { currentId: selectedContainerId },
   }),
 }));
 

@@ -20,12 +20,19 @@ const statusBarData: CourseOutlineStatusBar = {
   highlightsEnabledForMessaging: true,
   videoSharingEnabled: true,
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
-  hasChanges: false,
 };
 
 jest.mock('@src/course-libraries/data/apiHooks', () => ({
   useEntityLinksSummaryByDownstreamContext: () => ({
     data: [{ readyToSyncCount: 2 }],
+    isLoading: false,
+  }),
+}));
+
+let mockHasChanges = false;
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  useCourseDetails: () => ({
+    data: [{ hasChanges: mockHasChanges }],
     isLoading: false,
   }),
 }));
@@ -83,12 +90,8 @@ describe('<StatusBar />', () => {
   });
 
   it('renders unpublished badge', async () => {
-    renderComponent({
-      statusBarData: {
-        ...statusBarData,
-        hasChanges: true,
-      },
-    });
+    mockHasChanges = true;
+    renderComponent();
     expect(await screen.findByText('Unpublished Changes')).toBeInTheDocument();
   });
 

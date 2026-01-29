@@ -27,7 +27,7 @@ export const SidebarTitle = ({
     {onBackBtnClick && (
       <IconButton
         onClick={onBackBtnClick}
-        alt={''}
+        alt=""
         src={ArrowBack}
         size="inline"
       />

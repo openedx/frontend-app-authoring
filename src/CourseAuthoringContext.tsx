@@ -6,7 +6,9 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { courseOutlineQueryKeys, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { addSection, addSubsection, addUnit, updateSavingStatus } from '@src/course-outline/data/slice';
+import {
+  addSection, addSubsection, addUnit, updateSavingStatus,
+} from '@src/course-outline/data/slice';
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';

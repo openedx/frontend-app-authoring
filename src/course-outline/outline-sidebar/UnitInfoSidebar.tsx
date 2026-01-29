@@ -80,7 +80,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
       openPublishModal({
         value: unitData,
         sectionId: selectedContainerState?.sectionId,
-        subsectionId: selectedContainerState?.subsectionId
+        subsectionId: selectedContainerState?.subsectionId,
       });
     }
   };

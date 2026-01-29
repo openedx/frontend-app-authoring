@@ -167,7 +167,7 @@ const CourseOutline = () => {
 
   const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
-  const itemCategory = currentItemData?.category;
+  const itemCategory = currentItemData?.category || '';
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
