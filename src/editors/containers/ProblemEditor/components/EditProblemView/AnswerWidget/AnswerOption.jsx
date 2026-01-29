@@ -73,7 +73,7 @@ const AnswerOption = ({
 
     if (problemType !== ProblemTypeKeys.NUMERIC || !answer.isAnswerRange) {
       return (
-        <Form.Group isInvalid={!data?.isValid ?? true}>
+        <Form.Group isInvalid={!data?.isValid}>
           <Form.Control
             as="textarea"
             className="answer-option-textarea text-gray-500 small"
@@ -89,7 +89,7 @@ const AnswerOption = ({
             placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
 
           />
-          {(!data?.isValid ?? true) && (
+          {(!data?.isValid) && (
           <Form.Control.Feedback type="invalid">
             <FormattedMessage {...messages.answerNumericErrorText} />
           </Form.Control.Feedback>
