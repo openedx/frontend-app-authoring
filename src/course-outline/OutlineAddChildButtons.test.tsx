@@ -14,7 +14,7 @@ jest.mock('react-redux', () => ({
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
-const handleAddUnit = { mutateAsync: jest.fn() };
+const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
 const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
@@ -24,7 +24,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     getUnitUrl: (id: string) => `/some/${id}`,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
     setCurrentSelection,
   }),
 }));
@@ -103,7 +103,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
           }));
           break;
         case ContainerType.Unit:
-          await waitFor(() => expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+          await waitFor(() => expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
             type: ContainerType.Vertical,
             parentLocator,
             displayName: 'Unit',

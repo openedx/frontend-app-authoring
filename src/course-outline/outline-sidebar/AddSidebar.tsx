@@ -51,7 +51,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     courseUsageKey,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
   const {
     currentFlow,
@@ -59,6 +59,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastEditableSection,
     lastEditableSubsection,
     currentItemData,
+    openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const sectionParentId = currentFlow?.parentLocator || lastEditableSection?.id;
   const subsectionParentId = currentFlow?.parentLocator || lastEditableSubsection?.id;
@@ -70,6 +71,12 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
           type: ContainerType.Chapter,
           parentLocator: courseUsageKey,
           displayName: COURSE_BLOCK_NAMES.chapter.name,
+        }, {
+          onSuccess: (data: { locator: string; }) => openContainerInfoSidebar(
+            data.locator,
+            undefined,
+            data.locator,
+          )
         });
         break;
       case 'subsection':
@@ -78,12 +85,18 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
             type: ContainerType.Sequential,
             parentLocator: sectionParentId,
             displayName: COURSE_BLOCK_NAMES.sequential.name,
+          }, {
+            onSuccess: (data: { locator: string; }) => openContainerInfoSidebar(
+              data.locator,
+              data.locator,
+              sectionParentId,
+            )
           });
         }
         break;
       case 'unit':
         if (subsectionParentId) {
-          await handleAddUnit.mutateAsync({
+          await handleAddAndOpenUnit.mutateAsync({
             type: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             displayName: COURSE_BLOCK_NAMES.vertical.name,
@@ -101,7 +114,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     courseUsageKey,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
     currentFlow,
     lastEditableSection,
     lastEditableSubsection,
@@ -170,7 +183,7 @@ const AddNewContent = () => {
     );
   }, [currentFlow, intl]);
 
-  if (!currentItemData?.actions.childAddable) {
+  if (currentItemData && !currentItemData.actions.childAddable) {
     return <CannotAddContentAlert />
   }
 
@@ -258,7 +271,7 @@ const ShowLibraryContent = () => {
     return blocks;
   }, [lastEditableSection, lastEditableSubsection, currentFlow]);
 
-  if (!currentItemData?.actions.childAddable) {
+  if (currentItemData && !currentItemData.actions.childAddable) {
     return <CannotAddContentAlert />
   }
 

@@ -23,6 +23,7 @@ import type { ContainerType } from '@src/generic/key-utils';
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
 const handleAddUnit = { mutateAsync: jest.fn() };
+const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -40,6 +41,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
     setCurrentSelection,
   }),
 }));
@@ -179,7 +181,7 @@ describe('AddSidebar component', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,

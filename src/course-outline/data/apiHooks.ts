@@ -39,14 +39,14 @@ export const courseOutlineQueryKeys = {
  * Can also be used to import block from library by passing `libraryContentKey` in request body
  */
 export const useCreateCourseBlock = (
-  callback?: ((locator: string, parentLocator: string) => void),
+  callback?: ((locator: string, parentLocator: string) => Promise<void>),
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCourseXblock,
     onSettled: async (data: { locator: string; }, _err, variables) => {
+      await callback?.(data.locator, variables.parentLocator);
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.parentLocator) });
-      callback?.(data.locator, variables.parentLocator);
     },
   });
 };
