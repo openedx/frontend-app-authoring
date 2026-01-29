@@ -47,6 +47,9 @@ export const useCreateCourseBlock = (
     onSettled: async (data: { locator: string; }, _err, variables) => {
       await callback?.(data.locator, variables.parentLocator);
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.parentLocator) });
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(data.locator)),
+      });
     },
   });
 };
@@ -72,6 +75,7 @@ export const useUpdateCourseBlockName = (courseId: string) => {
     mutationFn: editItemDisplayName,
     onSettled: async (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
     },
   });
@@ -83,6 +87,7 @@ export const usePublishCourseItem = () => {
     mutationFn: publishCourseItem,
     onSettled: async (_data, _err, itemId) => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(itemId) });
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(itemId)) });
     },
   });
 };

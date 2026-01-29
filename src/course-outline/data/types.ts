@@ -33,6 +33,7 @@ export interface CourseDetails {
   subtitle?: string;
   org: string;
   description?: string;
+  hasChanges: boolean;
 }
 
 export interface ChecklistType {
@@ -50,7 +51,6 @@ export interface CourseOutlineStatusBar {
   checklist: ChecklistType;
   videoSharingEnabled: boolean;
   videoSharingOptions: string;
-  hasChanges: boolean;
 }
 
 export interface CourseOutlineState {

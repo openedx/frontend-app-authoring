@@ -17,6 +17,9 @@ export const useUnlinkDownstream = () => {
       queryClient.invalidateQueries({
         queryKey: courseOutlineQueryKeys.courseItemId(contentId),
       });
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(courseKey),
+      });
     },
   });
 };
