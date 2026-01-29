@@ -31,7 +31,7 @@ const OpenedXConfigForm = ({
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
   const legacyAppConfig = {
-    ...(appConfigObj || {}),
+    ...appConfigObj,
     divideDiscussionIds,
     enableInContext: true,
     enableGradedUnits,

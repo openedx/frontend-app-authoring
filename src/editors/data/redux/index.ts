@@ -122,7 +122,7 @@ export interface EditorState {
     videoSharingEnabledForAll: boolean;
     videoSharingEnabledForCourse: boolean;
     videoSharingLearnMoreLink: string;
-    thumbnail: null | any;
+    thumbnail: any;
     transcripts: any[];
     selectedVideoTranscriptUrls: Record<string, any>;
     allowTranscriptDownloads: boolean;

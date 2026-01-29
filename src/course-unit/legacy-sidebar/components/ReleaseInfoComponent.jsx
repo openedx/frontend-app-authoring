@@ -23,7 +23,8 @@ const ReleaseInfoComponent = () => {
     );
   }
 
-  return releaseInfo.message ?? '';
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{releaseInfo.message}</>;
 };
 
 export default ReleaseInfoComponent;
