@@ -187,7 +187,12 @@ export const useContentSearchResults = ({
     // Call this to load more pages. We include some "safety" features recommended by the docs: this should never be
     // called while already fetching a page, and parameters (like 'event') should not be passed into fetchNextPage().
     // See https://tanstack.com/query/v4/docs/framework/react/guides/infinite-queries
-    fetchNextPage: () => { if (!query.isFetching && !query.isFetchingNextPage) { query.fetchNextPage(); } },
+    fetchNextPage: /* istanbul ignore next */ () => {
+      if (!query.isFetching && !query.isFetchingNextPage) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        query.fetchNextPage();
+      }
+    },
     hasNextPage: query.hasNextPage,
     // The last page has the most accurate count of total hits
     totalHits: pages?.[pages.length - 1]?.totalHits ?? 0,

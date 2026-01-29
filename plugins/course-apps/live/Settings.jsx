@@ -72,6 +72,7 @@ const LiveSettings = ({
   };
 
   const handleSettingsSave = async (values) => {
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     await dispatch(saveLiveConfiguration(courseId, values, navigate));
   };
 

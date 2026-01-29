@@ -62,6 +62,7 @@ const AddComponentWidget = () => {
         variant="outline-primary"
         className="m-1 text-nowrap flex-grow-1"
         onClick={() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           onComponentSelected({ usageKey, blockType: getBlockType(usageKey) });
         }}
       >
@@ -78,8 +79,10 @@ const AddComponentWidget = () => {
         blockType: getBlockType(usageKey),
       };
       if (!isChecked) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         addComponentToSelectedComponents(selectedComponent);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         removeComponentFromSelectedComponents(selectedComponent);
       }
     };

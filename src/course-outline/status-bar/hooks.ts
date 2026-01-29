@@ -32,6 +32,7 @@ export function useDynamicHookShim() {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     load();
 
     return () => {

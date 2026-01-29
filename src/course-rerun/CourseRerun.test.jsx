@@ -17,6 +17,13 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 describe('<CourseRerun />', () => {
   beforeEach(() => {
     const { axiosMock } = initializeMocks();
@@ -30,13 +37,13 @@ describe('<CourseRerun />', () => {
     expect(getAllByRole('button', { name: messages.cancelButton.defaultMessage }).length).toBe(2);
   });
 
-  it('should navigate to /home on cancel button click', () => {
+  it('should navigate to /home on cancel button click', async () => {
     const { getAllByRole } = render(<CourseRerun />);
     const cancelButton = getAllByRole('button', { name: messages.cancelButton.defaultMessage })[0];
 
     fireEvent.click(cancelButton);
-    waitFor(() => {
-      expect(window.location.pathname).toBe('/home');
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/home');
     });
   });
 

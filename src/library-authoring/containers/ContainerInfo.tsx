@@ -44,6 +44,7 @@ const ContainerMenu = ({ containerId }: ContainerPreviewProps) => {
   const { copyToClipboard } = useClipboard();
 
   const handleCopy = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     copyToClipboard(containerId);
   }, [copyToClipboard, containerId]);
 

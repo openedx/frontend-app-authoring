@@ -172,6 +172,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
         // feature to support the legacy Django template courseware page.
 
         // Sends content tags.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         getContentTaxonomyTagsData(contentId).then((data) => {
           const contentData = { contentId, ...data };
 
@@ -187,6 +188,7 @@ export const useContentTaxonomyTagsUpdater = (contentId: string) => {
         });
 
         // Sends tags count.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         getContentTaxonomyTagsCount(contentId).then((count) => {
           const contentData = { contentId, count };
 

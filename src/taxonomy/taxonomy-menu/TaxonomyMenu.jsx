@@ -41,6 +41,7 @@ const TaxonomyMenu = ({
   const { setToastMessage } = useContext(TaxonomyContext);
 
   const onDeleteTaxonomy = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     deleteTaxonomy({ pk: taxonomy.id }, {
       onSuccess: () => {
         if (setToastMessage) {

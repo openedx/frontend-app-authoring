@@ -58,6 +58,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
 
   const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleOnChangeText(event);
     } else if (event.key === 'Escape') {
       setIsActive(false);

@@ -104,7 +104,7 @@ describe('<ImportDetailsPage />', () => {
       name: /view imported content/i,
     });
 
-    await viewImportedContentBtn.click();
+    viewImportedContentBtn.click();
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/library/lib:Axim:TEST/collection/coll'));
   });
 

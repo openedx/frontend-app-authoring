@@ -128,7 +128,7 @@ describe('ORASettings', () => {
     await mockStore({ apiStatus: 200, enabled: true });
     renderComponent();
 
-    const checkbox = await screen.getByRole('checkbox', { name: /Flex Peer Grading/ });
+    const checkbox = screen.getByRole('checkbox', { name: /Flex Peer Grading/ });
     expect(checkbox).toBeChecked();
 
     await waitFor(() => {

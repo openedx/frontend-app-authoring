@@ -107,7 +107,7 @@ mockFetchIndexDocuments.applyMock = () => {
 /**
  * Mock the useGetContentHits
  */
-export async function mockGetContentHits(
+export function mockGetContentHits(
   mockResponse: 'noHits' | 'someHits',
 ) {
   fetchMock.post(mockContentSearchConfig.searchEndpointUrl, () => {

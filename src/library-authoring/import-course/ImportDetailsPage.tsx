@@ -132,6 +132,7 @@ const ImportDetailsContent = () => {
     migrationStatus = 'Failed';
   } else if (migrationStatusData?.state === 'Succeeded') {
     // refetch migrationBlockInfo data once the import is complete
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     refetchMigrationBlockInfo();
     // Currently, bulk migrate is being used to migrate courses because
     // it has the ability to create collections.
