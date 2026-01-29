@@ -90,6 +90,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         break;
       default:
         // istanbul ignore next: unreachable
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Unrecognized block type ${blockType}`);
     }
     stopCurrentFlow();

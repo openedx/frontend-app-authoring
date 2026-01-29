@@ -110,7 +110,7 @@ const CourseDates = ({
       <Stack direction="horizontal" gap={2}>
         <Icon size="sm" className="mb-1" src={Event} />
         <FormattedDate
-          value={startDate.toString()}
+          value={startDate.toISOString()}
           year="numeric"
           month="short"
           day="2-digit"
@@ -119,7 +119,7 @@ const CourseDates = ({
           <>
             {' - '}
             <FormattedDate
-              value={endDate.toString()}
+              value={endDate.toISOString()}
               year="numeric"
               month="short"
               day="2-digit"

@@ -28,6 +28,10 @@ const renderComponent = children => (
 let axiosMock;
 
 describe('ProctoredExamSettings', () => {
+  /**
+   * @param {boolean} isAdmin
+   * @param {string | undefined} org
+   */
   function setupApp(isAdmin = true, org = undefined) {
     mergeConfig({
       EXAMS_BASE_URL: 'http://exams.testing.co',

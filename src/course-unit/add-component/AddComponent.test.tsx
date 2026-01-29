@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-useless-spread
 /* eslint-disable react/prop-types */
 import userEvent from '@testing-library/user-event';
 

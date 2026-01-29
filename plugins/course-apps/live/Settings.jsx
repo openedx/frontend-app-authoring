@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-thenable
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';

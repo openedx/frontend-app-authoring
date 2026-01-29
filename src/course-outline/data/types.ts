@@ -10,14 +10,13 @@ export interface CourseStructure {
   hasChanges: boolean,
 }
 
-// TODO: Create interface for all `Object` fields in courseOutline
 export interface CourseOutline {
   courseReleaseDate: string;
   courseStructure: CourseStructure;
-  deprecatedBlocksInfo: Object;
+  deprecatedBlocksInfo: Record<string, any>; // TODO: Create interface for this type
   discussionsIncontextLearnmoreUrl: string;
-  initialState: Object;
-  initialUserClipboard: Object;
+  initialState: Record<string, any>; // TODO: Create interface for this type
+  initialUserClipboard: Record<string, any>; // TODO: Create interface for this type
   languageCode: string;
   lmsLink: string;
   mfeProctoredExamSettingsUrl: string;

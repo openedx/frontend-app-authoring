@@ -79,7 +79,7 @@ export function isLibraryV1Key(learningContextKey: string | undefined | null): l
 }
 
 /** Check if this is a V1 block key. */
-export function isBlockV1Key(usageKey: string | undefined | null): usageKey is string {
+export function isBlockV1Key(usageKey: string | undefined | null): boolean {
   return typeof usageKey === 'string' && usageKey.startsWith('block-v1:');
 }
 

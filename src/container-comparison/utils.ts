@@ -128,6 +128,7 @@ export function diffPreviewContainerChildren<A extends CourseContainerChildBase,
 
   // Use new mapB for getting new index for added elements
   addedA.forEach((addedRow) => {
+    // oxlint-disable-next-line typescript/no-non-null-asserted-optional-chain FIXME: clean this up.
     updatedA.splice(mapB.get(addedRow.id)?.index!, 0, { ...addedRow, state: 'added' });
   });
 

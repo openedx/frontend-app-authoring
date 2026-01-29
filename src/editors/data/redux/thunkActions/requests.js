@@ -59,8 +59,8 @@ export const networkRequest = ({
 /**
  * Tracked fetchByBlockId api method.
  * Tracked to the `fetchBlock` request key.
- * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
- * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ * @param {func} onSuccess - onSuccess method ((response) => { ... })
+ * @param {func} onFailure - onFailure method ((error) => { ... })
  */
 export const fetchBlock = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
@@ -77,8 +77,8 @@ export const fetchBlock = ({ ...rest }) => (dispatch, getState) => {
 
  * Tracked fetchStudioView api method.
  * Tracked to the `fetchBlock` request key.
- * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
- * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ * @param {func} onSuccess - onSuccess method ((response) => { ... })
+ * @param {func} onFailure - onFailure method ((error) => { ... })
  */
 export const fetchStudioView = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
@@ -94,8 +94,8 @@ export const fetchStudioView = ({ ...rest }) => (dispatch, getState) => {
 /**
  * Tracked fetchByUnitId api method.
  * Tracked to the `fetchUnit` request key.
- * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
- * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ * @param {func} onSuccess - onSuccess method ((response) => { ... })
+ * @param {func} onFailure - onFailure method ((error) => { ... })
  */
 export const fetchUnit = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
@@ -111,8 +111,8 @@ export const fetchUnit = ({ ...rest }) => (dispatch, getState) => {
 /**
  * Tracked saveBlock api method.  Tracked to the `saveBlock` request key.
  * @param {Object} content
- * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
- * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ * @param {func} onSuccess - onSuccess method ((response) => { ... })
+ * @param {func} onFailure - onFailure method ((error) => { ... })
  */
 export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
@@ -131,8 +131,8 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
 
 /**
  * Tracked createBlock api method.  Tracked to the `createBlock` request key.
- * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
- * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ * @param {func} onSuccess - onSuccess method ((response) => { ... })
+ * @param {func} onFailure - onFailure method ((error) => { ... })
  */
 export const createBlock = ({ ...rest }) => (dispatch, getState) => {
   const blockTitle = selectors.app.blockTitle(getState());

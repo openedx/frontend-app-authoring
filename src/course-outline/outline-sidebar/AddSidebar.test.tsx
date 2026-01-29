@@ -70,9 +70,7 @@ const searchResult = {
   results: [
     {
       ...mockResult.results[0],
-      hits: [
-        ...mockResult.results[0].hits.slice(16, 19),
-      ],
+      hits: mockResult.results[0].hits.slice(16, 19),
     },
     {
       ...mockResult.results[1],

@@ -9,14 +9,14 @@ import {
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { ContainerType } from '@src/generic/key-utils';
-import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import messages from './messages';
 import { ContainerState } from './types';
 import { isRowClickable } from './utils';
 
 export interface ContainerRowProps {
   title: string;
-  containerType: ContainerType | keyof typeof COMPONENT_TYPES | string;
+  /** containerType: can be one of `ContainerType` | `COMPONENT_TYPES` or any other string (3rd party XBlocks)  */
+  containerType: ContainerType | string;
   state?: ContainerState;
   side: 'Before' | 'After';
   originalName?: string;

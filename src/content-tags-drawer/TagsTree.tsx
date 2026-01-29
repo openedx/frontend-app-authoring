@@ -75,11 +75,17 @@ const TagComponent = ({
 };
 
 interface TagsTreeProps {
+  /** Array of taxonomy tags that are applied to the content. */
   tags: TagTree;
+  /** Key of the parent tag. */
   parentKey?: string;
+  /** Depth of the parent tag (root), used to render tabs for the tree. */
   rootDepth?: number;
+  /** Lineage of the tag. */
   lineage?: string[];
+  /** Function that is called when removing tags from the tree. */
   removeTagHandler?: (value: string) => void;
+  /** Optional component to render after the tags components. */
   afterTagsComponent?: React.ReactNode;
 }
 
@@ -121,17 +127,12 @@ interface TagsTreeProps {
  *
  */
 const TagsTree = ({
-  /** Array of taxonomy tags that are applied to the content. */
   tags,
-  /** Depth of the parent tag (root), used to render tabs for the tree. */
   rootDepth = 0,
-  /** Key of the parent tag. */
   parentKey,
-  /** Lineage of the tag. */
   lineage = [],
-  /** Function that is called when removing tags from the tree. */
   removeTagHandler,
-  /** Optional component to render after the tags components. */
+  // oxlint-disable-next-line oxc/only-used-in-recursion
   afterTagsComponent,
 }: TagsTreeProps) => {
   const { isEditMode } = useContext(ContentTagsDrawerContext);

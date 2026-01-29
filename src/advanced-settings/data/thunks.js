@@ -25,7 +25,7 @@ export function fetchCourseAppSettings(courseId) {
         sortedDisplayName.push(displayName);
       });
       const sortedSettingValues = {};
-      sortedDisplayName.sort().forEach((displayName => {
+      sortedDisplayName.sort((a, b) => a.localeCompare(b)).forEach((displayName => {
         Object.entries(settingValues).forEach(([key, value]) => {
           if (value.displayName === displayName) {
             sortedSettingValues[key] = value;

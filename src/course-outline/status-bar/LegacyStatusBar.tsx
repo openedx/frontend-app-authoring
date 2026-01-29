@@ -92,7 +92,7 @@ export const LegacyStatusBar = ({
           >
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate
-                value={courseReleaseDateObj.toString()}
+                value={courseReleaseDateObj.toISOString()}
                 year="numeric"
                 month="short"
                 day="2-digit"

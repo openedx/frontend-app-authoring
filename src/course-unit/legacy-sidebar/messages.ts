@@ -29,6 +29,16 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.sidebar.body.note',
     defaultMessage: 'Note: Do not hide graded assignments after they have been released.',
   },
+  publishInfoDraftSaved: {
+    id: 'course-authoring.course-unit.publish.info.draft.saved',
+    defaultMessage: 'DRAFT SAVED',
+    description: 'Label for the draft date in the publish info section',
+  },
+  publishLastPublished: {
+    id: 'course-authoring.course-unit.publish.info.last.published',
+    defaultMessage: 'LAST PUBLISHED',
+    description: 'Label for the last published date in the publish info section',
+  },
   publishInfoPreviouslyPublished: {
     id: 'course-authoring.course-unit.publish.info.previously-published',
     defaultMessage: 'Previously published',

@@ -85,7 +85,7 @@ const UnitInfoSettings = () => {
 
   const handleUpdate = async (
     isVisible: boolean,
-    groupAccess: Object | null,
+    groupAccess: Record<string, any> | null,
     isDiscussionEnabled: boolean,
   ) => {
     // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.

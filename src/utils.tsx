@@ -34,7 +34,7 @@ export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
 }
 
-export function convertObjectToSnakeCase(obj: Object, unpacked = false) {
+export function convertObjectToSnakeCase(obj: Record<string, any>, unpacked = false) {
   return Object.keys(obj).reduce((snakeCaseObj, key) => {
     const snakeCaseKey = snakeCase(key);
     const value = unpacked ? obj[key] : { value: obj[key] };
@@ -45,7 +45,7 @@ export function convertObjectToSnakeCase(obj: Object, unpacked = false) {
   }, {});
 }
 
-export function deepConvertingKeysToCamelCase(obj: any[] | Object | null) {
+export function deepConvertingKeysToCamelCase(obj: any[] | Record<string, any> | null) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
@@ -62,7 +62,7 @@ export function deepConvertingKeysToCamelCase(obj: any[] | Object | null) {
   return camelCaseObj;
 }
 
-export function deepConvertingKeysToSnakeCase(obj: any[] | Object | null) {
+export function deepConvertingKeysToSnakeCase(obj: any[] | Record<string, any> | null) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
