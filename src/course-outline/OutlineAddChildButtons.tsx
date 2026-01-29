@@ -26,7 +26,7 @@ import messages from './messages';
  */
 const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
   const intl = useIntl();
-  const { currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
+  const { isCurrentFlowOn, currentFlow, stopCurrentFlow } = useOutlineSidebarContext();
   const {
     handleAddSection,
     handleAddSubsection,
@@ -34,7 +34,7 @@ const AddPlaceholder = ({ parentLocator }: { parentLocator?: string }) => {
     handleAddAndOpenUnit,
   } = useCourseAuthoringContext();
 
-  if (!currentFlow || currentFlow.parentLocator !== parentLocator) {
+  if (!isCurrentFlowOn || currentFlow?.parentLocator !== parentLocator) {
     return null;
   }
 
@@ -86,11 +86,11 @@ interface BaseProps {
   btnClasses?: string;
   btnSize?: 'sm' | 'md' | 'lg' | 'inline';
   parentLocator: string;
+  grandParentLocator?: string;
 }
 
 interface NewChildButtonsProps extends BaseProps {
   handleUseFromLibraryClick?: () => void;
-  parentTitle: string;
 }
 
 const NewOutlineAddChildButtons = ({
@@ -102,7 +102,7 @@ const NewOutlineAddChildButtons = ({
   btnClasses = 'mt-4 border-gray-500 rounded-0',
   btnSize,
   parentLocator,
-  parentTitle,
+  grandParentLocator,
 }: NewChildButtonsProps) => {
   // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
   // as it has a useEffect that fetches course waffle flags whenever
@@ -175,12 +175,12 @@ const NewOutlineAddChildButtons = ({
     startCurrentFlow({
       flowType,
       parentLocator,
-      parentTitle,
+      grandParentLocator,
     });
   }, [
     childType,
     parentLocator,
-    parentTitle,
+    grandParentLocator,
     startCurrentFlow,
   ]);
 

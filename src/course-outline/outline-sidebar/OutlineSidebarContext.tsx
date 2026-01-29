@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useToggle } from '@openedx/paragon';
 
-import { useEscapeClick, useStateWithUrlSearchParam } from '@src/hooks';
+import { useEscapeClick, useStateWithUrlSearchParam, useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { isOutlineNewDesignEnabled } from '../utils';
@@ -22,13 +22,14 @@ export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
   flowType: ContainerType;
   parentLocator: string;
-  parentTitle: string;
+  grandParentLocator?: string;
 };
 
 interface OutlineSidebarContextData {
   currentPageKey: OutlineSidebarPageKeys;
   setCurrentPageKey: (pageKey: OutlineSidebarPageKeys) => void;
-  currentFlow: OutlineFlow | null;
+  isCurrentFlowOn?: boolean;
+  currentFlow?: OutlineFlow;
   startCurrentFlow: (flow: OutlineFlow) => void;
   stopCurrentFlow: () => void;
   isOpen: boolean;
@@ -39,8 +40,8 @@ interface OutlineSidebarContextData {
   clearSelection: () => void;
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
-  /** Stores last subsection that allows adding units inside it. */
-  lastEditableSubsection?: XBlock;
+  /** Stores last subsection that allows adding units inside it and its parent sectionId */
+  lastEditableSubsection?: { data: XBlock, sectionId?: string };
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }
@@ -52,12 +53,18 @@ const getLastEditableItem = (blockList: Array<XBlock>) => {
   return blockList[lastIndex];
 };
 
-const getLastEditableSubsection = (blockList: Array<XBlock>, startIndex?: number) => {
+const getLastEditableSubsection = (
+  blockList: Array<XBlock>,
+  startIndex?: number
+): { data: XBlock, sectionId: string } | undefined => {
   let lastSectionIndex = findLastIndex(blockList, (item) => item.actions.childAddable, startIndex);
   if (lastSectionIndex !== -1) {
     let lastSubsectionIndex = findLastIndex(blockList[lastSectionIndex].childInfo.children, (item) => item.actions.childAddable);
     if (lastSubsectionIndex !== -1) {
-      return blockList[lastSectionIndex].childInfo.children[lastSubsectionIndex];
+      return {
+        data: blockList[lastSectionIndex].childInfo.children[lastSubsectionIndex],
+        sectionId: blockList[lastSectionIndex].id,
+      }
     }
     if (lastSectionIndex > 0) {
       return getLastEditableSubsection(blockList, lastSectionIndex - 1);
@@ -73,7 +80,12 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     (value: string) => value as OutlineSidebarPageKeys,
     (value: OutlineSidebarPageKeys) => value,
   );
-  const [currentFlow, setCurrentFlow] = useState<OutlineFlow | null>(null);
+  const [
+    isCurrentFlowOn,
+    currentFlow,
+    setCurrentFlow,
+    stopCurrentFlow,
+  ] = useToggleWithValue<OutlineFlow>();
   const [isOpen, open, , toggle] = useToggle(true);
 
   /**
@@ -100,19 +112,11 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     }
   }, [currentPageKey, selectedContainerState]);
 
-  /**
-  * Stops current add content flow.
-  * This will cause the sidebar to switch back to its normal state and clear out any placeholder containers.
-  */
-  const stopCurrentFlow = useCallback(() => {
-    setCurrentFlow(null);
-  }, [setCurrentFlow]);
-
   const setCurrentPageKey = useCallback((pageKey: OutlineSidebarPageKeys) => {
     setCurrentPageKeyState(pageKey);
-    setCurrentFlow(null);
+    stopCurrentFlow();
     open();
-  }, [open, setCurrentFlow]);
+  }, [open, stopCurrentFlow]);
 
   const openContainerInfoSidebar = useCallback((
     containerId: string,
@@ -153,10 +157,13 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   /** Stores last subsection that allows adding units inside it. */
   const lastEditableSubsection = useMemo(() => {
     if (currentItemData?.category === 'sequential' && currentItemData.actions.childAddable) {
-      return currentItemData;
+      return { data: currentItemData, sectionId: selectedContainerState?.sectionId };
     }
     if (currentItemData?.category === 'chapter') {
-      return getLastEditableItem(currentItemData?.childInfo.children || []);
+      return {
+        data: getLastEditableItem(currentItemData?.childInfo.children || []),
+        sectionId: selectedContainerState?.currentId,
+      };
     }
     return currentItemData ? undefined: getLastEditableSubsection(sectionsList);
   }, [currentItemData, sectionsList]);
@@ -173,6 +180,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     () => ({
       currentPageKey,
       setCurrentPageKey,
+      isCurrentFlowOn,
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
@@ -189,6 +197,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     [
       currentPageKey,
       setCurrentPageKey,
+      isCurrentFlowOn,
       currentFlow,
       startCurrentFlow,
       stopCurrentFlow,
