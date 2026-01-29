@@ -12,6 +12,7 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 import { useEntityLinksSummaryByDownstreamContext } from '@src/course-libraries/data/apiHooks';
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
+import { useCourseDetails } from '@src/course-outline/data/apiHooks';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Moment }) => {
   const now = moment().utc();
@@ -42,17 +43,23 @@ const CourseBadge = ({ startDate, endDate }: { startDate: Moment, endDate: Momen
   }
 };
 
-const UnpublishedBadgeStatus = () => (
-  <Badge
-    className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal"
-    variant="light"
-  >
-    <Stack direction="horizontal" gap={2}>
-      <Icon size="xs" src={Description} />
-      <FormattedMessage {...messages.unpublishedBadgeText} />
-    </Stack>
-  </Badge>
-);
+const UnpublishedBadgeStatus = ({ courseId }: { courseId: string }) => {
+  const { data } = useCourseDetails(courseId);
+  if (!data?.hasChanges) {
+    return null;
+  }
+  return (
+    <Badge
+      className="px-2 py-2 bg-draft-status text-gray-700 font-weight-normal"
+      variant="light"
+    >
+      <Stack direction="horizontal" gap={2}>
+        <Icon size="xs" src={Description} />
+        <FormattedMessage {...messages.unpublishedBadgeText} />
+      </Stack>
+    </Badge>
+  )
+};
 
 const LibraryUpdates = ({ courseId }: { courseId: string }) => {
   const { data } = useEntityLinksSummaryByDownstreamContext(courseId);
@@ -178,7 +185,6 @@ export const StatusBar = ({
     endDate,
     courseReleaseDate,
     checklist,
-    hasChanges,
   } = statusBarData;
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY [at] HH:mm UTC', true);
@@ -192,7 +198,7 @@ export const StatusBar = ({
   return (
     <Stack direction="horizontal" gap={4}>
       <CourseBadge startDate={courseReleaseDateObj} endDate={endDateObj} />
-      {hasChanges && <UnpublishedBadgeStatus />}
+      <UnpublishedBadgeStatus courseId={courseId} />
       <CourseDates
         startDate={courseReleaseDateObj}
         endDate={endDateObj}

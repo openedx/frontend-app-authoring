@@ -33,7 +33,6 @@ const initialState = {
     },
     videoSharingEnabled: false,
     videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
-    hasChanges: false,
   },
   sectionsList: [],
   isCustomRelativeDatesActive: false,

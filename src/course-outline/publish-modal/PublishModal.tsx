@@ -20,7 +20,7 @@ const PublishModal = () => {
   const {
     id, displayName, childInfo, category,
   } = currentPublishModalData?.value || {};
-  const categoryName = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
+  const categoryName = COURSE_BLOCK_NAMES[category || '']?.name.toLowerCase();
   const children: XBlock[] = childInfo?.children || [];
   const publishMutation = usePublishCourseItem();
   const queryClient = useQueryClient();
