@@ -20,6 +20,9 @@ import messages from './messages';
  * @param publishedOn - The timestamp when the content was last published.
  * @returns Publish information based on the provided parameters.
  */
+// this fn appears to be unused - <SidebarBody> is never called with displayUnitLocation=false.
+// Ingoring it for coverage for now and we'll delete the whole legacy sidebar soon.
+// istanbul ignore next
 export const getPublishInfo = (
   intl: IntlShape,
   hasChanges: boolean,
