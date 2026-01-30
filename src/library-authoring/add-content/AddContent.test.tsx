@@ -93,7 +93,7 @@ describe('<AddContent />', () => {
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
     expect(await screen.findByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
-    expect(await screen.queryByRole('button', { name: /existing library content/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /existing library content/i })).not.toBeInTheDocument();
   });
 
   it('should render advanced content buttons', async () => {

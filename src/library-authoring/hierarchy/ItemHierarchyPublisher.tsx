@@ -123,10 +123,10 @@ export const ItemHierarchyPublisher = ({
           {intl.formatMessage(messages.publishCancel)}
         </Button>
         <LoadingButton
-          onClick={async (e) => {
+          onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            await handlePublish();
+            handlePublish();
           }}
           variant="primary rounded-0"
           label={intl.formatMessage(messages.publishConfirm)}

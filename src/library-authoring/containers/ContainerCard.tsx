@@ -95,6 +95,7 @@ export const ContainerMenu = ({ containerKey, displayName, index } : ContainerMe
   }, [navigateTo, containerKey]);
 
   const handleCopy = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     copyToClipboard(containerKey);
   }, [copyToClipboard, containerKey]);
 

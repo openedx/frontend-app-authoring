@@ -83,12 +83,13 @@ const UnitInfoSettings = () => {
 
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
 
-  const handleUpdate = (
+  const handleUpdate = async (
     isVisible: boolean,
     groupAccess: Object | null,
     isDiscussionEnabled: boolean,
   ) => {
-    dispatch(editCourseUnitVisibilityAndData(
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
+    await dispatch(editCourseUnitVisibilityAndData(
       id,
       PUBLISH_TYPES.republish,
       isVisible,
@@ -99,13 +100,13 @@ const UnitInfoSettings = () => {
     ));
   };
 
-  const handleSaveGroups = (data, { resetForm }) => {
+  const handleSaveGroups = async (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {
       const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
       groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
     }
-    handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
+    await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
     resetForm({ values: data });
   };
 

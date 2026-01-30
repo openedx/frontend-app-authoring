@@ -239,8 +239,10 @@ const SettingsModal = ({
     const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
 
     if (enabled) {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(updateXpertSettings(courseId, values));
     } else {
+      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
       success = await dispatch(removeXpertSettings(courseId));
     }
 

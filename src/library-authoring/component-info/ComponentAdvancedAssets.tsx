@@ -59,6 +59,7 @@ export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
   const deleter = useDeleteXBlockAsset(usageKey);
   const [filePathToDelete, setConfirmDeleteAsset] = React.useState<string>('');
   const deleteFile = React.useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     deleter.mutateAsync(filePathToDelete); // Don't wait for this before clearing the modal on the next line
     setConfirmDeleteAsset('');
   }, [filePathToDelete, usageKey]);

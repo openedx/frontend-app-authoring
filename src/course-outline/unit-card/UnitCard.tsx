@@ -157,6 +157,7 @@ const UnitCard = ({
   };
 
   const handleCopyClick = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     copyToClipboard(id);
   };
 

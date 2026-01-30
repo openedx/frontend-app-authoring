@@ -175,7 +175,7 @@ describe('<TaxonomyListPage />', () => {
     } = render(<TaxonomyListPage />);
 
     // Open the taxonomies org filter select menu
-    const taxonomiesFilterSelectMenu = await getByRole('button', { name: 'All taxonomies' });
+    const taxonomiesFilterSelectMenu = getByRole('button', { name: 'All taxonomies' });
     fireEvent.click(taxonomiesFilterSelectMenu);
 
     // Check that the 'Unassigned' option is correctly called

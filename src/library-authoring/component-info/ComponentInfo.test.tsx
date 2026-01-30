@@ -143,7 +143,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
     // Should show the confirmation box
     expect(await screen.findByText(/Confirm Publish/i)).toBeInTheDocument();
-    const secondPublishButton = await screen.getByRole('button', { name: /publish/i });
+    const secondPublishButton = screen.getByRole('button', { name: /publish/i });
     secondPublishButton.click();
   });
 
@@ -160,7 +160,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
     // Should show the confirmation box
     expect(await screen.findByText(/Confirm Publish/i)).toBeInTheDocument();
-    const secondPublishButton = await screen.getByRole('button', { name: /publish/i });
+    const secondPublishButton = screen.getByRole('button', { name: /publish/i });
     secondPublishButton.click();
   });
 
@@ -177,7 +177,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
     // Should show the confirmation box
     expect(await screen.findByText(/Confirm Publish/i)).toBeInTheDocument();
-    const secondPublishButton = await screen.getByRole('button', { name: /publish/i });
+    const secondPublishButton = screen.getByRole('button', { name: /publish/i });
     secondPublishButton.click();
   });
 
@@ -195,7 +195,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
     // Should show the confirmation box
     expect(await screen.findByText(/Confirm Publish/i)).toBeInTheDocument();
-    const secondPublishButton = await screen.getByRole('button', { name: /publish/i });
+    const secondPublishButton = screen.getByRole('button', { name: /publish/i });
     secondPublishButton.click();
 
     await waitFor(() => {
@@ -217,7 +217,7 @@ describe('<ComponentInfo> Sidebar', () => {
 
     // Should show the confirmation box
     expect(await screen.findByText(/Confirm Publish/i)).toBeInTheDocument();
-    const secondPublishButton = await screen.getByRole('button', { name: /publish/i });
+    const secondPublishButton = screen.getByRole('button', { name: /publish/i });
     secondPublishButton.click();
 
     await waitFor(() => {

@@ -113,6 +113,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const headerNavigationsActions = {
     handleNewSection: () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleAddSection.mutateAsync({
         type: ContainerType.Chapter,
         parentLocator: courseStructure?.id,

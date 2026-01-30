@@ -70,7 +70,7 @@ export async function getDownload(selectedRows, courseId) {
       definedAssets.forEach((assetBlob, index) => {
         folder.file(assetNames[index], assetBlob.value, { blob: true });
       });
-      zip.generateAsync({ type: 'blob' }).then(content => {
+      await zip.generateAsync({ type: 'blob' }).then(content => {
         saveAs(content, `${courseId}-assets-${date}.zip`);
       });
     }

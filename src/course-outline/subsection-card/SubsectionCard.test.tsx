@@ -428,12 +428,12 @@ describe('<SubsectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
     const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    await fireEvent.click(menu);
+    fireEvent.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    await fireEvent.click(manageTagsBtn);
+    fireEvent.click(manageTagsBtn);
 
     const drawer = await screen.findByRole('alert');
     expect(within(drawer).getByText(/manage tags/i));
@@ -474,12 +474,12 @@ describe('<SubsectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
     const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    await fireEvent.click(menu);
+    fireEvent.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    await fireEvent.click(manageTagsBtn);
+    fireEvent.click(manageTagsBtn);
 
     await waitFor(() => {
       expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', subsection.id);

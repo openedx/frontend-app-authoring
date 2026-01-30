@@ -471,11 +471,11 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'vertical',
@@ -509,10 +509,10 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'sequential',
@@ -545,10 +545,10 @@ describe('<CourseOutline />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    waitFor(() => expect(axiosMock.history.post.length).toBe(3));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(3));
 
     const courseUsageKey = courseOutlineIndexMock.courseStructure.id;
-    waitFor(() => {
+    await waitFor(() => {
       expect(axiosMock.history.post[2].data).toBe(JSON.stringify({
         type: COMPONENT_TYPES.libraryV2,
         category: 'chapter',
