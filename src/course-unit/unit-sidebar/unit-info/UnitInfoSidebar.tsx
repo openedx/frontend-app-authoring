@@ -94,10 +94,7 @@ const UnitInfoSettings = () => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
-      () => {
-        sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id });
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
-      },
+      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
       id,
     ));
   };
