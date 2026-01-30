@@ -107,7 +107,7 @@ describe('OpenedXConfigForm', () => {
     expect(container.querySelector('h3')).toHaveTextContent('edX');
   });
 
-  test('new Open edX provider config', async () => {
+  test('new edX provider config', async () => {
     await mockStore({ ...legacyApiResponse, enable_in_context: true });
     createComponent(jest.fn(), createRef(), false);
     expect(queryByText(container, messages.visibilityInContext.defaultMessage)).toBeInTheDocument();
