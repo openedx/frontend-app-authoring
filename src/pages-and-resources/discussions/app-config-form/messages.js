@@ -107,12 +107,12 @@ const messages = defineMessages({
   },
   'appName-legacy': {
     id: 'authoring.discussions.appConfigForm.appName-legacy',
-    defaultMessage: 'Open edX (legacy)',
+    defaultMessage: 'edX (legacy)',
     description: 'The name of the Legacy Open edX Discussions app.',
   },
   'appName-openedx': {
     id: 'authoring.discussions.appConfigForm.appName-openedx',
-    defaultMessage: 'Open edX',
+    defaultMessage: 'edX',
     description: 'The name of the new Open edX Discussions app.',
   },
   divisionByGroup: {
