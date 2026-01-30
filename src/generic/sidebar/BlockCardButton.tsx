@@ -44,19 +44,21 @@ export const BlockCardButton = ({
 
   if (templates?.length) {
     return (
-      <Collapsible
-        styling="card-lg"
-        className="mx-2 font-weight-bold shadow pl-1 rounded"
-        title={titleComponent}
-      >
-        <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
-          {templates.map((template) => (
-            <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>
-              {template.displayName}
-            </Chip>
-          ))}
-        </Stack>
-      </Collapsible>
+      <div data-testid={`${blockType}-collapsible`}>
+        <Collapsible
+          styling="card-lg"
+          className="mx-2 font-weight-bold shadow pl-1 rounded"
+          title={titleComponent}
+        >
+          <Stack direction="horizontal" className="d-flex flex-wrap" gap={2}>
+            {templates.map((template) => (
+              <Chip onClick={() => onClickTemplate?.(template.boilerplateName)}>
+                {template.displayName}
+              </Chip>
+            ))}
+          </Stack>
+        </Collapsible>
+      </div>
     );
   }
 

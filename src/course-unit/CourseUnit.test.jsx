@@ -1,3 +1,4 @@
+import fetchMock from 'fetch-mock-jest';
 import userEvent from '@testing-library/user-event';
 import {
   camelCaseObject,
@@ -9,6 +10,7 @@ import { cloneDeep, set } from 'lodash';
 import {
   act, fireEvent, render, waitFor, within, screen, initializeMocks,
 } from '@src/testUtils';
+import mockResult from '@src/library-authoring/__mocks__/library-search.json';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import pasteComponentMessages from '@src/generic/clipboard/paste-component/messages';
@@ -16,7 +18,13 @@ import { getClipboardUrl } from '@src/generic/data/api';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import {
+  mockContentLibrary,
+  mockGetContentLibraryV2List,
+  mockLibraryBlockMetadata,
+} from '@src/library-authoring/data/api.mocks';
 
+import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import {
   getCourseSectionVerticalApiUrl,
   getCourseVerticalChildrenApiUrl,
@@ -70,6 +78,10 @@ const unitDisplayName = courseSectionVerticalMock.xblock_info.display_name;
 const mockedUsedNavigate = jest.fn();
 const userName = 'openedx';
 const handleConfigureSubmitMock = jest.fn();
+mockContentSearchConfig.applyMock();
+mockContentLibrary.applyMock();
+mockGetContentLibraryV2List.applyMock();
+mockLibraryBlockMetadata.applyMock();
 
 const {
   block_id: id,
@@ -86,6 +98,14 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId, sequenceId }),
   useNavigate: () => mockedUsedNavigate,
+}));
+
+jest.mock('@src/studio-home/hooks', () => ({
+  useStudioHome: () => ({
+    isLoadingPage: false,
+    isFailedLoadingPage: false,
+    librariesV2Enabled: true,
+  }),
 }));
 
 /**
@@ -2827,5 +2847,272 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
     render(<RootWrapper />);
     expect(await screen.findByText('Access: 3 Groups')).toBeInTheDocument();
+  });
+
+  describe('Add sidebar', () => {
+    let user;
+
+    const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
+    const searchResult = {
+      ...mockResult,
+      results: [
+        {
+          ...mockResult.results[0],
+          hits: [
+            ...mockResult.results[0].hits.slice(0, 10),
+          ],
+        },
+        {
+          ...mockResult.results[1],
+        },
+      ],
+    };
+
+    beforeEach(async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+      });
+
+      // The Meilisearch client-side API uses fetch, not Axios.
+      fetchMock.mockReset();
+      fetchMock.post(searchEndpoint, (_url, req) => {
+        const requestData = JSON.parse((req.body ?? ''));
+        const query = requestData?.queries[0]?.q ?? '';
+        // We have to replace the query (search keywords) in the mock results with the actual query,
+        // because otherwise Instantsearch will update the UI and change the query,
+        // leading to unexpected results in the test cases.
+        const newMockResult = { ...searchResult };
+        newMockResult.results[0].query = query;
+        // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
+        // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+        newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+        return newMockResult;
+      });
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl())
+        .reply(200, courseCreateXblockMock);
+
+      user = userEvent.setup();
+      render(<RootWrapper />);
+
+      // Moving to the add sidebar
+      const sidebarToggle = await screen.findByTestId('sidebar-toggle');
+      expect(sidebarToggle).toBeInTheDocument();
+      const addButton = within(sidebarToggle).getByRole('button', { name: 'Add' });
+      expect(addButton).toBeInTheDocument();
+      await user.click(addButton);
+    });
+
+    it('renders the add sidebar component without any errors', async () => {
+      // Check add new tab content
+      expect(await screen.findByRole('button', { name: 'Video' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Drag Drop' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Add New' })).toBeInTheDocument();
+      const textCollapsible = screen.getByTestId('html-collapsible');
+      expect(textCollapsible).toBeInTheDocument();
+      const openResponseCollapsible = screen.getByTestId('openassessment-collapsible');
+      expect(openResponseCollapsible).toBeInTheDocument();
+      const problemCollapsible = screen.getByTestId('problem-collapsible');
+      expect(problemCollapsible).toBeInTheDocument();
+
+      // Check text templates
+      await user.click(within(textCollapsible).getByText(/text/i));
+      expect(within(textCollapsible).getByText('Raw HTML'));
+      expect(within(textCollapsible).getByText('IFrame Tool'));
+      expect(within(textCollapsible).getByText('Anonymous User ID'));
+      expect(within(textCollapsible).getByText('Announcement'));
+
+      // Check Open response templates
+      await user.click(within(openResponseCollapsible).getByText(/open response/i));
+      expect(within(openResponseCollapsible).getByText('Peer Assessment Only'));
+      expect(within(openResponseCollapsible).getByText('Self Assessment Only'));
+      expect(within(openResponseCollapsible).getByText('Staff Assessment Only'));
+      expect(within(openResponseCollapsible).getByText('Self Assessment to Peer Assessment'));
+      expect(within(openResponseCollapsible).getByText('Self Assessment to Staff Assessment'));
+
+      // Check problem templates
+      await user.click(within(problemCollapsible).getByText(/problem/i));
+      expect(within(problemCollapsible).getByText('Single select'));
+      expect(within(problemCollapsible).getByText('Multi-select'));
+      expect(within(problemCollapsible).getByText('Dropdown'));
+      expect(within(problemCollapsible).getByText('Text input'));
+      expect(within(problemCollapsible).getByText('Advanced Problem'));
+
+      // Check Advanced blocks
+      const advancedButton = screen.getByRole('button', { name: 'Advanced' });
+      expect(advancedButton).toBeInTheDocument();
+      await user.click(advancedButton);
+      expect(await screen.findByRole('button', { name: 'Annotation' })).toBeInTheDocument();
+      expect(await screen.findByRole('button', { name: 'Video' })).toBeInTheDocument();
+      const backButton = screen.getByRole('button', { name: 'Back' });
+      expect(backButton).toBeInTheDocument();
+      await user.click(backButton);
+      expect(await screen.findByRole('button', { name: 'Advanced' })).toBeInTheDocument();
+
+      // Check existing tab content
+      const existingTab = screen.getByRole('tab', { name: 'Add Existing' });
+      expect(existingTab).toBeInTheDocument();
+      await user.click(existingTab);
+      expect(await screen.findByRole('button', { name: 'All libraries' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'See more' })).toBeInTheDocument();
+      expect(screen.getByRole('search')).toBeInTheDocument();
+    });
+
+    [
+      {
+        name: 'Video',
+        blockType: 'video',
+      },
+      {
+        name: 'Drag Drop',
+        blockType: 'drag-and-drop-v2',
+      },
+    ].forEach(({ name, blockType }) => {
+      it(`calls appropriate handlers on new button click for ${name} block`, async () => {
+        const blockButton = await screen.findByRole('button', { name });
+        expect(blockButton).toBeInTheDocument();
+
+        await user.click(blockButton);
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(1);
+        });
+        expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+        expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({
+          category: blockType,
+          parent_locator: blockId,
+          type: blockType,
+        });
+      });
+    });
+
+    [
+      {
+        name: 'Text',
+        blockType: 'html',
+        templates: [
+          {
+            name: 'Raw HTML',
+            boilerplate: 'raw.yaml',
+          },
+          {
+            name: 'IFrame Tool',
+            boilerplate: 'iframe.yaml',
+          },
+          {
+            name: 'Anonymous User ID',
+            boilerplate: 'anon_user_id.yaml',
+          },
+          {
+            name: 'Announcement',
+            boilerplate: 'announcement.yaml',
+          },
+        ],
+      },
+      {
+        name: 'Open Response',
+        blockType: 'openassessment',
+        templates: [
+          {
+            name: 'Peer Assessment Only',
+            boilerplate: 'peer-assessment',
+          },
+          {
+            name: 'Self Assessment Only',
+            boilerplate: 'self-assessment',
+          },
+          {
+            name: 'Staff Assessment Only',
+            boilerplate: 'staff-assessment',
+          },
+          {
+            name: 'Self Assessment to Peer Assessment',
+            boilerplate: 'self-to-peer',
+          },
+          {
+            name: 'Self Assessment to Staff Assessment',
+            boilerplate: 'self-to-staff',
+          },
+        ],
+      },
+    ].forEach(({ name, blockType, templates }) => {
+      templates.forEach((template) => {
+        it(`calls appropriate handlers on new button click for ${name} block with ${template.name} template`, async () => {
+          const collapsible = screen.getByTestId(`${blockType}-collapsible`);
+          expect(collapsible).toBeInTheDocument();
+          await user.click(within(collapsible).getByText(name));
+          const templateButton = within(collapsible).getByText(template.name);
+          expect(templateButton).toBeInTheDocument();
+          await user.click(templateButton);
+
+          await waitFor(() => {
+            expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+          });
+
+          expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+            category: blockType,
+            parent_locator: blockId,
+            boilerplate: template.boilerplate,
+            ...(blockType !== 'openassessment' ? { type: blockType } : {}),
+          });
+        });
+      });
+    });
+
+    [
+      {
+        name: 'Annotation',
+        blockType: 'annotatable',
+      },
+      {
+        name: 'Video',
+        blockType: 'videoalpha',
+      },
+    ].forEach(({ name, blockType }) => {
+      it(`calls appropriate handlers on new button click for Advanced ${name} block`, async () => {
+        const advancedButton = await screen.findByRole('button', { name: 'Advanced' });
+        expect(advancedButton).toBeInTheDocument();
+        await user.click(advancedButton);
+
+        const blockButton = await screen.findByRole('button', { name });
+        expect(blockButton).toBeInTheDocument();
+        await user.click(blockButton);
+
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toBe(1);
+        });
+        expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+        expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({
+          category: blockType,
+          parent_locator: blockId,
+          type: blockType,
+        });
+      });
+    });
+
+    it('calls appropriate handlers on existing button click', async () => {
+      // Check existing tab content
+      await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
+
+      // Add text
+      const textCard = await screen.findByText(/introduction to testing/i);
+      expect(textCard).toBeInTheDocument();
+      await user.click(textCard);
+      const addButton = await screen.findByRole('button', { name: 'Add to Course' });
+      expect(addButton).toBeInTheDocument();
+      await user.click(addButton);
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toBe(1);
+      });
+      expect(axiosMock.history.post[0].url).toBe(postXBlockBaseApiUrl());
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        category: 'html',
+        parent_locator: blockId,
+        library_content_key: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        type: 'library_v2',
+      });
+    });
   });
 });

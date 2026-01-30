@@ -1,15 +1,16 @@
 import { get, isEmpty } from 'lodash';
+
 import { camelizeKeys, convertMarkdownToXml } from '@src/editors/utils';
+import { OLXParser } from '@src/editors/containers/ProblemEditor/data/OLXParser';
+import { parseSettings } from '@src/editors/containers/ProblemEditor/data/SettingsParser';
+import { fetchEditorContent } from '@src/editors/containers/ProblemEditor/components/EditProblemView/hooks';
+import ReactStateOLXParser from '@src/editors/containers/ProblemEditor/data/ReactStateOLXParser';
+import { isLibraryKey } from '@src/generic/key-utils';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
 import * as requests from './requests';
-import { isLibraryKey } from '../../../../generic/key-utils';
-import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
-import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
-import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
-import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 import { RequestKeys } from '../../constants/requests';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:

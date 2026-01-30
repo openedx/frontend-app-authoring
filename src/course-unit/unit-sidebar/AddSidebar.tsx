@@ -68,15 +68,15 @@ const AddNewContent = () => {
     // (1) All types have at least one template of the same type.
     //     In that case, it's left empty to avoid rendering that single template.
     // (2) Set the problem templates required for this component.
-    if (item.templates.length === 1) {
-      result = {
-        ...item,
-        templates: [],
-      };
-    } else if (item.type === 'problem') {
+    if (item.type === 'problem') {
       result = {
         ...item,
         templates: problemTemplates,
+      };
+    } else if (item.templates.length === 1) {
+      result = {
+        ...item,
+        templates: [],
       };
     }
 
