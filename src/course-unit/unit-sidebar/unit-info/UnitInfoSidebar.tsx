@@ -95,12 +95,11 @@ const UnitInfoSettings = () => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
+      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
       id,
     ));
   };
 
-  /* istanbul ignore next */
   const handleSaveGroups = async (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {
