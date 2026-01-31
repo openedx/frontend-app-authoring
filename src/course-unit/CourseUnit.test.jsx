@@ -2917,4 +2917,20 @@ describe('<CourseUnit />', () => {
     render(<RootWrapper />);
     expect(await screen.findByText('Access: 3 Groups')).toBeInTheDocument();
   });
+
+  it('opens the align sidebar on postMessage event', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+
+    render(<RootWrapper />);
+
+    await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+
+    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
+
+    await screen.findByText('Align');
+  });
 });

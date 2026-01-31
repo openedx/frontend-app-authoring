@@ -3,15 +3,20 @@ import {
 } from 'react';
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
+import { useStateWithUrlSearchParam } from '@src/hooks';
 
-export type UnitSidebarPageKeys = 'info';
+export type UnitSidebarPageKeys = 'info' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
-  setCurrentPageKey: (pageKey: UnitSidebarPageKeys) => void;
+  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string) => void;
   currentTabKey?: string;
   setCurrentTabKey: (tabKey: string) => void;
+  // The Id of the component used in the current sidebar page
+  // The component is not necessarily selected to open a selected sidebar.
+  // Example: Align sidebar
+  currentComponentId?: string;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
@@ -20,12 +25,22 @@ interface UnitSidebarContextData {
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
 export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
+  const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
+    'info',
+    'sidebar',
+    (value: string) => value as UnitSidebarPageKeys,
+    (value: UnitSidebarPageKeys) => value,
+  );
   const [currentTabKey, setCurrentTabKey] = useState<string>();
+  const [currentComponentId, setCurrentComponentId] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
 
-  const setCurrentPageKey = useCallback(/* istanbul ignore next */ (pageKey: UnitSidebarPageKeys) => {
+  const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
+    pageKey: UnitSidebarPageKeys,
+    componentId?: string,
+  ) => {
     setCurrentPageKeyState(pageKey);
+    setCurrentComponentId(componentId);
     open();
   }, [open]);
 
@@ -35,6 +50,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
+      currentComponentId,
       isOpen,
       open,
       toggle,
@@ -44,6 +60,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
+      currentComponentId,
       isOpen,
       open,
       toggle,
