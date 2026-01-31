@@ -1,6 +1,6 @@
-import { ContentTagsDrawer } from "@src/content-tags-drawer";
-import { SidebarTitle } from "./SidebarTitle";
-import { SchoolOutline } from "@openedx/paragon/icons";
+import { ContentTagsDrawer } from '@src/content-tags-drawer';
+import { SchoolOutline } from '@openedx/paragon/icons';
+import { SidebarTitle } from './SidebarTitle';
 
 export interface AlignSidebarProps {
   contentId: string;
@@ -11,7 +11,7 @@ export interface AlignSidebarProps {
  * Sidebar that renders Align Sidebar (manage tags sidebar)
  * for the given content.
  */
-export const AlignSidebar = ({ contentId, title }) => (
+export const AlignSidebar = ({ contentId, title }: AlignSidebarProps) => (
   <div>
     <SidebarTitle
       title={title}

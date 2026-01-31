@@ -1,8 +1,8 @@
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseDetails } from '@src/data/apiHooks';
-import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
+import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 /**
  * Align sidebar for course or selected containers.

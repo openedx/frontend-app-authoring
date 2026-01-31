@@ -31,5 +31,5 @@ export const getUnitSidebarPages = (): UnitSidebarPages => {
         title: messages.sidebarButtonAlign,
       },
     }),
-  }
+  };
 };

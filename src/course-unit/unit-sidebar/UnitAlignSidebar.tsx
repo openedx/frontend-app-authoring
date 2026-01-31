@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
-import { useContentData } from "@src/content-tags-drawer/data/apiHooks";
-import { AlignSidebar } from "@src/generic/sidebar/AlignSidebar";
-import { useUnitSidebarContext } from "./UnitSidebarContext";
+import { useParams } from 'react-router-dom';
+import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
+import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
+import { useUnitSidebarContext } from './UnitSidebarContext';
 
 /**
  * Align sidebar for unit or selected components.
@@ -22,7 +22,7 @@ export const UnitAlignSidebar = () => {
         contentData && 'displayName' in contentData
           ? contentData.displayName : ''
       }
-      contentId={sidebarContentId}
+      contentId={sidebarContentId || ''}
     />
   );
 };

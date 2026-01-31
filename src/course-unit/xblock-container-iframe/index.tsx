@@ -178,7 +178,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       // Legacy manage tags modal
       setConfigureXBlockId(id);
       openManageTagsModal();
-    }    
+    }
   };
 
   const handleShowProcessingNotification = (variant: string) => {
