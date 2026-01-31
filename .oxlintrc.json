@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "warn"
+  },
+  "rules": {
+    "eslint/no-unused-vars": "off",
+    "typescript/unbound-method": "off", // 🛑 TEMPORARY
+    "typescript/no-floating-promises": ["error", {
+      "allowForKnownSafeCalls": [
+        // queryClient.invalidateQueries returns a promise that can be awaited
+        // if you want to do something after all the subsequent refetches are
+        // complete, but we rarely if ever want that; we usually want to
+        // continue invalidating more things immediately. So we don't usually
+        // want to await this.
+        "invalidateQueries",
+      ]
+    }]
+  },
+  "ignorePatterns": [
+    "webpack.dev-tutor.config.js",
+  ]
+}
