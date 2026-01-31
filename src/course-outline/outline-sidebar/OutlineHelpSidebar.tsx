@@ -1,10 +1,12 @@
 import { Hyperlink } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { SchoolOutline } from '@openedx/paragon/icons';
 
-import { HelpSidebar } from '@src/generic/help-sidebar';
+import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
 import { useHelpUrls } from '@src/help-urls/hooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
+import { useCourseDetails } from '../data/apiHooks';
 import { getFormattedSidebarMessages } from './utils';
 
 const OutlineHelpSideBar = () => {
@@ -15,6 +17,7 @@ const OutlineHelpSideBar = () => {
     outline: learnMoreOutlineUrl,
   } = useHelpUrls(['visibility', 'grading', 'outline']);
   const { courseId } = useCourseAuthoringContext();
+  const { data: courseDetails } = useCourseDetails(courseId);
 
   const sidebarMessages = getFormattedSidebarMessages(
     {
@@ -26,24 +29,23 @@ const OutlineHelpSideBar = () => {
   );
 
   return (
-    <HelpSidebar
-      courseId={courseId}
-      showOtherSettings={false}
-      className="outline-sidebar mt-4"
-      data-testid="outline-sidebar"
-    >
-      {sidebarMessages.map(({ title, descriptions, link }, index) => {
-        const isLastSection = index === sidebarMessages.length - 1;
-
-        return (
-          <div className="outline-sidebar-section" key={title}>
-            <h4 className="help-sidebar-about-title">{title}</h4>
+    <>
+      <SidebarTitle
+        title={courseDetails?.title || ''}
+        icon={SchoolOutline}
+      />
+      <SidebarContent>
+        {sidebarMessages.map(({ title, descriptions, link }) => (
+          <SidebarSection
+            key={title}
+            title={title}
+          >
             {descriptions.map((description) => (
-              <p className="help-sidebar-about-descriptions" key={description}>{description}</p>
+              <p className="x-small" key={description}>{description}</p>
             ))}
             {!!link?.href && (
               <Hyperlink
-                className="small"
+                className="x-small"
                 destination={link.href}
                 target="_blank"
                 showLaunchIcon={false}
@@ -51,11 +53,10 @@ const OutlineHelpSideBar = () => {
                 {link.text}
               </Hyperlink>
             )}
-            {!isLastSection && <hr className="my-3.5" />}
-          </div>
-        );
-      })}
-    </HelpSidebar>
+          </SidebarSection>
+        ))}
+      </SidebarContent>
+    </>
   );
 };
 
