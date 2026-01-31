@@ -15,7 +15,7 @@ export const getCourseVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${
 /**
  * Fetches the course custom pages for provided course
  * @param {string} courseId
- * @returns {Promise<[{}]>}
+ * @returns {Promise<Record<string, any>>}
  */
 export async function getVideos(courseId) {
   const { data } = await getAuthenticatedHttpClient()

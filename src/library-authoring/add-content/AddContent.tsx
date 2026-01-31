@@ -397,15 +397,16 @@ const AddContent = () => {
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
   // that can be pasted
-  const showPasteButton = false
+  const showPasteButton = (
     // We are not in a unit, subsection, or section, so we can paste any XBlock
-    || (!(insideUnit || insideSubsection || insideSection) && isPasteable)
+    (!(insideUnit || insideSubsection || insideSection) && isPasteable)
     // We are in a unit, so we can paste only components
     || (insideUnit && showPasteXBlock)
     // We are in a subsection, so we can only paste units
     || (insideSubsection && showPasteUnit)
     // We are in a section, so we can only paste subsections
-    || (insideSection && showPasteSubsection);
+    || (insideSection && showPasteSubsection)
+  );
 
   if (showPasteButton) {
     const pasteButton = {
