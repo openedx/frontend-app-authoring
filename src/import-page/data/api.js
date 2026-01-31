@@ -10,7 +10,7 @@ export const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}
  * @param {string} courseId
  * @param {File} fileData
  * @param {Record<string, any>} requestConfig
- * @returns {Promise<ecord<string, any>>}
+ * @returns {Promise<Record<string, any>>}
  */
 export async function startCourseImporting(courseId, fileData, requestConfig, updateProgress) {
   const chunkSize = 20 * 1000000; // 20 MB
