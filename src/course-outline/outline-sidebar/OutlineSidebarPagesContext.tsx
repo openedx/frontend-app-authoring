@@ -9,7 +9,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { InfoSidebar } from './InfoSidebar';
 import messages from './messages';
 
 export type OutlineSidebarPages = {
@@ -21,7 +21,7 @@ export type OutlineSidebarPages = {
 
 const getOutlineSidebarPages = () => ({
   info: {
-    component: OutlineInfoSidebar,
+    component: InfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },

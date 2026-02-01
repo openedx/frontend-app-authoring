@@ -210,7 +210,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const deleteMutation = useDeleteCourseItem();
 
-  const handleDeleteItemSubmit = async () => {
+  const handleDeleteItemSubmit = useCallback(async () => {
     // istanbul ignore if
     if (!currentSelection) {
       return;
@@ -221,7 +221,7 @@ const useCourseOutline = ({ courseId }) => {
         await deleteMutation.mutateAsync(
           currentSelection.currentId,
           {
-            onSettled: () => dispatch(deleteSection({ itemId: sectionId })),
+            onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })),
           }
         );
         break;
@@ -271,7 +271,18 @@ const useCourseOutline = ({ courseId }) => {
     if (selectedContainerState.currentId === currentSelection?.currentId) {
       clearSelection();
     }
-  };
+  }, [
+    deleteMutation,
+    clearSelection,
+    closeDeleteModal,
+    queryClient,
+    currentSelection,
+    courseOutlineQueryKeys,
+    dispatch,
+    deleteSection,
+    deleteUnit,
+    deleteSubsection,
+  ]);
 
   const handleDuplicateSectionSubmit = () => {
     dispatch(duplicateSectionQuery(currentSelection?.sectionId, courseStructure.id));
