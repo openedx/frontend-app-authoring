@@ -59,42 +59,71 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     stopCurrentFlow,
     lastEditableSection,
     lastEditableSubsection,
-    currentItemData,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
   const queryClient = useQueryClient();
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
+  const addSection = async (onSuccess?: (data: { locator: string; }) => void) => {
+    await handleAddSection.mutateAsync({
+      type: ContainerType.Chapter,
+      parentLocator: courseUsageKey,
+      displayName: COURSE_BLOCK_NAMES.chapter.name,
+    }, {
+        onSuccess: (data: { locator: string; }) => {
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            openContainerInfoSidebar(data.locator, undefined, data.locator)
+          }
+        },
+      });
+  }
+
+  const addSubsection = async (sectionParentId: string, onSuccess?: (data: { locator: string; }) => void) => {
+    await handleAddSubsection.mutateAsync({
+      type: ContainerType.Sequential,
+      parentLocator: sectionParentId,
+      displayName: COURSE_BLOCK_NAMES.sequential.name,
+    }, {
+        onSuccess: (data: { locator: string; }) => {
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            openContainerInfoSidebar(data.locator, data.locator, sectionParentId)
+          }
+        },
+      });
+  }
+
+  const addUnit = async (subsectionParentId: string, sectionParentId?: string, onSettled?: () => void) => {
+    await handleAddAndOpenUnit.mutateAsync({
+      type: ContainerType.Vertical,
+      parentLocator: subsectionParentId,
+      displayName: COURSE_BLOCK_NAMES.vertical.name,
+    }, {
+        onSettled: () => {
+          if (onSettled) {
+            onSettled();
+          } else {
+            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId) })
+          }
+        },
+      });
+  }
+
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
       case 'section':
-        await handleAddSection.mutateAsync({
-          type: ContainerType.Chapter,
-          parentLocator: courseUsageKey,
-          displayName: COURSE_BLOCK_NAMES.chapter.name,
-        }, {
-          onSuccess: (data: { locator: string; }) => openContainerInfoSidebar(
-            data.locator,
-            undefined,
-            data.locator,
-          ),
-        });
+        addSection();
         break;
       case 'subsection':
         sectionParentId = currentFlow?.parentLocator || sectionParentId;
         if (sectionParentId) {
-          await handleAddSubsection.mutateAsync({
-            type: ContainerType.Sequential,
-            parentLocator: sectionParentId,
-            displayName: COURSE_BLOCK_NAMES.sequential.name,
-          }, {
-            onSuccess: (data: { locator: string; }) => openContainerInfoSidebar(
-              data.locator,
-              data.locator,
-              sectionParentId,
-            ),
-          });
+          addSubsection(sectionParentId);
+        } else {
+          addSection(({ locator }) => addSubsection(locator));
         }
         break;
       case 'unit':
@@ -102,17 +131,17 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
           currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
         );
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
+        // __AUTO_GENERATED_PRINT_VAR_START__
+        console.log("AddContentButton#(anon) subsectionParentId: ", subsectionParentId); // __AUTO_GENERATED_PRINT_VAR_END__
         if (subsectionParentId) {
-          await handleAddAndOpenUnit.mutateAsync({
-            type: ContainerType.Vertical,
-            parentLocator: subsectionParentId,
-            displayName: COURSE_BLOCK_NAMES.vertical.name,
-          }, {
-            onSettled: () => {
-              queryClient.invalidateQueries({
-                queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
-              });
-            },
+          addUnit(subsectionParentId, sectionParentId);
+        } else if (sectionParentId) {
+          addSubsection(sectionParentId, ({ locator }) => addUnit(locator));
+        } else {
+          addSection(({ locator: sectionId }) => {
+            addSubsection(sectionId, ({ locator: subsectionId }) => {
+              addUnit(subsectionId, sectionId)
+            })
           });
         }
         break;
@@ -129,21 +158,19 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     handleAddSubsection,
     handleAddAndOpenUnit,
     currentFlow,
-    lastEditableSection,
+    sectionParentId,
+    subsectionParentId,
     lastEditableSubsection,
   ]);
 
-  const enabled = useMemo(() => (
-    (currentFlow)
-      || (blockType === 'subsection' && lastEditableSection)
-      || (blockType === 'unit' && lastEditableSubsection)
-      || (blockType === 'section' && !currentItemData)
+  const disabled = useMemo(() => (
+    handleAddSection.isPending ||
+    handleAddSubsection.isPending ||
+    handleAddAndOpenUnit.isPending
   ), [
-    currentFlow,
-    blockType,
-    currentItemData,
-    lastEditableSection,
-    lastEditableSubsection,
+      handleAddSection,
+      handleAddSubsection,
+      handleAddAndOpenUnit,
   ]);
 
   return (
@@ -151,7 +178,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       variant="tertiary shadow"
       className="mx-2 justify-content-start px-4 font-weight-bold"
       onClick={onCreateContent}
-      disabled={!enabled}
+      disabled={disabled}
     >
       <Stack direction="horizontal" gap={3}>
         <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>

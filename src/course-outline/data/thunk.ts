@@ -355,55 +355,6 @@ export function configureCourseUnitQuery(
 }
 
 /**
- * Generic function to delete course item, see below wrapper funcs for specific implementations.
- * @param {string} itemId
- * @param {() => {}} deleteItemFn
- */
-function deleteCourseItemQuery(itemId: string, deleteItemFn: () => {}) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
-
-    try {
-      await deleteCourseItem(itemId);
-      dispatch(deleteItemFn());
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-export function deleteCourseSectionQuery(sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      sectionId,
-      () => deleteSection({ itemId: sectionId }),
-    ));
-  };
-}
-
-export function deleteCourseSubsectionQuery(subsectionId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      subsectionId,
-      () => deleteSubsection({ itemId: subsectionId, sectionId }),
-    ));
-  };
-}
-
-export function deleteCourseUnitQuery(unitId: string, subsectionId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      unitId,
-      () => deleteUnit({ itemId: unitId, subsectionId, sectionId }),
-    ));
-  };
-}
-
-/**
  * Generic function to duplicate any course item. See wrapper functions below for specific implementations.
  * @param {string} itemId
  * @param {string} parentLocator

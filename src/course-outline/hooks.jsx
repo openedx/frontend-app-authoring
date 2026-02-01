@@ -12,9 +12,12 @@ import { ContainerType, getBlockType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useUnlinkDownstream } from '@src/generic/unlink-modal';
 import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useDeleteCourseItem } from '@src/course-outline/data/apiHooks';
 import { COURSE_BLOCK_NAMES } from './constants';
 import {
+  deleteSection,
+  deleteSubsection,
+  deleteUnit,
   resetScrollField,
   updateSavingStatus,
 } from './data/slice';
@@ -30,9 +33,6 @@ import {
   getCreatedOn,
 } from './data/selectors';
 import {
-  deleteCourseSectionQuery,
-  deleteCourseSubsectionQuery,
-  deleteCourseUnitQuery,
   duplicateSectionQuery,
   duplicateSubsectionQuery,
   duplicateUnitQuery,
@@ -208,21 +208,60 @@ const useCourseOutline = ({ courseId }) => {
     handleConfigureModalClose();
   };
 
-  const handleDeleteItemSubmit = () => {
+  const deleteMutation = useDeleteCourseItem();
+
+  const handleDeleteItemSubmit = async () => {
+    // istanbul ignore if
+    if (!currentSelection) {
+      return;
+    }
     const category = getBlockType(currentSelection.currentId);
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        dispatch(deleteCourseSectionQuery(currentSelection?.currentId));
+        await deleteMutation.mutateAsync(
+          currentSelection.currentId,
+          {
+            onSettled: () => dispatch(deleteSection({ itemId: sectionId })),
+          }
+        );
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
-        dispatch(deleteCourseSubsectionQuery(currentSelection?.currentId, currentSelection?.sectionId));
+        await deleteMutation.mutateAsync(
+          currentSelection.currentId,
+          {
+            onSettled: () => {
+              dispatch(deleteSubsection({
+                itemId: currentSelection.currentId,
+                sectionId: currentSelection.sectionId,
+              }));
+              // invalidate parent section data
+              queryClient.invalidateQueries({
+                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
+              });
+            }
+          }
+        );
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
-        dispatch(deleteCourseUnitQuery(
-          currentSelection?.currentId,
-          currentSelection?.subsectionId,
-          currentSelection?.sectionId,
-        ));
+        await deleteMutation.mutateAsync(
+          currentSelection.currentId,
+          {
+            onSettled: () => {
+              dispatch(deleteUnit({
+                itemId: currentSelection.currentId,
+                subsectionId: currentSelection.subsectionId,
+                sectionId: currentSelection.sectionId,
+              }));
+              // invalidate parent subsection and section data
+              queryClient.invalidateQueries({
+                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.subsectionId),
+              });
+              queryClient.invalidateQueries({
+                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
+              });
+            }
+          }
+        );
         break;
       default:
         // istanbul ignore next
