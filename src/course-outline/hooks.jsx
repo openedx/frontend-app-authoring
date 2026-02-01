@@ -222,7 +222,7 @@ const useCourseOutline = ({ courseId }) => {
           currentSelection.currentId,
           {
             onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })),
-          }
+          },
         );
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
@@ -238,8 +238,8 @@ const useCourseOutline = ({ courseId }) => {
               queryClient.invalidateQueries({
                 queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
               });
-            }
-          }
+            },
+          },
         );
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
@@ -259,8 +259,8 @@ const useCourseOutline = ({ courseId }) => {
               queryClient.invalidateQueries({
                 queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
               });
-            }
-          }
+            },
+          },
         );
         break;
       default:

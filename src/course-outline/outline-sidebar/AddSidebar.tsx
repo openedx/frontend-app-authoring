@@ -71,47 +71,47 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       parentLocator: courseUsageKey,
       displayName: COURSE_BLOCK_NAMES.chapter.name,
     }, {
-        onSuccess: (data: { locator: string; }) => {
-          if (onSuccess) {
-            onSuccess(data);
-          } else {
-            openContainerInfoSidebar(data.locator, undefined, data.locator)
-          }
-        },
-      });
-  }
+      onSuccess: (data: { locator: string; }) => {
+        if (onSuccess) {
+          onSuccess(data);
+        } else {
+          openContainerInfoSidebar(data.locator, undefined, data.locator);
+        }
+      },
+    });
+  };
 
-  const addSubsection = async (sectionParentId: string, onSuccess?: (data: { locator: string; }) => void) => {
+  const addSubsection = async (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
     await handleAddSubsection.mutateAsync({
       type: ContainerType.Sequential,
-      parentLocator: sectionParentId,
+      parentLocator: sectionId,
       displayName: COURSE_BLOCK_NAMES.sequential.name,
     }, {
-        onSuccess: (data: { locator: string; }) => {
-          if (onSuccess) {
-            onSuccess(data);
-          } else {
-            openContainerInfoSidebar(data.locator, data.locator, sectionParentId)
-          }
-        },
-      });
-  }
+      onSuccess: (data: { locator: string; }) => {
+        if (onSuccess) {
+          onSuccess(data);
+        } else {
+          openContainerInfoSidebar(data.locator, data.locator, sectionId);
+        }
+      },
+    });
+  };
 
-  const addUnit = async (subsectionParentId: string, sectionParentId?: string, onSettled?: () => void) => {
+  const addUnit = async (subsectionId: string, sectionId?: string, onSettled?: () => void) => {
     await handleAddAndOpenUnit.mutateAsync({
       type: ContainerType.Vertical,
-      parentLocator: subsectionParentId,
+      parentLocator: subsectionId,
       displayName: COURSE_BLOCK_NAMES.vertical.name,
     }, {
-        onSettled: () => {
-          if (onSettled) {
-            onSettled();
-          } else {
-            queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId) })
-          }
-        },
-      });
-  }
+      onSettled: () => {
+        if (onSettled) {
+          onSettled();
+        } else {
+          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
+        }
+      },
+    });
+  };
 
   const onCreateContent = useCallback(async () => {
     switch (blockType) {
@@ -131,8 +131,6 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
           currentFlow?.grandParentLocator || lastEditableSubsection?.sectionId || sectionParentId
         );
         subsectionParentId = currentFlow?.parentLocator || subsectionParentId;
-        // __AUTO_GENERATED_PRINT_VAR_START__
-        console.log("AddContentButton#(anon) subsectionParentId: ", subsectionParentId); // __AUTO_GENERATED_PRINT_VAR_END__
         if (subsectionParentId) {
           addUnit(subsectionParentId, sectionParentId);
         } else if (sectionParentId) {
@@ -140,8 +138,8 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
         } else {
           addSection(({ locator: sectionId }) => {
             addSubsection(sectionId, ({ locator: subsectionId }) => {
-              addUnit(subsectionId, sectionId)
-            })
+              addUnit(subsectionId, sectionId);
+            });
           });
         }
         break;
@@ -164,13 +162,13 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   ]);
 
   const disabled = useMemo(() => (
-    handleAddSection.isPending ||
-    handleAddSubsection.isPending ||
-    handleAddAndOpenUnit.isPending
+    handleAddSection.isPending
+    || handleAddSubsection.isPending
+    || handleAddAndOpenUnit.isPending
   ), [
-      handleAddSection,
-      handleAddSubsection,
-      handleAddAndOpenUnit,
+    handleAddSection,
+    handleAddSubsection,
+    handleAddAndOpenUnit,
   ]);
 
   return (
