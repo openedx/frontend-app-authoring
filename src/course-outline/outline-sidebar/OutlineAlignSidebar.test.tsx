@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
@@ -25,8 +24,9 @@ describe('OutlineAlignSidebar', () => {
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
       .mockReturnValue({
-        currentContainerId:
-          'block-v1:test+course+run+type@sequential+block@seq1',
+        selectedContainerState: {
+          currentId: 'block-v1:test+course+run+type@sequential+block@seq1',
+        },
       } as any);
     jest
       .spyOn(CourseDetailsApi, 'useCourseDetails')

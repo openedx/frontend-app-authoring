@@ -28,7 +28,13 @@ const HeaderActions = ({
   const intl = useIntl();
   const { lmsLink } = actions;
 
-  const { setCurrentPageKey } = useOutlineSidebarContext();
+  const { clearSelection, open, setCurrentPageKey } = useOutlineSidebarContext();
+
+  const handleCourseInfoClick = () => {
+    clearSelection();
+    setCurrentPageKey('info');
+    open();
+  };
 
   return (
     <Stack direction="horizontal" gap={3}>
@@ -42,7 +48,7 @@ const HeaderActions = ({
       >
         <Button
           iconBefore={InfoOutline}
-          onClick={() => setCurrentPageKey('info')}
+          onClick={handleCourseInfoClick}
           variant="outline-primary"
         >
           {intl.formatMessage(messages.courseInfoButton)}

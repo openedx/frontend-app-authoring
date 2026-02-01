@@ -36,8 +36,8 @@ import { XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import {
-  getCurrentItem,
   getProctoredExamsFlag,
   getTimedExamsFlag,
 } from './data/selectors';
@@ -61,7 +61,6 @@ import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import { getTagsExportFile } from './data/api';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
-import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
@@ -74,7 +73,11 @@ const CourseOutline = () => {
     courseUsageKey,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
     handleAddSection,
+    isUnlinkModalOpen,
+    closeUnlinkModal,
+    currentSelection,
   } = useCourseAuthoringContext();
 
   const {
@@ -93,19 +96,13 @@ const CourseOutline = () => {
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
     isHighlightsModalOpen,
-    isPublishModalOpen,
     isConfigureModalOpen,
     isDeleteModalOpen,
-    isUnlinkModalOpen,
     closeHighlightsModal,
-    closePublishModal,
     handleConfigureModalClose,
     closeDeleteModal,
-    closeUnlinkModal,
-    openPublishModal,
     openConfigureModal,
     openDeleteModal,
-    openUnlinkModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
@@ -114,10 +111,7 @@ const CourseOutline = () => {
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
     handleConfigureItemSubmit,
-    handlePublishItemSubmit,
-    handleEditSubmit,
     handleDeleteItemSubmit,
-    handleUnlinkItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
     handleDuplicateUnitSubmit,
@@ -136,6 +130,7 @@ const CourseOutline = () => {
     handleUnitDragAndDrop,
     errors,
     resetScrollState,
+    handleUnlinkItemSubmit,
   } = useCourseOutline({ courseId });
 
   // Show the new actions bar if it is enabled in the configuration.
@@ -170,9 +165,9 @@ const CourseOutline = () => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const currentItemData = useSelector(getCurrentItem);
+  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
 
-  const itemCategory = currentItemData?.category;
+  const itemCategory = currentItemData?.category || '';
   const itemCategoryName = COURSE_BLOCK_NAMES[itemCategory]?.name.toLowerCase();
 
   const enableProctoredExams = useSelector(getProctoredExamsFlag);
@@ -269,7 +264,7 @@ const CourseOutline = () => {
   }
 
   return (
-    <OutlineSidebarProvider>
+    <>
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
@@ -338,7 +333,7 @@ const CourseOutline = () => {
               />
             )}
           <hr className="mt-4 mb-0 w-100 text-light-400" />
-          <div className="d-flex align-items-baseline flex-wrap">
+          <div className="d-flex align-items-baseline">
             <div className="flex-fill">
               <article>
                 <div>
@@ -385,13 +380,9 @@ const CourseOutline = () => {
                                     canMoveItem={canMoveSection(sections)}
                                     isSelfPaced={statusBarData.isSelfPaced}
                                     isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                    savingStatus={savingStatus}
                                     onOpenHighlightsModal={handleOpenHighlightsModal}
-                                    onOpenPublishModal={openPublishModal}
                                     onOpenConfigureModal={openConfigureModal}
                                     onOpenDeleteModal={openDeleteModal}
-                                    onOpenUnlinkModal={openUnlinkModal}
-                                    onEditSectionSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSectionSubmit}
                                     isSectionsExpanded={isSectionsExpanded}
                                     onOrderChange={updateSectionOrderByIndex}
@@ -417,11 +408,7 @@ const CourseOutline = () => {
                                           isSectionsExpanded={isSectionsExpanded}
                                           isSelfPaced={statusBarData.isSelfPaced}
                                           isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                          savingStatus={savingStatus}
-                                          onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
-                                          onOpenUnlinkModal={openUnlinkModal}
-                                          onEditSubmit={handleEditSubmit}
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
                                           onOrderChange={updateSubsectionOrderByIndex}
@@ -450,12 +437,8 @@ const CourseOutline = () => {
                                                   subsection,
                                                   subsection.childInfo.children,
                                                 )}
-                                                savingStatus={savingStatus}
-                                                onOpenPublishModal={openPublishModal}
                                                 onOpenConfigureModal={openConfigureModal}
                                                 onOpenDeleteModal={openDeleteModal}
-                                                onOpenUnlinkModal={openUnlinkModal}
-                                                onEditSubmit={handleEditSubmit}
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
@@ -473,7 +456,6 @@ const CourseOutline = () => {
                               <OutlineAddChildButtons
                                 childType={ContainerType.Section}
                                 parentLocator={courseUsageKey}
-                                parentTitle={courseName}
                               />
                             )}
                           </>
@@ -483,7 +465,6 @@ const CourseOutline = () => {
                               <OutlineAddChildButtons
                                 childType={ContainerType.Section}
                                 parentLocator={courseUsageKey}
-                                parentTitle={courseName}
                                 btnVariant="primary"
                                 btnClasses="mt-1"
                               />
@@ -513,11 +494,7 @@ const CourseOutline = () => {
           onClose={closeHighlightsModal}
           onSubmit={handleHighlightsFormSubmit}
         />
-        <PublishModal
-          isOpen={isPublishModalOpen}
-          onClose={closePublishModal}
-          onPublishSubmit={handlePublishItemSubmit}
-        />
+        <PublishModal />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={handleConfigureModalClose}
@@ -547,6 +524,7 @@ const CourseOutline = () => {
           isShow={
             isShowProcessingNotification
             || handleAddUnit.isPending
+            || handleAddAndOpenUnit.isPending
             || handleAddSubsection.isPending
             || handleAddSection.isPending
           }
@@ -568,7 +546,7 @@ const CourseOutline = () => {
           {toastMessage}
         </Toast>
       )}
-    </OutlineSidebarProvider>
+    </>
   );
 };
 

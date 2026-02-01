@@ -33,6 +33,7 @@ export interface CourseDetails {
   subtitle?: string;
   org: string;
   description?: string;
+  hasChanges: boolean;
 }
 
 export interface ChecklistType {
@@ -50,7 +51,6 @@ export interface CourseOutlineStatusBar {
   checklist: ChecklistType;
   videoSharingEnabled: boolean;
   videoSharingOptions: string;
-  hasChanges: boolean;
 }
 
 export interface CourseOutlineState {
@@ -71,12 +71,22 @@ export interface CourseOutlineState {
   statusBarData: CourseOutlineStatusBar;
   sectionsList: Array<XBlock>;
   isCustomRelativeDatesActive: boolean;
-  currentSection: XBlock | {};
-  currentSubsection: XBlock | {};
-  currentItem: XBlock | {};
   actions: XBlockActions;
   enableProctoredExams: boolean;
   enableTimedExams: boolean;
   pasteFileNotices: object;
   createdOn: null | Date;
+}
+
+export interface CourseItemUpdateResult {
+  id: string;
+  data?: object | null;
+  metadata: {
+    downstreamCustomized?: string[];
+    topLevelDownstreamParentKey?: string;
+    upstream?: string;
+    upstreamDisplayName?: string;
+    upstreamVersion?: number;
+    displayName?: string;
+  }
 }

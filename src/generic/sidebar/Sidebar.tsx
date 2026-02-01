@@ -11,6 +11,7 @@ import {
   FormatIndentDecrease,
   FormatIndentIncrease,
 } from '@openedx/paragon/icons';
+import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
 
 import messages from './messages';
@@ -91,33 +92,35 @@ export function Sidebar<T extends SidebarPages>({
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
       {isOpen && !!currentPageKey && (
-        <div className="sidebar-content p-3 bg-white border-right">
-          <Dropdown data-testid="sidebar-dropdown">
-            <Dropdown.Toggle
-              id="dropdown-toggle-with-iconbutton"
-              as={Button}
-              variant="tertiary"
-              className="x-small text-primary font-weight-bold pl-0"
-            >
-              {intl.formatMessage(pages[currentPageKey].title)}
-              <Icon src={pages[currentPageKey].icon} size="xs" className="ml-2" />
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="mt-1">
-              {Object.entries(pages).map(([key, page]) => (
-                <Dropdown.Item
-                  key={key}
-                  onClick={() => setCurrentPageKey(key)}
-                >
-                  <Stack direction="horizontal" gap={2}>
-                    <Icon src={page.icon} />
-                    {intl.formatMessage(page.title)}
-                  </Stack>
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-          <SidebarComponent />
-        </div>
+        <ResizableBox>
+          <div className="sidebar-content p-3 bg-white border-right">
+            <Dropdown data-testid="sidebar-dropdown">
+              <Dropdown.Toggle
+                id="dropdown-toggle-with-iconbutton"
+                as={Button}
+                variant="tertiary"
+                className="x-small text-primary font-weight-bold pl-0"
+              >
+                {intl.formatMessage(pages[currentPageKey].title)}
+                <Icon src={pages[currentPageKey].icon} size="xs" className="ml-2" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="mt-1">
+                {Object.entries(pages).map(([key, page]) => (
+                  <Dropdown.Item
+                    key={key}
+                    onClick={() => setCurrentPageKey(key)}
+                  >
+                    <Stack direction="horizontal" gap={2}>
+                      <Icon src={page.icon} />
+                      {intl.formatMessage(page.title)}
+                    </Stack>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            <SidebarComponent />
+          </div>
+        </ResizableBox>
       )}
       <div className="sidebar-toggle" data-testid="sidebar-toggle">
         <IconButton

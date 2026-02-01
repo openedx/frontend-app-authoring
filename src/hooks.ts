@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 import { history } from '@edx/frontend-platform';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -212,4 +213,18 @@ export function useStickyState<T>(
   }, [key, value]);
 
   return [value, setValue];
+}
+
+export function useToggleWithValue<T>(defaultValue?: T): [
+  isDefined: boolean, value: T | undefined, define: ((val: T) => void), undefine: () => void,
+] {
+  const [value, setValue] = useState<T | undefined>(defaultValue);
+  const define = useCallback((val: T) => {
+    setValue(val);
+  }, []);
+  const undefine = useCallback(() => {
+    setValue(undefined);
+  }, []);
+  const isDefined = useMemo(() => value !== undefined, [value]);
+  return [isDefined, value, define, undefine];
 }

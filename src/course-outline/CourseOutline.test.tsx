@@ -18,6 +18,7 @@ import {
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { userEvent } from '@testing-library/user-event';
+import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -67,8 +68,18 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
+const clearSelection = jest.fn();
+let selectedContainerId: string;
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
+  useOutlineSidebarContext: () => ({
+    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    clearSelection,
+    selectedContainerState: { currentId: selectedContainerId },
+  }),
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -139,7 +150,9 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const renderComponent = () => render(
   <CourseAuthoringProvider courseId={courseId}>
-    <CourseOutline />
+    <OutlineSidebarProvider>
+      <CourseOutline />
+    </OutlineSidebarProvider>
   </CourseAuthoringProvider>,
 );
 
@@ -689,7 +702,7 @@ describe('<CourseOutline />', () => {
 
   it('check edit title works for section, subsection and unit', async () => {
     const { findAllByTestId } = renderComponent();
-    const checkEditTitle = async (section, element, item, newName, elementName) => {
+    const checkEditTitle = async (element, item, newName, elementName) => {
       axiosMock.reset();
       axiosMock
         .onPost(getCourseItemApiUrl(item.id))
@@ -697,26 +710,10 @@ describe('<CourseOutline />', () => {
       // mock section, subsection and unit name and check within the elements.
       // this is done to avoid adding conditions to this mock.
       axiosMock
-        .onGet(getXBlockApiUrl(section.id))
+        .onGet(getXBlockApiUrl(item.id))
         .reply(200, {
-          ...section,
+          ...item,
           display_name: newName,
-          childInfo: {
-            children: [
-              {
-                ...section.childInfo.children[0],
-                display_name: newName,
-                childInfo: {
-                  children: [
-                    {
-                      ...section.childInfo.children[0].childInfo.children[0],
-                      display_name: newName,
-                    },
-                  ],
-                },
-              },
-            ],
-          },
         });
 
       const editButton = await within(element).findByTestId(`${elementName}-edit-button`);
@@ -738,17 +735,17 @@ describe('<CourseOutline />', () => {
     // check section
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
-    await checkEditTitle(section, sectionElement, section, 'New section name', 'section');
+    await checkEditTitle(sectionElement, section, 'New section name', 'section');
 
     // check subsection
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    await checkEditTitle(section, subsectionElement, subsection, 'New subsection name', 'subsection');
+    await checkEditTitle(subsectionElement, subsection, 'New subsection name', 'subsection');
 
     // check unit
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
-    await checkEditTitle(section, unitElement, unit, 'New unit name', 'unit');
+    await checkEditTitle(unitElement, unit, 'New unit name', 'unit');
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
@@ -760,6 +757,7 @@ describe('<CourseOutline />', () => {
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+    selectedContainerId = section.id;
 
     const checkDeleteBtn = async (item, element, elementName) => {
       await waitFor(() => {
@@ -787,6 +785,7 @@ describe('<CourseOutline />', () => {
     await checkDeleteBtn(subsection, subsectionElement, 'subsection');
     // check section
     await checkDeleteBtn(section, sectionElement, 'section');
+    expect(clearSelection).toHaveBeenCalledTimes(1);
   });
 
   it('check whether section, subsection and unit is duplicated successfully', async () => {
@@ -874,47 +873,12 @@ describe('<CourseOutline />', () => {
           publish: 'make_public',
         })
         .reply(200, { dummy: 'value' });
-
-      let mockReturnValue = {
-        ...section,
-        childInfo: {
-          children: [
-            {
-              ...section.childInfo.children[0],
-              published: true,
-              visibilityState: 'live',
-            },
-            ...section.childInfo.children.slice(1),
-          ],
-        },
-      };
-      if (elementName === 'unit') {
-        mockReturnValue = {
-          ...section,
-          childInfo: {
-            children: [
-              {
-                ...section.childInfo.children[0],
-                childInfo: {
-                  displayName: 'Unit Tests',
-                  children: [
-                    {
-                      ...section.childInfo.children[0].childInfo.children[0],
-                      published: true,
-                      visibilityState: 'live',
-                    },
-                    ...section.childInfo.children[0].childInfo.children.slice(1),
-                  ],
-                },
-              },
-              ...section.childInfo.children.slice(1),
-            ],
-          },
-        };
-      }
       axiosMock
-        .onGet(getXBlockApiUrl(section.id))
-        .reply(200, mockReturnValue);
+        .onGet(getXBlockApiUrl(item.id))
+        .reply(200, {
+          ...item,
+          visibilityState: 'live',
+        });
 
       const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
       fireEvent.click(menu);
@@ -941,6 +905,17 @@ describe('<CourseOutline />', () => {
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDateIso = '2025-09-10T22:00:00Z';
     const newReleaseDate = '09/10/2025';
+
+    const [firstSection] = await findAllByTestId('section-card');
+
+    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(sectionDropdownButton));
+    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
+    await act(async () => fireEvent.click(configureBtn));
+    let releaseDateStack = await findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2023');
+
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
         publish: 'republish',
@@ -957,16 +932,6 @@ describe('<CourseOutline />', () => {
         ...section,
         start: newReleaseDateIso,
       });
-
-    const [firstSection] = await findAllByTestId('section-card');
-
-    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
-    await act(async () => fireEvent.click(sectionDropdownButton));
-    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
-    await act(async () => fireEvent.click(configureBtn));
-    let releaseDateStack = await findByTestId('release-date-stack');
-    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
-    expect(releaseDatePicker).toHaveValue('08/10/2023');
 
     await act(async () => fireEvent.change(releaseDatePicker, { target: { value: newReleaseDate } }));
     expect(releaseDatePicker).toHaveValue(newReleaseDate);

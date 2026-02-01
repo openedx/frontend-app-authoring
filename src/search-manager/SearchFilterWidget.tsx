@@ -41,7 +41,7 @@ const SearchFilterWidget: React.FC<{
 
   return (
     <>
-      <div className="d-flex mr-3">
+      <div className="d-flex">
         <Button
           ref={setTarget}
           variant={appliedFilters.length ? 'light' : 'outline-primary'}

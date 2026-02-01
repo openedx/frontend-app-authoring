@@ -3,9 +3,10 @@ import {
   fireEvent, initializeMocks, render, screen,
 } from '@src/testUtils';
 
+import { OutlineSidebarProvider } from '@src/course-outline';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import HeaderActions, { HeaderActionsProps } from './HeaderActions';
-import { OutlineSidebarProvider } from '../outline-sidebar/OutlineSidebarContext';
 
 const headerNavigationsActions = {
   lmsLink: '',
@@ -34,7 +35,15 @@ const renderComponent = (props?: Partial<HeaderActionsProps>) => render(
     courseActions={courseActions}
     {...props}
   />,
-  { extraWrapper: OutlineSidebarProvider },
+  {
+    extraWrapper: ({ children }) => (
+      <CourseAuthoringProvider courseId="1">
+        <OutlineSidebarProvider>
+          {children}
+        </OutlineSidebarProvider>
+      </CourseAuthoringProvider>
+    ),
+  },
 );
 
 describe('<HeaderActions />', () => {

@@ -9,7 +9,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { InfoSidebar } from './InfoSidebar';
 import messages from './messages';
 
 export type OutlineSidebarPages = {
@@ -23,7 +23,7 @@ const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
 
 const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
   info: {
-    component: OutlineInfoSidebar,
+    component: InfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },

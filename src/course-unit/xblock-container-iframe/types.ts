@@ -37,6 +37,7 @@ export interface XBlockContainerIframeProps {
   };
   courseVerticalChildren: Array<XBlockTypes>;
   handleConfigureSubmit: (XBlockId: string, ...args: any[]) => void;
+  readonly?: boolean;
 }
 
 export type AccessManagedXBlockDataTypes = {
@@ -57,7 +58,7 @@ export type AccessManagedXBlockDataTypes = {
   ancestorHasStaffLock?: boolean;
   isPrereq?: boolean;
   prereqs?: XBlockPrereqs[];
-  prereq?: number;
+  prereq?: string;
   prereqMinScore?: number;
   prereqMinCompletion?: number;
   releasedToStudents?: boolean;

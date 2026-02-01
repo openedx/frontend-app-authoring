@@ -4,7 +4,7 @@ import { ContainerType } from '@src/generic/key-utils';
 import {
   initializeMocks, render, screen, waitFor,
 } from '@src/testUtils';
-import { OutlineFlow, OutlineFlowType, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
 jest.mock('react-redux', () => ({
@@ -14,8 +14,9 @@ jest.mock('react-redux', () => ({
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
-const handleAddUnit = { mutateAsync: jest.fn() };
+const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
+const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -23,7 +24,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     getUnitUrl: (id: string) => `/some/${id}`,
     handleAddSection,
     handleAddSubsection,
-    handleAddUnit,
+    handleAddAndOpenUnit,
+    setCurrentSelection,
   }),
 }));
 
@@ -60,7 +62,6 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
         handleUseFromLibraryClick={useFromLibClickHandler}
         childType={containerType}
         parentLocator=""
-        parentTitle=""
       />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
@@ -75,11 +76,9 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
     it('calls appropriate new handlers', async () => {
       const parentLocator = `parent-of-${containerType}`;
-      const parentTitle = `parent-title-of-${containerType}`;
       render(<OutlineAddChildButtons
         childType={containerType}
         parentLocator={parentLocator}
-        parentTitle={parentTitle}
       />, { extraWrapper: OutlineSidebarProvider });
 
       const newBtn = await screen.findByRole('button', { name: `New ${containerType}` });
@@ -101,7 +100,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
           }));
           break;
         case ContainerType.Unit:
-          await waitFor(() => expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+          await waitFor(() => expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
             type: ContainerType.Vertical,
             parentLocator,
             displayName: 'Unit',
@@ -114,34 +113,28 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
 
     it('calls appropriate use handlers', async () => {
       const parentLocator = `parent-of-${containerType}`;
-      const parentTitle = `parent-title-of-${containerType}`;
       render(<OutlineAddChildButtons
         childType={containerType}
         parentLocator={parentLocator}
-        parentTitle={parentTitle}
       />, { extraWrapper: OutlineSidebarProvider });
       const useBtn = await screen.findByRole('button', { name: `Use ${containerType} from library` });
       expect(useBtn).toBeInTheDocument();
       await userEvent.click(useBtn);
       await waitFor(() => expect(startCurrentFlow).toHaveBeenCalledWith({
-        flowType: `use-${containerType}`,
+        flowType: containerType,
         parentLocator,
-        parentTitle,
       }));
     });
 
     it('shows appropriate static placeholder', async () => {
       const parentLocator = `parent-of-${containerType}`;
-      const parentTitle = `parent-title-of-${containerType}`;
       currentFlow = {
-        flowType: `use-${containerType}` as OutlineFlowType,
+        flowType: containerType,
         parentLocator,
-        parentTitle,
       };
       render(<OutlineAddChildButtons
         childType={containerType}
         parentLocator={parentLocator}
-        parentTitle={parentTitle}
       />, { extraWrapper: OutlineSidebarProvider });
       // should show placeholder when use button is clicked
       expect(await screen.findByRole('heading', {

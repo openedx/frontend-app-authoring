@@ -14,15 +14,16 @@ import {
 } from '@src/library-authoring/data/api.mocks';
 import {
   type OutlineFlow,
-  type OutlineFlowType,
   OutlineSidebarProvider,
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
+import type { ContainerType } from '@src/generic/key-utils';
 import { AddSidebar } from './AddSidebar';
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
 const handleAddUnit = { mutateAsync: jest.fn() };
+const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -31,6 +32,7 @@ mockLibraryBlockMetadata.applyMock();
 mockGetContainerMetadata.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
+const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
@@ -39,6 +41,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddSection,
     handleAddSubsection,
     handleAddUnit,
+    handleAddAndOpenUnit,
+    setCurrentSelection,
   }),
 }));
 
@@ -177,7 +181,7 @@ describe('AddSidebar component', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,
@@ -208,9 +212,9 @@ describe('AddSidebar component', () => {
       const firstSection = sectionList[0];
       const firstSubsection = firstSection.childInfo.children[0];
       currentFlow = {
-        flowType: `use-${category}` as OutlineFlowType,
+        flowType: category as ContainerType,
         parentLocator: category === 'subsection' ? firstSection.id : firstSubsection.id,
-        parentTitle: category === 'subsection' ? firstSection.displayName : firstSubsection.displayName!,
+        grandParentLocator: category === 'unit' ? firstSection.id : undefined,
       };
       renderComponent();
       // Check existing tab content is rendered by default
