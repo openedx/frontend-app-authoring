@@ -169,7 +169,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
       };
     }
     return currentItemData ? undefined : getLastEditableSubsection(sectionsList);
-  }, [currentItemData, sectionsList]);
+  }, [currentItemData, sectionsList, selectedContainerState]);
 
   useEscapeClick({
     onEscape: () => {

@@ -5,7 +5,7 @@ import {
   skipToken, useMutation, useQuery, useQueryClient,
 } from '@tanstack/react-query';
 import {
-  createCourseXblock, editItemDisplayName, getCourseDetails, getCourseItem, publishCourseItem,
+  createCourseXblock, deleteCourseItem, editItemDisplayName, getCourseDetails, getCourseItem, publishCourseItem,
 } from './api';
 
 export const courseOutlineQueryKeys = {
@@ -91,3 +91,13 @@ export const usePublishCourseItem = () => {
     },
   });
 };
+
+export const useDeleteCourseItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCourseItem,
+    onSettled: async (_data, _err, itemId) => {
+      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(itemId)) });
+    },
+  });
+}
