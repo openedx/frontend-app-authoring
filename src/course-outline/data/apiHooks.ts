@@ -100,4 +100,4 @@ export const useDeleteCourseItem = () => {
       queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(getCourseKey(itemId)) });
     },
   });
-}
+};
