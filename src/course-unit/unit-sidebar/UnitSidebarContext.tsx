@@ -4,14 +4,14 @@ import {
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
 
-export type UnitSidebarPageKeys = 'info';
+export type UnitSidebarPageKeys = 'info' | 'add';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
   setCurrentPageKey: (pageKey: UnitSidebarPageKeys) => void;
   currentTabKey?: string;
-  setCurrentTabKey: (tabKey: string) => void;
+  setCurrentTabKey: (tabKey: string | undefined) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
@@ -25,6 +25,8 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
   const [isOpen, open,, toggle] = useToggle(true);
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (pageKey: UnitSidebarPageKeys) => {
+    // Reset tab
+    setCurrentTabKey(undefined);
     setCurrentPageKeyState(pageKey);
     open();
   }, [open]);
