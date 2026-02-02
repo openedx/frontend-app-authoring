@@ -10,9 +10,9 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { InfoSection } from '@src/course-outline/outline-sidebar/sharedComponents';
 import messages from './messages';
 import { PublishButon } from './PublishButon';
-import { InfoSection } from '@src/course-outline/outline-sidebar/sharedComponents';
 
 interface Props {
   sectionId: string;

@@ -1,13 +1,13 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { useToggle } from "@openedx/paragon";
-import { SchoolOutline, Tag } from "@openedx/paragon/icons";
-import { ContentTagsDrawerSheet, ContentTagsSnippet } from "@src/content-tags-drawer";
-import { useCourseItemData } from "@src/course-outline/data/apiHooks";
-import { LibraryReferenceCard } from "@src/course-outline/outline-sidebar/LibraryReferenceCard";
-import { ComponentCountSnippet, getItemIcon } from "@src/generic/block-type-utils";
-import { normalizeContainerType } from "@src/generic/key-utils";
-import { SidebarContent, SidebarSection } from "@src/generic/sidebar";
-import { useGetBlockTypes } from "@src/search-manager";
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { useToggle } from '@openedx/paragon';
+import { SchoolOutline, Tag } from '@openedx/paragon/icons';
+import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { LibraryReferenceCard } from '@src/course-outline/outline-sidebar/LibraryReferenceCard';
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
+import { normalizeContainerType } from '@src/generic/key-utils';
+import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
+import { useGetBlockTypes } from '@src/search-manager';
 import messages from './messages';
 
 interface Props {

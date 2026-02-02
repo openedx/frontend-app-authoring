@@ -1,11 +1,11 @@
-import { InfoSidebar } from './InfoSidebar'
-import { initializeMocks, render, screen } from '@src/testUtils'
+import { initializeMocks, render, screen } from '@src/testUtils';
 import { SelectionState } from '@src/data/types';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import userEvent from '@testing-library/user-event';
+import { InfoSidebar } from './InfoSidebar';
 
-let selectedContainerState: SelectionState | undefined = undefined;
+let selectedContainerState: SelectionState | undefined;
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
@@ -36,7 +36,7 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
 }));
 
-const renderComponent = () => render(<InfoSidebar />, { extraWrapper: OutlineSidebarProvider});
+const renderComponent = () => render(<InfoSidebar />, { extraWrapper: OutlineSidebarProvider });
 let axiosMock;
 
 describe('InfoSidebar component', () => {
@@ -53,14 +53,14 @@ describe('InfoSidebar component', () => {
   it('renders InfoSidebar with section info', async () => {
     const user = userEvent.setup();
     selectedContainerState = {
-      currentId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123'
-    }
+      currentId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
+    };
     const data = {
       id: selectedContainerState.currentId,
       displayName: 'section name',
       category: 'chapter',
       hasChanges: true,
-    }
+    };
     axiosMock
       .onGet(getXBlockApiUrl(selectedContainerState.currentId))
       .reply(200, data);
@@ -80,14 +80,14 @@ describe('InfoSidebar component', () => {
     const user = userEvent.setup();
     selectedContainerState = {
       currentId: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@123',
-      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123'
-    }
+      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
+    };
     const data = {
       id: selectedContainerState.currentId,
       displayName: 'subsection name',
       category: 'sequential',
       hasChanges: true,
-    }
+    };
     axiosMock
       .onGet(getXBlockApiUrl(selectedContainerState.currentId))
       .reply(200, data);
@@ -108,14 +108,14 @@ describe('InfoSidebar component', () => {
     selectedContainerState = {
       currentId: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@123',
       subsectionId: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@123',
-      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123'
-    }
+      sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@123',
+    };
     const data = {
       id: selectedContainerState.currentId,
       displayName: 'unit name',
       category: 'vertical',
       hasChanges: true,
-    }
+    };
     axiosMock
       .onGet(getXBlockApiUrl(selectedContainerState.currentId))
       .reply(200, data);

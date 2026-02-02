@@ -24,17 +24,20 @@ export const SidebarTitle = ({
   title,
   icon,
   onBackBtnClick,
-}: SidebarTitleProps) => (
-  <Stack direction="horizontal" gap={2} className="mb-3">
-    {onBackBtnClick && (
-      <IconButton
-        onClick={onBackBtnClick}
-        alt={useIntl().formatMessage(messages.backBtnText)}
-        src={ArrowBack}
-        size="inline"
-      />
-    )}
-    <Icon src={icon} className="mr-2 text-primary" />
-    <h2 className="text-primary h3 mb-0">{title}</h2>
-  </Stack>
-);
+}: SidebarTitleProps) => {
+  const intl = useIntl();
+  return (
+    <Stack direction="horizontal" gap={2} className="mb-3">
+      {onBackBtnClick && (
+        <IconButton
+          onClick={onBackBtnClick}
+          alt={intl.formatMessage(messages.backBtnText)}
+          src={ArrowBack}
+          size="inline"
+        />
+      )}
+      <Icon src={icon} className="mr-2 text-primary" />
+      <h2 className="text-primary h3 mb-0">{title}</h2>
+    </Stack>
+  );
+};

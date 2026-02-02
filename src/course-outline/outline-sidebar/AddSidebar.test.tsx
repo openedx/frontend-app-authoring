@@ -18,11 +18,11 @@ import {
 } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
-import { AddSidebar } from './AddSidebar';
 import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockBaseApiUrl } from '@src/course-outline/data/api';
+import { AddSidebar } from './AddSidebar';
 
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
@@ -60,8 +60,8 @@ jest.mock('@src/studio-home/hooks', () => ({
 let currentFlow: OutlineFlow | null = null;
 let isCurrentFlowOn = false;
 let currentItemData: Partial<XBlock> | null;
-let clearSelection = jest.fn();
-let stopCurrentFlow = jest.fn();
+const clearSelection = jest.fn();
+const stopCurrentFlow = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
@@ -75,8 +75,8 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
 }));
 
 const renderComponent = () => render(<AddSidebar />, {
-  extraWrapper: ({children}) => (
-    <CourseAuthoringProvider courseId={"some-course"}>
+  extraWrapper: ({ children }) => (
+    <CourseAuthoringProvider courseId="some-course">
       <OutlineSidebarProvider>
         {children}
       </OutlineSidebarProvider>
@@ -285,15 +285,15 @@ describe('AddSidebar component', () => {
         deletable: true,
         draggable: true,
         duplicable: true,
-      }
-    }
+      },
+    };
     renderComponent();
 
     // render existing tab as well
     await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
     // One in new tab and one in existing tab
     expect((await screen.findAllByText(
-      `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`
+      `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`,
     )).length).toEqual(2);
   });
 
