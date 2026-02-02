@@ -4,7 +4,7 @@ import { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsVersion } from '.
 import { generateLicenseURL } from './utils';
 
 const useLicenseDetails = (license, onChange) => {
-  const [licenseType, setLicenseType] = useState(null);
+  const [licenseType, setLicenseType] = useState(/** @type { string | null } */(null));
   const [licenseDetails, setLicenseDetails] = useState({});
   const [licenseURL, setLicenseURL] = useState('');
 

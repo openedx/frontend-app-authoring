@@ -3,14 +3,13 @@ import { useMediaQuery } from 'react-responsive';
 
 import { Sidebar } from '@src/generic/sidebar';
 
+import { isOutlineNewDesignEnabled } from '../utils';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
-import { isOutlineNewDesignEnabled } from '../utils';
-import { getOutlineSidebarPages } from './sidebarPages';
+import { useOutlineSidebarPagesContext } from './OutlineSidebarPagesContext';
 
 const OutlineSideBar = () => {
   const isMedium = useMediaQuery({ maxWidth: breakpoints.medium.maxWidth });
-  const sidebarPages = getOutlineSidebarPages();
 
   const {
     currentPageKey,
@@ -18,6 +17,8 @@ const OutlineSideBar = () => {
     isOpen,
     toggle,
   } = useOutlineSidebarContext();
+
+  const sidebarPages = useOutlineSidebarPagesContext();
 
   // Returns the previous help sidebar component if the waffle flag is disabled
   if (!isOutlineNewDesignEnabled()) {
