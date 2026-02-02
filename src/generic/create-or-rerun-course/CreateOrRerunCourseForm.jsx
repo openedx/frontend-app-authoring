@@ -155,6 +155,7 @@ const CreateOrRerunCourseForm = ({
   const handleCustomBlurForDropdown = (e) => {
     // it needs to correct handleOnChange Form.Autosuggest
     const { value, name } = e.target;
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setFieldValue(name, value);
     handleBlur(e);
   };

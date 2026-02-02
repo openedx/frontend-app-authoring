@@ -229,7 +229,7 @@ describe('<CardHeader />', () => {
     });
 
     expect(await screen.findByTestId('subsection-edit-field')).toBeInTheDocument();
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
       expect(screen.queryByTestId('edit-button')).not.toBeInTheDocument();
     });

@@ -122,7 +122,7 @@ export interface EditorState {
     videoSharingEnabledForAll: boolean;
     videoSharingEnabledForCourse: boolean;
     videoSharingLearnMoreLink: string;
-    thumbnail: null | any;
+    thumbnail: any;
     transcripts: any[];
     selectedVideoTranscriptUrls: Record<string, any>;
     allowTranscriptDownloads: boolean;
@@ -172,7 +172,7 @@ export interface EditorState {
     additionalAttributes: Record<string, any>;
     defaultSettings: Record<string, any>;
     settings: {
-      randomization: null | any; // Not sure what type this field has
+      randomization: any; // Not sure what type this field has
       scoring: {
         weight: number;
         attempts: { unlimited: boolean; number: number | null; };

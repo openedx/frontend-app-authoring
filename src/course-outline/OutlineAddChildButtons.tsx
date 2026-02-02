@@ -321,6 +321,7 @@ const LegacyOutlineAddChildButtons = ({
   }
 
   const handleOnComponentSelected = (selected: SelectedComponent) => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     onUseLibraryContent(selected);
     closeAddLibrarySectionModal();
   };

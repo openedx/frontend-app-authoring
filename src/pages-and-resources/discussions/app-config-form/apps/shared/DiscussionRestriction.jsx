@@ -24,12 +24,14 @@ const DiscussionRestriction = () => {
     setSelectedRestrictionOption(value);
 
     if (value !== discussionRestriction.ENABLED) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       setFieldValue('postingRestrictions', value);
     }
   }, []);
 
   const handleConfirmation = useCallback(() => {
     setSelectedRestrictionOption(discussionRestriction.ENABLED);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     setFieldValue('postingRestrictions', discussionRestriction.ENABLED);
   }, []);
 

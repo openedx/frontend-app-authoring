@@ -431,7 +431,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
 
-    waitFor(() => expect(screen.getAllByTestId('component-card-menu-toggle').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByTestId('component-card-menu-toggle').length).toBeGreaterThan(0));
 
     // Open menu
     fireEvent.click((await screen.findAllByTestId('component-card-menu-toggle'))[0]);
@@ -455,7 +455,7 @@ describe('<LibraryAuthoringPage />', () => {
     const displayName = 'Test Unit';
     await renderLibraryPage();
 
-    waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
 
     // Open menu
     fireEvent.click((await screen.findAllByTestId('container-card-menu-toggle'))[0]);

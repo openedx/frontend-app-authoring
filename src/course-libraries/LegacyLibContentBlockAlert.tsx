@@ -31,11 +31,13 @@ const LegacyLibContentBlockAlert = ({ courseId }: Props) => {
     if (taskStatus.data?.state === UserTaskStatus.Succeeded) {
       showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskCompleted));
       setTaskId(undefined);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       refetch();
     } else if (taskStatus.data?.state === UserTaskStatus.Failed
       || taskStatus.data?.state === UserTaskStatus.Cancelled) {
       showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskFailed));
       setTaskId(undefined);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       refetch();
     } else if (taskId) {
       showToast(intl.formatMessage(messages.legacyLibReadyToMigrateTaskInProgress));

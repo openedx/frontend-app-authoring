@@ -8,7 +8,14 @@ import {
 import { cloneDeep, set } from 'lodash';
 
 import {
-  act, fireEvent, render, waitFor, within, screen, initializeMocks,
+  act,
+  cleanup,
+  fireEvent,
+  initializeMocks,
+  render,
+  waitFor,
+  within,
+  screen,
 } from '@src/testUtils';
 import mockResult from '@src/library-authoring/__mocks__/library-search.json';
 import { IFRAME_FEATURE_POLICY } from '@src/constants';
@@ -810,9 +817,10 @@ describe('<CourseUnit />', () => {
       .reply(200, {
         ...updatedCourseSectionVerticalData,
       });
+    cleanup(); // clear the first render before we create the second.
     render(<RootWrapper />);
     // to wait for loading
-    screen.findByTestId('unit-header-title');
+    await screen.findByTestId('unit-header-title');
     // The new unit button should not be visible when childAddable is false
     expect(
       screen.queryByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage }),
@@ -2551,6 +2559,87 @@ describe('<CourseUnit />', () => {
     ), store.dispatch);
 
     expect(discussionButton).not.toBeChecked();
+  });
+
+  it('should update the group access in the unit sidebar', async () => {
+    const user = userEvent.setup();
+
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+      });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          user_partition_info: {
+            selected_partition_index: 0,
+            selected_groups_label: 'Group A',
+            selectable_partitions: [{
+              id: 10,
+              name: 'Content Groups',
+              scheme: 'cohort',
+              groups: [
+                {
+                  deleted: false,
+                  id: 1,
+                  name: 'Group A',
+                  selected: true,
+                },
+                {
+                  deleted: false,
+                  id: 2,
+                  name: 'Group B',
+                  selected: false,
+                },
+                {
+                  deleted: false,
+                  id: 3,
+                  name: 'Group C',
+                  selected: false,
+                },
+              ],
+            }],
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(blockId, courseId), store.dispatch);
+
+    // Move to settings
+    expect(await screen.findByRole('heading', { name: /draft \(unpublished changes\)/i })).toBeInTheDocument();
+    const settingsTab = screen.getByRole('tab', { name: /settings/i });
+    expect(settingsTab).toBeInTheDocument();
+    await user.click(settingsTab);
+
+    // Select groub
+    const groupCombobox = screen.getByTestId('group-type-select');
+    await user.selectOptions(groupCombobox, 'Content Groups');
+    await user.click(screen.getByRole('checkbox', { name: /Group A/i }));
+    await user.click(screen.getByRole('checkbox', { name: /Group B/i }));
+    await user.click(screen.getByRole('button', { name: /Save changes/i }));
+
+    // Check that the group access is being updated
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBeGreaterThan(0);
+    });
+
+    expect(axiosMock.history.post[0].url).toBe(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id));
+    expect(axiosMock.history.post[0].data).toMatch(/"group_access":\{"10":\[1,2\]\}/);
   });
 
   it('should one group in the visibility field in the unit sidebar', async () => {

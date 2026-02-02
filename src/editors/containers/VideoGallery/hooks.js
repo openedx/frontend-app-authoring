@@ -88,7 +88,7 @@ export const useVideoListProps = ({
   videos,
   returnFunction,
 }) => {
-  const [highlighted, setHighlighted] = React.useState(null);
+  const [highlighted, setHighlighted] = React.useState(/** @type {string | null} */(null));
   const [
     showSelectVideoError,
     setShowSelectVideoError,

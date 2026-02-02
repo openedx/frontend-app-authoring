@@ -1,3 +1,4 @@
+// oxlint-disable unicorn/no-thenable
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
@@ -72,6 +73,7 @@ const LiveSettings = ({
   };
 
   const handleSettingsSave = async (values) => {
+    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     await dispatch(saveLiveConfiguration(courseId, values, navigate));
   };
 

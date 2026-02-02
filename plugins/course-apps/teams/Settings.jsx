@@ -107,6 +107,7 @@ const TeamSettings = ({
         )
           .when('enabled', {
             is: true,
+            // oxlint-disable-next-line unicorn/no-thenable
             then: Yup.array().min(1),
           })
           .default([])

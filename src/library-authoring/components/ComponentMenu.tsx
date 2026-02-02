@@ -54,6 +54,7 @@ export const ComponentMenu = ({ usageKey, index }: Props) => {
   const { copyToClipboard } = useClipboard();
 
   const updateClipboardClick = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     copyToClipboard(usageKey);
   };
 

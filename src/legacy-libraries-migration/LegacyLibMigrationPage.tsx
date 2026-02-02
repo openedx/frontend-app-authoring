@@ -114,6 +114,7 @@ export const LegacyLibMigrationPage = () => {
         break;
       case 'confirmation-view':
         setConfirmationButtonState('pending');
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         handleMigrate();
         break;
       default:
