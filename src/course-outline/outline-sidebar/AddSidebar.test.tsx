@@ -20,11 +20,10 @@ import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { AddSidebar } from './AddSidebar';
 import { XBlock } from '@src/data/types';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { snakeCaseKeys } from '@src/editors/utils';
+import { getXBlockBaseApiUrl } from '@src/course-outline/data/api';
 
-const handleAddSection = { mutateAsync: jest.fn() };
-const handleAddSubsection = { mutateAsync: jest.fn() };
-const handleAddUnit = { mutateAsync: jest.fn() };
-const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -35,14 +34,12 @@ mockGetContainerMetadata.applyMock();
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
+  ...jest.requireActual('@src/CourseAuthoringContext'),
   useCourseAuthoringContext: () => ({
+    ...jest.requireActual('@src/CourseAuthoringContext').useCourseAuthoringContext(),
     courseId: 5,
-    courseUsageKey: 'course-usage-key',
+    courseUsageKey: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
     courseDetails: { name: 'Test course' },
-    handleAddSection,
-    handleAddSubsection,
-    handleAddUnit,
-    handleAddAndOpenUnit,
     setCurrentSelection,
   }),
 }));
@@ -77,7 +74,15 @@ jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   }),
 }));
 
-const renderComponent = () => render(<AddSidebar />, { extraWrapper: OutlineSidebarProvider });
+const renderComponent = () => render(<AddSidebar />, {
+  extraWrapper: ({children}) => (
+    <CourseAuthoringProvider courseId={"some-course"}>
+      <OutlineSidebarProvider>
+        {children}
+      </OutlineSidebarProvider>
+    </CourseAuthoringProvider>
+  ),
+});
 const searchResult = {
   ...mockResult,
   results: [
@@ -90,10 +95,12 @@ const searchResult = {
     },
   ],
 };
+let axiosMock;
 
 describe('AddSidebar component', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
     fetchMock.post(searchEndpoint, (_url, req) => {
@@ -151,6 +158,8 @@ describe('AddSidebar component', () => {
     const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
+    axiosMock.onPost(getXBlockBaseApiUrl())
+      .reply(200, { locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a' });
     renderComponent();
 
     // Validate handler for adding section, subsection and unit
@@ -158,23 +167,26 @@ describe('AddSidebar component', () => {
     const subsection = await screen.findByRole('button', { name: 'Subsection' });
     const unit = await screen.findByRole('button', { name: 'Unit' });
     await user.click(section);
-    expect(handleAddSection.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'chapter',
-      parentLocator: 'course-usage-key',
+      category: 'chapter',
+      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       displayName: 'Section',
-    }, { onSuccess: expect.anything() });
+    })));
     await user.click(subsection);
-    expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'sequential',
+      category: 'sequential',
       parentLocator: lastSection.id,
       displayName: 'Subsection',
-    }, { onSuccess: expect.anything() });
+    })));
     await user.click(unit);
-    expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'vertical',
+      category: 'vertical',
       parentLocator: lastSubsection.id,
       displayName: 'Unit',
-    }, { onSettled: expect.anything() });
+    })));
   });
 
   it('calls appropriate handlers on existing button click', async () => {
@@ -182,6 +194,8 @@ describe('AddSidebar component', () => {
     const sectionList = courseOutlineIndexMock.courseStructure.childInfo.children;
     const lastSection = sectionList[3];
     const lastSubsection = lastSection.childInfo.children[0];
+    axiosMock.onPost(getXBlockBaseApiUrl())
+      .reply(200, { locator: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential45d4d95a' });
     renderComponent();
     // Check existing tab content
     await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
@@ -190,28 +204,28 @@ describe('AddSidebar component', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,
       libraryContentKey: searchResult.results[0].hits[0].usage_key,
-    }, { onSettled: expect.anything() });
+    })));
     // second one is subsection as per mock
     await user.click(addBtns[1]);
-    expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'library_v2',
       category: 'sequential',
       parentLocator: lastSection.id,
       libraryContentKey: searchResult.results[0].hits[1].usage_key,
-    });
+    })));
     // third one is section as per mock
     await user.click(addBtns[2]);
-    expect(handleAddSection.mutateAsync).toHaveBeenCalledWith({
+    expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
       type: 'library_v2',
       category: 'chapter',
-      parentLocator: 'course-usage-key',
+      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       libraryContentKey: searchResult.results[0].hits[2].usage_key,
-    });
+    })));
   });
 
   ['section', 'subsection', 'unit'].forEach((category) => {
