@@ -315,6 +315,7 @@ describe('app thunkActions', () => {
         blockType: 'video',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
+        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
