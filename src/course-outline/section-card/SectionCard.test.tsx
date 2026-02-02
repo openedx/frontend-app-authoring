@@ -5,6 +5,7 @@ import {
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
+import { getXBlockApiUrl } from '@src/course-outline/data/api';
 import SectionCard from './SectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
 import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
@@ -51,9 +52,7 @@ const subsection = {
   isHeaderVisible: true,
   releasedToStudents: true,
   childInfo: {
-    children: [{
-      id: unit.id,
-    }],
+    children: [unit],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
 } satisfies Partial<XBlock> as XBlock;
 
@@ -73,14 +72,7 @@ const section = {
   },
   isHeaderVisible: true,
   childInfo: {
-    children: [{
-      id: subsection.id,
-      childInfo: {
-        children: [{
-          id: unit.id,
-        }],
-      },
-    }],
+    children: [subsection],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
@@ -121,10 +113,15 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     extraWrapper: OutlineSidebarContext.OutlineSidebarProvider,
   },
 );
+let axiosMock;
 
 describe('<SectionCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
   });
 
   it('render SectionCard component correctly', () => {
@@ -138,7 +135,8 @@ describe('<SectionCard />', () => {
     expect(card).not.toHaveClass('outline-card-selected');
   });
 
-  it('render SectionCard component in selected state', () => {
+  it('render SectionCard component in selected state', async () => {
+    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_COURSE_OUTLINE_NEW_DESIGN: 'true',
@@ -148,16 +146,15 @@ describe('<SectionCard />', () => {
     expect(screen.getByTestId('section-card-header')).toBeInTheDocument();
 
     // The card is not selected
-    const card = screen.getByTestId('section-card');
-    expect(card).not.toHaveClass('outline-card-selected');
+    expect((await screen.findByTestId('section-card'))).not.toHaveClass('outline-card-selected');
 
     // Get the <Row> that contains the card and click it to select the card
     const el = container.querySelector('div.row.mx-0') as HTMLInputElement;
     expect(el).not.toBeNull();
-    fireEvent.click(el!);
+    await user.click(el!);
 
     // The card is selected
-    expect(card).toHaveClass('outline-card-selected');
+    expect(await screen.findByTestId('section-card')).toHaveClass('outline-card-selected');
   });
 
   it('expands/collapses the card when the expand button is clicked', () => {
@@ -184,6 +181,17 @@ describe('<SectionCard />', () => {
   });
 
   it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, {
+        ...section,
+        actions: {
+          draggable: true,
+          childAddable: false,
+          deletable: false,
+          duplicable: false,
+        },
+      });
     renderComponent({
       section: {
         ...section,

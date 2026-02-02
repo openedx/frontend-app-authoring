@@ -153,19 +153,19 @@ describe('AddSidebar component', () => {
       type: 'chapter',
       parentLocator: 'course-usage-key',
       displayName: 'Section',
-    });
+    }, { onSuccess: expect.anything() });
     await user.click(subsection);
     expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
       type: 'sequential',
       parentLocator: lastSection.id,
       displayName: 'Subsection',
-    });
+    }, { onSuccess: expect.anything() });
     await user.click(unit);
-    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
       type: 'vertical',
       parentLocator: lastSubsection.id,
       displayName: 'Unit',
-    });
+    }, { onSettled: expect.anything() });
   });
 
   it('calls appropriate handlers on existing button click', async () => {
@@ -181,12 +181,12 @@ describe('AddSidebar component', () => {
     const addBtns = await screen.findAllByRole('button', { name: 'Add' });
     // first one is unit as per mock
     await user.click(addBtns[0]);
-    expect(handleAddAndOpenUnit.mutateAsync).toHaveBeenCalledWith({
+    expect(handleAddUnit.mutateAsync).toHaveBeenCalledWith({
       type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,
       libraryContentKey: searchResult.results[0].hits[0].usage_key,
-    });
+    }, { onSettled: expect.anything() });
     // second one is subsection as per mock
     await user.click(addBtns[1]);
     expect(handleAddSubsection.mutateAsync).toHaveBeenCalledWith({
@@ -217,6 +217,8 @@ describe('AddSidebar component', () => {
         grandParentLocator: category === 'unit' ? firstSection.id : undefined,
       };
       renderComponent();
+      // Check existing tab content
+      await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
       // Check existing tab content is rendered by default
       await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
       expect(fetchMock).toHaveLastFetched((_url, req) => {

@@ -32,7 +32,7 @@ jest.mock('@src/course-libraries/data/apiHooks', () => ({
 let mockHasChanges = false;
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: () => ({
-    data: [{ hasChanges: mockHasChanges }],
+    data: { hasChanges: mockHasChanges },
     isLoading: false,
   }),
 }));

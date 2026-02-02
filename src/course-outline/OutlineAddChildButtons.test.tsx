@@ -15,6 +15,7 @@ jest.mock('react-redux', () => ({
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
 const handleAddAndOpenUnit = { mutateAsync: jest.fn() };
+const handleAddUnit = { mutateAsync: jest.fn() };
 const courseUsageKey = 'some/usage/key';
 const setCurrentSelection = jest.fn();
 jest.mock('@src/CourseAuthoringContext', () => ({
@@ -25,6 +26,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     handleAddSection,
     handleAddSubsection,
     handleAddAndOpenUnit,
+    handleAddUnit,
     setCurrentSelection,
   }),
 }));
@@ -37,6 +39,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     startCurrentFlow,
     currentFlow,
+    isCurrentFlowOn: !!currentFlow,
   }),
 }));
 
