@@ -1,5 +1,7 @@
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, IconButton, Stack } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
+import messages from './messages';
 
 interface SidebarTitleProps {
   /** Title of the section */
@@ -27,7 +29,7 @@ export const SidebarTitle = ({
     {onBackBtnClick && (
       <IconButton
         onClick={onBackBtnClick}
-        alt=""
+        alt={useIntl().formatMessage(messages.backBtnText)}
         src={ArrowBack}
         size="inline"
       />

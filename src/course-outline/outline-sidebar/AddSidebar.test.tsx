@@ -19,6 +19,7 @@ import {
 import fetchMock from 'fetch-mock-jest';
 import type { ContainerType } from '@src/generic/key-utils';
 import { AddSidebar } from './AddSidebar';
+import { XBlock } from '@src/data/types';
 
 const handleAddSection = { mutateAsync: jest.fn() };
 const handleAddSubsection = { mutateAsync: jest.fn() };
@@ -60,11 +61,19 @@ jest.mock('@src/studio-home/hooks', () => ({
 }));
 
 let currentFlow: OutlineFlow | null = null;
+let isCurrentFlowOn = false;
+let currentItemData: Partial<XBlock> | null;
+let clearSelection = jest.fn();
+let stopCurrentFlow = jest.fn();
 jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
   ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('../outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     currentFlow,
+    isCurrentFlowOn,
+    currentItemData,
+    clearSelection,
+    stopCurrentFlow,
   }),
 }));
 
@@ -250,5 +259,38 @@ describe('AddSidebar component', () => {
           break;
       }
     });
+  });
+
+  it('shows alert when container cannot be added', async () => {
+    const user = userEvent.setup();
+    currentItemData = {
+      displayName: 'Test container',
+      category: 'chapter',
+      actions: {
+        childAddable: false,
+        deletable: true,
+        draggable: true,
+        duplicable: true,
+      }
+    }
+    renderComponent();
+
+    // render existing tab as well
+    await user.click(await screen.findByRole('tab', { name: 'Add Existing' }));
+    // One in new tab and one in existing tab
+    expect((await screen.findAllByText(
+      `${currentItemData.displayName} is a library section. Content cannot be added to Library referenced sections.`
+    )).length).toEqual(2);
+  });
+
+  it('back button is rendered and works', async () => {
+    const user = userEvent.setup();
+    isCurrentFlowOn = true;
+    renderComponent();
+
+    const back = await screen.findByRole('button', { name: 'Back' });
+    await user.click(back);
+    expect(clearSelection).toHaveBeenCalled();
+    expect(stopCurrentFlow).toHaveBeenCalled();
   });
 });

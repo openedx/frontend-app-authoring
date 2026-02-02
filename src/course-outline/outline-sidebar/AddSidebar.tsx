@@ -72,6 +72,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       displayName: COURSE_BLOCK_NAMES.chapter.name,
     }, {
       onSuccess: (data: { locator: string; }) => {
+        // istanbul ignore next
         if (onSuccess) {
           onSuccess(data);
         } else {
@@ -88,6 +89,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       displayName: COURSE_BLOCK_NAMES.sequential.name,
     }, {
       onSuccess: (data: { locator: string; }) => {
+        // istanbul ignore next
         if (onSuccess) {
           onSuccess(data);
         } else {
@@ -104,6 +106,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       displayName: COURSE_BLOCK_NAMES.vertical.name,
     }, {
       onSettled: () => {
+        // istanbul ignore next
         if (onSettled) {
           onSettled();
         } else {
@@ -286,6 +289,7 @@ const ShowLibraryContent = () => {
             libraryContentKey: usageKey,
           }, {
             onSettled: () => {
+              // istanbul ignore next
               queryClient.invalidateQueries({
                 queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
               });

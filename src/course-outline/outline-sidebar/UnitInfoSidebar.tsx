@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Stack, Tab, Tabs, useToggle,
+  Button, Stack, Tab, Tabs,
 } from '@openedx/paragon';
 import {
-  OpenInFull, SchoolOutline, Tag,
+  OpenInFull,
 } from '@openedx/paragon/icons';
 
-import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
-import { useGetBlockTypes } from '@src/search-manager';
+import { getItemIcon } from '@src/generic/block-type-utils';
 
-import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
+import { SidebarTitle } from '@src/generic/sidebar';
 
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
@@ -21,52 +19,12 @@ import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link } from 'react-router-dom';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
-import { LibraryReferenceCard } from './LibraryReferenceCard';
 import messages from './messages';
+import { InfoSection } from './sharedComponents';
 
 interface Props {
   unitId: string;
 }
-
-const UnitInfoSidebar = ({ unitId }: Props) => {
-  const intl = useIntl();
-  const { data: componentData } = useGetBlockTypes(
-    [`breadcrumbs.usage_key = "${unitId}"`],
-  );
-
-  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
-
-  return (
-    <>
-      <LibraryReferenceCard itemId={unitId} />
-      <SidebarContent>
-        <SidebarSection
-          title={intl.formatMessage(messages.unitContentSummaryText)}
-          icon={SchoolOutline}
-        >
-          {componentData && <ComponentCountSnippet componentData={componentData} />}
-        </SidebarSection>
-        <SidebarSection
-          title={intl.formatMessage(messages.sidebarSectionTaxonomy)}
-          icon={Tag}
-          actions={[
-            {
-              label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
-              onClick: openManageTagsDrawer,
-            },
-          ]}
-        >
-          <ContentTagsSnippet contentId={unitId} />
-        </SidebarSection>
-      </SidebarContent>
-      <ContentTagsDrawerSheet
-        id={unitId}
-        onClose={closeManageTagsDrawer}
-        showSheet={isManageTagsDrawerOpen}
-      />
-    </>
-  );
-};
 
 export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();
@@ -137,7 +95,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
           </IframeProvider>
         </Tab>
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
-          <UnitInfoSidebar unitId={unitId} />
+          <InfoSection itemId={unitId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
           <div>Settings</div>

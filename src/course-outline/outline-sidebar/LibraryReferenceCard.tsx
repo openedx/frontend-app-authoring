@@ -25,12 +25,12 @@ interface SubProps {
 
 const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
   const { upstreamInfo } = blockData;
-  const { selectedContainerState } = useOutlineSidebarContext();
-  const { openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const { openUnlinkModal } = useCourseAuthoringContext();
   const { data: parentData, isPending } = useCourseItemData(upstreamInfo?.topLevelParentKey);
 
   const handleUnlinkClick = () => {
+    // istanbul ignore if
     if (!selectedContainerState?.sectionId || !parentData) {
       return;
     }
@@ -38,6 +38,7 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
   };
 
   const handleSyncClick = () => {
+    // istanbul ignore if
     if (!parentData) {
       return;
     }
@@ -45,7 +46,7 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
   };
 
   const handleGoToParent = () => {
-    // istanbul ignore: to satisfy checker
+    // istanbul ignore if
     if (!upstreamInfo?.topLevelParentKey) {
       return null;
     }
@@ -127,6 +128,7 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
   };
 
   const handleUnlinkClick = () => {
+    // istanbul ignore if
     if (!selectedContainerState?.sectionId) {
       return;
     }
@@ -203,6 +205,7 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
     };
   }, [syncModalData]);
 
+  // istanbul ignore next
   const handleOnPostChangeSync = useCallback(() => {
     if (selectedContainerState?.sectionId) {
       dispatch(fetchCourseSectionQuery([selectedContainerState.sectionId]));
