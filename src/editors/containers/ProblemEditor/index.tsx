@@ -48,6 +48,8 @@ const ProblemEditor: React.FC<Props> = ({
   useEffect(() => {
     const run = async () => {
       if (blockFinished && !blockFailed) {
+        // Await initialize problem and set a new problem type if applicable
+        // oxlint-disable-next-line @typescript-eslint/await-thenable
         await dispatch(thunkActions.problem.initializeProblem(blockValue));
 
         if (extraProps?.problemType && extraProps.problemType !== 'advanced') {
@@ -62,7 +64,7 @@ const ProblemEditor: React.FC<Props> = ({
       }
     };
 
-    run();
+    void run();
   }, [blockFinished, blockFailed, blockValue, dispatch]);
 
   if (!blockFinished || !advancedSettingsFinished) {

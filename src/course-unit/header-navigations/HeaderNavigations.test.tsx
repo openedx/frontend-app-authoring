@@ -1,9 +1,11 @@
-import { fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render, initializeMocks, screen } from '@src/testUtils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import HeaderNavigations from './HeaderNavigations';
 import messages from './messages';
+import { UnitSidebarProvider } from '../unit-sidebar/UnitSidebarContext';
 
 const handleViewLiveFn = jest.fn();
 const handlePreviewFn = jest.fn();
@@ -23,41 +25,50 @@ const renderComponent = (props) => render(
       {...props}
     />
   </IntlProvider>,
+  {
+    extraWrapper: UnitSidebarProvider,
+  },
 );
 
 describe('<HeaderNavigations />', () => {
-  it('render HeaderNavigations component correctly', () => {
-    const { getByRole } = renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
-
-    expect(getByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.previewButton.defaultMessage })).toBeInTheDocument();
+  beforeEach(() => {
+    initializeMocks();
   });
 
-  it('calls the correct handlers when clicking buttons for unit page', () => {
-    const { getByRole, queryByRole } = renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
+  it('render HeaderNavigations component correctly', () => {
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
 
-    const viewLiveButton = getByRole('button', { name: messages.viewLiveButton.defaultMessage });
-    fireEvent.click(viewLiveButton);
+    expect(screen.getByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.previewButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('calls the correct handlers when clicking buttons for unit page', async () => {
+    const user = userEvent.setup();
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
+
+    const viewLiveButton = screen.getByRole('button', { name: messages.viewLiveButton.defaultMessage });
+    await user.click(viewLiveButton);
     expect(handleViewLiveFn).toHaveBeenCalledTimes(1);
 
-    const previewButton = getByRole('button', { name: messages.previewButton.defaultMessage });
-    fireEvent.click(previewButton);
+    const previewButton = screen.getByRole('button', { name: messages.previewButton.defaultMessage });
+    await user.click(previewButton);
     expect(handlePreviewFn).toHaveBeenCalledTimes(1);
 
-    const editButton = queryByRole('button', { name: messages.editButton.defaultMessage });
+    const editButton = screen.queryByRole('button', { name: messages.editButton.defaultMessage });
     expect(editButton).not.toBeInTheDocument();
   });
 
   ['libraryContent', 'splitTest'].forEach((category) => {
-    it(`calls the correct handlers when clicking buttons for ${category} page`, () => {
-      const { getByRole, queryByRole } = renderComponent({ category: COURSE_BLOCK_NAMES[category].id });
+    it(`calls the correct handlers when clicking buttons for ${category} page`, async () => {
+      const user = userEvent.setup();
+      renderComponent({ category: COURSE_BLOCK_NAMES[category].id });
 
-      const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
-      fireEvent.click(editButton);
-      expect(handleViewLiveFn).toHaveBeenCalledTimes(1);
+      const editButton = await screen.findByRole('button', { name: messages.editButton.defaultMessage });
+      await user.click(editButton);
+      expect(handleEditFn).toHaveBeenCalledTimes(1);
 
       [messages.viewLiveButton.defaultMessage, messages.previewButton.defaultMessage].forEach((btnName) => {
-        expect(queryByRole('button', { name: btnName })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: btnName })).not.toBeInTheDocument();
       });
     });
   });

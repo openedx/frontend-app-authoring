@@ -2947,9 +2947,7 @@ describe('<CourseUnit />', () => {
       results: [
         {
           ...mockResult.results[0],
-          hits: [
-            ...mockResult.results[0].hits.slice(0, 10),
-          ],
+          hits: mockResult.results[0].hits.slice(0, 10),
         },
         {
           ...mockResult.results[1],

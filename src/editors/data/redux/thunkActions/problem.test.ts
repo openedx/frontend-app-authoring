@@ -161,20 +161,20 @@ describe('problem thunkActions', () => {
 
   describe('fetchAdvanceSettings', () => {
     it('dispatches fetchAdvanceSettings action', () => {
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       expect(dispatchedAction.fetchAdvanceSettings).not.toEqual(undefined);
     });
     it('dispatches actions.problem.updateField and loadProblem on success', () => {
       dispatch.mockClear();
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onSuccess({ data: { key: 'test', max_attempts: 1 } });
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
     });
     it('calls loadProblem on failure', () => {
       dispatch.mockClear();
-      fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
+      void fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled: true })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onFailure();
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
