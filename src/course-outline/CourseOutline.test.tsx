@@ -70,7 +70,7 @@ const courseId = '123';
 const getContainerKey = jest.fn().mockReturnValue('lct:org:lib:unit:1');
 const getContainerType = jest.fn().mockReturnValue('unit');
 const clearSelection = jest.fn();
-let selectedContainerId: string;
+let selectedContainerId: string | undefined;
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
@@ -78,7 +78,7 @@ jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
   useOutlineSidebarContext: () => ({
     ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     clearSelection,
-    selectedContainerState: { currentId: selectedContainerId },
+    selectedContainerState: (() => (selectedContainerId ? { currentId: selectedContainerId } : undefined))(),
   }),
 }));
 
@@ -162,6 +162,7 @@ const renderComponent = () => render(
 describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
+    selectedContainerId = undefined;
 
     jest.mocked(useLocation).mockReturnValue({
       pathname: mockPathname,

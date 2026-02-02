@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { initializeMocks, render, screen } from '@src/testUtils';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
@@ -16,6 +16,7 @@ jest.mock('@src/content-tags-drawer', () => ({
 
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {
+    initializeMocks();
     jest
       .spyOn(CourseAuthoringContext, 'useCourseAuthoringContext')
       .mockReturnValue({
