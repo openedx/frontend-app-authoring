@@ -104,7 +104,7 @@ describe('OpenedXConfigForm', () => {
   test('title rendering', async () => {
     await mockStore(legacyApiResponse);
     createComponent();
-    expect(container.querySelector('h3')).toHaveTextContent('edX');
+    expect(container.querySelector('h3')).toHaveTextContent('edX (legacy)');
   });
 
   test('new edX provider config', async () => {
