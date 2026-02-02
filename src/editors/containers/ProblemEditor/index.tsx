@@ -64,6 +64,7 @@ const ProblemEditor: React.FC<Props> = ({
       }
     };
 
+    // eslint-disable-next-line no-void
     void run();
   }, [blockFinished, blockFailed, blockValue, dispatch]);
 
