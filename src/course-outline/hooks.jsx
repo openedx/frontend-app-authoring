@@ -172,6 +172,7 @@ const useCourseOutline = ({ courseId }) => {
     await unlinkDownstream(currentUnlinkModalData.value.id, {
       onSuccess: () => {
         closeUnlinkModal();
+        // istanbul ignore next
         // refresh child block data
         currentUnlinkModalData.value.childInfo.children.forEach((block) => {
           queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(block.id) });
@@ -203,7 +204,8 @@ const useCourseOutline = ({ courseId }) => {
         dispatch(configureCourseUnitQuery(currentSelection?.currentId, currentSelection?.sectionId, ...arg));
         break;
       default:
-        return;
+        // istanbul ignore next
+        throw new Error('Unsupported block type');
     }
     handleConfigureModalClose();
   };

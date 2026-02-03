@@ -332,7 +332,10 @@ const ShowLibraryContent = () => {
     <MultiLibraryProvider>
       <ComponentPicker
         showOnlyPublished
-        extraFilter={[`block_type IN ["${allowedBlocks.join('","')}"]`]}
+        extraFilter={[
+          `block_type IN ["${allowedBlocks.join('","')}"]`,
+          'type = "library_container"',
+        ]}
         visibleTabs={[ContentType.home]}
         FiltersComponent={SidebarFilters}
         onComponentSelected={onComponentSelected}

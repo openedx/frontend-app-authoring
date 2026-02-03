@@ -22,6 +22,7 @@ import { XBlock } from '@src/data/types';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { snakeCaseKeys } from '@src/editors/utils';
 import { getXBlockBaseApiUrl } from '@src/course-outline/data/api';
+import MockAdapter from 'axios-mock-adapter/types';
 import { AddSidebar } from './AddSidebar';
 
 mockContentSearchConfig.applyMock();
@@ -44,9 +45,10 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
+let outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: jest.fn().mockReturnValue(courseOutlineIndexMock.courseStructure.childInfo.children),
+  useSelector: () => outlineChildren,
 }));
 
 jest.mock('@src/studio-home/hooks', () => ({
@@ -95,9 +97,9 @@ const searchResult = {
     },
   ],
 };
-let axiosMock;
+let axiosMock: MockAdapter;
 
-describe('AddSidebar component', () => {
+describe('AddSidebar', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
@@ -116,6 +118,7 @@ describe('AddSidebar component', () => {
       newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return newMockResult;
     });
+    outlineChildren = courseOutlineIndexMock.courseStructure.childInfo.children;
   });
 
   it('renders the AddSidebar component without any errors', async () => {
@@ -187,6 +190,76 @@ describe('AddSidebar component', () => {
       parentLocator: lastSubsection.id,
       displayName: 'Unit',
     })));
+  });
+
+  it('creates parent section if required', async () => {
+    const user = userEvent.setup();
+    // the course is empty
+    outlineChildren = [];
+    const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
+    axiosMock.onPost(getXBlockBaseApiUrl())
+      .reply(200, { locator: sectionId });
+    renderComponent();
+
+    const subsection = await screen.findByRole('button', { name: 'Subsection' });
+    await user.click(subsection);
+    // should add a section first
+    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
+      type: 'chapter',
+      category: 'chapter',
+      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+      displayName: 'Section',
+    })));
+    // then subsection
+    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
+      type: 'sequential',
+      category: 'sequential',
+      parentLocator: sectionId,
+      displayName: 'Subsection',
+    })));
+  });
+
+  it('creates parent section and subsection if required', async () => {
+    const user = userEvent.setup();
+    // the course is empty
+    outlineChildren = [];
+    const sectionId = 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@chapter123';
+    const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential234';
+    const unitId = 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical2133';
+    const sectionBody = snakeCaseKeys({
+      type: 'chapter',
+      category: 'chapter',
+      parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
+      displayName: 'Section',
+    });
+    const subsectionBody = snakeCaseKeys({
+      type: 'sequential',
+      category: 'sequential',
+      parentLocator: sectionId,
+      displayName: 'Subsection',
+    });
+    const unitBody = snakeCaseKeys({
+      type: 'vertical',
+      category: 'vertical',
+      parentLocator: subsectionId,
+      displayName: 'Unit',
+    });
+    axiosMock.onPost(getXBlockBaseApiUrl(), sectionBody)
+      .reply(200, { locator: sectionId });
+    axiosMock.onPost(getXBlockBaseApiUrl(), subsectionBody)
+      .reply(200, { locator: subsectionId });
+    axiosMock.onPost(getXBlockBaseApiUrl(), unitBody)
+      .reply(200, { locator: unitId });
+    renderComponent();
+
+    const unit = await screen.findByRole('button', { name: 'Unit' });
+    await user.click(unit);
+    // should add a section first
+    expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(sectionBody));
+    // then subsection
+    expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(subsectionBody));
+    // then unit
+    expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(unitBody));
   });
 
   it('calls appropriate handlers on existing button click', async () => {

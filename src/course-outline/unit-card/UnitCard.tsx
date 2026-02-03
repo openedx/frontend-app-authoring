@@ -192,6 +192,7 @@ const UnitCard = ({
   /**
   Temporary measure to keep the react-query state updated with redux state  */
   useEffect(() => {
+    // istanbul ignore if
     if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
       queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
     }

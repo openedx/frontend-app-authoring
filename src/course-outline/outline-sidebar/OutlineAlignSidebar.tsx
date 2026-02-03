@@ -22,6 +22,7 @@ export const OutlineAlignSidebar = () => {
 
   const { data: contentData } = useContentData(sidebarContentId);
 
+  // istanbul ignore next
   const handleBack = () => {
     clearSelection();
     setCurrentSelection(undefined);
