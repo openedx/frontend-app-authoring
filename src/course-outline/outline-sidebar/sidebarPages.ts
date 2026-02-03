@@ -24,6 +24,11 @@ export const getOutlineSidebarPages = (): OutlineSidebarPages => {
       icon: Info,
       title: messages.sidebarButtonInfo,
     },
+    add: {
+      component: AddSidebar,
+      icon: Plus,
+      title: messages.sidebarButtonAdd,
+    },
     ...(showAlignSidebar && {
       align: {
         component: OutlineAlignSidebar,
@@ -35,11 +40,6 @@ export const getOutlineSidebarPages = (): OutlineSidebarPages => {
       component: OutlineHelpSidebar,
       icon: HelpOutline,
       title: messages.sidebarButtonHelp,
-    },
-    add: {
-      component: AddSidebar,
-      icon: Plus,
-      title: messages.sidebarButtonAdd,
     },
   } satisfies OutlineSidebarPages;
 };
