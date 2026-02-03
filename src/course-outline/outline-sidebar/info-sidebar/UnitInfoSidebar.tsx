@@ -11,7 +11,7 @@ import { getItemIcon } from '@src/generic/block-type-utils';
 
 import { SidebarTitle } from '@src/generic/sidebar';
 
-import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
@@ -21,15 +21,40 @@ import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
 import { InfoSection } from './InfoSection';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   unitId: string;
 }
 
+const UnitSettingsTab = ({ unitId }: Props) => {
+  const queryClient = useQueryClient();
+  const { data: unitData, isPending } = useCourseItemData(unitId);
+
+  if (isPending || !unitData) {
+    return <Loading />
+  }
+
+  const onUpdate = () => {
+    queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(unitId)});
+  }
+
+  return (
+    <GenericUnitInfoSettings
+      id={unitData.id}
+      visibilityState={unitData.visibilityState}
+      discussionEnabled={unitData.discussionEnabled}
+      userPartitionInfo={unitData.userPartitionInfo}
+      updateCallback={onUpdate}
+    />
+  );
+}
+
 export const UnitSidebar = ({ unitId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'preview' | 'info' | 'settings'>('info');
-  const { data: unitData, isLoading } = useCourseItemData(unitId);
+  const { data: unitData, isPending } = useCourseItemData(unitId);
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
   const { openPublishModal, getUnitUrl, courseId } = useCourseAuthoringContext();
 
@@ -43,7 +68,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
     }
   };
 
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 
@@ -98,7 +123,7 @@ export const UnitSidebar = ({ unitId }: Props) => {
           <InfoSection itemId={unitId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
-          <div>Settings</div>
+          <UnitSettingsTab unitId={unitId} />
         </Tab>
       </Tabs>
     </>

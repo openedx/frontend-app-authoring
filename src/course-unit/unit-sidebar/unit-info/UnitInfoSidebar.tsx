@@ -19,6 +19,7 @@ import { editCourseUnitVisibilityAndData } from '@src/course-unit/data/thunk';
 import PublishControls from './PublishControls';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
+import { GenericUnitInfoSettings } from '@src/course-unit/unit-sidebar/unit-info/GenericUnitInfoSettings';
 
 /**
  * Component to show unit details: Publish status, Component counts and Content Tags.
@@ -70,9 +71,7 @@ const UnitInfoDetails = () => {
  *
  * It's using in the settings tab of the unit info sidebar.
  */
-const UnitInfoSettings = () => {
-  const dispatch = useDispatch();
-  const intl = useIntl();
+export const UnitInfoSettings = () => {
   const { sendMessageToIframe } = useIframe();
   const {
     id,
@@ -81,110 +80,18 @@ const UnitInfoSettings = () => {
     userPartitionInfo,
   } = useSelector(getCourseUnitData);
 
-  const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
-
-  const handleUpdate = async (
-    isVisible: boolean,
-    groupAccess: Record<string, any> | null,
-    isDiscussionEnabled: boolean,
-  ) => {
-    // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-    await dispatch(editCourseUnitVisibilityAndData(
-      id,
-      PUBLISH_TYPES.republish,
-      isVisible,
-      groupAccess,
-      isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
-      id,
-    ));
+  const updateCallback = () => {
+    sendMessageToIframe(messageTypes.refreshXBlock, null);
   };
-
-  const handleSaveGroups = async (data, { resetForm }) => {
-    const groupAccess = {};
-    if (data.selectedPartitionIndex >= 0) {
-      const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
-      groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
-    }
-    await handleUpdate(visibleToStaffOnly, groupAccess, discussionEnabled);
-    resetForm({ values: data });
-  };
-
-  /* istanbul ignore next */
-  const getSelectedGroups = () => {
-    if (userPartitionInfo?.selectedPartitionIndex >= 0) {
-      return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
-        ?.groups
-        .filter(({ selected }) => selected)
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        .map(({ id }) => `${id}`)
-        || [];
-    }
-    return [];
-  };
-
-  const initialValues = useMemo(() => (
-    {
-      selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
-      selectedGroups: getSelectedGroups(),
-    }
-  ), [userPartitionInfo]);
 
   return (
-    <SidebarContent>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoVisibilityTitle)}
-      >
-        <ButtonGroup toggle>
-          <Button
-            variant={visibleToStaffOnly ? 'outline-primary' : 'primary'}
-            onClick={() => handleUpdate(false, null, discussionEnabled)}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
-          </Button>
-          <Button
-            variant={visibleToStaffOnly ? 'primary' : 'outline-primary'}
-            onClick={() => handleUpdate(true, null, discussionEnabled)}
-          >
-            <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
-          </Button>
-        </ButtonGroup>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
-      >
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSaveGroups}
-        >
-          {({
-            values, setFieldValue, dirty,
-          }) => (
-            <Form>
-              <AccessEditComponent
-                selectedPartitionIndex={values.selectedPartitionIndex}
-                setFieldValue={setFieldValue}
-                userPartitionInfo={userPartitionInfo}
-                selectedGroups={values.selectedGroups}
-              />
-              {dirty && (
-                <Button className="mt-3" type="submit" variant="primary">
-                  <FormattedMessage {...messages.visibilitySaveGroupsButton} />
-                </Button>
-              )}
-            </Form>
-          )}
-        </Formik>
-      </SidebarSection>
-      <SidebarSection
-        title={intl.formatMessage(configureMessages.discussionEnabledSectionTitle)}
-      >
-        <DiscussionEditComponent
-          discussionEnabled={discussionEnabled}
-          handleDiscussionChange={(e) => handleUpdate(visibleToStaffOnly, null, e.target.checked)}
-        />
-      </SidebarSection>
-    </SidebarContent>
+    <GenericUnitInfoSettings
+      id={id}
+      visibilityState={visibilityState}
+      discussionEnabled={discussionEnabled}
+      userPartitionInfo={userPartitionInfo}
+      updateCallback={updateCallback}
+    />
   );
 };
 

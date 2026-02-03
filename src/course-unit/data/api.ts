@@ -45,13 +45,19 @@ export async function getVerticalData(unitId: string): Promise<object> {
  * Handles the visibility and data of a course unit, such as publishing, resetting to default values,
  * and toggling visibility to students.
  */
-export async function handleCourseUnitVisibilityAndData(
+export async function handleCourseUnitVisibilityAndData({
+  unitId,
+  type,
+  isVisible,
+  isDiscussionEnabled,
+  groupAccess,
+}: {
   unitId: string,
   type: string, // The action type (e.g., PUBLISH_TYPES.discardChanges).
   isVisible: boolean, // The visibility status for students.
   isDiscussionEnabled: boolean,
   groupAccess: Record<string, any> | null,
-): Promise<object> {
+}): Promise<object> {
   const body = {
     publish: groupAccess ? null : type,
     ...(type === PUBLISH_TYPES.republish ? {
