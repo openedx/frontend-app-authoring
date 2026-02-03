@@ -65,8 +65,8 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
-  const addSection = async (onSuccess?: (data: { locator: string; }) => void) => {
-    await handleAddSection.mutateAsync({
+  const addSection = (onSuccess?: (data: { locator: string; }) => void) => {
+    handleAddSection.mutate({
       type: ContainerType.Chapter,
       parentLocator: courseUsageKey,
       displayName: COURSE_BLOCK_NAMES.chapter.name,
@@ -82,8 +82,8 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     });
   };
 
-  const addSubsection = async (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
-    await handleAddSubsection.mutateAsync({
+  const addSubsection = (sectionId: string, onSuccess?: (data: { locator: string; }) => void) => {
+    handleAddSubsection.mutate({
       type: ContainerType.Sequential,
       parentLocator: sectionId,
       displayName: COURSE_BLOCK_NAMES.sequential.name,
@@ -99,8 +99,8 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     });
   };
 
-  const addUnit = async (subsectionId: string, sectionId?: string, onSettled?: () => void) => {
-    await handleAddAndOpenUnit.mutateAsync({
+  const addUnit = (subsectionId: string, sectionId?: string, onSettled?: () => void) => {
+    handleAddAndOpenUnit.mutate({
       type: ContainerType.Vertical,
       parentLocator: subsectionId,
       displayName: COURSE_BLOCK_NAMES.vertical.name,
