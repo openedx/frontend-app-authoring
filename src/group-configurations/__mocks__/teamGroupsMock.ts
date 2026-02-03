@@ -1,4 +1,4 @@
-import { AvailableGroup } from '../types';
+import { AvailableGroup } from '@src/group-configurations/types';
 
 const teamGroupsMock: AvailableGroup = {
   active: true,

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { AvailableGroup } from '../types';
-import ContentGroupCard from '../content-groups-section/ContentGroupCard';
+import { AvailableGroup } from '@src/group-configurations/types';
+import ContentGroupCard from '@src/group-configurations/content-groups-section/ContentGroupCard';
 
 interface TeamGroupsSectionProps {
   availableGroup: AvailableGroup;
