@@ -1,4 +1,6 @@
-module.exports = {
+import { AvailableGroup } from '../types';
+
+const teamGroupsMock: AvailableGroup = {
   active: true,
   description: 'Partition for segmenting users by team-set',
   groups: [
@@ -21,13 +23,13 @@ module.exports = {
     },
   ],
   id: 92768376,
-  usage: null,
   name: 'Team Group: My Group',
   parameters: {
-    course_id: 'course-v1:org+101+101',
-    team_set_id: '0ec11208-335f-4b48-9475-136f02cc30f3"',
+    courseId: 'course-v1:org+101+101',
   },
-  read_only: true,
+  readOnly: true,
   scheme: 'team',
   version: 3,
 };
+
+export default teamGroupsMock;
