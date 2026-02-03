@@ -241,7 +241,7 @@ const CourseUnit = () => {
   }
 
   return (
-    <UnitSidebarProvider>
+    <UnitSidebarProvider readOnly={readOnly}>
       <Container fluid className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>

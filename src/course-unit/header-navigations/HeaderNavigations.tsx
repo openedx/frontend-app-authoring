@@ -36,7 +36,7 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
     handleEdit,
   } = headerNavigationsActions;
 
-  const { setCurrentPageKey } = useUnitSidebarContext();
+  const { setCurrentPageKey, readOnly } = useUnitSidebarContext();
 
   const showNewDesignButtons = isUnitPageNewDesignEnabled();
 
@@ -56,13 +56,15 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
               >
                 {intl.formatMessage(messages.infoButton)}
               </Button>
-              <Button
-                variant="outline-primary"
-                iconBefore={Add}
-                onClick={() => setCurrentPageKey('add')}
-              >
-                {intl.formatMessage(messages.addButton)}
-              </Button>
+              {!readOnly && (
+                <Button
+                  variant="outline-primary"
+                  iconBefore={Add}
+                  onClick={() => setCurrentPageKey('add')}
+                >
+                  {intl.formatMessage(messages.addButton)}
+                </Button>
+              )}
             </>
           )}
           <ButtonGroup>

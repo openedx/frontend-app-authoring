@@ -296,7 +296,7 @@ const AddLibraryContent = () => {
     <MultiLibraryProvider>
       <ComponentPicker
         showOnlyPublished
-        extraFilter={['NOT block_type = "unit"', 'NOT block_type = "section"', 'NOT block_type = "subsection"']}
+        extraFilter={['type = "library_block"']}
         visibleTabs={[ContentType.home]}
         FiltersComponent={SidebarFilters}
         onComponentSelected={handleSelection}

@@ -15,11 +15,18 @@ interface UnitSidebarContextData {
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
+  readOnly: boolean;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
-export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
+export const UnitSidebarProvider = ({
+  children,
+  readOnly = false,
+}: {
+  children?: React.ReactNode,
+  readOnly?: boolean,
+}) => {
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
@@ -40,6 +47,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     }),
     [
       currentPageKey,
@@ -49,6 +57,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     ],
   );
 

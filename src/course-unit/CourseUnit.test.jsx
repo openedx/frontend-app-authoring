@@ -3202,4 +3202,40 @@ describe('<CourseUnit />', () => {
       });
     });
   });
+
+  it('not render add sidebar in units from libraries (read-only)', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          upstreamInfo: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstreamRef: 'lct:org:lib:unit:unit-1',
+            upstreamLink: 'some-link',
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
+
+    // Does not render the "Add Components" section
+    expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
+
+    // Does not render the Add button in the header to open the add sidebar
+    expect(screen.queryByText('Add')).not.toBeInTheDocument();
+
+    // Does not render the Add button in the navbar.
+    const sidebarToggle = await screen.findByTestId('sidebar-toggle');
+    expect(sidebarToggle).toBeInTheDocument();
+    expect(within(sidebarToggle).queryByRole('button', { name: 'Add' })).not.toBeInTheDocument();
+  });
 });
