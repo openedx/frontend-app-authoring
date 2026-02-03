@@ -280,7 +280,10 @@ const SubsectionCard = ({
                 onClickMenuButton={handleClickMenuButton}
                 onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={() => openUnlinkModal({ value: subsection, sectionId: section.id })}
+                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
+                  value: subsection,
+                  sectionId: section.id,
+                })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}

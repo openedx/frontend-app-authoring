@@ -272,8 +272,10 @@ const SectionCard = ({
                 status={sectionStatus}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                // istanbul ignore next
-                onClickPublish={() => openPublishModal({ value: section, sectionId: section.id })}
+                onClickPublish={/* istanbul ignore next */ () => openPublishModal({
+                  value: section,
+                  sectionId: section.id,
+                })}
                 onClickConfigure={onOpenConfigureModal}
                 onClickDelete={onOpenDeleteModal}
                 onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}

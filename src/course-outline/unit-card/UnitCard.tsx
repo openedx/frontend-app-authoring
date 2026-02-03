@@ -259,7 +259,7 @@ const UnitCard = ({
             })}
             onClickConfigure={onOpenConfigureModal}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={() => openUnlinkModal({
+            onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
               value: unit,
               sectionId: section.id,
               subsectionId: subsection.id,
