@@ -1,15 +1,16 @@
 import userEvent from '@testing-library/user-event';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { render, initializeMocks, screen } from '@src/testUtils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import HeaderNavigations from './HeaderNavigations';
 import messages from './messages';
-import { UnitSidebarProvider } from '../unit-sidebar/UnitSidebarContext';
 
 const handleViewLiveFn = jest.fn();
 const handlePreviewFn = jest.fn();
 const handleEditFn = jest.fn();
+const mockSetCurrentPageKey = jest.fn();
 
 const headerNavigationsActions = {
   handleViewLive: handleViewLiveFn,
@@ -25,10 +26,14 @@ const renderComponent = (props) => render(
       {...props}
     />
   </IntlProvider>,
-  {
-    extraWrapper: UnitSidebarProvider,
-  },
 );
+
+jest.mock('../unit-sidebar/UnitSidebarContext', () => ({
+  useUnitSidebarContext: () => ({
+    readOnly: false,
+    setCurrentPageKey: mockSetCurrentPageKey,
+  }),
+}));
 
 describe('<HeaderNavigations />', () => {
   beforeEach(() => {
@@ -71,5 +76,37 @@ describe('<HeaderNavigations />', () => {
         expect(screen.queryByRole('button', { name: btnName })).not.toBeInTheDocument();
       });
     });
+  });
+
+  it('click Info button should open info sidebar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+
+    const user = userEvent.setup();
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
+
+    const infoButton = screen.getByRole('button', { name: /unit info/i });
+    expect(infoButton).toBeInTheDocument();
+    await user.click(infoButton);
+
+    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('info');
+  });
+
+  it('click Add button should open add sidebar', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+
+    const user = userEvent.setup();
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
+
+    const addButton = screen.getByRole('button', { name: /add/i });
+    expect(addButton).toBeInTheDocument();
+    await user.click(addButton);
+
+    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('add');
   });
 });

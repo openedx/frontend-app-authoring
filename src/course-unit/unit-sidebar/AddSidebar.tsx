@@ -156,6 +156,8 @@ const AddNewContent = () => {
         handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
         break;
       default:
+        /* istanbul ignore next */
+        break;
     }
   }, [blockId]);
 
