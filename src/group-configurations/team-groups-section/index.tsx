@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AvailableGroup } from '../constants';
+import { AvailableGroup } from '../types';
 import ContentGroupCard from '../content-groups-section/ContentGroupCard';
 
 interface TeamGroupsSectionProps {
