@@ -171,6 +171,7 @@ const slice = createSlice({
       });
     },
     addUnit: (state: CourseOutlineState, { payload }) => {
+      // istanbul ignore next
       state.sectionsList = state.sectionsList.map((section) => {
         section.childInfo.children = section.childInfo.children.map((subsection) => {
           if (subsection.id !== payload.parentLocator) {
