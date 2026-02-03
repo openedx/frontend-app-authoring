@@ -582,12 +582,11 @@ describe('<CourseUnit />', () => {
     } = courseSectionVerticalMock;
 
     const viewLiveButton = await screen.findByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
-
     await user.click(viewLiveButton);
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
 
-    const previewButton = screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
+    const previewButton = await screen.findByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
     await user.click(previewButton);
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
@@ -664,16 +663,14 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
       .reply(500, {});
-    const { getByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(async () => {
-      const videoButton = getByRole('button', {
-        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
-      });
-
-      await user.click(videoButton);
-      expect(mockedUsedNavigate).not.toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
+    const videoButton = await screen.findByRole('button', {
+      name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
     });
+
+    await user.click(videoButton);
+    expect(mockedUsedNavigate).not.toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
   });
 
   it('handle creating Problem xblock and showing editor modal', async () => {
@@ -683,9 +680,7 @@ describe('<CourseUnit />', () => {
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
-    });
+    await user.click(await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
