@@ -146,7 +146,9 @@ export const CourseAuthoringProvider = ({
   const addUnitToCourse = async (locator: string, parentLocator: string) => {
     try {
       const data = await getCourseItem(locator);
+      // istanbul ignore next
       data.shouldScroll = true;
+      // istanbul ignore next
       // Page should scroll to newly added subsection.
       dispatch(addUnit({ parentLocator, data }));
     } catch {

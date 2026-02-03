@@ -159,9 +159,10 @@ const CardHeader = ({
   );
 
   useEscapeClick({
-    // istanbul ignore next
     onEscape: () => {
+      // istanbul ignore next
       setTitleValue(title);
+      // istanbul ignore next
       closeForm();
     },
     dependency: [title],

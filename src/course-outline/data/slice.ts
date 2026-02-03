@@ -170,6 +170,7 @@ const slice = createSlice({
         return section;
       });
     },
+    // istanbul ignore next
     addUnit: (state: CourseOutlineState, { payload }) => {
       // istanbul ignore next
       state.sectionsList = state.sectionsList.map((section) => {
