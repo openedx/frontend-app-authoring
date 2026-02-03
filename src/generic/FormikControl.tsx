@@ -12,6 +12,8 @@ interface Props {
   value: string | number;
 }
 
+// Because <Form.Control> is only typed as 'any' in Paragon so far, the props of the following become 'any' :/
+// oxlint-disable-next-line @typescript-eslint(no-redundant-type-constituents
 const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>> = ({
   name,
   // eslint-disable-next-line react/jsx-no-useless-fragment

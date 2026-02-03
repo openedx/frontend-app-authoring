@@ -14,6 +14,7 @@
     "i18n_extract": "fedx-scripts formatjs extract --include=plugins",
     "stylelint": "stylelint \"plugins/**/*.scss\" \"src/**/*.scss\" \"scss/**/*.scss\" --config .stylelintrc.json",
     "lint": "npm run stylelint && fedx-scripts eslint --ext .js --ext .jsx --ext .ts --ext .tsx .",
+    "oxlint": "oxlint --type-aware --deny-warnings",
     "lint:fix": "npm run stylelint -- --fix && fedx-scripts eslint --fix --ext .js --ext .jsx --ext .ts --ext .tsx .",
     "start": "fedx-scripts webpack-dev-server --progress",
     "start:with-theme": "paragon install-theme && npm start && npm install",
@@ -60,7 +61,7 @@
     "@openedx-plugins/course-app-wiki": "file:plugins/course-apps/wiki",
     "@openedx-plugins/course-app-xpert_unit_summary": "file:plugins/course-apps/xpert_unit_summary",
     "@openedx/frontend-build": "^14.6.2",
-    "@openedx/frontend-plugin-framework": "^1.7.0",
+    "@openedx/frontend-plugin-framework": "^1.8.0",
     "@openedx/paragon": "^23.5.0",
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "2.11.2",
@@ -116,6 +117,8 @@
     "fetch-mock-jest": "^1.5.1",
     "jest-canvas-mock": "^2.5.2",
     "jest-expect-message": "^1.1.3",
+    "oxlint": "^1.42.0",
+    "oxlint-tsgolint": "^0.11.2",
     "react-test-renderer": "^18.3.1",
     "redux-mock-store": "^1.5.4"
   }

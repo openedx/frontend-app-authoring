@@ -27,7 +27,7 @@ const courseId = '1234567890';
 const closeModalMockFn = jest.fn() as jest.MockedFunction<() => void>;
 const openModalMockFn = jest.fn() as jest.MockedFunction<() => void>;
 const scrollToMockFn = jest.fn() as jest.MockedFunction<() => void>;
-const sections: IXBlock[] | any = camelCaseObject(courseOutlineInfoMock)?.childInfo.children || [];
+const sections: IXBlock[] = camelCaseObject(courseOutlineInfoMock)?.childInfo.children || [];
 const subsections: IXBlock[] = sections[1]?.childInfo?.children || [];
 const units: IXBlock[] = subsections[1]?.childInfo?.children || [];
 const components: IXBlock[] = units[0]?.childInfo?.children || [];

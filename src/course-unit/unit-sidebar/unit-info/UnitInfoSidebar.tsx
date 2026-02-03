@@ -85,7 +85,7 @@ const UnitInfoSettings = () => {
 
   const handleUpdate = async (
     isVisible: boolean,
-    groupAccess: Object | null,
+    groupAccess: Record<string, any> | null,
     isDiscussionEnabled: boolean,
   ) => {
     // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
@@ -95,12 +95,11 @@ const UnitInfoSettings = () => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
+      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
       id,
     ));
   };
 
-  /* istanbul ignore next */
   const handleSaveGroups = async (data, { resetForm }) => {
     const groupAccess = {};
     if (data.selectedPartitionIndex >= 0) {

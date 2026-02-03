@@ -78,7 +78,7 @@ describe('CodeEditor', () => {
     });
     describe('textArr is undefined', () => {
       it('returns empty array', () => {
-        let textArr;
+        const textArr = undefined;
         const diagnostics = hooks.syntaxChecker({ textArr, lang: 'html' });
         expect(diagnostics).toEqual([]);
       });
