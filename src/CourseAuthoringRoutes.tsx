@@ -11,7 +11,7 @@ import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
 import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
-import { CourseOutline } from './course-outline';
+import { CourseOutline, OutlineSidebarPagesProvider } from './course-outline';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -58,7 +58,13 @@ const CourseAuthoringRoutes = () => {
         <Routes>
           <Route
             path="/"
-            element={<PageWrap><CourseOutline /></PageWrap>}
+            element={(
+              <PageWrap>
+                <OutlineSidebarPagesProvider>
+                  <CourseOutline />
+                </OutlineSidebarPagesProvider>
+              </PageWrap>
+            )}
           />
           <Route
             path="course_info"
