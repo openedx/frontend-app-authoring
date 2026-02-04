@@ -49,9 +49,7 @@ interface OutlineSidebarContextData {
 
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
-const getLastEditableItem = (blockList: Array<XBlock>) => {
-  return findLast(blockList, (item) => item.actions.childAddable);
-};
+const getLastEditableItem = (blockList: Array<XBlock>) => findLast(blockList, (item) => item.actions.childAddable);
 
 const getLastEditableSubsection = (
   blockList: Array<XBlock>,

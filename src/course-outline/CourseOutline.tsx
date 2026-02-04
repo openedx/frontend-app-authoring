@@ -37,6 +37,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { OutlineSidebarPagesProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarPagesContext';
 import {
   getProctoredExamsFlag,
   getTimedExamsFlag,
@@ -64,7 +65,6 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
-import { OutlineSidebarPagesProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarPagesContext';
 
 const CourseOutline = () => {
   const intl = useIntl();

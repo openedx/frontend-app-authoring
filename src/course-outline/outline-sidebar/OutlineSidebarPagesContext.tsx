@@ -80,6 +80,8 @@ type OutlineSidebarPagesProviderProps = {
 };
 
 export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesProviderProps) => {
+  // align page is sometimes not added when getOutlineSidebarPages() is called at the top level.
+  // So if we call it inside the hook, getConfig has updated values and align page is added.
   const sidebarPages = useMemo(getOutlineSidebarPages, []);
 
   return (
