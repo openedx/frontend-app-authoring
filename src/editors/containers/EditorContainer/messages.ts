@@ -1,7 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
   cancelConfirmTitle: {
     id: 'authoring.editorContainer.cancelConfirm.title',
     defaultMessage: 'Exit the editor?',
@@ -56,6 +55,11 @@ const messages = defineMessages({
     id: 'authoring.editorfooter.savebutton.label',
     defaultMessage: 'Save',
     description: 'Label for Save button',
+  },
+  toggleFullscreenButtonLabel: {
+    id: 'authoring.editorfooter.toggleFullscreen.label',
+    defaultMessage: 'Toggle Fullscreen',
+    description: 'Label for toggle fullscreen button',
   },
 });
 
