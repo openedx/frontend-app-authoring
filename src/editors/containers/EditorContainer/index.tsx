@@ -8,39 +8,57 @@ import {
   IconButton,
   ModalDialog,
   Spinner,
+  Stack,
   Toast,
+  useToggle,
 } from '@openedx/paragon';
-import { Close } from '@openedx/paragon/icons';
+import { Close, Fullscreen, FullscreenExit } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+
+import { parseErrorMsg } from '@src/library-authoring/add-content/AddContent';
+import libraryMessages from '@src/library-authoring/add-content/messages';
+import usePromptIfDirty from '@src/generic/promptIfDirty/usePromptIfDirty';
 
 import { EditorComponent } from '../../EditorComponent';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
-import { parseErrorMsg } from '../../../library-authoring/add-content/AddContent';
-import libraryMessages from '../../../library-authoring/add-content/messages';
 
 import './index.scss';
-import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
 import CancelConfirmModal from './components/CancelConfirmModal';
 
 interface WrapperProps {
   children: React.ReactNode;
 }
 
-export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }> = ({ children, onClose }) => {
+export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void, fullscreen?: boolean }> = (
+  {
+    children,
+    onClose,
+    fullscreen = false,
+  },
+) => {
   const intl = useIntl();
 
   const title = intl.formatMessage(messages.modalTitle);
   return (
-    <ModalDialog isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
+    <ModalDialog
+      isOpen
+      onClose={onClose}
+      title={title}
+      size={fullscreen ? 'fullscreen' : 'xl'}
+      isOverflowVisible={false}
+      hasCloseButton={false}
+    >
+      {children}
+    </ModalDialog>
   );
 };
 
-export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{ children }</ModalDialog.Body>;
+export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => <ModalDialog.Body className="pb-0">{children}</ModalDialog.Body>;
 
 // eslint-disable-next-line react/jsx-no-useless-fragment
-export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{ children }</>;
+export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{children}</>;
 
 interface Props extends EditorComponent {
   children: React.ReactNode;
@@ -63,6 +81,7 @@ const EditorContainer: React.FC<Props> = ({
   const [saved, setSaved] = React.useState(false);
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
+  const [isFullscreen, , , toggleFullscreen] = useToggle(false);
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const { createFailed, createFailedError } = hooks.createFailed();
   const disableSave = !isInitialized;
@@ -97,8 +116,9 @@ const EditorContainer: React.FC<Props> = ({
       handleCancel();
     }
   };
+
   return (
-    <EditorModalWrapper onClose={confirmCancelIfDirty}>
+    <EditorModalWrapper onClose={confirmCancelIfDirty} fullscreen={isFullscreen}>
       {createFailed && (
         <Toast show onClose={clearCreateFailed}>
           {parseErrorMsg(
@@ -127,15 +147,27 @@ const EditorContainer: React.FC<Props> = ({
       />
       <ModalDialog.Header className="shadow-sm zindex-10">
         <div className="d-flex flex-row justify-content-between">
-          <h2 className="h3 col pl-0">
-            <TitleHeader isInitialized={isInitialized} />
-          </h2>
-          <IconButton
-            src={Close}
-            iconAs={Icon}
-            onClick={confirmCancelIfDirty}
-            alt={intl.formatMessage(messages.exitButtonAlt)}
-          />
+          <ActionRow>
+            <h2 className="h3 col pl-0">
+              <TitleHeader isInitialized={isInitialized} />
+            </h2>
+            <ActionRow.Spacer />
+            <Stack direction="horizontal" reversed>
+              <IconButton
+                src={Close}
+                iconAs={Icon}
+                onClick={confirmCancelIfDirty}
+                alt={intl.formatMessage(messages.exitButtonAlt)}
+                autoFocus
+              />
+              <IconButton
+                src={isFullscreen ? FullscreenExit : Fullscreen}
+                iconAs={Icon}
+                alt={intl.formatMessage(messages.toggleFullscreenButtonLabel)}
+                onClick={toggleFullscreen}
+              />
+            </Stack>
+          </ActionRow>
         </div>
       </ModalDialog.Header>
       <EditorModalBody>

@@ -1,7 +1,16 @@
 import React, { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle } from '@openedx/paragon';
+import {
+  ActionRow,
+  Icon,
+  IconButton,
+  ModalDialog,
+  ModalCloseButton,
+  Stack,
+  useToggle,
+} from '@openedx/paragon';
+import { Close, Fullscreen, FullscreenExit } from '@openedx/paragon/icons';
 
 import { LibraryBlock } from '../library-authoring/LibraryBlock';
 import { EditorModalWrapper } from './containers/EditorContainer';
@@ -10,6 +19,8 @@ import { ToastContext } from '../generic/toast-context';
 import messages from './messages';
 import CancelConfirmModal from './containers/EditorContainer/components/CancelConfirmModal';
 import { IframeProvider } from '../generic/hooks/context/iFrameContext';
+
+import editorModalWrapperMessages from './containers/EditorContainer/messages';
 
 interface AdvancedEditorProps {
   usageKey: string,
@@ -20,6 +31,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
   const intl = useIntl();
   const { showToast } = React.useContext(ToastContext);
   const [isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal] = useToggle(false);
+  const [isFullscreen, , , toggleFullscreen] = useToggle(false);
 
   useEffect(() => {
     const handleIframeMessage = (event) => {
@@ -49,7 +61,28 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
 
   return (
     <>
-      <EditorModalWrapper onClose={openCancelConfirmModal}>
+      <EditorModalWrapper onClose={openCancelConfirmModal} fullscreen={isFullscreen}>
+        <ModalDialog.Header>
+          <ActionRow>
+            <ModalDialog.Title>
+              {intl.formatMessage(editorModalWrapperMessages.modalTitle)}
+            </ModalDialog.Title>
+            <ActionRow.Spacer />
+            <Stack direction="horizontal" reversed>
+              <ModalCloseButton
+                as={IconButton}
+                src={Close}
+                iconAs={Icon}
+              />
+              <IconButton
+                src={isFullscreen ? FullscreenExit : Fullscreen}
+                iconAs={Icon}
+                alt={intl.formatMessage(messages.advancedEditorFullscreenButtonAlt)}
+                onClick={toggleFullscreen}
+              />
+            </Stack>
+          </ActionRow>
+        </ModalDialog.Header>
         <IframeProvider>
           <LibraryBlock
             usageKey={usageKey}
