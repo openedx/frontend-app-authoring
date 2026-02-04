@@ -84,7 +84,7 @@ const UpstreamInfoIconContent = ({
       key={`upstream-icon-${upstreamInfo.upstreamRef}`}
       placement="top"
       overlay={(
-        <Tooltip id={`upstream-icon-tooltip-${upstreamInfo.upstreamRef}`}>
+        <Tooltip className="upstream-info-tooltip" id={`upstream-icon-tooltip-${upstreamInfo.upstreamRef}`}>
           {tooltipMessage}
         </Tooltip>
       )}
