@@ -3,6 +3,7 @@ import {
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
+import { OutlineSidebarPagesProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarPagesContext';
 import { Textbooks } from './textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';

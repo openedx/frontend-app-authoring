@@ -37,7 +37,6 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import LegacyLibContentBlockAlert from '@src/course-libraries/LegacyLibContentBlockAlert';
 import { ContainerType } from '@src/generic/key-utils';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { OutlineSidebarPagesProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarPagesContext';
 import {
   getProctoredExamsFlag,
   getTimedExamsFlag,

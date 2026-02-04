@@ -9,6 +9,7 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
 import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
 import OutlineSidebar from './OutlineSidebar';
+import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
 
 // Mock the useCourseDetails hook
 jest.mock('@src/course-outline/data/apiHooks', () => ({
