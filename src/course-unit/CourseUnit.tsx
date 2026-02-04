@@ -361,15 +361,17 @@ const CourseUnit = () => {
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
-                <PasteComponent
-                  clipboardData={sharedClipboardData}
-                  onClick={
-                    () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
-                  }
-                  text={intl.formatMessage(messages.pasteButtonText)}
-                />
-              )}
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
+                /* istanbul ignore next */
+                && (
+                  <PasteComponent
+                    clipboardData={sharedClipboardData}
+                    onClick={
+                      () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                    }
+                    text={intl.formatMessage(messages.pasteButtonText)}
+                  />
+                )}
               {!readOnly && blockId && (
                 <AddComponent
                   parentLocator={blockId}

@@ -285,8 +285,10 @@ export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string })
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
 
-  return (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
-    dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
+  // oxlint-disable typescript-eslint(await-thenable)
+  return async (body: object, callback?: (args: { courseKey: string, locator: string }) => void) => (
+    // eslint-disable-next-line @typescript-eslint/return-await
+    await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );
 };
 

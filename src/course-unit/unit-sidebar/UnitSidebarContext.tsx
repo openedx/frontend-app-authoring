@@ -22,10 +22,10 @@ const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(und
 
 export const UnitSidebarProvider = ({
   children,
-  readOnly = false,
+  readOnly,
 }: {
   children?: React.ReactNode,
-  readOnly?: boolean,
+  readOnly: boolean,
 }) => {
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [currentTabKey, setCurrentTabKey] = useState<string>();

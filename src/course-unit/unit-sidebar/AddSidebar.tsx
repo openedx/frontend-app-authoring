@@ -111,13 +111,14 @@ const AddNewContent = () => {
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
   }, [closeXBlockEditorModal, sendMessageToIframe, blockId, sequenceId]);
 
+  /* eslint-disable no-void */
   const handleSelection = useCallback((type: string, moduleName?: string) => {
     switch (type) {
       case COMPONENT_TYPES.dragAndDrop:
-        handleCreateXBlock({ type, parentLocator: blockId });
+        void handleCreateXBlock({ type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.problem:
-        handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
+        void handleCreateXBlock({ type, parentLocator: blockId }, ({ locator }) => {
           setEditorExtraProps({ problemType: moduleName });
           setBlockType(type);
           setNewBlockId(locator);
@@ -125,7 +126,7 @@ const AddNewContent = () => {
         });
         break;
       case COMPONENT_TYPES.video:
-        handleCreateXBlock(
+        void handleCreateXBlock(
           { type, parentLocator: blockId },
           /* istanbul ignore next */ ({ locator }) => {
             setBlockType(type);
@@ -139,10 +140,10 @@ const AddNewContent = () => {
         );
         break;
       case COMPONENT_TYPES.openassessment:
-        handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
+        void handleCreateXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;
       case COMPONENT_TYPES.html:
-        handleCreateXBlock({
+        void handleCreateXBlock({
           type,
           boilerplate: moduleName,
           parentLocator: blockId,
@@ -153,10 +154,10 @@ const AddNewContent = () => {
         });
         break;
       case COMPONENT_TYPES.advanced:
-        handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        void handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
         break;
+      /* istanbul ignore next */
       default:
-        /* istanbul ignore next */
         break;
     }
   }, [blockId]);
@@ -285,8 +286,8 @@ const AddLibraryContent = () => {
 
   const handleCreateXBlock = useHandleCreateNewCourseXBlock({ blockId });
 
-  const handleSelection = useCallback((selection: SelectedComponent) => {
-    handleCreateXBlock({
+  const handleSelection = useCallback(async (selection: SelectedComponent) => {
+    await handleCreateXBlock({
       type: COMPONENT_TYPES.libraryV2,
       category: selection.blockType,
       parentLocator: blockId,
