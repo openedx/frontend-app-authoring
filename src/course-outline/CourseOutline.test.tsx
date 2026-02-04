@@ -18,7 +18,8 @@ import {
 } from '@src/testUtils';
 import { XBlock } from '@src/data/types';
 import { userEvent } from '@testing-library/user-event';
-import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { OutlineSidebarProvider } from './outline-sidebar/OutlineSidebarContext';
+import { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
