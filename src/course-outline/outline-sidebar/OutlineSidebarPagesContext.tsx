@@ -19,7 +19,7 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-const getOutlineSidebarPages = () => ({
+export const getOutlineSidebarPages = () => ({
   info: {
     component: InfoSidebar,
     icon: Info,
@@ -55,23 +55,21 @@ const getOutlineSidebarPages = () => ({
  * export function CourseOutlineSidebarWrapper(
  *   { component, pluginProps }: { component: React.ReactNode, pluginProps: CourseOutlineAspectsPageProps },
  * ) {
- *  const sidebarPages = useOutlineSidebarPagesContext();
  *
  *  const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
  *
- *  const overridedPages = useMemo(() => ({
- *    ...sidebarPages,
+ *  const additionalPages = useMemo(() => ({
  *    analytics: {
  *      component: AnalyticsPage,
  *      icon: AutoGraph,
  *      title: messages.analyticsLabel,
  *    },
- *  }), [sidebarPages, AnalyticsPage]);
+ *  }), [AnalyticsPage]);
  *
  *  return (
- *    <OutlineSidebarPagesContext.Provider value={overridedPages}>
+ *    <OutlineSidebarPagesProvider pages={additionalPages}>
  *      {component}
- *    </OutlineSidebarPagesContext.Provider>
+ *    </OutlineSidebarPagesProvider>
  *  );
  *}
  */

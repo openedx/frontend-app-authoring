@@ -17,6 +17,7 @@ import { getSectionsList } from '@src/course-outline/data/selectors';
 import { findLast, findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
 import { isOutlineNewDesignEnabled } from '../utils';
+import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
 
 export type OutlineSidebarPageKeys = 'help' | 'info' | 'add' | 'align';
 export type OutlineFlow = {
@@ -216,9 +217,11 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
   );
 
   return (
-    <OutlineSidebarContext.Provider value={context}>
-      {children}
-    </OutlineSidebarContext.Provider>
+    <OutlineSidebarPagesProvider>
+      <OutlineSidebarContext.Provider value={context}>
+        {children}
+      </OutlineSidebarContext.Provider>
+    </OutlineSidebarPagesProvider>
   );
 };
 

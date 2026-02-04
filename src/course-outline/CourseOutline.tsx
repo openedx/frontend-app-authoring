@@ -64,6 +64,7 @@ import OutlineAddChildButtons from './OutlineAddChildButtons';
 import { StatusBar } from './status-bar/StatusBar';
 import { LegacyStatusBar } from './status-bar/LegacyStatusBar';
 import { isOutlineNewDesignEnabled } from './utils';
+import { OutlineSidebarPagesProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarPagesContext';
 
 const CourseOutline = () => {
   const intl = useIntl();
