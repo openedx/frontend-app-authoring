@@ -14,7 +14,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useSelector } from 'react-redux';
 import { getSectionsList } from '@src/course-outline/data/selectors';
-import { findLastIndex } from 'lodash';
+import { findLast, findLastIndex } from 'lodash';
 import { ContainerType } from '@src/generic/key-utils';
 import { isOutlineNewDesignEnabled } from '../utils';
 
@@ -41,7 +41,7 @@ interface OutlineSidebarContextData {
   /** Stores last section that allows adding subsections inside it. */
   lastEditableSection?: XBlock;
   /** Stores last subsection that allows adding units inside it and its parent sectionId */
-  lastEditableSubsection?: { data: XBlock, sectionId?: string };
+  lastEditableSubsection?: { data?: XBlock, sectionId?: string };
   /** XBlock data of selectedContainerState.currentId */
   currentItemData?: XBlock;
 }
@@ -49,8 +49,7 @@ interface OutlineSidebarContextData {
 const OutlineSidebarContext = createContext<OutlineSidebarContextData | undefined>(undefined);
 
 const getLastEditableItem = (blockList: Array<XBlock>) => {
-  const lastIndex = findLastIndex(blockList, (item) => item.actions.childAddable);
-  return blockList[lastIndex];
+  return findLast(blockList, (item) => item.actions.childAddable);
 };
 
 const getLastEditableSubsection = (

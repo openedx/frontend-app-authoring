@@ -3,7 +3,6 @@ import { ContentTagsDrawer } from '@src/content-tags-drawer';
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SidebarTitle } from '@src/generic/sidebar';
-import { useMemo } from 'react';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 
 export const OutlineAlignSidebar = () => {
@@ -14,11 +13,7 @@ export const OutlineAlignSidebar = () => {
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
-  const sidebarContentId = useMemo(() => currentSelection?.currentId || selectedContainerState?.currentId || courseId, [
-    currentSelection,
-    selectedContainerState,
-    courseId,
-  ]);
+  const sidebarContentId = currentSelection?.currentId || selectedContainerState?.currentId || courseId;
 
   const { data: contentData } = useContentData(sidebarContentId);
 

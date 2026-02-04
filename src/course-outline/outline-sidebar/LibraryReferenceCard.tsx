@@ -200,7 +200,7 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
       upstreamBlockId: syncModalData.upstreamInfo.upstreamRef,
       upstreamBlockVersionSynced: syncModalData.upstreamInfo.versionSynced,
       isReadyToSyncIndividually: syncModalData.upstreamInfo.isReadyToSyncIndividually,
-      isContainer: syncModalData.category === 'vertical' || syncModalData.category === 'sequential' || syncModalData.category === 'chapter',
+      isContainer: ['vertical', 'sequential', 'chapter'].includes(syncModalData.category),
       blockType: normalizeContainerType(syncModalData.category),
     };
   }, [syncModalData]);

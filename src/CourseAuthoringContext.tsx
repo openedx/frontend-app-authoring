@@ -3,7 +3,7 @@ import {
   createContext, useContext, useMemo, useState,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { courseOutlineQueryKeys, useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
+import { useCreateCourseBlock } from '@src/course-outline/data/apiHooks';
 import { getCourseItem } from '@src/course-outline/data/api';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';
 import { SelectionState, XBlock } from '@src/data/types';
-import { useQueryClient } from '@tanstack/react-query';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatus, RequestStatusType } from './data/constants';
@@ -94,7 +93,6 @@ export const CourseAuthoringProvider = ({
   * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
   */
   const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
-  const queryClient = useQueryClient();
 
   const getUnitUrl = (locator: string) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
@@ -108,9 +106,6 @@ export const CourseAuthoringProvider = ({
    * Open the unit page for a given locator.
    */
   const openUnitPage = async (locator: string) => {
-    queryClient.invalidateQueries({
-      queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
-    });
     const url = getUnitUrl(locator);
     if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
       // instanbul ignore next

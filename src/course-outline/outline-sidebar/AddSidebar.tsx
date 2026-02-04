@@ -99,19 +99,14 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     });
   };
 
-  const addUnit = (subsectionId: string, sectionId?: string, onSettled?: () => void) => {
+  const addUnit = (subsectionId: string, sectionId?: string) => {
     handleAddAndOpenUnit.mutate({
       type: ContainerType.Vertical,
       parentLocator: subsectionId,
       displayName: COURSE_BLOCK_NAMES.vertical.name,
     }, {
       onSettled: () => {
-        // istanbul ignore next
-        if (onSettled) {
-          onSettled();
-        } else {
-          queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
-        }
+        queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
       },
     });
   };
@@ -164,15 +159,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastEditableSubsection,
   ]);
 
-  const disabled = useMemo(() => (
-    handleAddSection.isPending
-    || handleAddSubsection.isPending
-    || handleAddAndOpenUnit.isPending
-  ), [
-    handleAddSection,
-    handleAddSubsection,
-    handleAddAndOpenUnit,
-  ]);
+  const disabled = handleAddSection.isPending || handleAddSubsection.isPending || handleAddAndOpenUnit.isPending;
 
   return (
     <Button

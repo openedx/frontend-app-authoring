@@ -111,7 +111,8 @@ const CardHeader = ({
 
   const openManageTagsDrawer = useCallback(() => {
     const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
-    if (showNewSidebar) {
+    const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
+    if (showNewSidebar && showAlignSidebar) {
       setCurrentPageKey('align');
       onClickMenuButton();
     } else {
