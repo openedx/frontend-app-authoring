@@ -173,18 +173,19 @@ const CardHeader = ({
         itemId: cardId,
         displayName: titleValue,
       }, {
-        onSuccess: () => {
-          closeForm();
-          queryClient.invalidateQueries({
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
             queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
           });
-          queryClient.invalidateQueries({
+          await queryClient.invalidateQueries({
             queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.subsectionId),
           });
         },
+        onSettled: () => closeForm(),
       });
+    } else {
+      closeForm();
     }
-    closeForm();
   }, [title, titleValue, cardId, editMutation]);
 
   return (
@@ -233,7 +234,6 @@ const CardHeader = ({
               tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
               iconAs={EditIcon}
               onClick={onEditClick}
-              // @ts-ignore
               disabled={editMutation.isPending}
             />
           </Stack>

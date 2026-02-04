@@ -73,10 +73,10 @@ export const useUpdateCourseBlockName = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editItemDisplayName,
-    onSettled: async (_data, _err, variables) => {
-      queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
-      queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({ queryKey: containerComparisonQueryKeys.course(courseId) });
+      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseDetails(courseId) });
+      await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.itemId) });
     },
   });
 };

@@ -202,8 +202,6 @@ export async function updateCourseSectionHighlights(
 
 /**
  * Publish course item
- * @param {string} itemId
- * @returns {Promise<Object>}
  */
 export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
