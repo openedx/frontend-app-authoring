@@ -37,9 +37,9 @@ jest.mock('@src/CourseAuthoringContext', () => ({
   }),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: () => ({
+jest.mock('@src/studio-home/data/selectors', () => ({
+  ...jest.requireActual('@src/studio-home/data/selectors'),
+  getStudioHomeData: () => ({
     librariesV2Enabled: true,
   }),
 }));
@@ -82,9 +82,7 @@ const subsection: XBlock = {
   isHeaderVisible: true,
   releasedToStudents: true,
   childInfo: {
-    children: [{
-      id: unit.id,
-    }],
+    children: [unit],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
@@ -106,9 +104,7 @@ const section: XBlock = {
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
   childInfo: {
-    children: [{
-      id: subsection.id,
-    }],
+    children: [subsection],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   actions: {
     draggable: true,

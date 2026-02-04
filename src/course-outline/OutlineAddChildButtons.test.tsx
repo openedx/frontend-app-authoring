@@ -7,9 +7,11 @@ import {
 import { OutlineFlow, OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import OutlineAddChildButtons from './OutlineAddChildButtons';
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn().mockReturnValue({ librariesV2Enabled: true }),
+jest.mock('@src/studio-home/data/selectors', () => ({
+  ...jest.requireActual('@src/studio-home/data/selectors'),
+  getStudioHomeData: () => ({
+    librariesV2Enabled: true,
+  }),
 }));
 
 const handleAddSection = { mutateAsync: jest.fn() };
