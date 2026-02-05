@@ -7,6 +7,7 @@ import {
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 import { OutlineSidebarProvider } from './OutlineSidebarContext';
+import { OutlineSidebarPagesProvider } from './OutlineSidebarPagesContext';
 import OutlineSidebar from './OutlineSidebar';
 
 // Mock the useCourseDetails hook
@@ -19,9 +20,11 @@ const courseId = '123';
 
 const extraWrapper = ({ children }) => (
   <CourseAuthoringProvider courseId={courseId}>
-    <OutlineSidebarProvider>
-      {children}
-    </OutlineSidebarProvider>
+    <OutlineSidebarPagesProvider>
+      <OutlineSidebarProvider>
+        {children}
+      </OutlineSidebarProvider>
+    </OutlineSidebarPagesProvider>
   </CourseAuthoringProvider>
 );
 

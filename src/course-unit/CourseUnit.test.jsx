@@ -581,17 +581,16 @@ describe('<CourseUnit />', () => {
       published_preview_link: publishedPreviewLink,
     } = courseSectionVerticalMock;
 
-    await waitFor(async () => {
-      const viewLiveButton = screen.getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
-      await user.click(viewLiveButton);
-      expect(window.open).toHaveBeenCalled();
-      expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
+    const viewLiveButton = await screen.findByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
 
-      const previewButton = screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
-      await user.click(previewButton);
-      expect(window.open).toHaveBeenCalled();
-      expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
-    });
+    await user.click(viewLiveButton);
+    expect(window.open).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
+
+    const previewButton = screen.getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
+    await user.click(previewButton);
+    expect(window.open).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
 
     window.open = open;
   });
@@ -870,9 +869,8 @@ describe('<CourseUnit />', () => {
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
-    await waitFor(async () => {
-      await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage }));
-    });
+    const publishButton = await screen.findByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage });
+    await user.click(publishButton);
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {

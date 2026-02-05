@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
   HelpOutline, Info, Plus, Tag,
@@ -19,15 +19,18 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
-
-const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
+const getOutlineSidebarPages = () => ({
   info: {
     component: OutlineInfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },
-  ...(showAlignSidebar && {
+  add: {
+    component: AddSidebar,
+    icon: Plus,
+    title: messages.sidebarButtonAdd,
+  },
+  ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && {
     align: {
       component: OutlineAlignSidebar,
       icon: Tag,
@@ -39,12 +42,7 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
     icon: HelpOutline,
     title: messages.sidebarButtonHelp,
   },
-  add: {
-    component: AddSidebar,
-    icon: Plus,
-    title: messages.sidebarButtonAdd,
-  },
-};
+});
 
 /**
  * Context for the Outline Sidebar Pages.
@@ -77,6 +75,24 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
  *  );
  *}
  */
-export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages>(OUTLINE_SIDEBAR_PAGES);
+export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages | undefined>(undefined);
 
-export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => useContext(OutlineSidebarPagesContext);
+type OutlineSidebarPagesProviderProps = {
+  children: React.ReactNode;
+};
+
+export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesProviderProps) => {
+  const sidebarPages = useMemo(getOutlineSidebarPages, []);
+
+  return (
+    <OutlineSidebarPagesContext.Provider value={sidebarPages}>
+      {children}
+    </OutlineSidebarPagesContext.Provider>
+  );
+};
+
+export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => {
+  const ctx = useContext(OutlineSidebarPagesContext);
+  if (ctx === undefined) { throw new Error('useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider'); }
+  return ctx;
+};
