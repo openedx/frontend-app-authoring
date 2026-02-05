@@ -305,37 +305,35 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
 
-    await waitFor(async () => {
-      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute(
-        'aria-label',
-        xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-          .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
-      );
+    const iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute(
+      'aria-label',
+      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
+        .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
+    );
 
-      simulatePostMessageEvent(messageTypes.deleteXBlock, {
-        usageId: courseVerticalChildrenMock.children[0].block_id,
-      });
-
-      expect(screen.getByText(/Delete this component?/i)).toBeInTheDocument();
-      expect(screen.getByText(/Deleting this component is permanent and cannot be undone./i)).toBeInTheDocument();
-
-      const dialog = screen.getByRole('dialog');
-      expect(dialog).toBeInTheDocument();
-
-      // Find the Cancel and Delete buttons within the iframe by their specific classes
-      const cancelButton = await within(dialog).findByRole('button', { name: /Cancel/i });
-      const deleteButton = await within(dialog).findByRole('button', { name: /Delete/i });
-
-      expect(cancelButton).toBeInTheDocument();
-
-      simulatePostMessageEvent(messageTypes.deleteXBlock, {
-        usageId: courseVerticalChildrenMock.children[0].block_id,
-      });
-
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-      await user.click(deleteButton);
+    simulatePostMessageEvent(messageTypes.deleteXBlock, {
+      usageId: courseVerticalChildrenMock.children[0].block_id,
     });
+
+    expect(await screen.findByText(/Delete this component?/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Deleting this component is permanent and cannot be undone./i)).toBeInTheDocument();
+
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+
+    // Find the Cancel and Delete buttons within the iframe by their specific classes
+    const cancelButton = await within(dialog).findByRole('button', { name: /Cancel/i });
+    const deleteButton = await within(dialog).findByRole('button', { name: /Delete/i });
+
+    expect(cancelButton).toBeInTheDocument();
+
+    simulatePostMessageEvent(messageTypes.deleteXBlock, {
+      usageId: courseVerticalChildrenMock.children[0].block_id,
+    });
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await user.click(deleteButton);
 
     axiosMock
       .onPost(getXBlockBaseApiUrl(blockId), {
@@ -355,17 +353,17 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
-    await waitFor(() => {
-      // check if the sidebar status is Published and Live
-      expect(screen.getByText(legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(
-        unitInfoMessages.publishLastPublished.defaultMessage
-          .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
-          .replace('{publishedBy}', userName),
-      )).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
-      expect(screen.getByText(unitDisplayName)).toBeInTheDocument();
-    });
+    // check if the sidebar status is Published and Live
+    expect(await screen.findByText(
+      legacySidebarMessages.sidebarTitlePublishedAndLive.defaultMessage,
+    )).toBeInTheDocument();
+    expect(await screen.findByText(
+      unitInfoMessages.publishLastPublished.defaultMessage
+        .replace('{publishedOn}', courseSectionVerticalMock.xblock_info.published_on)
+        .replace('{publishedBy}', userName),
+    )).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: legacySidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+    expect(await screen.findByText(unitDisplayName)).toBeInTheDocument();
 
     axiosMock
       .onDelete(getXBlockBaseApiUrl(courseVerticalChildrenMock.children[0].block_id))
@@ -397,35 +395,34 @@ describe('<CourseUnit />', () => {
       .reply(200, courseSectionVerticalMock);
     await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
 
-    await waitFor(() => {
-      const iframe = screen.getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute(
-        'aria-label',
-        xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-          .replace('{xblockCount}', updatedCourseVerticalChildren.length),
-      );
-      // after removing the xblock, the sidebar status changes to Draft (unpublished changes)
-      expect(screen.getByText(
-        legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
-      )).toBeInTheDocument();
-      expect(screen.getByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(
-        legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
-      )).toBeInTheDocument();
-      expect(screen.getByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
-      expect(screen.getByText(
-        unitInfoMessages.publishInfoDraftSaved.defaultMessage
-          .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
-          .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
-      )).toBeInTheDocument();
-      expect(screen.getByText(
-        legacySidebarMessages.releaseInfoWithSection.defaultMessage
-          .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
-      )).toBeInTheDocument();
-    });
+    expect(await screen.findByTitle(
+      xblockContainerIframeMessages.xblockIframeTitle.defaultMessage,
+    )).toHaveAttribute(
+      'aria-label',
+      xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
+        .replace('{xblockCount}', updatedCourseVerticalChildren.length),
+    );
+    // after removing the xblock, the sidebar status changes to Draft (unpublished changes)
+    expect(await screen.findByText(
+      legacySidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage,
+    )).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(unitInfoMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(legacySidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(
+      legacySidebarMessages.actionButtonDiscardChangesTitle.defaultMessage,
+    )).toBeInTheDocument();
+    expect(await screen.findByText(courseSectionVerticalMock.xblock_info.release_date)).toBeInTheDocument();
+    expect(await screen.findByText(
+      unitInfoMessages.publishInfoDraftSaved.defaultMessage
+        .replace('{editedOn}', courseSectionVerticalMock.xblock_info.edited_on)
+        .replace('{editedBy}', courseSectionVerticalMock.xblock_info.edited_by),
+    )).toBeInTheDocument();
+    expect(await screen.findByText(
+      legacySidebarMessages.releaseInfoWithSection.defaultMessage
+        .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
+    )).toBeInTheDocument();
   });
 
   it('checks if the xblock unlink is called when the corresponding unlink button is clicked', async () => {
