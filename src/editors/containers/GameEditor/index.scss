@@ -296,3 +296,8 @@ width: 100%;
   color: #51565C;
   margin-bottom: 8px;
 }
+
+.timer-toggle-button:focus::before,
+.shuffle-toggle-button:focus::before {
+	display: none;
+}

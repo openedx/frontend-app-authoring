@@ -367,14 +367,14 @@ export const GameEditor = ({
           <Button
             onClick={() => setTimerStatus(false)}
             variant={!settings.timer ? 'primary' : 'outline-primary'}
-            className="toggle-button rounded-0"
+            className="toggle-button rounded-0 timer-toggle-button"
           >
             {intl.formatMessage(messages.offLabel)}
           </Button>
           <Button
             onClick={() => setTimerStatus(true)}
             variant={settings.timer ? 'primary' : 'outline-primary'}
-            className="toggle-button rounded-0"
+            className="toggle-button rounded-0 timer-toggle-button"
           >
             {intl.formatMessage(messages.onLabel)}
           </Button>
@@ -668,14 +668,14 @@ export const GameEditor = ({
               <Button
                 onClick={() => setShuffleStatus(false)}
                 variant={!settings.shuffle ? 'primary' : 'outline-primary'}
-                className="toggle-button rounded-0"
+                className="toggle-button rounded-0 shuffle-toggle-button"
               >
                 {intl.formatMessage(messages.offLabel)}
               </Button>
               <Button
                 onClick={() => setShuffleStatus(true)}
                 variant={settings.shuffle ? 'primary' : 'outline-primary'}
-                className="toggle-button rounded-0"
+                className="toggle-button rounded-0 shuffle-toggle-button"
               >
                 {intl.formatMessage(messages.onLabel)}
               </Button>
