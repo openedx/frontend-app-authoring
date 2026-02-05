@@ -57,20 +57,21 @@ export const getOutlineSidebarPages = () => ({
  * ) {
  *
  *  const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
+ *  const sidebarPages = useOutlineSidebarPagesContext();
  *
- *  const additionalPages = useMemo(() => ({
+ *  const overridedPages = useMemo(() => ({
+ *    ...sidebarPages,
  *    analytics: {
  *      component: AnalyticsPage,
  *      icon: AutoGraph,
  *      title: messages.analyticsLabel,
  *    },
- *  }), [AnalyticsPage]);
+ *  }), [sidebarPages, AnalyticsPage]);
  *
  *  return (
- *    <OutlineSidebarPagesProvider pages={additionalPages}>
+ *    <OutlineSidebarPagesContext.Provider value={overridedPages}>
  *      {component}
- *    </OutlineSidebarPagesProvider>
- *  );
+ *    </OutlineSidebarPagesContext.Provider>
  *}
  */
 export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages | undefined>(undefined);
