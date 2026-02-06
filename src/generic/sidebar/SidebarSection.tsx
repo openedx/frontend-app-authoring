@@ -48,9 +48,9 @@ export const SidebarSection = ({
     <Stack direction="horizontal" gap={2}>
       {icon && <Icon src={icon} className="mr-1 text-primary" size="sm" />}
       {title && (
-      <h5 className="font-weight-bold text-primary mb-0 mt-1">
+      <h3 className="h5 font-weight-bold text-primary mb-0 mt-1">
         {title}
-      </h5>
+      </h3>
       )}
       {actions && (
         <Dropdown className="ml-auto">

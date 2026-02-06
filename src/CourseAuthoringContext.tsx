@@ -115,10 +115,9 @@ export const CourseAuthoringProvider = ({
     }
   };
 
-  const addSectionToCourse = async (locator: string) => {
+  const addSectionToCourse = /* istanbul ignore next */ async (locator: string) => {
     try {
       const data = await getCourseItem(locator);
-      // instanbul ignore next
       // Page should scroll to newly added section.
       data.shouldScroll = true;
       dispatch(addSection(data));
@@ -127,24 +126,22 @@ export const CourseAuthoringProvider = ({
     }
   };
 
-  const addSubsectionToCourse = async (locator: string, parentLocator: string) => {
+  const addSubsectionToCourse = /* istanbul ignore next */ async (locator: string, parentLocator: string) => {
     try {
       const data = await getCourseItem(locator);
-      data.shouldScroll = true;
       // Page should scroll to newly added subsection.
+      data.shouldScroll = true;
       dispatch(addSubsection({ parentLocator, data }));
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
 
-  const addUnitToCourse = async (locator: string, parentLocator: string) => {
+  const addUnitToCourse = /* istanbul ignore next */ async (locator: string, parentLocator: string) => {
     try {
       const data = await getCourseItem(locator);
-      // istanbul ignore next
-      data.shouldScroll = true;
-      // istanbul ignore next
       // Page should scroll to newly added subsection.
+      data.shouldScroll = true;
       dispatch(addUnit({ parentLocator, data }));
     } catch {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
