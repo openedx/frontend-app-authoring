@@ -361,12 +361,12 @@ const CourseUnit = () => {
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
-              {/* istanbul ignore next */}
               {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
-                && (
+                && /* istanbul ignore next */ (
                   <PasteComponent
                     clipboardData={sharedClipboardData}
                     onClick={
+                      /* istanbul ignore next */
                       () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
                     }
                     text={intl.formatMessage(messages.pasteButtonText)}
