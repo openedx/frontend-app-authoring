@@ -44,7 +44,6 @@ const AddNewContent = () => {
   const { courseId } = useCourseAuthoringContext();
   const courseUnit = useSelector(getCourseUnitData);
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
-  const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
   const [blockType, setBlockType] = useState<string | null>(null);
   const [newBlockId, setNewBlockId] = useState<string | null>(null);
   const [editorExtraProps, setEditorExtraProps] = useState<Record<string, any> | null>(null);
@@ -52,6 +51,9 @@ const AddNewContent = () => {
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isAdvancedPageOpen, showAdvancedPage, closeAdvancedPage] = useToggle();
+
+  /** The ID of the subsection (`sequential`) that is the parent of the unit we're adding to */
+  const parentSubsectionId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
 
   // Build problem templates
   const problemTemplates: BlockTemplate[] = [];
@@ -102,14 +104,14 @@ const AddNewContent = () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+    dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
   }, [closeXBlockEditorModal, sendMessageToIframe]);
 
   const onXBlockCancel = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
     closeVideoSelectorModal();
-    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-  }, [closeXBlockEditorModal, sendMessageToIframe, blockId, sequenceId]);
+    dispatch(fetchCourseSectionVerticalData(blockId, parentSubsectionId));
+  }, [closeXBlockEditorModal, sendMessageToIframe, blockId, parentSubsectionId]);
 
   /* eslint-disable no-void */
   const handleSelection = useCallback((type: string, moduleName?: string) => {
