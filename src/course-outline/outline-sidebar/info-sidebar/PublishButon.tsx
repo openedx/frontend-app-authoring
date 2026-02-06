@@ -1,6 +1,6 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
-import messages from './messages';
+import messages from '../messages';
 
 interface Props {
   onClick: () => void;

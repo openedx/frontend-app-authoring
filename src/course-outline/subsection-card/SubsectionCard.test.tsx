@@ -6,10 +6,10 @@ import {
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
+import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };

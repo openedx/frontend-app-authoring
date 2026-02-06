@@ -9,7 +9,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { InfoSidebar } from './InfoSidebar';
+import { InfoSidebar } from './info-sidebar/InfoSidebar';
 import messages from './messages';
 
 export type OutlineSidebarPages = {

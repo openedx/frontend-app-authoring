@@ -6,10 +6,10 @@ import {
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
+import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();

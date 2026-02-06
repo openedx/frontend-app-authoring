@@ -8,7 +8,7 @@ import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-util
 import { normalizeContainerType } from '@src/generic/key-utils';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useGetBlockTypes } from '@src/search-manager';
-import messages from './messages';
+import messages from '../messages';
 
 interface Props {
   itemId: string;

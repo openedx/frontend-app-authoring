@@ -17,9 +17,9 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import XBlockContainerIframe from '@src/course-unit/xblock-container-iframe';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { Link } from 'react-router-dom';
-import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
-import messages from './messages';
+import messages from '../messages';
 import { InfoSection } from './sharedComponents';
 
 interface Props {

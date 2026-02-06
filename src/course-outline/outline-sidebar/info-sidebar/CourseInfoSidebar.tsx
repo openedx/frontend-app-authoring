@@ -8,9 +8,9 @@ import { useGetBlockTypes } from '@src/search-manager';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useCourseDetails } from '../data/apiHooks';
 
-import messages from './messages';
+import { useCourseDetails } from '@src/course-outline/data/apiHooks';
+import messages from '../messages';
 
 export const CourseInfoSidebar = () => {
   const intl = useIntl();

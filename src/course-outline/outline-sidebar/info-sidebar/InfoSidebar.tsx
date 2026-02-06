@@ -1,5 +1,5 @@
 import { ContainerType, getBlockType } from '@src/generic/key-utils';
-import { useOutlineSidebarContext } from './OutlineSidebarContext';
+import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { CourseInfoSidebar } from './CourseInfoSidebar';
 import { SectionSidebar } from './SectionInfoSidebar';
 import { SubsectionSidebar } from './SubsectionInfoSidebar';

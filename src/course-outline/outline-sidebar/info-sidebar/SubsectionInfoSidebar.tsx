@@ -10,26 +10,27 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import Loading from '@src/generic/Loading';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
-import { InfoSection } from '@src/course-outline/outline-sidebar/sharedComponents';
-import messages from './messages';
+import { InfoSection } from './sharedComponents';
 import { PublishButon } from './PublishButon';
+import messages from '../messages';
 
 interface Props {
-  sectionId: string;
+  subsectionId: string;
 }
 
-export const SectionSidebar = ({ sectionId }: Props) => {
+export const SubsectionSidebar = ({ subsectionId }: Props) => {
   const intl = useIntl();
   const [tab, setTab] = useState<'info' | 'settings'>('info');
-  const { data: sectionData, isLoading } = useCourseItemData(sectionId);
+  const { data: subsectionData, isLoading } = useCourseItemData(subsectionId);
+  const { selectedContainerState } = useOutlineSidebarContext();
   const { openPublishModal } = useCourseAuthoringContext();
   const { clearSelection } = useOutlineSidebarContext();
 
   const handlePublish = () => {
-    if (sectionData?.hasChanges) {
+    if (selectedContainerState?.sectionId && subsectionData?.hasChanges) {
       openPublishModal({
-        value: sectionData,
-        sectionId: sectionData.id,
+        value: subsectionData,
+        sectionId: selectedContainerState?.sectionId,
       });
     }
   };
@@ -41,11 +42,11 @@ export const SectionSidebar = ({ sectionId }: Props) => {
   return (
     <>
       <SidebarTitle
-        title={sectionData?.displayName || ''}
-        icon={getItemIcon(sectionData?.category || '')}
+        title={subsectionData?.displayName || ''}
+        icon={getItemIcon(subsectionData?.category || '')}
         onBackBtnClick={clearSelection}
       />
-      {sectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
+      {subsectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs
         variant="tabs"
         className="my-2 d-flex justify-content-around"
@@ -55,7 +56,7 @@ export const SectionSidebar = ({ sectionId }: Props) => {
         mountOnEnter
       >
         <Tab eventKey="info" title={intl.formatMessage(messages.infoTabText)}>
-          <InfoSection itemId={sectionId} />
+          <InfoSection itemId={subsectionId} />
         </Tab>
         <Tab eventKey="settings" title={intl.formatMessage(messages.settingsTabText)}>
           <div>Settings</div>

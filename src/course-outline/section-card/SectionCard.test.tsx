@@ -6,9 +6,9 @@ import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
+import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import SectionCard from './SectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { CourseInfoSidebar } from '../outline-sidebar/CourseInfoSidebar';
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
