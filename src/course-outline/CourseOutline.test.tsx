@@ -48,7 +48,6 @@ import {
 } from './__mocks__';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
-import { OutlineSidebarPagesProvider } from './outline-sidebar/OutlineSidebarPagesContext';
 
 import messages from './messages';
 import headerMessages from './header-navigations/messages';

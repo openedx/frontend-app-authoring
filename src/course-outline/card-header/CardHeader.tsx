@@ -25,9 +25,8 @@ import { ContentTagsDrawerSheet } from '@src/content-tags-drawer';
 import TagCount from '@src/generic/tag-count';
 import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
-import { courseOutlineQueryKeys, useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
+import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useQueryClient } from '@tanstack/react-query';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -107,7 +106,6 @@ const CardHeader = ({
   const cardHeaderRef = useRef(null);
   const [isLegacyManageTagsDrawerOpen, openLegacyTagsDrawer, closeLegacyTagsDrawer] = useToggle(false);
   const { setCurrentPageKey } = useOutlineSidebarContext();
-  const queryClient = useQueryClient();
 
   const openManageTagsDrawer = useCallback(() => {
     const showNewSidebar = getConfig().ENABLE_COURSE_OUTLINE_NEW_DESIGN?.toString().toLowerCase() === 'true';
@@ -173,15 +171,9 @@ const CardHeader = ({
       editMutation.mutate({
         itemId: cardId,
         displayName: titleValue,
+        subsectionId: currentSelection?.subsectionId,
+        sectionId: currentSelection?.sectionId,
       }, {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries({
-            queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.sectionId),
-          });
-          await queryClient.invalidateQueries({
-            queryKey: courseOutlineQueryKeys.courseItemId(currentSelection?.subsectionId),
-          });
-        },
         onSettled: () => closeForm(),
       });
     } else {

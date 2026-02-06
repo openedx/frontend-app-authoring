@@ -221,7 +221,7 @@ const useCourseOutline = ({ courseId }) => {
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
         await deleteMutation.mutateAsync(
-          currentSelection.currentId,
+          { itemId: currentSelection.currentId },
           {
             onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })),
           },
@@ -229,39 +229,28 @@ const useCourseOutline = ({ courseId }) => {
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
         await deleteMutation.mutateAsync(
-          currentSelection.currentId,
+          { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
           {
-            onSettled: () => {
-              dispatch(deleteSubsection({
-                itemId: currentSelection.currentId,
-                sectionId: currentSelection.sectionId,
-              }));
-              // invalidate parent section data
-              queryClient.invalidateQueries({
-                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
-              });
-            },
+            onSettled: () => dispatch(deleteSubsection({
+              itemId: currentSelection.currentId,
+              sectionId: currentSelection.sectionId,
+            })),
           },
         );
         break;
       case COURSE_BLOCK_NAMES.vertical.id:
         await deleteMutation.mutateAsync(
-          currentSelection.currentId,
           {
-            onSettled: () => {
-              dispatch(deleteUnit({
-                itemId: currentSelection.currentId,
-                subsectionId: currentSelection.subsectionId,
-                sectionId: currentSelection.sectionId,
-              }));
-              // invalidate parent subsection and section data
-              queryClient.invalidateQueries({
-                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.subsectionId),
-              });
-              queryClient.invalidateQueries({
-                queryKey: courseOutlineQueryKeys.courseItemId(currentSelection.sectionId),
-              });
-            },
+            itemId: currentSelection.currentId,
+            subsectionId: currentSelection.subsectionId,
+            sectionId: currentSelection.sectionId,
+          },
+          {
+            onSettled: () => dispatch(deleteUnit({
+              itemId: currentSelection.currentId,
+              subsectionId: currentSelection.subsectionId,
+              sectionId: currentSelection.sectionId,
+            })),
           },
         );
         break;

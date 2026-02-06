@@ -21,8 +21,7 @@ import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
 import AlertMessage from '@src/generic/alert-message';
-import { useQueryClient } from '@tanstack/react-query';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
 import messages from './messages';
 
@@ -61,7 +60,6 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
     lastEditableSubsection,
     openContainerInfoSidebar,
   } = useOutlineSidebarContext();
-  const queryClient = useQueryClient();
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
 
@@ -104,10 +102,7 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
       type: ContainerType.Vertical,
       parentLocator: subsectionId,
       displayName: COURSE_BLOCK_NAMES.vertical.name,
-    }, {
-      onSettled: () => {
-        queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(sectionId) });
-      },
+      sectionId,
     });
   };
 
@@ -237,7 +232,6 @@ const ShowLibraryContent = () => {
     selectedContainerState,
     currentItemData,
   } = useOutlineSidebarContext();
-  const queryClient = useQueryClient();
 
   let sectionParentId = lastEditableSection?.id;
   let subsectionParentId = lastEditableSubsection?.data?.id;
@@ -274,13 +268,7 @@ const ShowLibraryContent = () => {
             category: ContainerType.Vertical,
             parentLocator: subsectionParentId,
             libraryContentKey: usageKey,
-          }, {
-            onSettled: () => {
-              // istanbul ignore next
-              queryClient.invalidateQueries({
-                queryKey: courseOutlineQueryKeys.courseItemId(sectionParentId),
-              });
-            },
+            sectionId: sectionParentId,
           });
         }
         break;

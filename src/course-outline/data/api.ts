@@ -376,6 +376,18 @@ export async function duplicateCourseItem(itemId: string, parentId: string): Pro
   return data;
 }
 
+export type CreateCourseXBlockType = {
+  type: string,
+  /** The category of the XBlock. Defaults to the type if not provided. */
+  category?: string,
+  parentLocator: string,
+  displayName?: string,
+  boilerplate?: string,
+  stagedContent?: string,
+  /** component key from library if being imported. */
+  libraryContentKey?: string,
+};
+
 /**
  * Creates a new course XBlock. Can be used to create any type of block
  * and also import a content from library.
@@ -388,17 +400,7 @@ export async function createCourseXblock({
   boilerplate,
   stagedContent,
   libraryContentKey,
-}: {
-  type: string,
-  /** The category of the XBlock. Defaults to the type if not provided. */
-  category?: string,
-  parentLocator: string,
-  displayName?: string,
-  boilerplate?: string,
-  stagedContent?: string,
-  /** component key from library if being imported. */
-  libraryContentKey?: string,
-}) {
+}: CreateCourseXBlockType) {
   const body = {
     type,
     boilerplate,

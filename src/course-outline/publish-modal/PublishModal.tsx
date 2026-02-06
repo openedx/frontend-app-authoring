@@ -39,18 +39,16 @@ const PublishModal = () => {
 
   const onPublishSubmit = async () => {
     if (id) {
-      await publishMutation.mutateAsync(id, {
+      await publishMutation.mutateAsync({
+        itemId: id,
+        subsectionId: currentPublishModalData?.subsectionId,
+        sectionId: currentPublishModalData?.sectionId,
+      }, {
         onSettled: () => {
           closePublishModal();
           // Update query client to refresh the data of all children blocks
           childrenIds.forEach((blockId) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
-          });
-          queryClient.invalidateQueries({
-            queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.sectionId),
-          });
-          queryClient.invalidateQueries({
-            queryKey: courseOutlineQueryKeys.courseItemId(currentPublishModalData?.subsectionId),
           });
         },
       });
