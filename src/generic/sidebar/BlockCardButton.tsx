@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Button, Chip, Collapsible, Icon, Stack,
 } from '@openedx/paragon';
-import { getIconBorderStyleColor, getItemIcon } from '../block-type-utils';
+import { getItemIcon } from '../block-type-utils';
 
 export type BlockTemplate = {
   displayName: string;
@@ -33,7 +33,7 @@ export const BlockCardButton = ({
 }: BlockCardButtonProps) => {
   const titleComponent = (
     <Stack direction="horizontal" gap={3}>
-      <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
+      <span className={`icon-with-border icon-with-border-${blockType} p-2 rounded`}>
         <Icon size="lg" src={getItemIcon(blockType)} />
       </span>
       <span className="text-primary-700">
