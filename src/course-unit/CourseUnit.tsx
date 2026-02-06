@@ -361,8 +361,8 @@ const CourseUnit = () => {
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
+              {/* istanbul ignore next */}
               {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
-                /* istanbul ignore next */
                 && (
                   <PasteComponent
                     clipboardData={sharedClipboardData}
