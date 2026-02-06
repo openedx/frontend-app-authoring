@@ -170,9 +170,11 @@ const slice = createSlice({
         return section;
       });
     },
-    // istanbul ignore next
-    addUnit: (state: CourseOutlineState, { payload }) => {
-      // istanbul ignore next
+    // FIXME: This is a temporary measure to add unit using redux even while we are
+    // actively trying to get rid of it.
+    // To remove this and other add functions, we need to migrate course outline data
+    // to a react-query and perform optimistic updates to add/remove content.
+    addUnit: /* istanbul ignore next */ (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => {
         section.childInfo.children = section.childInfo.children.map((subsection) => {
           if (subsection.id !== payload.parentLocator) {
