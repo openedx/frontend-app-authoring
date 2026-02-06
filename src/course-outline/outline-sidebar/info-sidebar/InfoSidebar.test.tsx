@@ -6,10 +6,10 @@ import userEvent from '@testing-library/user-event';
 import { InfoSidebar } from './InfoSidebar';
 
 let selectedContainerState: SelectionState | undefined;
-jest.mock('../outline-sidebar/OutlineSidebarContext', () => ({
-  ...jest.requireActual('../outline-sidebar/OutlineSidebarContext'),
+jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
+  ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext'),
   useOutlineSidebarContext: () => ({
-    ...jest.requireActual('../outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
+    ...jest.requireActual('@src/course-outline/outline-sidebar/OutlineSidebarContext').useOutlineSidebarContext(),
     selectedContainerState,
   }),
 }));
