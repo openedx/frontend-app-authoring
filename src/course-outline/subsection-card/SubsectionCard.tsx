@@ -10,8 +10,6 @@ import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import CourseOutlineSubsectionCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -28,6 +26,8 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import moment from 'moment';
 import messages from './messages';
 
 interface SubsectionCardProps {
@@ -37,11 +37,7 @@ interface SubsectionCardProps {
   isSectionsExpanded: boolean,
   isSelfPaced: boolean,
   isCustomRelativeDatesActive: boolean,
-  onOpenPublishModal: () => void,
-  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
-  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   index: number,
   getPossibleMoves: (index: number, step: number) => void,
@@ -52,19 +48,15 @@ interface SubsectionCardProps {
 }
 
 const SubsectionCard = ({
-  section,
-  subsection,
+  section: initialSectionData,
+  subsection: initialData,
   isSectionsExpanded,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
   index,
   getPossibleMoves,
-  onOpenPublishModal,
-  onEditSubmit,
-  savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   onOrderChange,
   onOpenConfigureModal,
@@ -75,16 +67,20 @@ const SubsectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === subsection.id;
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { courseId } = useCourseAuthoringContext();
+  const {
+    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  // Set initialData state from course outline and subsequently depend on its own state
+  const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
+  const { data: subsection = initialData } = useCourseItemData(initialData.id, initialData);
+  const isScrolledToElement = locatorId === subsection.id;
 
   const {
     id,
@@ -145,14 +141,25 @@ const SubsectionCard = ({
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
 
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    // istanbul ignore if
+    if (moment(initialData.editedOnRaw).isAfter(moment(subsection.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, subsection]);
+
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentSection(section));
-    dispatch(setCurrentSubsection(subsection));
-    dispatch(setCurrentItem(subsection));
+    setCurrentSelection({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   };
 
   const handleOnPostChangeSync = useCallback(() => {
@@ -161,15 +168,6 @@ const SubsectionCard = ({
       invalidateLinksQuery(queryClient, courseId);
     }
   }, [dispatch, section, queryClient, courseId]);
-
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      onEditSubmit(id, section.id, titleValue);
-      return;
-    }
-
-    closeForm();
-  };
 
   const handleSubsectionMoveUp = () => {
     onOrderChange(section, moveUpDetails);
@@ -228,12 +226,6 @@ const SubsectionCard = ({
     setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
 
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
-
   const isDraggable = (
     actions.draggable
       && (actions.allowMoveUp || actions.allowMoveDown)
@@ -243,7 +235,7 @@ const SubsectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(subsection.id);
+      openContainerInfoSidebar(subsection.id, subsection.id, section.id);
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);
@@ -272,7 +264,7 @@ const SubsectionCard = ({
             'subsection-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': subsection.id === selectedContainerId,
+              'outline-card-selected': subsection.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="subsection-card"
@@ -286,19 +278,17 @@ const SubsectionCard = ({
                 cardId={id}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={onOpenPublishModal}
-                onClickEdit={openForm}
+                onClickPublish={() => openPublishModal({ value: subsection, sectionId: section.id })}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={onOpenUnlinkModal}
+                onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
+                  value: subsection,
+                  sectionId: section.id,
+                })}
                 onClickMoveUp={handleSubsectionMoveUp}
                 onClickMoveDown={handleSubsectionMoveDown}
                 onClickConfigure={onOpenConfigureModal}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                isFormOpen={isFormOpen}
-                closeForm={closeForm}
-                onEditSubmit={handleEditSubmit}
-                savingStatus={savingStatus}
                 onClickDuplicate={onDuplicateSubmit}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
@@ -341,7 +331,7 @@ const SubsectionCard = ({
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Unit}
                     parentLocator={subsection.id}
-                    parentTitle={subsection.displayName}
+                    grandParentLocator={section.id}
                   />
                   {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
                     <PasteComponent

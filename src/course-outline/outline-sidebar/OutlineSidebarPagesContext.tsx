@@ -9,7 +9,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { InfoSidebar } from './info-sidebar/InfoSidebar';
 import messages from './messages';
 
 export type OutlineSidebarPages = {
@@ -19,9 +19,9 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-const getOutlineSidebarPages = () => ({
+export const getOutlineSidebarPages = () => ({
   info: {
-    component: OutlineInfoSidebar,
+    component: InfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },
@@ -55,9 +55,9 @@ const getOutlineSidebarPages = () => ({
  * export function CourseOutlineSidebarWrapper(
  *   { component, pluginProps }: { component: React.ReactNode, pluginProps: CourseOutlineAspectsPageProps },
  * ) {
- *  const sidebarPages = useOutlineSidebarPagesContext();
  *
  *  const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
+ *  const sidebarPages = useOutlineSidebarPagesContext();
  *
  *  const overridedPages = useMemo(() => ({
  *    ...sidebarPages,
@@ -72,7 +72,6 @@ const getOutlineSidebarPages = () => ({
  *    <OutlineSidebarPagesContext.Provider value={overridedPages}>
  *      {component}
  *    </OutlineSidebarPagesContext.Provider>
- *  );
  *}
  */
 export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages | undefined>(undefined);
@@ -82,6 +81,8 @@ type OutlineSidebarPagesProviderProps = {
 };
 
 export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesProviderProps) => {
+  // align page is sometimes not added when getOutlineSidebarPages() is called at the top level.
+  // So if we call it inside the hook, getConfig has updated values and align page is added.
   const sidebarPages = useMemo(getOutlineSidebarPages, []);
 
   return (

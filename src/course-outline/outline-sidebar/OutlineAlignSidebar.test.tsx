@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { initializeMocks, render, screen } from '@src/testUtils';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
@@ -17,6 +16,7 @@ jest.mock('@src/content-tags-drawer', () => ({
 
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {
+    initializeMocks();
     jest
       .spyOn(CourseAuthoringContext, 'useCourseAuthoringContext')
       .mockReturnValue({
@@ -25,8 +25,9 @@ describe('OutlineAlignSidebar', () => {
     jest
       .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
       .mockReturnValue({
-        currentContainerId:
-          'block-v1:test+course+run+type@sequential+block@seq1',
+        selectedContainerState: {
+          currentId: 'block-v1:test+course+run+type@sequential+block@seq1',
+        },
       } as any);
     jest
       .spyOn(CourseDetailsApi, 'useCourseDetails')
@@ -53,5 +54,26 @@ describe('OutlineAlignSidebar', () => {
     expect(drawer).toHaveTextContent(
       'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component',
     );
+  });
+
+  it('renders ContentTagsDrawer with the course name', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: undefined,
+      } as any);
+    jest
+      .spyOn(CourseDetailsApi, 'useCourseDetails')
+      .mockReturnValue({
+        data: { courseDisplayNameWithDefault: 'Test Course' },
+      } as any);
+    jest
+      .spyOn(ContentDataApi, 'useContentData')
+      .mockReturnValue({
+        data: { courseDisplayNameWithDefault: 'Test Course' },
+      } as any);
+    render(<OutlineAlignSidebar />);
+
+    expect(await screen.findByText('Test Course')).toBeInTheDocument();
   });
 });

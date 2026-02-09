@@ -14,6 +14,7 @@ import OutlineSidebar from './OutlineSidebar';
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseDetails: jest.fn().mockReturnValue({ isPending: false, data: { title: 'Test Course' } }),
   useCreateCourseBlock: jest.fn(),
+  useCourseItemData: jest.fn().mockReturnValue({ data: {} }),
 }));
 
 const courseId = '123';

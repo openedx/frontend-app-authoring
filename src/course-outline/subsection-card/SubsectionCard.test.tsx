@@ -6,14 +6,14 @@ import {
 import { XBlock } from '@src/data/types';
 import { Info } from '@openedx/paragon/icons';
 import userEvent from '@testing-library/user-event';
+import { CourseInfoSidebar } from '@src/course-outline/outline-sidebar/info-sidebar/CourseInfoSidebar';
 import cardHeaderMessages from '../card-header/messages';
 import SubsectionCard from './SubsectionCard';
 import * as OutlineSidebarContext from '../outline-sidebar/OutlineSidebarContext';
-import { OutlineInfoSidebar } from '../outline-sidebar/OutlineInfoSidebar';
 
-let store;
 const containerKey = 'lct:org:lib:unit:1';
 const handleOnAddUnitFromLibrary = { mutateAsync: jest.fn(), isPending: false };
+const setCurrentSelection = jest.fn();
 
 const mockUseAcceptLibraryBlockChanges = jest.fn();
 const mockUseIgnoreLibraryBlockChanges = jest.fn();
@@ -30,15 +30,16 @@ jest.mock('@src/course-unit/data/apiHooks', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 5,
-    handleAddUnit: handleOnAddUnitFromLibrary,
+    handleAddAndOpenUnit: handleOnAddUnitFromLibrary,
     handleAddSubsection: {},
     handleAddSection: {},
+    setCurrentSelection,
   }),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: () => ({
+jest.mock('@src/studio-home/data/selectors', () => ({
+  ...jest.requireActual('@src/studio-home/data/selectors'),
+  getStudioHomeData: () => ({
     librariesV2Enabled: true,
   }),
 }));
@@ -81,9 +82,7 @@ const subsection: XBlock = {
   isHeaderVisible: true,
   releasedToStudents: true,
   childInfo: {
-    children: [{
-      id: unit.id,
-    }],
+    children: [unit],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   upstreamInfo: {
     readyToSync: true,
@@ -105,9 +104,7 @@ const section: XBlock = {
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
   childInfo: {
-    children: [{
-      id: subsection.id,
-    }],
+    children: [subsection],
   } as any, // 'as any' because we are omitting a lot of fields from 'childInfo'
   actions: {
     draggable: true,
@@ -117,8 +114,6 @@ const section: XBlock = {
   },
 } satisfies Partial<XBlock> as XBlock;
 
-const onEditSubectionSubmit = jest.fn();
-
 const renderComponent = (props?: object, entry = '/course/:courseId') => render(
   <SubsectionCard
     section={section}
@@ -127,11 +122,8 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
     isSelfPaced={false}
     getPossibleMoves={jest.fn()}
     onOrderChange={jest.fn()}
-    onOpenPublishModal={jest.fn()}
     onOpenDeleteModal={jest.fn()}
-    onOpenUnlinkModal={jest.fn()}
     isCustomRelativeDatesActive={false}
-    onEditSubmit={onEditSubectionSubmit}
     onDuplicateSubmit={jest.fn()}
     onOpenConfigureModal={jest.fn()}
     onPasteClick={jest.fn()}
@@ -153,8 +145,7 @@ const renderComponent = (props?: object, entry = '/course/:courseId') => render(
 
 describe('<SubsectionCard />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    store = mocks.reduxStore;
+    initializeMocks();
   });
 
   it('render SubsectionCard component correctly', () => {
@@ -207,28 +198,11 @@ describe('<SubsectionCard />', () => {
 
     const menu = await screen.findByTestId('subsection-card-header__menu');
     fireEvent.click(menu);
-    const { currentSection, currentSubsection, currentItem } = store.getState().courseOutline;
-    expect(currentSection).toEqual(section);
-    expect(currentSubsection).toEqual(subsection);
-    expect(currentItem).toEqual(subsection);
-  });
-
-  it('title only updates if changed', async () => {
-    renderComponent();
-
-    let editButton = await screen.findByTestId('subsection-edit-button');
-    fireEvent.click(editButton);
-    let editField = await screen.findByTestId('subsection-edit-field');
-    fireEvent.blur(editField);
-
-    expect(onEditSubectionSubmit).not.toHaveBeenCalled();
-
-    editButton = await screen.findByTestId('subsection-edit-button');
-    fireEvent.click(editButton);
-    editField = await screen.findByTestId('subsection-edit-field');
-    fireEvent.change(editField, { target: { value: 'some random value' } });
-    fireEvent.keyDown(editField, { key: 'Enter', keyCode: 13 });
-    expect(onEditSubectionSubmit).toHaveBeenCalled();
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   });
 
   it('hides header based on isHeaderVisible flag', async () => {
@@ -440,10 +414,11 @@ describe('<SubsectionCard />', () => {
   });
 
   it('should open align sidebar', async () => {
+    const user = userEvent.setup();
     const mockSetCurrentPageKey = jest.fn();
 
     const testSidebarPage = {
-      component: OutlineInfoSidebar,
+      component: CourseInfoSidebar,
       icon: Info,
       title: '',
     };
@@ -461,10 +436,11 @@ describe('<SubsectionCard />', () => {
         isOpen: true,
         open: jest.fn(),
         toggle: jest.fn(),
-        currentFlow: null,
+        currentFlow: undefined,
         startCurrentFlow: jest.fn(),
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
+        clearSelection: jest.fn(),
       }));
     setConfig({
       ...getConfig(),
@@ -474,15 +450,20 @@ describe('<SubsectionCard />', () => {
     renderComponent();
     const element = await screen.findByTestId('subsection-card');
     const menu = await within(element).findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menu);
+    await user.click(menu);
 
     const manageTagsBtn = await within(element).findByTestId('subsection-card-header__menu-manage-tags-button');
     expect(manageTagsBtn).toBeInTheDocument();
 
-    fireEvent.click(manageTagsBtn);
+    await user.click(manageTagsBtn);
 
     await waitFor(() => {
-      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align', subsection.id);
+      expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
+    });
+    expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: subsection.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
     });
   });
 });

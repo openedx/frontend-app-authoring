@@ -1,22 +1,30 @@
-import React from 'react';
 import {
-  render, fireEvent, act, waitFor,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
+  initializeMocks, render, fireEvent, act, waitFor,
+} from '@src/testUtils';
 
-import initializeStore from '../../store';
 import HighlightsModal from './HighlightsModal';
 import messages from './messages';
 
-let store;
 const mockPathname = '/foo-bar';
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
+const currentItemMock = {
+  highlights: ['Highlight 1', 'Highlight 2'],
+  displayName: 'Test Section',
+};
+
+jest.mock('@src/CourseAuthoringContext', () => ({
+  useCourseAuthoringContext: () => ({
+    courseId: 5,
+    courseUsageKey: 'course-usage-key',
+    courseDetails: { name: 'Test course' },
+    currentSelection: { currentId: 1 },
+  }),
+}));
+
+jest.mock('@src/course-outline/data/apiHooks', () => ({
+  useCourseItemData: () => ({
+    data: currentItemMock,
+  }),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -32,39 +40,20 @@ jest.mock('../../help-urls/hooks', () => ({
   }),
 }));
 
-const currentItemMock = {
-  highlights: ['Highlight 1', 'Highlight 2'],
-  displayName: 'Test Section',
-};
-
 const onCloseMock = jest.fn();
 const onSubmitMock = jest.fn();
 
 const renderComponent = () => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <HighlightsModal
-        isOpen
-        onClose={onCloseMock}
-        onSubmit={onSubmitMock}
-      />
-    </IntlProvider>,
-  </AppProvider>,
+  <HighlightsModal
+    isOpen
+    onClose={onCloseMock}
+    onSubmit={onSubmitMock}
+  />,
 );
 
 describe('<HighlightsModal />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
-    useSelector.mockReturnValue(currentItemMock);
+    initializeMocks();
   });
 
   it('renders HighlightsModal component correctly', () => {

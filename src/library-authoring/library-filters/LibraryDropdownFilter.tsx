@@ -92,6 +92,7 @@ export const LibraryDropdownFilter = () => {
       id="library-filter-dropdown"
       as={ButtonGroup}
       autoClose="outside"
+      className="flex-fill mw-xs"
     >
       <OverlayTrigger
         placement="auto"
