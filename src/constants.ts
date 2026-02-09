@@ -116,3 +116,9 @@ export const BROKEN = 'broken';
 export const LOCKED = 'locked';
 
 export const MANUAL = 'manual';
+
+export enum AgreementGated {
+  UPLOAD = 'upload',
+  UPLOAD_VIDEOS = 'upload.videos',
+  UPLOAD_FILES = 'upload.files',
+}
