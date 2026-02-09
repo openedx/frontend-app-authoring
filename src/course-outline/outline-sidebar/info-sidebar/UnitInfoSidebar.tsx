@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom';
 import { useOutlineSidebarContext } from '../OutlineSidebarContext';
 import { PublishButon } from './PublishButon';
 import messages from '../messages';
-import { InfoSection } from './sharedComponents';
+import { InfoSection } from './InfoSection';
 
 interface Props {
   unitId: string;
