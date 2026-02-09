@@ -55,4 +55,25 @@ describe('OutlineAlignSidebar', () => {
       'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component',
     );
   });
+
+  it('renders ContentTagsDrawer with the course name', async () => {
+    jest
+      .spyOn(OutlineSidebarContext, 'useOutlineSidebarContext')
+      .mockReturnValue({
+        selectedContainerState: undefined,
+      } as any);
+    jest
+      .spyOn(CourseDetailsApi, 'useCourseDetails')
+      .mockReturnValue({
+        data: { courseDisplayNameWithDefault: 'Test Course' },
+      } as any);
+    jest
+      .spyOn(ContentDataApi, 'useContentData')
+      .mockReturnValue({
+        data: { courseDisplayNameWithDefault: 'Test Course' },
+      } as any);
+    render(<OutlineAlignSidebar />);
+
+    expect(await screen.findByText('Test Course')).toBeInTheDocument();
+  });
 });
