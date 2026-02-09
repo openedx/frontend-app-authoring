@@ -7,7 +7,7 @@ import { getXBlockApiUrl } from '../course-outline/data/api';
 
 let axiosMock;
 const courseId = '123';
-const subsectionId = 'block-v1+edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
+const subsectionId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
 const path = '/subsection/:subsectionId';
 
 const expectedCourseItemDataWithUnit = {

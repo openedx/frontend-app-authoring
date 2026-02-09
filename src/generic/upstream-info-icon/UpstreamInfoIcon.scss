@@ -45,3 +45,9 @@
     height: 18px;
   }
 }
+
+.upstream-info-tooltip {
+  .tooltip-inner {
+    background-color: var(--pgn-color-primary-700);
+  }
+}

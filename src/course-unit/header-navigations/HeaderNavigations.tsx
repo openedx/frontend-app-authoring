@@ -9,6 +9,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 
 import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 
 type HeaderNavigationActions = {
   handleViewLive: () => void;
@@ -35,6 +36,8 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
     handleEdit,
   } = headerNavigationsActions;
 
+  const { setCurrentPageKey, readOnly } = useUnitSidebarContext();
+
   const showNewDesignButtons = isUnitPageNewDesignEnabled();
 
   return (
@@ -49,15 +52,19 @@ const HeaderNavigations = ({ headerNavigationsActions, category }: HeaderNavigat
               <Button
                 variant="outline-primary"
                 iconBefore={InfoOutline}
+                onClick={() => setCurrentPageKey('info')}
               >
                 {intl.formatMessage(messages.infoButton)}
               </Button>
-              <Button
-                variant="outline-primary"
-                iconBefore={Add}
-              >
-                {intl.formatMessage(messages.addButton)}
-              </Button>
+              {!readOnly && (
+                <Button
+                  variant="outline-primary"
+                  iconBefore={Add}
+                  onClick={() => setCurrentPageKey('add')}
+                >
+                  {intl.formatMessage(messages.addButton)}
+                </Button>
+              )}
             </>
           )}
           <ButtonGroup>

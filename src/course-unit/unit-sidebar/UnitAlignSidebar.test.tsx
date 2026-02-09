@@ -15,13 +15,19 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ blockId: 'unit-id-1' }),
 }));
 
+const renderComponent = () => render(
+  <UnitSidebarProvider readOnly={false}>
+    <UnitAlignSidebar />
+  </UnitSidebarProvider>,
+);
+
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {
     initializeMocks();
   });
 
   it('renders ContentTagsDrawer with the correct id and variant', () => {
-    render(<UnitSidebarProvider><UnitAlignSidebar /></UnitSidebarProvider>);
+    renderComponent();
 
     const drawer = screen.getByTestId('content-tags-drawer');
 

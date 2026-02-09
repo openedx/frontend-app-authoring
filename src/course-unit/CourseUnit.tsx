@@ -40,7 +40,7 @@ import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import Sequence from './course-sequence';
-import { useCourseUnit, useScrollToLastPosition } from './hooks';
+import { useCourseUnit, useHandleCreateNewCourseXBlock, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
@@ -200,7 +200,6 @@ const CourseUnit = () => {
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
-    handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
     canPasteComponent,
@@ -213,6 +212,8 @@ const CourseUnit = () => {
     handleNavigateToTargetUnit,
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
+
+  const handleCreateNewCourseXBlock = useHandleCreateNewCourseXBlock({ blockId });
 
   const readOnly = !!courseUnit.readOnly;
 
@@ -240,7 +241,7 @@ const CourseUnit = () => {
   }
 
   return (
-    <UnitSidebarProvider>
+    <UnitSidebarProvider readOnly={readOnly}>
       <Container fluid className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
           <TransitionReplace>
@@ -360,6 +361,17 @@ const CourseUnit = () => {
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
+                && /* istanbul ignore next */ (
+                  <PasteComponent
+                    clipboardData={sharedClipboardData}
+                    onClick={
+                      /* istanbul ignore next */
+                      () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                    }
+                    text={intl.formatMessage(messages.pasteButtonText)}
+                  />
+                )}
               {!readOnly && blockId && (
                 <AddComponent
                   parentLocator={blockId}
@@ -368,15 +380,6 @@ const CourseUnit = () => {
                   isProblemBankType={isProblemBankType}
                   handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
                   addComponentTemplateData={addComponentTemplateData}
-                />
-              )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData && (
-                <PasteComponent
-                  clipboardData={sharedClipboardData}
-                  onClick={
-                    () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
-                  }
-                  text={intl.formatMessage(messages.pasteButtonText)}
                 />
               )}
               <MoveModal

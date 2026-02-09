@@ -5,14 +5,14 @@ import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
 import { useStateWithUrlSearchParam } from '@src/hooks';
 
-export type UnitSidebarPageKeys = 'info' | 'align';
+export type UnitSidebarPageKeys = 'info' | 'add' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
   setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string) => void;
   currentTabKey?: string;
-  setCurrentTabKey: (tabKey: string) => void;
+  setCurrentTabKey: (tabKey: string | undefined) => void;
   // The Id of the component used in the current sidebar page
   // The component is not necessarily selected to open a selected sidebar.
   // Example: Align sidebar
@@ -20,11 +20,18 @@ interface UnitSidebarContextData {
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
+  readOnly: boolean;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
-export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
+export const UnitSidebarProvider = ({
+  children,
+  readOnly,
+}: {
+  children?: React.ReactNode,
+  readOnly: boolean,
+}) => {
   const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
     'info',
     'sidebar',
@@ -39,6 +46,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
     pageKey: UnitSidebarPageKeys,
     componentId?: string,
   ) => {
+    setCurrentTabKey(undefined);
     setCurrentPageKeyState(pageKey);
     setCurrentComponentId(componentId);
     open();
@@ -54,6 +62,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     }),
     [
       currentPageKey,
@@ -64,6 +73,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     ],
   );
 

@@ -75,7 +75,7 @@
     "formik": "2.4.9",
     "frontend-components-tinymce-advanced-plugins": "^1.0.3",
     "jszip": "^3.10.1",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "meilisearch": "^0.41.0",
     "moment": "2.30.1",
     "moment-shortformat": "^2.1.0",

@@ -33,13 +33,9 @@ const initialState = {
     },
     videoSharingEnabled: false,
     videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
-    hasChanges: false,
   },
   sectionsList: [],
   isCustomRelativeDatesActive: false,
-  currentSection: {},
-  currentSubsection: {},
-  currentItem: {},
   actions: {
     deletable: true,
     unlinkable: false,
@@ -125,20 +121,11 @@ const slice = createSlice({
     updateSectionList: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => (section.id in payload ? payload[section.id] : section));
     },
-    setCurrentItem: (state: CourseOutlineState, { payload }) => {
-      state.currentItem = payload;
-    },
     reorderSectionList: (state: CourseOutlineState, { payload }) => {
       const sectionsList = [...state.sectionsList];
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
-    },
-    setCurrentSection: (state: CourseOutlineState, { payload }) => {
-      state.currentSection = payload;
-    },
-    setCurrentSubsection: (state: CourseOutlineState, { payload }) => {
-      state.currentSubsection = payload;
     },
     addSection: (state: CourseOutlineState, { payload }) => {
       state.sectionsList = [
@@ -180,6 +167,25 @@ const slice = createSlice({
         section.childInfo.children = section.childInfo.children.filter(
           ({ id }) => id !== payload.itemId,
         );
+        return section;
+      });
+    },
+    // FIXME: This is a temporary measure to add unit using redux even while we are
+    // actively trying to get rid of it.
+    // To remove this and other add functions, we need to migrate course outline data
+    // to a react-query and perform optimistic updates to add/remove content.
+    addUnit: /* istanbul ignore next */ (state: CourseOutlineState, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        section.childInfo.children = section.childInfo.children.map((subsection) => {
+          if (subsection.id !== payload.parentLocator) {
+            return subsection;
+          }
+          subsection.childInfo.children = [
+            ...subsection.childInfo.children.filter(({ id }) => id !== payload.data.id),
+            payload.data,
+          ];
+          return subsection;
+        });
         return section;
       });
     },
@@ -233,12 +239,10 @@ export const {
   updateCourseLaunchQueryStatus,
   updateSavingStatus,
   updateSectionList,
-  setCurrentItem,
-  setCurrentSection,
-  setCurrentSubsection,
   deleteSection,
   deleteSubsection,
   deleteUnit,
+  addUnit,
   duplicateSection,
   reorderSectionList,
   setPasteFileNotices,

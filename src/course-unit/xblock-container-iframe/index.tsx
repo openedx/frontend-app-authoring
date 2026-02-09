@@ -43,7 +43,13 @@ import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 import { isUnitPageNewDesignEnabled } from '../utils';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
-  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
+  courseId,
+  blockId,
+  unitXBlockActions,
+  courseVerticalChildren,
+  handleConfigureSubmit,
+  isUnitVerticalType,
+  readonly,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -218,7 +224,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleRefreshIframe,
   });
 
-  useIframeMessages(messageHandlers);
+  useIframeMessages(readonly ? {} : messageHandlers);
 
   return (
     <>
