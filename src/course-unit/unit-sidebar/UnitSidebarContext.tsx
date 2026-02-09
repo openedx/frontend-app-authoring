@@ -4,27 +4,36 @@ import {
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
 
-export type UnitSidebarPageKeys = 'info';
+export type UnitSidebarPageKeys = 'info' | 'add';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
   setCurrentPageKey: (pageKey: UnitSidebarPageKeys) => void;
   currentTabKey?: string;
-  setCurrentTabKey: (tabKey: string) => void;
+  setCurrentTabKey: (tabKey: string | undefined) => void;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
+  readOnly: boolean;
 }
 
 const UnitSidebarContext = createContext<UnitSidebarContextData | undefined>(undefined);
 
-export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }) => {
+export const UnitSidebarProvider = ({
+  children,
+  readOnly,
+}: {
+  children?: React.ReactNode,
+  readOnly: boolean,
+}) => {
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
 
   const setCurrentPageKey = useCallback(/* istanbul ignore next */ (pageKey: UnitSidebarPageKeys) => {
+    // Reset tab
+    setCurrentTabKey(undefined);
     setCurrentPageKeyState(pageKey);
     open();
   }, [open]);
@@ -38,6 +47,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     }),
     [
       currentPageKey,
@@ -47,6 +57,7 @@ export const UnitSidebarProvider = ({ children }: { children?: React.ReactNode }
       isOpen,
       open,
       toggle,
+      readOnly,
     ],
   );
 

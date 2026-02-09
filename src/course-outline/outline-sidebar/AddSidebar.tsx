@@ -7,9 +7,9 @@ import contentMessages from '@src/library-authoring/add-content/messages';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFilters';
 import {
-  Button, Icon, Stack, Tab, Tabs,
+  Stack, Tab, Tabs,
 } from '@openedx/paragon';
-import { getIconBorderStyleColor, getItemIcon } from '@src/generic/block-type-utils';
+import { getItemIcon } from '@src/generic/block-type-utils';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
@@ -20,6 +20,7 @@ import { ContentType } from '@src/library-authoring/routes';
 import { ComponentPicker } from '@src/library-authoring';
 import { MultiLibraryProvider } from '@src/library-authoring/common/context/MultiLibraryContext';
 import { COURSE_BLOCK_NAMES } from '@src/constants';
+import { BlockCardButton } from '@src/generic/sidebar/BlockCardButton';
 import AlertMessage from '@src/generic/alert-message';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useOutlineSidebarContext } from './OutlineSidebarContext';
@@ -157,19 +158,12 @@ const AddContentButton = ({ name, blockType } : AddContentButtonProps) => {
   const disabled = handleAddSection.isPending || handleAddSubsection.isPending || handleAddAndOpenUnit.isPending;
 
   return (
-    <Button
-      variant="tertiary shadow"
-      className="mx-2 justify-content-start px-4 font-weight-bold"
+    <BlockCardButton
+      name={name}
+      blockType={blockType}
       onClick={onCreateContent}
       disabled={disabled}
-    >
-      <Stack direction="horizontal" gap={3}>
-        <span className={`p-2 rounded ${getIconBorderStyleColor(blockType)}`}>
-          <Icon size="lg" src={getItemIcon(blockType)} />
-        </span>
-        {name}
-      </Stack>
-    </Button>
+    />
   );
 };
 

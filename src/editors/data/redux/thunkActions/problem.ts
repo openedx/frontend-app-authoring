@@ -1,15 +1,16 @@
 import { get, isEmpty } from 'lodash';
+
 import { camelizeKeys, convertMarkdownToXml } from '@src/editors/utils';
+import { OLXParser } from '@src/editors/containers/ProblemEditor/data/OLXParser';
+import { parseSettings } from '@src/editors/containers/ProblemEditor/data/SettingsParser';
+import { fetchEditorContent } from '@src/editors/containers/ProblemEditor/components/EditProblemView/hooks';
+import ReactStateOLXParser from '@src/editors/containers/ProblemEditor/data/ReactStateOLXParser';
+import { isLibraryKey } from '@src/generic/key-utils';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
 import * as requests from './requests';
-import { isLibraryKey } from '../../../../generic/key-utils';
-import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
-import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
-import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
-import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 import { RequestKeys } from '../../constants/requests';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
@@ -96,28 +97,49 @@ export const loadProblem = ({
   }
 };
 
-export const fetchAdvancedSettings = ({ rawOLX, rawSettings, isMarkdownEditorEnabled }) => (dispatch) => {
+export const fetchAdvancedSettings = ({
+  rawOLX,
+  rawSettings,
+  isMarkdownEditorEnabled,
+}) => (dispatch) => new Promise((resolve) => {
   const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
+
   dispatch(requests.fetchAdvancedSettings({
     onSuccess: (response) => {
       const defaultSettings = {};
+
       Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
         if (advancedProblemSettingKeys.includes(key)) {
           defaultSettings[key] = value.value;
         }
       });
-      dispatch(actions.problem.updateField({ defaultSettings: camelizeKeys(defaultSettings) }));
+
+      dispatch(actions.problem.updateField({
+        defaultSettings: camelizeKeys(defaultSettings),
+      }));
+
       loadProblem({
-        rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
+        rawOLX,
+        rawSettings,
+        defaultSettings,
+        isMarkdownEditorEnabled,
       })(dispatch);
+
+      resolve(true);
     },
+
     onFailure: () => {
       loadProblem({
-        rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
+        rawOLX,
+        rawSettings,
+        defaultSettings: {},
+        isMarkdownEditorEnabled,
       })(dispatch);
+
+      resolve(false);
     },
   }));
-};
+});
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = get(blockValue, 'data.data', '');
@@ -129,13 +151,12 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
     dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
-    dispatch(loadProblem({
+    return dispatch(loadProblem({
       rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
     }));
-  } else {
-    // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
-    dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
   }
+  // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
+  return dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
 };
 
 export default {

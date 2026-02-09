@@ -1,20 +1,32 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Spinner } from '@openedx/paragon';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  EditorState, selectors, actions, thunkActions,
+} from '@src/editors/data/redux';
+import { RequestKeys } from '@src/editors/data/constants/requests';
+import { EditorComponent } from '@src/editors/EditorComponent';
+
 import SelectTypeModal from './components/SelectTypeModal';
 import EditProblemView from './components/EditProblemView';
-import { EditorState, selectors, thunkActions } from '../../data/redux';
-import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
-import type { EditorComponent } from '../../EditorComponent';
+import * as hooks from './components/SelectTypeModal/hooks';
 
 export interface Props extends EditorComponent {}
 
+/**
+ * Renders the form with all field to edit a problem
+ *
+ * When create a new problem, seet extraProps.problemType to skip the select step
+ * and go directly to the edit page using the given problem type.
+ */
 const ProblemEditor: React.FC<Props> = ({
   onClose,
   returnFunction = null,
+  extraProps = null,
 }) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
 
   const blockFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
@@ -27,13 +39,33 @@ const ProblemEditor: React.FC<Props> = ({
   const problemType = useSelector(selectors.problem.problemType);
   const blockValue = useSelector(selectors.app.blockValue);
 
+  const updateField = React.useCallback((data) => dispatch(actions.problem.updateField(data)), [dispatch]);
+  const setBlockTitle = React.useCallback((title) => dispatch(actions.app.setBlockTitle(title)), [dispatch]);
+
   const advancedSettingsFinished = useSelector((state: EditorState) => selectors.app.shouldCreateBlock(state)
     || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }));
 
   useEffect(() => {
-    if (blockFinished && !blockFailed) {
-      dispatch(thunkActions.problem.initializeProblem(blockValue));
-    }
+    const run = async () => {
+      if (blockFinished && !blockFailed) {
+        // Await initialize problem and set a new problem type if applicable
+        // oxlint-disable-next-line @typescript-eslint/await-thenable
+        await dispatch(thunkActions.problem.initializeProblem(blockValue));
+
+        if (extraProps?.problemType && extraProps.problemType !== 'advanced') {
+          hooks.onSelect({
+            selected: extraProps.problemType,
+            updateField,
+            setBlockTitle,
+            defaultSettings: {},
+            formatMessage: intl.formatMessage,
+          })();
+        }
+      }
+    };
+
+    // eslint-disable-next-line no-void
+    void run();
   }, [blockFinished, blockFailed, blockValue, dispatch]);
 
   if (!blockFinished || !advancedSettingsFinished) {
@@ -57,7 +89,7 @@ const ProblemEditor: React.FC<Props> = ({
   }
 
   if (problemType === null) {
-    return (<SelectTypeModal onClose={onClose} />);
+    return (<SelectTypeModal onClose={onClose} openAdvanced={extraProps?.problemType === 'advanced'} />);
   }
 
   return (<EditProblemView returnFunction={returnFunction} />);
