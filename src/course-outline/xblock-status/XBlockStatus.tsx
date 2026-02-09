@@ -1,5 +1,5 @@
 import { ShowAnswerTypesKeys } from '@src/editors/data/constants/problem';
-import { XBlock } from '@src/data/types';
+import type { UnitXBlock, XBlock } from '@src/data/types';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import ReleaseStatus from './ReleaseStatus';
 import GradingPolicyAlert from './GradingPolicyAlert';
@@ -11,7 +11,7 @@ import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage
 interface XBlockStatusProps {
   isSelfPaced: boolean;
   isCustomRelativeDatesActive: boolean,
-  blockData: XBlock,
+  blockData: XBlock | UnitXBlock,
 }
 
 const XBlockStatus = ({

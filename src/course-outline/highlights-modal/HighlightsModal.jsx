@@ -8,11 +8,11 @@ import {
   Hyperlink,
 } from '@openedx/paragon';
 import { Formik } from 'formik';
-import { useSelector } from 'react-redux';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useHelpUrls } from '../../help-urls/hooks';
 import FormikControl from '../../generic/FormikControl';
-import { getCurrentSection } from '../data/selectors';
 import { HIGHLIGHTS_FIELD_MAX_LENGTH } from '../constants';
 import { getHighlightsFormValues } from '../utils';
 import messages from './messages';
@@ -23,7 +23,9 @@ const HighlightsModal = ({
   onSubmit,
 }) => {
   const intl = useIntl();
-  const { highlights = [], displayName } = useSelector(getCurrentSection);
+  const { currentSelection } = useCourseAuthoringContext();
+  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
+  const { highlights = [], displayName } = currentItemData || {};
   const initialFormValues = getHighlightsFormValues(highlights);
 
   const {

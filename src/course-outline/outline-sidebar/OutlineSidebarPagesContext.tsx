@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import {
   HelpOutline, Info, Plus, Tag,
@@ -9,7 +9,7 @@ import type { SidebarPage } from '@src/generic/sidebar';
 import { AddSidebar } from './AddSidebar';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
-import { OutlineInfoSidebar } from './OutlineInfoSidebar';
+import { InfoSidebar } from './info-sidebar/InfoSidebar';
 import messages from './messages';
 
 export type OutlineSidebarPages = {
@@ -19,15 +19,18 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
-
-const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
+export const getOutlineSidebarPages = () => ({
   info: {
-    component: OutlineInfoSidebar,
+    component: InfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },
-  ...(showAlignSidebar && {
+  add: {
+    component: AddSidebar,
+    icon: Plus,
+    title: messages.sidebarButtonAdd,
+  },
+  ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && {
     align: {
       component: OutlineAlignSidebar,
       icon: Tag,
@@ -39,12 +42,7 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
     icon: HelpOutline,
     title: messages.sidebarButtonHelp,
   },
-  add: {
-    component: AddSidebar,
-    icon: Plus,
-    title: messages.sidebarButtonAdd,
-  },
-};
+});
 
 /**
  * Context for the Outline Sidebar Pages.
@@ -57,9 +55,9 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
  * export function CourseOutlineSidebarWrapper(
  *   { component, pluginProps }: { component: React.ReactNode, pluginProps: CourseOutlineAspectsPageProps },
  * ) {
- *  const sidebarPages = useOutlineSidebarPagesContext();
  *
  *  const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
+ *  const sidebarPages = useOutlineSidebarPagesContext();
  *
  *  const overridedPages = useMemo(() => ({
  *    ...sidebarPages,
@@ -74,9 +72,28 @@ const OUTLINE_SIDEBAR_PAGES: OutlineSidebarPages = {
  *    <OutlineSidebarPagesContext.Provider value={overridedPages}>
  *      {component}
  *    </OutlineSidebarPagesContext.Provider>
- *  );
  *}
  */
-export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages>(OUTLINE_SIDEBAR_PAGES);
+export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages | undefined>(undefined);
 
-export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => useContext(OutlineSidebarPagesContext);
+type OutlineSidebarPagesProviderProps = {
+  children: React.ReactNode;
+};
+
+export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesProviderProps) => {
+  // align page is sometimes not added when getOutlineSidebarPages() is called at the top level.
+  // So if we call it inside the hook, getConfig has updated values and align page is added.
+  const sidebarPages = useMemo(getOutlineSidebarPages, []);
+
+  return (
+    <OutlineSidebarPagesContext.Provider value={sidebarPages}>
+      {children}
+    </OutlineSidebarPagesContext.Provider>
+  );
+};
+
+export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => {
+  const ctx = useContext(OutlineSidebarPagesContext);
+  if (ctx === undefined) { throw new Error('useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider'); }
+  return ctx;
+};

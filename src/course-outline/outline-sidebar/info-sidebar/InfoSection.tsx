@@ -1,38 +1,36 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
-
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { ComponentCountSnippet } from '@src/generic/block-type-utils';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { LibraryReferenceCard } from '@src/course-outline/outline-sidebar/LibraryReferenceCard';
+import { ComponentCountSnippet, getItemIcon } from '@src/generic/block-type-utils';
+import { normalizeContainerType } from '@src/generic/key-utils';
+import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { useGetBlockTypes } from '@src/search-manager';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import messages from '../messages';
 
-import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
-import { useCourseDetails } from '../data/apiHooks';
+interface Props {
+  itemId: string;
+}
 
-import messages from './messages';
-
-export const OutlineInfoSidebar = () => {
+export const InfoSection = ({ itemId }: Props) => {
   const intl = useIntl();
-  const { courseId } = useCourseAuthoringContext();
-  const { data: courseDetails } = useCourseDetails(courseId);
-
+  const { data: itemData } = useCourseItemData(itemId);
   const { data: componentData } = useGetBlockTypes(
-    [`context_key = "${courseId}"`],
+    [`breadcrumbs.usage_key = "${itemId}"`],
   );
+  const category = normalizeContainerType(itemData?.category || '');
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
   return (
-    <div>
-      <SidebarTitle
-        title={courseDetails?.title || ''}
-        icon={SchoolOutline}
-      />
+    <>
+      <LibraryReferenceCard itemId={itemId} />
       <SidebarContent>
         <SidebarSection
-          title={intl.formatMessage(messages.sidebarSectionSummary)}
-          icon={SchoolOutline}
+          title={intl.formatMessage(messages[`${category}ContentSummaryText`])}
+          icon={getItemIcon(itemData?.category || SchoolOutline)}
         >
           {componentData && <ComponentCountSnippet componentData={componentData} />}
         </SidebarSection>
@@ -46,14 +44,14 @@ export const OutlineInfoSidebar = () => {
             },
           ]}
         >
-          <ContentTagsSnippet contentId={courseId} />
+          <ContentTagsSnippet contentId={itemId} />
         </SidebarSection>
       </SidebarContent>
       <ContentTagsDrawerSheet
-        id={courseId}
+        id={itemId}
         onClose={closeManageTagsDrawer}
         showSheet={isManageTagsDrawerOpen}
       />
-    </div>
+    </>
   );
 };

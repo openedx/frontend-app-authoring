@@ -355,7 +355,7 @@ export const AddSidebar = () => {
               eventKey="add-existing"
               title={intl.formatMessage(messages.sidebarAddExistingTab)}
             >
-              <div className="mt-4" style={{ width: '600px' }}>
+              <div className="mt-4">
                 <AddLibraryContent />
               </div>
             </Tab>

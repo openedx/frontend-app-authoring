@@ -9,8 +9,6 @@ import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { setCurrentItem, setCurrentSection } from '@src/course-outline/data/slice';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import { DragContext } from '@src/course-outline/drag-helper/DragContextProvider';
@@ -26,6 +24,8 @@ import type { XBlock } from '@src/data/types';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import moment from 'moment';
 import messages from './messages';
 
 interface SectionCardProps {
@@ -34,12 +34,8 @@ interface SectionCardProps {
   isCustomRelativeDatesActive: boolean,
   children: ReactNode,
   onOpenHighlightsModal: (section: XBlock) => void,
-  onOpenPublishModal: () => void,
   onOpenConfigureModal: () => void,
-  onEditSectionSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType,
   onOpenDeleteModal: () => void,
-  onOpenUnlinkModal: () => void,
   onDuplicateSubmit: () => void,
   isSectionsExpanded: boolean,
   index: number,
@@ -49,19 +45,15 @@ interface SectionCardProps {
 }
 
 const SectionCard = ({
-  section,
+  section: initialData,
   isSelfPaced,
   isCustomRelativeDatesActive,
   children,
   index,
   canMoveItem,
   onOpenHighlightsModal,
-  onOpenPublishModal,
   onOpenConfigureModal,
-  onEditSectionSubmit,
-  savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   isSectionsExpanded,
   onOrderChange,
@@ -70,12 +62,16 @@ const SectionCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === section.id;
-  const { courseId } = useCourseAuthoringContext();
+  const {
+    courseId, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  // Set initialData state from course outline and subsequently depend on its own state
+  const { data: section = initialData } = useCourseItemData(initialData.id, initialData);
+  const isScrolledToElement = locatorId === section?.id;
 
   // Expand the section if a search result should be shown/scrolled to
   const containsSearchResult = () => {
@@ -103,13 +99,21 @@ const SectionCard = ({
     return false;
   };
   const [isExpanded, setIsExpanded] = useState(containsSearchResult() || isSectionsExpanded);
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'section';
 
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
+
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    // istanbul ignore if
+    if (moment(initialData.editedOnRaw).isAfter(moment(section.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, section]);
 
   const {
     id,
@@ -189,18 +193,10 @@ const SectionCard = ({
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentItem(section));
-    dispatch(setCurrentSection(section));
-  };
-
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      // both itemId and sectionId are same
-      onEditSectionSubmit(id, id, titleValue);
-      return;
-    }
-
-    closeForm();
+    setCurrentSelection({
+      currentId: section.id,
+      sectionId: section.id,
+    });
   };
 
   const handleOpenHighlightsModal = () => {
@@ -214,12 +210,6 @@ const SectionCard = ({
   const handleSectionMoveDown = () => {
     onOrderChange(index, index + 1);
   };
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
 
   const titleComponent = (
     <TitleButton
@@ -241,7 +231,7 @@ const SectionCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent, preventNodeEvents: boolean) => {
     if (!preventNodeEvents || e.target === e.currentTarget) {
-      openContainerInfoSidebar(section.id);
+      openContainerInfoSidebar(section.id, undefined, section.id);
       setIsExpanded(true);
     }
   }, [openContainerInfoSidebar]);
@@ -268,7 +258,7 @@ const SectionCard = ({
             'section-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': section.id === selectedContainerId,
+              'outline-card-selected': section.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="section-card"
@@ -282,19 +272,17 @@ const SectionCard = ({
                 status={sectionStatus}
                 hasChanges={hasChanges}
                 onClickMenuButton={handleClickMenuButton}
-                onClickPublish={onOpenPublishModal}
+                onClickPublish={/* istanbul ignore next */ () => openPublishModal({
+                  value: section,
+                  sectionId: section.id,
+                })}
                 onClickConfigure={onOpenConfigureModal}
-                onClickEdit={openForm}
                 onClickDelete={onOpenDeleteModal}
-                onClickUnlink={onOpenUnlinkModal}
+                onClickUnlink={() => openUnlinkModal({ value: section, sectionId: section.id })}
                 onClickMoveUp={handleSectionMoveUp}
                 onClickMoveDown={handleSectionMoveDown}
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
-                isFormOpen={isFormOpen}
-                closeForm={closeForm}
-                onEditSubmit={handleEditSubmit}
-                savingStatus={savingStatus}
                 onClickDuplicate={onDuplicateSubmit}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
@@ -356,7 +344,6 @@ const SectionCard = ({
                     onClickCard={(e) => onClickCard(e, true)}
                     childType={ContainerType.Subsection}
                     parentLocator={section.id}
-                    parentTitle={section.displayName}
                   />
                 )}
               </div>

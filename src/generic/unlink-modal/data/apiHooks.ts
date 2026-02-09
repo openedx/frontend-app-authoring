@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseLibrariesQueryKeys } from '@src/course-libraries';
 import { getCourseKey } from '@src/generic/key-utils';
 
+import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
 import { unlinkDownstream } from './api';
 
 export const useUnlinkDownstream = () => {
@@ -12,6 +13,12 @@ export const useUnlinkDownstream = () => {
       const courseKey = getCourseKey(contentId);
       queryClient.invalidateQueries({
         queryKey: courseLibrariesQueryKeys.courseLibraries(courseKey),
+      });
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseItemId(contentId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: courseOutlineQueryKeys.courseDetails(courseKey),
       });
     },
   });

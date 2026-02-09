@@ -11,15 +11,12 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import { getErrorDetails } from '../utils/getErrorDetails';
 import {
-  deleteCourseItem,
   duplicateCourseItem,
-  editItemDisplayName,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
   getCourseItem,
-  publishCourseSection,
   configureCourseSection,
   configureCourseSubsection,
   configureCourseUnit,
@@ -42,9 +39,6 @@ import {
   updateSavingStatus,
   updateSectionList,
   updateFetchSectionLoadingStatus,
-  deleteSection,
-  deleteSubsection,
-  deleteUnit,
   duplicateSection,
   reorderSectionList,
   setPasteFileNotices,
@@ -266,26 +260,6 @@ export function updateCourseSectionHighlightsQuery(sectionId: string, highlights
   };
 }
 
-export function publishCourseItemQuery(itemId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await publishCourseSection(itemId).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
 export function configureCourseItemQuery(sectionId: string, configureFn: () => Promise<any>) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -372,75 +346,6 @@ export function configureCourseUnitQuery(
     dispatch(configureCourseItemQuery(
       sectionId,
       async () => configureCourseUnit(itemId, isVisibleToStaffOnly, groupAccess, discussionEnabled),
-    ));
-  };
-}
-
-export function editCourseItemQuery(itemId: string, sectionId: string, displayName: string) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await editItemDisplayName(itemId, displayName).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery([sectionId]));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-/**
- * Generic function to delete course item, see below wrapper funcs for specific implementations.
- * @param {string} itemId
- * @param {() => {}} deleteItemFn
- */
-function deleteCourseItemQuery(itemId: string, deleteItemFn: () => {}) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
-
-    try {
-      await deleteCourseItem(itemId);
-      dispatch(deleteItemFn());
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    } catch {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-export function deleteCourseSectionQuery(sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      sectionId,
-      () => deleteSection({ itemId: sectionId }),
-    ));
-  };
-}
-
-export function deleteCourseSubsectionQuery(subsectionId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      subsectionId,
-      () => deleteSubsection({ itemId: subsectionId, sectionId }),
-    ));
-  };
-}
-
-export function deleteCourseUnitQuery(unitId: string, subsectionId: string, sectionId: string) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      unitId,
-      () => deleteUnit({ itemId: unitId, subsectionId, sectionId }),
     ));
   };
 }

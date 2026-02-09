@@ -65,7 +65,7 @@ export interface UpstreamInfo {
   versionDeclined: number | null,
   errorMessage: string | null,
   downstreamCustomized: string[],
-  hasTopLevelParent?: boolean,
+  topLevelParentKey?: string,
   readyToSyncChildren?: UpstreamChildrenInfo[],
   isReadyToSyncIndividually?: boolean,
 }
@@ -78,6 +78,7 @@ export interface XBlock {
   category: string;
   hasChildren: boolean;
   editedOn: string;
+  editedOnRaw: string;
   published: boolean;
   publishedOn: string;
   studioUrl: string;
@@ -126,6 +127,8 @@ export interface XBlock {
   upstreamInfo?: UpstreamInfo;
 }
 
+export type UnitXBlock = Omit<XBlock, 'childInfo'>;
+
 interface OutlineError {
   data?: string;
   type: string;
@@ -153,3 +156,9 @@ export interface UserTaskStatusWithUuid {
   modified: string;
   uuid: string;
 }
+
+export type SelectionState = {
+  currentId: string;
+  sectionId?: string;
+  subsectionId?: string;
+};

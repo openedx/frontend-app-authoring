@@ -12,9 +12,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import CourseOutlineUnitCardExtraActionsSlot from '@src/plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
-import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '@src/course-outline/data/slice';
 import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { RequestStatus, RequestStatusType } from '@src/data/constants';
 import CardHeader from '@src/course-outline/card-header/CardHeader';
 import SortableItem from '@src/course-outline/drag-helper/SortableItem';
 import TitleLink from '@src/course-outline/card-header/TitleLink';
@@ -24,20 +22,18 @@ import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import type { XBlock } from '@src/data/types';
+import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
+import moment from 'moment';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
-  unit: XBlock;
+  unit: UnitXBlock;
   subsection: XBlock;
   section: XBlock;
-  onOpenPublishModal: () => void;
   onOpenConfigureModal: () => void;
-  onEditSubmit: (itemId: string, sectionId: string, displayName: string) => void,
-  savingStatus?: RequestStatusType;
   onOpenDeleteModal: () => void;
-  onOpenUnlinkModal: () => void;
   onDuplicateSubmit: () => void;
   index: number;
   getPossibleMoves: (index: number, step: number) => void,
@@ -51,19 +47,15 @@ interface UnitCardProps {
 }
 
 const UnitCard = ({
-  unit,
-  subsection,
-  section,
+  unit: initialData,
+  subsection: initialSubsectionData,
+  section: initialSectionData,
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
   getPossibleMoves,
-  onOpenPublishModal,
   onOpenConfigureModal,
-  onEditSubmit,
-  savingStatus,
   onOpenDeleteModal,
-  onOpenUnlinkModal,
   onDuplicateSubmit,
   onOrderChange,
   discussionsSettings,
@@ -71,16 +63,23 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const { selectedContainerId, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
-  const isScrolledToElement = locatorId === unit.id;
-  const [isFormOpen, openForm, closeForm] = useToggle(false);
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
-  const { courseId, getUnitUrl } = useCourseAuthoringContext();
+  const {
+    courseId, getUnitUrl, openUnlinkModal, openPublishModal, setCurrentSelection,
+  } = useCourseAuthoringContext();
   const queryClient = useQueryClient();
+  const { data: section = initialSectionData } = useCourseItemData(initialSectionData.id, initialSectionData);
+  const { data: subsection = initialSubsectionData } = useCourseItemData(
+    initialSubsectionData.id,
+    initialSubsectionData,
+  );
+  const { data: unit = initialData } = useCourseItemData<UnitXBlock>(initialData.id, initialData);
+  const isScrolledToElement = locatorId === unit.id;
 
   const {
     id,
@@ -133,19 +132,12 @@ const UnitCard = ({
   });
   const borderStyle = getItemStatusBorder(unitStatus);
 
-  const handleClickMenuButton = () => {
-    dispatch(setCurrentItem(unit));
-    dispatch(setCurrentSection(section));
-    dispatch(setCurrentSubsection(subsection));
-  };
-
-  const handleEditSubmit = (titleValue: string) => {
-    if (displayName !== titleValue) {
-      onEditSubmit(id, section.id, titleValue);
-      return;
-    }
-
-    closeForm();
+  const selectAndTrigger = () => {
+    setCurrentSelection({
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
   };
 
   const handleUnitMoveUp = () => {
@@ -170,7 +162,7 @@ const UnitCard = ({
 
   const onClickCard = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      openContainerInfoSidebar(unit.id);
+      openContainerInfoSidebar(unit.id, subsection.id, section.id);
     }
   }, [openContainerInfoSidebar]);
 
@@ -197,6 +189,15 @@ const UnitCard = ({
     />
   );
 
+  /**
+  Temporary measure to keep the react-query state updated with redux state  */
+  useEffect(() => {
+    // istanbul ignore if
+    if (moment(initialData.editedOnRaw).isAfter(moment(unit.editedOnRaw))) {
+      queryClient.setQueryData(courseOutlineQueryKeys.courseItemId(initialData.id), initialData);
+    }
+  }, [initialData, unit]);
+
   useEffect(() => {
     // if this items has been newly added, scroll to it.
     if (currentRef.current && (unit.shouldScroll || isScrolledToElement)) {
@@ -205,12 +206,6 @@ const UnitCard = ({
       scrollToElement(currentRef.current, alignWithTop, true);
     }
   }, [isScrolledToElement]);
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      closeForm();
-    }
-  }, [savingStatus]);
 
   if (!isHeaderVisible) {
     return null;
@@ -245,7 +240,7 @@ const UnitCard = ({
             'unit-card',
             {
               highlight: isScrolledToElement,
-              'outline-card-selected': unit.id === selectedContainerId,
+              'outline-card-selected': unit.id === selectedContainerState?.currentId,
             },
           )}
           data-testid="unit-card"
@@ -256,20 +251,23 @@ const UnitCard = ({
             status={unitStatus}
             hasChanges={hasChanges}
             cardId={id}
-            onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
+            onClickMenuButton={selectAndTrigger}
+            onClickPublish={() => openPublishModal({
+              value: unit,
+              sectionId: section.id,
+              subsectionId: subsection.id,
+            })}
             onClickConfigure={onOpenConfigureModal}
-            onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
-            onClickUnlink={onOpenUnlinkModal}
+            onClickUnlink={/* istanbul ignore next */ () => openUnlinkModal({
+              value: unit,
+              sectionId: section.id,
+              subsectionId: subsection.id,
+            })}
             onClickMoveUp={handleUnitMoveUp}
             onClickMoveDown={handleUnitMoveDown}
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            savingStatus={savingStatus}
             onClickDuplicate={onDuplicateSubmit}
             titleComponent={titleComponent}
             namePrefix={namePrefix}
