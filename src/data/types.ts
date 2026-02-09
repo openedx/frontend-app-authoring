@@ -127,6 +127,8 @@ export interface XBlock {
   upstreamInfo?: UpstreamInfo;
 }
 
+export type UnitXBlock = Omit<XBlock, 'childInfo'>;
+
 interface OutlineError {
   data?: string;
   type: string;

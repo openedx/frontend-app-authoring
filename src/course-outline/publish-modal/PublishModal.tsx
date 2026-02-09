@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 
 import { courseOutlineQueryKeys, usePublishCourseItem } from '@src/course-outline/data/apiHooks';
-import { XBlock } from '@src/data/types';
+import type { UnitXBlock, XBlock } from '@src/data/types';
 import LoadingButton from '@src/generic/loading-button';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,19 +18,25 @@ const PublishModal = () => {
   const intl = useIntl();
   const { isPublishModalOpen, currentPublishModalData, closePublishModal } = useCourseAuthoringContext();
   const {
-    id, displayName, childInfo, category,
+    id, displayName, category,
   } = currentPublishModalData?.value || {};
   const categoryName = COURSE_BLOCK_NAMES[category || '']?.name.toLowerCase();
-  const children: XBlock[] = childInfo?.children || [];
+  const childInfo = (currentPublishModalData?.value && 'childInfo' in currentPublishModalData.value)
+    ? currentPublishModalData?.value.childInfo
+    : undefined;
+  const children: Array<XBlock | UnitXBlock> | undefined = childInfo?.children;
   const publishMutation = usePublishCourseItem();
   const queryClient = useQueryClient();
 
-  const childrenIds = useMemo(() => children.reduce((
+  const childrenIds = useMemo(() => children?.reduce((
     result: string[],
-    current: XBlock,
+    current: XBlock | UnitXBlock,
   ): string[] => {
-    const grandChildren = current.childInfo?.children.filter((child) => child.hasChanges) || [];
-    const temp = [...result, ...grandChildren.map((child) => child.id)];
+    let temp = [...result];
+    if ('childInfo' in current) {
+      const grandChildren = current.childInfo.children.filter((child) => child.hasChanges);
+      temp = [...temp, ...grandChildren.map((child) => child.id)];
+    }
     if (current.hasChanges) {
       temp.push(current.id);
     }
@@ -47,7 +53,7 @@ const PublishModal = () => {
         onSettled: () => {
           closePublishModal();
           // Update query client to refresh the data of all children blocks
-          childrenIds.forEach((blockId) => {
+          childrenIds?.forEach((blockId) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
           });
         },
@@ -74,11 +80,11 @@ const PublishModal = () => {
         <p className="small">
           {intl.formatMessage(messages.description, { category: categoryName })}
         </p>
-        {children.filter(child => child.hasChanges).map((child) => {
-          let grandChildren = child.childInfo?.children || [];
-          grandChildren = grandChildren.filter(grandChild => grandChild.hasChanges);
+        {children?.filter(child => child.hasChanges).map((child) => {
+          let grandChildren = 'childInfo' in child ? child.childInfo?.children : undefined;
+          grandChildren = grandChildren?.filter(grandChild => grandChild.hasChanges);
 
-          return grandChildren.length ? (
+          return grandChildren?.length ? (
             <React.Fragment key={child.id}>
               <span className="small text-gray-400">{child.displayName}</span>
               {grandChildren.map((grandChild) => (

@@ -22,14 +22,14 @@ import { useClipboard } from '@src/generic/clipboard';
 import { UpstreamInfoIcon } from '@src/generic/upstream-info-icon';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import type { XBlock } from '@src/data/types';
+import type { UnitXBlock, XBlock } from '@src/data/types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
 import moment from 'moment';
 import { useOutlineSidebarContext } from '../outline-sidebar/OutlineSidebarContext';
 
 interface UnitCardProps {
-  unit: XBlock;
+  unit: UnitXBlock;
   subsection: XBlock;
   section: XBlock;
   onOpenConfigureModal: () => void;
@@ -78,7 +78,7 @@ const UnitCard = ({
     initialSubsectionData.id,
     initialSubsectionData,
   );
-  const { data: unit = initialData } = useCourseItemData(initialData.id, initialData);
+  const { data: unit = initialData } = useCourseItemData<UnitXBlock>(initialData.id, initialData);
   const isScrolledToElement = locatorId === unit.id;
 
   const {

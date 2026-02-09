@@ -170,10 +170,8 @@ export async function restartIndexingOnCourse(reindexLink: string): Promise<obje
 
 /**
  * Get course Xblock
- * @param {string} itemId
- * @returns {Promise<XBlock>}
  */
-export async function getCourseItem(itemId: string): Promise<XBlock> {
+export async function getCourseItem<T = XBlock>(itemId: string): Promise<T> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
@@ -362,9 +360,6 @@ export async function deleteCourseItem(itemId: string): Promise<object> {
 
 /**
  * Duplicate course section
- * @param {string} itemId
- * @param {string} parentId
- * @returns {Promise<XBlock>}
  */
 export async function duplicateCourseItem(itemId: string, parentId: string): Promise<XBlock> {
   const { data } = await getAuthenticatedHttpClient()

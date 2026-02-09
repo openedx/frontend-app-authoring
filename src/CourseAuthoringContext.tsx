@@ -12,13 +12,13 @@ import {
 import { useNavigate } from 'react-router';
 import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { useToggleWithValue } from '@src/hooks';
-import { SelectionState, XBlock } from '@src/data/types';
+import { SelectionState, type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatus, RequestStatusType } from './data/constants';
 
 type ModalState = {
-  value: XBlock;
+  value: XBlock | UnitXBlock;
   subsectionId?: string;
   sectionId?: string;
 };

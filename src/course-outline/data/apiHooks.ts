@@ -84,11 +84,11 @@ export const useCreateCourseBlock = (
   });
 };
 
-export const useCourseItemData = (itemId?: string, initialData?: XBlock, enabled: boolean = true) => (
+export const useCourseItemData = <T = XBlock>(itemId?: string, initialData?: T, enabled: boolean = true) => (
   useQuery({
     initialData,
     queryKey: courseOutlineQueryKeys.courseItemId(itemId),
-    queryFn: enabled && itemId ? () => getCourseItem(itemId!) : skipToken,
+    queryFn: enabled && itemId ? () => getCourseItem<T>(itemId!) : skipToken,
   })
 );
 

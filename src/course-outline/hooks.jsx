@@ -174,7 +174,7 @@ const useCourseOutline = ({ courseId }) => {
         closeUnlinkModal();
         // istanbul ignore next
         // refresh child block data
-        currentUnlinkModalData.value.childInfo.children.forEach((block) => {
+        currentUnlinkModalData.value.childInfo?.children.forEach((block) => {
           queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(block.id) });
           block.childInfo?.children.forEach(({ id: blockId }) => {
             queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(blockId) });
