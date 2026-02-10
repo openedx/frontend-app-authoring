@@ -8,7 +8,7 @@ import messages from './messages';
 import {
   useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems,
 } from './hooks';
-import { mockWaffleFlags } from '../data/apiHooks.mock';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -145,6 +145,21 @@ describe('header utils', () => {
       jest.mocked(useUserPermissions).mockReturnValue({
         isLoading: false,
         data: { canManageAdvancedSettings: false },
+      } as any);
+      const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
+      await waitFor(() => {
+        const actualItemsTitle = result.current.map((item) => item.title);
+        expect(actualItemsTitle).not.toContain('Advanced Settings');
+      });
+    });
+
+    it('when authz.enable_course_authoring flag is enabled and the permission request is still loading, should not include advanced settings option', async () => {
+      // Mock feature flag
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+      jest.mocked(useUserPermissions).mockReturnValue({
+        isLoading: true,
+        data: undefined,
       } as any);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
       await waitFor(() => {

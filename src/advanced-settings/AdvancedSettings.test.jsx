@@ -11,6 +11,9 @@ import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import { updateCourseAppSetting } from './data/thunks';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+
 
 let axiosMock;
 let store;
@@ -21,10 +24,14 @@ const courseId = '123';
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea
     {...props}
-    onFocus={() => {}}
-    onBlur={() => {}}
+    onFocus={() => { }}
+    onBlur={() => { }}
   />
 )));
+
+jest.mock('@src/authz/data/apiHooks', () => ({
+  useUserPermissions: jest.fn(),
+}));
 
 const render = () => baseRender(
   <CourseAuthoringProvider courseId={courseId}>
@@ -41,6 +48,11 @@ describe('<AdvancedSettings />', () => {
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(200, advancedSettingsMock);
+
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: true },
+    });
   });
   it('should render without errors', async () => {
     const { getByText } = render();
@@ -143,5 +155,39 @@ describe('<AdvancedSettings />', () => {
     fireEvent.click(getByText('Save changes'));
     await executeThunk(updateCourseAppSetting(courseId, [3, 2, 1]), store.dispatch);
     expect(getByText('Your policy changes have been saved.')).toBeInTheDocument();
+  });
+
+  it('should render without errors when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
+    // Mock feature flag
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: true },
+    });
+    const { getByText } = render();
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const advancedSettingsElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      expect(advancedSettingsElement).toBeInTheDocument();
+      expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
+      expect(getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    });
+  });
+  it('should show permission alert when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {
+    // Mock feature flag
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: false },
+    });
+    const { getByTestId } = render();
+    await waitFor(() => {
+      const permissionAlert = getByTestId('permissionDeniedAlert');
+      expect(permissionAlert).toBeInTheDocument();
+    });
   });
 });
