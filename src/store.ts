@@ -25,7 +25,6 @@ import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
-import { reducer as courseChecklistReducer } from './course-checklist/data/slice';
 import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
@@ -56,7 +55,6 @@ export interface DeprecatedReduxState {
   videos: Record<string, any>;
   courseOutline: Record<string, any>;
   courseUnit: Record<string, any>;
-  courseChecklist: Record<string, any>;
   certificates: {
     loadingStatus: RequestStatusType;
     savingStatus: any;
@@ -91,7 +89,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
       videos: videosReducer,
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
-      courseChecklist: courseChecklistReducer,
       certificates: certificatesReducer,
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
