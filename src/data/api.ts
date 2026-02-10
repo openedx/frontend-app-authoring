@@ -92,6 +92,7 @@ export const waffleFlagDefaults = {
   useNewGroupConfigurationsPage: true,
   useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
+  enableAuthzCourseAuthoring: false,
 } as const;
 
 export type WaffleFlagName = keyof typeof waffleFlagDefaults;
