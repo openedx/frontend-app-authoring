@@ -1,4 +1,6 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import {
   render as baseRender,
   fireEvent,
@@ -11,9 +13,6 @@ import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import { updateCourseAppSetting } from './data/thunks';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-
 
 let axiosMock;
 let store;

@@ -4,11 +4,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import messages from './messages';
 import {
   useContentMenuItems, useToolsMenuItems, useSettingMenuItems, useLibrarySettingsMenuItems, useLibraryToolsMenuItems,
 } from './hooks';
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
