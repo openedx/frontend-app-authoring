@@ -30,10 +30,6 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-jest.mock('@edx/frontend-platform/auth', () => ({
-  getAuthenticatedHttpClient: jest.fn(),
-}));
-
 jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
 }));
