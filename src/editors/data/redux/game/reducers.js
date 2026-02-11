@@ -14,8 +14,10 @@ const initialState = {
       id: generateId(),
       term: '',
       term_image: '',
+      term_image_path: '',
       definition: '',
       definition_image: '',
+      definition_image_path: '',
       editorOpen: true,
     },
   ],
@@ -64,8 +66,10 @@ const game = createSlice({
           id: generateId(),
           term: '',
           term_image: '',
+          term_image_path: '',
           definition: '',
           definition_image: '',
+          definition_image_path: '',
           editorOpen: true,
         },
       ],
@@ -98,8 +102,10 @@ const actions = StrictDict({
   // Backward compatible wrappers for card fields
   updateTerm: ({ index, term }) => baseActions.updateCardField({ index, field: 'term', value: term }),
   updateTermImage: ({ index, termImage }) => baseActions.updateCardField({ index, field: 'term_image', value: termImage }),
+  updateTermImagePath: ({ index, termImagePath }) => baseActions.updateCardField({ index, field: 'term_image_path', value: termImagePath }),
   updateDefinition: ({ index, definition }) => baseActions.updateCardField({ index, field: 'definition', value: definition }),
   updateDefinitionImage: ({ index, definitionImage }) => baseActions.updateCardField({ index, field: 'definition_image', value: definitionImage }),
+  updateDefinitionImagePath: ({ index, definitionImagePath }) => baseActions.updateCardField({ index, field: 'definition_image_path', value: definitionImagePath }),
   toggleOpen: ({ index, isOpen }) => baseActions.updateCardField({ index, field: 'editorOpen', value: !!isOpen }),
 });
 

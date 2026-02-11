@@ -70,6 +70,19 @@ const messages = defineMessages({
       + ' The {detail} text provides more information about the error.'
     ),
   },
+  errorDeleteMessage: {
+    id: 'course-authoring.library-authoring.delete-asset.error.text',
+    defaultMessage: 'There was an error deleting the file.',
+    description: 'Error message when file deletion fails.',
+  },
+  errorDeleteMessageWithDetail: {
+    id: 'course-authoring.library-authoring.delete-asset.error.text-detail',
+    defaultMessage: 'There was an error deleting the file: {detail}',
+    description: (
+      'Error message when file deletion fails.'
+      + ' The {detail} text provides more information about the error.'
+    ),
+  },
 });
 
 export default messages;

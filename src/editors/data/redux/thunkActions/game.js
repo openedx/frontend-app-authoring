@@ -30,8 +30,10 @@ export const loadGamesSettings = () => (dispatch) => {
           id: `card-${Date.now()}-${index}`,
           term: card.term || '',
           term_image: card.term_image || '',
+          term_image_path: card.term_image_path || '',
           definition: card.definition || '',
           definition_image: card.definition_image || '',
+          definition_image_path: card.definition_image_path || '',
           editorOpen: true,
         }));
         dispatch(actions.game.setList(formattedCards));
@@ -40,8 +42,10 @@ export const loadGamesSettings = () => (dispatch) => {
           id: `card-${Date.now()}-0`,
           term: '',
           term_image: '',
+          term_image_path: '',
           definition: '',
           definition_image: '',
+          definition_image_path: '',
           editorOpen: true,
         };
         dispatch(actions.game.setList([emptyCard]));
@@ -66,9 +70,10 @@ export const uploadGameImage = ({ index, imageFile, imageType }) => (dispatch) =
   dispatch(requests.uploadGamesImage({
     image: imageFile,
     onSuccess: (response) => {
-      // Extract the URL from the response
-      // Response format: { success: true, url: "/media/games/...", filename: "..." }
+      // Extract the URL and file_path from the response
+      // Response format: { success: true, url: "/media/games/...", filename: "...", file_path: "games/..." }
       let imageUrl = response.data?.url;
+      const filePath = response.data?.file_path || '';
 
       // Check if URL is already complete (starts with http/https) or needs studio base URL
       if (imageUrl && !imageUrl.startsWith('http')) {
@@ -77,8 +82,10 @@ export const uploadGameImage = ({ index, imageFile, imageType }) => (dispatch) =
 
       if (imageType === 'term') {
         dispatch(actions.game.updateTermImage({ index, termImage: imageUrl }));
+        dispatch(actions.game.updateTermImagePath({ index, termImagePath: filePath }));
       } else if (imageType === 'definition') {
         dispatch(actions.game.updateDefinitionImage({ index, definitionImage: imageUrl }));
+        dispatch(actions.game.updateDefinitionImagePath({ index, definitionImagePath: filePath }));
       }
     },
     onFailure: (error) => {
@@ -95,11 +102,13 @@ export const uploadGameImage = ({ index, imageFile, imageType }) => (dispatch) =
  */
 export const deleteGameImage = ({ index, imageType, filePath }) => (dispatch) => {
   if (!filePath) {
-    // If no filePath, just clear the field without calling API
+    // If no filePath, just clear the fields without calling API
     if (imageType === 'term') {
       dispatch(actions.game.updateTermImage({ index, termImage: '' }));
+      dispatch(actions.game.updateTermImagePath({ index, termImagePath: '' }));
     } else if (imageType === 'definition') {
       dispatch(actions.game.updateDefinitionImage({ index, definitionImage: '' }));
+      dispatch(actions.game.updateDefinitionImagePath({ index, definitionImagePath: '' }));
     }
     return;
   }
@@ -109,20 +118,22 @@ export const deleteGameImage = ({ index, imageType, filePath }) => (dispatch) =>
     onSuccess: (response) => {
       if (response.data.success === false) {
         dispatch(actions.requests.failRequest({
-          requestKey: RequestKeys.uploadAsset,
+          requestKey: RequestKeys.deleteAsset,
           error: response.data?.error,
         }));
         return;
       }
       if (imageType === 'term') {
         dispatch(actions.game.updateTermImage({ index, termImage: '' }));
+        dispatch(actions.game.updateTermImagePath({ index, termImagePath: '' }));
       } else if (imageType === 'definition') {
         dispatch(actions.game.updateDefinitionImage({ index, definitionImage: '' }));
+        dispatch(actions.game.updateDefinitionImagePath({ index, definitionImagePath: '' }));
       }
     },
     onFailure: (error) => {
       dispatch(actions.requests.failRequest({
-        requestKey: RequestKeys.uploadAsset,
+        requestKey: RequestKeys.deleteAsset,
         error,
       }));
     },

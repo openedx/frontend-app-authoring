@@ -30,8 +30,10 @@ describe('game reducer', () => {
           id: expect.stringMatching(/^card-\d+-\d+$/),
           term: '',
           term_image: '',
+          term_image_path: '',
           definition: '',
           definition_image: '',
+          definition_image_path: '',
           editorOpen: true,
         }],
         isDirty: false,
@@ -222,8 +224,10 @@ describe('game reducer', () => {
         id: `card-${mockDate}-${Math.floor(mockRandom * 100000)}`,
         term: '',
         term_image: '',
+        term_image_path: '',
         definition: '',
         definition_image: '',
+        definition_image_path: '',
         editorOpen: true,
       });
       expect(result.isDirty).toBe(true);

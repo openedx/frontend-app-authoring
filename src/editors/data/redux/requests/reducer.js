@@ -11,6 +11,7 @@ const initialState = {
   [RequestKeys.createBlock]: { status: RequestStates.inactive },
   [RequestKeys.saveBlock]: { status: RequestStates.inactive },
   [RequestKeys.uploadAsset]: { status: RequestStates.inactive },
+  [RequestKeys.deleteAsset]: { status: RequestStates.inactive },
   [RequestKeys.allowThumbnailUpload]: { status: RequestStates.inactive },
   [RequestKeys.uploadThumbnail]: { status: RequestStates.inactive },
   [RequestKeys.uploadTranscript]: { status: RequestStates.inactive },

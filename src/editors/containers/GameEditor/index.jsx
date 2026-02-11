@@ -287,13 +287,9 @@ export const GameEditor = ({
     }
   }, [uploadGameImage]);
 
-  const handleImageRemove = useCallback((index, imageType, imageUrl) => {
+  const handleImageRemove = useCallback((index, imageType, filePath) => {
     const id = `${imageType}_image_upload|${index}`;
     document.getElementById(id).value = '';
-    let filePath = imageUrl;
-    if (filePath.includes('/media/')) {
-      filePath = filePath.substring(filePath.indexOf('/media/') + '/media/'.length);
-    }
     deleteGameImage({ index, imageType, filePath });
   }, [deleteGameImage]);
 
@@ -326,7 +322,7 @@ export const GameEditor = ({
     </div>
   );
 
-  const renderImageDisplay = useCallback((imageUrl, index, imageType) => (
+  const renderImageDisplay = useCallback((imageUrl, filePath, index, imageType) => (
     <div className="card-image-area d-flex align-items-center align-self-stretch">
       <img className="card-image" src={imageUrl} alt={`${imageType.toUpperCase()}_IMG`} />
       <IconButton
@@ -334,7 +330,7 @@ export const GameEditor = ({
         iconAs={Icon}
         alt="DEL_IMG"
         variant="primary"
-        onClick={() => handleImageRemove(index, imageType, imageUrl)}
+        onClick={() => handleImageRemove(index, imageType, filePath)}
       />
     </div>
   ), [handleImageRemove]);
@@ -349,9 +345,9 @@ export const GameEditor = ({
     />
   ), []);
 
-  const termImageDiv = (card, index) => renderImageDisplay(card.term_image, index, 'term');
+  const termImageDiv = (card, index) => renderImageDisplay(card.term_image, card.term_image_path, index, 'term');
   const termImageUploadButton = (card, index) => renderImageUploadButton(index, 'term');
-  const definitionImageDiv = (card, index) => renderImageDisplay(card.definition_image, index, 'definition');
+  const definitionImageDiv = (card, index) => renderImageDisplay(card.definition_image, card.definition_image_path, index, 'definition');
   const definitionImageUploadButton = (card, index) => renderImageUploadButton(index, 'definition');
 
   const timerSettingsOption = (

@@ -75,15 +75,23 @@ const EditorContainer: React.FC<Props> = ({
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
   const { uploadFailed, uploadFailedError } = hooks.uploadFailed();
+  const { deleteFailed, deleteFailedError } = hooks.deleteFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
   const clearUploadFailed = hooks.clearUploadError({ dispatch });
+  const clearDeleteFailed = hooks.clearDeleteError({ dispatch });
 
   React.useEffect(() => {
     if (uploadFailed && errorAlertRef.current) {
       errorAlertRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [uploadFailed]);
+
+  React.useEffect(() => {
+    if (deleteFailed && errorAlertRef.current) {
+      errorAlertRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [deleteFailed]);
 
   const handleSave = hooks.handleSaveClicked({
     dispatch,
@@ -164,6 +172,17 @@ const EditorContainer: React.FC<Props> = ({
               uploadFailedError,
               messages.errorUploadMessageWithDetail,
               messages.errorUploadMessage,
+            )}
+          </ErrorAlert>
+          <ErrorAlert
+            isError={deleteFailed}
+            dismissError={clearDeleteFailed}
+          >
+            {parseErrorMsg(
+              intl,
+              deleteFailedError,
+              messages.errorDeleteMessageWithDetail,
+              messages.errorDeleteMessage,
             )}
           </ErrorAlert>
         </div>

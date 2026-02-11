@@ -28,6 +28,8 @@ jest.mock('../game', () => ({
     setList: jest.fn(),
     updateTermImage: jest.fn(),
     updateDefinitionImage: jest.fn(),
+    updateTermImagePath: jest.fn(),
+    updateDefinitionImagePath: jest.fn(),
   },
 }));
 
@@ -182,16 +184,20 @@ describe('game thunkActions', () => {
             id: `card-${mockDate}-0`,
             term: 'Test Term 1',
             term_image: '/media/term1.jpg',
+            term_image_path: '',
             definition: 'Test Definition 1',
             definition_image: '',
+            definition_image_path: '',
             editorOpen: true,
           },
           {
             id: `card-${mockDate}-1`,
             term: 'Test Term 2',
             term_image: '',
+            term_image_path: '',
             definition: 'Test Definition 2',
             definition_image: '/media/def2.jpg',
+            definition_image_path: '',
             editorOpen: true,
           },
         ];
@@ -224,24 +230,30 @@ describe('game thunkActions', () => {
             id: `card-${mockDate}-0`,
             term: 'Term Only',
             term_image: '',
+            term_image_path: '',
             definition: '',
             definition_image: '',
+            definition_image_path: '',
             editorOpen: true,
           },
           {
             id: `card-${mockDate}-1`,
             term: '',
             term_image: '',
+            term_image_path: '',
             definition: 'Definition Only',
             definition_image: '',
+            definition_image_path: '',
             editorOpen: true,
           },
           {
             id: `card-${mockDate}-2`,
             term: '',
             term_image: '',
+            term_image_path: '',
             definition: '',
             definition_image: '',
+            definition_image_path: '',
             editorOpen: true,
           },
         ];
@@ -264,8 +276,10 @@ describe('game thunkActions', () => {
           id: `card-${mockDate}-0`,
           term: '',
           term_image: '',
+          term_image_path: '',
           definition: '',
           definition_image: '',
+          definition_image_path: '',
           editorOpen: true,
         }];
 
@@ -577,12 +591,12 @@ describe('game thunkActions', () => {
           mockOnSuccess(failureResponse);
 
           expect(requestsActions.failRequest).toHaveBeenCalledWith({
-            requestKey: RequestKeys.uploadAsset,
+            requestKey: RequestKeys.deleteAsset,
             error: 'File not found',
           });
           expect(dispatch).toHaveBeenCalledWith(
             requestsActions.failRequest({
-              requestKey: RequestKeys.uploadAsset,
+              requestKey: RequestKeys.deleteAsset,
               error: 'File not found',
             }),
           );
@@ -602,12 +616,12 @@ describe('game thunkActions', () => {
           mockOnFailure(mockError);
 
           expect(requestsActions.failRequest).toHaveBeenCalledWith({
-            requestKey: RequestKeys.uploadAsset,
+            requestKey: RequestKeys.deleteAsset,
             error: mockError,
           });
           expect(dispatch).toHaveBeenCalledWith(
             requestsActions.failRequest({
-              requestKey: RequestKeys.uploadAsset,
+              requestKey: RequestKeys.deleteAsset,
               error: mockError,
             }),
           );

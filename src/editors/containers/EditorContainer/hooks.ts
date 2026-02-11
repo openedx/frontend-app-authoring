@@ -11,6 +11,7 @@ export const {
   clearSaveError,
   clearCreateError,
   clearUploadError,
+  clearDeleteError,
   navigateCallback,
   nullMethod,
   saveBlock,
@@ -113,5 +114,17 @@ export const createFailed = () => ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   createFailedError: useSelector((rootState) => (
     selectors.requests.error(rootState, { requestKey: RequestKeys.createBlock })
+  )),
+});
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+export const deleteFailed = () => ({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  deleteFailed: useSelector((rootState) => (
+    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.deleteAsset })
+  )),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  deleteFailedError: useSelector((rootState) => (
+    selectors.requests.error(rootState, { requestKey: RequestKeys.deleteAsset })
   )),
 });

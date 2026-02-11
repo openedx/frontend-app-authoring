@@ -100,3 +100,7 @@ export const clearCreateError = ({
 export const clearUploadError = ({
   dispatch,
 }) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.uploadAsset }));
+
+export const clearDeleteError = ({
+  dispatch,
+}) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.deleteAsset }));
