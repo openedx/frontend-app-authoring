@@ -141,12 +141,13 @@ const AdvancedSettings = () => {
     showSaveSettingsPrompt(true);
   };
 
-  if (isAuthzEnabled) {
-    if (!isLoadingUserPermissions && !userPermissions?.canManageAdvancedSettings) {
-      return (
-        <PermissionDeniedAlert />
-      );
-    }
+  // Show permission denied alert when authz is enabled and user doesn't have permission
+  const authzIsEnabledAndNoPermission = isAuthzEnabled
+    && !isLoadingUserPermissions
+    && !userPermissions?.canManageAdvancedSettings;
+
+  if (authzIsEnabledAndNoPermission) {
+    return <PermissionDeniedAlert />;
   }
 
   return (
@@ -213,8 +214,8 @@ const AdvancedSettings = () => {
                           defaultMessage="{visibility} deprecated settings"
                           values={{
                             visibility:
-                                    showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
-                                      : intl.formatMessage(messages.deprecatedButtonShowText),
+                              showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)
+                                : intl.formatMessage(messages.deprecatedButtonShowText),
                           }}
                         />
                       </Button>

@@ -53,10 +53,12 @@ const HelpSidebar = ({
     },
   }, isAuthzEnabled);
 
+  // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
   const authzCanManageAdvancedSettings = isLoadingUserPermissions
     ? false
-    : userPermissions?.canManageAdvancedSettings || false;
+    : !!userPermissions?.canManageAdvancedSettings;
 
+  // When authz is enabled, use permission, otherwise it's always allowed (legacy behavior)
   const canManageAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : true;
 
   return (
