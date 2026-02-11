@@ -327,17 +327,22 @@ const AddTabs = () => {
   return (
     <Tabs
       variant="tabs"
-      className="my-2 d-flex justify-content-around"
+      className="mb-2 d-flex justify-content-around"
+      style={{ marginLeft: '-2rem', marginRight: '-2rem' }}
       id="add-content-tabs"
       activeKey={key}
       onSelect={setKey}
       mountOnEnter
     >
       <Tab eventKey="addNew" title={intl.formatMessage(messages.sidebarTabsAddNew)}>
-        <AddNewContent />
+        <div className="mt-4">
+          <AddNewContent />
+        </div>
       </Tab>
       <Tab eventKey="addExisting" title={intl.formatMessage(messages.sidebarTabsAddExisiting)}>
-        <ShowLibraryContent />
+        <div className="mt-4">
+          <ShowLibraryContent />
+        </div>
       </Tab>
     </Tabs>
   );

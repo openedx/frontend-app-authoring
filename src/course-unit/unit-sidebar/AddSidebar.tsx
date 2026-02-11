@@ -339,7 +339,8 @@ export const AddSidebar = () => {
         <SidebarSection>
           <Tabs
             id="unit-add-sidebar"
-            className="my-2 d-flex justify-content-around"
+            className="unit-add-sidebar mb-2"
+            style={{ marginLeft: '-2rem', marginRight: '-2rem' }}
             activeKey={currentTabKey}
             onSelect={setCurrentTabKey}
           >
