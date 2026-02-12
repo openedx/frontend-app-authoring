@@ -28,7 +28,7 @@ interface SidebarContentProps {
  * ```
  */
 export const SidebarContent = ({ children } : SidebarContentProps) => (
-  <Stack gap={1} className="px-3 py-1s">
+  <Stack gap={1} className="px-3 py-1">
     {Array.isArray(children) ? children.map((child, index) => (
       // eslint-disable-next-line react/no-array-index-key
       <React.Fragment key={index}>
