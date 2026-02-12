@@ -1,13 +1,13 @@
 // @ts-check
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { DataTable } from '@openedx/paragon';
+import { Button, DataTable } from '@openedx/paragon';
 import { isEqual } from 'lodash';
 import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
-import { useTagListData, useSubTags } from '../data/apiHooks';
+import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
 
 const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);
@@ -69,6 +69,7 @@ const TagListTable = ({ taxonomyId }) => {
     pageSize: 100,
   });
   const { isLoading, data: tagList } = useTagListData(taxonomyId, options);
+  const createTagMutation = useCreateTag(taxonomyId);
 
   const fetchData = (args) => {
     if (!isEqual(args, options)) {
@@ -76,8 +77,19 @@ const TagListTable = ({ taxonomyId }) => {
     }
   };
 
+  const TableAction = ({ tableInstance }) => (
+    // Here is access to the tableInstance
+    <Button onClick={() => { tableInstance.toggleAllRowsExpanded() }}>
+      Expand All
+    </Button>
+  );
+
   return (
     <div className="tag-list-table">
+      <label>Add Example Tag</label>
+      <input type="text" onBlur={(e) => {
+        createTagMutation.mutateAsync({ value: e.target.value })
+      }} />
       <DataTable
         isLoading={isLoading}
         isPaginated
@@ -88,6 +100,10 @@ const TagListTable = ({ taxonomyId }) => {
         pageCount={tagList?.numPages || 0}
         initialState={options}
         isExpandable
+        tableActions={[
+           // @ts-ignore
+          <TableAction />,
+        ]}
         // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
         // the Figma design and do something more sophisticated.
         renderRowSubComponent={({ row }) => (
@@ -100,11 +116,17 @@ const TagListTable = ({ taxonomyId }) => {
           },
           {
             id: 'expander',
-            Header: DataTable.ExpandAll,
+            Header: <></>,
             Cell: OptionalExpandLink,
+          },
+          {
+            id: 'options',
+            Header: <span style={{ cursor: 'pointer' }}>+</span>,
+            Cell: <span style={{ cursor: 'pointer' }}>&#8942;</span>
           },
         ]}
       >
+        <DataTable.TableControlBar />
         <DataTable.Table />
         <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
         {tagList?.numPages !== undefined && tagList?.numPages > 1
