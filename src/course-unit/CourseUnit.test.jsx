@@ -122,10 +122,10 @@ jest.mock('@src/studio-home/hooks', () => ({
  * This can be used to mimic events like deletion or other actions
  * sent from Backbone or other sources via postMessage.
  *
- * @param {string} type - The type of the message event (e.g., 'deleteXBlock').
- * @param {Object} payload - The payload data for the message event.
+ * @param type - The type of the message event (e.g., 'deleteXBlock').
+ * @param payload - The payload data for the message event.
  */
-function simulatePostMessageEvent(type, payload) {
+function simulatePostMessageEvent(type: string, payload?: Object) {
   const messageEvent = new MessageEvent('message', {
     data: { type, payload },
   });
@@ -331,7 +331,7 @@ describe('<CourseUnit />', () => {
     expect(iframe).toHaveAttribute(
       'aria-label',
       xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-        .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
+        .replace('{xblockCount}', courseVerticalChildrenMock.children.length.toString()),
     );
 
     simulatePostMessageEvent(messageTypes.deleteXBlock, {
@@ -422,7 +422,7 @@ describe('<CourseUnit />', () => {
     )).toHaveAttribute(
       'aria-label',
       xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-        .replace('{xblockCount}', updatedCourseVerticalChildren.length),
+        .replace('{xblockCount}', updatedCourseVerticalChildren.length.toString()),
     );
     // after removing the xblock, the sidebar status changes to Draft (unpublished changes)
     expect(await screen.findByText(
@@ -520,7 +520,7 @@ describe('<CourseUnit />', () => {
     expect(iframe).toHaveAttribute(
       'aria-label',
       xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-        .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
+        .replace('{xblockCount}', courseVerticalChildrenMock.children.length.toString()),
     );
 
     simulatePostMessageEvent(messageTypes.duplicateXBlock, {
@@ -566,7 +566,7 @@ describe('<CourseUnit />', () => {
     expect(xblockIframe).toHaveAttribute(
       'aria-label',
       xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-        .replace('{xblockCount}', updatedCourseVerticalChildren.length),
+        .replace('{xblockCount}', updatedCourseVerticalChildren.length.toString()),
     );
 
     // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
@@ -616,16 +616,14 @@ describe('<CourseUnit />', () => {
   it('checks courseUnit title changing when edit query is successfully', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let editTitleButton = null;
-    let titleEditField = null;
     const newDisplayName = `${unitDisplayName} new`;
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId, {
+      .onPost(getXBlockBaseApiUrl(blockId), {
         metadata: {
           display_name: newDisplayName,
         },
-      }))
+      })
       .reply(200, { dummy: 'value' });
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -634,7 +632,6 @@ describe('<CourseUnit />', () => {
         xblock_info: {
           ...courseSectionVerticalMock.xblock_info,
           metadata: {
-            ...courseSectionVerticalMock.xblock_info.metadata,
             display_name: newDisplayName,
           },
         },
@@ -653,15 +650,14 @@ describe('<CourseUnit />', () => {
         },
       });
 
-    await waitFor(() => {
-      const unitHeaderTitle = screen.getByTestId('unit-header-title');
-      editTitleButton = within(unitHeaderTitle)
-        .getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
-      titleEditField = within(unitHeaderTitle)
-        .queryByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
-    });
+    const unitHeaderTitle = await screen.findByTestId('unit-header-title');
+    const editTitleButton = within(unitHeaderTitle)
+      .getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
+    let titleEditField = within(unitHeaderTitle)
+      .queryByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
     expect(titleEditField).not.toBeInTheDocument();
     await user.click(editTitleButton);
+
     titleEditField = screen.getByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
 
     await user.clear(titleEditField);
@@ -680,7 +676,7 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     const { courseKey, locator } = courseCreateXblockMock;
     axiosMock
-      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
       .reply(500, {});
     render(<RootWrapper />);
 
@@ -695,7 +691,7 @@ describe('<CourseUnit />', () => {
   it('handle creating Problem xblock and showing editor modal', async () => {
     const user = userEvent.setup();
     axiosMock
-      .onPost(postXBlockBaseApiUrl({ type: 'problem', category: 'problem', parentLocator: blockId }))
+      .onPost(postXBlockBaseApiUrl(), { type: 'problem', category: 'problem', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
@@ -759,17 +755,17 @@ describe('<CourseUnit />', () => {
   it('correct addition of a new course unit after click on the "Add new unit" button', async () => {
     const user = userEvent.setup();
     render(<RootWrapper />);
-    let units = null;
+    let units: HTMLElement[] | null = null;
     const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
     const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
     set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-      ...updatedAncestorsChild.child_info.children,
+      ...updatedAncestorsChild.child_info!.children,
       courseUnitMock,
     ]);
 
     await waitFor(async () => {
       units = screen.getAllByTestId('course-unit-btn');
-      const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info.children;
+      const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info!.children;
       expect(units).toHaveLength(courseUnits.length);
     });
 
@@ -788,7 +784,7 @@ describe('<CourseUnit />', () => {
     const addNewUnitBtn = screen.getByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage });
     units = screen.getAllByTestId('course-unit-btn');
     const updatedCourseUnits = updatedCourseSectionVerticalData
-      .xblock_info.ancestor_info.ancestors[0].child_info.children;
+      .xblock_info.ancestor_info.ancestors[0].child_info!.children;
 
     await user.click(addNewUnitBtn);
     expect(units.length).toEqual(updatedCourseUnits.length);
@@ -826,18 +822,18 @@ describe('<CourseUnit />', () => {
     const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
     const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
     set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-      ...updatedAncestorsChild.child_info.children,
+      ...updatedAncestorsChild.child_info!.children,
       courseUnitMock,
     ]);
 
     const newDisplayName = `${unitDisplayName} new`;
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId, {
+      .onPost(getXBlockBaseApiUrl(blockId), {
         metadata: {
           display_name: newDisplayName,
         },
-      }))
+      })
       .reply(200, { dummy: 'value' })
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -845,7 +841,6 @@ describe('<CourseUnit />', () => {
         xblock_info: {
           ...courseSectionVerticalMock.xblock_info,
           metadata: {
-            ...courseSectionVerticalMock.xblock_info.metadata,
             display_name: newDisplayName,
           },
         },
@@ -879,7 +874,7 @@ describe('<CourseUnit />', () => {
     const waffleSpy = mockWaffleFlags({ useVideoGalleryFlow: true });
 
     axiosMock
-      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
@@ -950,12 +945,13 @@ describe('<CourseUnit />', () => {
         .replace('{sectionName}', courseSectionVerticalMock.xblock_info.release_date_from),
     )).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /add video to your course/i, hidden: true })).toBeInTheDocument();
+
     waffleSpy.mockRestore();
   });
 
   it('handles creating Video xblock and showing editor modal', async () => {
     axiosMock
-      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     const user = userEvent.setup();
     render(<RootWrapper />);
@@ -1160,11 +1156,12 @@ describe('<CourseUnit />', () => {
     const modalNotification = screen.getByRole('dialog');
     const makeVisibilityBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalMakeVisibilityActionButtonText.defaultMessage });
     const cancelBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalMakeVisibilityCancelButtonText.defaultMessage });
-    const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalMakeVisibilityTitle.defaultMessage, class: 'pgn__modal-title' });
+    const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalMakeVisibilityTitle.defaultMessage });
 
     expect(makeVisibilityBtn).toBeInTheDocument();
     expect(cancelBtn).toBeInTheDocument();
     expect(headingElement).toBeInTheDocument();
+    expect(headingElement).toHaveClass('pgn__modal-title');
     expect(within(modalNotification)
       .getByText(unitInfoMessages.modalMakeVisibilityDescription.defaultMessage)).toBeInTheDocument();
 
@@ -1252,8 +1249,9 @@ describe('<CourseUnit />', () => {
         .getByText(unitInfoMessages.modalDiscardUnitChangesDescription.defaultMessage)).toBeInTheDocument();
       expect(within(modalNotification)
         .getByText(unitInfoMessages.modalDiscardUnitChangesCancelButtonText.defaultMessage)).toBeInTheDocument();
-      const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalDiscardUnitChangesTitle.defaultMessage, class: 'pgn__modal-title' });
+      const headingElement = within(modalNotification).getByRole('heading', { name: unitInfoMessages.modalDiscardUnitChangesTitle.defaultMessage });
       expect(headingElement).toBeInTheDocument();
+      expect(headingElement).toHaveClass('pgn__modal-title');
       const actionBtn = within(modalNotification).getByRole('button', { name: unitInfoMessages.modalDiscardUnitChangesActionButtonText.defaultMessage });
       expect(actionBtn).toBeInTheDocument();
 
@@ -1398,17 +1396,17 @@ describe('<CourseUnit />', () => {
       await user.click(screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
-      let units = null;
+      let units: HTMLElement[] | null = null;
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
       const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
       set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-        ...updatedAncestorsChild.child_info.children,
+        ...updatedAncestorsChild.child_info!.children,
         courseUnitMock,
       ]);
 
       await waitFor(() => {
         units = screen.getAllByTestId('course-unit-btn');
-        const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info.children;
+        const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info!.children;
         expect(units).toHaveLength(courseUnits.length);
       });
 
@@ -1425,7 +1423,7 @@ describe('<CourseUnit />', () => {
 
       units = screen.getAllByTestId('course-unit-btn');
       const updatedCourseUnits = updatedCourseSectionVerticalData
-        .xblock_info.ancestor_info.ancestors[0].child_info.children;
+        .xblock_info.ancestor_info.ancestors[0].child_info!.children;
 
       expect(units.length).toEqual(updatedCourseUnits.length);
       expect(mockedUsedNavigate).toHaveBeenCalled();
@@ -1459,7 +1457,7 @@ describe('<CourseUnit />', () => {
         expect(iframe).toHaveAttribute(
           'aria-label',
           xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-            .replace('{xblockCount}', courseVerticalChildrenMock.children.length),
+            .replace('{xblockCount}', courseVerticalChildrenMock.children.length.toString()),
         );
 
         simulatePostMessageEvent(messageTypes.copyXBlock, {
@@ -1495,7 +1493,7 @@ describe('<CourseUnit />', () => {
         expect(iframe).toHaveAttribute(
           'aria-label',
           xblockContainerIframeMessages.xblockIframeLabel.defaultMessage
-            .replace('{xblockCount}', updatedCourseVerticalChildren.length),
+            .replace('{xblockCount}', updatedCourseVerticalChildren.length.toString()),
         );
       });
     });
@@ -1522,12 +1520,12 @@ describe('<CourseUnit />', () => {
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
       const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
       set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-        ...updatedAncestorsChild.child_info.children,
+        ...updatedAncestorsChild.child_info!.children,
         courseUnitMock,
       ]);
 
       axiosMock
-        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .onPost(postXBlockBaseApiUrl(), postXBlockBody)
         .reply(200, clipboardMockResponse);
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -1575,12 +1573,12 @@ describe('<CourseUnit />', () => {
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
       const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
       set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-        ...updatedAncestorsChild.child_info.children,
+        ...updatedAncestorsChild.child_info!.children,
         courseUnitMock,
       ]);
 
       axiosMock
-        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .onPost(postXBlockBaseApiUrl(), postXBlockBody)
         .reply(200, clipboardMockResponse);
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -1630,12 +1628,12 @@ describe('<CourseUnit />', () => {
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
       const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
       set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
-        ...updatedAncestorsChild.child_info.children,
+        ...updatedAncestorsChild.child_info!.children,
         courseUnitMock,
       ]);
 
       axiosMock
-        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .onPost(postXBlockBaseApiUrl(), postXBlockBody)
         .reply(200, clipboardMockResponse);
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
@@ -1808,7 +1806,7 @@ describe('<CourseUnit />', () => {
       });
 
       await waitFor(async () => {
-        const currentUnit = currentSubsection.child_info.children[0];
+        const currentUnit = currentSubsection.child_info!.children[0];
         const currentUnitItemBtn = screen.getByRole('button', {
           name: `${currentUnit.display_name} ${moveModalMessages.moveModalOutlineItemViewText.defaultMessage}`,
         });
@@ -1848,13 +1846,13 @@ describe('<CourseUnit />', () => {
 
       simulatePostMessageEvent(messageTypes.rollbackMovedXBlock, { locator: requestData.sourceLocator });
 
-      const dismissButton = screen.queryByRole('button', {
+      const dismissButton = screen.getByRole('button', {
         name: /dismiss/i, hidden: true,
       });
-      const undoButton = screen.queryByRole('button', {
+      const undoButton = screen.getByRole('button', {
         name: messages.undoMoveButton.defaultMessage, hidden: true,
       });
-      const newLocationButton = screen.queryByRole('button', {
+      const newLocationButton = screen.getByRole('button', {
         name: messages.newLocationButton.defaultMessage, hidden: true,
       });
 
@@ -1894,7 +1892,7 @@ describe('<CourseUnit />', () => {
         callbackFn: requestData.callbackFn,
       }), store.dispatch);
 
-      const newLocationButton = screen.queryByRole('button', {
+      const newLocationButton = screen.getByRole('button', {
         name: messages.newLocationButton.defaultMessage, hidden: true,
       });
       await user.click(newLocationButton);
@@ -2248,6 +2246,7 @@ describe('<CourseUnit />', () => {
         ];
 
         sidebarContent.forEach(({ query, type, name }) => {
+          // @ts-ignore
           expect(type ? query(type, { name }) : query(name)).toBeInTheDocument();
         });
 
@@ -2273,10 +2272,10 @@ describe('<CourseUnit />', () => {
     targetChild.block_id = 'block-v1:OpenedX+L153+3T2023+type@html+block@test123original';
 
     axiosMock
-      .onPost(postXBlockBaseApiUrl({
+      .onPost(postXBlockBaseApiUrl(), {
         parent_locator: blockId,
         duplicate_source_locator: targetChild.block_id,
-      }))
+      })
       .replyOnce(200, { locator: '1234567890' });
 
     axiosMock
@@ -2973,7 +2972,7 @@ describe('<CourseUnit />', () => {
       // The Meilisearch client-side API uses fetch, not Axios.
       fetchMock.mockReset();
       fetchMock.post(searchEndpoint, (_url, req) => {
-        const requestData = JSON.parse((req.body ?? ''));
+        const requestData = JSON.parse((req.body ?? '') as string);
         const query = requestData?.queries[0]?.q ?? '';
         // We have to replace the query (search keywords) in the mock results with the actual query,
         // because otherwise Instantsearch will update the UI and change the query,
