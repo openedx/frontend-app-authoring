@@ -19,7 +19,7 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-export const getOutlineSidebarPages = () => ({
+const getOutlineSidebarPages = () => ({
   info: {
     component: InfoSidebar,
     icon: Info,
@@ -55,24 +55,24 @@ export const getOutlineSidebarPages = () => ({
  * export function CourseOutlineSidebarWrapper(
  *   { component, pluginProps }: { component: React.ReactNode, pluginProps: CourseOutlineAspectsPageProps },
  * ) {
+ *   const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
+ *   const sidebarPages = useOutlineSidebarPagesContext();
  *
- *  const AnalyticsPage = React.useCallback(() => <CourseOutlineAspectsPage {...pluginProps} />, [pluginProps]);
- *  const sidebarPages = useOutlineSidebarPagesContext();
+ *   const overridedPages = useMemo(() => ({
+ *     ...sidebarPages,
+ *     analytics: {
+ *       component: AnalyticsPage,
+ *       icon: AutoGraph,
+ *        title: messages.analyticsLabel,
+ *     },
+ *   }), [sidebarPages, AnalyticsPage]);
  *
- *  const overridedPages = useMemo(() => ({
- *    ...sidebarPages,
- *    analytics: {
- *      component: AnalyticsPage,
- *      icon: AutoGraph,
- *      title: messages.analyticsLabel,
- *    },
- *  }), [sidebarPages, AnalyticsPage]);
- *
- *  return (
- *    <OutlineSidebarPagesContext.Provider value={overridedPages}>
- *      {component}
- *    </OutlineSidebarPagesContext.Provider>
- *}
+ *   return (
+ *     <OutlineSidebarPagesContext.Provider value={overridedPages}>
+ *       {component}
+ *     </OutlineSidebarPagesContext.Provider>
+ *   );
+ * }
  */
 export const OutlineSidebarPagesContext = createContext<OutlineSidebarPages | undefined>(undefined);
 
@@ -94,6 +94,7 @@ export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesPro
 
 export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => {
   const ctx = useContext(OutlineSidebarPagesContext);
+  // istanbul ignore if: this should never happen
   if (ctx === undefined) { throw new Error('useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider'); }
   return ctx;
 };
