@@ -7,7 +7,7 @@ import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
-import { useTagListData, useSubTags } from '../data/apiHooks';
+import { useTagListData, useSubTags, useCreateTag } from '../data/apiHooks';
 
 const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);
@@ -69,6 +69,7 @@ const TagListTable = ({ taxonomyId }) => {
     pageSize: 100,
   });
   const { isLoading, data: tagList } = useTagListData(taxonomyId, options);
+  const createTagMutation = useCreateTag(taxonomyId);
 
   const fetchData = (args) => {
     if (!isEqual(args, options)) {
@@ -78,6 +79,10 @@ const TagListTable = ({ taxonomyId }) => {
 
   return (
     <div className="tag-list-table">
+      <label>Add Example Tag</label>
+      <input type="text" onBlur={(e) => {
+        createTagMutation.mutateAsync({ value: e.target.value })
+      }} />
       <DataTable
         isLoading={isLoading}
         isPaginated

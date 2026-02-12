@@ -17,6 +17,32 @@ import { apiUrls, ALL_TAXONOMIES } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
 
+/*
+**Create Query Parameters**
+        * id (required) - The ID of the taxonomy to create a Tag for
+
+    **Create Request Body**
+        * tag (required): The value of the Tag that should be added to
+          the Taxonomy
+        * parent_tag_value (optional): The value of the parent tag that the new
+          Tag should fall under
+        * extenal_id (optional): The external id for the new Tag
+
+    **Create Example Requests**
+        POST api/tagging/v1/taxonomy/:id/tags                                       - Create a Tag in taxonomy
+        {
+            "value": "New Tag",
+            "parent_tag_value": "Parent Tag"
+            "external_id": "abc123",
+        }
+
+    **Create Query Returns**
+        * 201 - Success
+        * 400 - Invalid parameters provided
+        * 403 - Permission denied
+        * 404 - Taxonomy not found
+*/
+
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
 // Inspired by https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories.
@@ -202,3 +228,24 @@ export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQue
     return camelCaseObject(response.data) as TagListData;
   },
 });
+
+export const useCreateTag = (taxonomyId) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ value, parentTagValue }: { value: string, parentTagValue?: string }) => {
+      try {
+        await getAuthenticatedHttpClient().post(apiUrls.createTag(taxonomyId), { tag: value });
+      } catch (err) {
+        throw new Error((err as any).response?.data?.error || (err as any).message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId),
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId) });
+    },
+  });
+}
