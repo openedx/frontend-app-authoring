@@ -48,6 +48,7 @@ import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
 import { UnitSidebarProvider } from './unit-sidebar/UnitSidebarContext';
+import { UnitSidebarPagesProvider } from './unit-sidebar/UnitSidebarPagesContext';
 import { UNIT_VISIBILITY_STATES } from './constants';
 import { isUnitPageNewDesignEnabled } from './utils';
 
@@ -242,178 +243,180 @@ const CourseUnit = () => {
 
   return (
     <UnitSidebarProvider readOnly={readOnly}>
-      <Container fluid className="course-unit px-4">
-        <section className="course-unit-container mb-4 mt-5">
-          <TransitionReplace>
-            {movedXBlockParams.isSuccess ? (
-              <AlertMessage
-                key="xblock-moved-alert"
-                data-testid="xblock-moved-alert"
-                show={movedXBlockParams.isSuccess}
-                variant="success"
-                icon={CheckCircleIcon}
-                title={movedXBlockParams.isUndo
-                  ? intl.formatMessage(messages.alertMoveCancelTitle)
-                  : intl.formatMessage(messages.alertMoveSuccessTitle)}
-                description={movedXBlockParams.isUndo
-                  ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
-                  : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
-                aria-hidden={movedXBlockParams.isSuccess}
-                dismissible
-                actions={movedXBlockParams.isUndo ? undefined : [
-                  <Button
-                    onClick={handleRollbackMovedXBlock}
-                    key="xblock-moved-alert-undo-move-button"
-                  >
-                    {intl.formatMessage(messages.undoMoveButton)}
-                  </Button>,
-                  <Button
-                    onClick={handleNavigateToTargetUnit}
-                    key="xblock-moved-alert-new-location-button"
-                  >
-                    {intl.formatMessage(messages.newLocationButton)}
-                  </Button>,
-                ]}
-                onClose={handleCloseXBlockMovedAlert}
-              />
-            ) : null}
-          </TransitionReplace>
-          {courseUnit.upstreamInfo?.upstreamLink && (
-            <AlertMessage
-              title={intl.formatMessage(
-                messages.alertLibraryUnitReadOnlyText,
-                {
-                  link: (
-                    <Alert.Link
-                      href={courseUnit.upstreamInfo.upstreamLink}
-                    >
-                      {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
-                    </Alert.Link>
-                  ),
-                },
-              )}
-              variant="info"
-            />
-          )}
-          <SubHeader
-            hideBorder
-            title={(
-              <HeaderTitle
-                unitTitle={unitTitle}
-                isTitleEditFormOpen={isTitleEditFormOpen}
-                handleTitleEdit={handleTitleEdit}
-                handleTitleEditSubmit={handleTitleEditSubmit}
-                handleConfigureSubmit={handleConfigureSubmit}
-              />
-            )}
-            breadcrumbs={(
-              <Breadcrumbs
-                courseId={courseId}
-                parentUnitId={sequenceId}
-              />
-            )}
-            headerActions={(
-              <CourseUnitHeaderActionsSlot
-                category={unitCategory}
-                headerNavigationsActions={headerNavigationsActions}
-                unitTitle={unitTitle}
-                verticalBlocks={courseVerticalChildren.children}
-              />
-            )}
-          />
-          <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
-            {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
-              <StatusBar courseUnit={courseUnit} />
-            )}
-          </div>
-          {isUnitVerticalType && (
-            <Sequence
-              courseId={courseId}
-              sequenceId={sequenceId}
-              unitId={blockId}
-              handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-              showPasteUnit={showPasteUnit}
-            />
-          )}
-          <div className="d-flex align-items-baseline">
-            <div className="flex-fill">
-              {currentlyVisibleToStudents && (
+      <UnitSidebarPagesProvider>
+        <Container fluid className="course-unit px-4">
+          <section className="course-unit-container mb-4 mt-5">
+            <TransitionReplace>
+              {movedXBlockParams.isSuccess ? (
                 <AlertMessage
-                  className="course-unit__alert"
-                  title={intl.formatMessage(messages.alertUnpublishedVersion)}
-                  variant="warning"
-                  icon={WarningIcon}
+                  key="xblock-moved-alert"
+                  data-testid="xblock-moved-alert"
+                  show={movedXBlockParams.isSuccess}
+                  variant="success"
+                  icon={CheckCircleIcon}
+                  title={movedXBlockParams.isUndo
+                    ? intl.formatMessage(messages.alertMoveCancelTitle)
+                    : intl.formatMessage(messages.alertMoveSuccessTitle)}
+                  description={movedXBlockParams.isUndo
+                    ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
+                    : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
+                  aria-hidden={movedXBlockParams.isSuccess}
+                  dismissible
+                  actions={movedXBlockParams.isUndo ? undefined : [
+                    <Button
+                      onClick={handleRollbackMovedXBlock}
+                      key="xblock-moved-alert-undo-move-button"
+                    >
+                      {intl.formatMessage(messages.undoMoveButton)}
+                    </Button>,
+                    <Button
+                      onClick={handleNavigateToTargetUnit}
+                      key="xblock-moved-alert-new-location-button"
+                    >
+                      {intl.formatMessage(messages.newLocationButton)}
+                    </Button>,
+                  ]}
+                  onClose={handleCloseXBlockMovedAlert}
                 />
-              )}
-              {staticFileNotices && (
-                <PasteNotificationAlert
-                  staticFileNotices={staticFileNotices}
-                  courseId={courseId}
-                />
-              )}
-              {blockId && (
-                <XBlockContainerIframe
-                  courseId={courseId}
-                  blockId={blockId}
-                  isUnitVerticalType={isUnitVerticalType}
-                  unitXBlockActions={unitXBlockActions}
-                  courseVerticalChildren={courseVerticalChildren.children}
+              ) : null}
+            </TransitionReplace>
+            {courseUnit.upstreamInfo?.upstreamLink && (
+              <AlertMessage
+                title={intl.formatMessage(
+                  messages.alertLibraryUnitReadOnlyText,
+                  {
+                    link: (
+                      <Alert.Link
+                        href={courseUnit.upstreamInfo.upstreamLink}
+                      >
+                        {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
+                      </Alert.Link>
+                    ),
+                  },
+                )}
+                variant="info"
+              />
+            )}
+            <SubHeader
+              hideBorder
+              title={(
+                <HeaderTitle
+                  unitTitle={unitTitle}
+                  isTitleEditFormOpen={isTitleEditFormOpen}
+                  handleTitleEdit={handleTitleEdit}
+                  handleTitleEditSubmit={handleTitleEditSubmit}
                   handleConfigureSubmit={handleConfigureSubmit}
                 />
               )}
-              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
-                && /* istanbul ignore next */ (
-                  <PasteComponent
-                    clipboardData={sharedClipboardData}
-                    onClick={
-                      /* istanbul ignore next */
-                      () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
-                    }
-                    text={intl.formatMessage(messages.pasteButtonText)}
-                  />
-                )}
-              {!readOnly && blockId && (
-                <AddComponent
-                  parentLocator={blockId}
-                  isSplitTestType={isSplitTestType}
-                  isUnitVerticalType={isUnitVerticalType}
-                  isProblemBankType={isProblemBankType}
-                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-                  addComponentTemplateData={addComponentTemplateData}
+              breadcrumbs={(
+                <Breadcrumbs
+                  courseId={courseId}
+                  parentUnitId={sequenceId}
                 />
               )}
-              <MoveModal
-                isOpenModal={isMoveModalOpen}
-                openModal={openMoveModal}
-                closeModal={closeMoveModal}
-                courseId={courseId}
-              />
-              <IframePreviewLibraryXBlockChanges />
+              headerActions={(
+                <CourseUnitHeaderActionsSlot
+                  category={unitCategory}
+                  headerNavigationsActions={headerNavigationsActions}
+                  unitTitle={unitTitle}
+                  verticalBlocks={courseVerticalChildren.children}
+                />
+              )}
+            />
+            <div className="unit-header-status-bar h5 mt-2 mb-4 font-weight-normal">
+              {isUnitPageNewDesignEnabled() && isUnitVerticalType && (
+                <StatusBar courseUnit={courseUnit} />
+              )}
             </div>
-            {!isUnitLegacyLibraryType && (
-              <CourseAuthoringUnitSidebarSlot
+            {isUnitVerticalType && (
+              <Sequence
                 courseId={courseId}
-                blockId={blockId}
-                unitTitle={unitTitle}
-                xBlocks={courseVerticalChildren.children}
-                readOnly={readOnly}
-                isUnitVerticalType={isUnitVerticalType}
-                isSplitTestType={isSplitTestType}
+                sequenceId={sequenceId}
+                unitId={blockId}
+                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                showPasteUnit={showPasteUnit}
               />
             )}
-          </div>
-        </section>
-      </Container>
-      <div className="alert-toast">
-        <ProcessingNotification
-          isShow={isShowProcessingNotification}
-          title={processingNotificationTitle}
-        />
-        <SavingErrorAlert
-          savingStatus={savingStatus}
-          errorMessage={errorMessage}
-        />
-      </div>
+            <div className="d-flex align-items-baseline">
+              <div className="flex-fill">
+                {currentlyVisibleToStudents && (
+                  <AlertMessage
+                    className="course-unit__alert"
+                    title={intl.formatMessage(messages.alertUnpublishedVersion)}
+                    variant="warning"
+                    icon={WarningIcon}
+                  />
+                )}
+                {staticFileNotices && (
+                  <PasteNotificationAlert
+                    staticFileNotices={staticFileNotices}
+                    courseId={courseId}
+                  />
+                )}
+                {blockId && (
+                  <XBlockContainerIframe
+                    courseId={courseId}
+                    blockId={blockId}
+                    isUnitVerticalType={isUnitVerticalType}
+                    unitXBlockActions={unitXBlockActions}
+                    courseVerticalChildren={courseVerticalChildren.children}
+                    handleConfigureSubmit={handleConfigureSubmit}
+                  />
+                )}
+                {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
+                  && /* istanbul ignore next */ (
+                    <PasteComponent
+                      clipboardData={sharedClipboardData}
+                      onClick={
+                        /* istanbul ignore next */
+                        () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                      }
+                      text={intl.formatMessage(messages.pasteButtonText)}
+                    />
+                  )}
+                {!readOnly && blockId && (
+                  <AddComponent
+                    parentLocator={blockId}
+                    isSplitTestType={isSplitTestType}
+                    isUnitVerticalType={isUnitVerticalType}
+                    isProblemBankType={isProblemBankType}
+                    handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                    addComponentTemplateData={addComponentTemplateData}
+                  />
+                )}
+                <MoveModal
+                  isOpenModal={isMoveModalOpen}
+                  openModal={openMoveModal}
+                  closeModal={closeMoveModal}
+                  courseId={courseId}
+                />
+                <IframePreviewLibraryXBlockChanges />
+              </div>
+              {!isUnitLegacyLibraryType && (
+                <CourseAuthoringUnitSidebarSlot
+                  courseId={courseId}
+                  blockId={blockId}
+                  unitTitle={unitTitle}
+                  xBlocks={courseVerticalChildren.children}
+                  readOnly={readOnly}
+                  isUnitVerticalType={isUnitVerticalType}
+                  isSplitTestType={isSplitTestType}
+                />
+              )}
+            </div>
+          </section>
+        </Container>
+        <div className="alert-toast">
+          <ProcessingNotification
+            isShow={isShowProcessingNotification}
+            title={processingNotificationTitle}
+          />
+          <SavingErrorAlert
+            savingStatus={savingStatus}
+            errorMessage={errorMessage}
+          />
+        </div>
+      </UnitSidebarPagesProvider>
     </UnitSidebarProvider>
   );
 };

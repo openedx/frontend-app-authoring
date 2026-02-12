@@ -123,7 +123,7 @@ jest.mock('@src/studio-home/hooks', () => ({
  * @param type - The type of the message event (e.g., 'deleteXBlock').
  * @param payload - The payload data for the message event.
  */
-function simulatePostMessageEvent(type: string, payload?: Object) {
+function simulatePostMessageEvent(type: string, payload?: object) {
   const messageEvent = new MessageEvent('message', {
     data: { type, payload },
   });
@@ -483,10 +483,7 @@ describe('<CourseUnit />', () => {
     });
 
     axiosMock
-      .onPost(postXBlockBaseApiUrl({
-        parent_locator: blockId,
-        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
-      }))
+      .onPost(postXBlockBaseApiUrl())
       .replyOnce(200, { locator: '1234567890' });
 
     const updatedCourseVerticalChildren = [
