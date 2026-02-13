@@ -48,7 +48,7 @@ export const SectionSidebar = ({ sectionId }: Props) => {
       {sectionData?.hasChanges && <PublishButon onClick={handlePublish} />}
       <Tabs
         variant="tabs"
-        className="my-2 d-flex justify-content-around"
+        className="my-2 mx-n3.5"
         id="add-content-tabs"
         activeKey={tab}
         onSelect={setTab}

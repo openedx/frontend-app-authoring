@@ -3,8 +3,9 @@ import {
 } from 'react';
 import { SidebarPage } from '@src/generic/sidebar';
 import { useToggle } from '@openedx/paragon';
+import { useStateWithUrlSearchParam } from '@src/hooks';
 
-export type UnitSidebarPageKeys = 'info' | 'add';
+export type UnitSidebarPageKeys = 'info' | 'add' | 'align';
 export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
@@ -28,7 +29,12 @@ export const UnitSidebarProvider = ({
   children?: React.ReactNode,
   readOnly: boolean,
 }) => {
-  const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
+  const [currentPageKey, setCurrentPageKeyState] = useStateWithUrlSearchParam<UnitSidebarPageKeys>(
+    'info',
+    'sidebar',
+    (value: string) => value as UnitSidebarPageKeys,
+    (value: UnitSidebarPageKeys) => value,
+  );
   const [currentTabKey, setCurrentTabKey] = useState<string>();
   const [selectedComponentId, setSelectedComponentId] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);

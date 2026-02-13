@@ -68,7 +68,7 @@ export const mockGetModulestoreMigratedBlocksInfo = {
       {
         sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@library_content+block@test_lib_content',
         targetKey: null,
-        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it not supported in content libraries. It has 2 children blocks.',
+        unsupportedReason: 'The "library_content" XBlock (ID: "test_lib_content") has children, so it is not supported in content libraries. It has 2 children blocks.',
       },
       {
         sourceKey: 'block-v1:UNIX+UX2+2025_T2+type@html+block@1',

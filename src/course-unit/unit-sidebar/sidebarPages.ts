@@ -1,6 +1,8 @@
-import { Info, Plus } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
+import { Info, Tag, Plus } from '@openedx/paragon/icons';
 import { SidebarPage } from '@src/generic/sidebar';
 import messages from './messages';
+import { UnitAlignSidebar } from './UnitAlignSidebar';
 import { AddSidebar } from './AddSidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 import { InfoSidebar } from './unit-info/InfoSidebar';
@@ -18,6 +20,7 @@ export type UnitSidebarPages = {
  * if you want to use the context in the sidebar pages.
  */
 export const useUnitSidebarPages = (): UnitSidebarPages => {
+  const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
   const { readOnly } = useUnitSidebarContext();
   return {
     info: {
@@ -30,6 +33,13 @@ export const useUnitSidebarPages = (): UnitSidebarPages => {
         component: AddSidebar,
         icon: Plus,
         title: messages.sidebarButtonAdd,
+      },
+    }),
+    ...(showAlignSidebar && {
+      align: {
+        component: UnitAlignSidebar,
+        icon: Tag,
+        title: messages.sidebarButtonAlign,
       },
     }),
   };

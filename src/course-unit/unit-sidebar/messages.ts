@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Label of the button for the Info sidebar',
   },
+  sidebarButtonAlign: {
+    id: 'course-authoring.unit-page.sidebar.info.sidebar-button-align',
+    defaultMessage: 'Align',
+    description: 'Label of the button for the Align sidebar',
+  },
   sidebarButtonAdd: {
     id: 'course-authoring.unit-page.sidebar.add.sidebar-button-add',
     defaultMessage: 'Add',
