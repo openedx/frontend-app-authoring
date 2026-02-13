@@ -1,4 +1,4 @@
-import { initializeMocks, render, screen } from '@src/testUtils';
+import { render, screen, initializeMocks } from '@src/testUtils';
 
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';

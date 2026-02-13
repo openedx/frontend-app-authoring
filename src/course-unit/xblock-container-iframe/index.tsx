@@ -39,6 +39,8 @@ import {
   AccessManagedXBlockDataTypes,
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
+import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
+import { isUnitPageNewDesignEnabled } from '../utils';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId,
@@ -51,6 +53,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { setCurrentPageKey } = useUnitSidebarContext();
 
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
@@ -175,8 +178,13 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   };
 
   const handleOpenManageTagsModal = (id: string) => {
-    setConfigureXBlockId(id);
-    openManageTagsModal();
+    if (isUnitPageNewDesignEnabled()) {
+      setCurrentPageKey('align', id);
+    } else {
+      // Legacy manage tags modal
+      setConfigureXBlockId(id);
+      openManageTagsModal();
+    }
   };
 
   const handleShowProcessingNotification = (variant: string) => {
