@@ -18,7 +18,7 @@ import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatus, RequestStatusType } from './data/constants';
 
 type ModalState = {
-  value: XBlock | UnitXBlock;
+  value?: XBlock | UnitXBlock;
   subsectionId?: string;
   sectionId?: string;
 };

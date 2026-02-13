@@ -9,12 +9,11 @@ import { useOutlineSidebarContext } from './OutlineSidebarContext';
 export const OutlineAlignSidebar = () => {
   const {
     courseId,
-    currentSelection,
     setCurrentSelection,
   } = useCourseAuthoringContext();
   const { selectedContainerState, clearSelection } = useOutlineSidebarContext();
 
-  const sidebarContentId = currentSelection?.currentId || selectedContainerState?.currentId || courseId;
+  const sidebarContentId = selectedContainerState?.currentId || courseId;
 
   const { data: contentData } = useContentData(sidebarContentId);
 

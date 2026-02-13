@@ -32,6 +32,7 @@ export const useMessageHandlers = ({
   handleHideProcessingNotification,
   handleEditXBlock,
   handleRefreshIframe,
+  handleXBlockSelected,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
@@ -45,7 +46,7 @@ export const useMessageHandlers = ({
     [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
     [messageTypes.toggleCourseXBlockDropdown]: ({
       courseXBlockDropdownHeight,
-    }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
+    }) => setIframeOffset(courseXBlockDropdownHeight),
     [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
     [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
@@ -63,6 +64,7 @@ export const useMessageHandlers = ({
       payload.type,
       payload.locator,
     ),
+    [messageTypes.xblockSelected]: ({ contentId }) => handleXBlockSelected(contentId),
   }), [
     courseId,
     handleDeleteXBlock,
@@ -71,5 +73,6 @@ export const useMessageHandlers = ({
     handleManageXBlockAccess,
     handleScrollToXBlock,
     copyToClipboard,
+    handleXBlockSelected,
   ]);
 };

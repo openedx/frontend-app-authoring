@@ -321,6 +321,7 @@ describe('<SectionCard />', () => {
   it('should open align sidebar', async () => {
     const user = userEvent.setup();
     const mockSetCurrentPageKey = jest.fn();
+    const mockSetSelectedContainerState = jest.fn();
 
     const testSidebarPage = {
       component: CourseInfoSidebar,
@@ -346,6 +347,7 @@ describe('<SectionCard />', () => {
         stopCurrentFlow: jest.fn(),
         openContainerInfoSidebar: jest.fn(),
         clearSelection: jest.fn(),
+        setSelectedContainerState: mockSetSelectedContainerState,
       }));
     setConfig({
       ...getConfig(),
@@ -366,6 +368,10 @@ describe('<SectionCard />', () => {
       expect(mockSetCurrentPageKey).toHaveBeenCalledWith('align');
     });
     expect(setCurrentSelection).toHaveBeenCalledWith({
+      currentId: section.id,
+      sectionId: section.id,
+    });
+    expect(mockSetSelectedContainerState).toHaveBeenCalledWith({
       currentId: section.id,
       sectionId: section.id,
     });

@@ -1,17 +1,20 @@
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
-import { useCallback } from 'react';
+import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useUnitSidebarContext } from './UnitSidebarContext';
+import { messageTypes } from '../constants';
 
 /**
  * Align sidebar for unit or selected components.
  */
 export const UnitAlignSidebar = () => {
   const { blockId } = useParams();
-  const { currentComponentId, setCurrentPageKey } = useUnitSidebarContext();
+  const { sendMessageToIframe } = useIframe();
+  const { selectedComponentId, setCurrentPageKey } = useUnitSidebarContext();
 
-  const sidebarContentId = currentComponentId || blockId;
+  const sidebarContentId = selectedComponentId || blockId;
 
   const {
     data: contentData,
@@ -20,7 +23,8 @@ export const UnitAlignSidebar = () => {
   const handleBack = useCallback(() => {
     // Set the align sidebar without current component to back
     // to unit align sidebar.
-    setCurrentPageKey('align');
+    setCurrentPageKey('align', null);
+    sendMessageToIframe(messageTypes.clearSelection, null);
   }, [setCurrentPageKey]);
 
   return (
@@ -30,7 +34,7 @@ export const UnitAlignSidebar = () => {
           ? contentData.displayName : ''
       }
       contentId={sidebarContentId || ''}
-      onBackBtnClick={currentComponentId ? handleBack : undefined}
+      onBackBtnClick={selectedComponentId ? handleBack : undefined}
     />
   );
 };

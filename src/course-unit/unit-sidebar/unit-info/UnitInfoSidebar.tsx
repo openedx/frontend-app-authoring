@@ -189,7 +189,7 @@ const UnitInfoSettings = () => {
 };
 
 /**
- * Main component that renders the tabs of the info sidebar.
+ * Component that renders the tabs of the info sidebar for units.
  */
 export const UnitInfoSidebar = () => {
   const intl = useIntl();

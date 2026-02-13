@@ -63,7 +63,7 @@ const UnitCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const locatorId = searchParams.get('show');
   const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
@@ -134,6 +134,14 @@ const UnitCard = ({
 
   const selectAndTrigger = () => {
     setCurrentSelection({
+      currentId: unit.id,
+      subsectionId: subsection.id,
+      sectionId: section.id,
+    });
+  };
+
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
       currentId: unit.id,
       subsectionId: subsection.id,
       sectionId: section.id,
@@ -269,6 +277,7 @@ const UnitCard = ({
             onClickSync={openSyncModal}
             onClickCard={onClickCard}
             onClickDuplicate={onDuplicateSubmit}
+            onClickManageTags={handleClickManageTags}
             titleComponent={titleComponent}
             namePrefix={namePrefix}
             actions={actions}

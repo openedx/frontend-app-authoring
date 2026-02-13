@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Advanced Blocks',
     description: 'Title for the add advanced blocks page in the unit sidebar',
   },
+  sidebarDisabledAddTooltip: {
+    id: 'course-authoring.course-unit.sidebar.add.disabled.tooltip',
+    defaultMessage: 'Cannot add content to components',
+    description: 'Tooltip for the Add sidebar when is disabled.',
+  },
 });
 
 export default messages;

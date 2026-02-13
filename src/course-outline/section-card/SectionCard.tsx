@@ -62,7 +62,7 @@ const SectionCard = ({
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
+  const { selectedContainerState, openContainerInfoSidebar, setSelectedContainerState } = useOutlineSidebarContext();
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const {
@@ -199,6 +199,13 @@ const SectionCard = ({
     });
   };
 
+  const handleClickManageTags = () => {
+    setSelectedContainerState({
+      currentId: section.id,
+      sectionId: section.id,
+    });
+  };
+
   const handleOpenHighlightsModal = () => {
     onOpenHighlightsModal(section);
   };
@@ -284,6 +291,7 @@ const SectionCard = ({
                 onClickSync={openSyncModal}
                 onClickCard={(e) => onClickCard(e, true)}
                 onClickDuplicate={onDuplicateSubmit}
+                onClickManageTags={handleClickManageTags}
                 titleComponent={titleComponent}
                 namePrefix={namePrefix}
                 actions={actions}

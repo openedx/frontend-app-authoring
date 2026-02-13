@@ -3,38 +3,43 @@ import {
   Button, Card, Icon, Stack,
 } from '@openedx/paragon';
 import { Cached, LinkOff, Newsstand } from '@openedx/paragon/icons';
-import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
-import { courseOutlineQueryKeys, useCourseItemData } from '@src/course-outline/data/apiHooks';
-import { fetchCourseSectionQuery } from '@src/course-outline/data/thunk';
-import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
+import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { PreviewLibraryXBlockChanges } from '@src/course-unit/preview-changes';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { XBlock } from '@src/data/types';
 import { ContainerType, getBlockType, normalizeContainerType } from '@src/generic/key-utils';
 import { useToggleWithValue } from '@src/hooks';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
 import messages from './messages';
 
 interface SubProps {
   blockData: XBlock;
   displayName: string;
   openSyncModal: (val: XBlock) => void;
+  sectionId?: string;
 }
 
-const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
+interface HasTopParentSubProps extends SubProps {
+  goToParent: (containerId: string, subsectionId?: string, sectionId?: string) => void;
+}
+
+const HasTopParentTextAndButton = ({
+  blockData,
+  displayName,
+  openSyncModal,
+  goToParent,
+  sectionId,
+}: HasTopParentSubProps) => {
   const { upstreamInfo } = blockData;
-  const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
   const { openUnlinkModal } = useCourseAuthoringContext();
   const { data: parentData, isPending } = useCourseItemData(upstreamInfo?.topLevelParentKey);
 
   const handleUnlinkClick = () => {
     // istanbul ignore if
-    if (!selectedContainerState?.sectionId || !parentData) {
+    if (!sectionId || !parentData) {
       return;
     }
-    openUnlinkModal({ value: parentData, sectionId: selectedContainerState.sectionId });
+    openUnlinkModal({ value: parentData, sectionId });
   };
 
   const handleSyncClick = () => {
@@ -52,17 +57,17 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
     }
     const category = getBlockType(upstreamInfo.topLevelParentKey) as ContainerType;
     if ([ContainerType.Chapter, ContainerType.Section].includes(category)) {
-      return openContainerInfoSidebar(
+      return goToParent(
         upstreamInfo.topLevelParentKey,
         undefined,
         upstreamInfo.topLevelParentKey,
       );
     }
     // Only possible option is sequential or subsection
-    return openContainerInfoSidebar(
+    return goToParent(
       upstreamInfo.topLevelParentKey,
       upstreamInfo.topLevelParentKey,
-      selectedContainerState?.sectionId,
+      sectionId,
     );
   };
 
@@ -119,9 +124,13 @@ const HasTopParentTextAndButton = ({ blockData, displayName, openSyncModal }: Su
   );
 };
 
-const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubProps) => {
+const TopLevelTextAndButton = ({
+  blockData,
+  displayName,
+  openSyncModal,
+  sectionId,
+}: SubProps) => {
   const { upstreamInfo } = blockData;
-  const { selectedContainerState } = useOutlineSidebarContext();
   const { openUnlinkModal } = useCourseAuthoringContext();
   const messageValues = {
     name: displayName,
@@ -129,10 +138,10 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
 
   const handleUnlinkClick = () => {
     // istanbul ignore if
-    if (!selectedContainerState?.sectionId) {
+    if (!sectionId) {
       return;
     }
-    openUnlinkModal({ value: blockData, sectionId: selectedContainerState.sectionId });
+    openUnlinkModal({ value: blockData, sectionId });
   };
 
   const handleSyncClick = () => {
@@ -180,15 +189,23 @@ const TopLevelTextAndButton = ({ blockData, displayName, openSyncModal }: SubPro
 
 interface Props {
   itemId?: string;
+  sectionId?: string;
+  postChange: (accept: boolean) => void,
+  goToParent: (containerId: string, subsectionId?: string, sectionId?: string) => void;
 }
 
-export const LibraryReferenceCard = ({ itemId }: Props) => {
+/**
+ * Libray reference card to show info and actions about
+ * upstream link of an item.
+ */
+export const LibraryReferenceCard = ({
+  itemId,
+  sectionId,
+  postChange,
+  goToParent,
+}: Props) => {
   const { data: itemData, isPending } = useCourseItemData(itemId);
-  const { selectedContainerState } = useOutlineSidebarContext();
-  const { courseId } = useCourseAuthoringContext();
   const [isSyncModalOpen, syncModalData, openSyncModal, closeSyncModal] = useToggleWithValue<XBlock>();
-  const dispatch = useDispatch();
-  const queryClient = useQueryClient();
 
   const blockSyncData = useMemo(() => {
     if (!syncModalData?.upstreamInfo?.readyToSync) {
@@ -204,19 +221,6 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
       blockType: normalizeContainerType(syncModalData.category),
     };
   }, [syncModalData]);
-
-  // istanbul ignore next
-  const handleOnPostChangeSync = useCallback(() => {
-    if (selectedContainerState?.sectionId) {
-      dispatch(fetchCourseSectionQuery([selectedContainerState.sectionId]));
-    }
-    if (courseId) {
-      invalidateLinksQuery(queryClient, courseId);
-      queryClient.invalidateQueries({
-        queryKey: courseOutlineQueryKeys.course(courseId),
-      });
-    }
-  }, [dispatch, selectedContainerState, queryClient, courseId]);
 
   if (!itemData?.upstreamInfo?.upstreamRef) {
     return null;
@@ -235,11 +239,14 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
               blockData={itemData}
               displayName={itemData.displayName}
               openSyncModal={openSyncModal}
+              sectionId={sectionId}
             />
             <HasTopParentTextAndButton
               blockData={itemData}
               displayName={itemData.displayName}
               openSyncModal={openSyncModal}
+              sectionId={sectionId}
+              goToParent={goToParent}
             />
           </Stack>
         </Card.Section>
@@ -249,7 +256,7 @@ export const LibraryReferenceCard = ({ itemId }: Props) => {
           blockData={blockSyncData}
           isModalOpen={isSyncModalOpen}
           closeModal={closeSyncModal}
-          postChange={handleOnPostChangeSync}
+          postChange={postChange}
         />
       )}
     </div>
