@@ -181,6 +181,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleOpenManageTagsModal = (id: string) => {
     if (isUnitPageNewDesignEnabled()) {
       setCurrentPageKey('align', id);
+      sendMessageToIframe(messageTypes.selectXblock, { locator: id });
     } else {
       // Legacy manage tags modal
       setConfigureXBlockId(id);

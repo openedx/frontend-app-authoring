@@ -81,4 +81,5 @@ export const messageTypes = {
   handleRedirectToXBlockEditPage: 'handleRedirectToXBlockEditPage',
   xblockSelected: 'xblockSelected',
   clearSelection: 'clearSelection',
+  selectXblock: 'selectXBlock',
 };
