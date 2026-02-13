@@ -7,14 +7,12 @@ import {
   IconButtonToggle,
   Stack,
 } from '@openedx/paragon';
-import {
-  FormatIndentDecrease,
-  FormatIndentIncrease,
-} from '@openedx/paragon/icons';
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
 
 import messages from './messages';
+import { CollapsedIcon } from './icons/CollapsedIcon';
+import { ExpandedIcon } from './icons/ExpandedIcon';
 
 export interface SidebarPage {
   component: React.ComponentType;
@@ -88,10 +86,11 @@ export function Sidebar<T extends SidebarPages>({
   const intl = useIntl();
 
   const SidebarComponent = pages[currentPageKey].component;
+  const activeKey = isOpen ? currentPageKey : undefined;
 
   return (
     <Stack direction="horizontal" className="sidebar align-items-baseline ml-3" gap={2}>
-      {isOpen && !!currentPageKey && (
+      {(isOpen && !!currentPageKey) ? (
         <ResizableBox>
           <div className="sidebar-content p-3 bg-white border-right">
             <Dropdown data-testid="sidebar-dropdown">
@@ -121,16 +120,18 @@ export function Sidebar<T extends SidebarPages>({
             <SidebarComponent />
           </div>
         </ResizableBox>
+      ) : (
+        <div className="min-vh-100 border" />
       )}
-      <div className="sidebar-toggle" data-testid="sidebar-toggle">
+      <div className="sidebar-toggle p-1" data-testid="sidebar-toggle">
         <IconButton
-          src={isOpen ? FormatIndentIncrease : FormatIndentDecrease}
+          src={isOpen ? ExpandedIcon : CollapsedIcon}
           alt={intl.formatMessage(messages.toggle)}
           onClick={toggle}
           variant="primary"
         />
         <IconButtonToggle
-          activeValue={currentPageKey}
+          activeValue={activeKey}
           onChange={setCurrentPageKey}
         >
           {Object.entries(pages).map(([key, page]) => (
@@ -142,7 +143,7 @@ export function Sidebar<T extends SidebarPages>({
               value={key}
               src={page.icon}
               alt={intl.formatMessage(page.title)}
-              className="rounded-iconbutton"
+              className="rounded-iconbutton my-2"
             />
           ))}
         </IconButtonToggle>

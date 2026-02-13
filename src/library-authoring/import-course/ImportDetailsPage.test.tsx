@@ -159,7 +159,7 @@ describe('<ImportDetailsPage />', () => {
       name: 'library_content',
     })).toBeInTheDocument();
     expect(await screen.findByRole('cell', {
-      name: /has children, so it not supported in content libraries/i,
+      name: /has children, so it is not supported in content libraries/i,
     })).toBeInTheDocument();
 
     const viewImportedContentBtn = screen.getByRole('button', {

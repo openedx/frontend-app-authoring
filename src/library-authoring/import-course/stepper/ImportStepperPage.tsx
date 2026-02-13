@@ -163,7 +163,7 @@ export const ImportStepperPage = () => {
                   </ActionRow>
                 ) : (
                   <ActionRow className="d-flex justify-content-between">
-                    <Button onClick={() => setCurrentStep('select-course')} variant="tertiary">
+                    <Button variant="outline-primary" onClick={() => setCurrentStep('select-course')}>
                       <FormattedMessage {...messages.importCourseBack} />
                     </Button>
                     {importIsBlocked ? (

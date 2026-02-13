@@ -327,7 +327,7 @@ const AddTabs = () => {
   return (
     <Tabs
       variant="tabs"
-      className="my-2 d-flex justify-content-around"
+      className="mb-4 mx-n4.5"
       id="add-content-tabs"
       activeKey={key}
       onSelect={setKey}
