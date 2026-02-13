@@ -79,4 +79,6 @@ export const messageTypes = {
   copyXBlockLegacy: 'copyXBlockLegacy',
   hideProcessingNotification: 'hideProcessingNotification',
   handleRedirectToXBlockEditPage: 'handleRedirectToXBlockEditPage',
+  xblockSelected: 'xblockSelected',
+  clearSelection: 'clearSelection',
 };

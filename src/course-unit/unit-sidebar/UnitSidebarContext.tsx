@@ -9,9 +9,10 @@ export type UnitSidebarPages = Record<UnitSidebarPageKeys, SidebarPage>;
 
 interface UnitSidebarContextData {
   currentPageKey: UnitSidebarPageKeys;
-  setCurrentPageKey: (pageKey: UnitSidebarPageKeys) => void;
+  setCurrentPageKey: (pageKey: UnitSidebarPageKeys, componentId?: string | null) => void;
   currentTabKey?: string;
   setCurrentTabKey: (tabKey: string | undefined) => void;
+  selectedComponentId?: string;
   isOpen: boolean;
   open: () => void;
   toggle: () => void;
@@ -29,12 +30,19 @@ export const UnitSidebarProvider = ({
 }) => {
   const [currentPageKey, setCurrentPageKeyState] = useState<UnitSidebarPageKeys>('info');
   const [currentTabKey, setCurrentTabKey] = useState<string>();
+  const [selectedComponentId, setSelectedComponentId] = useState<string>();
   const [isOpen, open,, toggle] = useToggle(true);
 
-  const setCurrentPageKey = useCallback(/* istanbul ignore next */ (pageKey: UnitSidebarPageKeys) => {
+  const setCurrentPageKey = useCallback(/* istanbul ignore next */ (
+    pageKey: UnitSidebarPageKeys,
+    componentId?: string | null,
+  ) => {
     // Reset tab
     setCurrentTabKey(undefined);
     setCurrentPageKeyState(pageKey);
+    if (componentId !== undefined) {
+      setSelectedComponentId(componentId === null ? undefined : componentId);
+    }
     open();
   }, [open]);
 
@@ -44,6 +52,7 @@ export const UnitSidebarProvider = ({
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
+      selectedComponentId,
       isOpen,
       open,
       toggle,
@@ -54,6 +63,7 @@ export const UnitSidebarProvider = ({
       setCurrentPageKey,
       currentTabKey,
       setCurrentTabKey,
+      selectedComponentId,
       isOpen,
       open,
       toggle,

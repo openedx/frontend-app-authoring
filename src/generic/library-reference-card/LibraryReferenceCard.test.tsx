@@ -37,21 +37,16 @@ const itemData = {
   },
 };
 
-const mockUseOutlineSidebarContext = jest.fn().mockReturnValue({
-  selectedContainerState: { currentId: itemData.id, sectionId: sectionData.id },
-  openContainerInfoSidebar: jest.fn(),
-});
 const mockUseCourseAuthoringContext = jest.fn().mockReturnValue({
   openUnlinkModal: jest.fn(),
   courseId: 'course1',
 });
 
-jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({
-  useOutlineSidebarContext: () => mockUseOutlineSidebarContext(),
-}));
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => mockUseCourseAuthoringContext(),
 }));
+const mockPostChange = jest.fn();
+const mockOpenContainerInfoSidebar = jest.fn();
 const mockOpenSyncModal = jest.fn();
 jest.mock('@src/hooks', () => ({
   useToggleWithValue: () => [false, {}, mockOpenSyncModal, jest.fn()],
@@ -70,7 +65,14 @@ describe('LibraryReferenceCard', () => {
   });
 
   it('renders the LibraryReferenceCard normally', async () => {
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(/Library Reference/)).toBeInTheDocument();
   });
 
@@ -86,7 +88,14 @@ describe('LibraryReferenceCard', () => {
     axiosMock
       .onGet(getXBlockApiUrl(itemData.id))
       .reply(200, data);
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `The link between ${itemData.displayName} and the library version has been broken. To edit or make changes, unlink component.`,
     )).toBeInTheDocument();
@@ -109,7 +118,14 @@ describe('LibraryReferenceCard', () => {
           readyToSync: true,
         },
       });
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `${itemData.displayName} has available updates`,
     )).toBeInTheDocument();
@@ -128,7 +144,14 @@ describe('LibraryReferenceCard', () => {
           downstreamCustomized: ['displayName'],
         },
       });
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `${itemData.displayName} has been modified in this course.`,
     )).toBeInTheDocument();
@@ -146,7 +169,14 @@ describe('LibraryReferenceCard', () => {
           errorMessage: 'some error',
         },
       });
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `${itemData.displayName} was reused as part of a section which has a broken link. To recieve library updates to this component, unlink the broken link.`,
     )).toBeInTheDocument();
@@ -180,7 +210,14 @@ describe('LibraryReferenceCard', () => {
     axiosMock
       .onGet(getXBlockApiUrl(sectionData.id))
       .reply(200, parentData);
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `${itemData.displayName} was reused as part of a section which has updates available.`,
     )).toBeInTheDocument();
@@ -200,13 +237,20 @@ describe('LibraryReferenceCard', () => {
           topLevelParentKey: sectionData.upstreamInfo.downstreamKey,
         },
       });
-    render(<LibraryReferenceCard itemId={itemData.id} />);
+    render(
+      <LibraryReferenceCard
+        itemId={itemData.id}
+        sectionId={sectionData.id}
+        postChange={mockPostChange}
+        goToParent={mockOpenContainerInfoSidebar}
+      />,
+    );
     expect(await screen.findByText(
       `${itemData.displayName} was reused as part of a section.`,
     )).toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'View section' }));
-    expect(mockUseOutlineSidebarContext().openContainerInfoSidebar).toHaveBeenCalledWith(
+    expect(mockOpenContainerInfoSidebar).toHaveBeenCalledWith(
       sectionData.id,
       undefined,
       sectionData.id,

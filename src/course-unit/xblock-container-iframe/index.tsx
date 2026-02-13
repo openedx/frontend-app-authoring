@@ -24,6 +24,7 @@ import { UnlinkModal } from '@src/generic/unlink-modal';
 import VideoSelectorPage from '@src/editors/VideoSelectorPage';
 import EditorPage from '@src/editors/EditorPage';
 
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { messageTypes } from '../constants';
 import {
   fetchCourseSectionVerticalData,
@@ -39,6 +40,7 @@ import {
   AccessManagedXBlockDataTypes,
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
+import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId,
@@ -55,7 +57,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal] = useToggle(false);
+  const { isUnlinkModalOpen, openUnlinkModal, closeUnlinkModal } = useCourseAuthoringContext();
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
@@ -75,6 +77,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
   const { iframeHeight } = useIframeBehavior({ id: blockId, iframeUrl, iframeRef });
+
+  const { setCurrentPageKey } = useUnitSidebarContext();
 
   useIframeContent(iframeRef, setIframeRef);
 
@@ -112,7 +116,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleUnlinkXBlock = (usageId: string) => {
     setUnlinkXBlockId(usageId);
-    openUnlinkModal();
+    openUnlinkModal({});
   };
 
   const handleManageXBlockAccess = (usageId: string) => {
@@ -196,6 +200,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     setIframeKey((prev) => prev + 1);
   };
 
+  const handleXBlockSelected = (id) => {
+    setCurrentPageKey('info', id);
+  };
+
   const messageHandlers = useMessageHandlers({
     courseId,
     dispatch,
@@ -214,6 +222,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleHideProcessingNotification,
     handleEditXBlock,
     handleRefreshIframe,
+    handleXBlockSelected,
   });
 
   useIframeMessages(readonly ? {} : messageHandlers);

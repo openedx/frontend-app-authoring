@@ -1,9 +1,9 @@
 import { Info, Plus } from '@openedx/paragon/icons';
 import { SidebarPage } from '@src/generic/sidebar';
 import messages from './messages';
-import { UnitInfoSidebar } from './unit-info/UnitInfoSidebar';
 import { AddSidebar } from './AddSidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
+import { InfoSidebar } from './unit-info/InfoSidebar';
 
 export type UnitSidebarPages = {
   info: SidebarPage;
@@ -21,7 +21,7 @@ export const useUnitSidebarPages = (): UnitSidebarPages => {
   const { readOnly } = useUnitSidebarContext();
   return {
     info: {
-      component: UnitInfoSidebar,
+      component: InfoSidebar,
       icon: Info,
       title: messages.sidebarButtonInfo,
     },
