@@ -14,8 +14,9 @@ import { useIframe } from '@src/generic/hooks/context/hooks';
 import { messageTypes } from '@src/course-unit/constants';
 import { LibraryReferenceCard } from '@src/generic/library-reference-card/LibraryReferenceCard';
 import { getCourseUnitData } from '@src/course-unit/data/selectors';
-
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/apiHooks';
+
 import { useUnitSidebarContext } from '../UnitSidebarContext';
 import messages from './messages';
 
@@ -28,9 +29,7 @@ export const ComponentInfoSidebar = () => {
   const navigate = useNavigate();
   const { sendMessageToIframe } = useIframe();
   const unitData = useSelector(getCourseUnitData);
-  const courseId = unitData?.ancestorInfo?.ancestors?.find(
-    (ancestor) => ancestor.category === 'course',
-  )?.id;
+  const { courseId } = useCourseAuthoringContext();
   const sectionId = unitData?.ancestorInfo?.ancestors?.find(
     (ancestor) => ancestor.category === 'chapter',
   )?.id;
@@ -48,7 +47,7 @@ export const ComponentInfoSidebar = () => {
   };
 
   const handleGoToParent = (containerId: string) => {
-    navigate(`${getConfig().STUDIO_BASE_URL}/course/${courseId}?show=${containerId}`);
+    navigate(`/course/${courseId}?show=${encodeURIComponent(containerId)}`);
   };
 
   const handlePostChange = () => {
