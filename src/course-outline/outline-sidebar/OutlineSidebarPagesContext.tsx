@@ -19,7 +19,7 @@ export type OutlineSidebarPages = {
   align?: SidebarPage;
 };
 
-export const getOutlineSidebarPages = () => ({
+const getOutlineSidebarPages = () => ({
   info: {
     component: InfoSidebar,
     icon: Info,
@@ -94,6 +94,7 @@ export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesPro
 
 export const useOutlineSidebarPagesContext = (): OutlineSidebarPages => {
   const ctx = useContext(OutlineSidebarPagesContext);
+  // istanbul ignore if: this should never happen
   if (ctx === undefined) { throw new Error('useOutlineSidebarPages must be used within an OutlineSidebarPagesProvider'); }
   return ctx;
 };
