@@ -76,7 +76,7 @@ export const CourseFilesTable = () => {
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'file',
   };
-  const maxFileSize = UPLOAD_FILE_MAX_SIZE * 1024 * 1024;
+  const maxFileSize = UPLOAD_FILE_MAX_SIZE;
 
   const activeColumn = {
     id: 'activeStatus',
