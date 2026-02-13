@@ -14,3 +14,7 @@ export const CONTENT_LIBRARY_PERMISSIONS = {
   MANAGE_LIBRARY_TEAM: 'content_libraries.manage_library_team',
   VIEW_LIBRARY_TEAM: 'content_libraries.view_library_team',
 };
+
+export const COURSE_PERMISSIONS = {
+  MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
+};
