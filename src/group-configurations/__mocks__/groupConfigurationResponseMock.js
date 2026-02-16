@@ -26,9 +26,9 @@ module.exports = {
       usage: null,
       name: 'Enrollment Track Groups',
       parameters: {
-        course_id: 'course-v1:org+101+101',
+        courseId: 'course-v1:org+101+101',
       },
-      read_only: true,
+      readOnly: true,
       scheme: 'enrollment_track',
       version: 3,
     },
@@ -66,6 +66,39 @@ module.exports = {
       parameters: {},
       readOnly: false,
       scheme: 'cohort',
+      version: 3,
+    },
+    {
+      active: true,
+      description: 'Partition for segmenting users by team-set',
+      groups: [
+        {
+          id: 6,
+          name: 'My Team 1',
+          usage: [],
+          version: 1,
+        },
+        {
+          id: 7,
+          name: 'My Team 2',
+          usage: [
+            {
+              label: 'Subsection / Unit',
+              url: '/container/block-v1:org+101+101+type@vertical+block@e960cb847be24b8c835ae1a0184d7831',
+            },
+          ],
+          version: 1,
+        },
+      ],
+      id: 92768376,
+      usage: null,
+      name: 'Team Group: My Group',
+      parameters: {
+        courseId: 'course-v1:org+101+101',
+        teamSetId: '0ec11208-335f-4b48-9475-136f02cc30f3"',
+      },
+      readOnly: true,
+      scheme: 'team',
       version: 3,
     },
   ],
