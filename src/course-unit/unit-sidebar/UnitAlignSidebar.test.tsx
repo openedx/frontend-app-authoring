@@ -1,4 +1,5 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
+import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
 import { UnitAlignSidebar } from './UnitAlignSidebar';
 import { UnitSidebarProvider } from './UnitSidebarContext';
 
@@ -16,9 +17,11 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const renderComponent = () => render(
-  <UnitSidebarProvider readOnly={false}>
-    <UnitAlignSidebar />
-  </UnitSidebarProvider>,
+  <IframeProvider>
+    <UnitSidebarProvider readOnly={false}>
+      <UnitAlignSidebar />
+    </UnitSidebarProvider>
+  </IframeProvider>,
 );
 
 describe('OutlineAlignSidebar', () => {
