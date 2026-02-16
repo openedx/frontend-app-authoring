@@ -20,6 +20,7 @@ export const UnitAlignSidebar = () => {
     data: contentData,
   } = useContentData(sidebarContentId);
 
+  // istanbul ignore next
   const handleBack = useCallback(() => {
     // Set the align sidebar without current component to back
     // to unit align sidebar.

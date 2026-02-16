@@ -2941,9 +2941,10 @@ describe('<CourseUnit />', () => {
 
     await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
 
-    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
+    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: mockContentData.textXBlock });
 
     await screen.findByText('Align');
+    await screen.findByText(mockContentData.textXBlockData.displayName);
   });
 
   describe('Add sidebar', () => {

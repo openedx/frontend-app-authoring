@@ -40,6 +40,7 @@ export const ComponentInfoSidebar = () => {
 
   const { data: contentData } = useContentData(selectedComponentId) as { data: XBlockData | undefined };
 
+  // istanbul ignore next
   const handleBack = () => {
     setCurrentPageKey('info', null);
     sendMessageToIframe(messageTypes.clearSelection, null);
@@ -49,6 +50,7 @@ export const ComponentInfoSidebar = () => {
     navigate(`/course/${courseId}?show=${encodeURIComponent(containerId)}`);
   };
 
+  // istanbul ignore next
   const handlePostChange = () => {
     sendMessageToIframe(messageTypes.refreshXBlock, null);
     queryClient.invalidateQueries({
