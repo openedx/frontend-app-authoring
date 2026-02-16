@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import { useNavigate } from 'react-router-dom';
 import { Tag } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
