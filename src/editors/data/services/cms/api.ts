@@ -470,6 +470,25 @@ export const apiMethods = {
     urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'delete_image_handler' }),
     { key },
   ),
+  saveInVideoQuizSettings: ({
+    studioEndpointUrl,
+    blockId,
+    displayName,
+    videoId,
+    timemap,
+    jumpBack,
+  }) => post(
+    urls.xblockHandler({ studioEndpointUrl, blockId, handlerName: 'submit_studio_edits' }),
+    {
+      values: {
+        display_name: displayName,
+        video_id: videoId,
+        timemap,
+        jump_back: jumpBack,
+      },
+      defaults: [],
+    },
+  ),
 };
 
 export default apiMethods;

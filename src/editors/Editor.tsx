@@ -24,7 +24,7 @@ const Editor: React.FC<Props> = ({
   lmsEndpointUrl,
   studioEndpointUrl,
   onClose = null,
-  returnFunction = null,
+  returnFunction,
 }) => {
   const dispatch = useDispatch();
   const loading = hooks.useInitializeApp({
@@ -54,7 +54,7 @@ const Editor: React.FC<Props> = ({
     );
   }
 
-  return <EditorComponent {...{ onClose, returnFunction }} />;
+  return <EditorComponent onClose={onClose} returnFunction={returnFunction} />;
 };
 
 export default Editor;
