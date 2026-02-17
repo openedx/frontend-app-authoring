@@ -54,7 +54,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { setCurrentPageKey } = useUnitSidebarContext();
+  const {
+    setCurrentPageKey,
+    setSelectedComponentId,
+  } = useUnitSidebarContext();
 
   // Useful to reload iframe
   const [iframeKey, setIframeKey] = useState(0);
@@ -130,6 +133,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const onDeleteSubmit = () => {
     if (deleteXBlockId) {
+      setSelectedComponentId(undefined);
       unitXBlockActions.handleDelete(deleteXBlockId);
       closeDeleteModal();
     }

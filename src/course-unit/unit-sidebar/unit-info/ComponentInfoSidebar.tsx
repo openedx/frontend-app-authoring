@@ -43,7 +43,6 @@ export const ComponentInfoSidebar = () => {
   // istanbul ignore next
   const handleBack = () => {
     setCurrentPageKey('info', null);
-    sendMessageToIframe(messageTypes.clearSelection, null);
   };
 
   const handleGoToParent = (containerId: string) => {

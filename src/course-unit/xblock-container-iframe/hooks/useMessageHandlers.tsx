@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
-import { useClipboard } from '../../../generic/clipboard';
-import { handleResponseErrors } from '../../../generic/saving-error-alert';
-import { NOTIFICATION_MESSAGES } from '../../../constants';
-import { updateSavingStatus } from '../../data/slice';
-import { messageTypes } from '../../constants';
+import { useClipboard } from '@src/generic/clipboard';
+import { messageTypes } from '@src/course-unit/constants';
+import { handleResponseErrors } from '@src/generic/saving-error-alert';
+import { updateSavingStatus } from '@src/course-unit/data/slice';
+import { NOTIFICATION_MESSAGES } from '@src/constants';
+
 import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
 
 /**
