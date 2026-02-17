@@ -91,7 +91,7 @@ describe('<HeaderNavigations />', () => {
     expect(infoButton).toBeInTheDocument();
     await user.click(infoButton);
 
-    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('info');
+    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('info', null);
   });
 
   it('click Add button should open add sidebar', async () => {
@@ -107,6 +107,6 @@ describe('<HeaderNavigations />', () => {
     expect(addButton).toBeInTheDocument();
     await user.click(addButton);
 
-    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('add');
+    expect(mockSetCurrentPageKey).toHaveBeenCalledWith('add', null);
   });
 });
