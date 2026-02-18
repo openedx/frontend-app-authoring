@@ -146,7 +146,7 @@ const CardMenu = ({
             as={Link}
             to={rerunLink ?? ''}
           >
-            {messages.btnReRunText.defaultMessage}
+            {intl.formatMessage(messages.btnReRunText)}
           </Dropdown.Item>
         )}
         <Dropdown.Item href={lmsLink}>
