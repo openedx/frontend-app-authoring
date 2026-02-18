@@ -5,11 +5,14 @@ import {
   Layout,
 } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
-import InternetConnectionAlert from '../generic/internet-connection-alert';
-import SubHeader from '../generic/sub-header/SubHeader';
-import { USER_ROLES } from '../constants';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import InternetConnectionAlert from '@src/generic/internet-connection-alert';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import { USER_ROLES } from '@src/constants';
+import getPageHeadTitle from '@src/generic/utils';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+
 import messages from './messages';
 import CourseTeamSideBar from './course-team-sidebar/CourseTeamSidebar';
 import AddUserForm from './add-user-form/AddUserForm';
@@ -17,12 +20,9 @@ import AddTeamMember from './add-team-member/AddTeamMember';
 import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
 import { useCourseTeam } from './hooks';
-import getPageHeadTitle from '../generic/utils';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
 const CourseTeam = () => {
   const intl = useIntl();
-
   const { courseId } = useCourseAuthoringContext();
 
   const {
@@ -43,7 +43,6 @@ const CourseTeam = () => {
     isShowAddTeamMember,
     isShowInitialSidebar,
     isShowUserFilledSidebar,
-    isInternetConnectionAlertFailed,
     openForm,
     hideForm,
     closeInfoModal,
@@ -51,8 +50,7 @@ const CourseTeam = () => {
     handleOpenDeleteModal,
     handleDeleteUserSubmit,
     handleChangeRoleUserSubmit,
-    handleInternetConnectionFailed,
-  } = useCourseTeam({ intl, courseId });
+  } = useCourseTeam();
 
   document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
 
@@ -86,7 +84,7 @@ const CourseTeam = () => {
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions && (
+                    headerActions={isAllowActions ? (
                       <Button
                         variant="primary"
                         iconBefore={IconAdd}
@@ -96,7 +94,7 @@ const CourseTeam = () => {
                       >
                         {intl.formatMessage(messages.addNewMemberButton)}
                       </Button>
-                    )}
+                    ) : undefined}
                   />
                   <section className="course-team-section">
                     <div className="members-container">
@@ -139,7 +137,7 @@ const CourseTeam = () => {
                       isOpen={isInfoModalOpen}
                       close={closeInfoModal}
                       currentEmail={currentEmail}
-                      errorMessage={errorMessage}
+                      errorMessage={errorMessage ?? ''}
                       courseName={courseName}
                       modalType={modalType}
                       onDeleteSubmit={handleDeleteUserSubmit}
@@ -161,9 +159,9 @@ const CourseTeam = () => {
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert
-          isFailed={isInternetConnectionAlertFailed}
+          isFailed={errorMessage !== undefined}
           isQueryPending={isQueryPending}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
+          onInternetConnectionFailed={() => {}}
         />
       </div>
     </>
