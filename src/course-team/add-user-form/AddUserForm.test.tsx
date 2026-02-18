@@ -32,8 +32,7 @@ const renderComponent = () => render(
 
 describe('<AddUserForm />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
+    initializeMocks();
   });
 
   it('render AddUserForm component correctly', () => {
