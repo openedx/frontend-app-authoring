@@ -70,7 +70,7 @@
     "classnames": "2.5.1",
     "codemirror": "^6.0.0",
     "email-validator": "2.0.4",
-    "fast-xml-parser": "^5.0.0",
+    "fast-xml-parser": "^5.3.6",
     "file-saver": "^2.0.5",
     "formik": "2.4.9",
     "frontend-components-tinymce-advanced-plugins": "^1.0.3",
