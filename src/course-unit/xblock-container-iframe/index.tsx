@@ -131,10 +131,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  const onDeleteSubmit = () => {
+  const onDeleteSubmit = async () => {
     if (deleteXBlockId) {
+      await unitXBlockActions.handleDelete(deleteXBlockId);
       setSelectedComponentId(undefined);
-      unitXBlockActions.handleDelete(deleteXBlockId);
       closeDeleteModal();
     }
   };
