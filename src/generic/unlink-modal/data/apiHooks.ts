@@ -21,9 +21,9 @@ export const useUnlinkDownstream = () => {
         queryKey: courseOutlineQueryKeys.courseDetails(courseKey),
       });
       if (variables.sectionId) {
+        // This will handle updating all children block cache data as section data contains
+        // xblock data of all of its children
         queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
-      } else if (variables.subsectionId) {
-        queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
       }
     },
   });

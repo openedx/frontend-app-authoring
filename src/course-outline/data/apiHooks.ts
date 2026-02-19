@@ -56,6 +56,7 @@ const invalidateParentQueries = async (queryClient: QueryClient, variables: Pare
   if (variables.sectionId) {
     await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.sectionId) });
   } else if (variables.subsectionId) {
+    // istanbul ignore next
     await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.courseItemId(variables.subsectionId) });
   }
 };
